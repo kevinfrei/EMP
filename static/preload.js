@@ -3,7 +3,7 @@
 // It has the same sandbox as a Chrome extension.
 // This is invoked before everything else for the windows, thanks to electron
 window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text:string) => {
+  const replaceText = (selector, text: string) => {
     const element = document.getElementById(selector);
     if (element) {
       element.innerText = text;
@@ -14,3 +14,4 @@ window.addEventListener('DOMContentLoaded', () => {
     replaceText(`${type}-version`, process.versions[type]);
   }
 });
+
