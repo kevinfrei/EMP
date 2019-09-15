@@ -51,8 +51,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: windowState.bounds.width,
     height: windowState.bounds.height,
-    x: windowState.bounds.x,
-    y: windowState.bounds.y,
+    x: windowState.bounds.x || undefined,
+    y: windowState.bounds.y || undefined,
     //    backgroundColor: '#282c34', // Unnecessary if you're not showing :)
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),

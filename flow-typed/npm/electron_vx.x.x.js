@@ -28,16 +28,28 @@ type AppPathNames =
   | 'videos'
   | 'logs';
 
+declare type BrowserWindowConstructorOptions = {
+  width?: number,
+  height?: number,
+  x?: number,
+  y?: number,
+  show?: boolean,
+  webPreferences?: {
+    preload?: string,
+    nodeIntegration?: boolean
+  }
+};
+
 declare module 'electron' {
   declare type BrowserWindowBounds = {
     x: number,
     y: number,
     width: number,
     height: number
-  }
+  };
 
   declare class BrowserWindow {
-    constructor(options?: Object): BrowserWindow;
+    constructor(options?: BrowserWindowConstructorOptions): BrowserWindow;
     loadURL(url: string): void;
     on(event: string, handler: Function): void;
     show(): void;
