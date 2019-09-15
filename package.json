@@ -24,9 +24,10 @@
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "release": "yarn react-build && electron-builder --publish=always",
-    "build": "yarn react-build && yarn electron-build",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\""
+    "release": "yarn prepare && yarn react-build && electron-builder --publish=always",
+    "build": "yarn prepare && yarn react-build && yarn electron-build",
+    "start": "yarn prepare && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
+    "prepare": "flow-remove-types static/ -d public/ --all --pretty"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -48,6 +49,7 @@
     "electron": "^6.0.9",
     "electron-builder": "^21.2.0",
     "flow-bin": "^0.107.0",
+    "flow-remove-types": "^2.107.0",
     "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
   }

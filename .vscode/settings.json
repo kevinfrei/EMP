@@ -1,0 +1,6 @@
+{
+  "flow.coverageSeverity": "warn",
+  "flow.runOnAllFiles": true,
+  "javascript.format.enable": false,
+  "javascript.validate.enable": false
+}
