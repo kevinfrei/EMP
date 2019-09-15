@@ -1,14 +1,25 @@
+// @flow
+// @format
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
+const App = () => {
+  const foo: string = 'Visible files:';
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Edit file <code>src/App.js</code> and save to reload.
+        </p>
+        <p>
+          We are using Node.js v<span id="node-version" />, Chromium v
+          <span id="chrome-version" />, and Electron v
+          <span id="electron-version" />.
+        </p>
+        <p>
+          {foo} <span id="files" />
         </p>
         <a
           className="App-link"
@@ -21,6 +32,5 @@ function App() {
       </header>
     </div>
   );
-}
-
+};
 export default App;
