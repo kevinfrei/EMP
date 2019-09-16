@@ -1616,6 +1616,11 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
+amplitudejs@^5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/amplitudejs/-/amplitudejs-5.0.2.tgz#c4b5ac8559fb294d3e0d84c7ada76d2226c9725d"
+  integrity sha512-NBrWUmmIocAbjfUHbNctHiC5Ip/uo4B+eqmvJEufmplmXE0SDLt++DK5u7sTE0ilH68+/5MuOKrRacg8SLt7Zg==
+
 ansi-align@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.0.tgz#b536b371cf687caaef236c18d3e21fe3797467cb"
