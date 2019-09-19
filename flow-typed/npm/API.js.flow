@@ -1,0 +1,98 @@
+type Identifier =
+  | {
+      name?: string,
+      type: string,
+      collection: boolean,
+      description?: string,
+      required: boolean,
+    }
+  | {
+      name?: string,
+      type: 'String',
+      collection: boolean,
+      description?: string,
+      required: boolean,
+      possibleValues: Array<{value: string}>,
+    }
+  | {
+      name?: string,
+      type: 'Object',
+      collection: boolean,
+      description?: string,
+      required: boolean,
+      properties: Array<Identifier>,
+    }
+  | {
+      name?: string,
+      type: 'Function',
+      collection: boolean,
+      description?: string,
+      required: boolean,
+      parameters: Array<Identifier>,
+    };
+
+type Method = {
+  name: string,
+  signature: string,
+  description?: string,
+  parameters?: Array<Identifier>,
+  platforms?: Array<string>,
+  returns?: Array<Identifier> | Identifier,
+};
+
+type electron$Event = {
+  name: string,
+  description: string,
+  returns?: Array<Identifier> | Identifier,
+};
+
+type electron$Interface = {
+  name: string,
+  description?: string,
+  process?: {
+    main: boolean,
+    renderer: boolean,
+  },
+  version: string,
+  slug: string,
+  websiteUrl: string,
+  repoUrl: string,
+};
+
+type electron$Module = {
+  type: 'Module',
+  ...electron$Interface,
+  methods?: Array<Method>,
+  events?: Array<electron$Event>,
+};
+
+type electron$Class = {
+  type: 'Class',
+  ...electron$Interface,
+  staticMethods: Array<Method>,
+  constructorMethod: Method,
+  instanceName: string,
+  instanceMethods: Array<Method>,
+  instanceProperties: Array<Identifier>,
+};
+
+type electron$Structure = {
+  type: 'Structure',
+  ...electron$Interface,
+  properties: Array<Identifier>,
+};
+
+type electron$Element = {
+  type: 'Element',
+  ...electron$Interface,
+  methods: Array<Method>,
+  attributes: Array<{
+    name: string,
+    description: string,
+  }>,
+  domEvents: Array<electron$Event>,
+};
+
+export type APIDefinition = Array<
+  electron$Module | electron$Class | electron$Structure | electron$Element
+>;

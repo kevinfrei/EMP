@@ -1,58 +1,22 @@
 // @flow
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+
 const path = require('path');
 const isDev = require('electron-is-dev');
-const lclstorage = require('node-localstorage');
+const persist = require('./persist');
 
-import type { BrowserWindowBounds } from 'electron';
+import type { WindowPosition } from './persist';
 
-// Here's a place for app settings & stuff...
-const { JSONStorage } = lclstorage;
-const storageLocation: string = app.getPath('userData');
-global.nodeStorage = new JSONStorage(storageLocation);
-
-type WindowState = {
-  bounds: { x: ?number, y: ?number, width: number, height: number },
-  isMaximized: boolean
-};
-const defaultWindowState: WindowState = {
-  bounds: { x: undefined, y: undefined, width: 900, height: 680 },
-  isMaximized: false
-};
-let ws: ?WindowState;
-try {
-  ws = global.nodeStorage.getItem('windowState');
-  if (!ws) {
-    ws = defaultWindowState;
-  }
-} catch (err) {
-  ws = defaultWindowState;
-}
-const windowState: WindowState = ws ? ws : defaultWindowState;
+const windowPos: WindowPosition = persist.getWindowPos();
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: ?BrowserWindow;
-
-const storeWindowState = () => {
-  if (mainWindow && windowState) {
-    windowState.isMaximized = mainWindow.isMaximized();
-    if (!windowState.isMaximized) {
-      // only update bounds if the window isn’t currently maximized
-      windowState.bounds = mainWindow.getBounds();
-    }
-
-    global.nodeStorage.setItem('windowState', windowState);
-  }
-};
+let mainWindow: ?BrowserWindow = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: windowState.bounds.width,
-    height: windowState.bounds.height,
-    x: windowState.bounds.x || undefined,
-    y: windowState.bounds.y || undefined,
+    ...persist.getBrowserWindowPos(windowPos),
     //    backgroundColor: '#282c34', // Unnecessary if you're not showing :)
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -94,7 +58,7 @@ function createWindow() {
       mainWindow.focus();
       // TODO: On Mac, there's 'full screen max' and then 'just big'
       // This code makes full screen max turn into just big
-      if (windowState.isMaximized) {
+      if (windowPos.isMaximized) {
         mainWindow.maximize();
       }
     }
@@ -102,7 +66,17 @@ function createWindow() {
 
   ['resize', 'move', 'close'].forEach(e => {
     if (mainWindow) {
-      mainWindow.on(e, storeWindowState);
+      mainWindow.on(e, () => {
+        // Get the window state & save it
+        if (mainWindow) {
+          windowPos.isMaximized = mainWindow.isMaximized();
+          if (!windowPos.isMaximized) {
+            // only update bounds if the window isn’t currently maximized
+            windowPos.bounds = mainWindow.getBounds();
+          }
+          persist.setWindowPos(windowPos);
+        }
+      });
     }
   });
 }
