@@ -9,32 +9,87 @@ import './App.css';
 
 Amplitude.init([]);
 
+const Sidebar = () => (
+  <div>
+    <div>Albums</div>
+    <div>Aritsts</div>
+    <div>Playlists</div>
+    <div>Songs</div>
+  </div>
+);
+
+const MixedSongsView = () => (
+  <div>
+    <div>
+      <span>01 - Title</span>
+      <span>Arist</span>
+      <span>Album</span>
+    </div>
+    <div>
+      <span>02 - Title</span>
+      <span>Arist</span>
+      <span>Album</span>
+    </div>
+    <div>
+      <span>03 - Title</span>
+      <span>Arist</span>
+      <span>Album</span>
+    </div>
+  </div>
+);
+
+const SingleSongsView = () => (
+  <div>
+    <div>
+      <span>01 - Title</span>
+      <span>Arist</span>
+      <span>Album</span>
+    </div>
+    <div>
+      <span>02 - Title</span>
+      <span>Arist</span>
+      <span>Album</span>
+    </div>
+    <div>
+      <span>03 - Title</span>
+      <span>Arist</span>
+      <span>Album</span>
+    </div>
+  </div>
+);
+
+const AlbumView = () => (
+  <div>
+    <div>Album Title</div>
+    <SingleSongsView />
+  </div>
+);
+
+const ArtistView = () => (
+  <div>
+    <div>Arist Name</div>
+    <AlbumView />
+    <AlbumView />
+    <AlbumView />
+  </div>
+);
+
+const ViewSelector = () => (
+  <div>
+    <div>Please pick view</div>
+    <AlbumView/>
+    <ArtistView/>
+    <MixedSongsView/>
+  </div>
+);
 const App = () => {
   const foo: string = 'Visible files:';
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit file <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          We are using Node.js v<span id="node-version" />, Chromium v
-          <span id="chrome-version" />, and Electron v
-          <span id="electron-version" />.
-        </p>
-        <p>
-          {foo} <span id="files" />
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <span>
+        <Sidebar />
+        <ViewSelector />
+      </span>
       <div id="amplitude-player">
         <div id="amplitude-left">
           <img data-amplitude-song-info="cover_art_url" className="album-art" />
