@@ -12,7 +12,6 @@ import Store from './MyStore';
 import './App.css';
 //import { isPseudoClass } from 'postcss-selector-parser';
 import AsyncDoodad from './AsyncDoodad';
-import type { IpcRendererEvent } from 'electron';
 
 Amplitude.init([]);
 

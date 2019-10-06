@@ -3,52 +3,24 @@
 // This file is required by the index.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
-const fs = require('fs');
+
 const { ipcRenderer } = require('electron');
 const isDev = require('electron-is-dev');
 
-import type { IpcRendererEvent } from 'electron';
+// This will expose the ipcRenderer (and isDev) interfaces for use by the
+// React components, then, assuming the index.js has already be invoked, it
+// calls the function to start the app, thus ensuring that the app has access
+// to the ipcRenderer to enable asynchronous callbacks to affect the Undux store
 
-// This is where we start getting stuff from the main process without asking
-if (false) {
-  ipcRenderer.on(
-    'asynchronous-message',
-    (event: IpcRendererEvent, message: string) => {
-      if (isDev) {
-        console.log('Async message from main:');
-        console.log(event);
-        console.log(`Message: '${message}'`);
-        //      console.log(window.store);
-      }
-      const val = Number.parseInt(message.split(':')[1]);
-      if (window.store) {
-        const store = window.store.useStore();
-        store.set('foo', val);
-      }
-    }
-  );
-}
-
-//const files = fs.readdirSync('/Users/freik');
-// An example of us starting communication with the main process
-/*
-ipcRenderer.on('asynchronous-reply', (event, ...args) => {
-  console.log('Async reply:');
-  console.log(event);
-  console.log('args:');
-  console.log(args);
-});
-ipcRenderer.send('asynchronous-message', 'ping');
-*/
-const doSomething = () => {
+window.addEventListener('DOMContentLoaded', () => {
   window.ipc = ipcRenderer;
-  window.isDev = isDev;
+  if (isDev) {
+    window.isDev = isDev;
+  }
   console.log('ready');
   if (window.initApp !== undefined) {
     window.initApp();
   } else {
-    console.log("FAILURE: No window.initApp() attached.");
+    console.log('FAILURE: No window.initApp() attached.');
   }
-};
-
-window.addEventListener('DOMContentLoaded', doSomething);
+});
