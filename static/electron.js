@@ -31,7 +31,7 @@ const init = async () => {
     // TODO: Rescan source locations
   }
 };
-
+let val = 0;
 const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   window.webContents.send('asynchronous-message', 'loading');
   // Initialize stuff now
@@ -41,6 +41,9 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
         'asynchronous-message',
         `ready:${musicDB.songs.length}`
       );
+      setInterval(() => {
+        window.webContents.send('asynchronous-message', `val:${val++}`);
+      }, 1000);
       console.log(musicDB);
     })
     .catch(e => {
