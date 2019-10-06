@@ -23,7 +23,7 @@ const AsyncDoodad = () => {
           console.log(`Message: '${message}'`);
           //      console.log(window.store);
         }
-        Handler(message);
+        Handler(store, message);
       }
     );
   }

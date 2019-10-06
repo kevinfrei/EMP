@@ -2,7 +2,7 @@
 import type { Store } from 'undux';
 import type { State } from './MyStore';
 
-export default (store: Store<State>, message: string) => {
+const Handler = (store: Store<State>, message: string) => {
   const [msg, num] = message.split(':');
   if (num !== undefined) {
     const val: number = Number.parseInt(num);
@@ -10,3 +10,5 @@ export default (store: Store<State>, message: string) => {
   }
   store.set('bar')(msg);
 };
+
+export default Handler;
