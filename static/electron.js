@@ -2,6 +2,7 @@
 
 const { app, ipcMain } = require('electron');
 const path = require('path');
+const logger = require('simplelogger');
 
 const persist = require('./persist');
 const setup = require('./electronSetup');
@@ -10,6 +11,9 @@ const music = require('./music');
 import type { BrowserWindow } from 'electron';
 import type { OnWindowCreated } from './electronSetup';
 import type { MusicDB } from './music';
+
+logger.disable('electron');
+const log = (...args: Array<mixed>) => logger('electron', ...args);
 
 let musicDB: ?MusicDB;
 
@@ -44,7 +48,7 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
       setInterval(() => {
         window.webContents.send('asynchronous-message', `val:${val++}`);
       }, 1000);
-      console.log(musicDB);
+      log(musicDB);
     })
     .catch(e => {
       console.error(e);
@@ -53,16 +57,16 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
 };
 
 ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log('Received async message:');
-  console.log(event);
-  console.log(`arg: ${arg}`);
+  log('Received async message:');
+  log(event);
+  log(`arg: ${arg}`);
   event.sender.send('asynchronous-reply', 'pong');
 });
 
 ipcMain.on('synchronous-message', (event, arg) => {
-  console.log('Received sync message');
-  console.log(event);
-  console.log(`arg: ${arg}`);
+  log('Received sync message');
+  log(event);
+  log(`arg: ${arg}`);
   event.returnValue = 'pong';
 });
 

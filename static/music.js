@@ -2,6 +2,10 @@
 
 const fsp = require('fs').promises;
 const path = require('path');
+const logger = require('simplelogger');
+
+logger.disable('music');
+const log = (...args: Array<mixed>) => logger('music', ...args);
 
 export type Song = {
   URL: string,
@@ -39,11 +43,11 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
   // If we have too many locations, this is *baaaad* but oh well...
   const queue: Array<string> = [...locations];
   const songs: Array<string> = [];
-  console.log('Queue:');
-  console.log(queue);
+  log('Queue:');
+  log(queue);
   while (queue.length > 0) {
     const i = queue.pop();
-    console.log(i);
+    log(i);
     const dirents = await fsp.readdir(i, { withFileTypes: true });
     for (let dirent of dirents) {
       if (dirent.isSymbolicLink()) {
