@@ -1,6 +1,6 @@
 // @flow
 
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, protocol } = require('electron');
 
 const path = require('path');
 const isDev = require('electron-is-dev');
@@ -13,11 +13,19 @@ export type OnWindowCreated = (window: BrowserWindow) => void;
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: ?BrowserWindow = null;
+const configureProtocols = () => {
+  protocol.registerFileProtocol(
+    'pic',
+    (req, callback) => {},
+    error => {}
+  );
+};
 
 const setup = (windowCreated: OnWindowCreated) => {
   const windowPos: WindowPosition = persist.getWindowPos();
 
   const createWindow = () => {
+    configureProtocols();
     // Create the window, but don't show it just yet
     mainWindow = new BrowserWindow({
       ...persist.getBrowserWindowPos(windowPos),
