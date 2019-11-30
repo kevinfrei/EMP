@@ -1,11 +1,11 @@
 // @flow
 
-const { app, protocol, BrowserWindow } = require('electron');
-
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 const logger = require('simplelogger');
 
+const configureProtocols = require('./configProtocols');
 const persist = require('./persist');
 
 import type { WindowPosition } from './persist';
@@ -15,49 +15,10 @@ export type OnWindowCreated = (window: BrowserWindow) => void;
 //logger.disable('electronSetup');
 const log = (...args: Array<mixed>) => logger('electronSetup', ...args);
 
-/*
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'pic', privileges: { standard: true, secure: true } },
-  { scheme: 'tune', privileges: { standard: true, secure: true } }
-]);
-*/
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: ?BrowserWindow = null;
-const configureProtocols = () => {
-  protocol.registerFileProtocol(
-    'pic',
-    (req, callback) => {
-      log('pic URL request:');
-      log(req);
-      callback({ path: path.join(__dirname, 'logo512.png') });
-    },
-    error => {
-      if (error) {
-        log('failed to register "pic" protocol:');
-        log(error);
-      }
-    }
-  );
-  protocol.registerFileProtocol(
-    'tune',
-    (req, callback) => {
-      log('tune URL request:');
-      log(req);
-      const thePath =
-        '/Volumes/Thunderbolt/Audio/Sorted/Sorted/Accurate/Kate Bush - 1993 - The Red Shoes/01 - Rubberband Girl.flac'; //path.join(__dirname, 'test.flac');
-      log('Returning path ' + thePath);
-      callback({ path: thePath });
-    },
-    error => {
-      if (error) {
-        log('failed to register "tune" protocol:');
-        log(error);
-      }
-    }
-  );
-};
 
 const setup = (windowCreated: OnWindowCreated) => {
   const windowPos: WindowPosition = persist.getWindowPos();
@@ -67,6 +28,7 @@ const setup = (windowCreated: OnWindowCreated) => {
     // Create the window, but don't show it just yet
     mainWindow = new BrowserWindow({
       ...persist.getBrowserWindowPos(windowPos),
+      title: 'Generic Music Player',
       //    backgroundColor: '#282c34', // Unnecessary if you're not showing :)
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),

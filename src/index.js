@@ -20,9 +20,9 @@ window.initApp = () => {
           artist: 'Test Artist',
           album: 'Test Album',
           url: 'tune://song/song.flac',
-          cover_art_url: 'pic://pic/coverart.jpg'
         }
-      ]
+      ],
+      "default_album_art": "/img-pause.svg"
     });
   }
 };
