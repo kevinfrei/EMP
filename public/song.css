@@ -1,0 +1,49 @@
+.song-container {
+  grid-row: 1;
+  grid-column: 3;
+  justify-self: stretch;
+  display: inline-grid;
+  grid-template-columns: 36px 36px auto 36px;
+  grid-template-rows: 15px 15px 6px;
+  font-size: x-small;
+  text-align: center;
+}
+
+.song-cover-art {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  height: 36px;
+  width: 36px;
+  -webkit-app-region: drag;
+}
+
+#now-playing-current-time {
+  grid-row: 2;
+  grid-column: 2;
+  font-size: xx-small;
+  -webkit-app-region: drag;
+}
+
+#now-playing-remaining-time {
+  grid-row: 2;
+  grid-column: 4;
+  font-size: xx-small;
+  -webkit-app-region: drag;
+}
+
+.song-name {
+  grid-row: 1;
+  grid-column: 2 / 5;
+  -webkit-app-region: drag;
+}
+
+.artist-name {
+  grid-row: 2;
+  grid-column: 2 / 5;
+  -webkit-app-region: drag;
+}
+
+.amplitude-song-slider {
+  grid-row: 3;
+  grid-column: 2 / 5;
+}
