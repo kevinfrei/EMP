@@ -1,14 +1,26 @@
 // @flow
 
-const { app, BrowserWindow, protocol } = require('electron');
+const { app, protocol, BrowserWindow } = require('electron');
 
 const path = require('path');
 const isDev = require('electron-is-dev');
+const logger = require('simplelogger');
+
 const persist = require('./persist');
 
 import type { WindowPosition } from './persist';
 
 export type OnWindowCreated = (window: BrowserWindow) => void;
+
+//logger.disable('electronSetup');
+const log = (...args: Array<mixed>) => logger('electronSetup', ...args);
+
+/*
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'pic', privileges: { standard: true, secure: true } },
+  { scheme: 'tune', privileges: { standard: true, secure: true } }
+]);
+*/
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,8 +28,34 @@ let mainWindow: ?BrowserWindow = null;
 const configureProtocols = () => {
   protocol.registerFileProtocol(
     'pic',
-    (req, callback) => {},
-    error => {}
+    (req, callback) => {
+      log('pic URL request:');
+      log(req);
+      callback({ path: path.join(__dirname, 'logo512.png') });
+    },
+    error => {
+      if (error) {
+        log('failed to register "pic" protocol:');
+        log(error);
+      }
+    }
+  );
+  protocol.registerFileProtocol(
+    'tune',
+    (req, callback) => {
+      log('tune URL request:');
+      log(req);
+      const thePath =
+        '/Volumes/Thunderbolt/Audio/Sorted/Sorted/Accurate/Kate Bush - 1993 - The Red Shoes/01 - Rubberband Girl.flac'; //path.join(__dirname, 'test.flac');
+      log('Returning path ' + thePath);
+      callback({ path: thePath });
+    },
+    error => {
+      if (error) {
+        log('failed to register "tune" protocol:');
+        log(error);
+      }
+    }
   );
 };
 
@@ -64,8 +102,8 @@ const setup = (windowCreated: OnWindowCreated) => {
           } = require('electron-devtools-installer');
 
           installExtension(REACT_DEVELOPER_TOOLS)
-            .then(name => console.log(`Added Extension:  ${name}`))
-            .catch(err => console.log('An error occurred: ', err));
+            .then(name => log(`Added Extension:  ${name}`))
+            .catch(err => log('An error occurred: ', err));
         }
         mainWindow.show();
         mainWindow.focus();

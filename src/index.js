@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Amplitude from 'amplitudejs';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -12,6 +13,17 @@ window.initApp = () => {
   const root = document.getElementById('root');
   if (root) {
     ReactDOM.render(<App />, root);
+    Amplitude.init({
+      songs: [
+        {
+          name: 'Test Name',
+          artist: 'Test Artist',
+          album: 'Test Album',
+          url: 'tune://song/song.flac',
+          cover_art_url: 'pic://pic/coverart.jpg'
+        }
+      ]
+    });
   }
 };
 

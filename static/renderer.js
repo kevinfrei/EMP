@@ -6,6 +6,10 @@
 
 const { ipcRenderer } = require('electron');
 const isDev = require('electron-is-dev');
+const logger = require('simplelogger');
+
+//logger.disable('renderer');
+const log = (...args:Array<mixed>) => logger('renderer', ...args);
 
 // This will expose the ipcRenderer (and isDev) interfaces for use by the
 // React components, then, assuming the index.js has already be invoked, it
@@ -17,10 +21,10 @@ window.addEventListener('DOMContentLoaded', () => {
   if (isDev) {
     window.isDev = isDev;
   }
-  console.log('ready');
+  log('ready');
   if (window.initApp !== undefined) {
     window.initApp();
   } else {
-    console.log('FAILURE: No window.initApp() attached.');
+    log('FAILURE: No window.initApp() attached.');
   }
 });

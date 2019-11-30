@@ -3,37 +3,44 @@
 import React from 'react';
 import Store from './MyStore';
 import { AsyncMessageHandler, AsyncReplyHandler } from './Handler';
+import logger from 'simplelogger';
 
 import type { IpcRendererEvent } from 'electron';
+
+logger.disable('async');
+const log = (...args:Array<mixed>) => logger('async', ...args);
 
 const AsyncDoodad = () => {
   const store = Store.useStore();
   if (window.ipc === undefined) {
-    console.log('No IPC');
+    log('No IPC');
   } else if (window.ipcSet === undefined) {
-    console.log('IPC initialized');
+    log('IPC initialized');
     window.ipcSet = true;
     window.ipc.on(
       'asynchronous-message',
       (event: IpcRendererEvent, message: string) => {
         if (window.isDev) {
-          console.log('Async message from main:');
-          console.log(event);
-          console.log(`Message: '${message}'`);
-          //      console.log(window.store);
+          log('Async message from main:');
+          log(event);
+          log(`Message: '${message}'`);
+          // log(window.store);
         }
         AsyncMessageHandler(store, message);
       }
     );
-    window.ipc.on('asynchronous-reply', (event:IpcRendererEvent, ...args:Array<string>) => {
-      if (window.isDev) {
-        console.log('Async reply:');
-        console.log(event);
-        console.log('args:');
-        console.log(args);
+    window.ipc.on(
+      'asynchronous-reply',
+      (event: IpcRendererEvent, ...args: Array<string>) => {
+        if (window.isDev) {
+          log('Async reply:');
+          log(event);
+          log('args:');
+          log(args);
+        }
+        AsyncReplyHandler(store, event, ...args);
       }
-      AsyncReplyHandler(store, event, ...args);
-    });
+    );
   }
   if (window.ipc !== undefined) {
     // I'm not sure about this, but I want to keep my IPC centralized, so

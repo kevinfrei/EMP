@@ -3,6 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <style>
+      div.amplitude-play-pause {
+        width: 74px;
+        height: 74px;
+        cursor: pointer;
+        float: left;
+        margin-left: 10px;
+      }
+
+      div.amplitude-play-pause.amplitude-paused {
+        background: url('%PUBLIC_URL%/img-play.svg');
+        background-size: cover;
+      }
+
+      div.amplitude-play-pause.amplitude-playing {
+        background: url('%PUBLIC_URL%/img-pause.svg');
+        background-size: cover;
+      }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -29,6 +49,57 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="single-song-player">
+      <div class="bottom-container">
+        <progress
+          class="amplitude-song-played-progress"
+          amplitude-main-song-played-progress="true"
+          id="song-played-progress"
+        ></progress>
+      </div>
+      <div class="time-container">
+        <span class="current-time">
+          <span
+            class="amplitude-current-minutes"
+            amplitude-main-current-minutes="true"
+          ></span>
+          :
+          <span
+            class="amplitude-current-seconds"
+            amplitude-main-current-seconds="true"
+          ></span>
+        </span>
+        <span class="duration">
+          <span
+            class="amplitude-duration-minutes"
+            amplitude-main-duration-minutes="true"
+          ></span>
+          :
+          <span
+            class="amplitude-duration-seconds"
+            amplitude-main-duration-seconds="true"
+          ></span>
+        </span>
+      </div>
+      <div class="control-container">
+        <div
+          class="amplitude-play-pause"
+          amplitude-main-play-pause="true"
+          id="play-pause"
+        ></div>
+      </div>
+      <div class="meta-container">
+        <span
+          amplitude-song-info="name"
+          amplitude-main-song-info="true"
+          class="song-name"
+        ></span>
+        <span
+          amplitude-song-info="artist"
+          amplitude-main-song-info="true"
+        ></span>
+      </div>
+    </div>
     <div id="root"></div>
     <!-- You can also require other files to run in this process -->
     <!--
