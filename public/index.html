@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/index.css" />
+    <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/controls.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -31,7 +32,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="single-song-player">
-      <div class="control-container">
+      <span class="control-container">
         <span class="amplitude-shuffle"></span>
         <span class="amplitude-prev"></span>
         <span
@@ -39,18 +40,15 @@
           amplitude-main-play-pause="true"
           id="play-pause"
         ></span>
-        <span class="amplitude-next"></span>
-        <span class="amplitude-repeat"></span>
-      </div>
-      <div class="bottom-container">
-        <input type="range" class="amplitude-song-slider" step=".1" />
-      </div>
-      <div class="time-container">
-          <span class="amplitude-current-time"></span>&nbsp;&nbsp;-
-          <span class="amplitude-time-remaining"></span>
-        </span>
-      </div>
-      <div class="meta-container">
+        <span class="amplitude-next">&nbsp;</span>
+        <span class="amplitude-repeat">&nbsp;</span>&nbsp;
+      </span>
+      <span class="song-container">
+        <img
+          id="cover-image"
+          amplitude-song-info="cover_art_url"
+          amplitude-main-song-info="true"
+        />
         <span
           amplitude-song-info="name"
           amplitude-main-song-info="true"
@@ -60,7 +58,15 @@
           amplitude-song-info="artist"
           amplitude-main-song-info="true"
         ></span>
-      </div>
+        <span
+          id="now-playing-current-time"
+          class="amplitude-current-time"
+        ></span>
+        <input type="range" class="amplitude-song-slider" step=".1" />
+        <span id="now-playing-remaining-time"
+          >-<span class="amplitude-time-remaining"></span
+        ></span>
+      </span>
     </div>
     <div id="root"></div>
     <!-- You can also require other files to run in this process -->

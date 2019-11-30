@@ -1,65 +1,17 @@
-.amplitude-play-pause {
-  width: 25px;
-  height: 25px;
-  cursor: pointer;
+#cover-image {
   float: left;
-  margin-left: 10px;
+  height: 32px;
+  width: 32px;
 }
 
-.amplitude-next,
-.amplitude-prev {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
+#now-playing-current-time {
   float: left;
-  margin-left: 10px;
+  font-size: x-small;
 }
 
-.amplitude-repeat,
-.amplitude-shuffle {
-  width: 10px;
-  height: 10px;
-  cursor: pointer;
-  float: left;
-  margin-left: 10px;
-}
-
-.amplitude-play-pause.amplitude-paused {
-  background: url('/img-play.svg');
-  background-size: cover;
-}
-
-.amplitude-play-pause.amplitude-playing {
-  background: url('/img-pause.svg');
-  background-size: cover;
-}
-
-.amplitude-prev {
-  background: url('/img-prev.svg');
-  background-size: cover;
-}
-
-.amplitude-next {
-  background: url('/img-next.svg');
-  background-size: cover;
-}
-
-.amplitude-shuffle {
-  background: url('/img-shuffle.svg');
-  background-size: cover;
-}
-.amplitude-repeat-off {
-  background-color: rgba(255, 255, 255, .05);
-}
-
-
-.amplitude-repeat {
-  background: url('/img-repeat.svg');
-  background-size: cover;
-}
-
-.amplitude-repeat-off {
-  color: rgb(255, 255, 255);
+#now-playing-remaining-time {
+  float: right;
+  font-size: x-small;
 }
 
 .my-ui-text {

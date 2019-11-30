@@ -22,7 +22,7 @@ window.initApp = () => {
           url: 'tune://song/song.flac',
         }
       ],
-      "default_album_art": "/img-pause.svg"
+      "default_album_art": "pic://pic/img-pause.svg"
     });
   }
 };

@@ -1,0 +1,54 @@
+.control-container {
+  float: left;
+  border: 1px solid blueviolet;
+}
+.amplitude-play-pause {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  float: left;
+  margin: 4px;
+}
+.amplitude-next,
+.amplitude-prev {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  float: left;
+  margin-top: 6px;
+  background: url('/img-prev.svg');
+  background-size: cover;
+}
+.amplitude-repeat,
+.amplitude-shuffle {
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+  float: left;
+  margin-top: 11px;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.amplitude-play-pause.amplitude-paused {
+  background: url('/img-play.svg');
+  background-size: cover;
+}
+.amplitude-play-pause.amplitude-playing {
+  background: url('/img-pause.svg');
+  background-size: cover;
+}
+.amplitude-next {
+  transform: scaleX(-1);
+}
+.amplitude-shuffle {
+  background: url('/img-shuffle.svg');
+  background-size: cover;
+}
+.amplitude-repeat {
+  background: url('/img-repeat.svg');
+  background-size: cover;
+}
+.amplitude-shuffle-off,
+.amplitude-repeat-off {
+  filter: opacity(25%);
+}

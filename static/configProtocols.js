@@ -19,7 +19,7 @@ const configureProtocols = () => {
     (req, callback) => {
       log('pic URL request:');
       log(req);
-      callback({ path: path.join(__dirname, 'logo512.png') });
+      callback({ path: path.join(__dirname, 'img-album.svg') });
     },
     error => {
       if (error) {
