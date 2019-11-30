@@ -31,43 +31,24 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="single-song-player">
-      <div class="bottom-container">
-        <progress
-          class="amplitude-song-played-progress"
-          amplitude-main-song-played-progress="true"
-          id="song-played-progress"
-        ></progress>
-      </div>
-      <div class="time-container">
-        <span class="current-time">
-          <span
-            class="amplitude-current-minutes"
-            amplitude-main-current-minutes="true"
-          ></span>
-          :
-          <span
-            class="amplitude-current-seconds"
-            amplitude-main-current-seconds="true"
-          ></span>
-        </span>
-        <span class="duration">
-          <span
-            class="amplitude-duration-minutes"
-            amplitude-main-duration-minutes="true"
-          ></span>
-          :
-          <span
-            class="amplitude-duration-seconds"
-            amplitude-main-duration-seconds="true"
-          ></span>
-        </span>
-      </div>
       <div class="control-container">
-        <div
+        <span class="amplitude-shuffle"></span>
+        <span class="amplitude-prev"></span>
+        <span
           class="amplitude-play-pause"
           amplitude-main-play-pause="true"
           id="play-pause"
-        ></div>
+        ></span>
+        <span class="amplitude-next"></span>
+        <span class="amplitude-repeat"></span>
+      </div>
+      <div class="bottom-container">
+        <input type="range" class="amplitude-song-slider" step=".1" />
+      </div>
+      <div class="time-container">
+          <span class="amplitude-current-time"></span>&nbsp;&nbsp;-
+          <span class="amplitude-time-remaining"></span>
+        </span>
       </div>
       <div class="meta-container">
         <span

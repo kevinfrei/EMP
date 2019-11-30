@@ -36,7 +36,7 @@ const configureProtocols = () => {
       log('tune URL request:');
       log(req);
       const thePath =
-        "/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tom Petty - 1985 - Southern Accents/03 - Don't Come Around Here No More.flac";
+        "/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tool - 2019 - Fear Inoculum/High/09 - 7empest.flac";
       log('Returning path ' + thePath);
       callback({ path: thePath });
     },
