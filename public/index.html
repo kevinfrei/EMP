@@ -28,49 +28,6 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <span class="grabber"></span>
-    <span class="control-container">
-      <span class="amplitude-shuffle"></span>
-      <span class="amplitude-prev"></span>
-      <span
-        class="amplitude-play-pause"
-        amplitude-main-play-pause="true"
-        id="play-pause"
-      ></span>
-      <span class="amplitude-next">&nbsp;</span>
-      <span class="amplitude-repeat">&nbsp;</span>&nbsp;
-    </span>
-    <span class="song-container">
-      <span class="song-cover-art"><img height='36px' width='36px'
-        amplitude-song-info="cover_art_url"
-        amplitude-main-song-info="true"
-        src="pic://pic/pic.svg"
-      /></span>
-      <span
-        amplitude-song-info="name"
-        amplitude-main-song-info="true"
-        class="song-name"
-        >Title</span
-      >
-      <span
-        amplitude-song-info="artist"
-        amplitude-main-song-info="true"
-        class="artist-name"
-        >Artist</span
-      >
-      <span
-        id="now-playing-current-time"
-        class="amplitude-current-time"
-      ></span>
-      <input type="range" class="amplitude-song-slider" step=".1" />
-      <span id="now-playing-remaining-time"
-        >-<span class="amplitude-time-remaining"></span
-      ></span>
-    </span>
-    <span class="volume-container">
-      <span class="amplitude-mute"></span>
-      <input type="range" class="amplitude-volume-slider"/>
-    </span>
     <div id="root"></div>
     <!-- You can also require other files to run in this process -->
     <script src="./renderer.js"></script>

@@ -10,7 +10,7 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'tune', privileges: { standard: true, secure: true } }
 ]);
 */
-//logger.disable('configProtocols');
+logger.disable('configProtocols');
 const log = (...args: Array<mixed>) => logger('configProtocols', ...args);
 
 const configureProtocols = () => {

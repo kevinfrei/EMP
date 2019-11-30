@@ -15,11 +15,11 @@
   align-self: center;
 }
 .amplitude-play-pause.amplitude-paused {
-  background: url('/img-play.svg');
+  background: url('./img-play.svg');
   background-size: cover;
 }
 .amplitude-play-pause.amplitude-playing {
-  background: url('/img-pause.svg');
+  background: url('./img-pause.svg');
   background-size: cover;
 }
 /* Next & Previous */
@@ -29,7 +29,7 @@
   height: 20px;
   cursor: pointer;
   float: left;
-  background: url('/img-prev.svg');
+  background: url('./img-prev.svg');
   background-size: cover;
   align-self: center;
 }
@@ -51,12 +51,12 @@
 }
 .amplitude-shuffle {
   grid-column: 1;
-  background: url('/img-shuffle.svg');
+  background: url('./img-shuffle.svg');
   background-size: contain;
 }
 .amplitude-repeat {
   grid-column: 5;
-  background: url('/img-repeat.svg');
+  background: url('./img-repeat.svg');
   background-size: contain;
 }
 .amplitude-shuffle-off,
