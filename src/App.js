@@ -6,16 +6,16 @@ import React from 'react';
 import Sidebar from './Sidebar';
 import ViewSelector from './ViewSelector';
 import Store from './MyStore';
+import AsyncDoodad from './AsyncDoodad';
 
 import './App.css';
-import AsyncDoodad from './AsyncDoodad';
 
 const App = () => {
   return (
     <Store.Container>
-      <AsyncDoodad />
-      <ViewSelector />
       <Sidebar />
+      <ViewSelector />
+      <AsyncDoodad />
     </Store.Container>
   );
 };

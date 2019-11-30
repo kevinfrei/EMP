@@ -12,19 +12,25 @@ import type { ViewNames } from './MyStore';
 const ViewSelector = () => {
   let store = Store.useStore();
   const which:ViewNames = store.get('curView');
+  let res:Element;
   switch (which) {
     case 'album':
-      return <AlbumView />;
+      res = <AlbumView />;
+      break;
     case 'artist':
-      return <ArtistView />;
+      res = <ArtistView />;
+      break;
     case 'playlist':
-      return <MixedSongsView />;
+      res =<MixedSongsView />;
+      break;
     case 'song':
-      return <MixedSongsView />;
+      res = <MixedSongsView />;
+      break;
     case 'none':
     default:
-      return <></>;
+      res = <></>;
   }
+  return <div className="current-view">{res}</div>;
 };
 
 export default ViewSelector;

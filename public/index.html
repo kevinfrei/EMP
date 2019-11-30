@@ -7,10 +7,6 @@
     <link rel="stylesheet" type="text/css" href="%PUBLIC_URL%/controls.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="Electron React App"
-      content="Web site created using create-react-app"
-    />
     <link rel="apple-touch-icon" href="logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -31,43 +27,49 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="single-song-player">
-      <span class="control-container">
-        <span class="amplitude-shuffle"></span>
-        <span class="amplitude-prev"></span>
-        <span
-          class="amplitude-play-pause"
-          amplitude-main-play-pause="true"
-          id="play-pause"
-        ></span>
-        <span class="amplitude-next">&nbsp;</span>
-        <span class="amplitude-repeat">&nbsp;</span>&nbsp;
-      </span>
-      <span class="song-container">
-        <img
-          id="cover-image"
-          amplitude-song-info="cover_art_url"
-          amplitude-main-song-info="true"
-        />
-        <span
-          amplitude-song-info="name"
-          amplitude-main-song-info="true"
-          class="song-name"
-        ></span>
-        <span
-          amplitude-song-info="artist"
-          amplitude-main-song-info="true"
-        ></span>
-        <span
-          id="now-playing-current-time"
-          class="amplitude-current-time"
-        ></span>
-        <input type="range" class="amplitude-song-slider" step=".1" />
-        <span id="now-playing-remaining-time"
-          >-<span class="amplitude-time-remaining"></span
-        ></span>
-      </span>
-    </div>
+    <span class="grabber">&nbsp;</span>
+    <span class="control-container">
+      <span class="amplitude-shuffle"></span>
+      <span class="amplitude-prev"></span>
+      <span
+        class="amplitude-play-pause"
+        amplitude-main-play-pause="true"
+        id="play-pause"
+      ></span>
+      <span class="amplitude-next">&nbsp;</span>
+      <span class="amplitude-repeat">&nbsp;</span>&nbsp;
+    </span>
+    <span class="song-container">
+      <span class="song-cover-art"><img height='36px' width='36px'
+        amplitude-song-info="cover_art_url"
+        amplitude-main-song-info="true"
+        src="pic://pic/pic.svg"
+      /></span>
+      <span
+        amplitude-song-info="name"
+        amplitude-main-song-info="true"
+        class="song-name"
+        >Title</span
+      >
+      <span
+        amplitude-song-info="artist"
+        amplitude-main-song-info="true"
+        class="artist-name"
+        >Artist</span
+      >
+      <span
+        id="now-playing-current-time"
+        class="amplitude-current-time"
+      ></span>
+      <input type="range" class="amplitude-song-slider" step=".1" />
+      <span id="now-playing-remaining-time"
+        >-<span class="amplitude-time-remaining"></span
+      ></span>
+    </span>
+    <span class="volume-container">
+      <span id="amplitude-mute"></span>
+      <input type="range" class="amplitude-volume-slider"/>
+    </span>
     <div id="root"></div>
     <!-- You can also require other files to run in this process -->
     <!--

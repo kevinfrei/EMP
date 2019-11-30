@@ -11,7 +11,7 @@ const Sidebar = () => {
   const is = (nm: ViewNames) => (store.get('curView') === nm ? selected : plain);
   const cl = (nm: ViewNames) => () => store.set('curView')(nm);
   return (
-    <>
+    <div id="sidebar">
       <div style={is('album')} onClick={cl('album')}>
         Albums
       </div>
@@ -26,7 +26,7 @@ const Sidebar = () => {
       </div>
       <div>Foo: {store.get('foo')}</div>
       <div>Bar: {store.get('bar')}</div>
-    </>
+    </div>
   );
 };
 

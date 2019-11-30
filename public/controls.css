@@ -1,33 +1,18 @@
 .control-container {
-  float: left;
-  border: 1px solid blueviolet;
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: center;
+  display: inline-grid;
+  grid-template-columns: 14px 24px 28px 24px 14px;
+  grid-template-rows: 36px;
 }
+/* Play/Pause */
 .amplitude-play-pause {
   width: 24px;
   height: 24px;
   cursor: pointer;
-  float: left;
-  margin: 4px;
-}
-.amplitude-next,
-.amplitude-prev {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  float: left;
-  margin-top: 6px;
-  background: url('/img-prev.svg');
-  background-size: cover;
-}
-.amplitude-repeat,
-.amplitude-shuffle {
-  width: 10px;
-  height: 10px;
-  cursor: pointer;
-  float: left;
-  margin-top: 11px;
-  margin-left: 4px;
-  margin-right: 4px;
+  grid-column: 3;
+  align-self: center;
 }
 .amplitude-play-pause.amplitude-paused {
   background: url('/img-play.svg');
@@ -37,16 +22,42 @@
   background: url('/img-pause.svg');
   background-size: cover;
 }
+/* Next & Previous */
+.amplitude-next,
+.amplitude-prev {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  float: left;
+  background: url('/img-prev.svg');
+  background-size: cover;
+  align-self: center;
+}
+.amplitude-prev {
+  grid-column: 2;
+}
 .amplitude-next {
+  grid-column: 4;
   transform: scaleX(-1);
 }
+/* Repeat & Shuffle stuff */
+.amplitude-repeat,
 .amplitude-shuffle {
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+  align-self: center;
+  justify-self: center;
+}
+.amplitude-shuffle {
+  grid-column: 1;
   background: url('/img-shuffle.svg');
-  background-size: cover;
+  background-size: contain;
 }
 .amplitude-repeat {
+  grid-column: 5;
   background: url('/img-repeat.svg');
-  background-size: cover;
+  background-size: contain;
 }
 .amplitude-shuffle-off,
 .amplitude-repeat-off {

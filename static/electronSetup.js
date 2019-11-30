@@ -34,6 +34,7 @@ const setup = (windowCreated: OnWindowCreated) => {
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: true
       },
+      titleBarStyle: 'hiddenInset',
       show: false
     });
     // Load the base URL
