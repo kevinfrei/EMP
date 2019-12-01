@@ -28,7 +28,7 @@ export type Album = {|
   key: AlbumKey
 |};
 
-export type ViewNames = 'none' | 'album' | 'artist' | 'song' | 'playlist';
+export type ViewNames = 'none' | 'recent' | 'album' | 'artist' | 'song' | 'playlist';
 
 export type State = {|
   // Silliness for now:

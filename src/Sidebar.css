@@ -1,0 +1,32 @@
+#sidebar {
+  margin: 8px;
+}
+
+#search {
+  width: 125px;
+  background: url(img/search.svg) no-repeat;
+  background-size: 16px;
+  background-position: 3px 3px;
+  border: 1px solid #444444;
+  border-radius: 5px;
+  height: 20px;
+  padding-left: 22px;
+  font-size: small;
+}
+
+.sidebar-container {
+  display: grid;
+  grid-template-columns: 26px auto;
+}
+
+.sidebar-icon {
+  grid-column: 1;
+  height: 18px;
+  width: 18px;
+  margin: 4px;
+}
+
+.sidebar-text {
+  grid-column: 2;
+  margin: 4px;
+}

@@ -10,11 +10,11 @@ const SingleSongLine = () => (
   </div>
 );
 
-const SingleSongsView = () => (
+const SingleSongs = () => (
   <>
     <SingleSongLine/>
     <SingleSongLine/>
   </>
 );
 
-export default SingleSongsView;
+export default SingleSongs;

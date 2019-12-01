@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import SingleSongsView from './SingleSongsView';
+import SingleSongsView from './SingleSongs';
 
 const AlbumView = () => (
   <>

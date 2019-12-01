@@ -2,7 +2,7 @@
   display: grid;
   /* TODO: Add a 5th column in the header for the "current playlist" window */
   height: 100vh;
-  grid-template-columns: 175px 150px auto 100px;
+  grid-template-columns: 175px 110px auto 110px;
   grid-template-rows: 44px auto;
 }
 

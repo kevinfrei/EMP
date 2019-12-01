@@ -1,7 +1,7 @@
 .control-container {
   grid-row: 1;
   grid-column: 2;
-  margin: 4px 20px 4px 20px;
+  margin: 4px 10px 4px 10px;
   justify-self: center;
   display: inline-grid;
   grid-template-columns: 14px 24px 28px 24px 14px;
@@ -16,11 +16,11 @@
   align-self: center;
 }
 .amplitude-play-pause.amplitude-paused {
-  background: url('./img-play.svg');
+  background: url('img/play.svg');
   background-size: cover;
 }
 .amplitude-play-pause.amplitude-playing {
-  background: url('./img-pause.svg');
+  background: url('img/pause.svg');
   background-size: cover;
 }
 /* Next & Previous */
@@ -30,7 +30,7 @@
   height: 20px;
   cursor: pointer;
   float: left;
-  background: url('./img-prev.svg');
+  background: url('img/prev.svg');
   background-size: cover;
   align-self: center;
 }
@@ -52,12 +52,12 @@
 }
 .amplitude-shuffle {
   grid-column: 1;
-  background: url('./img-shuffle.svg');
+  background: url('img/shuffle.svg');
   background-size: contain;
 }
 .amplitude-repeat {
   grid-column: 5;
-  background: url('./img-repeat.svg');
+  background: url('img/repeat.svg');
   background-size: contain;
 }
 .amplitude-shuffle-off,

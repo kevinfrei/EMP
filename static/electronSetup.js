@@ -35,7 +35,9 @@ const setup = (windowCreated: OnWindowCreated) => {
         nodeIntegration: true
       },
       titleBarStyle: 'hiddenInset',
-      show: false
+      show: false,
+      minWidth: 660,
+      minHeight: 260
     });
     // Load the base URL
     mainWindow.loadURL(

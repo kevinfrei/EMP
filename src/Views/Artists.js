@@ -1,9 +1,9 @@
 // @flow
 
 import React from 'react';
-import AlbumView from './AlbumView';
+import AlbumView from './Albums';
 
-const ArtistView = () => (
+const Artists = () => (
   <>
     <div>Arist Name</div>
     <AlbumView />
@@ -12,4 +12,4 @@ const ArtistView = () => (
   </>
 );
 
-export default ArtistView;
+export default Artists;

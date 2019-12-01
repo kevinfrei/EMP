@@ -3,29 +3,65 @@ import React from 'react';
 import Store from './MyStore';
 
 import type { ViewNames } from './MyStore';
+import recentPic from './img/recent.svg';
+import albumPic from './img/album.svg';
+import artistPic from './img/artist.svg';
+import songPic from './img/song.svg';
+import playlistPic from './img/playlist.svg';
+
+import './Sidebar.css';
 
 const Sidebar = () => {
   let store = Store.useStore();
   const plain = {};
   const selected = { fontWeight: 'bold' };
-  const is = (nm: ViewNames) => (store.get('curView') === nm ? selected : plain);
+  const is = (nm: ViewNames) =>
+    store.get('curView') === nm ? selected : plain;
   const cl = (nm: ViewNames) => () => store.set('curView')(nm);
   return (
     <div id="sidebar">
       <div className="search-bar">
-        <input type="text"/>
+        <input id="search" type="text" />
       </div>
-      <div style={is('album')} onClick={cl('album')}>
-        Albums
+      <div
+        className="sidebar-container"
+        style={is('recent')}
+        onClick={cl('recent')}
+      >
+        <img src={recentPic} className="sidebar-icon"></img>
+        <span className="sidebar-text">Recently Added</span>
       </div>
-      <div style={is('artist')} onClick={cl('artist')}>
-        Aritsts
+      <div
+        className="sidebar-container"
+        style={is('album')}
+        onClick={cl('album')}
+      >
+        <img src={albumPic} className="sidebar-icon"></img>
+        <span className="sidebar-text">Albums</span>
       </div>
-      <div style={is('song')} onClick={cl('song')}>
-        Songs
+      <div
+        className="sidebar-container"
+        style={is('artist')}
+        onClick={cl('artist')}
+      >
+        <img src={artistPic} className="sidebar-icon"></img>
+        <span className="sidebar-text">Artists</span>
       </div>
-      <div style={is('playlist')} onClick={cl('playlist')}>
-        Playlists
+      <div
+        className="sidebar-container"
+        style={is('song')}
+        onClick={cl('song')}
+      >
+        <img src={songPic} className="sidebar-icon"></img>
+        <span className="sidebar-text">Songs</span>
+      </div>
+      <div
+        className="sidebar-container"
+        style={is('playlist')}
+        onClick={cl('playlist')}
+      >
+        <img src={playlistPic} className="sidebar-icon"></img>
+        <span className="sidebar-text">Playlists</span>
       </div>
       <div>Foo: {store.get('foo')}</div>
       <div>Bar: {store.get('bar')}</div>
