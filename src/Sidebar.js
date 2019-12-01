@@ -14,14 +14,17 @@ import './Sidebar.css';
 const Sidebar = () => {
   let store = Store.useStore();
   const plain = {};
-  const selected = { fontWeight: 'bold' };
+  const selected = {
+    background: 'rgba(200,200,200,.3)',
+    borderRadius: '6px'
+  };
   const is = (nm: ViewNames) =>
     store.get('curView') === nm ? selected : plain;
   const cl = (nm: ViewNames) => () => store.set('curView')(nm);
   return (
     <div id="sidebar">
       <div className="search-bar">
-        <input id="search" type="text" />
+        <input id="search" type="text" placeholder="Search"/>
       </div>
       <div
         className="sidebar-container"

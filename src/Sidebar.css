@@ -1,5 +1,5 @@
 #sidebar {
-  margin: 8px;
+  margin: 0px 3px;
 }
 
 #search {
@@ -7,11 +7,17 @@
   background: url(img/search.svg) no-repeat;
   background-size: 16px;
   background-position: 3px 3px;
+  background-color: white;
   border: 1px solid #444444;
   border-radius: 5px;
   height: 20px;
-  padding-left: 22px;
+  padding-left: 32px;
+  margin: -2px 0px 4px 0px;
   font-size: small;
+}
+
+::placeholder {
+  color: rgba(0, 0, 0, .2);
 }
 
 .sidebar-container {
@@ -20,6 +26,9 @@
 }
 
 .sidebar-icon {
+  background-color: rgba(200, 200, 200, 0.5);
+  border: solid 3px rgba(200, 200, 200, 0);
+  border-radius: 5px;
   grid-column: 1;
   height: 18px;
   width: 18px;
@@ -28,5 +37,7 @@
 
 .sidebar-text {
   grid-column: 2;
+  align-self: center;
   margin: 4px;
 }
+

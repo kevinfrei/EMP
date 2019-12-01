@@ -10,8 +10,15 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'tune', privileges: { standard: true, secure: true } }
 ]);
 */
-logger.disable('configProtocols');
+//logger.disable('configProtocols');
 const log = (...args: Array<mixed>) => logger('configProtocols', ...args);
+
+const songs = [
+  '09 - 7empest.flac',
+  '02 - Pneuma.flac',
+  '04 - Invincible.flac',
+  '01 - Fear Inoculum.flac'
+];
 
 const configureProtocols = () => {
   protocol.registerFileProtocol(
@@ -19,7 +26,14 @@ const configureProtocols = () => {
     (req, callback) => {
       log('pic URL request:');
       log(req);
-      callback({ path: path.join(__dirname, 'img-album.svg') });
+      if (req.url.startsWith('pic://album/')) {
+        callback({
+          path:
+            '/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tool - 2019 - Fear Inoculum/High/Cover.png'
+        });
+      } else {
+        callback({ path: path.join(__dirname, 'img-album.svg') });
+      }
     },
     error => {
       if (error) {
@@ -35,10 +49,17 @@ const configureProtocols = () => {
     (req, callback) => {
       log('tune URL request:');
       log(req);
-      const thePath =
-        "/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tool - 2019 - Fear Inoculum/High/09 - 7empest.flac";
-      log('Returning path ' + thePath);
-      callback({ path: thePath });
+      // req.url: "tune://song/song.flac"
+      if (req.url.startsWith('tune://song/')) {
+        const val = req.url.charCodeAt(12) % songs.length;
+        const thePath =
+          '/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tool - 2019 - Fear Inoculum/High/' +
+          songs[val];
+        log('Returning path ' + thePath);
+        callback({ path: thePath });
+      } else {
+        // Do something?
+      }
     },
     error => {
       if (error) {
