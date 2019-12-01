@@ -44,10 +44,21 @@ window.initApp = () => {
           cover_art_url: 'pic://album/1.png'
         }
       ],
-      default_album_art: 'pic://pic/img-album.svg'
+      default_album_art: 'pic://pic/img-album.svg',
+      debug: true
     });
   }
 };
+
+let lastDisplayed = null;
+window.setInterval(() => {
+  const activeSong = Amplitude.getActiveSongMetadata();
+  const json = JSON.stringify(activeSong);
+  if (lastDisplayed !== json) {
+    console.log(activeSong);
+    lastDisplayed = json;
+  }
+}, 5000);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

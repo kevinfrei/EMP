@@ -8,6 +8,7 @@ import albumPic from './img/album.svg';
 import artistPic from './img/artist.svg';
 import songPic from './img/song.svg';
 import playlistPic from './img/playlist.svg';
+import nowPlayingPic from './img/playing.svg';
 
 import './Sidebar.css';
 
@@ -65,6 +66,12 @@ const Sidebar = () => {
       >
         <img src={playlistPic} className="sidebar-icon" alt="playlist"></img>
         <span className="sidebar-text">Playlists</span>
+      </div>
+      <div className="sidebar-container"
+      style={is('current')}
+      onClick={cl('current')}>
+        <img src={nowPlayingPic} className="sidebar-icon" alt="now playing"></img>
+        <span className="sidebar-text">Now Playing</span>
       </div>
       <div>Foo: {store.get('foo')}</div>
       <div>Bar: {store.get('bar')}</div>

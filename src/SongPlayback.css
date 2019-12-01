@@ -3,44 +3,57 @@
   grid-column: 3;
   justify-self: stretch;
   align-self: center;
-  margin-left: 40px;
-  margin-right: 40px;
+  margin-left: 20px;
+  margin-right: 20px;
   display: inline-grid;
   grid-template-columns: 36px 36px auto 36px;
   grid-template-rows: 15px 15px 6px;
   font-size: x-small;
   text-align: center;
+  background-color: white;
+  border: solid 1px rgb(230, 230, 230);
+  font-weight: lighter;
 }
 
+#current-cover-art {
+  height: 32px;
+  width: 32px;
+}
 .song-cover-art {
   grid-column: 1;
   grid-row: 1 / 4;
-  height: 36px;
-  width: 36px;
+  height: 32px;
+  width: 32px;
+  padding: 2px;
   -webkit-app-region: drag;
+  border-right: solid 1px rgb(230, 230, 230);
 }
 
 #now-playing-current-time {
   grid-row: 2;
   grid-column: 2;
   font-size: xx-small;
-  -webkit-app-region: drag;
+  justify-self: left;
+  margin-left: 2px;
 }
 
 #now-playing-remaining-time {
   grid-row: 2;
   grid-column: 4;
   font-size: xx-small;
-  -webkit-app-region: drag;
+  justify-self: right;
+  margin-right: 2px;
 }
 
 .song-name {
+  font-weight: bold;
   grid-row: 1;
   grid-column: 2 / 5;
   -webkit-app-region: drag;
 }
 
 .artist-name {
+  font-weight: bold;
   grid-row: 2;
   grid-column: 2 / 5;
   -webkit-app-region: drag;

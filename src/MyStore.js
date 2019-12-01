@@ -28,7 +28,14 @@ export type Album = {|
   key: AlbumKey
 |};
 
-export type ViewNames = 'none' | 'recent' | 'album' | 'artist' | 'song' | 'playlist';
+export type ViewNames =
+  | 'none'
+  | 'recent'
+  | 'album'
+  | 'artist'
+  | 'song'
+  | 'playlist'
+  | 'current';
 
 export type State = {|
   // Silliness for now:
@@ -49,7 +56,7 @@ export type State = {|
 let initialState: State = {
   foo: -50,
   bar: '---',
-  request:'none',
+  request: 'none',
   Artists: new Map(),
   Albums: new Map(),
   Songs: new Map(),
