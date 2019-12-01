@@ -13,6 +13,7 @@ const SongPlayback = () => (<span className="song-container">
     amplitude-song-info="cover_art_url"
     amplitude-main-song-info="true"
     src="pic://pic/pic.svg"
+    alt="album cover"
   />
 </span>
 <span

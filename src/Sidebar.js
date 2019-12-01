@@ -28,7 +28,7 @@ const Sidebar = () => {
         style={is('recent')}
         onClick={cl('recent')}
       >
-        <img src={recentPic} className="sidebar-icon"></img>
+        <img src={recentPic} className="sidebar-icon" alt="recent"></img>
         <span className="sidebar-text">Recently Added</span>
       </div>
       <div
@@ -36,7 +36,7 @@ const Sidebar = () => {
         style={is('album')}
         onClick={cl('album')}
       >
-        <img src={albumPic} className="sidebar-icon"></img>
+        <img src={albumPic} className="sidebar-icon" alt="album"></img>
         <span className="sidebar-text">Albums</span>
       </div>
       <div
@@ -44,7 +44,7 @@ const Sidebar = () => {
         style={is('artist')}
         onClick={cl('artist')}
       >
-        <img src={artistPic} className="sidebar-icon"></img>
+        <img src={artistPic} className="sidebar-icon" alt="artist"></img>
         <span className="sidebar-text">Artists</span>
       </div>
       <div
@@ -52,7 +52,7 @@ const Sidebar = () => {
         style={is('song')}
         onClick={cl('song')}
       >
-        <img src={songPic} className="sidebar-icon"></img>
+        <img src={songPic} className="sidebar-icon" alt="song"></img>
         <span className="sidebar-text">Songs</span>
       </div>
       <div
@@ -60,7 +60,7 @@ const Sidebar = () => {
         style={is('playlist')}
         onClick={cl('playlist')}
       >
-        <img src={playlistPic} className="sidebar-icon"></img>
+        <img src={playlistPic} className="sidebar-icon" alt="playlist"></img>
         <span className="sidebar-text">Playlists</span>
       </div>
       <div>Foo: {store.get('foo')}</div>
