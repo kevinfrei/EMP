@@ -17,6 +17,8 @@ const App = () => {
   return (
     <Store.Container>
       <span className="grabber"></span>
+      <span className="left-column"></span>
+      <span className="top-row"></span>
       <SongControls />
       <SongPlayback />
       <VolumeControl />

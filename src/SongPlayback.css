@@ -2,6 +2,9 @@
   grid-row: 1;
   grid-column: 3;
   justify-self: stretch;
+  align-self: center;
+  margin-left: 40px;
+  margin-right: 40px;
   display: inline-grid;
   grid-template-columns: 36px 36px auto 36px;
   grid-template-rows: 15px 15px 6px;

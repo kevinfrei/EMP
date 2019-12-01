@@ -21,7 +21,7 @@
   grid-row: 1;
   height: 14px;
   margin-top:3px;
-  background: url('/img-mute.svg');
+  background: url('img-mute.svg');
   background-size: cover;
 }
 

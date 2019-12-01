@@ -1,6 +1,0 @@
-body {
-  /* This makes it so stuff won't be selectable
- * Might need to update it in the future...
- */
-  -webkit-user-select: none;
-}

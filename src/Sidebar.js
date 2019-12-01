@@ -12,6 +12,9 @@ const Sidebar = () => {
   const cl = (nm: ViewNames) => () => store.set('curView')(nm);
   return (
     <div id="sidebar">
+      <div className="search-bar">
+        <input type="text"/>
+      </div>
       <div style={is('album')} onClick={cl('album')}>
         Albums
       </div>
