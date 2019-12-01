@@ -4,6 +4,7 @@
   display: grid;
   justify-self: center;
   align-self: center;
+  margin: 0px 30px 0px 0px;
   grid-template-columns: 14px auto;
   grid-template-rows: auto;
 }
