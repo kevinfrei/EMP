@@ -2,15 +2,17 @@
 import React from 'react';
 import Store from './MyStore';
 
-import type { ViewNames } from './MyStore';
 import recentPic from './img/recent.svg';
 import albumPic from './img/album.svg';
 import artistPic from './img/artist.svg';
 import songPic from './img/song.svg';
 import playlistPic from './img/playlist.svg';
 import nowPlayingPic from './img/playing.svg';
+import settingsPic from './img/settings.svg';
 
 import './Sidebar.css';
+
+import type { ViewNames } from './MyStore';
 
 const Sidebar = () => {
   let store = Store.useStore();
@@ -25,8 +27,9 @@ const Sidebar = () => {
   return (
     <div id="sidebar">
       <div className="search-bar">
-        <input id="search" type="text" placeholder="Search"/>
+        <input id="search" type="text" placeholder="Search" />
       </div>
+      <br />
       <div
         className="sidebar-container"
         style={is('recent')}
@@ -67,12 +70,28 @@ const Sidebar = () => {
         <img src={playlistPic} className="sidebar-icon" alt="playlist"></img>
         <span className="sidebar-text">Playlists</span>
       </div>
-      <div className="sidebar-container"
-      style={is('current')}
-      onClick={cl('current')}>
-        <img src={nowPlayingPic} className="sidebar-icon" alt="now playing"></img>
+      <div
+        className="sidebar-container"
+        style={is('current')}
+        onClick={cl('current')}
+      >
+        <img
+          src={nowPlayingPic}
+          className="sidebar-icon"
+          alt="now playing"
+        ></img>
         <span className="sidebar-text">Now Playing</span>
       </div>
+      <hr />
+      <div
+        className="sidebar-container"
+        style={is('settings')}
+        onClick={cl('settings')}
+      >
+        <img src={settingsPic} className="sidebar-icon" alt="settings"></img>
+        <span className="sidebar-text">Settings</span>
+      </div>
+      <br />
       <div>Foo: {store.get('foo')}</div>
       <div>Bar: {store.get('bar')}</div>
     </div>

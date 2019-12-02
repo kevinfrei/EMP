@@ -27,4 +27,5 @@ const AsyncReplyHandler = (
   store.set('request')('none');
   // TODO: Handle the async reply here...
 };
+
 export { AsyncMessageHandler, AsyncReplyHandler };

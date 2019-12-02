@@ -35,12 +35,14 @@ export type ViewNames =
   | 'artist'
   | 'song'
   | 'playlist'
-  | 'current';
+  | 'current'
+  | 'settings';
 
 export type State = {|
   // Silliness for now:
   foo: number,
   bar: string,
+
   // Real state stuff:
   request: string, // 'none', 'sent', or the message to send to main
   // This is basically the song database
@@ -49,6 +51,8 @@ export type State = {|
   Albums: Map<AlbumKey, Album>,
   Songs: Map<SongKey, Song>,
   Playlists: Map<string, Array<SongKey>>,
+  // Just a list of paths to search for music
+  Configuration: Set<string>,
   // This is about the actual stuff on screen
   curView: ViewNames // Which view is selected
 |};
@@ -61,6 +65,7 @@ let initialState: State = {
   Albums: new Map(),
   Songs: new Map(),
   Playlists: new Map(),
+  Configuration: new Set(),
   curView: 'none'
 };
 

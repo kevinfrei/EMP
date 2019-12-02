@@ -1,0 +1,34 @@
+.table-2-column {
+  display: grid;
+  margin: 10px;
+  grid-template-columns: 30px minmax(150px, 1fr);
+  grid-auto-rows: 30px;
+}
+
+.table-header {
+  grid-row: 1;
+  grid-column: 2;
+  font-weight: bold;
+}
+
+.config-name {
+  grid-column: 2;
+}
+
+.delete-pic {
+  grid-column: 1;
+}
+
+.delete-pic, .add-pic {
+  height: 12px;
+  width: 12px;
+  border: solid 1px gray;
+  border-radius: 3px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.add-label {
+  grid-column: 1;
+}
+

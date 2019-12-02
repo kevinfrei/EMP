@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import * as React from 'react';
 import Store from './MyStore';
 import { AsyncMessageHandler, AsyncReplyHandler } from './Handler';
 import logger from 'simplelogger';
@@ -8,10 +8,31 @@ import logger from 'simplelogger';
 import type { IpcRendererEvent } from 'electron';
 
 logger.disable('async');
-const log = (...args:Array<mixed>) => logger('async', ...args);
+const log = (...args: Array<mixed>) => logger('async', ...args);
+
+function setEqual<T>(s1: Set<T>, s2: Set<T>): boolean {
+  if (s1.size !== s2.size) {
+    return false;
+  }
+  for (let i of s1) {
+    if (!s2.has(i)) {
+      return false;
+    }
+  }
+  return true;
+};
 
 const AsyncDoodad = () => {
   const store = Store.useStore();
+  let lastSavedConfig: ?Set<string> = null;
+  store.on('Configuration').subscribe((val: Set<string>) => {
+    if (lastSavedConfig == null || !setEqual(lastSavedConfig, val)) {
+      lastSavedConfig = val;
+      const message = { cmd: 'save-config', value: [...val] };
+      window.ipc.send('asynchronous-message', message);
+      // TODO: Save this over in main process land!
+    }
+  });
   if (window.ipc === undefined) {
     log('No IPC');
   } else if (window.ipcSet === undefined) {
@@ -53,7 +74,7 @@ const AsyncDoodad = () => {
     }
   }
   // Invisible, because this is just for listening to the main process
-  return <div style={{ display: 'none' }} />;
+  return <div id="async-doodad" style={{ display: 'none' }} />;
 };
 
 export default AsyncDoodad;

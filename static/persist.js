@@ -9,12 +9,13 @@ export type WindowPosition = {|
   bounds: Rectangle,
   isMaximized: boolean
 |};
+
 export type Persist = {
   getItem(key: string): any,
   setItem(key: string, value: any): void,
   getWindowPos: () => WindowPosition,
   setWindowPos: (st: WindowPosition) => void,
-  getBrowserWindowPos: (st: WindowPosition) => Rectangle
+  getBrowserWindowPos: (st: WindowPosition) => Rectangle,
 };
 
 const defaultWindowPosition: WindowPosition = {

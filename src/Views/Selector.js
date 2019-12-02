@@ -6,7 +6,8 @@ import AlbumsView from './Albums';
 import ArtistsView from './Artists';
 import MixedSongsView from './MixedSongs';
 import RecentlyAddedView from './RecentlyAdded';
-import NowPlayingView from "./NowPlaying";
+import NowPlayingView from './NowPlaying';
+import SettingsView from './Settings';
 import Store from '../MyStore';
 
 import './Selector.css';
@@ -33,9 +34,12 @@ const ViewSelector = () => {
     case 'recent':
       res = <RecentlyAddedView />;
       break;
-      case 'current':
-        res = <NowPlayingView />;
-        break;
+    case 'current':
+      res = <NowPlayingView />;
+      break;
+    case 'settings':
+      res = <SettingsView />;
+      break;
     case 'none':
     default:
       res = <></>;
