@@ -34,7 +34,8 @@ const setup = (windowCreated: OnWindowCreated) => {
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: true
       },
-      titleBarStyle: 'hiddenInset',
+      titleBarStyle: 'hiddenInset', // TODO: Only Mac
+      frame: false, // TODO: !Mac, add close/min/max buttons
       show: false,
       minWidth: 660,
       minHeight: 260
