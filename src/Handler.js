@@ -5,8 +5,8 @@ import logger from 'simplelogger';
 import type { Store } from 'undux';
 import type { State } from './MyStore';
 
+const log = logger.bind('handler');
 logger.disable('handler');
-const log = (...args: Array<mixed>) => logger('handler', ...args);
 
 const AsyncMessageHandler = (store: Store<State>, message: string) => {
   // TODO: Make this do real stuff

@@ -7,8 +7,8 @@ const logger = require('simplelogger');
 
 import type { Rectangle } from 'electron';
 
-//logger.disable('perist');
-const log = (...args: Array<mixed>) => logger('perist', ...args);
+const log = logger.bind('persist');
+//logger.disable('persist');
 
 export type WindowPosition = {|
   bounds: Rectangle,

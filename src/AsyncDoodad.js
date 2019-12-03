@@ -7,8 +7,8 @@ import logger from 'simplelogger';
 
 import type { IpcRendererEvent } from 'electron';
 
+const log = logger.bind('async');
 logger.disable('async');
-const log = (...args: Array<mixed>) => logger('async', ...args);
 
 function setEqual<T>(s1: Set<T>, s2: Set<T>): boolean {
   if (s1.size !== s2.size) {

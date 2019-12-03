@@ -4,8 +4,8 @@ const fsp = require('fs').promises;
 const path = require('path');
 const logger = require('simplelogger');
 
+const log = logger.bind('music');
 logger.disable('music');
-const log = (...args: Array<mixed>) => logger('music', ...args);
 
 export type Song = {
   URL: string,

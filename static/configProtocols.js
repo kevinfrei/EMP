@@ -11,7 +11,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 */
 //logger.disable('configProtocols');
-const log = (...args: Array<mixed>) => logger('configProtocols', ...args);
+const log = logger.bind('configProtocols');
 
 const songs: string[] = [
   '09 - 7empest.flac',

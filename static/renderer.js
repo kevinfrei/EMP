@@ -8,8 +8,8 @@ const { ipcRenderer } = require('electron');
 const isDev = require('electron-is-dev');
 const logger = require('simplelogger');
 
+const log = logger.bind('renderer');
 //logger.disable('renderer');
-const log = (...args:Array<mixed>) => logger('renderer', ...args);
 
 // This will expose the ipcRenderer (and isDev) interfaces for use by the
 // React components, then, assuming the index.js has already be invoked, it

@@ -12,8 +12,8 @@ import type { BrowserWindow } from 'electron';
 import type { OnWindowCreated } from './electronSetup';
 import type { MusicDB } from './music';
 
+const log = logger.bind('electron');
 logger.disable('electron');
-const log = (...args: Array<mixed>) => logger('electron', ...args);
 
 let musicDB: ?MusicDB;
 
