@@ -1,5 +1,6 @@
 // @flow
 const logger = require('simplelogger');
+const { BrowserWindow } = require('electron');
 
 const persist = require('./persist');
 
@@ -39,8 +40,14 @@ const stringValidator = (val: string): ?string => val;
 const setter = ({ key, value }: KVP) => {
   persist.setItem(key, JSON.stringify(value));
 };
+
 const deleter = (key: string) => {
   persist.deleteItem(key);
+};
+
+const getter = (key: string) => {
+  const val = persist.getItem(key);
+  BrowserWindow.getFocusedWindow().webContents.send('data', val);
 };
 
 const mk = <T>(
@@ -51,5 +58,6 @@ const mk = <T>(
 
 module.exports = [
   mk<KVP>('set', kvpValidator, setter),
-  mk<string>('delete', stringValidator, deleter)
+  mk<string>('delete', stringValidator, deleter),
+  mk<string>('get', stringValidator, getter)
 ];

@@ -4,9 +4,10 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const { ipcRenderer } = require('electron');
+const electron = require('electron');
 const isDev = require('electron-is-dev');
 const logger = require('simplelogger');
+const { ipcRenderer, remote } = electron;
 
 const log = logger.bind('renderer');
 //logger.disable('renderer');
@@ -18,6 +19,7 @@ const log = logger.bind('renderer');
 
 window.addEventListener('DOMContentLoaded', () => {
   window.ipc = ipcRenderer;
+  window.remote = remote;
   if (isDev) {
     window.isDev = isDev;
   }

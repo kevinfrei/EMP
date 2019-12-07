@@ -45,17 +45,18 @@ const Settings = () => {
       <span className="table-header">Locations</span>
       {elems}
       <label className="add-label" htmlFor="folder-picker">
-        <img className="add-pic" src={addPic} alt="add source" />
+        <img
+          className="add-pic"
+          src={addPic}
+          alt="add source"
+          onClick={() => {
+            const locations = window.remote.dialog.showOpenDialogSync({
+              properties: ['openDirectory']
+            });
+            setConfig(new Set([...locations, ...config]));
+          }}
+        />
       </label>
-      <input
-        id="folder-picker"
-        type="file"
-        webkitdirectory=""
-        style={{ display: 'none' }}
-        onChange={ev => {
-          setConfig(new Set([...config, ev.target.files[0].path.toString()]));
-        }}
-      />
     </div>
   );
 };
