@@ -44,7 +44,6 @@ export type State = {|
   bar: string,
 
   // Real state stuff:
-  request: string, // 'none', 'sent', or the message to send to main
   // This is basically the song database
   // I'm not really confident that this is where it ought to live
   Artists: Map<ArtistKey, Artist>,
@@ -60,7 +59,6 @@ export type State = {|
 let initialState: State = {
   foo: -50,
   bar: '---',
-  request: 'none',
   Artists: new Map(),
   Albums: new Map(),
   Songs: new Map(),

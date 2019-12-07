@@ -6,14 +6,16 @@ const logger = require('simplelogger');
 
 const persist = require('./persist');
 const setup = require('./electronSetup');
+const comms = require('./mainComms');
 const music = require('./music');
 
 import type { BrowserWindow } from 'electron';
 import type { OnWindowCreated } from './electronSetup';
 import type { MusicDB } from './music';
+import type { MessageHandler } from './mainComms';
 
 const log = logger.bind('electron');
-logger.disable('electron');
+//logger.disable('electron');
 
 let musicDB: ?MusicDB;
 
@@ -37,37 +39,41 @@ const init = async () => {
 };
 let val = 0;
 const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
-  window.webContents.send('asynchronous-message', 'loading');
   // Initialize stuff now
   init()
     .then(() => {
-      window.webContents.send(
-        'asynchronous-message',
-        `ready:${musicDB.songs.length}`
-      );
-      setInterval(() => {
-        window.webContents.send('asynchronous-message', `val:${val++}`);
-      }, 1000);
+      window.webContents.send('data', `{"songCount":${musicDB.songs.length}}`);
+/*      setInterval(() => {
+        window.webContents.send('data', `{"val":${val++}}`);
+      }, 1000);*/
       log(musicDB);
     })
     .catch(e => {
       console.error(e);
-      window.webContents.send('asynchronous-message', 'error:loading');
+      window.webContents.send('data', '{"error":"loading"}');
     });
 };
 
-ipcMain.on('asynchronous-message', (event, arg) => {
-  log('Received async message:');
-  log(event);
-  log(`arg: ${arg}`);
-  event.sender.send('asynchronous-reply', 'pong');
+// The only messages I expect from the render are these 3:
+// 'set', 'delete', 'get'
+// 'set': JSON of this: {key: 'name', value: stuff}
+// 'delete': 'name'
+// 'get': 'name'
+
+comms.forEach(<T>(val: MessageHandler<T>) => {
+  ipcMain.on(val.command, (event, arg) => {
+    log(`checking ${val.command}`);
+    const data: ?T = val.validator(arg);
+    if (data !== undefined && data !== null) {
+      val.handler(data);
+    } else {
+      log('data validation failure');
+      log(arg);
+    }
+  });
 });
 
-ipcMain.on('synchronous-message', (event, arg) => {
-  log('Received sync message');
-  log(event);
-  log(`arg: ${arg}`);
-  event.returnValue = 'pong';
-});
+// messages to send to the client:
+// 'data', JSON of data sending
 
 setup(onWindowCreated);

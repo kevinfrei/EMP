@@ -10,8 +10,8 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'tune', privileges: { standard: true, secure: true } }
 ]);
 */
-//logger.disable('configProtocols');
 const log = logger.bind('configProtocols');
+logger.disable('configProtocols');
 
 const songs: string[] = [
   '09 - 7empest.flac',

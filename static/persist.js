@@ -49,15 +49,19 @@ const writeFile = (val: Object): void => {
 };
 const persist: Persist = {
   getItem: (key: string): mixed => {
+    log(`Reading ${key}`);
     const val: Object = readFile();
     return val[key];
   },
   setItem: (key: string, value: mixed): void => {
+    log(`Writing ${key}:`);
+    log(value);
     const val: Object = readFile();
     val[key] = value;
     writeFile(val);
   },
   deleteItem: (key: string): void => {
+    log(`deleting ${key}`);
     const val: Object = readFile();
     delete val[key];
     writeFile(val);

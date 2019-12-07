@@ -3,11 +3,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Amplitude from 'amplitudejs';
+import logger from 'simplelogger';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import './index.css';
+
+const log = logger.bind('index');
+logger.disable('index');
 
 window.initApp = () => {
   const root = document.getElementById('root');
@@ -55,7 +59,7 @@ window.setInterval(() => {
   const activeSong = Amplitude.getActiveSongMetadata();
   const json = JSON.stringify(activeSong);
   if (lastDisplayed !== json) {
-    console.log(activeSong);
+    log(activeSong);
     lastDisplayed = json;
   }
 }, 5000);

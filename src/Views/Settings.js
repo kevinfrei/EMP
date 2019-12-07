@@ -28,6 +28,7 @@ const Settings = () => {
         className="delete-pic"
         src={deletePic}
         key={'>' + elem}
+        alt="Delete Item"
         onClick={() => setConfig(removeFromSet(config, elem))}
       />
     );
@@ -44,7 +45,7 @@ const Settings = () => {
       <span className="table-header">Locations</span>
       {elems}
       <label className="add-label" htmlFor="folder-picker">
-        <img className="add-pic" src={addPic} />
+        <img className="add-pic" src={addPic} alt="add source" />
       </label>
       <input
         id="folder-picker"
