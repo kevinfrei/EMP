@@ -4,7 +4,7 @@
 
 #search {
   width: 125px;
-  background: url(img/search.svg) no-repeat;
+  background: url(../img/search.svg) no-repeat;
   background-size: 16px;
   background-position: 3px 3px;
   background-color: white;
