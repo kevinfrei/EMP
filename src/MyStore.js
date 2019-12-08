@@ -14,12 +14,14 @@ export type Song = {|
   Album: number,
   key: SongKey
 |};
+
 export type Artist = {|
   Name: string,
   Albums: Array<AlbumKey>,
   Songs: Array<SongKey>,
   key: ArtistKey
 |};
+
 export type Album = {|
   Name: string,
   Year: number,
@@ -60,6 +62,14 @@ let initialState: State = {
   curView: 'none'
 };
 
+export const ValidKeyNames = [
+  'Artists',
+  'Albums',
+  'Songs',
+  'Playlists',
+  'locations',
+  'curView'
+];
 export default createConnectedStore<State>(initialState);
 
 // Docs say: Ignore this if you're using React Hooks

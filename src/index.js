@@ -54,15 +54,21 @@ window.initApp = () => {
   }
 };
 
-let lastDisplayed = null;
-window.setInterval(() => {
-  const activeSong = Amplitude.getActiveSongMetadata();
-  const json = JSON.stringify(activeSong);
-  if (lastDisplayed !== json) {
-    log(activeSong);
-    lastDisplayed = json;
-  }
-}, 5000);
+if (logger.isEnabled('index')) {
+  // Don't bother with this if logging is disabled...
+  let lastDisplayed = null;
+  const logSong = () => {
+    const activeSong = Amplitude.getActiveSongMetadata();
+    if (activeSong) {
+      const json = JSON.stringify(activeSong);
+      if (lastDisplayed !== json) {
+        log(activeSong);
+        lastDisplayed = json;
+      }
+    }
+  };
+  window.setInterval(logSong, 5000);
+}
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

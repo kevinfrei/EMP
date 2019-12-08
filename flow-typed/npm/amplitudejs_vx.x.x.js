@@ -13,8 +13,23 @@
  * https://github.com/flowtype/flow-typed
  */
 
+export type Song = {
+  name?: string,
+  artist?: string,
+  album?: string,
+  url: string,
+  cover_art_url?: string
+};
+
 declare module 'amplitudejs' {
-  declare module.exports: any;
+  declare module.exports: {
+    init: (arg: {
+      songs: Array<Song>,
+      default_album_art?: string,
+      debug?: boolean
+    }) => void,
+    getActiveSongMetadata: () => ?Song
+  };
 }
 
 /**
@@ -57,10 +72,14 @@ declare module 'amplitudejs/dist/visualizations/bar.js' {
   declare module.exports: $Exports<'amplitudejs/dist/visualizations/bar'>;
 }
 declare module 'amplitudejs/dist/visualizations/frequencyanalyzer.js' {
-  declare module.exports: $Exports<'amplitudejs/dist/visualizations/frequencyanalyzer'>;
+  declare module.exports: $Exports<
+    'amplitudejs/dist/visualizations/frequencyanalyzer'
+  >;
 }
 declare module 'amplitudejs/dist/visualizations/michaelbromley.js' {
-  declare module.exports: $Exports<'amplitudejs/dist/visualizations/michaelbromley'>;
+  declare module.exports: $Exports<
+    'amplitudejs/dist/visualizations/michaelbromley'
+  >;
 }
 declare module 'amplitudejs/dist/visualizations/template.js' {
   declare module.exports: $Exports<'amplitudejs/dist/visualizations/template'>;

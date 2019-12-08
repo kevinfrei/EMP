@@ -1,6 +1,7 @@
 // @flow
 
 import logger from 'simplelogger';
+import { ValidKeyNames } from './MyStore';
 
 import type { IpcRendererEvent } from 'electron';
 import type { Store } from 'undux';
@@ -27,7 +28,7 @@ function setEqual<T>(a1: Array<T>, a2: Array<T>): boolean {
 
 const MessageFromMainHandler = (store: Store<State>, message: string) => {
   try {
-    const action = JSON.parse(message);
+    const action: mixed = JSON.parse(message);
     log('Received a message from the Main process:');
     log(action);
     if (
@@ -39,19 +40,20 @@ const MessageFromMainHandler = (store: Store<State>, message: string) => {
     ) {
       log(`Message to set ${action.key} to `);
       log(action.value);
-      log('Store:');
-      log(store);
-      const setter = store.set(action.key);
-      log('Setter:');
-      log(setter);
-      setter(action.value);
+      // Validate that the key is valid
+      if (ValidKeyNames.indexOf(action.key) >= 0) {
+        const setter = store.set(action.key);
+        setter(action.value);
+      } else {
+        log('Invalid key name');
+      }
     }
   } catch (e) {}
   log('An error occurred');
   log(message);
 };
 
-const ConfigureIPC = (store: Store) => {
+const ConfigureIPC = (store: Store<State>) => {
   log('Store:');
   log(store);
   log('window.ipc');
