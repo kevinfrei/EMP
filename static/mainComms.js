@@ -5,7 +5,7 @@ const { BrowserWindow } = require('electron');
 const persist = require('./persist');
 
 const log = logger.bind('mainComms');
-// logger.disable('mainComms');
+logger.disable('mainComms');
 
 // This returns an array of object handlers
 
@@ -35,6 +35,7 @@ const kvpValidator = (val: string): ?KVP => {
   } catch (e) {}
   return undefined;
 };
+
 const stringValidator = (val: string): ?string => val;
 
 const setter = ({ key, value }: KVP) => {
@@ -47,18 +48,26 @@ const deleter = (key: string) => {
 
 // Get a value from disk and sends {key:'key', value: ...value} in JSON
 const getter = (key: string) => {
-  const val = persist.getItem(key);
-  if (typeof val !== 'string') {
-    log(`getting ${key} results in non-string value:`);
-    log(val);
-    return;
-  }
   try {
+    const val = persist.getItem(key);
+    if (typeof val !== 'string') {
+      log(`getting ${key} results in non-string value:`);
+      log(val);
+      return;
+    }
+    log(`About to send {key:${key}, value:${val}}`);
     const value = JSON.parse(val);
-    BrowserWindow.getFocusedWindow().webContents.send(
-      'data',
-      JSON.stringify({ key, value })
-    );
+    const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
+    log(`Window count: ${allWnd.length}`);
+    const firstWnd = allWnd[0];
+    log("Window:");
+    log(firstWnd);
+    const webCont = firstWnd.webContents;
+    log("webContents");
+    log(webCont);
+    const message = JSON.stringify({key, value});
+    log(`Sending data: ${message}`);
+    webCont.send('data', message);
   } catch (e) {}
 };
 

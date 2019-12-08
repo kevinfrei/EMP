@@ -51,7 +51,7 @@ export type State = {|
   Songs: Map<SongKey, Song>,
   Playlists: Map<string, Array<SongKey>>,
   // Just a list of paths to search for music
-  Configuration: Set<string>,
+  locations: Array<string>,
   // This is about the actual stuff on screen
   curView: ViewNames // Which view is selected
 |};
@@ -63,7 +63,7 @@ let initialState: State = {
   Albums: new Map(),
   Songs: new Map(),
   Playlists: new Map(),
-  Configuration: new Set(),
+  locations: [],
   curView: 'none'
 };
 

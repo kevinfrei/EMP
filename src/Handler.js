@@ -9,10 +9,12 @@ import type { State } from './MyStore';
 const log = logger.bind('handler');
 //logger.disable('handler');
 
-let lastSavedConfig = null;
+let lastSavedConfig: ?Array<string> = null;
 
-function setEqual<T>(s1: Set<T>, s2: Set<T>): boolean {
-  if (s1.size !== s2.size) {
+function setEqual<T>(a1: Array<T>, a2: Array<T>): boolean {
+  const s1 = new Set(a1);
+  const s2 = new Set(a2);
+  if (a1.length !== a2.length) {
     return false;
   }
   for (let i of s1) {
@@ -37,7 +39,12 @@ const MessageFromMainHandler = (store: Store<State>, message: string) => {
     ) {
       log(`Message to set ${action.key} to `);
       log(action.value);
-      store.set(action.key)(action.value);
+      log('Store:');
+      log(store);
+      const setter = store.set(action.key);
+      log('Setter:');
+      log(setter);
+      setter(action.value);
     }
   } catch (e) {}
   log('An error occurred');
@@ -49,13 +56,10 @@ const ConfigureIPC = (store: Store) => {
   log(store);
   log('window.ipc');
   log(window.ipc);
-  store.on('Configuration').subscribe((val: Set<string>) => {
+  store.on('locations').subscribe((val: Array<string>) => {
     if (lastSavedConfig == null || !setEqual(lastSavedConfig, val)) {
       lastSavedConfig = val;
-      window.ipc.send(
-        'set',
-        JSON.stringify({ key: 'locations', value: [...val] })
-      );
+      window.ipc.send('set', JSON.stringify({ key: 'locations', value: val }));
     }
   });
   window.ipc.on('data', (event: IpcRendererEvent, message: string) => {
@@ -64,7 +68,7 @@ const ConfigureIPC = (store: Store) => {
     log(`Message: '${message}'`);
     MessageFromMainHandler(store, message);
   });
-  window.ipc.send('get', 'Configuration');
+  window.ipc.send('get', 'locations');
 };
 
 export { ConfigureIPC };

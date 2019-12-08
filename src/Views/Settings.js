@@ -8,16 +8,16 @@ import addPic from '../img/add.svg';
 
 import './Settings.css';
 
-const removeFromSet = (set: Set<string>, val: string) => {
+const removeFromSet = (set: Array<string>, val: string): Array<string> => {
   const newSet = new Set(set);
   newSet.delete(val);
-  return newSet;
+  return [...newSet];
 };
 
 const Settings = () => {
   const store = Store.useStore();
-  const config: Set<string> = store.get('Configuration');
-  const setConfig = store.set('Configuration');
+  const config: Array<string> = store.get('locations');
+  const setConfig = store.set('locations');
   const elems = [];
   let num = 2;
   config.forEach(elem => {
@@ -50,10 +50,14 @@ const Settings = () => {
           src={addPic}
           alt="add source"
           onClick={() => {
-            const locations = window.remote.dialog.showOpenDialogSync({
-              properties: ['openDirectory']
-            });
-            setConfig(new Set([...locations, ...config]));
+            const locations: ?Array<string> = window.remote.dialog.showOpenDialogSync(
+              {
+                properties: ['openDirectory']
+              }
+            );
+            if (locations) {
+              setConfig([...locations, ...config]);
+            }
           }}
         />
       </label>

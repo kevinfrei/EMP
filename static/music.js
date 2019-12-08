@@ -5,7 +5,7 @@ const path = require('path');
 const logger = require('simplelogger');
 
 const log = logger.bind('music');
-logger.disable('music');
+//logger.disable('music');
 
 export type Song = {
   URL: string,
@@ -39,9 +39,26 @@ export type MusicDB = {
   playlists: Array<number> // This is probably a bad idea...
 };
 
+const isMusicType = (filename: string): boolean => {
+  if (path.basename(filename).startsWith('.')) {
+    return false;
+  }
+  const suffix = path.extname(filename);
+  switch (suffix.toLowerCase()) {
+    case '.flac':
+    case '.mp3':
+    case '.m4a':
+    case '.aac':
+      return true;
+    default:
+      log(`Failed suffix: ${suffix}`);
+      return false;
+  }
+};
+
 const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
   // If we have too many locations, this is *baaaad* but oh well...
-  const queue: Array<string> = [...locations];
+  const queue: Array<string> = locations;
   const songs: Array<string> = [];
   log('Queue:');
   log(queue);
@@ -55,12 +72,12 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
         const st = await fsp.stat(ap);
         if (st.isDirectory()) {
           queue.push(ap);
-        } else if (st.isFile()) {
+        } else if (st.isFile() && isMusicType(ap)) {
           songs.push(ap);
         }
       } else if (dirent.isDirectory()) {
         queue.push(path.join(i, dirent.name));
-      } else if (dirent.isFile()) {
+      } else if (dirent.isFile() && isMusicType(dirent.name)) {
         songs.push(path.join(i, dirent.name));
       }
     }

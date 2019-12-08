@@ -24,14 +24,18 @@ const init = async () => {
   // If not, start with the "music" location and see what we can find...
   musicDB = persist.getItem('DB');
   if (!musicDB) {
-    let musicLocations = persist.getItem('locations');
+    let musicLocations = JSON.parse(persist.getItem('locations'));
     if (!musicLocations) {
       musicLocations = [app.getPath('music')];
-      persist.setItem('locations', musicLocations);
+      persist.setItem('locations', JSON.stringify(musicLocations));
     }
+    log('Looking for music: ');
+    log(musicLocations);
+    log('...');
     musicDB = await music.find(musicLocations);
 
     // I wonder how big this winds up being :/
+    log('Finished finding music');
     persist.setItem('DB', musicDB);
   } else {
     // TODO: Rescan source locations
@@ -42,11 +46,11 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   // Initialize stuff now
   init()
     .then(() => {
-      window.webContents.send('data', `{"songCount":${musicDB.songs.length}}`);
-/*      setInterval(() => {
+      //      window.webContents.send('data', `{"songCount":${musicDB.songs.length}}`);
+      /*      setInterval(() => {
         window.webContents.send('data', `{"val":${val++}}`);
       }, 1000);*/
-      log(musicDB);
+      //      log(musicDB);
     })
     .catch(e => {
       console.error(e);
@@ -65,6 +69,9 @@ comms.forEach(<T>(val: MessageHandler<T>) => {
     log(`checking ${val.command}`);
     const data: ?T = val.validator(arg);
     if (data !== undefined && data !== null) {
+      log(`Got data for ${val.command}:`);
+      log(`typeof data: ${typeof data}`);
+      log(data);
       val.handler(data);
     } else {
       log('data validation failure');

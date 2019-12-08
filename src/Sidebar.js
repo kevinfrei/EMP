@@ -91,9 +91,6 @@ const Sidebar = () => {
         <img src={settingsPic} className="sidebar-icon" alt="settings"></img>
         <span className="sidebar-text">Settings</span>
       </div>
-      <br />
-      <div>Foo: {store.get('foo')}</div>
-      <div>Bar: {store.get('bar')}</div>
     </div>
   );
 };
