@@ -7,7 +7,7 @@ import type { Store } from 'undux';
 import type { State } from './MyStore';
 
 const log = logger.bind('handler');
-//logger.disable('handler');
+logger.disable('handler');
 
 let lastSavedConfig: ?Array<string> = null;
 

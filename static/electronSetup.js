@@ -13,7 +13,7 @@ import type { WindowPosition } from './persist';
 export type OnWindowCreated = (window: BrowserWindow) => void;
 
 const log = logger.bind('electronSetup');
-//logger.disable('electronSetup');
+logger.disable('electronSetup');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

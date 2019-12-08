@@ -6,7 +6,7 @@ import { ConfigureIPC } from './Handler';
 import logger from 'simplelogger';
 
 const log = logger.bind('async');
-//logger.disable('async');
+logger.disable('async');
 
 const AsyncDoodad = () => {
   const store = Store.useStore();

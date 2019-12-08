@@ -15,7 +15,7 @@ import type { MusicDB } from './music';
 import type { MessageHandler } from './mainComms';
 
 const log = logger.bind('electron');
-//logger.disable('electron');
+logger.disable('electron');
 
 let musicDB: ?MusicDB;
 
@@ -46,11 +46,7 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   // Initialize stuff now
   init()
     .then(() => {
-      //      window.webContents.send('data', `{"songCount":${musicDB.songs.length}}`);
-      /*      setInterval(() => {
-        window.webContents.send('data', `{"val":${val++}}`);
-      }, 1000);*/
-      //      log(musicDB);
+     // TODO: Update the music in the renderer
     })
     .catch(e => {
       console.error(e);

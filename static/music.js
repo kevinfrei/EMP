@@ -5,7 +5,7 @@ const path = require('path');
 const logger = require('simplelogger');
 
 const log = logger.bind('music');
-//logger.disable('music');
+logger.disable('music');
 
 export type Song = {
   URL: string,
