@@ -8,7 +8,7 @@ import logger from 'simplelogger';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
-import './index.css';
+import './styles/index.css';
 
 const log = logger.bind('index');
 logger.disable('index');

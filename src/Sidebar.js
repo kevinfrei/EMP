@@ -10,7 +10,7 @@ import playlistPic from './img/playlist.svg';
 import nowPlayingPic from './img/playing.svg';
 import settingsPic from './img/settings.svg';
 
-import './Sidebar.css';
+import './styles/Sidebar.css';
 
 import type { ViewNames } from './MyStore';
 

@@ -11,7 +11,7 @@ import SongControls from './SongControls';
 import SongPlayback from './SongPlayback';
 import VolumeControl from './VolumeControl';
 
-import './App.css';
+import './styles/App.css';
 
 const App = () => {
   return (

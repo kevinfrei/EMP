@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import './SongControls.css';
+import './styles/SongControls.css';
 
 const SongControls = () => (
   <span className="control-container">

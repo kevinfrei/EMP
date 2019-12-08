@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import './VolumeControl.css';
+import './styles/VolumeControl.css';
 
 const VolumeControl = () => (
   <span className="volume-container">

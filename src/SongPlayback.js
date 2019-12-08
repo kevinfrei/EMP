@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import './SongPlayback.css';
+import './styles/SongPlayback.css';
 
 const SongPlayback = () => (
   <span className="song-container">
