@@ -1,5 +1,6 @@
 #sidebar {
   margin: 0px 3px;
+  overflow-y: hidden;
 }
 
 #search {
