@@ -24,35 +24,26 @@ function setEqual<T>(s1: Set<T>, s2: Set<T>): boolean {
 }
 
 const MessageFromMainHandler = (store: Store<State>, message: string) => {
-  // TODO: Make this do real stuff
-  const action = JSON.parse(message);
-  log('Received a message from the Main process:');
-  log(action);
-  const [msg, num] = message.split(':');
-  if (num !== undefined) {
-    const val: number = Number.parseInt(num);
-    store.set('foo')(val);
-  }
-  store.set('bar')(msg);
+  try {
+    const action = JSON.parse(message);
+    log('Received a message from the Main process:');
+    log(action);
+    if (
+      typeof action === 'object' &&
+      action !== null &&
+      action.hasOwnProperty('key') &&
+      typeof action.key === 'string' &&
+      action.hasOwnProperty('value')
+    ) {
+      log(`Message to set ${action.key} to `);
+      log(action.value);
+      store.set(action.key)(action.value);
+    }
+  } catch (e) {}
+  log('An error occurred');
+  log(message);
 };
 
-/*
-const AsyncReplyHandler = (
-  store: Store<State>,
-  event: Object,
-  ...args: Array<string>
-) => {
-  if (store.get('request') !== 'sent') {
-    // TODO: Make sure this is handled properly somehow
-    log(
-      'Reply received but request not sent, already replied to, or overlapped.'
-    );
-    return;
-  }
-  store.set('request')('none');
-  // TODO: Handle the async reply here...
-};
-*/
 const ConfigureIPC = (store: Store) => {
   log('Store:');
   log(store);
@@ -71,9 +62,9 @@ const ConfigureIPC = (store: Store) => {
     log('Async message from main:');
     log(event);
     log(`Message: '${message}'`);
-    // log(window.store);
     MessageFromMainHandler(store, message);
   });
+  window.ipc.send('get', 'Configuration');
 };
 
 export { ConfigureIPC };

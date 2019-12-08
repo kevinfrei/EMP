@@ -45,9 +45,21 @@ const deleter = (key: string) => {
   persist.deleteItem(key);
 };
 
+// Get a value from disk and sends {key:'key', value: ...value} in JSON
 const getter = (key: string) => {
   const val = persist.getItem(key);
-  BrowserWindow.getFocusedWindow().webContents.send('data', val);
+  if (typeof val !== 'string') {
+    log(`getting ${key} results in non-string value:`);
+    log(val);
+    return;
+  }
+  try {
+    const value = JSON.parse(val);
+    BrowserWindow.getFocusedWindow().webContents.send(
+      'data',
+      JSON.stringify({ key, value })
+    );
+  } catch (e) {}
 };
 
 const mk = <T>(
