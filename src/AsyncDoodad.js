@@ -1,13 +1,17 @@
 // @flow
 
 import * as React from 'react';
+import logger from 'simplelogger';
+
 import Store from './MyStore';
 import { ConfigureIPC } from './Handler';
-import logger from 'simplelogger';
 
 const log = logger.bind('async');
 logger.disable('async');
 
+// This is a react component to enable the IPC subsystem to talk to the store
+// It uses a hook to get the store, then passes that on to the IPC subsystem
+// It's not clear to me if this forces any sort of re-rendering  :/ ?
 const AsyncDoodad = () => {
   const store = Store.useStore();
   // Store subscription change notifications go here
@@ -22,12 +26,5 @@ const AsyncDoodad = () => {
   // Invisible, because this is just for listening to the main process
   return <div id="async-doodad" style={{ display: 'none' }} />;
 };
-
-// I feel like this is probably too complex
-// Honestly, I need a simple set of primitives:
-// Render => Main: Save this key/value pair, delete this key (and it's value)
-//  Everything else is a URL fetch
-//  Not quite true: Need some better way of dealing with playlists, probably
-// Main => Render: Add this (song/artist/album/playlist) to the database
 
 export default AsyncDoodad;

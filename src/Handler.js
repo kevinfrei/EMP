@@ -71,4 +71,4 @@ const ConfigureIPC = (store: Store) => {
   window.ipc.send('get', 'locations');
 };
 
-export { ConfigureIPC };
+export { ConfigureIPC, MessageFromMainHandler };

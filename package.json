@@ -31,7 +31,8 @@
     "release": "yarn prepare && yarn react-build && electron-builder --publish=always",
     "build": "yarn prepare && yarn react-build && yarn electron-build",
     "start": "yarn prepare && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "prepare": "flow-remove-types static/ -d public/ --all --pretty"
+    "prepare": "flow-remove-types static/ -d public/ --all --pretty",
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -52,6 +53,7 @@
     ]
   },
   "devDependencies": {
+    "babel-jest": "^24.9.0",
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.0",
     "electron": "^7.1.1",
@@ -59,6 +61,7 @@
     "electron-devtools-installer": "^2.2.4",
     "flow-bin": "^0.112.0",
     "flow-remove-types": "^2.113.0",
+    "jest": "^24.9.0",
     "typescript": "^3.7.2",
     "wait-on": "^3.3.0"
   }
