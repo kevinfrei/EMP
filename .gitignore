@@ -11,6 +11,8 @@
 /build
 /dist
 /public/*.js
+/public/main/*.js
+/public/render/*.js
 
 # misc
 .DS_Store
