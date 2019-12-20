@@ -24,15 +24,21 @@ export type Persist = {
   getBrowserWindowPos(st: WindowPosition): Rectangle
 };
 
-const defaultWindowPosition: WindowPosition = {
-  bounds: {
-    x: Number.MIN_SAFE_INTEGER,
-    y: Number.MIN_SAFE_INTEGER,
-    width: 900,
-    height: 680
-  },
-  isMaximized: false
-};
+const makeWindowPos = (
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  isMaximized: boolean
+) => ({ bounds: { x, y, width, height }, isMaximized });
+
+const defaultWindowPosition: WindowPosition = makeWindowPos(
+  Number.MIN_SAFE_INTEGER,
+  Number.MIN_SAFE_INTEGER,
+  900,
+  680,
+  false
+);
 
 // Here's a place for app settings & stuff...
 const storageLocation: string = path.join(app.getPath('userData'), 'data.json');
@@ -69,24 +75,30 @@ const persist: Persist = {
   getWindowPos: (): WindowPosition => {
     try {
       const tmpws: mixed = persist.getItem('windowPosition');
-      if (
-        tmpws &&
-        typeof tmpws === 'object' &&
-        tmpws.bounds &&
-        typeof tmpws.bounds === 'object' &&
-        tmpws.bounds.x !== undefined &&
-        typeof tmpws.bounds.x === 'number' &&
-        tmpws.bounds.y !== undefined &&
-        typeof tmpws.bounds.y === 'number' &&
-        tmpws.bounds.width !== undefined &&
-        typeof tmpws.bounds.width === 'number' &&
-        tmpws.bounds.height !== undefined &&
-        typeof tmpws.bounds.height === 'number' &&
-        tmpws.isMaximized !== undefined &&
-        tmpws.isMaximized !== null &&
-        typeof tmpws.isMaximized === 'boolean'
-      ) {
-        return tmpws;
+      if (tmpws && typeof tmpws === 'object' && tmpws.bounds) {
+        const bounds = tmpws.bounds;
+        if (
+          typeof bounds === 'object' &&
+          bounds.x !== undefined &&
+          typeof bounds.x === 'number' &&
+          bounds.y !== undefined &&
+          typeof bounds.y === 'number' &&
+          bounds.width !== undefined &&
+          typeof bounds.width === 'number' &&
+          bounds.height !== undefined &&
+          typeof bounds.height === 'number' &&
+          tmpws.isMaximized !== undefined &&
+          tmpws.isMaximized !== null &&
+          typeof tmpws.isMaximized === 'boolean'
+        ) {
+          return makeWindowPos(
+            bounds.x,
+            bounds.y,
+            bounds.width,
+            bounds.height,
+            tmpws.isMaximized
+          );
+        }
       }
     } catch (err) {}
     return defaultWindowPosition;

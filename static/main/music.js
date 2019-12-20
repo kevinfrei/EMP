@@ -7,36 +7,43 @@ const logger = require('simplelogger');
 const log = logger.bind('music');
 logger.disable('music');
 
+export type SongKey = string;
+export type AlbumKey = string;
+export type ArtistKey = string;
+
 export type Song = {
   URL: string,
-  artistIds: Array<number>,
-  secondaryIds: Array<number>,
+  artistIds: Array<ArtistKey>,
+  secondaryIds: Array<AlbumKey>,
   albumId: number,
   track: number,
-  title: string
+  title: string,
+  key: SongKey
 };
 
 export type Album = {
   year: number,
-  primaryArtists: Array<number>,
+  primaryArtists: Array<ArtistKey>,
   title: string,
   vatype: '' | 'ost' | 'va',
-  songs: Array<number>
+  songs: Array<SongKey>,
+  key: AlbumKey
 };
 
 export type Artist = {
   name: string,
-  songs: Array<number>,
-  albums: Array<number>
+  songs: Array<SongKey>,
+  albums: Array<AlbumKey>,
+  key: ArtistKey
 };
 
 export type MusicDB = {
-  songs: Array<Song>,
-  albums: Array<Album>,
-  albumTitleIndex: Map<string, Array<number>>,
-  artists: Array<Artist>,
-  artistNameIndex: Map<string, Array<number>>,
-  playlists: Array<number> // This is probably a bad idea...
+  songs: Map<SongKey, Song>,
+  albums: Map<AlbumKey, Album>,
+  albumTitleIndex: Map<string, Array<AlbumKey>>,
+  artists: Map<ArtistKey, Artist>,
+  artistNameIndex: Map<string, Array<ArtistKey>>,
+  playlists: Map<string, Array<SongKey>> // This is probably a bad idea...
 };
 
 const isMusicType = (filename: string): boolean => {

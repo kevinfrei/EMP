@@ -7,10 +7,30 @@ import type { IpcRendererEvent } from 'electron';
 import type { Store } from 'undux';
 import type { State } from './MyStore';
 
+export type KeyValue = {
+  key: string,
+  value: mixed
+};
+
 const log = logger.bind('handler');
 logger.disable('handler');
 
 let lastSavedConfig: ?Array<string> = null;
+
+const getKeyValue = (data: string): ?KeyValue => {
+  try {
+    const action: mixed = JSON.parse(data);
+    if (
+      typeof action === 'object' &&
+      action !== null &&
+      action.hasOwnProperty('key') &&
+      typeof action.key === 'string' &&
+      action.hasOwnProperty('value')
+    ) {
+      return { key: action.key, value: action.value };
+    }
+  } catch (e) {}
+};
 
 function setEqual<T>(a1: Array<T>, a2: Array<T>): boolean {
   const s1 = new Set(a1);
@@ -26,10 +46,10 @@ function setEqual<T>(a1: Array<T>, a2: Array<T>): boolean {
   return true;
 }
 
-const MessageFromMainHandler = (store: Store<State>, message: string) => {
+const StoreFromMainHandler = (store: Store<State>, message: string) => {
   try {
     const action: mixed = JSON.parse(message);
-    log('Received a message from the Main process:');
+    log('Store message from main process:');
     log(action);
     if (
       typeof action === 'object' &&
@@ -38,17 +58,54 @@ const MessageFromMainHandler = (store: Store<State>, message: string) => {
       typeof action.key === 'string' &&
       action.hasOwnProperty('value')
     ) {
-      log(`Message to set ${action.key} to `);
+      const key: string = action.key;
+      log(`Message to set ${key} to `);
       log(action.value);
       // Validate that the key is valid
-      if (ValidKeyNames.indexOf(action.key) >= 0) {
-        const setter = store.set(action.key);
+      if (ValidKeyNames.indexOf(key) >= 0) {
+        const setter = store.set(key);
         setter(action.value);
+        return;
       } else {
         log('Invalid key name');
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    log('Exception!');
+    log(e);
+  }
+  log('An error occurred');
+  log(message);
+};
+
+const DataFromMainHandler = (store: Store<State>, message: string) => {
+  try {
+    const action: mixed = JSON.parse(message);
+    log('Store message from main process:');
+    log(action);
+    if (
+      typeof action === 'object' &&
+      action !== null &&
+      action.hasOwnProperty('key') &&
+      typeof action.key === 'string' &&
+      action.hasOwnProperty('value')
+    ) {
+      const key: string = action.key;
+      log(`Message to set ${key} to `);
+      log(action.value);
+      // Validate that the key is valid
+      if (ValidKeyNames.indexOf(key) >= 0) {
+        const setter = store.set(key);
+        setter(action.value);
+        return;
+      } else {
+        log('Invalid key name');
+      }
+    }
+  } catch (e) {
+    log('Exception!');
+    log(e);
+  }
   log('An error occurred');
   log(message);
 };
@@ -65,12 +122,16 @@ const ConfigureIPC = (store: Store<State>) => {
     }
   });
   window.ipc.on('data', (event: IpcRendererEvent, message: string) => {
-    log('Async message from main:');
-    log(event);
+    log('Async data message from main:');
     log(`Message: '${message}'`);
-    MessageFromMainHandler(store, message);
+    DataFromMainHandler(store, message);
+  });
+  window.ipc.on('store', (event: IpcRendererEvent, message: string) => {
+    log('Async store message from main:');
+    log(`Message: '${message}'`);
+    StoreFromMainHandler(store, message);
   });
   window.ipc.send('get', 'locations');
 };
 
-export { ConfigureIPC, MessageFromMainHandler };
+export { ConfigureIPC };

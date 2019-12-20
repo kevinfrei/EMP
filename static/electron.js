@@ -4,15 +4,15 @@ const { app, ipcMain } = require('electron');
 const path = require('path');
 const logger = require('simplelogger');
 
-const persist = require('./persist');
-const setup = require('./electronSetup');
-const comms = require('./mainComms');
-const music = require('./music');
+const persist = require('./main/persist');
+const setup = require('./main/electronSetup');
+const comms = require('./main/mainComms');
+const music = require('./main/music');
 
 import type { BrowserWindow } from 'electron';
-import type { OnWindowCreated } from './electronSetup';
-import type { MusicDB } from './music';
-import type { MessageHandler } from './mainComms';
+import type { OnWindowCreated } from './main/electronSetup';
+import type { MusicDB } from './main/music';
+import type { MessageHandler } from './main/mainComms';
 
 const log = logger.bind('electron');
 logger.disable('electron');
