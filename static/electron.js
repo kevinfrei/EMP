@@ -15,20 +15,24 @@ import type { MusicDB } from './main/music';
 import type { MessageHandler } from './main/mainComms';
 
 const log = logger.bind('electron');
-logger.disable('electron');
+logger.enable('electron');
 
 let musicDB: ?MusicDB;
 
+const getLocations = () => {
+  let musicLocations = JSON.parse(persist.getItem('locations'));
+  if (!musicLocations) {
+    musicLocations = [app.getPath('music')];
+    persist.setItem('locations', JSON.stringify(musicLocations));
+  }
+  return musicLocations;
+};
 const init = async () => {
   // Check to see if we have any locations to start with
   // If not, start with the "music" location and see what we can find...
   musicDB = persist.getItem('DB');
   if (!musicDB) {
-    let musicLocations = JSON.parse(persist.getItem('locations'));
-    if (!musicLocations) {
-      musicLocations = [app.getPath('music')];
-      persist.setItem('locations', JSON.stringify(musicLocations));
-    }
+    let musicLocations = getLocations();
     log('Looking for music: ');
     log(musicLocations);
     log('...');
@@ -38,7 +42,12 @@ const init = async () => {
     log('Finished finding music');
     persist.setItem('DB', musicDB);
   } else {
-    // TODO: Rescan source locations
+    let musicLocations = getLocations();
+    log('re-looking for music: ');
+    log(musicLocations);
+    musicDB = await music.find(musicLocations);
+    log('Done re-scanning music');
+    persist.setItem('DB', musicDB);
   }
 };
 let val = 0;
@@ -46,7 +55,7 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   // Initialize stuff now
   init()
     .then(() => {
-     // TODO: Update the music in the renderer
+      // TODO: Update the music in the renderer
     })
     .catch(e => {
       console.error(e);

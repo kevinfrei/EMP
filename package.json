@@ -13,14 +13,15 @@
   "dependencies": {
     "amplitudejs": "^5.0.3",
     "electron-is-dev": "^1.1.0",
-    "music-metadata": "^5.2.0",
+    "media-utils": "../modules/media-utils",
+    "music-metadata": "^6.3.0",
     "my-utils": "../modules/js-freik-utils",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-scripts": "3.3.0",
-    "rxjs": "^6.5.3",
+    "rxjs": "^6.5.4",
     "simplelogger": "file:../modules/simplelogger",
-    "source-map-explorer": "^2.1.2",
+    "source-map-explorer": "^2.2.2",
     "undux": "^5.0.1"
   },
   "scripts": {
@@ -48,17 +49,17 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.7.5",
+    "@babel/core": "^7.8.3",
     "babel-jest": "^24.9.0",
     "concurrently": "^5.0.2",
     "cross-env": "^6.0.0",
-    "electron": "^7.1.6",
-    "electron-builder": "^21.2.0",
+    "electron": "^7.1.9",
+    "electron-builder": "^22.2.0",
     "electron-devtools-installer": "^2.2.4",
-    "flow-bin": "^0.114.0",
-    "flow-remove-types": "^2.114.0",
+    "flow-bin": "^0.116.1",
+    "flow-remove-types": "^2.116.1",
     "jest": "^24.9.0",
-    "typescript": "^3.7.3",
+    "typescript": "^3.7.5",
     "wait-on": "^3.3.0"
   }
 }
