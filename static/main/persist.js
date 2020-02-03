@@ -4,6 +4,7 @@ const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const logger = require('simplelogger');
+const { FTON } = require('my-utils');
 
 import type { Rectangle } from 'electron';
 
@@ -45,13 +46,13 @@ const storageLocation: string = path.join(app.getPath('userData'), 'data.json');
 log(`User data location: ${storageLocation}`);
 const readFile = (): Object => {
   try {
-    return JSON.parse(fs.readFileSync(storageLocation, 'utf8'));
+    return FTON.parse(fs.readFileSync(storageLocation, 'utf8'));
   } catch (e) {
     return {};
   }
 };
 const writeFile = (val: Object): void => {
-  fs.writeFileSync(storageLocation, JSON.stringify(val), 'utf8');
+  fs.writeFileSync(storageLocation, FTON.stringify(val), 'utf8');
 };
 const persist: Persist = {
   getItem: (key: string): mixed => {

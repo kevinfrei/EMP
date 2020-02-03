@@ -1,6 +1,7 @@
 // @flow
 
 import logger from 'simplelogger';
+import { FTON } from 'my-utils';
 import { ValidKeyNames } from './MyStore';
 
 import type { IpcRendererEvent } from 'electron';
@@ -13,13 +14,13 @@ export type KeyValue = {
 };
 
 const log = logger.bind('handler');
-logger.disable('handler');
+logger.enable('handler');
 
 let lastSavedConfig: ?Array<string> = null;
 
 const getKeyValue = (data: string): ?KeyValue => {
   try {
-    const action: mixed = JSON.parse(data);
+    const action: mixed = FTON.parse(data);
     if (
       typeof action === 'object' &&
       action !== null &&
@@ -48,7 +49,7 @@ function setEqual<T>(a1: Array<T>, a2: Array<T>): boolean {
 
 const StoreFromMainHandler = (store: Store<State>, message: string) => {
   try {
-    const action: mixed = JSON.parse(message);
+    const action: mixed = FTON.parse(message);
     log('Store message from main process:');
     log(action);
     if (
@@ -71,7 +72,7 @@ const StoreFromMainHandler = (store: Store<State>, message: string) => {
       }
     }
   } catch (e) {
-    log('Exception!');
+    log('Exception in StoreFromMainHandler:');
     log(e);
   }
   log('An error occurred');
@@ -80,7 +81,7 @@ const StoreFromMainHandler = (store: Store<State>, message: string) => {
 
 const DataFromMainHandler = (store: Store<State>, message: string) => {
   try {
-    const action: mixed = JSON.parse(message);
+    const action: mixed = FTON.parse(message);
     log('Store message from main process:');
     log(action);
     if (
@@ -118,7 +119,7 @@ const ConfigureIPC = (store: Store<State>) => {
   store.on('locations').subscribe((val: Array<string>) => {
     if (lastSavedConfig == null || !setEqual(lastSavedConfig, val)) {
       lastSavedConfig = val;
-      window.ipc.send('set', JSON.stringify({ key: 'locations', value: val }));
+      window.ipc.send('set', FTON.stringify({ key: 'locations', value: val }));
     }
   });
   window.ipc.on('data', (event: IpcRendererEvent, message: string) => {

@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Amplitude from 'amplitudejs';
 import logger from 'simplelogger';
+import { FTON } from 'my-utils';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -60,7 +61,7 @@ if (logger.isEnabled('index')) {
   const logSong = () => {
     const activeSong = Amplitude.getActiveSongMetadata();
     if (activeSong) {
-      const json = JSON.stringify(activeSong);
+      const json = FTON.stringify(activeSong);
       if (lastDisplayed !== json) {
         log(activeSong);
         lastDisplayed = json;

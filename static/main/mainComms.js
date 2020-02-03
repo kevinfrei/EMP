@@ -1,6 +1,7 @@
 // @flow
 const logger = require('simplelogger');
 const { BrowserWindow } = require('electron');
+const { FTON } = require('my-utils');
 
 const persist = require('./persist');
 
@@ -22,7 +23,7 @@ export type KVP = {
 
 const kvpValidator = (val: string): ?KVP => {
   try {
-    const res = JSON.parse(val);
+    const res = FTON.parse(val);
     if (
       typeof res === 'object' &&
       res !== null &&
@@ -39,7 +40,7 @@ const kvpValidator = (val: string): ?KVP => {
 const stringValidator = (val: string): ?string => val;
 
 const setter = ({ key, value }: KVP) => {
-  persist.setItem(key, JSON.stringify(value));
+  persist.setItem(key, FTON.stringify(value));
 };
 
 const deleter = (key: string) => {
@@ -56,7 +57,7 @@ const getter = (key: string) => {
       return;
     }
     log(`About to send {key:${key}, value:${val}}`);
-    const value = JSON.parse(val);
+    const value = FTON.parse(val);
     const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
     log(`Window count: ${allWnd.length}`);
     const firstWnd = allWnd[0];
@@ -65,7 +66,7 @@ const getter = (key: string) => {
     const webCont = firstWnd.webContents;
     log("webContents");
     log(webCont);
-    const message = JSON.stringify({key, value});
+    const message = FTON.stringify({key, value});
     log(`Sending data: ${message}`);
     webCont.send('data', message);
   } catch (e) {}

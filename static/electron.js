@@ -3,6 +3,7 @@
 const { app, ipcMain } = require('electron');
 const path = require('path');
 const logger = require('simplelogger');
+const { FTON } = require('my-utils');
 
 const persist = require('./main/persist');
 const setup = require('./main/electronSetup');
@@ -20,10 +21,10 @@ logger.enable('electron');
 let musicDB: ?MusicDB;
 
 const getLocations = () => {
-  let musicLocations = JSON.parse(persist.getItem('locations'));
+  let musicLocations = FTON.parse(persist.getItem('locations'));
   if (!musicLocations) {
     musicLocations = [app.getPath('music')];
-    persist.setItem('locations', JSON.stringify(musicLocations));
+    persist.setItem('locations', FTON.stringify(musicLocations));
   }
   return musicLocations;
 };
@@ -55,7 +56,18 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   // Initialize stuff now
   init()
     .then(() => {
-      // TODO: Update the music in the renderer
+      window.webContents.send(
+        'data',
+        FTON.stringify({ key: 'Albums', value: musicDB.albums })
+      );
+      window.webContents.send(
+        'data',
+        FTON.stringify({ key: 'Songs', value: musicDB.songs })
+      );
+      window.webContents.send(
+        'data',
+        FTON.stringify({ key: 'Artists', value: musicDB.artists })
+      );
     })
     .catch(e => {
       console.error(e);

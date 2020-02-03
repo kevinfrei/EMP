@@ -7,7 +7,7 @@ const metadata = require('media-utils').Metadata;
 const log = logger.bind('music');
 logger.enable('music');
 
-import type FullMetadata from 'media-utils';
+import type { FullMetadata } from 'media-utils';
 
 export type SongKey = string;
 export type AlbumKey = string;
@@ -92,17 +92,19 @@ const getOrNewAlbum = (
   artists: Set<ArtistKey>,
   vatype: VAType
 ): Album => {
+  // TODO: This doesn't currently handle vatypes properly :/
   const maybeSharedNames: ?Array<AlbumKey> = db.albumTitleIndex.get(
     title.toLowerCase()
   );
   let sharedNames: Array<AlbumKey>;
   if (!maybeSharedNames) {
     sharedNames = [];
-    db.albumTitleIndex.set(title, sharedNames);
+    db.albumTitleIndex.set(title.toLowerCase(), sharedNames);
   } else {
     sharedNames = maybeSharedNames;
   }
   // sharedNames is the list of existing albums with this title
+  // It might be empty (coming from 5 lines up there ^^^ )
   for (let albumKey of sharedNames) {
     const alb: ?Album = db.albums.get(albumKey);
     if (!alb) {
@@ -135,6 +137,18 @@ const getOrNewAlbum = (
       continue;
     }
     // If we're here, we've found the album we're looking for
+    // Before returning, ensure that the artists have this album in their set
+    for (let art of artists) {
+      const thisArtist: ?Artist = db.artists.get(art);
+      if (!thisArtist) {
+        continue;
+      }
+      const albums: Set<AlbumKey> = new Set(thisArtist.albums);
+      if (albums.has(check.key)) {
+        continue;
+      }
+      thisArtist.albums.push(check.key);
+    }
     return check;
   }
   // If we've reached this code, we need to create a new album
@@ -152,6 +166,42 @@ const getOrNewAlbum = (
   sharedNames.push(key);
   db.albums.set(key, album);
   return album;
+};
+
+const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
+  // We need to go from textual metadata to artist, album, and song keys
+  // First, get the primary artist
+  // TODO: FullMetaData doesn't allow for multiple primary artists
+  // Check Trent Reznor & Atticus Ross for an example where it kinda matters
+  const artist: Artist = getOrNewArtist(db, md.Artist);
+  const artistSet: Set<ArtistKey> = new Set();
+  artistSet.add(artist.key);
+  const album = getOrNewAlbum(
+    db,
+    md.Album,
+    md.Year || 0,
+    artistSet,
+    md.VAType || ''
+  );
+  const artistIds: Array<ArtistKey> = [artist.key];
+  const secondaryIds: Array<ArtistKey> = [];
+  if (md.MoreArtists) {
+    for (let sa of md.MoreArtists) {
+      const moreArt = getOrNewArtist(db, sa);
+      secondaryIds.push(moreArt.key);
+    }
+  }
+  const theSong: Song = {
+    URL: md.OriginalPath,
+    artistIds,
+    secondaryIds,
+    albumId: album.key,
+    track: md.Track,
+    title: md.Title,
+    key: newSongKey()
+  };
+  album.songs.push(theSong.key);
+  db.songs.set(theSong.key, theSong);
 };
 
 const fileNamesToDatabase = (files: Array<string>): MusicDB => {
@@ -181,10 +231,7 @@ const fileNamesToDatabase = (files: Array<string>): MusicDB => {
       log('Unable to get full metadata from file ' + file);
       continue;
     }
-    const fmd: FullMetadata = md;
-    qwer1234!@#$%^&*
-    // Continue here:
-    // getOrNewArtist(db, fmd.primaryArtists
+    AddSongToDatabase(md, db);
   }
   return db;
 };
@@ -201,7 +248,6 @@ const isMusicType = (filename: string): boolean => {
     case '.aac':
       return true;
     default:
-      log(`Failed suffix: ${suffix}`);
       return false;
   }
 };
@@ -215,20 +261,32 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
   while (queue.length > 0) {
     const i = queue.pop();
     log(i);
-    const dirents = await fsp.readdir(i, { withFileTypes: true });
+    let dirents;
+    try {
+      dirents = await fsp.readdir(i, { withFileTypes: true });
+    } catch (e) {
+      log(`Unable to read ${i}`);
+      continue;
+    }
     for (let dirent of dirents) {
-      if (dirent.isSymbolicLink()) {
-        const ap = await fsp.realpath(path.join(i, dirent.name));
-        const st = await fsp.stat(ap);
-        if (st.isDirectory()) {
-          queue.push(ap);
-        } else if (st.isFile() && isMusicType(ap)) {
-          songsList.push(ap);
+      try {
+        if (dirent.isSymbolicLink()) {
+          const ap = await fsp.realpath(path.join(i, dirent.name));
+          const st = await fsp.stat(ap);
+          if (st.isDirectory()) {
+            queue.push(ap);
+          } else if (st.isFile() && isMusicType(ap)) {
+            songsList.push(ap);
+          }
+        } else if (dirent.isDirectory()) {
+          queue.push(path.join(i, dirent.name));
+        } else if (dirent.isFile() && isMusicType(dirent.name)) {
+          songsList.push(path.join(i, dirent.name));
         }
-      } else if (dirent.isDirectory()) {
-        queue.push(path.join(i, dirent.name));
-      } else if (dirent.isFile() && isMusicType(dirent.name)) {
-        songsList.push(path.join(i, dirent.name));
+        // TODO: Maybe look for album cover art, too
+      } catch (e) {
+        log(`Unable to process ${dirent}`);
+        continue;
       }
     }
   }
