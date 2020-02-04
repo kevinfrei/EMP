@@ -5,7 +5,7 @@ const path = require('path');
 const logger = require('simplelogger');
 const metadata = require('media-utils').Metadata;
 const log = logger.bind('music');
-logger.enable('music');
+//logger.enable('music');
 
 import type { FullMetadata } from 'media-utils';
 
@@ -192,7 +192,7 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
     }
   }
   const theSong: Song = {
-    URL: md.OriginalPath,
+    URL: `file://${md.OriginalPath}`,
     artistIds,
     secondaryIds,
     albumId: album.key,

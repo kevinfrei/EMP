@@ -1,12 +1,25 @@
 // @flow
 import React from 'react';
 import Store from '../MyStore';
+import Amplitude from 'amplitudejs';
 
 const MixedSongLine = ({ song, album }) => (
-  <div>
-    <span>
-      {song.track} - {song.title}
-    </span>
+  <div
+    onClick={() => {
+      const songs = Amplitude.getSongs();
+      for (let i = 0; i < songs.length; i++) {
+        Amplitude.removeSong(songs.length - 1 - i);
+      }
+      const index = Amplitude.addSong({
+        name: song.title,
+        album: album.title,
+        url: `tune://song/${song.key}`
+      });
+      Amplitude.playSongAtIndex(index);
+    }}
+  >
+    <div>{`${album.title} - ${song.track} - ${song.title}`}</div>
+    <div>{`${song.key}: ${song.URL}`}</div>
   </div>
 );
 

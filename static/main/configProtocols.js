@@ -4,6 +4,9 @@ const path = require('path');
 const { protocol } = require('electron');
 const logger = require('simplelogger');
 
+const persist = require('./persist');
+
+import type { MusicDB } from './music';
 /*
 protocol.registerSchemesAsPrivileged([
   { scheme: 'pic', privileges: { standard: true, secure: true } },
@@ -11,14 +14,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 */
 const log = logger.bind('configProtocols');
-logger.disable('configProtocols');
-
-const songs: string[] = [
-  '09 - 7empest.flac',
-  '02 - Pneuma.flac',
-  '04 - Invincible.flac',
-  '01 - Fear Inoculum.flac'
-];
+logger.enable('configProtocols');
 
 const configureProtocols = () => {
   protocol.registerFileProtocol('pic', (req, callback) => {
@@ -41,10 +37,10 @@ const configureProtocols = () => {
     if (!req.url) {
       callback({ error: -324 });
     } else if (req.url.startsWith('tune://song/')) {
-      const val = req.url.charCodeAt(12) % songs.length;
-      const thePath =
-        '/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tool - 2019 - Fear Inoculum/High/' +
-        songs[val];
+      const key = req.url.substring(12);
+      const db: MusicDB = persist.getItem('DB');
+      const song = db.songs.get(key);
+      const thePath = song.URL;
       log('Returning path ' + thePath);
       callback({ path: thePath });
     } else {

@@ -19,36 +19,7 @@ window.initApp = () => {
   if (root) {
     ReactDOM.render(<App />, root);
     Amplitude.init({
-      songs: [
-        {
-          name: 'Song 0',
-          artist: 'Artist 0',
-          album: 'Album 0',
-          url: 'tune://song/0.flac',
-          cover_art_url: 'pic://album/1.png'
-        },
-        {
-          name: 'Song 1',
-          artist: 'Artist 1',
-          album: 'Album 1',
-          url: 'tune://song/1.flac',
-          cover_art_url: 'pic://album/1.png'
-        },
-        {
-          name: 'Song 2',
-          artist: 'Artist 2',
-          album: 'Album 2',
-          url: 'tune://song/2.flac',
-          cover_art_url: 'pic://album/1.png'
-        },
-        {
-          name: 'Song 3',
-          artist: 'Artist 3',
-          album: 'Album 3',
-          url: 'tune://song/3.flac',
-          cover_art_url: 'pic://album/1.png'
-        }
-      ],
+      songs: [],
       default_album_art: 'pic://pic/img-album.svg',
       debug: true
     });
