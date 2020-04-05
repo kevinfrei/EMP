@@ -12,17 +12,17 @@
   "homepage": "./",
   "dependencies": {
     "amplitudejs": "^5.0.3",
-    "electron-is-dev": "^1.1.0",
+    "electron-is-dev": "^1.2.0",
     "media-utils": "../modules/media-utils",
-    "music-metadata": "^6.3.0",
+    "music-metadata": "^6.3.7",
     "my-utils": "../modules/js-freik-utils",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-scripts": "3.3.0",
-    "rxjs": "^6.5.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1",
+    "rxjs": "^6.5.5",
     "simplelogger": "file:../modules/simplelogger",
-    "source-map-explorer": "^2.2.2",
-    "undux": "^5.0.1"
+    "source-map-explorer": "^2.4.2",
+    "undux": "^5.2.0"
   },
   "scripts": {
     "analyze": "yarn react-scripts build && yarn source-map-explorer 'build/static/js/*.js'",
@@ -49,17 +49,17 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.8.3",
-    "babel-jest": "^24.9.0",
-    "concurrently": "^5.0.2",
-    "cross-env": "^6.0.0",
-    "electron": "^7.1.9",
-    "electron-builder": "^22.2.0",
+    "@babel/core": "^7.9.0",
+    "babel-jest": "^25.2.6",
+    "concurrently": "^5.1.0",
+    "cross-env": "^7.0.2",
+    "electron": "^8.2.0",
+    "electron-builder": "^22.4.1",
     "electron-devtools-installer": "^2.2.4",
-    "flow-bin": "^0.116.1",
-    "flow-remove-types": "^2.116.1",
-    "jest": "^24.9.0",
-    "typescript": "^3.7.5",
-    "wait-on": "^3.3.0"
+    "flow-bin": "^0.122.0",
+    "flow-remove-types": "^2.122.0",
+    "jest": "^25.2.7",
+    "typescript": "^3.8.3",
+    "wait-on": "^4.0.1"
   }
 }
