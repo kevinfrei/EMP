@@ -13,14 +13,14 @@
   "dependencies": {
     "amplitudejs": "^5.0.3",
     "electron-is-dev": "^1.2.0",
-    "media-utils": "../modules/media-utils",
+    "media-utils": "file:./submodules/media-utils",
     "music-metadata": "^6.3.7",
-    "my-utils": "../modules/js-freik-utils",
+    "my-utils": "file:./submodules/js-freik-utils",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "rxjs": "^6.5.5",
-    "simplelogger": "file:../modules/simplelogger",
+    "simplelogger": "file:./submodules/simplelogger",
     "source-map-explorer": "^2.4.2",
     "undux": "^5.2.0"
   },

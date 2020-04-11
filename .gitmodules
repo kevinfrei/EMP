@@ -1,0 +1,15 @@
+[submodule "submodules/simplelogger"]
+	path = submodules/simplelogger
+	url = https://github.com/kevinfrei/simplelogger.git
+[submodule "submodules/media-utils"]
+	path = submodules/media-utils
+	url = https://github.com/kevinfrei/media-utils.git
+[submodule "submodules/js-freik-utils"]
+	path = submodules/js-freik-utils
+	url = https://github.com/kevinfrei/js-freik-utils.git
+[submodule "submodules/node-freik-utils"]
+	path = submodules/node-freik-utils
+	url = https://github.com/kevinfrei/node-freik-utils.git
+[submodule "submodules/build-tools"]
+	path = submodules/build-tools
+	url = https://github.com/kevinfrei/build-tools.git
