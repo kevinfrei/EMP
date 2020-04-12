@@ -2,16 +2,18 @@
 import React from 'react';
 import Store from '../MyStore';
 
-const MixedSongLine = ({ song, album }) => (
-  <div
-    onClick={() => {
-      return;
-    }}
-  >
-    <div>{`${album.title} - ${song.track} - ${song.title}`}</div>
-    <div>{`${song.key}: ${song.URL}`}</div>
-  </div>
-);
+const MixedSongLine = ({ song, album }) => {
+  const store = Store.useStore();
+  const setter = store.set('curSong');
+  return (
+    <div
+      onClick={() => setter(song.key)}
+    >
+      <div>{`${album.title} - ${song.track} - ${song.title}`}</div>
+      <div>{`${song.key}: ${song.URL}`}</div>
+    </div>
+  );
+};
 
 const MixedSongsView = () => {
   let store = Store.useStore();

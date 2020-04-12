@@ -123,13 +123,9 @@ const ConfigureIPC = (store: Store<State>) => {
     }
   });
   window.ipc.on('data', (event: IpcRendererEvent, message: string) => {
-    log('Async data message from main:');
-    log(`Message: '${message}'`);
     DataFromMainHandler(store, message);
   });
   window.ipc.on('store', (event: IpcRendererEvent, message: string) => {
-    log('Async store message from main:');
-    log(`Message: '${message}'`);
     StoreFromMainHandler(store, message);
   });
   window.ipc.send('get', 'locations');

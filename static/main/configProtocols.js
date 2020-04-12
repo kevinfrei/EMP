@@ -21,14 +21,17 @@ const configureProtocols = () => {
     log('pic URL request:');
     log(req);
     if (!req.url) {
+      log('No URL specified in pic request');
       callback({ error: -324 });
     } else if (req.url.startsWith('pic://album/')) {
-      callback({
-        path:
-          '/Volumes/Thunderbolt/Audio/Sorted/Accurate/Tool - 2019 - Fear Inoculum/High/Cover.png'
-      });
+      // TODO: Make this work
+      const thePath = path.join(__dirname, '..', 'img-album.svg');
+      log(`Album cover pic:// Returning ${thePath}`);
+      callback({ path: thePath });
     } else {
-      callback({ path: path.join(__dirname, 'img-album.svg') });
+      const thePath = path.join(__dirname, '..', 'img-album.svg');
+      log(`Non-album cover pic:// Returning ${thePath}`);
+      callback({ path: thePath });
     }
   });
   protocol.registerFileProtocol('tune', (req, callback) => {
@@ -41,8 +44,9 @@ const configureProtocols = () => {
       const db: MusicDB = persist.getItem('DB');
       const song = db.songs.get(key);
       const thePath = song.URL;
-      log('Returning path ' + thePath);
-      callback({ path: thePath });
+      if (thePath.startsWith('file://')) {
+      log('Returning path ' + thePath.substr(7));
+      callback({ path: thePath.substr(7) });}
     } else {
       callback({ error: 404 });
     }

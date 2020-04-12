@@ -50,7 +50,8 @@ export type State = {|
   // Just a list of paths to search for music
   locations: Array<string>,
   // This is about the actual stuff on screen
-  curView: ViewNames // Which view is selected
+  curView: ViewNames, // Which view is selected
+  curSong: string // the current song key
 |};
 
 let initialState: State = {
@@ -59,7 +60,8 @@ let initialState: State = {
   Songs: new Map(),
   Playlists: new Map(),
   locations: [],
-  curView: 'none'
+  curView: 'none',
+  curSong: ''
 };
 
 export const ValidKeyNames = [
@@ -68,7 +70,8 @@ export const ValidKeyNames = [
   'Songs',
   'Playlists',
   'locations',
-  'curView'
+  'curView',
+  'curSong'
 ];
 export default createConnectedStore<State>(initialState);
 

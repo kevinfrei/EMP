@@ -175,6 +175,7 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
   // Check Trent Reznor & Atticus Ross for an example where it kinda matters
   const artist: Artist = getOrNewArtist(db, md.Artist);
   const artistSet: Set<ArtistKey> = new Set();
+  const allArtists: Array<Artist> = [artist];
   artistSet.add(artist.key);
   const album = getOrNewAlbum(
     db,
@@ -187,7 +188,8 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
   const secondaryIds: Array<ArtistKey> = [];
   if (md.MoreArtists) {
     for (let sa of md.MoreArtists) {
-      const moreArt = getOrNewArtist(db, sa);
+      const moreArt: Artist = getOrNewArtist(db, sa);
+      allArtists.push(moreArt);
       secondaryIds.push(moreArt.key);
     }
   }
@@ -201,6 +203,7 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
     key: newSongKey()
   };
   album.songs.push(theSong.key);
+  allArtists.forEach((artist) => artist.songs.push(theSong.key));
   db.songs.set(theSong.key, theSong);
 };
 
