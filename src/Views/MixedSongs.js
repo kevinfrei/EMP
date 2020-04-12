@@ -1,21 +1,11 @@
 // @flow
 import React from 'react';
 import Store from '../MyStore';
-import Amplitude from 'amplitudejs';
 
 const MixedSongLine = ({ song, album }) => (
   <div
     onClick={() => {
-      const songs = Amplitude.getSongs();
-      for (let i = 0; i < songs.length; i++) {
-        Amplitude.removeSong(songs.length - 1 - i);
-      }
-      const index = Amplitude.addSong({
-        name: song.title,
-        album: album.title,
-        url: `tune://song/${song.key}`
-      });
-      Amplitude.playSongAtIndex(index);
+      return;
     }}
   >
     <div>{`${album.title} - ${song.track} - ${song.title}`}</div>
@@ -49,7 +39,7 @@ const MixedSongsView = () => {
   });
   return (
     <div>
-      {sng.map(s => (
+      {sng.map((s) => (
         <MixedSongLine key={s.key} song={s} album={albums.get(s.albumId)} />
       ))}
     </div>

@@ -59,7 +59,7 @@
   -webkit-app-region: drag;
 }
 
-.amplitude-song-slider {
+#song-slider {
   grid-row: 3;
   grid-column: 2 / 5;
 }

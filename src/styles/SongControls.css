@@ -9,7 +9,7 @@
   grid-template-rows: 36px;
 }
 /* Play/Pause */
-.amplitude-play-pause {
+#play-pause {
   width: 24px;
   height: 24px;
   cursor: pointer;
@@ -17,17 +17,17 @@
   align-self: center;
   justify-self: center;
 }
-.amplitude-play-pause.amplitude-paused {
+#play-pause.paused {
   background: url('../img/play.svg');
   background-size: cover;
 }
-.amplitude-play-pause.amplitude-playing {
+#play-pause.playing {
   background: url('../img/pause.svg');
   background-size: cover;
 }
 /* Next & Previous */
-.amplitude-next,
-.amplitude-prev {
+#next,
+#prev {
   width: 20px;
   height: 20px;
   cursor: pointer;
@@ -37,33 +37,33 @@
   align-self: center;
   justify-self: center;
 }
-.amplitude-prev {
+#prev {
   grid-column: 2;
 }
-.amplitude-next {
+#next {
   grid-column: 4;
   transform: scaleX(-1);
 }
 /* Repeat & Shuffle stuff */
-.amplitude-repeat,
-.amplitude-shuffle {
+#repeat,
+#shuffle {
   width: 10px;
   height: 10px;
   cursor: pointer;
   align-self: center;
   justify-self: center;
 }
-.amplitude-shuffle {
+#shuffle {
   grid-column: 1;
   background: url('../img/shuffle.svg');
   background-size: contain;
 }
-.amplitude-repeat {
+#repeat {
   grid-column: 5;
   background: url('../img/repeat.svg');
   background-size: contain;
 }
-.amplitude-shuffle-off,
-.amplitude-repeat-off {
+.shuffle-off,
+.repeat-off {
   filter: opacity(25%);
 }

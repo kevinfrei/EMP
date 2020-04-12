@@ -11,7 +11,6 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "amplitudejs": "^5.0.3",
     "electron-is-dev": "^1.2.0",
     "media-utils": "file:./submodules/media-utils",
     "music-metadata": "^6.3.7",
@@ -50,7 +49,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
-    "babel-jest": "^25.3.0",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
     "electron": "^8.2.1",
@@ -58,7 +56,6 @@
     "electron-devtools-installer": "^3.0.0",
     "flow-bin": "^0.122.0",
     "flow-remove-types": "^2.122.0",
-    "jest": "^25.3.0",
     "typescript": "^3.8.3",
     "wait-on": "^4.0.2"
   }
