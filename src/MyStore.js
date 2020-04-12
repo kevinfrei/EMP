@@ -8,26 +8,29 @@ export type AlbumKey = string;
 export type ArtistKey = string;
 
 export type Song = {|
-  Track: number,
-  Name: string,
-  Artist: number,
-  Album: number,
-  key: SongKey
+  key: SongKey,
+  track: number,
+  title: string,
+  URL: string,
+  albumId: AlbumKey,
+  artistIds: Array<ArtistKey>,
+  secondaryIds: Array<ArtistKey>,
 |};
 
 export type Artist = {|
-  Name: string,
-  Albums: Array<AlbumKey>,
-  Songs: Array<SongKey>,
-  key: ArtistKey
+  key: ArtistKey,
+  name: string,
+  albums: Array<AlbumKey>,
+  aongs: Array<SongKey>,
 |};
 
 export type Album = {|
-  Name: string,
-  Year: number,
-  PrimaryArtist: ArtistKey,
-  Songs: Array<SongKey>,
-  key: AlbumKey
+  key: AlbumKey,
+  year: number,
+  title: string,
+  vatype: string,
+  primaryArtists: Set<ArtistKey>,
+  songs: Array<SongKey>,
 |};
 
 export type ViewNames =
@@ -51,7 +54,8 @@ export type State = {|
   locations: Array<string>,
   // This is about the actual stuff on screen
   curView: ViewNames, // Which view is selected
-  curSong: string // the current song key
+  curSong: string, // the current song key
+  playing: boolean, // is a song currently playing?
 |};
 
 let initialState: State = {
@@ -61,7 +65,8 @@ let initialState: State = {
   Playlists: new Map(),
   locations: [],
   curView: 'none',
-  curSong: ''
+  curSong: '',
+  playing: false,
 };
 
 export const ValidKeyNames = [
@@ -71,13 +76,58 @@ export const ValidKeyNames = [
   'Playlists',
   'locations',
   'curView',
-  'curSong'
+  'curSong',
+  'playing',
 ];
+
 export default createConnectedStore<State>(initialState);
+
+export const GetDataForSong = (
+  store,
+  sk: SongKey
+): { title: string, artist: string, album: string } => {
+  let res = { title: '-', artist: '-', album: '-' };
+  const allSongs: ?Map<SongKey, Song> = store.get('Songs');
+  if (!allSongs) {
+    return res;
+  }
+  const song: ?Song = allSongs.get(sk);
+  if (!song) {
+    return res;
+  }
+  res.title = song.title;
+  const allAlbums: ?Map<AlbumKey, Album> = store.get('Albums');
+  if (!allAlbums) {
+    return res;
+  }
+  const album: ?Album = allAlbums.get(song.albumId);
+  if (album) {
+    res.album = album.title;
+  }
+  const allArtists: ?Map<ArtistKey, Artist> = store.get('Artists');
+  if (!allArtists) {
+    return res;
+  }
+  const artists: Array<string> = song.artistIds
+    .map((ak) => {
+      const art: ?Artist = allArtists.get(ak);
+      return art ? art.name : '';
+    })
+    .filter((a) => a.length > 0);
+  let artist = '';
+  if (artists.length === 1) {
+    artist = artists[0];
+  } else {
+    artist = ' & ' + artists.pop();
+    artist = artists.join(', ') + artist;
+  }
+  res.artist = artist;
+  return res;
+};
 
 // Docs say: Ignore this if you're using React Hooks
 export type StoreProps = {|
-  store: Store<State>
+  store: Store<State>,
 |};
 
 export type StoreEffects = Effects<State>;
