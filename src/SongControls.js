@@ -22,7 +22,7 @@ const SongControls = () => {
           const ae = document.querySelector('#audioElement');
           if (playing === 'playing') {
             ae.pause();
-          } else {
+          } else if (ae.readyState === 4) {
             ae.play();
           }
 //          ae.ended bool

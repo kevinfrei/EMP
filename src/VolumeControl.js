@@ -7,7 +7,10 @@ import './styles/VolumeControl.css';
 
 const VolumeControl = () => (
   <span id="volume-container">
-    <span id="mute"></span>
+    <span id="mute" onClick={(ev) => {
+      const ae = document.getElementById('audioElement');
+      ae.muted = !ae.muted;
+    }}>&nbsp;</span>
     <input
       type="range"
       id="volume-slider"
@@ -16,8 +19,9 @@ const VolumeControl = () => (
       defaultValue={0.8}
       step={.01}
       onChange={(ev) => {
-        const ae = document.querySelector('#audioElement');
+        const ae = document.getElementById('audioElement');
         ae.volume = ev.target.valueAsNumber;
+        ae.muted = false;
       }}
     />
   </span>

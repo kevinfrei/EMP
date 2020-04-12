@@ -51,25 +51,35 @@ const init = async () => {
     persist.setItem('DB', musicDB);
   }
 };
-let val = 0;
+
+let win = null;
+
+const SendDatabase = () => {
+  if (win === null) {
+    setTimeout(SendDatabase, 50);
+    return;
+  }
+  win.webContents.send(
+    'data',
+    FTON.stringify({ key: 'Albums', value: musicDB.albums })
+  );
+  win.webContents.send(
+    'data',
+    FTON.stringify({ key: 'Songs', value: musicDB.songs })
+  );
+  win.webContents.send(
+    'data',
+    FTON.stringify({ key: 'Artists', value: musicDB.artists })
+  );
+};
+
 const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   // Initialize stuff now
   init()
     .then(() => {
-      window.webContents.send(
-        'data',
-        FTON.stringify({ key: 'Albums', value: musicDB.albums })
-      );
-      window.webContents.send(
-        'data',
-        FTON.stringify({ key: 'Songs', value: musicDB.songs })
-      );
-      window.webContents.send(
-        'data',
-        FTON.stringify({ key: 'Artists', value: musicDB.artists })
-      );
+      win = window;
     })
-    .catch(e => {
+    .catch((e) => {
       console.error(e);
       window.webContents.send('data', '{"error":"loading"}');
     });
@@ -96,6 +106,8 @@ comms.forEach(<T>(val: MessageHandler<T>) => {
     }
   });
 });
+
+ipcMain.on('GetDatabase', SendDatabase);
 
 // messages to send to the client:
 // 'data', JSON of data sending

@@ -129,6 +129,7 @@ const ConfigureIPC = (store: Store<State>) => {
     StoreFromMainHandler(store, message);
   });
   window.ipc.send('get', 'locations');
+  window.ipc.send('GetDatabase', 'GetDatabase');
 };
 
 export { ConfigureIPC };
