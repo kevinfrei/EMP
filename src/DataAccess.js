@@ -2,13 +2,13 @@
 
 import Store from './MyStore';
 
-import type { StoreState, SongKey } from './MyStore';
+import type { StoreState, SongKey, Song } from './MyStore';
 
 export const GetDataForSong = (
   store: StoreState,
   sk: SongKey
-): { title: string, artist: string, album: string } => {
-  let res = { title: '-', artist: '-', album: '-' };
+): { title: string, track: number, artist: string, album: string } => {
+  let res = { title: '-', track: 0, artist: '-', album: '-' };
   const allSongs: ?Map<SongKey, Song> = store.get('Songs');
   if (!allSongs) {
     return res;
@@ -18,6 +18,7 @@ export const GetDataForSong = (
     return res;
   }
   res.title = song.title;
+  res.track = song.track;
   const allAlbums: ?Map<AlbumKey, Album> = store.get('Albums');
   if (!allAlbums) {
     return res;

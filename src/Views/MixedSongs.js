@@ -1,16 +1,15 @@
 // @flow
 import React from 'react';
 import Store from '../MyStore';
+import { GetDataForSong } from '../DataAccess';
 
-const MixedSongLine = ({ song, album }) => {
+const MixedSongLine = ({ songKey }) => {
   const store = Store.useStore();
   const setter = store.set('curSong');
+  const { title, track, album, artist } = GetDataForSong(store, songKey);
   return (
-    <div
-      onClick={() => setter(song.key)}
-    >
-      <div>{`${album.title} - ${song.track} - ${song.title}`}</div>
-      <div>{`${song.key}: ${song.URL}`}</div>
+    <div onClick={() => setter(songKey)}>
+      <div>{`${artist} - ${album}: ${track} - ${title}`}</div>
     </div>
   );
 };
@@ -34,15 +33,15 @@ const MixedSongsView = () => {
     if (res !== 0) {
       return res;
     }
-    if (a.Track === b.Track) {
+    if (a.track === b.track) {
       return 0;
     }
-    return a.Track < b.Track ? 1 : -1;
+    return a.track < b.track ? -1 : 1;
   });
   return (
     <div>
       {sng.map((s) => (
-        <MixedSongLine key={s.key} song={s} album={albums.get(s.albumId)} />
+        <MixedSongLine key={s.key} songKey={s.key} />
       ))}
     </div>
   );
