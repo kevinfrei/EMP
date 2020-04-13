@@ -5,7 +5,7 @@ import Store from '../MyStore';
 import { GetDataForSong } from '../DataAccess';
 import { PlayingPlaylist, GetSongKey, PlaySongNumber } from '../Playlist';
 
-import type { SongKey, Song, PlaySet } from '../MyStore';
+import type { PlaySet } from '../MyStore';
 
 import './styles/NowPlaying.css';
 

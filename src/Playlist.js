@@ -6,7 +6,6 @@ import { StartSongPlaying } from './SongPlayback';
 import type { Store } from 'undux';
 import type {
   State,
-  Song,
   SongKey,
   PlaySet,
   Album,
@@ -95,14 +94,14 @@ const AddSongList = (store: Store<State>, keys: Array<SongKey>) => {
 };
 
 export const AddAlbum = (store: Store<State>, key: AlbumKey) => {
-  const album = store.get('Albums').get(key);
+  const album:?Album = store.get('Albums').get(key);
   if (album) {
     AddSongList(store, album.songs);
   }
 };
 
 export const AddArtist = (store: Store<State>, key: ArtistKey) => {
-  const artist = store.get('Artists').get(key);
+  const artist:?Artist = store.get('Artists').get(key);
   if (artist) {
     AddSongList(store, artist.songs);
   }
@@ -138,7 +137,6 @@ export const ShuffleNowPlaying = (store: Store<State>) => {
   if (nowPlaying.pos < 0) {
     nowPlaying.songs = ShuffleArray(nowPlaying.songs);
   } else {
-    const curPlaying = nowPlaying.pos;
     // if we're currently playing something, remove it from the array
     const curKey = nowPlaying.songs[nowPlaying.pos];
     nowPlaying.songs.splice(nowPlaying.pos, 1);
