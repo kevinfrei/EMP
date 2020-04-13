@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Store from '../MyStore';
 import { GetDataForSong } from '../DataAccess';
-import { PlayingPlaylist, GetSongKey } from '../Playlist';
+import { PlayingPlaylist, GetSongKey, PlaySongNumber } from '../Playlist';
 
 import type { SongKey, Song, PlaySet } from '../MyStore';
 
@@ -22,6 +22,7 @@ const NowPlaying = () => {
           idx === nowPlaying.pos ? 'currently-playing' : 'sitting-in-list'
         }
         key={idx}
+        onDoubleClick={() => PlaySongNumber(store, idx)}
       >{`${album} (${artist}) ${track}: ${title}`}</div>
     );
   });

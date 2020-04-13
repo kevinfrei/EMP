@@ -2,15 +2,18 @@
 
 import React from 'react';
 import Store from '../MyStore';
+import { AddAlbum } from '../Playlist';
 
-const SingleAlbum = ({ album }) => (
-  <div>
-    <span>{album.title}</span>
-    {':'}
-    <span>{album.year}</span>
-  </div>
-);
-
+const SingleAlbum = ({ album }) => {
+  const store = Store.useStore();
+  return (
+    <div onDoubleClick={() => AddAlbum(store, album.key)}>
+      <span>{album.title}</span>
+      {':'}
+      <span>{album.year}</span>
+    </div>
+  );
+};
 const Albums = () => {
   let store = Store.useStore();
   const albums = store.get('Albums');
@@ -20,7 +23,7 @@ const Albums = () => {
   );
   return (
     <div>
-      {alb.map(album => (
+      {alb.map((album) => (
         <SingleAlbum key={album.key} album={album} />
       ))}
     </div>

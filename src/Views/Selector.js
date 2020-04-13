@@ -8,6 +8,7 @@ import MixedSongsView from './MixedSongs';
 import RecentlyAddedView from './RecentlyAdded';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
+import PlaylistsView from './Playlists';
 import Store from '../MyStore';
 
 import './styles/Selector.css';
@@ -26,7 +27,7 @@ const ViewSelector = () => {
       res = <ArtistsView />;
       break;
     case 'playlist':
-      res = <MixedSongsView />;
+      res = <PlaylistsView />;
       break;
     case 'song':
       res = <MixedSongsView />;

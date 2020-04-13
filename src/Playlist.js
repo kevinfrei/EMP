@@ -4,7 +4,16 @@ import ShuffleArray from './ShuffleArray';
 import { StartSongPlaying } from './SongPlayback';
 
 import type { Store } from 'undux';
-import type { State, Song, SongKey, PlaySet } from './MyStore';
+import type {
+  State,
+  Song,
+  SongKey,
+  PlaySet,
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+} from './MyStore';
 
 // Playlists are a named ordered (?) list of songs
 // Literally: Map<string, Array<SongKey>>
@@ -13,6 +22,25 @@ import type { State, Song, SongKey, PlaySet } from './MyStore';
 // a position into that list of offsets
 // { name: string, position: number, songList: Array<number> }
 // This allows for shuffling & repeating
+
+export const GetSongKey = (
+  store: Store<State>,
+  playing: PlaySet,
+  pos: number
+): SongKey => {
+  const next = playing.songs[pos];
+  if (typeof next === 'string') {
+    return next;
+  } else {
+    const list = store.get('Playlists').get(playing.name);
+    if (!list) {
+      // We didn't find the playlist
+      console.log('Attempting to play from a non-existent playlist');
+      return '';
+    }
+    return list[next];
+  }
+};
 
 export const PlayingPlaylist = (playSet: PlaySet) => playSet.name.length !== 0;
 
@@ -31,15 +59,53 @@ export const PlaySong = (store: Store<State>, key: SongKey) => {
   StartSongPlaying(store, key);
 };
 
+export const PlaySongNumber = (store: Store<State>, index: number) => {
+  const nowPlaying = store.get('nowPlaying');
+  nowPlaying.pos = index;
+  store.set('nowPlaying')(nowPlaying);
+  StartSongPlaying(store, GetSongKey(store, nowPlaying, index));
+};
+
+const JustAddSong = (store: Store<State>, key: SongKey) => {
+  const nowPlaying = store.get('nowPlaying');
+  nowPlaying.songs.push(key);
+  store.set('nowPlaying')(nowPlaying);
+};
+
 // Just add a specific song to the now playing set
 export const AddSong = (store: Store<State>, key: SongKey) => {
   const nowPlaying = store.get('nowPlaying');
   nowPlaying.songs.push(key);
-  if (store.get('curSong') === '') {
+  if (store.get('curSong') === '' || nowPlaying.pos < 0) {
     nowPlaying.pos = nowPlaying.songs.length - 1;
     StartSongPlaying(store, key);
   }
   store.set('nowPlaying')(nowPlaying);
+};
+
+const AddSongList = (store: Store<State>, keys: Array<SongKey>) => {
+  const nowPlaying = store.get('nowPlaying');
+  const prevPos = nowPlaying.pos;
+  keys.forEach((k) => JustAddSong(store, k));
+  if (store.get('curSong') === '' || prevPos < 0) {
+    nowPlaying.pos = Math.max(prevPos, 0);
+    const key = GetSongKey(store, nowPlaying, nowPlaying.pos);
+    StartSongPlaying(store, key);
+  }
+};
+
+export const AddAlbum = (store: Store<State>, key: AlbumKey) => {
+  const album = store.get('Albums').get(key);
+  if (album) {
+    AddSongList(store, album.songs);
+  }
+};
+
+export const AddArtist = (store: Store<State>, key: ArtistKey) => {
+  const artist = store.get('Artists').get(key);
+  if (artist) {
+    AddSongList(store, artist.songs);
+  }
 };
 
 // Adds a song to a specific playlist
@@ -62,25 +128,6 @@ export const AddToPlaylist = (
   if (nowPlaying.name === playlist) {
     nowPlaying.songs.push(index);
     store.set('nowPlaying')(nowPlaying);
-  }
-};
-
-export const GetSongKey = (
-  store: Store<State>,
-  playing: PlaySet,
-  pos: number
-): SongKey => {
-  const next = playing.songs[pos];
-  if (typeof next === 'string') {
-    return next;
-  } else {
-    const list = store.get('Playlists').get(playing.name);
-    if (!list) {
-      // We didn't find the playlist
-      console.log('Attempting to play from a non-existent playlist');
-      return '';
-    }
-    return list[next];
   }
 };
 

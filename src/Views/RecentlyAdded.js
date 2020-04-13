@@ -4,8 +4,9 @@ import React from 'react';
 
 const RecentlyAdded = () => (
   <>
-    <div>A recently added album</div>
-    <div>Another recently added album</div>
+    <div>Not</div>
+    <div>Yet</div>
+    <div>Implemented</div>
   </>
 );
 

@@ -2,9 +2,13 @@
 
 import React from 'react';
 import Store from '../MyStore';
-
-const SingleArtist = ({ artist }) => <div>{artist.name}</div>;
-
+import { AddArtist } from '../Playlist';
+const SingleArtist = ({ artist }) => {
+  const store = Store.useStore();
+  return (
+    <div onDoubleClick={() => AddArtist(store, artist.key)}>{artist.name}</div>
+  );
+};
 const Artists = () => {
   let store = Store.useStore();
   const artists = store.get('Artists');
