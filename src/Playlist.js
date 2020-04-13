@@ -77,9 +77,6 @@ export const GetSongKey = (
     }
     return list[next];
   }
-  console.log('Unable to get the song key ${pos} from:');
-  console.log(playing);
-  return '';
 };
 
 // Moves the current playset forward

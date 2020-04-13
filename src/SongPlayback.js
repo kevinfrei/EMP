@@ -4,6 +4,7 @@
 import React, { useState } from 'react';
 import Store from './MyStore';
 import { GetDataForSong } from './DataAccess';
+import { StartNextSong } from './Playlist';
 
 import './styles/SongPlayback.css';
 
@@ -66,6 +67,7 @@ const SongPlayback = () => {
         src={'tune://song/' + songKey}
         onPlay={() => playing(true)}
         onPause={() => playing(false)}
+        onEnded={() => StartNextSong(store)}
       />
     );
     picUrl = 'pic://album/' + songKey;
