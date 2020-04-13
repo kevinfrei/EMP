@@ -6,7 +6,7 @@ import Store from '../MyStore';
 import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
 
-import './Settings.css';
+import './styles/Settings.css';
 
 const removeFromSet = (set: Array<string>, val: string): Array<string> => {
   const newSet = new Set(set);

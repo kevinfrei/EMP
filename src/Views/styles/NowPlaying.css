@@ -1,0 +1,12 @@
+.header {
+  font-weight: bold;
+  font-size: larger;
+}
+
+.currently-playing {
+  font-weight: bold;
+}
+
+.sitting-in-list {
+  font-weight: normal;
+}

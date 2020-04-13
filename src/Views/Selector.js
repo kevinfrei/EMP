@@ -10,7 +10,7 @@ import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
 import Store from '../MyStore';
 
-import './Selector.css';
+import './styles/Selector.css';
 
 import type { ViewNames } from '../MyStore';
 

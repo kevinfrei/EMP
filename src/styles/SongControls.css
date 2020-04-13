@@ -63,7 +63,9 @@
   background: url('../img/repeat.svg');
   background-size: contain;
 }
-.shuffle-off,
-.repeat-off {
+.disabled {
   filter: opacity(25%);
+}
+.enabled {
+  filter: opacity(100%);
 }

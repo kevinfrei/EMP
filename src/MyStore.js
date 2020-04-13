@@ -33,6 +33,12 @@ export type Album = {|
   songs: Array<SongKey>,
 |};
 
+export type PlaySet = {|
+  name: string,
+  pos: number,
+  songs: Array<number | SongKey>,
+|};
+
 export type ViewNames =
   | 'none'
   | 'recent'
@@ -56,6 +62,9 @@ export type State = {|
   curView: ViewNames, // Which view is selected
   curSong: SongKey, // the current song key
   playing: boolean, // is a song currently playing?
+  shuffle: boolean,
+  repeat: boolean, // Have I ever wanted "repeat 1 song"? No. I have not.
+  nowPlaying: PlaySet, // What's currently playing
 |};
 
 let initialState: State = {
@@ -67,6 +76,9 @@ let initialState: State = {
   curView: 'song',
   curSong: '',
   playing: false,
+  shuffle: false,
+  repeat: false,
+  nowPlaying: { name: '', pos: -1, songs: [] },
 };
 
 export const ValidKeyNames = [
