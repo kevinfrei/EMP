@@ -2,19 +2,15 @@
 import React from 'react';
 import Store from '../MyStore';
 import { GetDataForSong } from '../DataAccess';
-import { PlaySong, AddSong } from '../Playlist';
+import { AddSong } from '../Playlist';
 
 import type { SongKey, Song } from '../MyStore';
 
 const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
   const store = Store.useStore();
-  const setter = store.set('curSong');
   const { title, track, album, artist } = GetDataForSong(store, songKey);
   return (
-    <div
-      onDoubleClick={() => PlaySong(store, songKey)}
-      onClick={() => AddSong(store, songKey)}
-    >
+    <div onDoubleClick={() => AddSong(store, songKey)}>
       <div>{`${artist} - ${album}: ${track} - ${title}`}</div>
     </div>
   );

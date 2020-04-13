@@ -6,6 +6,8 @@ import Store from './MyStore';
 import { GetDataForSong } from './DataAccess';
 import { StartNextSong } from './Playlist';
 
+import type { State } from './MyStore';
+
 import './styles/SongPlayback.css';
 
 const secondsToTime = (val: number): string => {
@@ -47,6 +49,17 @@ window.positionInterval = setInterval(() => {
     }
   }
 }, 250);
+
+export const StartSongPlaying = (store: Store<State>, key: SongKey) => {
+  const changing = store.get('curSong') !== key;
+  store.set('curSong')(key);
+  if (changing) {
+    return;
+  }
+  const ae = document.getElementById('audioElement');
+  ae.currentTime = 0;
+  ae.play();
+};
 
 const SongPlayback = () => {
   const [, setPos] = useState('songPos');

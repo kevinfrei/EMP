@@ -1,6 +1,7 @@
 // @flow
 // @format
 import ShuffleArray from './ShuffleArray';
+import { StartSongPlaying } from './SongPlayback';
 
 import type { Store } from 'undux';
 import type { State, Song, SongKey, PlaySet } from './MyStore';
@@ -18,7 +19,6 @@ export const PlayingPlaylist = (playSet: PlaySet) => playSet.name.length !== 0;
 // If a playlist is playing, clear the playlist
 // If a playlist isn't playing, prepend to the nowPlaying list
 export const PlaySong = (store: Store<State>, key: SongKey) => {
-  store.set('curSong')(key);
   const nowPlaying = store.get('nowPlaying');
   if (PlayingPlaylist(nowPlaying)) {
     nowPlaying.songs = [key];
@@ -28,12 +28,17 @@ export const PlaySong = (store: Store<State>, key: SongKey) => {
   }
   nowPlaying.pos = 0;
   store.set('nowPlaying')(nowPlaying);
+  StartSongPlaying(store, key);
 };
 
 // Just add a specific song to the now playing set
 export const AddSong = (store: Store<State>, key: SongKey) => {
   const nowPlaying = store.get('nowPlaying');
   nowPlaying.songs.push(key);
+  if (store.get('curSong') === '') {
+    nowPlaying.pos = nowPlaying.songs.length - 1;
+    StartSongPlaying(store, key);
+  }
   store.set('nowPlaying')(nowPlaying);
 };
 
@@ -79,6 +84,23 @@ export const GetSongKey = (
   }
 };
 
+// This shuffles now playing without changing what's currently playing
+export const ShuffleNowPlaying = (store: Store<State>) => {
+  const nowPlaying = store.get('nowPlaying');
+  // Special casing this makes things much easier:
+  if (nowPlaying.pos < 0) {
+    nowPlaying.songs = ShuffleArray(nowPlaying.songs);
+  } else {
+    const curPlaying = nowPlaying.pos;
+    // if we're currently playing something, remove it from the array
+    const curKey = nowPlaying.songs[nowPlaying.pos];
+    nowPlaying.songs.splice(nowPlaying.pos, 1);
+    nowPlaying.songs = [curKey, ...ShuffleArray(nowPlaying.songs)];
+    nowPlaying.pos = 0;
+  }
+  store.set('nowPlaying')(nowPlaying);
+};
+
 // Moves the current playset forward
 // Should handle repeat & shuffle as well
 export const StartNextSong = (store: Store<State>) => {
@@ -101,8 +123,8 @@ export const StartNextSong = (store: Store<State>) => {
   }
   // K, we've got pos moved forward, let's queue up the song
   const songKey = GetSongKey(store, nowPlaying, nowPlaying.pos);
-  store.set('curSong')(songKey);
   store.set('nowPlaying')(nowPlaying);
+  StartSongPlaying(store, songKey);
 };
 
 // Moves the current playset backward
@@ -123,6 +145,6 @@ export const StartPrevSong = (store: Store<State>) => {
   }
   // K, we've got pos moved forward, let's queue up the song
   const songKey = GetSongKey(store, nowPlaying, nowPlaying.pos);
-  store.set('curSong')(songKey);
   store.set('nowPlaying')(nowPlaying);
+  StartSongPlaying(store, songKey);
 };

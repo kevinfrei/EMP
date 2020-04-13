@@ -3,7 +3,7 @@
 
 import React from 'react';
 import Store from './MyStore';
-import { StartNextSong, StartPrevSong } from './Playlist';
+import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from './Playlist';
 
 import './styles/SongControls.css';
 
@@ -18,7 +18,17 @@ const SongControls = () => {
   const repClass = rep ? 'enabled' : 'disabled';
   return (
     <span className="control-container">
-      <span id="shuffle" className={shufClass} onClick={() => shufSet(!shuf)}>
+      <span
+        id="shuffle"
+        className={shufClass}
+        onClick={() => {
+          if (!shuf) {
+            // If we're turning shuffle on, shuffle the Now Playing list
+            ShuffleNowPlaying(store);
+          }
+          shufSet(!shuf);
+        }}
+      >
         &nbsp;
       </span>
       <span id="prev" onClick={() => StartPrevSong(store)}>
