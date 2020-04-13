@@ -21,14 +21,14 @@ export type Artist = {|
   key: ArtistKey,
   name: string,
   albums: Array<AlbumKey>,
-  aongs: Array<SongKey>,
+  songs: Array<SongKey>,
 |};
 
 export type Album = {|
   key: AlbumKey,
   year: number,
   title: string,
-  vatype: string,
+  vatype: '' | 'va' | 'ost',
   primaryArtists: Set<ArtistKey>,
   songs: Array<SongKey>,
 |};
@@ -54,7 +54,7 @@ export type State = {|
   locations: Array<string>,
   // This is about the actual stuff on screen
   curView: ViewNames, // Which view is selected
-  curSong: string, // the current song key
+  curSong: SongKey, // the current song key
   playing: boolean, // is a song currently playing?
 |};
 
@@ -64,7 +64,7 @@ let initialState: State = {
   Songs: new Map(),
   Playlists: new Map(),
   locations: [],
-  curView: 'none',
+  curView: 'song',
   curSong: '',
   playing: false,
 };

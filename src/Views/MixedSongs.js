@@ -3,7 +3,9 @@ import React from 'react';
 import Store from '../MyStore';
 import { GetDataForSong } from '../DataAccess';
 
-const MixedSongLine = ({ songKey }) => {
+import type { SongKey, Song } from '../MyStore';
+
+const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
   const store = Store.useStore();
   const setter = store.set('curSong');
   const { title, track, album, artist } = GetDataForSong(store, songKey);
@@ -17,31 +19,36 @@ const MixedSongLine = ({ songKey }) => {
 const MixedSongsView = () => {
   let store = Store.useStore();
   const songs = store.get('Songs');
-  const albums = store.get('Albums');
-  const artists = store.get('Artists');
-  const sng = Array.from(songs.values());
-  sng.sort((a, b) => {
-    const aArt = artists.get(a.artistIds[0]).name.toLowerCase();
-    const bArt = artists.get(b.artistIds[0]).name.toLowerCase();
-    let res = aArt.localeCompare(bArt);
+  const sngs: Array<SongKey> = Array.from(songs.values()).map((s:Song) => s.key);
+  sngs.sort((a: SongKey, b: SongKey) => {
+    const {
+      title: aTitle,
+      track: aTrack,
+      album: aAlbum,
+      artist: aArtist,
+    } = GetDataForSong(store, a);
+    const {
+      title: bTitle,
+      track: bTrack,
+      album: bAlbum,
+      artist: bArtist,
+    } = GetDataForSong(store, b);
+    let res = aArtist
+      .toLocaleLowerCase()
+      .localeCompare(bArtist.toLocaleLowerCase());
     if (res !== 0) {
       return res;
     }
-    const aAlb = albums.get(a.albumId).title.toLowerCase();
-    const bAlb = albums.get(b.albumId).title.toLowerCase();
-    res = aAlb.localeCompare(bAlb);
+    res = aAlbum.toLocaleLowerCase().localeCompare(bAlbum.toLocaleLowerCase());
     if (res !== 0) {
       return res;
     }
-    if (a.track === b.track) {
-      return 0;
-    }
-    return a.track < b.track ? -1 : 1;
+    return aTrack - bTrack;
   });
   return (
     <div>
-      {sng.map((s) => (
-        <MixedSongLine key={s.key} songKey={s.key} />
+      {sngs.map((s) => (
+        <MixedSongLine key={s} songKey={s} />
       ))}
     </div>
   );
