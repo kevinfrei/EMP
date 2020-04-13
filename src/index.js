@@ -2,16 +2,12 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import logger from 'simplelogger';
-import { FTON } from 'my-utils';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import './styles/index.css';
 
-const log = logger.bind('index');
-logger.disable('index');
 
 window.initApp = () => {
   const root = document.getElementById('root');

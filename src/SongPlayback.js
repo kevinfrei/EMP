@@ -5,8 +5,6 @@ import React, { useState } from 'react';
 import Store from './MyStore';
 import { GetDataForSong } from './DataAccess';
 
-import type { Song } from './MyStore';
-
 import './styles/SongPlayback.css';
 
 const secondsToTime = (val: number): string => {
@@ -50,7 +48,7 @@ window.positionInterval = setInterval(() => {
 }, 250);
 
 const SongPlayback = () => {
-  const [pos, setPos] = useState('songPos');
+  const [, setPos] = useState('songPos');
 
   let audio: React$Element<any>;
   let store = Store.useStore();
@@ -78,11 +76,11 @@ const SongPlayback = () => {
   return (
     <span id="song-container">
       <span id="song-cover-art">
-        <img id="current-cover-art" src="pic://pic/pic.svg" alt="album cover" />
+        <img id="current-cover-art" src={picUrl} alt="album cover" />
       </span>
       <span id="song-name">{title}</span>
       <span id="artist-name">{`${artist}: ${album}`}</span>
-      <span id="now-playing-current-time">npct</span>
+      <span id="now-playing-current-time"></span>
       <input
         type="range"
         id="song-slider"
@@ -98,7 +96,7 @@ const SongPlayback = () => {
           ae.currentTime = ae.duration * ev.target.value;
         }}
       />
-      <span id="now-playing-remaining-time">nprt</span>
+      <span id="now-playing-remaining-time"></span>
       {audio}
     </span>
   );

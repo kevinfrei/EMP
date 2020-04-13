@@ -4,8 +4,6 @@
 import React from 'react';
 import Store from './MyStore';
 
-import type { State } from './MyStore';
-
 import './styles/SongControls.css';
 
 const SongControls = () => {

@@ -1,8 +1,6 @@
 // @flow
 
-import Store from './MyStore';
-
-import type { StoreState, SongKey, Song } from './MyStore';
+import type { StoreState, SongKey, AlbumKey, Song, Album } from './MyStore';
 
 export const GetDataForSong = (
   store: StoreState,

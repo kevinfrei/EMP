@@ -19,7 +19,9 @@ const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
 const MixedSongsView = () => {
   let store = Store.useStore();
   const songs = store.get('Songs');
-  const sngs: Array<SongKey> = Array.from(songs.values()).map((s:Song) => s.key);
+  const sngs: Array<SongKey> = Array.from(songs.values()).map(
+    (s: Song) => s.key
+  );
   sngs.sort((a: SongKey, b: SongKey) => {
     const {
       title: aTitle,
@@ -43,7 +45,10 @@ const MixedSongsView = () => {
     if (res !== 0) {
       return res;
     }
-    return aTrack - bTrack;
+    if (aTrack !== bTrack) {
+      return aTrack - bTrack;
+    }
+    return aTitle.toLocaleLowerCase().localeCompare(bTitle.toLocaleLowerCase());
   });
   return (
     <div>

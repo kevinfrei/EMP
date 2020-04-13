@@ -3,8 +3,6 @@
 import React from 'react';
 import Store from '../MyStore';
 
-import type { ViewNames } from '../MyStore';
-
 const SingleArtist = ({ artist }) => <div>{artist.name}</div>;
 
 const Artists = () => {
@@ -14,7 +12,7 @@ const Artists = () => {
   arr.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
   return (
     <div>
-      {arr.map(artist => (
+      {arr.map((artist) => (
         <SingleArtist key={artist.key} artist={artist} />
       ))}
     </div>
