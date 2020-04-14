@@ -27,7 +27,7 @@ const Sidebar = () => {
   return (
     <div id="sidebar">
       <div className="search-bar">
-        <input id="search" type="text" placeholder="Search" />
+        <input id="search" type="text" placeholder="Search NYI" />
       </div>
       <br />
       <div

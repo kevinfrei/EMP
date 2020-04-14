@@ -22,6 +22,14 @@ import type {
 // { name: string, position: number, songList: Array<number> }
 // This allows for shuffling & repeating
 
+export const StopAndClear = (store: Store<State>) => {
+  const nowPlaying = store.get('nowPlaying');
+  nowPlaying.pos = -1;
+  nowPlaying.name = '';
+  nowPlaying.songs=[];
+  store.set('nowPlaying')(nowPlaying);
+};
+
 export const GetSongKey = (
   store: Store<State>,
   playing: PlaySet,

@@ -1,12 +1,18 @@
 .header {
   font-weight: bold;
   font-size: larger;
+  float: left;
 }
 
-.currently-playing {
+.playing {
   font-weight: bold;
 }
 
-.sitting-in-list {
+.list {
   font-weight: normal;
+}
+
+#clear-now-playing {
+  display: inline;
+  float: right;
 }
