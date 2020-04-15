@@ -18,6 +18,7 @@ I've got playback working. Double-clicking on artists, albums, and songs adds to
 ## Stuff to do
 
 1. Debounce the living crap out of state saving to disk. Seriously, that's outta control.
+1. Break the persistence data into smaller chunks. The DB is read-only from the UI, after all!
 2. Add custom Playlist capabilities
 3. Make adding new music "append" new keys (no key re-use)
 4. Make changing music "migrate" keys?
