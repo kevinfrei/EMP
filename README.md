@@ -34,7 +34,7 @@ In order to persist some state across runs of the app, you need to add the name
 of the key to the `ValidKeyNames` list in
 [MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js) as
 well as the `KeyWhiteList` function in
-[persist.js](https://github.com/kevinfrei/music/blob/master/static/persist.js).
+[persist.js](https://github.com/kevinfrei/music/blob/master/static/main/persist.js).
 To load it at UI refresh, add a request to `ConfigureIPC` in
 [Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js). To
 ensure that it gets updated, you'll also be editing `ConfigureIPC` to subscribe
