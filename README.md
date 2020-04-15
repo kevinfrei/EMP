@@ -26,6 +26,7 @@ I've got playback working. Double-clicking on artists, albums, and songs adds to
 6. Maybe try to get band photos?
 7. Make a miniplayer?
 8. Bundle the thing into a dist!
+9. Testing! Testing! Testing!
 
 ## Stuff to remember
 
