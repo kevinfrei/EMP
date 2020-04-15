@@ -6,11 +6,11 @@ import { ValidKeyNames } from './MyStore';
 
 import type { IpcRendererEvent } from 'electron';
 import type { Store } from 'undux';
-import type { State } from './MyStore';
+import type { State, PlaySet } from './MyStore';
 
 export type KeyValue = {
   key: string,
-  value: mixed
+  value: mixed,
 };
 
 const log = logger.bind('handler');
@@ -111,6 +111,10 @@ const DataFromMainHandler = (store: Store<State>, message: string) => {
   log(message);
 };
 
+// For anything that should be synchronized, do the store.on('') thing
+// TODO: Debounce saving stuff
+// TODO: Make this a more trivially configurable kind of thing
+// TODO: Document this. Seriously. Rediscovering how this works is a PITA
 const ConfigureIPC = (store: Store<State>) => {
   log('Store:');
   log(store);
@@ -122,12 +126,17 @@ const ConfigureIPC = (store: Store<State>) => {
       window.ipc.send('set', FTON.stringify({ key: 'locations', value: val }));
     }
   });
+  store.on('nowPlaying').subscribe((val: PlaySet) => {
+    window.ipc.send('set', FTON.stringify({ key: 'nowPlaying', value: val }));
+  });
   window.ipc.on('data', (event: IpcRendererEvent, message: string) => {
     DataFromMainHandler(store, message);
   });
   window.ipc.on('store', (event: IpcRendererEvent, message: string) => {
     StoreFromMainHandler(store, message);
   });
+  window.ipc.on('asdf', () => {});
+  window.ipc.send('get', 'nowPlaying');
   window.ipc.send('get', 'locations');
   window.ipc.send('GetDatabase', 'GetDatabase');
 };

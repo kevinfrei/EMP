@@ -5,20 +5,22 @@ const { FTON } = require('my-utils');
 
 const persist = require('./persist');
 
+import type { FTONData } from 'my-utils';
+
 const log = logger.bind('mainComms');
-logger.disable('mainComms');
+logger.enable('mainComms');
 
 // This returns an array of object handlers
 
 export type MessageHandler<T> = {
   command: string,
   validator: (val: string) => ?T,
-  handler: (data: T) => void
+  handler: (data: T) => void,
 };
 
 export type KVP = {
   key: string,
-  value: mixed
+  value: FTONData,
 };
 
 const kvpValidator = (val: string): ?KVP => {
@@ -40,6 +42,8 @@ const kvpValidator = (val: string): ?KVP => {
 const stringValidator = (val: string): ?string => val;
 
 const setter = ({ key, value }: KVP) => {
+  log(`Persisting '${key}' to:`);
+  log(value);
   persist.setItem(key, FTON.stringify(value));
 };
 
@@ -59,17 +63,18 @@ const getter = (key: string) => {
     log(`About to send {key:${key}, value:${val}}`);
     const value = FTON.parse(val);
     const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
-    log(`Window count: ${allWnd.length}`);
-    const firstWnd = allWnd[0];
-    log("Window:");
-    log(firstWnd);
-    const webCont = firstWnd.webContents;
-    log("webContents");
-    log(webCont);
-    const message = FTON.stringify({key, value});
+    if (allWnd.length < 1) {
+      log('No browser windows found in get operation.');
+      return;
+    }
+    const webCont = allWnd[0].webContents;
+    const message = FTON.stringify({ key, value });
     log(`Sending data: ${message}`);
     webCont.send('data', message);
-  } catch (e) {}
+  } catch (e) {
+    log('Swallowed exception during get operation:');
+    log(e);
+  }
 };
 
 const mk = <T>(
@@ -81,5 +86,5 @@ const mk = <T>(
 module.exports = [
   mk<KVP>('set', kvpValidator, setter),
   mk<string>('delete', stringValidator, deleter),
-  mk<string>('get', stringValidator, getter)
+  mk<string>('get', stringValidator, getter),
 ];

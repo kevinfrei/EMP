@@ -89,7 +89,7 @@ export const ValidKeyNames = [
   'locations',
   'curView',
   'curSong',
-  'playing',
+  'nowPlaying',
 ];
 
 export default createConnectedStore<State>(initialState);

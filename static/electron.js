@@ -20,20 +20,21 @@ logger.enable('electron');
 
 let musicDB: ?MusicDB;
 
-const getLocations = () => {
+const getLocations = (): Array<string> => {
   let musicLocations = FTON.parse(persist.getItem('locations'));
-  if (!musicLocations) {
+  if (!musicLocations || !Array.isArray(musicLocations)) {
     musicLocations = [app.getPath('music')];
     persist.setItem('locations', FTON.stringify(musicLocations));
   }
   return musicLocations;
 };
+
 const init = async () => {
   // Check to see if we have any locations to start with
   // If not, start with the "music" location and see what we can find...
   musicDB = persist.getItem('DB');
+  let musicLocations = getLocations();
   if (!musicDB) {
-    let musicLocations = getLocations();
     log('Looking for music: ');
     log(musicLocations);
     log('...');
@@ -43,7 +44,6 @@ const init = async () => {
     log('Finished finding music');
     persist.setItem('DB', musicDB);
   } else {
-    let musicLocations = getLocations();
     log('re-looking for music: ');
     log(musicLocations);
     musicDB = await music.find(musicLocations);
@@ -85,23 +85,23 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
     });
 };
 
-// The only messages I expect from the render are these 3:
+// The primary messages I expect from the render are these 3:
 // 'set', 'delete', 'get'
+
 // 'set': JSON of this: {key: 'name', value: stuff}
 // 'delete': 'name'
 // 'get': 'name'
 
+// In addition, there's the 'GetDatabase' request
 comms.forEach(<T>(val: MessageHandler<T>) => {
-  ipcMain.on(val.command, (event, arg) => {
-    log(`checking ${val.command}`);
+  ipcMain.on(val.command, (event, arg: string) => {
     const data: ?T = val.validator(arg);
     if (data !== undefined && data !== null) {
-      log(`Got data for ${val.command}:`);
-      log(`typeof data: ${typeof data}`);
+      log(`Got data for "${val.command}":`);
       log(data);
       val.handler(data);
     } else {
-      log('data validation failure');
+      log(`data validation failure while checking ${val.command}`);
       log(arg);
     }
   });

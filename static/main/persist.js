@@ -7,22 +7,35 @@ const logger = require('simplelogger');
 const { FTON } = require('my-utils');
 
 import type { Rectangle } from 'electron';
+import type { FTONData } from 'my-utils';
 
 const log = logger.bind('persist');
 logger.disable('persist');
 
 export type WindowPosition = {|
   bounds: Rectangle,
-  isMaximized: boolean
+  isMaximized: boolean,
 |};
 
 export type Persist = {
-  getItem(key: string): mixed,
-  setItem(key: string, value: mixed): void,
+  getItem<T>(key: string): T,
+  setItem(key: string, value: FTONData): void,
   deleteItem(key: string): void,
   getWindowPos(): WindowPosition,
   setWindowPos(st: WindowPosition): void,
-  getBrowserWindowPos(st: WindowPosition): Rectangle
+  getBrowserWindowPos(st: WindowPosition): Rectangle,
+};
+
+const KeyWhiteList = (name: string): boolean => {
+  switch (name) {
+    case 'nowPlaying':
+    case 'windowPosition':
+    case 'locations':
+    case 'DB':
+      return true;
+    default:
+      return false;
+  }
 };
 
 const makeWindowPos = (
@@ -44,28 +57,42 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
 // Here's a place for app settings & stuff...
 const storageLocation: string = path.join(app.getPath('userData'), 'data.json');
 log(`User data location: ${storageLocation}`);
-const readFile = (): Object => {
+const readFile = (): FTONData => {
   try {
     return FTON.parse(fs.readFileSync(storageLocation, 'utf8'));
   } catch (e) {
     return {};
   }
 };
-const writeFile = (val: Object): void => {
+const writeFile = (val: FTONData): void => {
   fs.writeFileSync(storageLocation, FTON.stringify(val), 'utf8');
 };
 const persist: Persist = {
-  getItem: (key: string): mixed => {
+  getItem: <T>(key: string): ?T => {
     log(`Reading ${key}`);
-    const val: Object = readFile();
-    return val[key];
+    const val: FTONData = readFile();
+    if (val && typeof val === 'object') {
+      if (key.toLocaleLowerCase() !== 'db') {
+        log('returning this value:');
+        log(val[key]);
+      }
+      return val[key];
+    } else {
+      log('Failed to return value');
+    }
   },
-  setItem: (key: string, value: mixed): void => {
+  setItem: (key: string, value: FTONData): void => {
     log(`Writing ${key}:`);
     log(value);
-    const val: Object = readFile();
-    val[key] = value;
-    writeFile(val);
+    const val: FTONData = readFile();
+    if (val && typeof val === 'object') {
+      if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
+        val[key] = value;
+        writeFile(val);
+      } else {
+        log('Invalid item persistence request');
+      }
+    }
   },
   deleteItem: (key: string): void => {
     log(`deleting ${key}`);
@@ -111,8 +138,8 @@ const persist: Persist = {
     width: st.bounds.width,
     height: st.bounds.height,
     x: st.bounds.x == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.x,
-    y: st.bounds.y == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.y
-  })
+    y: st.bounds.y == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.y,
+  }),
 };
 
 module.exports = persist;
