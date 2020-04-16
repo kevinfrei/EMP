@@ -27,7 +27,7 @@ const setup = (windowCreated: OnWindowCreated) => {
     // Create the window, but don't show it just yet
     mainWindow = new BrowserWindow({
       ...persist.getBrowserWindowPos(windowPos),
-      title: 'Generic Music Player',
+      title: 'EMP: Electron Music Player',
       //    backgroundColor: '#282c34', // Unnecessary if you're not showing :)
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),

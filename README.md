@@ -31,13 +31,12 @@ electron packager so that the results of `yarn build` don't actually work :/
    * Media metadata editing!
 8. Make adding new music "append" new keys (no key re-use)
 9.  Make changing music "migrate" keys
-   * Only when renaming files/moving files around happesn
-11.  Add album covers
-    * Maybe try to get band photos?
-12. Bundle the thing into a dist!
-13. Make 'Search' work.
-14. Make a miniplayer!
-15. Testing! Testing! Testing!
+    * Only when renaming files/moving files around happesn
+1.   Add album covers
+     * Maybe try to get band photos?
+2.  Make 'Search' work.
+3.  Make a miniplayer!
+4.  Testing! Testing! Testing!
 
 ## Stuff to remember
 
