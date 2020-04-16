@@ -31,7 +31,8 @@ const setup = (windowCreated: OnWindowCreated) => {
       //    backgroundColor: '#282c34', // Unnecessary if you're not showing :)
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
-        nodeIntegration: true
+        nodeIntegration: true,
+        webSecurity: false
       },
       titleBarStyle: 'hiddenInset', // TODO: Only Mac
       frame: false, // TODO: !Mac, add close/min/max buttons
@@ -43,7 +44,8 @@ const setup = (windowCreated: OnWindowCreated) => {
     mainWindow.loadURL(
       isDev
         ? 'http://localhost:3000'
-        : `file://${path.join(__dirname, '../build/index.html')}`
+        // If this file moves, you have to fix this to make it work for release
+        : `file://${path.join(__dirname, '../../build/index.html')}`
     );
 
     // Open the DevTools.

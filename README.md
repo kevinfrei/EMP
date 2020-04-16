@@ -13,27 +13,38 @@ music, IMO)
 
 ## What's the current state?
 
-I've got playback working. Double-clicking on artists, albums, and songs adds to the 'Now Playing' list. Repeat & Shuffle generally work the way you expect. `yarn start` will launch it. The trouble is that there's something buggy in the electron packager so that the results of `yarn build` don't actually work :/
+I've got playback working. Double-clicking on artists, albums, and songs adds
+to the 'Now Playing' list. Repeat & Shuffle generally work the way you expect.
+`yarn start` will launch it. The trouble is that there's something buggy in the
+electron packager so that the results of `yarn build` don't actually work :/
 
 ## Stuff to do
 
 1. Debounce the living crap out of state saving to disk. Seriously, that's outta control.
-1. Break the persistence data into smaller chunks. The DB is read-only from the UI, after all!
-2. Add custom Playlist capabilities
-3. Make adding new music "append" new keys (no key re-use)
-4. Make changing music "migrate" keys?
-5. Add album covers
-6. Maybe try to get band photos?
-7. Make a miniplayer?
-8. Bundle the thing into a dist!
-9. Testing! Testing! Testing!
+2. Break the persistence data into smaller chunks. The DB is read-only from the UI, after all!
+3. Add custom Playlist capabilities
+4. Removing songs from playlists
+   * Eventually enable reordering with drag & drop?
+5. Improve the views for pretty much everything
+6. Playlist unique-ification
+7. Media "info" (using node-mediainfo seems like the right thing to do)
+   * Media metadata editing!
+8. Make adding new music "append" new keys (no key re-use)
+9.  Make changing music "migrate" keys
+   * Only when renaming files/moving files around happesn
+11.  Add album covers
+    * Maybe try to get band photos?
+12. Bundle the thing into a dist!
+13. Make 'Search' work.
+14. Make a miniplayer!
+15. Testing! Testing! Testing!
 
 ## Stuff to remember
 
 ### Persisting stuff across runs
 
-In order to persist some state across runs of the app, you need to add the name
-of the key to the `ValidKeyNames` list in
+In order to persist important state across runs of the app, you need to add the
+name of the key to the `ValidKeyNames` list in
 [MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js) as
 well as the `KeyWhiteList` function in
 [persist.js](https://github.com/kevinfrei/music/blob/master/static/main/persist.js).
@@ -45,9 +56,11 @@ with while hacking away during quarantine.
 
 ## Old stuff
 
-This started as a `create-react-app` and `electron-quick-start` shoved together with a very anemic
+This started as a `create-react-app` and `electron-quick-start` shoved together
+with a very anemic
 [AmplitudeJS](https://521dimensions.com/open-source/amplitudejs/)-based play
-back thingamajig. I ripped out Amplitude (it was overkill, and didn't mesh well with React/Undux) and I've got a core set of capabilities working.
+back thingamajig. I ripped out Amplitude (it was overkill, and didn't mesh well
+with React/Undux) and I've got a core set of capabilities working.
 
 Music player stuff. First: I have a *lot* of media. Last time I checked it was
 over 20,000 songs spread across about 2000 albums and the same general number
