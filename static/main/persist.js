@@ -55,22 +55,34 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
 );
 
 // Here's a place for app settings & stuff...
-const storageLocation: string = path.join(app.getPath('userData'), 'data.json');
-log(`User data location: ${storageLocation}`);
-const readFile = (): FTONData => {
+const storageLocation = (id: string): string => {
+  return path.join(app.getPath('userData'), `persist-${id}.json`);
+};
+
+log(`User data location: ${storageLocation('test')}`);
+
+const readFile = (id: string): FTONData => {
   try {
-    return FTON.parse(fs.readFileSync(storageLocation, 'utf8'));
+    return FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
   } catch (e) {
     return {};
   }
 };
-const writeFile = (val: FTONData): void => {
-  fs.writeFileSync(storageLocation, FTON.stringify(val), 'utf8');
+
+const writeFile = (id: string, val: FTONData): void => {
+  fs.writeFileSync(storageLocation(id), FTON.stringify(val), 'utf8');
 };
+
+const deleteFile = (id: string) => {
+  try {
+    fs.unlinkSync(storageLocation(id));
+  } catch (e) {}
+};
+
 const persist: Persist = {
   getItem: <T>(key: string): ?T => {
     log(`Reading ${key}`);
-    const val: FTONData = readFile();
+    const val: FTONData = readFile(key);
     if (val && typeof val === 'object') {
       if (key.toLocaleLowerCase() !== 'db') {
         log('returning this value:');
@@ -84,11 +96,11 @@ const persist: Persist = {
   setItem: (key: string, value: FTONData): void => {
     log(`Writing ${key}:`);
     log(value);
-    const val: FTONData = readFile();
+    const val: FTONData = readFile(key);
     if (val && typeof val === 'object') {
       if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
         val[key] = value;
-        writeFile(val);
+        writeFile(key, val);
       } else {
         log('Invalid item persistence request');
       }
@@ -96,9 +108,7 @@ const persist: Persist = {
   },
   deleteItem: (key: string): void => {
     log(`deleting ${key}`);
-    const val: Object = readFile();
-    delete val[key];
-    writeFile(val);
+    deleteFile(key);
   },
   getWindowPos: (): WindowPosition => {
     try {
