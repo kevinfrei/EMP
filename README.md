@@ -1,15 +1,17 @@
-# It's a slowly-turning-into-something Electron-based local music player
-### Because iTunes, er, "Music" doesn't play flac :/
+# EMP: Electron Music Player
+ > A little Hat Tip to us older Seattleites ;)
+### Because macOS iTunes, er, "Music" doesn't play flac files
 * Why? Because Apple is lame.
 
 I'm old. I have a whole lot of music that I purchased on CD's over the past
 many, many years. I like having high quality music playable from the PC I'm
 working on. When that PC was a Windows PC, the incredibly ancient Windows Media
-Player would play Flac, as would "Groove Music" I imagine. But I'm on a Mac on
-a regular basis these days and Vox is **awful** (I'm not paying a monthly fee
-for the privilege of listening to the music I've already purchased, thanks very
-much), VLC is a bad music player (a great video player, but not great for
-music, IMO)
+Player would play Flac, as would "Groove Music" I imagine (and anything else
+probably, because of the pluggable (and highly overarchitected) nature of
+audio/video handling in Windows. But I'm on a Mac on a regular basis these days
+and Vox is **awful** (I'm not paying a monthly fee for the privilege of
+listening to the music I've already purchased, thanks very much) and VLC is a
+bad music player (a great video player, but not great for music, IMO)
 
 ## What's the current state?
 
@@ -20,23 +22,21 @@ electron packager so that the results of `yarn build` don't actually work :/
 
 ## Stuff to do
 
-1. Debounce the living crap out of state saving to disk. Seriously, that's outta control.
-2. Break the persistence data into smaller chunks. The DB is read-only from the UI, after all!
-3. Add custom Playlist capabilities
-4. Removing songs from playlists
-   * Eventually enable reordering with drag & drop?
-5. Improve the views for pretty much everything
-6. Playlist unique-ification
-7. Media "info" (using node-mediainfo seems like the right thing to do)
-   * Media metadata editing!
-8. Make adding new music "append" new keys (no key re-use)
-9.  Make changing music "migrate" keys
-    * Only when renaming files/moving files around happesn
-1.   Add album covers
-     * Maybe try to get band photos?
-2.  Make 'Search' work.
-3.  Make a miniplayer!
-4.  Testing! Testing! Testing!
+* Add custom Playlist capabilities
+* Removing songs from playlists
+  * Eventually enable reordering with drag & drop?
+* Improve the views for pretty much everything
+* Playlist unique-ification
+* Media "info" (using node-mediainfo seems like the right thing to do)
+  * Media metadata editing!
+* Make adding new music "append" new keys (no key re-use)
+  * Make changing music "migrate" keys
+  * Only when renaming files/moving files around happesn
+* Add album covers
+  * Maybe try to get band photos?
+* Make 'Search' work.
+* Make a miniplayer!
+* Testing! Testing! Testing!
 
 ## Stuff to remember
 
@@ -47,11 +47,9 @@ name of the key to the `ValidKeyNames` list in
 [MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js) as
 well as the `KeyWhiteList` function in
 [persist.js](https://github.com/kevinfrei/music/blob/master/static/main/persist.js).
-To load it at UI refresh, add a request to `ConfigureIPC` in
-[Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js). To
-ensure that it gets updated, you'll also be editing `ConfigureIPC` to subscribe
-to updates. Very little of this is close to ideal, but it's what I wound up
-with while hacking away during quarantine.
+Easierst, add it to `PersistedBetweenRuns` in Array. For something more
+complicated, you'll need to monkey with `ConfigureIPC`. Both functions in
+[Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js).
 
 ## Old stuff
 
