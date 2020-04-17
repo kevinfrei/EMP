@@ -156,7 +156,7 @@ const HandlePersistence = (store: Store<State>) => {
           key.maxtimeout = null;
           key.timeout = null;
           if (mto !== null) {
-            window.clearTimeout(key.maxtimeout);
+            window.clearTimeout(mto);
           }
           if (key.hasChanged(value)) {
             window.ipc.send('set', FTON.stringify({ key: key.key, value }));
@@ -169,7 +169,7 @@ const HandlePersistence = (store: Store<State>) => {
             if (key.hasChanged(value)) {
               window.ipc.send('set', FTON.stringify({ key: key.key, value }));
             }
-          });
+          }, key.maxDelay);
         }
       }
     });
