@@ -23,6 +23,7 @@ Playlists are the next major piece of functionality to add.
 
 ## Stuff to do
 
+* Make VA/OST stuff work properly (currently they show up separately)
 * Add custom Playlist capabilities
 * Supoort removing songs from playlists
   * Eventually enable reordering with drag & drop?
