@@ -1,61 +1,53 @@
 // @flow
-import React from 'react';
+import React, { useState } from 'react';
+import Table from 'react-bootstrap/Table';
+
 import Store from '../MyStore';
+
 import { GetDataForSong } from '../DataAccess';
 import { AddSong } from '../Playlist';
+import { SongByRLTN } from '../Sorters';
 
-import type { SongKey, Song } from '../MyStore';
+import type { SongKey, Song, State } from '../MyStore';
 
 const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
+  const [open, setOpen] = useState(false);
   const store = Store.useStore();
   const { title, track, album, artist } = GetDataForSong(store, songKey);
   return (
-    <div onDoubleClick={() => AddSong(store, songKey)}>
-      <div>{`${artist} - ${album}: ${track} - ${title}`}</div>
-    </div>
+    <tr
+      onDoubleClick={() => AddSong(store, songKey)}
+      onAuxClick={() => setOpen(true)}
+    >
+      <td>{artist}</td>
+      <td>{album}</td>
+      <td>{track}</td>
+      <td>{title}</td>
+    </tr>
   );
 };
 
 const MixedSongsView = () => {
   let store = Store.useStore();
   const songs = store.get('Songs');
-  const sngs: Array<SongKey> = Array.from(songs.values()).map(
-    (s: Song) => s.key
-  );
-  sngs.sort((a: SongKey, b: SongKey) => {
-    const {
-      title: aTitle,
-      track: aTrack,
-      album: aAlbum,
-      artist: aArtist,
-    } = GetDataForSong(store, a);
-    const {
-      title: bTitle,
-      track: bTrack,
-      album: bAlbum,
-      artist: bArtist,
-    } = GetDataForSong(store, b);
-    let res = aArtist
-      .toLocaleLowerCase()
-      .localeCompare(bArtist.toLocaleLowerCase());
-    if (res !== 0) {
-      return res;
-    }
-    res = aAlbum.toLocaleLowerCase().localeCompare(bAlbum.toLocaleLowerCase());
-    if (res !== 0) {
-      return res;
-    }
-    if (aTrack !== bTrack) {
-      return aTrack - bTrack;
-    }
-    return aTitle.toLocaleLowerCase().localeCompare(bTitle.toLocaleLowerCase());
-  });
+  const sngs: Array<SongKey> = Array.from(songs.keys());
+  sngs.sort(SongByRLTN(store));
   return (
-    <div>
-      {sngs.map((s) => (
-        <MixedSongLine key={s} songKey={s} />
-      ))}
-    </div>
+    <Table striped hover size="sm">
+      <thead>
+        <tr>
+          <td>Album</td>
+          <td>Artist</td>
+          <td>#</td>
+          <td>Title</td>
+        </tr>
+      </thead>
+      <tbody>
+        {sngs.map((s) => (
+          <MixedSongLine key={s} songKey={s} />
+        ))}
+      </tbody>
+    </Table>
   );
 };
 

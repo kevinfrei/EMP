@@ -1,18 +1,16 @@
-.header {
+thead {
   font-weight: bold;
   font-size: larger;
-  float: left;
 }
 
 .playing {
   font-weight: bold;
 }
 
-.list {
+.not-playing {
   font-weight: normal;
 }
 
 #clear-now-playing {
-  display: inline;
   float: right;
 }

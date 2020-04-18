@@ -20,12 +20,12 @@ const Settings = () => {
   const setConfig = store.set('locations');
   const elems = [];
   let num = 2;
-  config.forEach(elem => {
+  config.forEach((elem) => {
     const theStyle = { gridRow: num };
     elems.push(
       <img
         style={theStyle}
-        className="delete-pic"
+        className="delete-pic pic-button"
         src={deletePic}
         key={'>' + elem}
         alt="Delete Item"
@@ -46,13 +46,13 @@ const Settings = () => {
       {elems}
       <label className="add-label" htmlFor="folder-picker">
         <img
-          className="add-pic"
+          className="add-pic pic-button"
           src={addPic}
           alt="add source"
           onClick={() => {
             const locations: ?Array<string> = window.remote.dialog.showOpenDialogSync(
               {
-                properties: ['openDirectory']
+                properties: ['openDirectory'],
               }
             );
             if (locations) {

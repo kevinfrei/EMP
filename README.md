@@ -23,17 +23,17 @@ electron packager so that the results of `yarn build` don't actually work :/
 ## Stuff to do
 
 * Add custom Playlist capabilities
-* Removing songs from playlists
+* Supoort removing songs from playlists
   * Eventually enable reordering with drag & drop?
-* Improve the views for pretty much everything
-* Playlist unique-ification
+* Add "Recently Added" capabilities
+* Improve the views for Artists
 * Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
 * Make adding new music "append" new keys (no key re-use)
   * Make changing music "migrate" keys
   * Only when renaming files/moving files around happesn
+* Playlist unique-ification
 * Add album covers
-  * Maybe try to get band photos?
 * Make 'Search' work.
 * Make a miniplayer!
 * Testing! Testing! Testing!

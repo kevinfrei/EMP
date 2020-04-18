@@ -20,8 +20,8 @@
 }
 
 .delete-pic, .add-pic {
-  height: 12px;
-  width: 12px;
+  height: 24px;
+  width: 24px;
   border: solid 1px gray;
   border-radius: 3px;
   padding: 4px;
@@ -31,4 +31,3 @@
 .add-label {
   grid-column: 1;
 }
-
