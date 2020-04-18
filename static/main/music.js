@@ -5,10 +5,13 @@ const fsp = require('fs').promises;
 const path = require('path');
 const logger = require('simplelogger');
 const metadata = require('media-utils').Metadata;
-const log = logger.bind('music');
-//logger.enable('music');
+const { SetEqual } = require('my-utils').Comparisons;
+const { SeqNum } = require('my-utils');
 
 import type { FullMetadata } from 'media-utils';
+
+const log = logger.bind('music');
+//logger.enable('music');
 
 export type SongKey = string;
 export type AlbumKey = string;
@@ -45,30 +48,16 @@ export type Artist = {
 export type MusicDB = {
   songs: Map<SongKey, Song>,
   albums: Map<AlbumKey, Album>,
-  albumTitleIndex: Map<string, Array<AlbumKey>>,
   artists: Map<ArtistKey, Artist>,
-  artistNameIndex: Map<string, ArtistKey>,
-  playlists: Map<string, Array<SongKey>>, // This is probably a bad idea...
   pictures: Map<AlbumKey, string>,
+  playlists: Map<string, Array<SongKey>>, // This is probably a bad idea...
+  albumTitleIndex: Map<string, Array<AlbumKey>>,
+  artistNameIndex: Map<string, ArtistKey>,
 };
 
-let songKey = 0;
-const newSongKey = (): SongKey => {
-  songKey++;
-  return 'S' + songKey.toString(36);
-};
-
-let albumKey = 0;
-const newAlbumKey = (): AlbumKey => {
-  albumKey++;
-  return 'L' + albumKey.toString(36);
-};
-
-let artistKey = 0;
-const newArtistKey = (): AlbumKey => {
-  artistKey++;
-  return 'R' + artistKey.toString(36);
-};
+const newSongKey = SeqNum('S');
+const newAlbumKey = SeqNum('L');
+const newArtistKey = SeqNum('R');
 
 const getOrNewArtist = (db: MusicDB, name: string): Artist => {
   const maybeKey: ?ArtistKey = db.artistNameIndex.get(name.toLowerCase());
@@ -124,18 +113,12 @@ const getOrNewAlbum = (
     if (check.year !== year || check.vatype != vatype) {
       continue;
     }
+    // For VA type albums, we can ignore the artist list
+    if (vatype.length > 0) {
+      return check;
+    }
     // Set equality...
-    if (check.primaryArtists.size != artists.size) {
-      continue;
-    }
-    let same: boolean = true;
-    for (let i /*:ArtistKey*/ of check.primaryArtists) {
-      if (!artists.has(i)) {
-        same = false;
-        break;
-      }
-    }
-    if (!same) {
+    if (!SetEqual(check.primaryArtists, artists)) {
       continue;
     }
     // If we're here, we've found the album we're looking for
@@ -223,11 +206,11 @@ const fileNamesToDatabase = (
   const db: MusicDB = {
     songs,
     albums,
-    albumTitleIndex,
     artists,
-    artistNameIndex,
-    playlists,
     pictures,
+    playlists,
+    albumTitleIndex,
+    artistNameIndex,
   };
 
   for (let file of files) {
@@ -283,13 +266,16 @@ const fileNamesToDatabase = (
   log(dirsToAlbums);
   // Now, for each dir, find the biggest file and dump it in the database
   // for each album that has stuff in that directory
-  let smallVal = { size: 0, name: '' };
+  type SizeAndName = { size: number, name: string };
+  let smallVal: SizeAndName = { size: 0, name: '' };
   for (let [dirName, setOfFiles] of dirsToPics) {
     const albums = dirsToAlbums.get(dirName);
     if (!albums || !albums.size) {
       continue;
     }
-    const largest = [...setOfFiles.values()].reduce((prev, cur) => {
+    const largest: { size: number, name: string } = [
+      ...setOfFiles.values(),
+    ].reduce((prev: SizeAndName, cur) => {
       // if cur is bigger than prev, return cursize/curName
       let fileStat = fs.statSync(cur);
       return fileStat.size > prev.size

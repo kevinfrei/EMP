@@ -2,6 +2,7 @@
 
 import logger from 'simplelogger';
 import { FTON } from 'my-utils';
+import { Comparisons } from 'my-utils'
 import { ValidKeyNames } from './MyStore';
 
 import type { IpcRendererEvent } from 'electron';
@@ -15,26 +16,6 @@ export type KeyValue = {
 
 const log = logger.bind('handler');
 logger.disable('handler');
-
-function setEqual<T>(a1: Array<T>, a2: Array<T>): boolean {
-  if ((a1 === undefined && a2 === undefined) || (a1 === null && a2 === null)) {
-    return true;
-  }
-  if (!a1 || !a2) {
-    return false;
-  }
-  const s1 = new Set(a1);
-  const s2 = new Set(a2);
-  if (a1.length !== a2.length) {
-    return false;
-  }
-  for (let i of s1) {
-    if (!s2.has(i)) {
-      return false;
-    }
-  }
-  return true;
-}
 
 // Returns true if psa and psb are equal
 function playSetEqual(psa: PlaySet, psb: PlaySet): boolean {
@@ -128,7 +109,7 @@ function makeChangeChecker<T>(
 // For each key that should be saved to main (and persisted between runs)
 // add a "change checker" here.
 const PersistedBetweenRuns: Array<SaveConfig<T>> = [
-  makeChangeChecker('locations', null, setEqual, 1, 10),
+  makeChangeChecker('locations', null, Comparisons.ArraySetEqual, 1, 10),
   makeChangeChecker(
     'nowPlaying',
     { name: '', pos: -1, songs: [] },
