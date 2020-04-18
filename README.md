@@ -40,6 +40,7 @@ Playlists are the next major piece of functionality to add.
 * Make a miniplayer!
 * "Auto" playlists (something involving stuff like "this artist" and "not this
 keyword" kind of stuff.
+* Add 'favorite' or 'love' attribute for songs
 * Transcode for phone (dump stuff out ready to import into iTunes)
 * Testing! Testing! Testing!
 

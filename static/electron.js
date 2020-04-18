@@ -16,7 +16,7 @@ import type { MusicDB } from './main/music';
 import type { MessageHandler } from './main/mainComms';
 
 const log = logger.bind('electron');
-logger.enable('electron');
+//logger.enable('electron');
 
 let musicDB: ?MusicDB;
 

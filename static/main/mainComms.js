@@ -8,7 +8,7 @@ const persist = require('./persist');
 import type { FTONData } from 'my-utils';
 
 const log = logger.bind('mainComms');
-logger.enable('mainComms');
+//logger.enable('mainComms');
 
 // This returns an array of object handlers
 
