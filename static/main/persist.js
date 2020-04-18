@@ -26,6 +26,8 @@ export type Persist = {
   getBrowserWindowPos(st: WindowPosition): Rectangle,
 };
 
+const memoryCache: Map<string, FTONData> = new Map();
+
 const KeyWhiteList = (name: string): boolean => {
   switch (name) {
     case 'nowPlaying':
@@ -62,94 +64,114 @@ const storageLocation = (id: string): string => {
 log(`User data location: ${storageLocation('test')}`);
 
 const readFile = (id: string): FTONData => {
-  try {
-    return FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
-  } catch (e) {
-    return {};
+  if (memoryCache.has(id)) {
+    return memoryCache.get(id);
   }
+  try {
+    const data = FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
+    memoryCache.set(id, data);
+    return data;
+  } catch (e) {}
+  return {};
 };
 
 const writeFile = (id: string, val: FTONData): void => {
   fs.writeFileSync(storageLocation(id), FTON.stringify(val), 'utf8');
+  memoryCache.set(id, val);
 };
 
-const deleteFile = (id: string) => {
+function deleteFile(id: string) {
   try {
     fs.unlinkSync(storageLocation(id));
+    memoryCache.delete(id);
   } catch (e) {}
-};
+}
 
-const persist: Persist = {
-  getItem: <T>(key: string): ?T => {
-    log(`Reading ${key}`);
-    const val: FTONData = readFile(key);
-    if (val && typeof val === 'object') {
-      if (key.toLocaleLowerCase() !== 'db') {
-        log('returning this value:');
-        log(val[key]);
-      }
-      return val[key];
+function getItem<T>(key: string): ?T {
+  log('Reading ' + key);
+  const val: FTONData = readFile(key);
+  if (val && typeof val === 'object') {
+    if (key.toLocaleLowerCase() !== 'db') {
+      log('returning this value:');
+      log(val[key]);
+    }
+    return val[key];
+  } else {
+    log('Failed to return value');
+  }
+}
+
+function setItem(key: string, value: FTONData): void {
+  log(`Writing ${key}:`);
+  log(value);
+  const val: FTONData = readFile(key);
+  if (val && typeof val === 'object') {
+    if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
+      val[key] = value;
+      writeFile(key, val);
     } else {
-      log('Failed to return value');
+      log('Invalid item persistence request');
     }
-  },
-  setItem: (key: string, value: FTONData): void => {
-    log(`Writing ${key}:`);
-    log(value);
-    const val: FTONData = readFile(key);
-    if (val && typeof val === 'object') {
-      if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
-        val[key] = value;
-        writeFile(key, val);
-      } else {
-        log('Invalid item persistence request');
+  }
+}
+
+function deleteItem(key: string): void {
+  log(`deleting ${key}`);
+  deleteFile(key);
+}
+
+function getWindowPos(): WindowPosition {
+  try {
+    const tmpws: mixed = persist.getItem('windowPosition');
+    if (tmpws && typeof tmpws === 'object' && tmpws.bounds) {
+      const bounds = tmpws.bounds;
+      if (
+        typeof bounds === 'object' &&
+        bounds.x !== undefined &&
+        typeof bounds.x === 'number' &&
+        bounds.y !== undefined &&
+        typeof bounds.y === 'number' &&
+        bounds.width !== undefined &&
+        typeof bounds.width === 'number' &&
+        bounds.height !== undefined &&
+        typeof bounds.height === 'number' &&
+        tmpws.isMaximized !== undefined &&
+        tmpws.isMaximized !== null &&
+        typeof tmpws.isMaximized === 'boolean'
+      ) {
+        return makeWindowPos(
+          bounds.x,
+          bounds.y,
+          bounds.width,
+          bounds.height,
+          tmpws.isMaximized
+        );
       }
     }
-  },
-  deleteItem: (key: string): void => {
-    log(`deleting ${key}`);
-    deleteFile(key);
-  },
-  getWindowPos: (): WindowPosition => {
-    try {
-      const tmpws: mixed = persist.getItem('windowPosition');
-      if (tmpws && typeof tmpws === 'object' && tmpws.bounds) {
-        const bounds = tmpws.bounds;
-        if (
-          typeof bounds === 'object' &&
-          bounds.x !== undefined &&
-          typeof bounds.x === 'number' &&
-          bounds.y !== undefined &&
-          typeof bounds.y === 'number' &&
-          bounds.width !== undefined &&
-          typeof bounds.width === 'number' &&
-          bounds.height !== undefined &&
-          typeof bounds.height === 'number' &&
-          tmpws.isMaximized !== undefined &&
-          tmpws.isMaximized !== null &&
-          typeof tmpws.isMaximized === 'boolean'
-        ) {
-          return makeWindowPos(
-            bounds.x,
-            bounds.y,
-            bounds.width,
-            bounds.height,
-            tmpws.isMaximized
-          );
-        }
-      }
-    } catch (err) {}
-    return defaultWindowPosition;
-  },
-  setWindowPos: (st: WindowPosition): void => {
-    persist.setItem('windowPosition', st);
-  },
-  getBrowserWindowPos: (st: WindowPosition): Rectangle => ({
+  } catch (err) {}
+  return defaultWindowPosition;
+}
+
+function setWindowPos(st: WindowPosition): void {
+  persist.setItem('windowPosition', st);
+}
+
+function getBrowserWindowPos(st: WindowPosition): Rectangle {
+  return {
     width: st.bounds.width,
     height: st.bounds.height,
     x: st.bounds.x == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.x,
     y: st.bounds.y == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.y,
-  }),
+  };
+}
+
+const persist: Persist = {
+  getItem,
+  setItem,
+  deleteItem,
+  getWindowPos,
+  setWindowPos,
+  getBrowserWindowPos,
 };
 
 module.exports = persist;

@@ -1,5 +1,6 @@
 // @flow
 
+const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
 const logger = require('simplelogger');
@@ -14,13 +15,13 @@ export type AlbumKey = string;
 export type ArtistKey = string;
 
 export type Song = {
-  URL: string,
+  path: string,
   artistIds: Array<ArtistKey>,
   secondaryIds: Array<ArtistKey>,
   albumId: AlbumKey,
   track: number,
   title: string,
-  key: SongKey
+  key: SongKey,
 };
 
 export type VAType = '' | 'ost' | 'va';
@@ -31,14 +32,14 @@ export type Album = {
   title: string,
   vatype: VAType,
   songs: Array<SongKey>,
-  key: AlbumKey
+  key: AlbumKey,
 };
 
 export type Artist = {
   name: string,
   songs: Array<SongKey>,
   albums: Array<AlbumKey>,
-  key: ArtistKey
+  key: ArtistKey,
 };
 
 export type MusicDB = {
@@ -47,7 +48,8 @@ export type MusicDB = {
   albumTitleIndex: Map<string, Array<AlbumKey>>,
   artists: Map<ArtistKey, Artist>,
   artistNameIndex: Map<string, ArtistKey>,
-  playlists: Map<string, Array<SongKey>> // This is probably a bad idea...
+  playlists: Map<string, Array<SongKey>>, // This is probably a bad idea...
+  pictures: Map<AlbumKey, string>,
 };
 
 let songKey = 0;
@@ -161,7 +163,7 @@ const getOrNewAlbum = (
     title,
     vatype,
     songs: [],
-    key
+    key,
   };
   sharedNames.push(key);
   db.albums.set(key, album);
@@ -194,33 +196,38 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
     }
   }
   const theSong: Song = {
-    URL: `file://${md.OriginalPath}`,
+    path: md.OriginalPath,
     artistIds,
     secondaryIds,
     albumId: album.key,
     track: md.Track,
     title: md.Title,
-    key: newSongKey()
+    key: newSongKey(),
   };
   album.songs.push(theSong.key);
   allArtists.forEach((artist) => artist.songs.push(theSong.key));
   db.songs.set(theSong.key, theSong);
 };
 
-const fileNamesToDatabase = (files: Array<string>): MusicDB => {
+const fileNamesToDatabase = (
+  files: Array<string>,
+  pics: Array<string>
+): MusicDB => {
   const songs: Map<SongKey, Song> = new Map();
   const albums: Map<AlbumKey, Album> = new Map();
   const artists: Map<ArtistKey, Artist> = new Map();
   const playlists: Map<string, Array<SongKey>> = new Map();
   const albumTitleIndex: Map<string, Array<AlbumKey>> = new Map();
   const artistNameIndex: Map<string, ArtistKey> = new Map();
+  const pictures: Map<AlbumKey, string> = new Map();
   const db: MusicDB = {
     songs,
     albums,
     albumTitleIndex,
     artists,
     artistNameIndex,
-    playlists
+    playlists,
+    pictures,
   };
 
   for (let file of files) {
@@ -236,34 +243,85 @@ const fileNamesToDatabase = (files: Array<string>): MusicDB => {
     }
     AddSongToDatabase(md, db);
   }
+  // Get all pictures from each directory.
+  // Find the biggest and make it the album picture for any albums in that dir
+  const dirsToPics: Map<string, Set<string>> = new Map();
+  for (let p of pics) {
+    const dirName = path.dirname(p);
+    const fileName = p.substr(dirName.length + 1);
+    const val = dirsToPics.get(dirName);
+    if (val) {
+      val.add(p);
+    } else {
+      dirsToPics.set(dirName, new Set([p]));
+    }
+  }
+  log('dirsToPics:');
+  log(dirsToPics);
+  const dirsToAlbums: Map<string, Set<Album>> = new Map();
+  for (let a of db.albums.values()) {
+    for (let s of a.songs) {
+      const theSong = db.songs.get(s);
+      if (!theSong) {
+        continue;
+      }
+      const thePath = theSong.path;
+      const dirName = path.dirname(thePath);
+      // We only need to track directories if we found folders in them...
+      if (!dirsToPics.has(dirName)) {
+        continue;
+      }
+      const val = dirsToAlbums.get(dirName);
+      if (val) {
+        val.add(a);
+      } else {
+        dirsToAlbums.set(dirName, new Set([a]));
+      }
+    }
+  }
+  log('dirsToAlbums:');
+  log(dirsToAlbums);
+  // Now, for each dir, find the biggest file and dump it in the database
+  // for each album that has stuff in that directory
+  let smallVal = { size: 0, name: '' };
+  for (let [dirName, setOfFiles] of dirsToPics) {
+    const albums = dirsToAlbums.get(dirName);
+    if (!albums || !albums.size) {
+      continue;
+    }
+    const largest = [...setOfFiles.values()].reduce((prev, cur) => {
+      // if cur is bigger than prev, return cursize/curName
+      let fileStat = fs.statSync(cur);
+      return fileStat.size > prev.size
+        ? { size: fileStat.size, name: cur }
+        : prev;
+    }, smallVal);
+
+    for (let album of albums) {
+      db.pictures.set(album.key, largest.name);
+    }
+  }
   return db;
 };
 
-const isMusicType = (filename: string): boolean => {
+const audioTypes = new Set(['flac', 'mp3', 'aac', 'm4a']);
+const imageTypes = new Set(['png', 'jpg', 'jpeg']);
+const isOfType = (filename: string, types: Set<string>): boolean => {
   if (path.basename(filename).startsWith('.')) {
     return false;
   }
-  const suffix = path.extname(filename);
-  switch (suffix.toLowerCase()) {
-    case '.flac':
-    case '.mp3':
-    case '.m4a':
-    case '.aac':
-      return true;
-    default:
-      return false;
-  }
+  const suffix = path.extname(filename).substr(1).toLocaleLowerCase();
+  return types.has(suffix);
 };
+const isMusicType = (filename: string) => isOfType(filename, audioTypes);
 
 const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
   // If we have too many locations, this is *baaaad* but oh well...
   const queue: Array<string> = locations;
   const songsList: Array<string> = [];
-  log('Queue:');
-  log(queue);
+  const picList: Array<string> = [];
   while (queue.length > 0) {
     const i = queue.pop();
-    log(i);
     let dirents;
     try {
       dirents = await fsp.readdir(i, { withFileTypes: true });
@@ -278,22 +336,29 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
           const st = await fsp.stat(ap);
           if (st.isDirectory()) {
             queue.push(ap);
-          } else if (st.isFile() && isMusicType(ap)) {
-            songsList.push(ap);
+          } else if (st.isFile()) {
+            if (isMusicType(ap)) {
+              songsList.push(ap);
+            } else if (isOfType(ap, imageTypes)) {
+              picList.push(ap);
+            }
           }
         } else if (dirent.isDirectory()) {
           queue.push(path.join(i, dirent.name));
-        } else if (dirent.isFile() && isMusicType(dirent.name)) {
-          songsList.push(path.join(i, dirent.name));
+        } else if (dirent.isFile()) {
+          if (isMusicType(dirent.name)) {
+            songsList.push(path.join(i, dirent.name));
+          } else if (isOfType(dirent.name, imageTypes)) {
+            picList.push(path.join(i, dirent.name));
+          }
         }
-        // TODO: Maybe look for album cover art, too
       } catch (e) {
         log(`Unable to process ${dirent}`);
         continue;
       }
     }
   }
-  return fileNamesToDatabase(songsList);
+  return fileNamesToDatabase(songsList, picList);
 };
 
 module.exports.find = findMusic;

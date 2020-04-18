@@ -34,9 +34,9 @@ function SingleAlbum({ album }: { album: Album }) {
   return (
     <Media>
       <img
-        src="pic://pic/pic.svg"
-        height="50px"
-        width="50px"
+        src={`pic://album/${album.key}`}
+        height="75px"
+        width="75px"
         onDoubleClick={adder}
       />
       <Media.Body>
@@ -54,7 +54,8 @@ function SingleAlbum({ album }: { album: Album }) {
           />
           &nbsp;
           <span onDoubleClick={adder}>
-            {artistName}: {album.year}
+            {artistName}
+            {album.year ? `: ${album.year}` : ''}
           </span>
         </h6>
         {songList}
@@ -70,7 +71,7 @@ const Albums = () => {
   alb.sort(AlbumByTitle);
   return (
     <div>
-      {alb.map((album) => (
+      {alb.map((album: Album) => (
         <SingleAlbum key={album.key} album={album} />
       ))}
     </div>

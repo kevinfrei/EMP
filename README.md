@@ -17,8 +17,9 @@ bad music player (a great video player, but not great for music, IMO)
 
 I've got playback working. Double-clicking on artists, albums, and songs adds
 to the 'Now Playing' list. Repeat & Shuffle generally work the way you expect.
-`yarn start` will launch it. The trouble is that there's something buggy in the
-electron packager so that the results of `yarn build` don't actually work :/
+`yarn start` will launch it. Albums with jpg's/png's in the same folder will
+display those images in the Album list. Honestly, it's semi-functional.
+Playlists are the next major piece of functionality to add.
 
 ## Stuff to do
 
@@ -29,13 +30,16 @@ electron packager so that the results of `yarn build` don't actually work :/
 * Improve the views for Artists
 * Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
+  * Support adding album covers
 * Make adding new music "append" new keys (no key re-use)
   * Make changing music "migrate" keys
-  * Only when renaming files/moving files around happesn
+  * Only when renaming files/moving files around happens
 * Playlist unique-ification
-* Add album covers
 * Make 'Search' work.
 * Make a miniplayer!
+* "Auto" playlists (something involving stuff like "this artist" and "not this
+keyword" kind of stuff.
+* Transcode for phone (dump stuff out ready to import into iTunes)
 * Testing! Testing! Testing!
 
 ## Stuff to remember

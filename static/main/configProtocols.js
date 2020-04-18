@@ -24,10 +24,16 @@ const configureProtocols = () => {
       log('No URL specified in pic request');
       callback({ error: -324 });
     } else if (req.url.startsWith('pic://album/')) {
-      // TODO: Make this work
-      const thePath = path.join(__dirname, '..', 'img-album.svg');
-      log(`Album cover pic:// Returning ${thePath}`);
-      callback({ path: thePath });
+      // Let's check the db to see if we've got
+      const db: MusicDB = persist.getItem('DB');
+      const maybePath = db.pictures.get(req.url.substr(12));
+      if (maybePath) {
+        callback({ path: maybePath });
+      } else {
+        const thePath = path.join(__dirname, '..', 'img-album.svg');
+        log(`Album cover pic:// Returning ${thePath}`);
+        callback({ path: thePath });
+      }
     } else {
       const thePath = path.join(__dirname, '..', 'img-album.svg');
       log(`Non-album cover pic:// Returning ${thePath}`);
@@ -43,10 +49,11 @@ const configureProtocols = () => {
       const key = req.url.substring(12);
       const db: MusicDB = persist.getItem('DB');
       const song = db.songs.get(key);
-      const thePath = song.URL;
-      if (thePath.startsWith('file://')) {
-      log('Returning path ' + thePath.substr(7));
-      callback({ path: thePath.substr(7) });}
+      if (song) {
+        const thePath = song.path;
+        log('Returning path ' + thePath);
+        callback({ path: thePath });
+      }
     } else {
       callback({ error: 404 });
     }

@@ -76,7 +76,7 @@ export function GetDataForSong(
 export function GetArtistForAlbum(
   store: StoreState,
   album: Album | AlbumKey
-): Artist | string {
+): string {
   let alb = album;
   if (typeof album === 'string') {
     const albums = store.get('Albums');
