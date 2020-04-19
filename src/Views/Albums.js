@@ -1,9 +1,7 @@
 // @flow
 
 import React, { useState } from 'react';
-import Card from 'react-bootstrap/Card';
 import Media from 'react-bootstrap/Media';
-import ListGroup from 'react-bootstrap/ListGroup';
 
 import Store from '../MyStore';
 
@@ -11,7 +9,7 @@ import { AddAlbum, AddSong } from '../Playlist';
 import { GetArtistForAlbum, GetTrackListingForSong } from '../DataAccess';
 import { AlbumByTitle } from '../Sorters';
 
-import type { SongKey, Song, Album, StoreState } from '../MyStore';
+import type { SongKey, Album, StoreState } from '../MyStore';
 
 import downChevron from '../img/down-chevron.svg';
 
@@ -38,6 +36,7 @@ function SingleAlbum({ album }: { album: Album }) {
         height="75px"
         width="75px"
         onDoubleClick={adder}
+        alt=''
       />
       <Media.Body>
         <h5 className="album-title" onDoubleClick={adder}>
@@ -51,6 +50,7 @@ function SingleAlbum({ album }: { album: Album }) {
             height="13px"
             src={downChevron}
             style={expanderStyle}
+            alt='show shows'
           />
           &nbsp;
           <span onDoubleClick={adder}>

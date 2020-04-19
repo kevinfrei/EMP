@@ -158,10 +158,11 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
   // First, get the primary artist
   // TODO: FullMetaData doesn't allow for multiple primary artists
   // Check Trent Reznor & Atticus Ross for an example where it kinda matters
-  const artist: Artist = getOrNewArtist(db, md.Artist);
-  const artistSet: Set<ArtistKey> = new Set();
-  const allArtists: Array<Artist> = [artist];
-  artistSet.add(artist.key);
+  const tmpArtist: string | Array<string> = md.Artist;
+  const artists = (typeof tmpArtist === 'string') ? [tmpArtist] : tmpArtist;
+  const allArtists = artists.map(a => getOrNewArtist(db, a));
+  const artistIds: Array<ArtistKey> = allArtists.map(a=>a.key);
+  const artistSet: Set<ArtistKey> = new Set(artistIds);
   const album = getOrNewAlbum(
     db,
     md.Album,
@@ -169,7 +170,6 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
     artistSet,
     md.VAType || ''
   );
-  const artistIds: Array<ArtistKey> = [artist.key];
   const secondaryIds: Array<ArtistKey> = [];
   if (md.MoreArtists) {
     for (let sa of md.MoreArtists) {

@@ -32,7 +32,7 @@ const setup = (windowCreated: OnWindowCreated) => {
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: true,
-        webSecurity: false
+        webSecurity: !isDev
       },
       titleBarStyle: 'hiddenInset', // TODO: Only Mac
       frame: false, // TODO: !Mac, add close/min/max buttons

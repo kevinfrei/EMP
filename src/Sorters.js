@@ -4,7 +4,7 @@ import Store from './MyStore';
 
 import { GetDataForSong } from './DataAccess';
 
-import type { SongKey, Song, State, Album } from './MyStore';
+import type { SongKey, State, Album } from './MyStore';
 
 export function SongByRLTN(store: Store<State>) {
   return (a: SongKey, b: SongKey) => {

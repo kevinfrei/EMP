@@ -8,10 +8,10 @@ import { GetDataForSong } from '../DataAccess';
 import { AddSong } from '../Playlist';
 import { SongByRLTN } from '../Sorters';
 
-import type { SongKey, Song, State } from '../MyStore';
+import type { SongKey } from '../MyStore';
 
 const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
-  const [open, setOpen] = useState(false);
+  const [, setOpen] = useState(false);
   const store = Store.useStore();
   const { title, track, album, artist } = GetDataForSong(store, songKey);
   return (

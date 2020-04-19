@@ -24,34 +24,37 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Core Capabilities
-* Make Now Playing resilient to song additions/changes
+* *main* Maintain some sort of persistent DB for various stuff
+* *main* Make Now Playing resilient to song additions/changes
   * potentially related to No Key Reuse below...
-* Add custom Playlist capabilities
-* Add "Recently Added" capabilities
-* Media "info" (using node-mediainfo seems like the right thing to do)
+* *both* Add custom Playlist capabilities
+* *both* Add "Recently Added" capabilities
+* *both* Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
   * Support adding album covers
-* Make 'Search' work.
-* Make a miniplayer!
-* "Auto" playlists (something involving stuff like "this artist" and "not this
+* *both* Make 'Search' work.
+* *render* Make a miniplayer!
+* *both* "Auto" playlists (something involving stuff like "this artist" and "not this
 keyword" kind of stuff.
-* Add 'favorite' or 'love' attribute for songs
+* *both* Add 'favorite/love' attribute for songs
 
 ### Logic improvements/changes
 * When locations are changed, the database should get a full update
 * Make adding new music "append" new keys (no key re-use)
   * Make changing music "migrate" keys
   * Only when renaming files/moving files around happens
-* Add Artist splitting (No more "Trent Reznor & Atticus Ross")
 * Transcode for phone (dump stuff out ready to import into iTunes)
 * Playlist unique-ification
-* Testing! Testing! Testing!
 
 ### UI Improvements
+* Make the currently 'scroll' position stick between navigation
 * Render proces needs an image cache or view virtualization (maybe both)
 * Improve the views for Artists (and Albums, and probably Songs too)
-* Playlist reordering with drag & drop
+* Playlist reordering (drag & drop?)
 * Handle single & double clicking from Now Playing with onClick timeouts
+
+### Other
+* Testing! Testing! Testing!
 
 ## Stuff to remember
 

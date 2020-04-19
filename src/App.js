@@ -16,6 +16,7 @@ import './styles/App.css';
 const App = () => {
   return (
     <Store.Container>
+      <AsyncDoodad />
       <span className="grabber"></span>
       <span className="left-column"></span>
       <span className="top-row"></span>
@@ -24,7 +25,6 @@ const App = () => {
       <VolumeControl />
       <Sidebar />
       <ViewSelector />
-      <AsyncDoodad />
     </Store.Container>
   );
 };

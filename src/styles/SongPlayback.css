@@ -31,7 +31,7 @@
 }
 
 #now-playing-current-time {
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 2;
   font-size: xx-small;
   justify-self: left;
@@ -39,7 +39,7 @@
 }
 
 #now-playing-remaining-time {
-  grid-row: 2;
+  grid-row: 1;
   grid-column: 4;
   font-size: xx-small;
   justify-self: right;

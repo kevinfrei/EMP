@@ -42,6 +42,7 @@ const NowPlaying = () => {
   const songs = nowPlaying.songs.map((val, idx) => {
     const songKey = GetSongKey(store, nowPlaying, idx);
     const { track, title, album, artist } = GetDataForSong(store, songKey);
+
     return (
       <tr
         className={idx === nowPlaying.pos ? 'playing' : 'not-playing'}
@@ -67,10 +68,7 @@ const NowPlaying = () => {
     <Table striped hover size="sm">
       <thead>
         <tr>
-          <td></td>
-          <td>{header}</td>
-          <td></td>
-          <td></td>
+          <td colSpan='4'>{header}</td>
           <td>{button}</td>
         </tr>
       </thead>
