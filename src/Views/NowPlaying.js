@@ -8,6 +8,7 @@ import {
   GetSongKey,
   PlaySongNumber,
   StopAndClear,
+  RemoveSongNumber,
 } from '../Playlist';
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
@@ -15,6 +16,7 @@ import Table from 'react-bootstrap/Table';
 import type { PlaySet } from '../MyStore';
 
 import './styles/NowPlaying.css';
+import deletePic from '../img/delete.svg';
 
 const NowPlaying = () => {
   const store = Store.useStore();
@@ -46,6 +48,14 @@ const NowPlaying = () => {
         key={idx}
         onDoubleClick={() => PlaySongNumber(store, idx)}
       >
+        <td>
+          <img
+            className="delete-pic pic-button"
+            src={deletePic}
+            alt="Remove"
+            onClick={() => RemoveSongNumber(store, idx)}
+          />
+        </td>
         <td>{album}</td>
         <td>{artist}</td>
         <td>{track}</td>
@@ -57,6 +67,7 @@ const NowPlaying = () => {
     <Table striped hover size="sm">
       <thead>
         <tr>
+          <td></td>
           <td>{header}</td>
           <td></td>
           <td></td>
@@ -65,6 +76,7 @@ const NowPlaying = () => {
       </thead>
       <thead>
         <tr>
+          <td></td>
           <td>Album</td>
           <td>Artist</td>
           <td>#</td>

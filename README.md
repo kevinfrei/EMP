@@ -27,8 +27,6 @@ Playlists are the next major piece of functionality to add.
 * Make Now Playing resilient to song additions/changes
   * potentially related to No Key Reuse below...
 * Add custom Playlist capabilities
-* Support removing songs from playlists
-  * Eventually enable reordering with drag & drop?
 * Add "Recently Added" capabilities
 * Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
@@ -52,6 +50,8 @@ keyword" kind of stuff.
 ### UI Improvements
 * Render proces needs an image cache or view virtualization (maybe both)
 * Improve the views for Artists (and Albums, and probably Songs too)
+* Playlist reordering with drag & drop
+* Handle single & double clicking from Now Playing with onClick timeouts
 
 ## Stuff to remember
 

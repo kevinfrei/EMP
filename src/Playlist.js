@@ -66,12 +66,26 @@ export const PlaySong = (store: Store<State>, key: SongKey) => {
   StartSongPlaying(store, key);
 };
 
-export const PlaySongNumber = (store: Store<State>, index: number) => {
+export function PlaySongNumber(store: Store<State>, index: number) {
   const nowPlaying = store.get('nowPlaying');
   nowPlaying.pos = index;
   store.set('nowPlaying')(nowPlaying);
   StartSongPlaying(store, GetSongKey(store, nowPlaying, index));
 };
+
+export function RemoveSongNumber(store: Store<State>, index:  number) {
+  const nowPlaying = store.get('nowPlaying');
+  nowPlaying.songs.splice(index, 1);
+  if (nowPlaying.pos === index) {
+    store.set('nowPlaying')(nowPlaying);
+    PlaySongNumber(store, index - 1);
+    return;
+  }
+  if (nowPlaying.pos > index) {
+    nowPlaying.pos--;
+  }
+  store.set('nowPlaying')(nowPlaying);
+}
 
 const JustAddSong = (store: Store<State>, key: SongKey) => {
   const nowPlaying = store.get('nowPlaying');

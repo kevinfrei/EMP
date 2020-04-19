@@ -19,7 +19,7 @@
   grid-column: 1;
 }
 
-.delete-pic, .add-pic {
+.pic-button {
   height: 24px;
   width: 24px;
   border: solid 1px gray;

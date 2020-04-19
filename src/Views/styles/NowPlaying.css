@@ -11,6 +11,15 @@ thead {
   font-weight: normal;
 }
 
+.pic-button {
+  height: 24px;
+  width: 24px;
+  border: solid 1px gray;
+  border-radius: 3px;
+  padding: 4px;
+  cursor: pointer;
+}
+
 #clear-now-playing {
   float: right;
 }
