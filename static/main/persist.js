@@ -4,7 +4,7 @@ const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const logger = require('simplelogger');
-const { FTON } = require('my-utils');
+const { FTON, SeqNum } = require('my-utils');
 
 import type { Rectangle } from 'electron';
 import type { FTONData } from 'my-utils';
@@ -12,10 +12,19 @@ import type { FTONData } from 'my-utils';
 const log = logger.bind('persist');
 logger.disable('persist');
 
+export type MaybeRectangle = {|
+  width: number,
+  height: number,
+  x?: number,
+  y?: number,
+|};
+
 export type WindowPosition = {|
-  bounds: Rectangle,
+  bounds: MaybeRectangle,
   isMaximized: boolean,
 |};
+
+export type ValueUpdateListener = (val: FTONData) => void;
 
 export type Persist = {
   getItem<T>(key: string): T,
@@ -24,9 +33,13 @@ export type Persist = {
   getWindowPos(): WindowPosition,
   setWindowPos(st: WindowPosition): void,
   getBrowserWindowPos(st: WindowPosition): Rectangle,
+  subscribe(key: string, listener: ValueUpdateListener): string,
+  unsubscribe(id: string): boolean,
 };
 
 const memoryCache: Map<string, FTONData> = new Map();
+const listeners: Map<string, Map<string, ValueUpdateListener>> = new Map();
+const getNextListenerId = SeqNum();
 
 const KeyWhiteList = (name: string): boolean => {
   switch (name) {
@@ -57,28 +70,29 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
 );
 
 // Here's a place for app settings & stuff...
-const storageLocation = (id: string): string => {
+function storageLocation(id: string): string {
   return path.join(app.getPath('userData'), `persist-${id}.json`);
-};
+}
 
 log(`User data location: ${storageLocation('test')}`);
 
-const readFile = (id: string): FTONData => {
-  if (memoryCache.has(id)) {
-    return memoryCache.get(id);
+function readFile(id: string): FTONData {
+  let data = memoryCache.get(id);
+  if (data) {
+    return data;
   }
   try {
-    const data = FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
+    data = FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
     memoryCache.set(id, data);
     return data;
   } catch (e) {}
   return {};
-};
+}
 
-const writeFile = (id: string, val: FTONData): void => {
+function writeFile(id: string, val: FTONData): void {
   fs.writeFileSync(storageLocation(id), FTON.stringify(val), 'utf8');
   memoryCache.set(id, val);
-};
+}
 
 function deleteFile(id: string) {
   try {
@@ -87,10 +101,44 @@ function deleteFile(id: string) {
   } catch (e) {}
 }
 
+function notify(key: string, val: FTONData) {
+  // For each listener, invoke the listening function
+  const ls = listeners.get(key);
+  if (!ls) return;
+  for (let fn of ls.values()) {
+    fn(val);
+  }
+}
+
+// Add a function to run when a value is persisted
+function subscribe(key: string, listener: ValueUpdateListener): string {
+  const id = getNextListenerId();
+  let keyListeners = listeners.get(key);
+  if (!keyListeners) {
+    keyListeners = new Map();
+    listeners.set(key, keyListeners);
+  }
+  keyListeners.set(id, listener);
+  return `${id}-${key}`;
+}
+
+// Remove the listening function with the given id
+function unsubscribe(id: string): boolean {
+  const splitPt = id.indexOf('-');
+  const actualId = id.substr(0, splitPt);
+  const keyName = id.substr(splitPt + 1);
+  const keyListeners = listeners.get(keyName);
+  if (!keyListeners) {
+    return false;
+  }
+  return keyListeners.delete(actualId);
+}
+
+// Get a value from disk/memory
 function getItem<T>(key: string): ?T {
   log('Reading ' + key);
   const val: FTONData = readFile(key);
-  if (val && typeof val === 'object') {
+  if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
     if (key.toLocaleLowerCase() !== 'db') {
       log('returning this value:');
       log(val[key]);
@@ -101,6 +149,7 @@ function getItem<T>(key: string): ?T {
   }
 }
 
+// Save a value to disk and cache it
 function setItem(key: string, value: FTONData): void {
   log(`Writing ${key}:`);
   log(value);
@@ -109,12 +158,14 @@ function setItem(key: string, value: FTONData): void {
     if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
       val[key] = value;
       writeFile(key, val);
+      notify(key, val);
     } else {
       log('Invalid item persistence request');
     }
   }
 }
 
+// Delete an item (and remove it from the cache)
 function deleteItem(key: string): void {
   log(`deleting ${key}`);
   deleteFile(key);
@@ -172,6 +223,8 @@ const persist: Persist = {
   getWindowPos,
   setWindowPos,
   getBrowserWindowPos,
+  subscribe,
+  unsubscribe,
 };
 
 module.exports = persist;

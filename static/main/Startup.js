@@ -6,6 +6,7 @@ const { FTON } = require('my-utils');
 
 const persist = require('./persist');
 const music = require('./music');
+const { SendDatabase } = require('./Communication');
 
 import type { MusicDB } from './music';
 
@@ -23,13 +24,25 @@ function getLocations(): Array<string> {
   return musicLocations;
 }
 
+async function getMusicDb() {
+  let musicLocations = getLocations();
+  let musicDB = await music.find(musicLocations);
+  persist.setItem('DB', musicDB);
+}
+
 // This is awaited upon initial window creation
 async function Startup() {
   // Scan for all music
-  let musicLocations = getLocations();
-  let musicDB = await music.find(musicLocations);
-  log('Finished finding music');
-  persist.setItem('DB', musicDB);
+  let musicDB = persist.getItem('DB');
+  // If we already have a musicDB, continue and schedule it to be rescanned
+  if (musicDB) {
+    setTimeout(() => {
+      getMusicDb().then(() => SendDatabase());
+    }, 250);
+  } else {
+    // If we don't already have it, wait to start until we've read it.
+    await getMusicDb();
+  }
 }
 
 function Ready(window) {

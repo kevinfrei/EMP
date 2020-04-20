@@ -3,5 +3,8 @@
   "flow.runOnAllFiles": true,
   "javascript.format.enable": false,
   "javascript.validate.enable": false,
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "search.exclude": {
+    "public/**/*.js": true
+  }
 }

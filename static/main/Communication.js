@@ -143,4 +143,4 @@ function Begin(window) {
   SendDatabase();
 }
 
-module.exports = { Init, Begin };
+module.exports = { Init, Begin, SendDatabase };

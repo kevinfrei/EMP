@@ -24,19 +24,19 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Core Capabilities
-* *main* Maintain some sort of persistent DB for various stuff
-* *main* Make Now Playing resilient to song additions/changes
+* **main** Maintain some sort of persistent DB for various stuff
+* **main** Make Now Playing resilient to song additions/changes
   * potentially related to No Key Reuse below...
-* *both* Add custom Playlist capabilities
-* *both* Add "Recently Added" capabilities
-* *both* Media "info" (using node-mediainfo seems like the right thing to do)
+* **both** Add custom Playlist capabilities
+* **both** Add "Recently Added" capabilities
+* **both** Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
   * Support adding album covers
-* *both* Make 'Search' work.
-* *render* Make a miniplayer!
-* *both* "Auto" playlists (something involving stuff like "this artist" and "not this
+* **both** Make 'Search' work.
+* **render** Make a miniplayer!
+* **both** "Auto" playlists (something involving stuff like "this artist" and "not this
 keyword" kind of stuff.
-* *both* Add 'favorite/love' attribute for songs
+* **both** Add 'favorite/love' attribute for songs
 
 ### Logic improvements/changes
 * When locations are changed, the database should get a full update

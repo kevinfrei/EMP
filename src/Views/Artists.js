@@ -1,12 +1,25 @@
 // @flow
 
 import React from 'react';
+import Card from 'react-bootstrap/Card';
+
 import Store from '../MyStore';
+
 import { AddArtist } from '../Playlist';
-const SingleArtist = ({ artist }) => {
+
+import type { Artist } from '../MyStore';
+
+const SingleArtist = ({ artist }: { artist: Artist }) => {
   const store = Store.useStore();
   return (
-    <div onDoubleClick={() => AddArtist(store, artist.key)}>{artist.name}</div>
+    <Card onDoubleClick={() => AddArtist(store, artist.key)}>
+      <Card.Body>
+        <Card.Title>{artist.name}</Card.Title>
+        <Card.Subtitle>
+          {artist.songs.length} Songs and {artist.albums.length} Albums
+        </Card.Subtitle>
+      </Card.Body>
+    </Card>
   );
 };
 const Artists = () => {
