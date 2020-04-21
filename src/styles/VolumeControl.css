@@ -15,13 +15,13 @@
   justify-self: center;
   align-self: center;
   width: 86px;
+  margin-left: 2px;
 }
 
 #mute {
   grid-column: 1;
   grid-row: 1;
   height: 14px;
-  margin-top: 3px;
   background: url('../img/mute.svg');
   background-size: cover;
 }

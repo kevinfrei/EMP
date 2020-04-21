@@ -29,6 +29,7 @@ Playlists are the next major piece of functionality to add.
   * potentially related to No Key Reuse below...
 * **both** Add custom Playlist capabilities
 * **both** Add "Recently Added" capabilities
+  * Also probably related to No Key Reuse below...
 * **both** Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
   * Support adding album covers
