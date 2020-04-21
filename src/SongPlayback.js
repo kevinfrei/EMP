@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Store from './MyStore';
-import { GetDataForSong } from './DataAccess';
+import { GetDataForSong, GetAlbumKeyForSongKey } from './DataAccess';
 import { StartNextSong } from './Playlist';
 
 import type { State } from './MyStore';
@@ -68,9 +68,10 @@ const SongPlayback = () => {
   let store = Store.useStore();
   const songKey = store.get('curSong');
   const playing = store.set('playing');
-  let title = 'title';
-  let artist = 'artist';
-  let album = 'album';
+  let title = '';
+  let artist = '';
+  let album = '';
+  let split = '';
   let picUrl = 'pic://pic/pic.svg';
   if (songKey !== '') {
     audio = (
@@ -83,8 +84,9 @@ const SongPlayback = () => {
         onEnded={() => StartNextSong(store)}
       />
     );
-    picUrl = 'pic://album/' + songKey;
+    picUrl = 'pic://album/' + GetAlbumKeyForSongKey(store, songKey);
     ({ title, artist, album } = GetDataForSong(store, songKey));
+    split = artist.length && album.length ? ': ' : '';
   } else {
     audio = <audio id="audioElement" />;
   }
@@ -94,21 +96,24 @@ const SongPlayback = () => {
         <img id="current-cover-art" src={picUrl} alt="album cover" />
       </span>
       <span id="song-name">{title}</span>
-      <span id="artist-name">{`${artist}: ${album}`}</span>
+      <span id="artist-name">{`${artist}${split}${album}`}</span>
       <span id="now-playing-current-time"></span>
       <input
         type="range"
         id="song-slider"
         min="0"
         max="1"
-        step="1e-6"
+        step="1e-5"
         onChange={(ev) => {
           setPos(ev.target.value);
           const ae = document.getElementById('audioElement');
           if (!ae) {
             return;
           }
-          ae.currentTime = ae.duration * ev.target.value;
+          const targetTime = ae.duration * ev.target.value;
+          if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
+            ae.currentTime = ae.duration * ev.target.value;
+          }
         }}
       />
       <span id="now-playing-remaining-time"></span>

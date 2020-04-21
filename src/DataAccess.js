@@ -98,3 +98,14 @@ export function GetArtistForAlbum(
   }
   return 'Various Artists';
 }
+
+export function GetAlbumKeyForSongKey(
+  store: StoreState,
+  songKey: SongKey
+): AlbumKey {
+  const song = GetSong(store, songKey);
+  if (!song) {
+    return '';
+  }
+  return song.albumId;
+}
