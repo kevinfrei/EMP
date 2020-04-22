@@ -65,6 +65,7 @@ export type State = {|
   shuffle: boolean,
   repeat: boolean, // Have I ever wanted "repeat 1 song"? No. I have not.
   nowPlaying: PlaySet, // What's currently playing
+  scrollManager: Map<string, { x: number, y: number }>,
 |};
 
 let initialState: State = {
@@ -73,12 +74,13 @@ let initialState: State = {
   Songs: new Map(),
   Playlists: new Map(),
   locations: [],
-  curView: 'song',
+  curView: 'artist',
   curSong: '',
   playing: false,
   shuffle: false,
   repeat: false,
   nowPlaying: { name: '', pos: -1, songs: [] },
+  scrollManager: new Map(),
 };
 
 export const ValidKeyNames = [

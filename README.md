@@ -48,7 +48,6 @@ keyword" kind of stuff.
 * Playlist unique-ification
 
 ### UI Improvements
-* Make the currently 'scroll' position stick between navigation
 * Render proces needs an image cache or view virtualization (maybe both)
 * Improve the views for Artists (and Albums, and probably Songs too)
 * Playlist reordering (drag & drop?)

@@ -1,6 +1,6 @@
 // @flow
 
-import * as React from 'react';
+import React, { useEffect } from 'react';
 
 import AlbumsView from './Albums';
 import ArtistsView from './Artists';
@@ -15,10 +15,39 @@ import './styles/Selector.css';
 
 import type { ViewNames } from '../MyStore';
 
+function scroll({ x, y }: { x: number, y: number }) {
+  const target = document.getElementById('scrollview');
+  if (!target) {
+    setTimeout(() => scroll({ x, y }), 10);
+  } else {
+    target.scrollLeft = x;
+    target.scrollTop = y;
+  }
+}
+
 const ViewSelector = () => {
+  //  const [which, setView] = React.useState('artist');
   let store = Store.useStore();
   const which: ViewNames = store.get('curView');
-  let res: React.Node;
+  const scrollData = store.get('scrollManager');
+  let pos = scrollData.get(which);
+  if (!pos) {
+    pos = { x: 0, y: 0 };
+    scrollData.set(which, pos);
+  }
+
+  useEffect(() => {
+    const pos = scrollData.get(which);
+    if (pos) {
+      scroll(pos);
+    }
+  }, [which, scrollData]);
+
+  const getScrollPosition = (ev) => {
+    scrollData.set(which, { x: ev.target.scrollLeft, y: ev.target.scrollTop });
+  };
+
+  let res: React$Node;
   switch (which) {
     case 'album':
       res = <AlbumsView />;
@@ -45,7 +74,11 @@ const ViewSelector = () => {
     default:
       res = <></>;
   }
-  return <div className="current-view">{res}</div>;
+  return (
+    <div id="scrollview" className="current-view" onScroll={getScrollPosition}>
+      {res}
+    </div>
+  );
 };
 
 export default ViewSelector;
