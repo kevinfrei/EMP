@@ -18,27 +18,44 @@ import type { PlaySet } from '../MyStore';
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
 
-const NowPlaying = () => {
+const Header = () => {
   const store = Store.useStore();
   const nowPlaying: PlaySet = store.get('nowPlaying');
   let header;
   let button;
+  const save = () => window.alert('save');
+  const saveAs = () => window.alert('Save As');
+  const del = () => StopAndClear(store);
   if (PlayingPlaylist(nowPlaying)) {
     header = nowPlaying.name;
-    button = <></>;
+    // Only use this button if it's been modified?
+    button = <Button onClick={save}>Save</Button>;
   } else {
     header = 'Now Playing';
-    button = (
-      <Button
-        id="clear-now-playing"
-        onClick={() => StopAndClear(store)}
-        variant="light"
-        size="sm"
-      >
-        Clear
-      </Button>
-    );
+    button = <></>;
   }
+  const clear = (
+    <img
+      className="delete-pic pic-button"
+      src={deletePic}
+      alt="Remove"
+      onClick={del}
+    />
+  );
+  return (
+    <h4 style={{ margin: '3pt' }}>
+      {header}&nbsp;
+      {clear}
+      {button}
+      <Button size="sm" style={{ float: 'right' }} onClick={saveAs}>
+        Save As...
+      </Button>
+    </h4>
+  );
+};
+const NowPlaying = () => {
+  const store = Store.useStore();
+  const nowPlaying: PlaySet = store.get('nowPlaying');
   const songs = nowPlaying.songs.map((val, idx) => {
     const songKey = GetSongKey(store, nowPlaying, idx);
     const { track, title, album, artist } = GetDataForSong(store, songKey);
@@ -65,24 +82,21 @@ const NowPlaying = () => {
     );
   });
   return (
-    <Table striped hover size="sm">
-      <thead>
-        <tr>
-          <td colSpan='4'>{header}</td>
-          <td>{button}</td>
-        </tr>
-      </thead>
-      <thead>
-        <tr>
-          <td></td>
-          <td>Album</td>
-          <td>Artist</td>
-          <td>#</td>
-          <td>Title</td>
-        </tr>
-      </thead>
-      <tbody>{songs}</tbody>
-    </Table>
+    <>
+      <Header />
+      <Table striped hover size="sm">
+        <thead>
+          <tr>
+            <td></td>
+            <td>Album</td>
+            <td>Artist</td>
+            <td>#</td>
+            <td>Title</td>
+          </tr>
+        </thead>
+        <tbody>{songs}</tbody>
+      </Table>
+    </>
   );
 };
 

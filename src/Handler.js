@@ -58,8 +58,7 @@ const DataFromMainHandler = (store: Store<State>, message: string) => {
       log(action.value);
       // Validate that the key is valid
       if (ValidKeyNames.indexOf(key) >= 0) {
-        const setter = store.set(key);
-        setter(action.value);
+        store.set(key)(action.value);
         return;
       } else {
         log('Invalid key name');

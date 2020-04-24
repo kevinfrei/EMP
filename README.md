@@ -26,13 +26,14 @@ Playlists are the next major piece of functionality to add.
 ### Core Capabilities
 * **main** Maintain some sort of persistent DB for various stuff
 * **main** Make Now Playing resilient to song additions/changes
-  * potentially related to No Key Reuse below...
+  * Directly related to No Key Reuse below...
 * **both** Add custom Playlist capabilities
 * **both** Add "Recently Added" capabilities
-  * Also probably related to No Key Reuse below...
+  * Also likely related to No Key Reuse below...
 * **both** Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
   * Support adding album covers
+* **main** Get album covers from media tags as well as the folder...
 * **both** Make 'Search' work.
 * **render** Make a miniplayer!
 * **both** "Auto" playlists (something involving stuff like "this artist" and "not this
@@ -48,10 +49,12 @@ keyword" kind of stuff.
 * Playlist unique-ification
 
 ### UI Improvements
-* Render proces needs an image cache or view virtualization (maybe both)
+* Sorting playlists by clicking headers
+* Render proces needs an image cache and/or view virtualization
 * Improve the views for Artists (and Albums, and probably Songs too)
 * Playlist reordering (drag & drop?)
 * Handle single & double clicking from Now Playing with onClick timeouts
+  * This shows up when clicking many 'delete' icons in a row
 
 ### Other
 * Testing! Testing! Testing!

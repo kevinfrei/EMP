@@ -50,39 +50,66 @@ export type ViewNames =
   | 'settings';
 
 export type State = {|
-  // This is basically the song database
-  // I'm not really confident that this is where it ought to live
+  // Just a list of paths to search for music
+  locations: Array<string>,
+
+  // This is the song database
+  // This should probably not need to be 'complete' but rather rely on
+  // the main process for something. I need to measure perf a bit to see
+  // if it's a problem, or if it's only UI scaling issues
   Artists: Map<ArtistKey, Artist>,
   Albums: Map<AlbumKey, Album>,
   Songs: Map<SongKey, Song>,
+
+  // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, Array<SongKey>>,
-  // Just a list of paths to search for music
-  locations: Array<string>,
+
   // This is about the actual stuff on screen
   curView: ViewNames, // Which view is selected
+  // This is where each view is scrolled to currently
+  scrollManager: Map<string, { x: number, y: number }>,
+
+  // This is, effectively, the active playlist
+  // There's logic around "unnamed" vs. "named" playlists in playlist.js
+  nowPlaying: PlaySet, // What's currently playing
   curSong: SongKey, // the current song key
+
+  // I'm going to migrate away from nowPlaying/curSong and shift to this:
+  songList: Array<SongKey>,
+  curIndex: number,
+  activePlaylistName: string,
+
+  // General state stuff
   playing: boolean, // is a song currently playing?
   shuffle: boolean,
   repeat: boolean, // Have I ever wanted "repeat 1 song"? No. I have not.
-  nowPlaying: PlaySet, // What's currently playing
-  scrollManager: Map<string, { x: number, y: number }>,
 |};
 
 let initialState: State = {
+  locations: [],
+
   Artists: new Map(),
   Albums: new Map(),
   Songs: new Map(),
+
   Playlists: new Map(),
-  locations: [],
+
   curView: 'artist',
+  scrollManager: new Map(),
+
+  nowPlaying: { name: '', pos: -1, songs: [] },
   curSong: '',
+
+  songList: [],
+  curIndex: -1,
+  activePlaylistName: '',
+
   playing: false,
   shuffle: false,
   repeat: false,
-  nowPlaying: { name: '', pos: -1, songs: [] },
-  scrollManager: new Map(),
 };
 
+// This is the white-list of stuff that can be sent from the main process
 export const ValidKeyNames = [
   'Artists',
   'Albums',
