@@ -23,3 +23,12 @@ thead {
 #clear-now-playing {
   float: right;
 }
+
+#save-playlist, #save-playlist-as{
+  float:right;
+  margin:2px;
+}
+
+#now-playing-header {
+  margin: 3pt;
+}

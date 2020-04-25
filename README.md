@@ -24,10 +24,10 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Core Capabilities
+* **main** Save custom Playlists between runs
 * **main** Maintain some sort of persistent DB for various stuff
 * **main** Make Now Playing resilient to song additions/changes
   * Directly related to No Key Reuse below...
-* **both** Add custom Playlist capabilities
 * **both** Add "Recently Added" capabilities
   * Also likely related to No Key Reuse below...
 * **both** Media "info" (using node-mediainfo seems like the right thing to do)

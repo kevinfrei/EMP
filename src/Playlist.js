@@ -11,6 +11,7 @@ import type {
   AlbumKey,
   Artist,
   ArtistKey,
+  StoreState,
 } from './MyStore';
 
 // Playlists are a named ordered (?) list of songs
@@ -168,7 +169,7 @@ export const StartNextSong = (store: Store<State>) => {
 };
 
 // Moves the current playset backward
-export const StartPrevSong = (store: Store<State>) => {
+export function StartPrevSong(store: StoreState) {
   let curIndex = store.get('curIndex');
   if (curIndex < 0) {
     return;
@@ -187,4 +188,16 @@ export const StartPrevSong = (store: Store<State>) => {
   }
   // K, we've got pos moved forward, let's queue up the song
   StartSongPlaying(store, curIndex);
-};
+}
+
+export function StartPlaylist(store: StoreState, name: string) {
+  const pl = store.get('Playlists');
+  const thePl = pl.get(name);
+  if (!thePl) {
+    console.log(`Invalid playlist name ${name}`);
+    return;
+  }
+  store.set('activePlaylistName')(name);
+  store.set('songList')([...thePl]);
+  StartSongPlaying(store, 0);
+}
