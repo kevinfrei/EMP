@@ -7,7 +7,6 @@ import type { Store } from 'undux';
 import type {
   State,
   SongKey,
-  PlaySet,
   Album,
   AlbumKey,
   Artist,
@@ -22,108 +21,77 @@ import type {
 // { name: string, position: number, songList: Array<number> }
 // This allows for shuffling & repeating
 
-export const StopAndClear = (store: Store<State>) => {
-  const nowPlaying = store.get('nowPlaying');
-  nowPlaying.pos = -1;
-  nowPlaying.name = '';
-  nowPlaying.songs=[];
-  store.set('nowPlaying')(nowPlaying);
-};
-
-export const GetSongKey = (
-  store: Store<State>,
-  playing: PlaySet,
-  pos: number
-): SongKey => {
-  const next = playing.songs[pos];
-  if (typeof next === 'string') {
-    return next;
-  } else {
-    const list = store.get('Playlists').get(playing.name);
-    if (!list) {
-      // We didn't find the playlist
-      console.log('Attempting to play from a non-existent playlist');
-      return '';
-    }
-    return list[next];
-  }
-};
-
-export const PlayingPlaylist = (playSet: PlaySet) => playSet.name.length !== 0;
-
-// If a playlist is playing, clear the playlist
-// If a playlist isn't playing, prepend to the nowPlaying list
-export const PlaySong = (store: Store<State>, key: SongKey) => {
-  const nowPlaying = store.get('nowPlaying');
-  if (PlayingPlaylist(nowPlaying)) {
-    nowPlaying.songs = [key];
-    nowPlaying.name = '';
-  } else {
-    nowPlaying.songs.unshift(key);
-  }
-  nowPlaying.pos = 0;
-  store.set('nowPlaying')(nowPlaying);
-  StartSongPlaying(store, key);
-};
-
-export function PlaySongNumber(store: Store<State>, index: number) {
-  const nowPlaying = store.get('nowPlaying');
-  nowPlaying.pos = index;
-  store.set('nowPlaying')(nowPlaying);
-  StartSongPlaying(store, GetSongKey(store, nowPlaying, index));
-};
-
-export function RemoveSongNumber(store: Store<State>, index:  number) {
-  const nowPlaying = store.get('nowPlaying');
-  nowPlaying.songs.splice(index, 1);
-  if (nowPlaying.pos === index) {
-    store.set('nowPlaying')(nowPlaying);
-    PlaySongNumber(store, index - 1);
-    return;
-  }
-  if (nowPlaying.pos > index) {
-    nowPlaying.pos--;
-  }
-  store.set('nowPlaying')(nowPlaying);
+// This stops playback and clears the active playlist
+export function StopAndClear(store: Store<State>): void {
+  store.set('songList')([]);
+  store.set('curIndex')(-1);
+  store.set('activePlaylistName')('');
 }
 
+// True if we're playing from a playlist and not a random song list
+export function PlayingPlaylist(playlistName: string) {
+  return playlistName.length > 0;
+}
+
+// This starts playing the song index from the songList
+export function PlaySongNumber(store: Store<State>, index: number) {
+  const songList = store.get('songList');
+  if (index < 0 || index >= songList.length) {
+    console.log(
+      `PlaySongNumber: bounds error: ${index} (of ${songList.length})`
+    );
+    return;
+  }
+  StartSongPlaying(store, index);
+}
+
+// Removes the given index from the current songList
+// If it's active, move the current to the previous song
+export function RemoveSongNumber(store: Store<State>, index: number) {
+  const songList = store.get('songList');
+  let curIndex = store.get('curIndex');
+  songList.splice(index, 1);
+  if (curIndex === index && index > 0) {
+    PlaySongNumber(store, index - 1);
+  } else if (curIndex > index) {
+    curIndex--;
+    store.set('curIndex')(curIndex);
+  }
+  store.set('songList')(songList);
+}
+
+// Adds a song to the end of the song list
 const JustAddSong = (store: Store<State>, key: SongKey) => {
-  const nowPlaying = store.get('nowPlaying');
-  nowPlaying.songs.push(key);
-  store.set('nowPlaying')(nowPlaying);
+  const songList = store.get('songList');
+  songList.push(key);
+  store.set('songList')(songList);
 };
 
-// Just add a specific song to the now playing set
+// Add a specific song to the now playing set. Start it playing if
+// nothing's already playing.
 export const AddSong = (store: Store<State>, key: SongKey) => {
-  const nowPlaying = store.get('nowPlaying');
-  nowPlaying.songs.push(key);
-  if (store.get('curSong') === '' || nowPlaying.pos < 0) {
-    nowPlaying.pos = nowPlaying.songs.length - 1;
-    StartSongPlaying(store, key);
+  JustAddSong(store, key);
+  if (store.get('curIndex') < 0) {
+    StartSongPlaying(store, 0);
   }
-  store.set('nowPlaying')(nowPlaying);
 };
 
 const AddSongList = (store: Store<State>, keys: Array<SongKey>) => {
-  const nowPlaying = store.get('nowPlaying');
-  const prevPos = nowPlaying.pos;
   keys.forEach((k) => JustAddSong(store, k));
-  if (store.get('curSong') === '' || prevPos < 0) {
-    nowPlaying.pos = Math.max(prevPos, 0);
-    const key = GetSongKey(store, nowPlaying, nowPlaying.pos);
-    StartSongPlaying(store, key);
+  if (store.get('curIndex') < 0) {
+    StartSongPlaying(store, 0);
   }
 };
 
 export const AddAlbum = (store: Store<State>, key: AlbumKey) => {
-  const album:?Album = store.get('Albums').get(key);
+  const album: ?Album = store.get('Albums').get(key);
   if (album) {
     AddSongList(store, album.songs);
   }
 };
 
 export const AddArtist = (store: Store<State>, key: ArtistKey) => {
-  const artist:?Artist = store.get('Artists').get(key);
+  const artist: ?Artist = store.get('Artists').get(key);
   if (artist) {
     AddSongList(store, artist.songs);
   }
@@ -142,76 +110,81 @@ export const AddToPlaylist = (
     console.log('Attempt to add to a non-existent playlist');
     return;
   }
-  // TODO: If we already got one, maybe ask for confirmation?
-  const index = thisOne.length;
+  // TODO: If this song is already in the list, maybe ask for confirmation?
   thisOne.push(key);
-  const nowPlaying = store.get('nowPlaying');
-  if (nowPlaying.name === playlist) {
-    nowPlaying.songs.push(index);
-    store.set('nowPlaying')(nowPlaying);
+  playlists.set(playlist, thisOne);
+  store.set('Playlists')(playlists);
+  const activePlaylist = store.get('activePlaylistName');
+  if (activePlaylist === playlist) {
+    const songList = store.get('songList');
+    songList.push(key);
+    store.set('songList')(songList);
   }
 };
 
 // This shuffles now playing without changing what's currently playing
+// If something is playing, it's the first song in the shuffled playlist
 export const ShuffleNowPlaying = (store: Store<State>) => {
-  const nowPlaying = store.get('nowPlaying');
+  let songList = store.get('songList');
   // Special casing this makes things much easier:
-  if (nowPlaying.pos < 0) {
-    nowPlaying.songs = ShuffleArray(nowPlaying.songs);
+  const curIndex = store.get('curIndex');
+  if (curIndex < 0) {
+    songList = ShuffleArray(songList);
   } else {
     // if we're currently playing something, remove it from the array
-    const curKey = nowPlaying.songs[nowPlaying.pos];
-    nowPlaying.songs.splice(nowPlaying.pos, 1);
-    nowPlaying.songs = [curKey, ...ShuffleArray(nowPlaying.songs)];
-    nowPlaying.pos = 0;
+    const curKey = songList[curIndex];
+    songList.splice(curIndex, 1);
+    songList = [curKey, ...ShuffleArray(songList)];
+    store.set('curIndex')(0);
   }
-  store.set('nowPlaying')(nowPlaying);
+  store.set('songList')(songList);
 };
 
 // Moves the current playset forward
 // Should handle repeat & shuffle as well
 export const StartNextSong = (store: Store<State>) => {
-  const nowPlaying = store.get('nowPlaying');
-  if (nowPlaying.pos < 0) {
+  let curIndex = store.get('curIndex');
+  if (curIndex < 0) {
     return;
   }
   // Scooch to the next song
-  nowPlaying.pos++;
-  if (nowPlaying.pos >= nowPlaying.songs.length) {
+  curIndex++;
+  let songList = store.get('songList');
+  if (curIndex >= songList.length) {
     // If we've past the end of the list, check to see if we're repeating
     const repeat = store.get('repeat');
     if (!repeat) {
+      store.set('curIndex')(-1);
       return;
     }
-    nowPlaying.pos = 0;
+    curIndex = 0;
     if (store.get('shuffle')) {
-      nowPlaying.songs = ShuffleArray(nowPlaying.songs);
+      songList = ShuffleArray(songList);
+      store.set('songList')(songList);
     }
   }
   // K, we've got pos moved forward, let's queue up the song
-  const songKey = GetSongKey(store, nowPlaying, nowPlaying.pos);
-  store.set('nowPlaying')(nowPlaying);
-  StartSongPlaying(store, songKey);
+  StartSongPlaying(store, curIndex);
 };
 
 // Moves the current playset backward
 export const StartPrevSong = (store: Store<State>) => {
-  const nowPlaying = store.get('nowPlaying');
-  if (nowPlaying.pos < 0) {
+  let curIndex = store.get('curIndex');
+  if (curIndex < 0) {
     return;
   }
   // Scooch to the next song
-  nowPlaying.pos--;
-  if (nowPlaying.pos < 0) {
+  curIndex--;
+  const songList = store.get('songList');
+  if (curIndex < 0) {
     // If we've past the end of the list, check to see if we're repeating
     const repeat = store.get('repeat');
     if (!repeat) {
+      store.set('curIndex')(-1);
       return;
     }
-    nowPlaying.pos = nowPlaying.songs.length - 1;
+    curIndex = songList.length - 1;
   }
   // K, we've got pos moved forward, let's queue up the song
-  const songKey = GetSongKey(store, nowPlaying, nowPlaying.pos);
-  store.set('nowPlaying')(nowPlaying);
-  StartSongPlaying(store, songKey);
+  StartSongPlaying(store, curIndex);
 };

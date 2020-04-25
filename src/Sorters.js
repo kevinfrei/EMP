@@ -1,12 +1,10 @@
 // @flow
 
-import Store from './MyStore';
-
 import { GetDataForSong } from './DataAccess';
 
-import type { SongKey, State, Album } from './MyStore';
+import type { SongKey, StoreState, Album } from './MyStore';
 
-export function SongByRLTN(store: Store<State>) {
+export function SongByRLTN(store: StoreState) {
   return (a: SongKey, b: SongKey) => {
     const {
       title: aTitle,

@@ -68,9 +68,9 @@ name of the key to the `ValidKeyNames` list in
 [MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js) as
 well as the `KeyWhiteList` function in
 [persist.js](https://github.com/kevinfrei/music/blob/master/static/main/persist.js).
-Easierst, add it to `PersistedBetweenRuns` in Array. For something more
-complicated, you'll need to monkey with `ConfigureIPC`. Both functions in
+Next, add it to the `PersistedBetweenRuns` array in
 [Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js).
+For something more complicated, you'll need to monkey with `ConfigureIPC`.
 
 ## Old stuff
 

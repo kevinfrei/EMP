@@ -2,12 +2,11 @@
 
 import logger from 'simplelogger';
 import { FTON } from 'my-utils';
-import { Comparisons } from 'my-utils'
+import { Comparisons } from 'my-utils';
 import { ValidKeyNames } from './MyStore';
 
 import type { IpcRendererEvent } from 'electron';
-import type { Store } from 'undux';
-import type { State, PlaySet } from './MyStore';
+import type { StoreState } from './MyStore';
 
 export type KeyValue = {
   key: string,
@@ -17,31 +16,7 @@ export type KeyValue = {
 const log = logger.bind('handler');
 logger.disable('handler');
 
-// Returns true if psa and psb are equal
-function playSetEqual(psa: PlaySet, psb: PlaySet): boolean {
-  const psan = psa.name.toLocaleLowerCase();
-  const psbn = psb.name.toLocaleLowerCase();
-  if (psan.localeCompare(psbn)) {
-    return false;
-  }
-  if (psa.pos !== psb.pos) {
-    return false;
-  }
-  if (psa.songs.length !== psb.songs.length) {
-    return false;
-  }
-  for (let i = 0; i < psa.songs.length; i++) {
-    if (typeof psa.songs[i] !== typeof psb.songs[i]) {
-      return false;
-    }
-    if (psa.songs[i] !== psb.songs[i]) {
-      return false;
-    }
-  }
-  return true;
-}
-
-const DataFromMainHandler = (store: Store<State>, message: string) => {
+const DataFromMainHandler = (store: StoreState, message: string) => {
   try {
     const action: mixed = FTON.parse(message);
     log('Store message from main process:');
@@ -109,18 +84,19 @@ function makeChangeChecker<T>(
 // add a "change checker" here.
 const PersistedBetweenRuns: Array<SaveConfig<T>> = [
   makeChangeChecker('locations', null, Comparisons.ArraySetEqual, 1, 10),
+  makeChangeChecker('songList', [], Comparisons.ArraySetEqual, 500, 1500),
   makeChangeChecker(
-    'nowPlaying',
-    { name: '', pos: -1, songs: [] },
-    playSetEqual,
-    500,
-    1500
+    'activePlaylistName',
+    '',
+    Comparisons.StringCaseInsensitiveEqual,
+    50,
+    150
   ),
 ];
 
 // This registers store subscribers for state changes we're watching
 // and requests the initial values from the main process
-const HandlePersistence = (store: Store<State>) => {
+const HandlePersistence = (store: StoreState) => {
   for (let key of PersistedBetweenRuns) {
     log(`key: ${key.key} subscription`);
     store.on(key.key).subscribe((value) => {
@@ -161,7 +137,7 @@ const HandlePersistence = (store: Store<State>) => {
 // TODO: Debounce saving stuff
 // TODO: Make this a more trivially configurable kind of thing
 // TODO: Document this. Seriously. Rediscovering how this works is a PITA
-const ConfigureIPC = (store: Store<State>) => {
+const ConfigureIPC = (store: StoreState) => {
   log('Store:');
   log(store);
   log('window.ipc');

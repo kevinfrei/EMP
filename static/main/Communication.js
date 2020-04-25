@@ -45,7 +45,7 @@ const setter = ({ key, value }: KVP) => {
   log(`Persisting '${key}' to:`);
   log(value);
   persist.setItem(key, FTON.stringify(value));
-  // KBF: Continue here maybe?
+  // KBF: Continue here for observing changes
   switch (key) {
     case 'locations':
       return;
@@ -120,7 +120,7 @@ function SendDatabase() {
 // Called to just set stuff up (nothing has actually been done yet)
 function Init() {
   // In addition, there's the 'GetDatabase' request
-  comms.forEach(<T>(val: MessageHandler<T>) => {
+  for (let val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
       const data: ?T = val.validator(arg);
       if (data !== undefined && data !== null) {
@@ -132,8 +132,7 @@ function Init() {
         log(arg);
       }
     });
-  });
-
+  }
   ipcMain.on('GetDatabase', SendDatabase);
 }
 

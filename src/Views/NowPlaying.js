@@ -5,7 +5,6 @@ import Store from '../MyStore';
 import { GetDataForSong } from '../DataAccess';
 import {
   PlayingPlaylist,
-  GetSongKey,
   PlaySongNumber,
   StopAndClear,
   RemoveSongNumber,
@@ -13,21 +12,19 @@ import {
 import Button from 'react-bootstrap/Button';
 import Table from 'react-bootstrap/Table';
 
-import type { PlaySet } from '../MyStore';
-
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
 
 const Header = () => {
   const store = Store.useStore();
-  const nowPlaying: PlaySet = store.get('nowPlaying');
+  const nowPlaying: string = store.get('activePlaylistName');
   let header;
   let button;
   const save = () => window.alert('save');
   const saveAs = () => window.alert('Save As');
   const del = () => StopAndClear(store);
   if (PlayingPlaylist(nowPlaying)) {
-    header = nowPlaying.name;
+    header = nowPlaying;
     // Only use this button if it's been modified?
     button = <Button onClick={save}>Save</Button>;
   } else {
@@ -55,14 +52,15 @@ const Header = () => {
 };
 const NowPlaying = () => {
   const store = Store.useStore();
-  const nowPlaying: PlaySet = store.get('nowPlaying');
-  const songs = nowPlaying.songs.map((val, idx) => {
-    const songKey = GetSongKey(store, nowPlaying, idx);
+  const songList = store.get('songList');
+  const curIndex = store.get('curIndex');
+  const songs = songList.map((val, idx) => {
+    const songKey = songList[idx];
     const { track, title, album, artist } = GetDataForSong(store, songKey);
 
     return (
       <tr
-        className={idx === nowPlaying.pos ? 'playing' : 'not-playing'}
+        className={idx === curIndex ? 'playing' : 'not-playing'}
         key={idx}
         onDoubleClick={() => PlaySongNumber(store, idx)}
       >

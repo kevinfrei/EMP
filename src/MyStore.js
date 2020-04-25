@@ -33,12 +33,6 @@ export type Album = {|
   songs: Array<SongKey>,
 |};
 
-export type PlaySet = {|
-  name: string,
-  pos: number,
-  songs: Array<number | SongKey>,
-|};
-
 export type ViewNames =
   | 'none'
   | 'recent'
@@ -69,13 +63,9 @@ export type State = {|
   // This is where each view is scrolled to currently
   scrollManager: Map<string, { x: number, y: number }>,
 
-  // This is, effectively, the active playlist
-  // There's logic around "unnamed" vs. "named" playlists in playlist.js
-  nowPlaying: PlaySet, // What's currently playing
-  curSong: SongKey, // the current song key
-
-  // I'm going to migrate away from nowPlaying/curSong and shift to this:
+  // The list of songs in the play queue
   songList: Array<SongKey>,
+  // The current song number being played (or having stopp
   curIndex: number,
   activePlaylistName: string,
 
@@ -94,11 +84,8 @@ let initialState: State = {
 
   Playlists: new Map(),
 
-  curView: 'artist',
+  curView: 'current',
   scrollManager: new Map(),
-
-  nowPlaying: { name: '', pos: -1, songs: [] },
-  curSong: '',
 
   songList: [],
   curIndex: -1,
@@ -117,8 +104,9 @@ export const ValidKeyNames = [
   'Playlists',
   'locations',
   'curView',
-  'curSong',
-  'nowPlaying',
+  'songList',
+  'activePlaylistName',
+  'curIndex',
 ];
 
 export default createConnectedStore<State>(initialState);

@@ -44,6 +44,8 @@ const KeyWhiteList = (name: string): boolean => {
     case 'windowPosition':
     case 'locations':
     case 'DB':
+    case 'songList':
+    case 'activePlaylistName':
       return true;
     default:
       return false;
@@ -274,8 +276,8 @@ function getBrowserWindowPos(st: WindowPosition): Rectangle {
   return {
     width: st.bounds.width,
     height: st.bounds.height,
-    x: (st.bounds.x == Number.MIN_SAFE_INTEGER) ? undefined : st.bounds.x,
-    y: (st.bounds.y == Number.MIN_SAFE_INTEGER) ? undefined : st.bounds.y,
+    x: st.bounds.x == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.x,
+    y: st.bounds.y == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.y,
   };
 }
 

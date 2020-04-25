@@ -50,15 +50,21 @@ window.positionInterval = setInterval(() => {
   }
 }, 250);
 
-export const StartSongPlaying = (store: Store<State>, key: SongKey) => {
-  const changing = store.get('curSong') !== key;
-  store.set('curSong')(key);
-  if (changing) {
+export const StartSongPlaying = (store: Store<State>, index: number) => {
+  const changing = store.get('curIndex') !== index;
+  if (!changing) {
     return;
   }
+  store.set('curIndex')(index);
   const ae = document.getElementById('audioElement');
-  ae.currentTime = 0;
-  ae.play();
+  if (ae) {
+    setTimeout(() => {
+      ae.currentTime = 0;
+      ae.play();
+    }, 1);
+  } else {
+    console.log('unable to find audioElement!');
+  }
 };
 
 const SongPlayback = () => {
@@ -66,7 +72,9 @@ const SongPlayback = () => {
 
   let audio: React$Element<any>;
   let store = Store.useStore();
-  const songKey = store.get('curSong');
+  const curIndex = store.get('curIndex');
+  const songIndex = store.get('songList');
+  const songKey = curIndex >= 0 ? songIndex[curIndex] : '';
   const playing = store.set('playing');
   let title = '';
   let artist = '';
