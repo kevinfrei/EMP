@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 import Store from '../MyStore';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
 
 import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
@@ -14,54 +16,84 @@ const removeFromSet = (set: Array<string>, val: string): Array<string> => {
   return [...newSet];
 };
 
+function GetDirs() {
+  return window.remote.dialog.showOpenDialogSync({
+    properties: ['openDirectory'],
+  });
+}
 const Settings = () => {
   const store = Store.useStore();
   const config: Array<string> = store.get('locations');
   const setConfig = store.set('locations');
-  const elems = [];
-  let num = 2;
-  config.forEach((elem) => {
-    const theStyle = { gridRow: num };
-    elems.push(
-      <img
-        style={theStyle}
-        className="delete-pic pic-button"
-        src={deletePic}
-        key={'>' + elem}
-        alt="Delete Item"
-        onClick={() => setConfig(removeFromSet(config, elem))}
-      />
-    );
-    elems.push(
-      <span key={'<' + elem} style={theStyle} className="config-name">
-        {elem}
-      </span>
-    );
-    num++;
-  });
-  return (
-    <div className="table-2-column">
-      <span></span>
-      <span className="table-header">Locations</span>
-      {elems}
-      <label className="add-label" htmlFor="folder-picker">
+  const elems = config.map((elem) => (
+    <tr key={'>' + elem}>
+      <td>
         <img
-          className="add-pic pic-button"
-          src={addPic}
-          alt="add source"
-          onClick={() => {
-            const locations: ?Array<string> = window.remote.dialog.showOpenDialogSync(
-              {
-                properties: ['openDirectory'],
-              }
-            );
-            if (locations) {
-              setConfig([...locations, ...config]);
-            }
-          }}
+          className="delete-pic pic-button"
+          src={deletePic}
+          alt="Delete Item"
+          onClick={() => setConfig(removeFromSet(config, elem))}
         />
-      </label>
-    </div>
+      </td>
+      <td>{elem}</td>
+    </tr>
+  ));
+  const plLoc = store.get('playlistLocation');
+  const setLocation = store.set('playlistLocation');
+  const playlistLocation =
+    plLoc.length > 0 ? plLoc : 'Please set a Playlist save location.';
+  return (
+    <Table size="sm">
+      <thead>
+        <tr key="<locationsHeader">
+          <td />
+          <td>Music Locations</td>
+        </tr>
+      </thead>
+      <tbody>
+        {elems}
+        <tr key="<locationsFooter">
+          <td />
+          <td>
+            <img
+              className="add-pic pic-button"
+              src={addPic}
+              alt="add source"
+              onClick={() => {
+                const locations: ?Array<string> = GetDirs();
+                if (locations) {
+                  setConfig([...locations, ...config]);
+                }
+              }}
+            />
+          </td>
+        </tr>
+      </tbody>
+      <thead>
+        <tr key="<pllocHeader">
+          <td />
+          <td>Playlist location</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr key="<plloc">
+          <td>
+            <Button
+              size="sm"
+              onClick={() => {
+                const locs: ?Array<string> = GetDirs();
+                if (locs) {
+                  setLocation(locs[0]);
+                }
+              }}
+            >
+              Change
+            </Button>
+          </td>
+          <td colSpan={2}>{playlistLocation}</td>
+        </tr>
+      </tbody>
+    </Table>
   );
 };
 export default Settings;

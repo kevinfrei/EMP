@@ -57,6 +57,7 @@ export type State = {|
 
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, Array<SongKey>>,
+  playlistLocation: string,
 
   // This is about the actual stuff on screen
   curView: ViewNames, // Which view is selected
@@ -83,6 +84,7 @@ let initialState: State = {
   Songs: new Map(),
 
   Playlists: new Map(),
+  playlistLocation: '',
 
   curView: 'current',
   scrollManager: new Map(),
@@ -102,6 +104,7 @@ export const ValidKeyNames = [
   'Albums',
   'Songs',
   'Playlists',
+  'playlistLocation',
   'locations',
   'curView',
   'songList',

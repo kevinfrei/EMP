@@ -5,20 +5,6 @@
   grid-auto-rows: 30px;
 }
 
-.table-header {
-  grid-row: 1;
-  grid-column: 2;
-  font-weight: bold;
-}
-
-.config-name {
-  grid-column: 2;
-}
-
-.delete-pic {
-  grid-column: 1;
-}
-
 .pic-button {
   height: 24px;
   width: 24px;
@@ -26,8 +12,4 @@
   border-radius: 3px;
   padding: 4px;
   cursor: pointer;
-}
-
-.add-label {
-  grid-column: 1;
 }
