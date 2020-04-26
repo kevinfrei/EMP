@@ -39,12 +39,11 @@ Playlists are the next major piece of functionality to add.
 * **both** "Auto" playlists (something involving stuff like "this artist" and "not this
 keyword" kind of stuff.
 * **both** Add 'favorite/love' attribute for songs
+* **render** Import/Export M3U's
 
 ### Logic improvements/changes
 * When locations are changed, the database should get a full update
-* Make adding new music "append" new keys (no key re-use)
-  * Make changing music "migrate" keys
-  * Only when renaming files/moving files around happens
+* **main** Filter song lists down to actual songKeys that exist
 * Transcode for phone (dump stuff out ready to import into iTunes)
 * Playlist unique-ification
 
