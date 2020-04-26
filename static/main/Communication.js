@@ -8,7 +8,7 @@ const persist = require('./persist');
 import type { FTONData } from 'my-utils';
 
 const log = logger.bind('Communication');
-//logger.enable('Communication');
+logger.enable('Communication');
 
 // This returns an array of object handlers
 
@@ -43,13 +43,9 @@ const stringValidator = (val: string): ?string => val;
 
 const setter = ({ key, value }: KVP) => {
   log(`Persisting '${key}' to:`);
-  log(value);
+  if (key.toLowerCase() !== 'db') log(value);
+  else log('{music database...}');
   persist.setItem(key, FTON.stringify(value));
-  // KBF: Continue here for observing changes
-  switch (key) {
-    case 'locations':
-      return;
-  }
 };
 
 const deleter = (key: string) => {
@@ -99,7 +95,7 @@ const comms = [
 let win = null;
 
 function SendDatabase() {
-  let musicDB = persist.getItem('DB');
+  const musicDB = persist.getItem('DB');
   if (!win || !musicDB) {
     setTimeout(SendDatabase, 10);
     return;

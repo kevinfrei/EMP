@@ -30,12 +30,13 @@ const NowPlaying = () => {
   const songList = store.get('songList');
   const curIndex = store.get('curIndex');
 
-  const [show, setShow] = useState(false);
+  const [showSaveAs, setShowSaveAs] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [inputName, setInputName] = useState(nowPlaying);
 
-  const justClose = () => setShow(false);
-  const showSaveDialog = () => setShow(true);
-
+  // Helpers for the SaveAs dialog
+  const justCloseSaveAs = () => setShowSaveAs(false);
+  const showSaveDialog = () => setShowSaveAs(true);
   const saveAndClose = () => {
     if (curPls.get(inputName)) {
       window.alert('Cowardly refusing to overwrite existing playlist.');
@@ -44,31 +45,53 @@ const NowPlaying = () => {
       setCurPls(curPls);
       setNowPlaying(inputName);
     }
-    justClose();
+    justCloseSaveAs();
+  };
+  // Helpers for the Confirm Delete dialog
+  const closeConfirmation = () => setShowConfirmation(false);
+  const approvedConfirmation = () => {
+    StopAndClear(store);
+    closeConfirmation();
   };
 
   const modalDialogs = (
-    <Modal show={show} onHide={justClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Save Playlist as...</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <FormControl
-          type="input"
-          placeholder="Playlist name"
-          value={inputName}
-          onChange={(ev) => setInputName(ev.target.value)}
-        ></FormControl>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={justClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={saveAndClose}>
-          Save
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <>
+      <Modal show={showSaveAs} onHide={justCloseSaveAs}>
+        <Modal.Header closeButton>
+          <Modal.Title>Save Playlist as...</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <FormControl
+            type="input"
+            placeholder="Playlist name"
+            value={inputName}
+            onChange={(ev) => setInputName(ev.target.value)}
+          ></FormControl>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={justCloseSaveAs}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={saveAndClose}>
+            Save
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showConfirmation} onHide={closeConfirmation}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            Please Confirm
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to delete the playlist?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={approvedConfirmation}>Yes</Button>
+          <Button onClick={closeConfirmation}>No</Button>
+        </Modal.Footer>
+      </Modal>
+    </>
   );
 
   let header;
@@ -77,13 +100,12 @@ const NowPlaying = () => {
     curPls.set(nowPlaying, [...songList]);
     setCurPls(curPls);
   };
-  const del = () => StopAndClear(store);
   if (PlayingPlaylist(nowPlaying)) {
     header = nowPlaying;
     // Only use this button if it's been modified?
     const curPlList = curPls.get(nowPlaying);
     const disabled =
-      !curPlList || !Comparisons.ArraySetEqual(songList, curPlList);
+      !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
     button = (
       <Button size="sm" onClick={save} id="save-playlist" disabled={disabled}>
         Save
@@ -100,7 +122,7 @@ const NowPlaying = () => {
         className="delete-pic pic-button"
         src={deletePic}
         alt="Remove"
-        onClick={del}
+        onClick={() => setShowConfirmation(true)}
       />
       <Button size="sm" id="save-playlist-as" onClick={showSaveDialog}>
         Save As...

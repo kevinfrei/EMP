@@ -1,12 +1,13 @@
 // @flow
 
-const fs = require('fs');
 const fsp = require('fs').promises;
 const path = require('path');
 const logger = require('simplelogger');
 const metadata = require('media-utils').Metadata;
 const { SetEqual } = require('my-utils').Comparisons;
 const { SeqNum } = require('my-utils');
+
+const persist = require('./persist');
 
 import type { FullMetadata } from 'media-utils';
 
@@ -55,11 +56,29 @@ export type MusicDB = {
   artistNameIndex: Map<string, ArtistKey>,
 };
 
-const newSongKey = SeqNum('S');
+let existingKeys: ?Map<string, SongKey> = null;
+const newSongKey = (() => {
+  let highestSongKey = persist.getItem<string>('highestSongKey');
+  if (highestSongKey) {
+    log(`highestSongKey: ${highestSongKey}`);
+    return SeqNum('S', highestSongKey);
+  } else {
+    log('no highest song key found');
+    return SeqNum('S');
+  }
+})();
 const newAlbumKey = SeqNum('L');
 const newArtistKey = SeqNum('R');
 
-const getOrNewArtist = (db: MusicDB, name: string): Artist => {
+function getSongKey(songPath: string) {
+  if (existingKeys) {
+    return existingKeys.get(songPath) || newSongKey();
+  } else {
+    return newSongKey();
+  }
+}
+
+function getOrNewArtist(db: MusicDB, name: string): Artist {
   const maybeKey: ?ArtistKey = db.artistNameIndex.get(name.toLowerCase());
   if (maybeKey) {
     const art = db.artists.get(maybeKey);
@@ -74,15 +93,15 @@ const getOrNewArtist = (db: MusicDB, name: string): Artist => {
   const artist: Artist = { name, songs: [], albums: [], key };
   db.artists.set(key, artist);
   return artist;
-};
+}
 
-const getOrNewAlbum = (
+function getOrNewAlbum(
   db: MusicDB,
   title: string,
   year: number,
   artists: Set<ArtistKey>,
   vatype: VAType
-): Album => {
+): Album {
   // TODO: This doesn't currently handle vatypes properly :/
   const maybeSharedNames: ?Array<AlbumKey> = db.albumTitleIndex.get(
     title.toLowerCase()
@@ -151,17 +170,17 @@ const getOrNewAlbum = (
   sharedNames.push(key);
   db.albums.set(key, album);
   return album;
-};
+}
 
-const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
+function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   // We need to go from textual metadata to artist, album, and song keys
   // First, get the primary artist
   // TODO: FullMetaData doesn't allow for multiple primary artists
   // Check Trent Reznor & Atticus Ross for an example where it kinda matters
   const tmpArtist: string | Array<string> = md.Artist;
-  const artists = (typeof tmpArtist === 'string') ? [tmpArtist] : tmpArtist;
-  const allArtists = artists.map(a => getOrNewArtist(db, a));
-  const artistIds: Array<ArtistKey> = allArtists.map(a=>a.key);
+  const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
+  const allArtists = artists.map((a) => getOrNewArtist(db, a));
+  const artistIds: Array<ArtistKey> = allArtists.map((a) => a.key);
   const artistSet: Set<ArtistKey> = new Set(artistIds);
   const album = getOrNewAlbum(
     db,
@@ -185,47 +204,14 @@ const AddSongToDatabase = (md: FullMetadata, db: MusicDB) => {
     albumId: album.key,
     track: md.Track,
     title: md.Title,
-    key: newSongKey(),
+    key: getSongKey(md.OriginalPath),
   };
   album.songs.push(theSong.key);
   allArtists.forEach((artist) => artist.songs.push(theSong.key));
   db.songs.set(theSong.key, theSong);
-};
+}
 
-const fileNamesToDatabase = (
-  files: Array<string>,
-  pics: Array<string>
-): MusicDB => {
-  const songs: Map<SongKey, Song> = new Map();
-  const albums: Map<AlbumKey, Album> = new Map();
-  const artists: Map<ArtistKey, Artist> = new Map();
-  const playlists: Map<string, Array<SongKey>> = new Map();
-  const albumTitleIndex: Map<string, Array<AlbumKey>> = new Map();
-  const artistNameIndex: Map<string, ArtistKey> = new Map();
-  const pictures: Map<AlbumKey, string> = new Map();
-  const db: MusicDB = {
-    songs,
-    albums,
-    artists,
-    pictures,
-    playlists,
-    albumTitleIndex,
-    artistNameIndex,
-  };
-
-  for (let file of files) {
-    const littlemd: ?Object = metadata.fromPath(file);
-    if (!littlemd) {
-      log('Unable to get metadata from file ' + file);
-      continue;
-    }
-    const md: ?FullMetadata = metadata.FullFromObj(file, littlemd);
-    if (!md) {
-      log('Unable to get full metadata from file ' + file);
-      continue;
-    }
-    AddSongToDatabase(md, db);
-  }
+async function HandleAlbumCovers(db: MusicDB, pics: Array<string>) {
   // Get all pictures from each directory.
   // Find the biggest and make it the album picture for any albums in that dir
   const dirsToPics: Map<string, Set<string>> = new Map();
@@ -239,8 +225,6 @@ const fileNamesToDatabase = (
       dirsToPics.set(dirName, new Set([p]));
     }
   }
-  log('dirsToPics:');
-  log(dirsToPics);
   const dirsToAlbums: Map<string, Set<Album>> = new Map();
   for (let a of db.albums.values()) {
     for (let s of a.songs) {
@@ -262,46 +246,85 @@ const fileNamesToDatabase = (
       }
     }
   }
-  log('dirsToAlbums:');
-  log(dirsToAlbums);
   // Now, for each dir, find the biggest file and dump it in the database
   // for each album that has stuff in that directory
   type SizeAndName = { size: number, name: string };
-  let smallVal: SizeAndName = { size: 0, name: '' };
   for (let [dirName, setOfFiles] of dirsToPics) {
     const albums = dirsToAlbums.get(dirName);
     if (!albums || !albums.size) {
       continue;
     }
-    const largest: { size: number, name: string } = [
-      ...setOfFiles.values(),
-    ].reduce((prev: SizeAndName, cur) => {
-      // if cur is bigger than prev, return cursize/curName
-      let fileStat = fs.statSync(cur);
-      return fileStat.size > prev.size
-        ? { size: fileStat.size, name: cur }
-        : prev;
-    }, smallVal);
-
+    let largest: SizeAndName = { size: 0, name: '' };
+    for (let cur of setOfFiles.values()) {
+      let fileStat = await fsp.stat(cur);
+      if (fileStat.size > largest.size) {
+        largest = { size: fileStat.size, name: cur };
+      }
+    }
     for (let album of albums) {
       db.pictures.set(album.key, largest.name);
     }
   }
-  return db;
-};
+  // TODO: Look inside song metadata
+}
 
-const audioTypes = new Set(['flac', 'mp3', 'aac', 'm4a']);
-const imageTypes = new Set(['png', 'jpg', 'jpeg']);
-const isOfType = (filename: string, types: Set<string>): boolean => {
-  if (path.basename(filename).startsWith('.')) {
-    return false;
+async function fileNamesToDatabase(
+  files: Array<string>,
+  pics: Array<string>
+): Promise<MusicDB> {
+  const songs: Map<SongKey, Song> = new Map();
+  const albums: Map<AlbumKey, Album> = new Map();
+  const artists: Map<ArtistKey, Artist> = new Map();
+  const playlists: Map<string, Array<SongKey>> = new Map();
+  const albumTitleIndex: Map<string, Array<AlbumKey>> = new Map();
+  const artistNameIndex: Map<string, ArtistKey> = new Map();
+  const pictures: Map<AlbumKey, string> = new Map();
+  const db: MusicDB = {
+    songs,
+    albums,
+    artists,
+    pictures,
+    playlists,
+    albumTitleIndex,
+    artistNameIndex,
+  };
+
+  // Get the list of existing paths to song-keys
+  existingKeys = await persist.getItemAsync<Map<string, SongKey>>(
+    'songHashIndex'
+  );
+
+  for (let file of files) {
+    const littlemd: ?Object = metadata.fromPath(file);
+    if (!littlemd) {
+      log('Unable to get metadata from file ' + file);
+      continue;
+    }
+    const md: ?FullMetadata = metadata.FullFromObj(file, littlemd);
+    if (!md) {
+      log('Unable to get full metadata from file ' + file);
+      continue;
+    }
+    AddSongToDatabase(md, db);
   }
-  const suffix = path.extname(filename).substr(1).toLocaleLowerCase();
-  return types.has(suffix);
-};
-const isMusicType = (filename: string) => isOfType(filename, audioTypes);
+  await HandleAlbumCovers(db, pics);
+  await persist.setItemAsync(
+    'songHashIndex',
+    new Map([...db.songs.values()].map((val) => [val.path, val.key]))
+  );
+  await persist.setItemAsync('highestSongKey', newSongKey());
+  return db;
+}
 
-const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
+const audioTypes = new Set(['.flac', '.mp3', '.aac', '.m4a']);
+const imageTypes = new Set(['.png', '.jpg', '.jpeg']);
+const isOfType = (filename: string, types: Set<string>) =>
+  !path.basename(filename).startsWith('.') &&
+  types.has(path.extname(filename).toLowerCase());
+const isMusicType = (filename: string) => isOfType(filename, audioTypes);
+const isImageType = (filename: string) => isOfType(filename, imageTypes);
+
+async function findMusic(locations: Array<string>): Promise<MusicDB> {
   // If we have too many locations, this is *baaaad* but oh well...
   const queue: Array<string> = locations;
   const songsList: Array<string> = [];
@@ -325,7 +348,7 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
           } else if (st.isFile()) {
             if (isMusicType(ap)) {
               songsList.push(ap);
-            } else if (isOfType(ap, imageTypes)) {
+            } else if (isImageType(ap)) {
               picList.push(ap);
             }
           }
@@ -334,7 +357,7 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
         } else if (dirent.isFile()) {
           if (isMusicType(dirent.name)) {
             songsList.push(path.join(i, dirent.name));
-          } else if (isOfType(dirent.name, imageTypes)) {
+          } else if (isImageType(dirent.name)) {
             picList.push(path.join(i, dirent.name));
           }
         }
@@ -344,7 +367,7 @@ const findMusic = async (locations: Array<string>): Promise<MusicDB> => {
       }
     }
   }
-  return fileNamesToDatabase(songsList, picList);
-};
+  return await fileNamesToDatabase(songsList, picList);
+}
 
 module.exports.find = findMusic;

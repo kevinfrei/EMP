@@ -3,7 +3,10 @@
 import logger from 'simplelogger';
 import { FTON } from 'my-utils';
 import { Comparisons } from 'my-utils';
+
 import { ValidKeyNames } from './MyStore';
+
+import { PlaysetsComp } from './Sorters';
 
 import type { IpcRendererEvent } from 'electron';
 import type { StoreState } from './MyStore';
@@ -92,6 +95,7 @@ const PersistedBetweenRuns: Array<SaveConfig<T>> = [
     50,
     150
   ),
+  makeChangeChecker('Playlists', new Map(), PlaysetsComp, 100, 1000),
 ];
 
 // This registers store subscribers for state changes we're watching

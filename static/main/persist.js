@@ -28,28 +28,17 @@ export type WindowPosition = {|
 export type ValueUpdateListener = (val: FTONData) => void;
 
 export type Persist = {
-  getItem<T>(key: string): T,
+  getItem: <T>(key: string) => ?T,
+  getItemAsync: <T>(key: string) => Promise<?T>,
   setItem(key: string, value: FTONData): void,
+  setItemAsync(key: string, value: FTONData): Promise<void>,
   deleteItem(key: string): void,
+  deleteItemAsync(key: string): Promise<void>,
   getWindowPos(): WindowPosition,
   setWindowPos(st: WindowPosition): void,
   getBrowserWindowPos(st: WindowPosition): Rectangle,
   subscribe(key: string, listener: ValueUpdateListener): string,
   unsubscribe(id: string): boolean,
-};
-
-const KeyWhiteList = (name: string): boolean => {
-  switch (name) {
-    case 'nowPlaying':
-    case 'windowPosition':
-    case 'locations':
-    case 'DB':
-    case 'songList':
-    case 'activePlaylistName':
-      return true;
-    default:
-      return false;
-  }
 };
 
 const memoryCache: Map<string, FTONData> = new Map();
@@ -151,10 +140,8 @@ function getItem<T>(key: string): ?T {
   log('Reading ' + key);
   const val: FTONData = readFile(key);
   if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
-    if (key.toLocaleLowerCase() !== 'db') {
-      log('returning this value:');
-      log(val[key]);
-    }
+    log('returning this value:');
+    log(val[key]);
     return val[key];
   } else {
     log('Failed to return value');
@@ -166,10 +153,8 @@ async function getItemAsync<T>(key: string): ?T {
   log('Reading ' + key);
   const val: FTONData = await readFileAsync(key);
   if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
-    if (key.toLocaleLowerCase() !== 'db') {
-      log('returning this value:');
-      log(val[key]);
-    }
+    log('returning this value:');
+    log(val[key]);
     return val[key];
   } else {
     log('Failed to return value');
@@ -180,32 +165,20 @@ async function getItemAsync<T>(key: string): ?T {
 function setItem(key: string, value: FTONData): void {
   log(`Writing ${key}:`);
   log(value);
-  const val: FTONData = readFile(key);
-  if (val && typeof val === 'object') {
-    if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
-      val[key] = value;
-      writeFile(key, val);
-      notify(key, value);
-    } else {
-      log('Invalid item persistence request');
-    }
-  }
+  const val: Object = {};
+  val[key] = value;
+  writeFile(key, val);
+  notify(key, value);
 }
 
 // Async Save a value to disk and cache it
 async function setItemAsync(key: string, value: FTONData): Promise<void> {
   log(`Writing ${key}:`);
   log(value);
-  const val: FTONData = await readFileAsync(key);
-  if (val && typeof val === 'object') {
-    if (val.hasOwnProperty(key) || KeyWhiteList(key)) {
-      val[key] = value;
-      await writeFileAsync(key, val);
-      notify(key, value);
-    } else {
-      log('Invalid item persistence request');
-    }
-  }
+  const val: Object = {};
+  val[key] = value;
+  await writeFileAsync(key, val);
+  notify(key, value);
 }
 
 // Delete an item (and remove it from the cache)

@@ -23,13 +23,13 @@ Playlists are the next major piece of functionality to add.
 
 ## Stuff to do
 
+### Bugs
+* When the playlist is deleted, playback should probably stop
+  * A few other places, the song disappears, but continues to play...
+
 ### Core Capabilities
-* **main** Save custom Playlists between runs
-* **main** Maintain some sort of persistent DB for various stuff
-* **main** Make Now Playing resilient to song additions/changes
-  * Directly related to No Key Reuse below...
 * **both** Add "Recently Added" capabilities
-  * Also likely related to No Key Reuse below...
+  * Likely related to No Key Reuse below...
 * **both** Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
   * Support adding album covers
@@ -65,9 +65,7 @@ keyword" kind of stuff.
 
 In order to persist important state across runs of the app, you need to add the
 name of the key to the `ValidKeyNames` list in
-[MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js) as
-well as the `KeyWhiteList` function in
-[persist.js](https://github.com/kevinfrei/music/blob/master/static/main/persist.js).
+[MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js).
 Next, add it to the `PersistedBetweenRuns` array in
 [Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js).
 For something more complicated, you'll need to monkey with `ConfigureIPC`.
