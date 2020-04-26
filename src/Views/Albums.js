@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import Media from 'react-bootstrap/Media';
+import ListGroup from 'react-bootstrap/ListGroup';
+import ListGroupItem from 'react-bootstrap/ListGroupItem';
 
 import Store from '../MyStore';
 
@@ -15,11 +17,11 @@ import downChevron from '../img/down-chevron.svg';
 
 function getSongList(store: StoreState, songsList: Array<SongKey>) {
   const sl = songsList.map((sk: SongKey) => (
-    <div key={sk} onDoubleClick={() => AddSong(store, sk)}>
+    <ListGroupItem key={sk} onDoubleClick={() => AddSong(store, sk)}>
       {GetTrackListingForSong(store, sk)}
-    </div>
+    </ListGroupItem>
   ));
-  return <div>{sl}</div>;
+  return <ListGroup>{sl}</ListGroup>;
 }
 
 function SingleAlbum({ album }: { album: Album }) {
@@ -30,37 +32,39 @@ function SingleAlbum({ album }: { album: Album }) {
   const songList = showSongs ? getSongList(store, album.songs) : <></>;
   const adder = () => AddAlbum(store, album.key);
   return (
-    <Media>
-      <img
-        src={`pic://album/${album.key}`}
-        height="75px"
-        width="75px"
-        onDoubleClick={adder}
-        alt=''
-      />
-      <Media.Body>
-        <h5 className="album-title" onDoubleClick={adder}>
-          {album.title}
-        </h5>
-        <h6 className="album-year">
-          &nbsp;
-          <img
-            onClick={() => setShowSongs(!showSongs)}
-            width="13px"
-            height="13px"
-            src={downChevron}
-            style={expanderStyle}
-            alt='show shows'
-          />
-          &nbsp;
-          <span onDoubleClick={adder}>
-            {artistName}
-            {album.year ? `: ${album.year}` : ''}
-          </span>
-        </h6>
-        {songList}
-      </Media.Body>
-    </Media>
+    <ListGroupItem>
+      <Media>
+        <img
+          src={`pic://album/${album.key}`}
+          height="75px"
+          width="75px"
+          onDoubleClick={adder}
+          alt=""
+        />
+        <Media.Body>
+          <h5 className="album-title" onDoubleClick={adder}>
+            {album.title}
+          </h5>
+          <h6 className="album-year">
+            &nbsp;
+            <img
+              onClick={() => setShowSongs(!showSongs)}
+              width="13px"
+              height="13px"
+              src={downChevron}
+              style={expanderStyle}
+              alt="show shows"
+            />
+            &nbsp;
+            <span onDoubleClick={adder}>
+              {artistName}
+              {album.year ? `: ${album.year}` : ''}
+            </span>
+          </h6>
+        </Media.Body>
+      </Media>
+      {songList}
+    </ListGroupItem>
   );
 }
 
@@ -70,11 +74,11 @@ const Albums = () => {
   const alb = Array.from(albums.values());
   alb.sort(AlbumByTitle);
   return (
-    <div>
+    <ListGroup>
       {alb.map((album: Album) => (
         <SingleAlbum key={album.key} album={album} />
       ))}
-    </div>
+    </ListGroup>
   );
 };
 

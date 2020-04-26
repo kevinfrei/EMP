@@ -16,6 +16,7 @@ import {
   StopAndClear,
   RemoveSongNumber,
 } from '../Playlist';
+import { SongByLRNT, SongByRLNT, SongByNLRT, SongByTLRN } from '../Sorters';
 
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
@@ -33,6 +34,7 @@ const NowPlaying = () => {
   const [showSaveAs, setShowSaveAs] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [inputName, setInputName] = useState(nowPlaying);
+  const [sortBy, setSortBy] = useState('');
 
   // Helpers for the SaveAs dialog
   const justCloseSaveAs = () => setShowSaveAs(false);
@@ -79,13 +81,9 @@ const NowPlaying = () => {
       </Modal>
       <Modal show={showConfirmation} onHide={closeConfirmation}>
         <Modal.Header closeButton>
-          <Modal.Title>
-            Please Confirm
-          </Modal.Title>
+          <Modal.Title>Please Confirm</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete the playlist?
-        </Modal.Body>
+        <Modal.Body>Are you sure you want to clear the play queue?</Modal.Body>
         <Modal.Footer>
           <Button onClick={approvedConfirmation}>Yes</Button>
           <Button onClick={closeConfirmation}>No</Button>
@@ -118,12 +116,9 @@ const NowPlaying = () => {
   const headerLine = (
     <h4 id="now-playing-header">
       {header}&nbsp;
-      <img
-        className="delete-pic pic-button"
-        src={deletePic}
-        alt="Remove"
-        onClick={() => setShowConfirmation(true)}
-      />
+      <Button size="sm" onClick={() => setShowConfirmation(true)}>
+        Clear Queue
+      </Button>
       <Button size="sm" id="save-playlist-as" onClick={showSaveDialog}>
         Save As...
       </Button>
@@ -131,6 +126,29 @@ const NowPlaying = () => {
     </h4>
   );
 
+  const setSort = (which: string) => {
+    if (which === sortBy) return;
+    const curKey = songList[curIndex];
+    switch (which) {
+      case 'album':
+        songList.sort(SongByLRNT(store));
+        break;
+      case 'artist':
+        songList.sort(SongByRLNT(store));
+        break;
+      case 'track':
+        songList.sort(SongByNLRT(store));
+        break;
+      case 'title':
+        songList.sort(SongByTLRN(store));
+        break;
+      default:
+        return;
+    }
+    setSortBy(which);
+    store.set('curIndex')(songList.indexOf(curKey));
+    store.set('songList')([...songList]);
+  };
   const songs = songList.map((val, idx) => {
     const songKey = songList[idx];
     const { track, title, album, artist } = GetDataForSong(store, songKey);
@@ -156,6 +174,7 @@ const NowPlaying = () => {
       </tr>
     );
   });
+
   return (
     <>
       {modalDialogs}
@@ -164,10 +183,10 @@ const NowPlaying = () => {
         <thead>
           <tr>
             <td></td>
-            <td>Album</td>
-            <td>Artist</td>
-            <td>#</td>
-            <td>Title</td>
+            <td onClick={() => setSort('album')}>Album</td>
+            <td onClick={() => setSort('artist')}>Artist</td>
+            <td onClick={() => setSort('track')}>#</td>
+            <td onClick={() => setSort('title')}>Title</td>
           </tr>
         </thead>
         <tbody>{songs}</tbody>

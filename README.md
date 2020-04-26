@@ -33,6 +33,7 @@ Playlists are the next major piece of functionality to add.
 * **both** Media "info" (using node-mediainfo seems like the right thing to do)
   * Media metadata editing!
   * Support adding album covers
+* **render** Need a way to *delete* a playlist
 * **main** Get album covers from media tags as well as the folder...
 * **both** Make 'Search' work.
 * **render** Make a miniplayer!
@@ -48,12 +49,14 @@ keyword" kind of stuff.
 * Playlist unique-ification
 
 ### UI Improvements
-* Sorting playlists by clicking headers
+* Sorting playlists by clicking headers *everywhere*
+  * Indicate the sorting (and invalidate it in Now Playing when shuffled)
 * Render proces needs an image cache and/or view virtualization
-* Improve the views for Artists (and Albums, and probably Songs too)
-* Playlist reordering (drag & drop?)
+* Improve the views for Artists and Playlists
+  * (and eventually better-ify Albums and Songs, too)
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
+* Playlist reordering (drag & drop?)
 
 ### Other
 * Testing! Testing! Testing!

@@ -6,7 +6,7 @@ import Store from '../MyStore';
 
 import { GetDataForSong } from '../DataAccess';
 import { AddSong } from '../Playlist';
-import { SongByRLTN } from '../Sorters';
+import { SongByRLNT } from '../Sorters';
 
 import type { SongKey } from '../MyStore';
 
@@ -31,7 +31,7 @@ const MixedSongsView = () => {
   let store = Store.useStore();
   const songs = store.get('Songs');
   const sngs: Array<SongKey> = Array.from(songs.keys());
-  sngs.sort(SongByRLTN(store));
+  sngs.sort(SongByRLNT(store));
   return (
     <Table striped hover size="sm">
       <thead>
