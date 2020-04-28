@@ -1,16 +1,16 @@
 // @flow
-const { ipcMain, BrowserWindow } = require('electron');
+const { ipcMain, BrowserWindow, WebContents } = require('electron');
 const logger = require('simplelogger');
 const { FTON } = require('my-utils');
 
 const persist = require('./persist');
+const { getMediaInfo } = require('./music');
 
 import type { FTONData } from 'my-utils';
+import type { SongKey, MediaInfo } from './music';
 
 const log = logger.bind('Communication');
 logger.enable('Communication');
-
-// This returns an array of object handlers
 
 export type MessageHandler<T> = {
   command: string,
@@ -23,37 +23,57 @@ export type KVP = {
   value: FTONData,
 };
 
-const kvpValidator = (val: string): ?KVP => {
+let win: ?WebContents = null;
+
+function getWebContents() {
+  const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
+  if (allWnd.length < 1) {
+    log('No browser windows found in get operation.');
+    return;
+  }
+  return allWnd[0].webContents;
+}
+
+function kvpValidator(val: string): ?KVP {
   try {
     const res = FTON.parse(val);
     if (
       typeof res === 'object' &&
       res !== null &&
-      res.hasOwnProperty('key') &&
-      res.hasOwnProperty('value') &&
-      typeof res.key === 'string'
+      typeof res.key === 'string' &&
+      typeof res.value !== 'undefined'
     ) {
-      return res;
+      return { key: res.key, value: res.value };
     }
   } catch (e) {}
   return undefined;
-};
+}
 
-const stringValidator = (val: string): ?string => val;
+function stringValidator(val: string): ?string {
+  return val;
+}
 
-const setter = ({ key, value }: KVP) => {
+function SongKeyValidator(val: string): ?SongKey {
+  return val;
+}
+
+function setter({ key, value }: KVP) {
   log(`Persisting '${key}' to:`);
   if (key.toLowerCase() !== 'db') log(value);
   else log('{music database...}');
   persist.setItem(key, FTON.stringify(value));
-};
+}
 
-const deleter = (key: string) => {
+function deleter(key: string) {
   persist.deleteItem(key);
-};
+}
 
 // Get a value from disk and sends {key:'key', value: ...value} in JSON
-const getter = (key: string) => {
+function getter(key: string) {
+  if (!win) {
+    setTimeout(() => getter(key), 10);
+    return;
+  }
   try {
     const val = persist.getItem(key);
     if (typeof val !== 'string') {
@@ -64,20 +84,14 @@ const getter = (key: string) => {
     // TODO: This needs updated if/when I add more windows...
     log(`About to send {key:${key}, value:${val}}`);
     const value = FTON.parse(val);
-    const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
-    if (allWnd.length < 1) {
-      log('No browser windows found in get operation.');
-      return;
-    }
-    const webCont = allWnd[0].webContents;
     const message = FTON.stringify({ key, value });
     log(`Sending data: ${message}`);
-    webCont.send('data', message);
+    win.webContents.send('data', message);
   } catch (e) {
     log('Swallowed exception during get operation:');
     log(e);
   }
-};
+}
 
 function mk<T>(
   command: string,
@@ -86,13 +100,6 @@ function mk<T>(
 ): MessageHandler<T> {
   return { command, validator, handler };
 }
-
-const comms = [
-  mk<KVP>('set', kvpValidator, setter),
-  mk<string>('delete', stringValidator, deleter),
-  mk<string>('get', stringValidator, getter),
-];
-let win = null;
 
 function SendDatabase() {
   const musicDB = persist.getItem('DB');
@@ -113,9 +120,40 @@ function SendDatabase() {
     FTON.stringify({ key: 'Artists', value: musicDB.artists })
   );
 }
+
+function sendBackMediaInfo(songKey: SongKey, data: MediaInfo) {
+  if (!win) return;
+  win.webContents.send('mediainfo', FTON.stringify({ key: songKey, data }));
+}
+
+function getMetadata(songKey: SongKey) {
+  const musicDB = persist.getItem('DB');
+  if (!musicDB) {
+    console.log("Can't load DB");
+    return;
+  }
+  const song = musicDB.songs.get(songKey);
+  if (!song) {
+    console.log("Can't find music key " + songKey);
+    return;
+  }
+  getMediaInfo(song.path)
+    .then((data: MediaInfo) => {
+      log(`Fetched the media info for ${song.path}:`);
+      log(data);
+      sendBackMediaInfo(songKey, data);
+    })
+    .catch(console.log);
+}
 // Called to just set stuff up (nothing has actually been done yet)
 function Init() {
-  // In addition, there's the 'GetDatabase' request
+  const comms = [
+    mk<KVP>('set', kvpValidator, setter),
+    mk<string>('delete', stringValidator, deleter),
+    mk<string>('get', stringValidator, getter),
+    mk<string>('GetDatabase', stringValidator, SendDatabase),
+    mk<string>('mediainfo', SongKeyValidator, getMetadata),
+  ];
   for (let val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
       const data: ?T = val.validator(arg);
@@ -129,7 +167,6 @@ function Init() {
       }
     });
   }
-  ipcMain.on('GetDatabase', SendDatabase);
 }
 
 // Called with the window handle after it's been created

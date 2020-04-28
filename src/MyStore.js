@@ -33,6 +33,11 @@ export type Album = {|
   songs: Array<SongKey>,
 |};
 
+export type MediaInfo = {|
+  general: Map<string, string>,
+  audio: Map<string, string>
+|};
+
 export type ViewNames =
   | 'none'
   | 'recent'
@@ -56,7 +61,7 @@ export type State = {|
   Songs: Map<SongKey, Song>,
 
   // This is metadata that we've collected from the main process, on demand
-  MetadataCache: Map<SongKey, Map<string, string>>,
+  MediaInfoCache: Map<SongKey, MediaInfo>,
 
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, Array<SongKey>>,
@@ -86,7 +91,7 @@ let initialState: State = {
   Albums: new Map(),
   Songs: new Map(),
 
-  MetadataCache: new Map(),
+  MediaInfoCache: new Map(),
 
   Playlists: new Map(),
   playlistLocation: '',

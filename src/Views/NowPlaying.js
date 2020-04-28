@@ -36,6 +36,7 @@ const NowPlaying = () => {
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
 
+  const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
   const justCloseSaveAs = () => setShowSaveAs(false);
   const showSaveDialog = () => setShowSaveAs(true);
@@ -116,10 +117,19 @@ const NowPlaying = () => {
   const headerLine = (
     <h4 id="now-playing-header">
       {header}&nbsp;
-      <Button size="sm" onClick={() => setShowConfirmation(true)}>
+      <Button
+        size="sm"
+        onClick={() => setShowConfirmation(true)}
+        disabled={emptyQueue}
+      >
         Clear Queue
       </Button>
-      <Button size="sm" id="save-playlist-as" onClick={showSaveDialog}>
+      <Button
+        size="sm"
+        id="save-playlist-as"
+        onClick={showSaveDialog}
+        disabled={emptyQueue}
+      >
         Save As...
       </Button>
       {button}

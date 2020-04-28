@@ -30,8 +30,7 @@ Playlists are the next major piece of functionality to add.
 ### Core Capabilities
 * **both** Add "Recently Added" capabilities
   * Likely related to No Key Reuse below...
-* **both** Media "info" (using node-mediainfo seems like the right thing to do)
-  * Media metadata editing!
+* **both** MediaInfo/Metadata editing!
   * Support adding album covers
 * **render** Need a way to *delete* a playlist
 * **main** Get album covers from media tags as well as the folder...
@@ -51,6 +50,7 @@ keyword" kind of stuff.
 ### UI Improvements
 * Sorting playlists by clicking headers *everywhere*
   * Indicate the sorting (and invalidate it in Now Playing when shuffled)
+* Make a resuable, configurable "song list" view. There are too many.
 * Render proces needs an image cache and/or view virtualization
 * Improve the views for Artists and Playlists
   * (and eventually better-ify Albums and Songs, too)
@@ -70,7 +70,18 @@ name of the key to the `ValidKeyNames` list in
 [MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js).
 Next, add it to the `PersistedBetweenRuns` array in
 [Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js).
-For something more complicated, you'll need to monkey with `ConfigureIPC`.
+
+### "Other" communication
+
+To generally communicate, you'll need to have a message name registered on
+both sides. In the **main** process, you'll need to register it in the
+`Init` function in
+[Communication.js](https://github.com/kevinfrei/music/blob/master/src/Communication.js).
+In the **render** process, you should register it in `ConfigureIPC` found in
+[Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js).
+The 'mediainfo' message is a reasonable example to check out. Nothing is
+persisted between runs, it's just a simple little "please give me the data
+for this song" RPC.
 
 ## Old stuff
 

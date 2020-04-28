@@ -29,7 +29,7 @@ const Sidebar = () => {
       <div className="search-bar">
         <input id="search" type="text" placeholder="Search NYI" />
       </div>
-      <br />
+      <br />{/*
       <div
         className="sidebar-container"
         style={is('recent')}
@@ -37,7 +37,7 @@ const Sidebar = () => {
       >
         <img src={recentPic} className="sidebar-icon" alt="recent"></img>
         <span className="sidebar-text">Recently Added</span>
-      </div>
+      </div>*/}
       <div
         className="sidebar-container"
         style={is('album')}

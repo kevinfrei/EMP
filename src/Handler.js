@@ -155,6 +155,18 @@ const ConfigureIPC = (store: StoreState) => {
     DataFromMainHandler(store, message);
   });
   window.ipc.send('GetDatabase', 'GetDatabase');
+  window.ipc.on('mediainfo', (event: IpcRendererEvent, message: string) => {
+    log("mediainfo received");
+    log(message);
+    const data = FTON.parse(message);
+    if (!data) return;
+    if (typeof data !== 'object') return;
+    if (typeof data.key !== 'string') return;
+    if (typeof data.data !== 'object') return;
+    const mi = store.get('MediaInfoCache');
+    mi.set(data.key, data.data);
+    store.set('MediaInfoCache')(mi);
+  });
 };
 
 export { ConfigureIPC };

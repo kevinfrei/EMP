@@ -6,6 +6,7 @@ const logger = require('simplelogger');
 const metadata = require('media-utils').Metadata;
 const { SetEqual } = require('my-utils').Comparisons;
 const { SeqNum } = require('my-utils');
+const mediainfo = require('node-mediainfo');
 
 const persist = require('./persist');
 
@@ -54,6 +55,11 @@ export type MusicDB = {
   playlists: Map<string, Array<SongKey>>, // This is probably a bad idea...
   albumTitleIndex: Map<string, Array<AlbumKey>>,
   artistNameIndex: Map<string, ArtistKey>,
+};
+
+export type MediaInfo = {
+  general: Map<string, string>,
+  audio: Map<string, string>,
 };
 
 let existingKeys: ?Map<string, SongKey> = null;
@@ -370,4 +376,29 @@ async function findMusic(locations: Array<string>): Promise<MusicDB> {
   return await fileNamesToDatabase(songsList, picList);
 }
 
+function objToMap(o: Object): Map<string, string> {
+  const res = new Map();
+  for (let i in o) {
+    if (
+      typeof i === 'string' &&
+      i.length > 0 &&
+      i[0] !== '@' &&
+      o.hasOwnProperty(i) &&
+      (typeof o[i] === 'string' || typeof o[i] === 'number')
+    ) {
+      res.set(i, o[i].toString());
+    }
+  }
+  return res;
+}
+
+async function getMediaInfo(path: string): Promise<MediaInfo> {
+  const rawMetadata = await mediainfo(path);
+  const trackInfo = rawMetadata.media.track;
+  const general = objToMap(trackInfo[0]);
+  const audio = objToMap(trackInfo[1]);
+  return { general, audio };
+}
+
 module.exports.find = findMusic;
+module.exports.getMediaInfo = getMediaInfo;
