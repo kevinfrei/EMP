@@ -12,7 +12,7 @@ import Store from '../MyStore';
 import { StartPlaylist } from '../Playlist';
 import { GetTrackListingForSong } from '../DataAccess';
 
-import type { StoreState, SongKey } from '../MyStore';
+import type { SongKey } from '../MyStore';
 
 import './styles/NowPlaying.css';
 import downChevron from '../img/down-chevron.svg';

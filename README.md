@@ -24,7 +24,7 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Bugs
-* When the playlist is deleted, playback should probably stop
+* When the playlist is cleared, playback should probably stop
   * A few other places, the song disappears, but continues to play...
 
 ### Core Capabilities

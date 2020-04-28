@@ -14,7 +14,6 @@
     "bootstrap": "^4.4.1",
     "electron-is-dev": "^1.2.0",
     "media-utils": "file:./submodules/media-utils",
-    "music-metadata": "^6.3.7",
     "my-utils": "file:./submodules/js-freik-utils",
     "node-mediainfo": "^1.0.3",
     "react": "^16.13.1",

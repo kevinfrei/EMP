@@ -55,6 +55,9 @@ export type State = {|
   Albums: Map<AlbumKey, Album>,
   Songs: Map<SongKey, Song>,
 
+  // This is metadata that we've collected from the main process, on demand
+  MetadataCache: Map<SongKey, Map<string, string>>,
+
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, Array<SongKey>>,
   playlistLocation: string,
@@ -82,6 +85,8 @@ let initialState: State = {
   Artists: new Map(),
   Albums: new Map(),
   Songs: new Map(),
+
+  MetadataCache: new Map(),
 
   Playlists: new Map(),
   playlistLocation: '',
