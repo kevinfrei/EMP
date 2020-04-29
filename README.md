@@ -29,7 +29,7 @@ Playlists are the next major piece of functionality to add.
 
 ### Core Capabilities
 * **both** Add "Recently Added" capabilities
-  * Likely related to No Key Reuse below...
+  * Something involving no Key Reuse.
 * **both** MediaInfo/Metadata editing!
   * Support adding album covers
 * **render** Need a way to *delete* a playlist

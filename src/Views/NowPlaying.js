@@ -162,7 +162,6 @@ const NowPlaying = () => {
   const songs = songList.map((val, idx) => {
     const songKey = songList[idx];
     const { track, title, album, artist } = GetDataForSong(store, songKey);
-
     return (
       <tr
         className={idx === curIndex ? 'playing' : 'not-playing'}
@@ -184,6 +183,8 @@ const NowPlaying = () => {
       </tr>
     );
   });
+  const isSortedBy = (sortBy: string, thisOne: string): string =>
+  sortBy === thisOne ? 'sorted-header' : 'notsorted-header';
 
   return (
     <>
@@ -193,10 +194,10 @@ const NowPlaying = () => {
         <thead>
           <tr>
             <td></td>
-            <td onClick={() => setSort('album')}>Album</td>
-            <td onClick={() => setSort('artist')}>Artist</td>
-            <td onClick={() => setSort('track')}>#</td>
-            <td onClick={() => setSort('title')}>Title</td>
+            <td onClick={() => setSort('album')} className={isSortedBy(sortBy, 'album')}>Album</td>
+            <td onClick={() => setSort('artist')} className={isSortedBy(sortBy, 'artist')}>Artist</td>
+            <td onClick={() => setSort('track')} className={isSortedBy(sortBy, 'track')}>#</td>
+            <td onClick={() => setSort('title')} className={isSortedBy(sortBy, 'title')}>Title</td>
           </tr>
         </thead>
         <tbody>{songs}</tbody>

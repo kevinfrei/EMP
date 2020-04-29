@@ -106,7 +106,7 @@ function notify(key: string, val: FTONData) {
   // For each listener, invoke the listening function
   const ls = listeners.get(key);
   if (!ls) return;
-  for (let fn of ls.values()) {
+  for (let [,fn] of ls) {
     fn(val);
   }
 }

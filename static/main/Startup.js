@@ -30,15 +30,22 @@ async function getMusicDb() {
   persist.setItem('DB', musicDB);
 }
 
+function UpdateAndSendDB() {
+  getMusicDb()
+    .then(SendDatabase)
+    .catch((rej) => {
+      console.log('Caught an exception while trying to update the db');
+      console.log(rej);
+    });
+}
+
 // This is awaited upon initial window creation
 async function Startup() {
   // Scan for all music
   let musicDB = persist.getItem('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
-    setTimeout(() => {
-      getMusicDb().then(() => SendDatabase());
-    }, 250);
+    setTimeout(UpdateAndSendDB, 250);
   } else {
     // If we don't already have it, wait to start until we've read it.
     await getMusicDb();
@@ -48,6 +55,7 @@ async function Startup() {
 function Ready(window) {
   // Do anything else here that needs to happen once we have the window
   // object available
+  persist.subscribe('locations', UpdateAndSendDB);
 }
 
 module.exports = { Startup, Ready };

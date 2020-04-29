@@ -24,11 +24,20 @@ thead {
   float: right;
 }
 
-#save-playlist, #save-playlist-as{
-  float:right;
-  margin:2px;
+#save-playlist,
+#save-playlist-as {
+  float: right;
+  margin: 2px;
 }
 
 #now-playing-header {
   margin: 3pt;
+}
+
+.sorted-header {
+  text-decoration: underline;
+}
+
+.notsorted-header {
+  text-decoration: none;
 }
