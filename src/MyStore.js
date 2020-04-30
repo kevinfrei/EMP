@@ -38,6 +38,7 @@ export type MediaInfo = {|
   audio: Map<string, string>
 |};
 
+export type ArrayOfKeys = 'ArtistArray' | 'AlbumArray' | 'SongArray';
 export type ViewNames =
   | 'none'
   | 'recent'
@@ -60,6 +61,16 @@ export type State = {|
   Albums: Map<AlbumKey, Album>,
   Songs: Map<SongKey, Song>,
 
+  ArtistArray: Array<ArtistKey>,
+  AlbumArray: Array<AlbumKey>,
+  SongArray: Array<SongKey>,
+
+  SortWithArticles: boolean,
+
+  ArtistListSort: 'AlbumCount' | 'ArtistName',
+  AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear',
+  SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack',
+
   // This is metadata that we've collected from the main process, on demand
   MediaInfoCache: Map<SongKey, MediaInfo>,
 
@@ -74,6 +85,7 @@ export type State = {|
 
   // The list of songs in the play queue
   songList: Array<SongKey>,
+
   // The current song number being played (or having stopp
   curIndex: number,
   activePlaylistName: string,
@@ -90,6 +102,16 @@ let initialState: State = {
   Artists: new Map(),
   Albums: new Map(),
   Songs: new Map(),
+
+  ArtistArray: [],
+  AlbumArray: [],
+  SongArray: [],
+
+  SortWithArticles: false,
+
+  ArtistListSort: 'ArtistName',
+  AlbumListSort: 'ArtistAlbum',
+  SongListSort: 'ArtistAlbum',
 
   MediaInfoCache: new Map(),
 

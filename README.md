@@ -42,18 +42,17 @@ keyword" kind of stuff.
 * **render** Import/Export M3U's
 
 ### Logic improvements/changes
-* When locations are changed, the database should get a full update
 * **main** Filter song lists down to actual songKeys that exist
 * Transcode for phone (dump stuff out ready to import into iTunes)
 * Playlist unique-ification
 
 ### UI Improvements
-* Sorting playlists by clicking headers *everywhere*
-  * Indicate the sorting (and invalidate it in Now Playing when shuffled)
-* Make a resuable, configurable "song list" view. There are too many.
 * Render proces needs an image cache and/or view virtualization
-* Improve the views for Artists and Playlists
-  * (and eventually better-ify Albums and Songs, too)
+  * Make the virtualized views remember (roughly) where they were scrolled to
+* Make a resuable, configurable "song list" view. There are too many.
+  * Sorting playlists by clicking headers *everywhere*
+  * Indicate the sorting (and invalidate it in Now Playing when shuffled)
+* Improve the views for, uh, everything.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
 * Playlist reordering (drag & drop?)

@@ -8,6 +8,18 @@ import type { SongKey, StoreState, Album } from './MyStore';
 const strCmp = (a: string, b: string): number =>
   a.toLocaleUpperCase().localeCompare(b.toLocaleUpperCase());
 
+function noArticles(phrase: string): string {
+  const res = phrase.toLocaleUpperCase();
+  if (res.startsWith('THE ')) {
+    return res.substr(4);
+  } else if (res.startsWith('A ')) {
+    return res.substr(2);
+  } else if (res.startsWith('AN ')) {
+    return res.substr(3);
+  }
+  return res;
+}
+
 export function SongByRLNT(store: StoreState) {
   return (a: SongKey, b: SongKey) => {
     const {
@@ -101,7 +113,11 @@ export function SongByTLRN(store: StoreState) {
 }
 
 export function AlbumByTitle(a: Album, b: Album) {
-  return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
+  return strCmp(a.title, b.title);
+}
+
+export function AlbumByTitleNoArticles(a: Album, b: Album) {
+  return noArticles(a.title).localeCompare(noArticles(b.title));
 }
 
 export function PlaysetsComp(

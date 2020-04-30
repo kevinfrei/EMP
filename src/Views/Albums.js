@@ -1,6 +1,7 @@
 // @flow
 
 import React, { useState } from 'react';
+import { FixedSizeList } from 'react-window';
 import Media from 'react-bootstrap/Media';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
@@ -24,28 +25,15 @@ function getSongList(store: StoreState, songsList: Array<SongKey>) {
   return <ListGroup>{sl}</ListGroup>;
 }
 
-function SingleAlbum({ album }: { album: Album }) {
+function SingleAlbum({ album, style }: { album: Album, style: object }) {
   const store = Store.useStore();
-  const [showSongs, setShowSongs] = useState(false);
   const artistName = GetArtistForAlbum(store, album);
-  const expanderStyle = showSongs ? {} : { transform: 'rotate(-90deg)' };
-  const songList = showSongs ? getSongList(store, album.songs) : <></>;
   const adder = () => AddAlbum(store, album.key);
-  return (
-    <ListGroupItem>
-      <Media>
-        <img
-          src={`pic://album/${album.key}`}
-          height="75px"
-          width="75px"
-          onDoubleClick={adder}
-          alt=""
-        />
-        <Media.Body>
-          <h5 className="album-title" onDoubleClick={adder}>
-            {album.title}
-          </h5>
-          <h6 className="album-year">
+  /*
+  const [showSongs, setShowSongs] = useState(false);
+  const expanderStyle = showSongs ? {} : { transform: 'rotate(-90deg)' };
+    const songList = showSongs ? getSongList(store, album.songs) : <></>;
+
             &nbsp;
             <img
               onClick={() => setShowSongs(!showSongs)}
@@ -54,7 +42,24 @@ function SingleAlbum({ album }: { album: Album }) {
               src={downChevron}
               style={expanderStyle}
               alt="show shows"
-            />
+            />...
+            {songList}
+*/
+  return (
+    <ListGroupItem style={style}>
+      <Media>
+        <img
+          src={`pic://album/${album.key}`}
+          height="55px"
+          width="55px"
+          onDoubleClick={adder}
+          alt="album cover"
+        />
+        <Media.Body>
+          <h5 className="album-title" onDoubleClick={adder}>
+            {album.title}
+          </h5>
+          <h6 className="album-year">
             &nbsp;
             <span onDoubleClick={adder}>
               {artistName}
@@ -63,23 +68,36 @@ function SingleAlbum({ album }: { album: Album }) {
           </h6>
         </Media.Body>
       </Media>
-      {songList}
     </ListGroupItem>
   );
 }
 
-const Albums = () => {
-  let store = Store.useStore();
+function VirtualAlbumRow({ index, style }: { index: number, style: object }) {
+  const store = Store.useStore();
   const albums = store.get('Albums');
-  const alb = Array.from(albums.values());
-  alb.sort(AlbumByTitle);
-  return (
-    <ListGroup>
-      {alb.map((album: Album) => (
-        <SingleAlbum key={album.key} album={album} />
-      ))}
-    </ListGroup>
+  const albumArray = store.get('AlbumArray');
+  const maybeAlbum = albums.get(albumArray[index]);
+  return maybeAlbum ? (
+    <SingleAlbum style={style} album={maybeAlbum} />
+  ) : (
+    <span>Error for element {index}</span>
   );
-};
+}
 
-export default Albums;
+export default function AlbumViewCreator(
+  store: StoreState,
+  width: number,
+  height: number
+) {
+  const albums = store.get('Albums');
+  return (
+    <FixedSizeList
+      height={height}
+      width={width}
+      itemCount={albums.size}
+      itemSize={80}
+    >
+      {VirtualAlbumRow}
+    </FixedSizeList>
+  );
+}

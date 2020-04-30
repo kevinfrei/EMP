@@ -12,87 +12,53 @@ import settingsPic from './img/settings.svg';
 
 import './styles/Sidebar.css';
 
-import type { ViewNames } from './MyStore';
+import type { ViewNames, StoreState } from './MyStore';
 
-const Sidebar = () => {
+type ViewEntry = { name: ViewNames, pic: mixed, title: string };
+const mkEntry = (name: ViewNames, title: string, pic: mixed) => ({
+  name,
+  pic,
+  title,
+});
+
+const views: Array<?ViewEntry> = [
+  // mkEntry('recent', 'Recently Added', recentPic),
+  mkEntry('album', 'Albums', albumPic),
+  mkEntry('artist', 'Artists', artistPic),
+  mkEntry('song', 'All Songs', songPic),
+  mkEntry('playlist', 'Playlists', playlistPic),
+  mkEntry('current', 'Now Playing', nowPlayingPic),
+  null,
+  mkEntry('settings', 'Settings', settingsPic),
+];
+
+function getEntry(store: StoreState, view: ?ViewEntry, index: number) {
+  if (!view) {
+    return <hr key={index} />;
+  }
+  const extra = store.get('curView') === view.name ? ' sidebar-selected' : '';
+  return (
+    <div
+      key={index}
+      className={`sidebar-container${extra}`}
+      onClick={() => store.set('curView')(view.name)}
+    >
+      <img src={view.pic} className="sidebar-icon" alt={view.title}></img>
+      <span className="sidebar-text">{view.title}</span>
+    </div>
+  );
+}
+
+export default function Sidebar() {
   let store = Store.useStore();
-  const plain = {};
-  const selected = {
-    background: 'rgba(200,200,200,.3)',
-    borderRadius: '6px'
-  };
-  const is = (nm: ViewNames) =>
-    store.get('curView') === nm ? selected : plain;
-  const cl = (nm: ViewNames) => () => store.set('curView')(nm);
+
   return (
     <div id="sidebar">
       <div className="search-bar">
         <input id="search" type="text" placeholder="Search NYI" />
       </div>
-      <br />{/*
-      <div
-        className="sidebar-container"
-        style={is('recent')}
-        onClick={cl('recent')}
-      >
-        <img src={recentPic} className="sidebar-icon" alt="recent"></img>
-        <span className="sidebar-text">Recently Added</span>
-      </div>*/}
-      <div
-        className="sidebar-container"
-        style={is('album')}
-        onClick={cl('album')}
-      >
-        <img src={albumPic} className="sidebar-icon" alt="album"></img>
-        <span className="sidebar-text">Albums</span>
-      </div>
-      <div
-        className="sidebar-container"
-        style={is('artist')}
-        onClick={cl('artist')}
-      >
-        <img src={artistPic} className="sidebar-icon" alt="artist"></img>
-        <span className="sidebar-text">Artists</span>
-      </div>
-      <div
-        className="sidebar-container"
-        style={is('song')}
-        onClick={cl('song')}
-      >
-        <img src={songPic} className="sidebar-icon" alt="song"></img>
-        <span className="sidebar-text">Songs</span>
-      </div>
-      <div
-        className="sidebar-container"
-        style={is('playlist')}
-        onClick={cl('playlist')}
-      >
-        <img src={playlistPic} className="sidebar-icon" alt="playlist"></img>
-        <span className="sidebar-text">Playlists</span>
-      </div>
-      <div
-        className="sidebar-container"
-        style={is('current')}
-        onClick={cl('current')}
-      >
-        <img
-          src={nowPlayingPic}
-          className="sidebar-icon"
-          alt="now playing"
-        ></img>
-        <span className="sidebar-text">Now Playing</span>
-      </div>
-      <hr />
-      <div
-        className="sidebar-container"
-        style={is('settings')}
-        onClick={cl('settings')}
-      >
-        <img src={settingsPic} className="sidebar-icon" alt="settings"></img>
-        <span className="sidebar-text">Settings</span>
-      </div>
+      <br />
+      {views.map((ve, index) => getEntry(store, ve, index))}
     </div>
   );
-};
-
-export default Sidebar;
+}

@@ -1,6 +1,7 @@
 // @flow
 
 import React from 'react';
+import { FixedSizeList } from 'react-window';
 import Card from 'react-bootstrap/Card';
 
 import Store from '../MyStore';
@@ -9,10 +10,16 @@ import { AddArtist } from '../Playlist';
 
 import type { Artist } from '../MyStore';
 
-const SingleArtist = ({ artist }: { artist: Artist }) => {
+function VirtualArtistRow({ index, style }: { index: number, style: object }) {
   const store = Store.useStore();
+  const artists = store.get('Artists');
+  const artistArray = store.get('ArtistArray');
+  const artist = artists.get(artistArray[index]);
+  if (!artist) {
+    return <span>Error for element {index}</span>;
+  }
   return (
-    <Card onDoubleClick={() => AddArtist(store, artist.key)}>
+    <Card style={style} onDoubleClick={() => AddArtist(store, artist.key)}>
       <Card.Body>
         <Card.Title>{artist.name}</Card.Title>
         <Card.Subtitle>
@@ -21,18 +28,22 @@ const SingleArtist = ({ artist }: { artist: Artist }) => {
       </Card.Body>
     </Card>
   );
-};
-const Artists = () => {
-  let store = Store.useStore();
+}
+
+export default function ArtistViewCreator(
+  store: StoreState,
+  width: number,
+  height: number
+) {
   const artists = store.get('Artists');
-  const arr = Array.from(artists.values());
-  arr.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
   return (
-    <div>
-      {arr.map((artist) => (
-        <SingleArtist key={artist.key} artist={artist} />
-      ))}
-    </div>
+    <FixedSizeList
+      height={height}
+      width={width}
+      itemCount={artists.size}
+      itemSize={80}
+    >
+      {VirtualArtistRow}
+    </FixedSizeList>
   );
-};
-export default Artists;
+}
