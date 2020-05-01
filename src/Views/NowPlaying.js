@@ -16,7 +16,7 @@ import {
   StopAndClear,
   RemoveSongNumber,
 } from '../Playlist';
-import { SongByLRNT, SongByRLNT, SongByNLRT, SongByTLRN } from '../Sorters';
+import { SongBy } from '../Sorters';
 
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
@@ -141,16 +141,16 @@ const NowPlaying = () => {
     const curKey = songList[curIndex];
     switch (which) {
       case 'album':
-        songList.sort(SongByLRNT(store));
+        songList.sort(SongBy.AlbumAristNumberTitle(store));
         break;
       case 'artist':
-        songList.sort(SongByRLNT(store));
+        songList.sort(SongBy.ArtistAlbumNumberTitle(store));
         break;
       case 'track':
-        songList.sort(SongByNLRT(store));
+        songList.sort(SongBy.NumberAlbumArtistTitle(store));
         break;
       case 'title':
-        songList.sort(SongByTLRN(store));
+        songList.sort(SongBy.TitleAlbumAristNumber(store));
         break;
       default:
         return;

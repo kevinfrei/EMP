@@ -4,6 +4,7 @@ import * as React from 'react';
 import Store from '../MyStore';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
+import ToggleButton from 'react-bootstrap/ToggleButton';
 
 import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
@@ -42,6 +43,8 @@ const Settings = () => {
   const setLocation = store.set('playlistLocation');
   const playlistLocation =
     plLoc.length > 0 ? plLoc : 'Please set a Playlist save location.';
+  const articles = store.get('SortWithArticles');
+  const setArticles = store.set('SortWithArticles');
   return (
     <Table size="sm">
       <thead>
@@ -91,6 +94,24 @@ const Settings = () => {
             </Button>
           </td>
           <td colSpan={2}>{playlistLocation}</td>
+        </tr>
+      </tbody>
+      <thead>
+        <tr key="<sortHeader">
+          <td />
+          <td>Sorting Preferences</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr key="<sorting">
+          <td rowSpan={2}>
+            <input
+              type="checkbox"
+              checked={articles}
+              onChange={() => setArticles(!articles)}
+            ></input>
+          </td>
+          <td>Sort ignoring 'the'/'a'/'an'</td>
         </tr>
       </tbody>
     </Table>

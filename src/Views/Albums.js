@@ -25,7 +25,7 @@ function getSongList(store: StoreState, songsList: Array<SongKey>) {
   return <ListGroup>{sl}</ListGroup>;
 }
 
-function SingleAlbum({ album, style }: { album: Album, style: object }) {
+function SingleAlbum({ album, style }: { album: Album, style: Object }) {
   const store = Store.useStore();
   const artistName = GetArtistForAlbum(store, album);
   const adder = () => AddAlbum(store, album.key);
@@ -80,24 +80,14 @@ function VirtualAlbumRow({ index, style }: { index: number, style: object }) {
   return maybeAlbum ? (
     <SingleAlbum style={style} album={maybeAlbum} />
   ) : (
-    <span>Error for element {index}</span>
+    <div>Error for element {index}</div>
   );
 }
 
-export default function AlbumViewCreator(
-  store: StoreState,
-  width: number,
-  height: number
-) {
-  const albums = store.get('Albums');
-  return (
-    <FixedSizeList
-      height={height}
-      width={width}
-      itemCount={albums.size}
-      itemSize={80}
-    >
-      {VirtualAlbumRow}
-    </FixedSizeList>
-  );
-}
+const VirtualAlbumView = {
+  name: 'Albums',
+  height: 80,
+  rowCreator: VirtualAlbumRow,
+};
+
+export default VirtualAlbumView;

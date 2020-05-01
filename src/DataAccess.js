@@ -109,3 +109,12 @@ export function GetAlbumKeyForSongKey(
   }
   return song.albumId;
 }
+
+export function GetDataForAlbum(store: StoreState, albumKey: AlbumKey) {
+  const album = store.get('Albums').get(albumKey);
+  if (!album) {
+    return { title: 'UNDEFINED', year: 0, artist: 'UNDEFINED' };
+  }
+  const artist = GetArtistForAlbum(store, album);
+  return { title: album.title, year: album.year, artist };
+}

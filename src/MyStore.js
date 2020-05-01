@@ -1,7 +1,7 @@
 // @flow
 
 import type { Effects, Store } from 'undux';
-import { createConnectedStore } from 'undux';
+import { createConnectedStore, withReduxDevtools, withLogger } from 'undux';
 
 export type SongKey = string;
 export type AlbumKey = string;
@@ -35,9 +35,10 @@ export type Album = {|
 
 export type MediaInfo = {|
   general: Map<string, string>,
-  audio: Map<string, string>
+  audio: Map<string, string>,
 |};
 
+export type MapNames = 'Artists' | 'Albums' | 'Songs';
 export type ArrayOfKeys = 'ArtistArray' | 'AlbumArray' | 'SongArray';
 export type ViewNames =
   | 'none'
@@ -67,7 +68,7 @@ export type State = {|
 
   SortWithArticles: boolean,
 
-  ArtistListSort: 'AlbumCount' | 'ArtistName',
+  ArtistListSort: 'AlbumCount' | 'ArtistName' | 'SongCount',
   AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear',
   SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack',
 
@@ -107,7 +108,7 @@ let initialState: State = {
   AlbumArray: [],
   SongArray: [],
 
-  SortWithArticles: false,
+  SortWithArticles: true,
 
   ArtistListSort: 'ArtistName',
   AlbumListSort: 'ArtistAlbum',
@@ -144,7 +145,8 @@ export const ValidKeyNames = [
   'curIndex',
 ];
 
-export default createConnectedStore<State>(initialState);
+// You can add 'withLogger' instead here..
+export default createConnectedStore<State>(initialState, withReduxDevtools);
 
 // Docs say: Ignore this if you're using React Hooks
 export type StoreProps = {|

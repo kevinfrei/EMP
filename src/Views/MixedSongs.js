@@ -8,7 +8,8 @@ import { GetDataForSong } from '../DataAccess';
 import { AddSong, StartPlaylist } from '../Playlist';
 import { SongByRLNT } from '../Sorters';
 
-import type { SongKey } from '../MyStore';
+import type { SongKey, StoreState } from '../MyStore';
+import type { VirtualViewInfo } from './Selector';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines = [];
@@ -23,12 +24,18 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   return lines;
 }
 
-const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
+const MixedSongLine = ({
+  songKey,
+  style,
+}: {
+  songKey: SongKey,
+  style: Object,
+}) => {
   const [open, setOpen] = useState(false);
   const store = Store.useStore();
   const { title, track, album, artist } = GetDataForSong(store, songKey);
   let details = <></>;
-  if (open) {
+  if (false && open) {
     const mdCache = store.get('MediaInfoCache');
     const mediaInfo = mdCache.get(songKey);
     if (mediaInfo) {
@@ -56,43 +63,30 @@ const MixedSongLine = ({ songKey }: { songKey: SongKey }) => {
     }
   }
   return (
-    <>
-      <tr
-        onDoubleClick={() => AddSong(store, songKey)}
-        onAuxClick={() => setOpen(!open)}
-      >
-        <td>{artist}</td>
-        <td>{album}</td>
-        <td>{track}</td>
-        <td>{title}</td>
-      </tr>
-      {details}
-    </>
+    <div
+      style={style}
+      onDoubleClick={() => AddSong(store, songKey)}
+      onAuxClick={() => setOpen(!open)}
+    >
+      <span>{artist}</span>
+      <span>{album}</span>
+      <span>{track}</span>
+      <span>{title}</span>
+    </div>
   );
 };
 
-const MixedSongsView = () => {
-  let store = Store.useStore();
+function VirtualSongRow({ index, style }: { index: number, style: object }) {
+  const store = Store.useStore();
   const songs = store.get('Songs');
-  const sngs: Array<SongKey> = Array.from(songs.keys());
-  sngs.sort(SongByRLNT(store));
-  return (
-    <Table striped hover size="sm">
-      <thead>
-        <tr>
-          <td>Album</td>
-          <td>Artist</td>
-          <td>#</td>
-          <td>Title</td>
-        </tr>
-      </thead>
-      <tbody>
-        {sngs.map((s) => (
-          <MixedSongLine key={s} songKey={s} />
-        ))}
-      </tbody>
-    </Table>
-  );
+  const songArray = store.get('SongArray');
+  return <MixedSongLine style={style} songKey={songArray[index]} />;
+}
+
+const VirtualSongView = {
+  name: 'Songs',
+  height: 20,
+  rowCreator: VirtualSongRow,
 };
 
-export default MixedSongsView;
+export default VirtualSongView;
