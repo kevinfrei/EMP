@@ -6,22 +6,32 @@ import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
 
 import Store from '../MyStore';
 
-import { StartPlaylist } from '../Playlist';
+import { StartPlaylist, DeletePlaylist } from '../Playlist';
 import { GetTrackListingForSong } from '../DataAccess';
 
 import type { SongKey } from '../MyStore';
 
-import './styles/NowPlaying.css';
+import './styles/Playlists.css';
 import downChevron from '../img/down-chevron.svg';
+import deletePic from '../img/delete.svg';
 
 function Playlist({ name, playing }: { name: string, playing: boolean }) {
   const store = Store.useStore();
   const [showSongs, setShowSongs] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const playlists = store.get('Playlists');
   const thisPlaylist = playlists.get(name);
+
+  const closeConfirmation = () => setShowConfirmation(false);
+  const approvedConfirmation = () => {
+    DeletePlaylist(store, name);
+    closeConfirmation();
+  };
   if (!thisPlaylist) {
     return <></>;
   }
@@ -31,7 +41,9 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
   ) : (
     <ListGroup>
       {thisPlaylist.map((sk: SongKey) => (
-        <ListGroupItem>{GetTrackListingForSong(store, sk)}</ListGroupItem>
+        <ListGroupItem key={sk}>
+          {GetTrackListingForSong(store, sk)}
+        </ListGroupItem>
       ))}
     </ListGroup>
   );
@@ -41,8 +53,26 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
       className={playing ? 'playing' : 'not-playing'}
       onDoubleClick={() => StartPlaylist(store, name)}
     >
+      <Modal show={showConfirmation} onHide={closeConfirmation}>
+        <Modal.Header closeButton>
+          <Modal.Title>Please Confirm</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete the playlist "{name}"?</Modal.Body>
+        <Modal.Footer>
+          <Button onClick={approvedConfirmation}>Yes</Button>
+          <Button onClick={closeConfirmation}>No</Button>
+        </Modal.Footer>
+      </Modal>
       <Card.Body>
-        <Card.Title>{name}</Card.Title>
+        <Card.Title>
+          <span>{name}</span>
+          <img
+            className="pic-button delete-playlist"
+            src={deletePic}
+            alt="Remove"
+            onClick={() => setShowConfirmation(true)}
+          ></img>
+        </Card.Title>
         <Card.Text>
           {' '}
           &nbsp;

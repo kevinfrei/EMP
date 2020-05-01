@@ -1,0 +1,17 @@
+.playing .card-title .h5 {
+  font-weight: bold;
+}
+
+.card-title .h5 {
+  width: 100%;
+}
+
+.delete-playlist {
+  float: right;
+}
+
+.not-playing .card-title,
+.playing .card-text,
+.playing .list-group {
+  font-weight: normal;
+}

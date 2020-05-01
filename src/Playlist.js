@@ -23,10 +23,19 @@ import type {
 // This allows for shuffling & repeating
 
 // This stops playback and clears the active playlist
-export function StopAndClear(store: Store<State>): void {
+export function StopAndClear(store: StoreState): void {
   store.set('songList')([]);
   store.set('curIndex')(-1);
   store.set('activePlaylistName')('');
+}
+
+export function DeletePlaylist(store: StoreState, playlist: string): void {
+  const playlists = store.get('Playlists');
+  playlists.delete(playlist);
+  store.set('Playlists')(playlists);
+  if (store.get('activePlaylistName') === playlist) {
+    store.set('activePlaylistName')('');
+  }
 }
 
 // True if we're playing from a playlist and not a random song list

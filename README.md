@@ -32,7 +32,6 @@ Playlists are the next major piece of functionality to add.
   * Something involving no Key Reuse.
 * **both** MediaInfo/Metadata editing!
   * Support adding album covers
-* **render** Need a way to *delete* a playlist
 * **main** Get album covers from media tags as well as the folder...
 * **both** Make 'Search' work.
 * **render** Make a miniplayer!

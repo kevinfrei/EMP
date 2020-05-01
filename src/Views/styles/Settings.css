@@ -4,12 +4,3 @@
   grid-template-columns: 30px minmax(150px, 1fr);
   grid-auto-rows: 30px;
 }
-
-.pic-button {
-  height: 24px;
-  width: 24px;
-  border: solid 1px gray;
-  border-radius: 3px;
-  padding: 4px;
-  cursor: pointer;
-}
