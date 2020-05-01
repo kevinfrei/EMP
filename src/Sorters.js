@@ -7,11 +7,8 @@ import type {
   SongKey,
   StoreState,
   ArrayOfKeys,
-  Album,
-  Song,
   AlbumKey,
   ArtistKey,
-  Artist,
 } from './MyStore';
 
 export type sorter = (a: string, b: string) => number;
@@ -132,14 +129,8 @@ export const AlbumBy = {
   TitleArtistYear: (store: StoreState): sorter => {
     const cmp = store.get('SortWithArticles') ? strCmp : theCmp;
     return (a: AlbumKey, b: AlbumKey) => {
-      const { title: aTitle, artist: aArtist, year: aYear } = GetDataForAlbum(
-        store,
-        a
-      );
-      const { title: bTitle, artist: bArtist, year: bYear } = GetDataForAlbum(
-        store,
-        b
-      );
+      const { title: aTitle, artist: aArtist } = GetDataForAlbum(store, a);
+      const { title: bTitle, artist: bArtist } = GetDataForAlbum(store, b);
       return cmp(aTitle, bTitle) || cmp(aArtist, bArtist);
     };
   },
@@ -246,7 +237,6 @@ export function PlaysetsComp(
   return true;
 }
 
-/*
 function sortAndStore<V>(
   store: StoreState,
   map: Map<string, V>,
@@ -254,18 +244,12 @@ function sortAndStore<V>(
   srt: (k1: string, K2: string) => number
 ) {
   let keys: Array<string> = [...map.keys()];
-  const before = [...keys];
-  const prevKeys = store.get(name);
-  console.log(`${name} sorting: ${keys.length} (prev: ${prevKeys.length})`);
-  keys = keys.sort(srt);
-  if (keys.join().localeCompare(prevKeys.join())) {
-    console.log("They're different order!");
-  }
-  const setter = store.set(name);
-  setter(keys);
+  keys.sort(srt);
+  store.set(name)(keys);
 }
 
 export function SortAlbums(store: StoreState) {
+  const map = store.get('Albums');
   const whichSort = store.get('AlbumListSort');
   let srt: sorter;
   switch (whichSort) {
@@ -283,16 +267,16 @@ export function SortAlbums(store: StoreState) {
       srt = AlbumBy.ArtistYear(store);
       break;
   }
-  sortAndStore(store, store.get('Albums'), 'AlbumArray', srt);
+  sortAndStore(store, map, 'AlbumArray', srt);
 }
 
 export function SortArtists(store: StoreState) {
+  const map = store.get('Artists');
   const whichSort = store.get('ArtistListSort');
   let srt: sorter;
   switch (whichSort) {
     default:
     case 'ArtistName':
-      console.log('Artist Name sort');
       srt = ArtistBy.Name(store);
       break;
     case 'AlbumCount':
@@ -302,10 +286,11 @@ export function SortArtists(store: StoreState) {
       srt = ArtistBy.SongCount(store);
       break;
   }
-  sortAndStore(store, store.get('Artists'), 'ArtistArray', srt);
+  sortAndStore(store, map, 'ArtistArray', srt);
 }
 
 export function SortSongs(store: StoreState) {
+  const map = store.get('Songs');
   const whichSort = store.get('SongListSort');
   let srt: sorter;
   switch (whichSort) {
@@ -320,6 +305,5 @@ export function SortSongs(store: StoreState) {
       srt = SongBy.AlbumAristNumberTitle(store);
       break;
   }
-  sortAndStore(store, store.get('Songs'), 'SongArray', srt);
+  sortAndStore(store, map, 'SongArray', srt);
 }
-*/

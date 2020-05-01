@@ -4,7 +4,6 @@ import * as React from 'react';
 import Store from '../MyStore';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
-import ToggleButton from 'react-bootstrap/ToggleButton';
 
 import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
@@ -111,7 +110,7 @@ const Settings = () => {
               onChange={() => setArticles(!articles)}
             ></input>
           </td>
-          <td>Sort ignoring 'the'/'a'/'an'</td>
+          <td>Consider 'the'/'a'/'an' when sorting</td>
         </tr>
       </tbody>
     </Table>

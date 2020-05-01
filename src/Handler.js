@@ -9,15 +9,7 @@ import { ValidKeyNames } from './MyStore';
 import { PlaysetsComp } from './Sorters';
 
 import type { IpcRendererEvent } from 'electron';
-import type {
-  StoreState,
-  SongKey,
-  AlbumKey,
-  ArtistKey,
-  Song,
-  Album,
-  Artist,
-} from './MyStore';
+import type { StoreState } from './MyStore';
 
 export type KeyValue = {
   key: string,
@@ -143,28 +135,9 @@ const HandlePersistence = (store: StoreState) => {
     });
     window.ipc.send('get', key.key);
   }
-  const updateAlbums = (map: Map<AlbumKey, Album>) => {
-    // TODO: sort!
-    store.set('AlbumArray')([...map.keys()]);
-  };
-  const updateArtists = (map: Map<ArtistKey, Artist>) => {
-    // TODO: sort!
-    store.set('ArtistArray')([...map.keys()]);
-  };
-  const updateSongs = (map: Map<SongKey, Song>) => {
-    // TODO: sort!
-    store.set('SongArray')([...map.keys()]);
-  };
-  // Add a couple more useful things to the store based on the DB
-  store.on('Albums').subscribe(updateAlbums);
-  store.on('Artists').subscribe(updateArtists);
-  store.on('Songs').subscribe(updateSongs);
 };
 
-// For anything that should be synchronized, do the store.on('') thing
-// TODO: Debounce saving stuff
-// TODO: Make this a more trivially configurable kind of thing
-// TODO: Document this. Seriously. Rediscovering how this works is a PITA
+// For anything that should be synchronized, update the effects in Effects.js
 const ConfigureIPC = (store: StoreState) => {
   log('Store:');
   log(store);

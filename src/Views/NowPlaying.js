@@ -119,7 +119,13 @@ const NowPlaying = () => {
       {header}&nbsp;
       <Button
         size="sm"
-        onClick={() => setShowConfirmation(true)}
+        onClick={() => {
+          if (PlayingPlaylist(nowPlaying)) {
+            StopAndClear(store);
+          } else {
+            setShowConfirmation(true);
+          }
+        }}
         disabled={emptyQueue}
       >
         Clear Queue
@@ -184,7 +190,7 @@ const NowPlaying = () => {
     );
   });
   const isSortedBy = (sortBy: string, thisOne: string): string =>
-  sortBy === thisOne ? 'sorted-header' : 'notsorted-header';
+    sortBy === thisOne ? 'sorted-header' : 'notsorted-header';
 
   return (
     <>
@@ -194,10 +200,30 @@ const NowPlaying = () => {
         <thead>
           <tr>
             <td></td>
-            <td onClick={() => setSort('album')} className={isSortedBy(sortBy, 'album')}>Album</td>
-            <td onClick={() => setSort('artist')} className={isSortedBy(sortBy, 'artist')}>Artist</td>
-            <td onClick={() => setSort('track')} className={isSortedBy(sortBy, 'track')}>#</td>
-            <td onClick={() => setSort('title')} className={isSortedBy(sortBy, 'title')}>Title</td>
+            <td
+              onClick={() => setSort('album')}
+              className={isSortedBy(sortBy, 'album')}
+            >
+              Album
+            </td>
+            <td
+              onClick={() => setSort('artist')}
+              className={isSortedBy(sortBy, 'artist')}
+            >
+              Artist
+            </td>
+            <td
+              onClick={() => setSort('track')}
+              className={isSortedBy(sortBy, 'track')}
+            >
+              #
+            </td>
+            <td
+              onClick={() => setSort('title')}
+              className={isSortedBy(sortBy, 'title')}
+            >
+              Title
+            </td>
           </tr>
         </thead>
         <tbody>{songs}</tbody>

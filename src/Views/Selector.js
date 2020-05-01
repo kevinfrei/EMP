@@ -7,7 +7,6 @@ import { FixedSizeList } from 'react-window';
 import VirtualAlbumView from './Albums';
 import VirtualArtistView from './Artists';
 import VirtualSongView from './MixedSongs';
-import MixedSongsView from './MixedSongs';
 import RecentlyAddedView from './RecentlyAdded';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';

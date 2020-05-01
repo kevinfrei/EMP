@@ -1,14 +1,11 @@
 // @flow
 
 import React from 'react';
-import { FixedSizeList } from 'react-window';
 import Card from 'react-bootstrap/Card';
 
 import Store from '../MyStore';
 
 import { AddArtist } from '../Playlist';
-
-import type { Artist } from '../MyStore';
 
 function VirtualArtistRow({ index, style }: { index: number, style: Object }) {
   const store = Store.useStore();
@@ -23,7 +20,7 @@ function VirtualArtistRow({ index, style }: { index: number, style: Object }) {
       <Card.Body>
         <Card.Title>{artist.name}</Card.Title>
         <Card.Subtitle>
-          {artist.songs.length} Songs and {artist.albums.length} Albums {artistArray[index]}
+          {artist.songs.length} Songs and {artist.albums.length} Albums
         </Card.Subtitle>
       </Card.Body>
     </Card>

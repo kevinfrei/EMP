@@ -5,11 +5,9 @@ import Table from 'react-bootstrap/Table';
 import Store from '../MyStore';
 
 import { GetDataForSong } from '../DataAccess';
-import { AddSong, StartPlaylist } from '../Playlist';
-import { SongByRLNT } from '../Sorters';
+import { AddSong } from '../Playlist';
 
-import type { SongKey, StoreState } from '../MyStore';
-import type { VirtualViewInfo } from './Selector';
+import type { SongKey } from '../MyStore';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines = [];
@@ -76,9 +74,8 @@ const MixedSongLine = ({
   );
 };
 
-function VirtualSongRow({ index, style }: { index: number, style: object }) {
+function VirtualSongRow({ index, style }: { index: number, style: Object }) {
   const store = Store.useStore();
-  const songs = store.get('Songs');
   const songArray = store.get('SongArray');
   return <MixedSongLine style={style} songKey={songArray[index]} />;
 }

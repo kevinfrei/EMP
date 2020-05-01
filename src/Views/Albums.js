@@ -10,7 +10,6 @@ import Store from '../MyStore';
 
 import { AddAlbum, AddSong } from '../Playlist';
 import { GetArtistForAlbum, GetTrackListingForSong } from '../DataAccess';
-import { AlbumByTitle } from '../Sorters';
 
 import type { SongKey, Album, StoreState } from '../MyStore';
 

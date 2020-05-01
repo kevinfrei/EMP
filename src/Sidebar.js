@@ -2,7 +2,7 @@
 import React from 'react';
 import Store from './MyStore';
 
-import recentPic from './img/recent.svg';
+//import recentPic from './img/recent.svg';
 import albumPic from './img/album.svg';
 import artistPic from './img/artist.svg';
 import songPic from './img/song.svg';

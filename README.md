@@ -39,7 +39,7 @@ Playlists are the next major piece of functionality to add.
 * **both** "Auto" playlists (something involving stuff like "this artist" and "not this
 keyword" kind of stuff.
 * **both** Add 'favorite/love' attribute for songs
-* **render** Import/Export M3U's
+* **both** Import/Export M3U's
 
 ### Logic improvements/changes
 * **main** Filter song lists down to actual songKeys that exist
