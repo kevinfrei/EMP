@@ -12,10 +12,19 @@ const effects: StoreEffects = (store) => {
   store.on('Songs').subscribe((v) => {
     SortSongs(store);
   });
+  store.on('SongListSort').subscribe((v) => {
+    SortSongs(store);
+  });
   store.on('Albums').subscribe((v) => {
     SortAlbums(store);
   });
+  store.on('AlbumListSort').subscribe((v) => {
+    SortAlbums(store);
+  });
   store.on('Artists').subscribe((v) => {
+    SortArtists(store);
+  });
+  store.on('ArtistListSort').subscribe((v) => {
     SortArtists(store);
   });
   return store;

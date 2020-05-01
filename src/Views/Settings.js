@@ -2,8 +2,13 @@
 
 import * as React from 'react';
 import Store from '../MyStore';
-import Table from 'react-bootstrap/Table';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import DropdownButton from 'react-bootstrap/DropdownButton';
+import Dropdown from 'react-bootstrap/Dropdown';
 
 import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
@@ -21,22 +26,50 @@ function GetDirs() {
     properties: ['openDirectory'],
   });
 }
+
+function sortPopup(item) {
+  const names: Array<string> = item.names;
+  const selected = item.types.indexOf(item.value);
+  const select = (key) => item.setter(key);
+  return (
+    <Row>
+      <Col xs={3}>
+        <span style={{ float: 'right' }}>View {item.title} by </span>
+      </Col>
+      <Col>
+        <DropdownButton size="sm" title={item.names[selected]}>
+          {names.map((val, index) => (
+            <Dropdown.Item
+              key={index}
+              eventKey={item.types[index]}
+              active={index === selected}
+              onSelect={select}
+            >
+              {val}
+            </Dropdown.Item>
+          ))}
+        </DropdownButton>
+      </Col>
+    </Row>
+  );
+}
+
 const Settings = () => {
   const store = Store.useStore();
   const config: Array<string> = store.get('locations');
   const setConfig = store.set('locations');
-  const elems = config.map((elem) => (
-    <tr key={'>' + elem}>
-      <td>
+  const locations = config.map((elem) => (
+    <Row key={elem}>
+      <Col xs={1}>
         <img
           className="delete-pic pic-button"
           src={deletePic}
           alt="Delete Item"
           onClick={() => setConfig(removeFromSet(config, elem))}
         />
-      </td>
-      <td>{elem}</td>
-    </tr>
+      </Col>
+      <Col>{elem}</Col>
+    </Row>
   ));
   const plLoc = store.get('playlistLocation');
   const setLocation = store.set('playlistLocation');
@@ -44,76 +77,78 @@ const Settings = () => {
     plLoc.length > 0 ? plLoc : 'Please set a Playlist save location.';
   const articles = store.get('SortWithArticles');
   const setArticles = store.set('SortWithArticles');
+
+  const album = {
+    title: 'Album',
+    value: store.get('AlbumListSort'),
+    setter: store.set('AlbumListSort'),
+    types: ['AlbumTitle', 'AlbumYear', 'ArtistAlbum', 'ArtistYear'],
+    names: ['Title', 'Year', 'Artist, then Title', 'Artist, then Year'],
+  };
+  const artist = {
+    title: 'Artist',
+    value: store.get('ArtistListSort'),
+    setter: store.set('ArtistListSort'),
+    types: ['AlbumCount', 'ArtistName', 'SongCount'],
+    names: ['# of Albums', 'Name', '# of songs'],
+  };
+  const song = {
+    title: 'Song',
+    value: store.get('SongListSort'),
+    setter: store.set('SongListSort'),
+    types: ['SongTitle', 'ArtistAlbum', 'AlbumTrack'],
+    names: ['Title', 'Artist, then Album', 'Album'],
+  };
+
   return (
-    <Table size="sm">
-      <thead>
-        <tr key="<locationsHeader">
-          <td />
-          <td>Music Locations</td>
-        </tr>
-      </thead>
-      <tbody>
-        {elems}
-        <tr key="<locationsFooter">
-          <td />
-          <td>
-            <img
-              className="add-pic pic-button"
-              src={addPic}
-              alt="add source"
-              onClick={() => {
-                const locations: ?Array<string> = GetDirs();
-                if (locations) {
-                  setConfig([...locations, ...config]);
-                }
-              }}
-            />
-          </td>
-        </tr>
-      </tbody>
-      <thead>
-        <tr key="<pllocHeader">
-          <td />
-          <td>Playlist location</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr key="<plloc">
-          <td>
-            <Button
-              size="sm"
-              onClick={() => {
-                const locs: ?Array<string> = GetDirs();
-                if (locs) {
-                  setLocation(locs[0]);
-                }
-              }}
-            >
-              Change
-            </Button>
-          </td>
-          <td colSpan={2}>{playlistLocation}</td>
-        </tr>
-      </tbody>
-      <thead>
-        <tr key="<sortHeader">
-          <td />
-          <td>Sorting Preferences</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr key="<sorting">
-          <td rowSpan={2}>
-            <input
-              type="checkbox"
-              checked={articles}
-              onChange={() => setArticles(!articles)}
-            ></input>
-          </td>
-          <td>Consider 'the'/'a'/'an' when sorting</td>
-        </tr>
-      </tbody>
-    </Table>
+    <>
+      <Card>
+        <Card.Body>
+          <Card.Title>Music Locations</Card.Title>
+          <Container>
+            {locations}
+            <Row>
+              <Col xs={1}>
+                <img
+                  className="add-pic pic-button"
+                  src={addPic}
+                  alt="add source"
+                  onClick={() => {
+                    const locations: ?Array<string> = GetDirs();
+                    if (locations) {
+                      setConfig([...locations, ...config]);
+                    }
+                  }}
+                />
+              </Col>
+              <Col>
+                <em>Add new location to scan</em>
+              </Col>
+            </Row>
+          </Container>
+        </Card.Body>
+      </Card>
+      <Card>
+        <Card.Body>
+          <Card.Title>Sorting Preferences</Card.Title>
+          <Container>
+            {sortPopup(album)}
+            {sortPopup(artist)}
+            {sortPopup(song)}
+            <Row>
+              <Col xs={3}>Consider articles</Col>
+              <Col>
+                <input
+                  type="checkbox"
+                  checked={articles}
+                  onChange={() => setArticles(!articles)}
+                ></input>
+              </Col>
+            </Row>
+          </Container>
+        </Card.Body>
+      </Card>
+    </>
   );
 };
 export default Settings;

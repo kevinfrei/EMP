@@ -1,6 +1,0 @@
-.table-2-column {
-  display: grid;
-  margin: 10px;
-  grid-template-columns: 30px minmax(150px, 1fr);
-  grid-auto-rows: 30px;
-}
