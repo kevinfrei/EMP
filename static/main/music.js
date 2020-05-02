@@ -397,6 +397,29 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
   const trackInfo = rawMetadata.media.track;
   const general = objToMap(trackInfo[0]);
   const audio = objToMap(trackInfo[1]);
+  // Remove some stuff I don't care about or don't handle yet
+  for (let i of [
+    'AudioCount',
+    'Cover',
+    'Cover_Type',
+    'Cover_Mime',
+    'StreamSize',
+    'OverallBitRate',
+    'OverallBitRate_Mode',
+  ]) {
+    general.delete(i);
+  }
+  for (let j of [
+    'SamplesPerFrame',
+    'SamplingCount',
+    'FrameRate',
+    'FrameCount',
+    'StreamSize',
+    'StreamSize_Proportion',
+    ...general.keys()
+  ]) {
+    audio.delete(j);
+  }
   return { general, audio };
 }
 
