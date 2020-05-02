@@ -26,6 +26,7 @@ Playlists are the next major piece of functionality to add.
 ### Bugs
 * When the playlist is cleared, playback should probably stop
   * A few other places, the song disappears, but continues to play...
+* Now Playing sorting / shuffle interactions are goofy
 
 ### Core Capabilities
 * **both** Add "Recently Added" capabilities
@@ -55,6 +56,8 @@ keyword" kind of stuff.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
 * Playlist reordering (drag & drop?)
+* Make an actual "About" screen
+* Get some controls in the menu with appropriate keyboard shortcuts
 
 ### Other
 * Testing! Testing! Testing!

@@ -4,12 +4,14 @@ import Table from 'react-bootstrap/Table';
 
 import Store from '../MyStore';
 
-import { GetDataForSong } from '../DataAccess';
 import { AddSong } from '../Playlist';
+import SongLine from '../SongLine';
 
-import type { SongKey } from '../MyStore';
+import type { SongKey, StoreState } from '../MyStore';
 
-function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
+/*
+
+  function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines = [];
   strs.forEach((val, key) =>
     lines.push(
@@ -22,13 +24,6 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   return lines;
 }
 
-const MixedSongLine = ({
-  songKey,
-  style,
-}: {
-  songKey: SongKey,
-  style: Object,
-}) => {
   const [open, setOpen] = useState(false);
   const store = Store.useStore();
   const { title, track, album, artist } = GetDataForSong(store, songKey);
@@ -58,26 +53,26 @@ const MixedSongLine = ({
         </tr>
       );
       window.ipc.send('mediainfo', songKey);
+
     }
   }
-  return (
-    <div
-      style={style}
-      onDoubleClick={() => AddSong(store, songKey)}
-      onAuxClick={() => setOpen(!open)}
-    >
-      <span>{artist}</span>
-      <span>{album}</span>
-      <span>{track}</span>
-      <span>{title}</span>
-    </div>
-  );
-};
+        onAuxClick={() => setOpen(!open)}
+
+  */
 
 function VirtualSongRow({ index, style }: { index: number, style: Object }) {
   const store = Store.useStore();
   const songArray = store.get('SongArray');
-  return <MixedSongLine style={style} songKey={songArray[index]} />;
+  return (
+    <SongLine
+      template="RL#T"
+      key={index}
+      style={style}
+      className={index & 1 ? 'evenSong' : 'oddSong'}
+      songKey={songArray[index]}
+      onDoubleClick={AddSong}
+    />
+  );
 }
 
 const VirtualSongView = {
