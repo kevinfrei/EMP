@@ -1,5 +1,6 @@
-.playing .card-title .h5 {
+.playing .card-title{
   font-weight: bold;
+  font-size: x-large;
 }
 
 .card-title .h5 {
@@ -12,6 +13,14 @@
 
 .not-playing .card-title,
 .playing .card-text,
-.playing .list-group {
+.playing .expandedSongList {
   font-weight: normal;
+}
+
+.expandedSongList {
+  margin-left: 35pt;
+}
+
+.expandedSongList .songArtist {
+  padding: 10pt;
 }

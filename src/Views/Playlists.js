@@ -4,15 +4,13 @@
 
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
-import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
 import Store from '../MyStore';
 
 import { StartPlaylist, DeletePlaylist } from '../Playlist';
-import { GetTrackListingForSong } from '../DataAccess';
+import SongLine from '../SongLine';
 
 import type { SongKey } from '../MyStore';
 
@@ -39,13 +37,11 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
   const theSongs = !showSongs ? (
     <></>
   ) : (
-    <ListGroup>
+    <div className='expandedSongList'>
       {thisPlaylist.map((sk: SongKey) => (
-        <ListGroupItem key={sk}>
-          {GetTrackListingForSong(store, sk)}
-        </ListGroupItem>
+        <SongLine key={sk} songKey={sk} template="LRT" />
       ))}
-    </ListGroup>
+    </div>
   );
 
   return (
@@ -57,7 +53,9 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
         <Modal.Header closeButton>
           <Modal.Title>Please Confirm</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to delete the playlist "{name}"?</Modal.Body>
+        <Modal.Body>
+          Are you sure you want to delete the playlist "{name}"?
+        </Modal.Body>
         <Modal.Footer>
           <Button onClick={approvedConfirmation}>Yes</Button>
           <Button onClick={closeConfirmation}>No</Button>

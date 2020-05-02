@@ -176,7 +176,7 @@ const NowPlaying = () => {
       <SongLine
         key={songKey}
         songKey={songKey}
-        onClick={() => PlaySongNumber(store, idx)}
+        onDoubleClick={() => PlaySongNumber(store, idx)}
         className={clsName}
         template="CLR#T"
       >
