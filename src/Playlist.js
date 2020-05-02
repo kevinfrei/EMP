@@ -1,7 +1,7 @@
 // @flow
 // @format
 import ShuffleArray from './ShuffleArray';
-import { StartSongPlaying } from './SongPlayback';
+import { StartSongPlaying, StopSongPlaying } from './SongPlayback';
 
 import type { Store } from 'undux';
 import type {
@@ -27,6 +27,7 @@ export function StopAndClear(store: StoreState): void {
   store.set('songList')([]);
   store.set('curIndex')(-1);
   store.set('activePlaylistName')('');
+  StopSongPlaying(store);
 }
 
 export function DeletePlaylist(store: StoreState, playlist: string): void {

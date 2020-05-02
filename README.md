@@ -24,11 +24,11 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Bugs
-* When the playlist is cleared, playback should probably stop
-  * A few other places, the song disappears, but continues to play...
 * Now Playing sorting / shuffle interactions are goofy
 
 ### Core Capabilities
+* **both** Remember volume position between runs
+* **both** Restore active tab between runs
 * **main** Get album covers from media tags as well as the folder...
 * **both** MediaInfo/Metadata editing!
   * Support adding album covers

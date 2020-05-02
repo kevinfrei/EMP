@@ -6,7 +6,7 @@ import Store from './MyStore';
 import { GetDataForSong, GetAlbumKeyForSongKey } from './DataAccess';
 import { StartNextSong } from './Playlist';
 
-import type { State } from './MyStore';
+import type { StoreState } from './MyStore';
 
 import './styles/SongPlayback.css';
 
@@ -50,7 +50,7 @@ window.positionInterval = setInterval(() => {
   }
 }, 250);
 
-export const StartSongPlaying = (store: Store<State>, index: number) => {
+export function StartSongPlaying(store: StoreState, index: number) {
   const changing = store.get('curIndex') !== index;
   if (!changing) {
     return;
@@ -65,9 +65,25 @@ export const StartSongPlaying = (store: Store<State>, index: number) => {
   } else {
     console.log('unable to find audioElement!');
   }
-};
+}
 
-const SongPlayback = () => {
+export function StopSongPlaying(store: StoreState) {
+  store.set('playing')(false);
+  const ae = document.getElementById('audioElement');
+  if (ae) {
+    console.log('Cleaning up Audio element status');
+    ae.src = '';
+    ae.currentTime = 0;
+    const npct = document.getElementById('now-playing-current-time');
+    const nprt = document.getElementById('now-playing-remaining-time');
+    npct.innerText = '';
+    nprt.innerText = '';
+    const rs = document.getElementById('song-slider');
+    rs.value = 0;
+  }
+}
+
+export default function SongPlayback() {
   const [, setPos] = useState('songPos');
 
   let audio: React$Element<any>;
@@ -128,5 +144,4 @@ const SongPlayback = () => {
       {audio}
     </span>
   );
-};
-export default SongPlayback;
+}
