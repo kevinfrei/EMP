@@ -2,14 +2,12 @@
 
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
 import Modal from 'react-bootstrap/Modal';
 import FormControl from 'react-bootstrap/FormControl';
 import { Comparisons } from 'my-utils';
 
 import Store from '../MyStore';
 
-import { GetDataForSong } from '../DataAccess';
 import {
   PlayingPlaylist,
   PlaySongNumber,
@@ -17,6 +15,7 @@ import {
   RemoveSongNumber,
 } from '../Playlist';
 import { SongBy } from '../Sorters';
+import SongLine from '../SongLine';
 
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
@@ -116,7 +115,7 @@ const NowPlaying = () => {
     header = 'Now Playing';
     button = <></>;
   }
-  const headerLine = (
+  const topLine = (
     <h4 id="now-playing-header">
       {header}&nbsp;
       <Button
@@ -170,28 +169,24 @@ const NowPlaying = () => {
     store.set('curIndex')(songList.indexOf(curKey));
     store.set('songList')([...songList]);
   };
-  const songs = songList.map((val, idx) => {
-    const songKey = songList[idx];
-    const { track, title, album, artist } = GetDataForSong(store, songKey);
+  const songs = songList.map((songKey, idx) => {
+    let clsName = idx & 1 ? 'songContainer oddSong' : 'songContainer evenSong';
+    clsName += idx === curIndex ? ' playing' : ' not-playing';
     return (
-      <tr
-        className={idx === curIndex ? 'playing' : 'not-playing'}
-        key={idx}
-        onDoubleClick={() => PlaySongNumber(store, idx)}
+      <SongLine
+        key={songKey}
+        songKey={songKey}
+        onClick={() => PlaySongNumber(store, idx)}
+        className={clsName}
+        template="CLR#T"
       >
-        <td>
-          <img
-            className="delete-pic pic-button"
-            src={deletePic}
-            alt="Remove"
-            onClick={() => RemoveSongNumber(store, idx)}
-          />
-        </td>
-        <td>{album}</td>
-        <td>{artist}</td>
-        <td>{track}</td>
-        <td>{title}</td>
-      </tr>
+        <img
+          className="delete-pic pic-button"
+          src={deletePic}
+          alt="Remove"
+          onClick={() => RemoveSongNumber(store, idx)}
+        />
+      </SongLine>
     );
   });
   const isSortedBy = (sortBy: string, thisOne: string): string =>
@@ -200,39 +195,34 @@ const NowPlaying = () => {
   return (
     <>
       {modalDialogs}
-      {headerLine}
-      <Table striped hover size="sm">
-        <thead>
-          <tr>
-            <td></td>
-            <td
-              onClick={() => setSort('album')}
-              className={isSortedBy(sortBy, 'album')}
-            >
-              Album
-            </td>
-            <td
-              onClick={() => setSort('artist')}
-              className={isSortedBy(sortBy, 'artist')}
-            >
-              Artist
-            </td>
-            <td
-              onClick={() => setSort('track')}
-              className={isSortedBy(sortBy, 'track')}
-            >
-              #
-            </td>
-            <td
-              onClick={() => setSort('title')}
-              className={isSortedBy(sortBy, 'title')}
-            >
-              Title
-            </td>
-          </tr>
-        </thead>
-        <tbody>{songs}</tbody>
-      </Table>
+      {topLine}
+      <div className="songHeader">
+        <div
+          onClick={() => setSort('album')}
+          className={isSortedBy(sortBy, 'album') + ' songAlbum'}
+        >
+          Album
+        </div>
+        <div
+          onClick={() => setSort('artist')}
+          className={isSortedBy(sortBy, 'artist') + ' songArtist'}
+        >
+          Artist
+        </div>
+        <div
+          onClick={() => setSort('track')}
+          className={isSortedBy(sortBy, 'track') + ' songTrack'}
+        >
+          #
+        </div>
+        <div
+          onClick={() => setSort('title')}
+          className={isSortedBy(sortBy, 'title') + ' songTitle'}
+        >
+          Title
+        </div>
+      </div>
+      {songs}
     </>
   );
 };

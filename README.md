@@ -25,7 +25,8 @@ Playlists are the next major piece of functionality to add.
 
 ### Bugs
 * Play button is non-responsive even when Now Playing is queue
-
+* Removing an element from Now Playing behaves weirdly
+*
 ### Core Capabilities
 * **both** Restore active tab between runs
 * **main** Get album covers from media tags as well as the folder...
@@ -44,7 +45,7 @@ keyword" kind of stuff.
 * **both** Import/Export M3U's?
 
 ### Logic improvements/changes
-* **main** Filter song lists down to actual songKeys that exist
+* Filter song lists down to actual songKeys that exist
 * Transcode for phone (dump stuff out ready to import into iTunes, for example)
 * Playlist unique-ification
 
@@ -56,9 +57,9 @@ keyword" kind of stuff.
 * Improve the views for, uh, everything.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
-* Playlist reordering? Dunno (drag & drop?)
 * Make an actual "About" screen
 * Get some controls in the menu with appropriate keyboard shortcuts
+* Maybe use the album-art package to get artist pix & missing album pix
 
 ### Other
 * Testing! Testing! Testing!

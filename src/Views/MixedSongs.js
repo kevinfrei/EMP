@@ -47,7 +47,7 @@ export default function MixedSongView() {
         key={index}
         style={style}
         className={
-          index & 1 ? 'songContainer evenSong' : 'songContainer oddSong'
+          index & 1 ? 'songContainer evenMixedSong' : 'songContainer oddMixedSong'
         }
         songKey={songArray[index]}
         onDoubleClick={AddSong}
@@ -90,25 +90,20 @@ export default function MixedSongView() {
         height={height}
         width={width}
         itemCount={songs.size}
-        itemSize={25}
+        itemSize={28}
       >
         {VirtualSongRow}
       </FixedSizeList>
     );
   };
   return (
-    <div className="songView current-view">
+    <div className="songView">
       <Modal show={!!selected} onHide={handleClose}>
         <Modal.Dialog>
           <Modal.Header closeButton>
             <Modal.Title>Metadata</Modal.Title>
           </Modal.Header>
           <Modal.Body>{details}</Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={handleClose}>
-              Close
-            </Button>
-          </Modal.Footer>
         </Modal.Dialog>
       </Modal>
       <div className="songContainer songHeader">
