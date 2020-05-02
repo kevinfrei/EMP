@@ -1,0 +1,54 @@
+/*
+Shamelessly swiped from
+https://github.com/IanLunn/Hover/blob/master/css/hover.css
+*/
+
+.songContainer {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 25px 1fr;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  vertical-align: middle;
+  -webkit-transform: perspective(1px) translateZ(0);
+  transform: perspective(1px) translateZ(0);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0);
+  transition-duration: 0.3s;
+  transition-property: color, background-color;
+}
+
+.songContainer:hover, .songContainer:focus, .songContainer:active {
+  background-color: lavender;
+  color: black;
+}
+
+/* The rest of this is to make my eyes not bleed */
+.oddSong {
+  background-color: whitesmoke;
+}
+
+.songHeader {
+  padding: 2pt;
+  font-weight: bold;
+  background-color: #eee;
+}
+
+.songTrack {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.songAlbum {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.songArtist {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.songTitle {
+  grid-column: 4;
+  grid-row: 1;
+}
+

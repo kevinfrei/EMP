@@ -1,7 +1,7 @@
 // @flow
 
 import type { Effects, Store } from 'undux';
-import { createConnectedStore, withReduxDevtools, withLogger } from 'undux';
+import { createConnectedStore, withReduxDevtools/*, withLogger*/ } from 'undux';
 import effects from './Effects';
 
 export type SongKey = string;

@@ -6,7 +6,7 @@ import { FixedSizeList } from 'react-window';
 
 import VirtualAlbumView from './Albums';
 import VirtualArtistView from './Artists';
-import VirtualSongView from './MixedSongs';
+import MixedSongView from './MixedSongs';
 import RecentlyAddedView from './RecentlyAdded';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
@@ -38,7 +38,6 @@ function scroll({ x, y }: { x: number, y: number }) {
 const virtualViews: Map<string, VirtualViewInfo> = new Map([
   ['album', VirtualAlbumView],
   ['artist', VirtualArtistView],
-  ['song', VirtualSongView],
 ]);
 
 function MakeVirtualView(store: StoreState, virtView: VirtualViewInfo) {
@@ -98,6 +97,8 @@ export default function ViewSelector() {
     case 'settings':
       res = <SettingsView />;
       break;
+    case 'song':
+      return <MixedSongView />;
     default:
       return <></>;
   }

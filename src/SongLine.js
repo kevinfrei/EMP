@@ -1,11 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
-import Modal from 'react-bootstrap/Modal';
-import FormControl from 'react-bootstrap/FormControl';
-import { Comparisons } from 'my-utils';
+import React from 'react';
 
 import Store from './MyStore';
 
@@ -43,7 +38,7 @@ export default function SongLine({
   elemAs,*/
 SongLineProps) {
   const store = Store.useStore();
-  const elementTemplate = (template || 'LR#TC').toUpperCase();
+  const elementTemplate = (template || 'RL#TC').toUpperCase();
   const data = GetDataForSong(store, songKey);
   const elements = [...elementTemplate].map((chr) => {
     switch (chr) {

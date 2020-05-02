@@ -5,7 +5,7 @@ import Store from '../MyStore';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
+
 import Card from 'react-bootstrap/Card';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -33,7 +33,7 @@ function sortPopup(item) {
   const select = (key) => item.setter(key);
   return (
     <Row>
-      <Col xs={3}>
+      <Col xs={3} style={{ height: '35px' }}>
         <span style={{ float: 'right' }}>View {item.title} by </span>
       </Col>
       <Col>
@@ -71,10 +71,6 @@ const Settings = () => {
       <Col>{elem}</Col>
     </Row>
   ));
-  const plLoc = store.get('playlistLocation');
-  const setLocation = store.set('playlistLocation');
-  const playlistLocation =
-    plLoc.length > 0 ? plLoc : 'Please set a Playlist save location.';
   const articles = store.get('SortWithArticles');
   const setArticles = store.set('SortWithArticles');
 
@@ -136,7 +132,9 @@ const Settings = () => {
             {sortPopup(artist)}
             {sortPopup(song)}
             <Row>
-              <Col xs={3}>Consider articles</Col>
+              <Col xs={3}>
+                <span style={{ float: 'right' }}>Consider articles</span>
+              </Col>
               <Col>
                 <input
                   type="checkbox"

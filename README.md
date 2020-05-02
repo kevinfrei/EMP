@@ -29,33 +29,33 @@ Playlists are the next major piece of functionality to add.
 * Now Playing sorting / shuffle interactions are goofy
 
 ### Core Capabilities
-* **both** Add "Recently Added" capabilities
-  * Something involving no Key Reuse.
+* **main** Get album covers from media tags as well as the folder...
 * **both** MediaInfo/Metadata editing!
   * Support adding album covers
-* **main** Get album covers from media tags as well as the folder...
+  * File name vs. metadata difference cleanup (this would be *awesome*)
+* **both** Add "Recently Added" capabilities
+  * Something involving no Key Reuse.
 * **both** Make 'Search' work.
 * **render** Make a miniplayer!
+* **both** Add 'favorite/love' attribute for songs
 * **both** "Auto" playlists (something involving stuff like "this artist" and "not this
 keyword" kind of stuff.
-* **both** Add 'favorite/love' attribute for songs
-* **both** Import/Export M3U's
+* **both** Import/Export M3U's?
 
 ### Logic improvements/changes
 * **main** Filter song lists down to actual songKeys that exist
-* Transcode for phone (dump stuff out ready to import into iTunes)
+* Transcode for phone (dump stuff out ready to import into iTunes, for example)
 * Playlist unique-ification
 
 ### UI Improvements
-* Render proces needs an image cache and/or view virtualization
-  * Make the virtualized views remember (roughly) where they were scrolled to
-* Make a resuable, configurable "song list" view. There are too many.
-  * Sorting playlists by clicking headers *everywhere*
+* Make broader use of the SongLine view.
+* Sorting lists by clicking headers *everywhere*
   * Indicate the sorting (and invalidate it in Now Playing when shuffled)
+* Make the virtualized views remember (roughly) where they were scrolled to
 * Improve the views for, uh, everything.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
-* Playlist reordering (drag & drop?)
+* Playlist reordering? Dunno (drag & drop?)
 * Make an actual "About" screen
 * Get some controls in the menu with appropriate keyboard shortcuts
 
