@@ -96,6 +96,8 @@ const PersistedBetweenRuns: Array<SaveConfig<T>> = [
     150
   ),
   makeChangeChecker('Playlists', new Map(), PlaysetsComp, 100, 1000),
+  makeChangeChecker<number>('volume', 0.8, (a, b) => Math.abs(a - b) < 1e-5, 100, 1000),
+  makeChangeChecker<boolean>('muted', false, (a, b) => a !== b, 10, 10),
 ];
 
 // This registers store subscribers for state changes we're watching

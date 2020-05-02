@@ -1,26 +1,32 @@
 // @flow
 // @format
 
-import React, { useState } from 'react';
+import React from 'react';
+
+import Store from './MyStore';
 
 import './styles/VolumeControl.css';
 
-// Volume holds no "React State"
-// I could wire it up
-// (and will need to if I want to save the values between runs)
 export default function VolumeControl() {
+  const store = Store.useStore();
+
+  const muted = store.get('muted');
+  const setMuted = store.set('muted');
+  const volume = store.get('volume');
+  const setVolume = store.set('volume');
+
   let ae = document.getElementById('audioElement');
-  const initM = !!ae && ae.muted;
-  const [muted, setMuted] = useState(initM);
+
   if (ae) {
     ae.muted = muted;
+    ae.volume = volume;
   }
   return (
     <span id="volume-container">
       <span
         id="mute"
         className={muted ? 'muted' : 'not-muted'}
-        onClick={(ev) => setMuted(!muted)}
+        onClick={() => setMuted(!muted)}
       >
         &nbsp;
       </span>
@@ -29,12 +35,10 @@ export default function VolumeControl() {
         id="volume-slider"
         min={0}
         max={1}
-        defaultValue={0.8}
+        value={volume}
         step={0.01}
         onChange={(ev) => {
-          ae = document.getElementById('audioElement');
-          if (!ae) return;
-          ae.volume = ev.target.valueAsNumber;
+          setVolume(ev.target.valueAsNumber);
           if (muted) {
             setMuted(false);
           }

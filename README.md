@@ -27,9 +27,10 @@ Playlists are the next major piece of functionality to add.
 * Play button is non-responsive even when Now Playing is queue
 
 ### Core Capabilities
-* **both** Remember volume position between runs
 * **both** Restore active tab between runs
 * **main** Get album covers from media tags as well as the folder...
+* **main** Update data from file metadata (overriding filename acquisition)
+  * Save this stuff between runs, as it's going to be *s l o w*.
 * **both** MediaInfo/Metadata editing!
   * Support adding album covers
   * File name vs. metadata difference cleanup (this would be *awesome*)

@@ -71,7 +71,7 @@ export function StopSongPlaying(store: StoreState) {
   store.set('playing')(false);
   const ae = document.getElementById('audioElement');
   if (ae) {
-    console.log('Cleaning up Audio element status');
+    // Cleaning up Audio element status
     ae.src = '';
     ae.currentTime = 0;
     const npct = document.getElementById('now-playing-current-time');
