@@ -36,6 +36,8 @@ const NowPlaying = () => {
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
 
+  store.on('shuffle').subscribe((val) => val && setSortBy(''));
+
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
   const justCloseSaveAs = () => setShowSaveAs(false);
@@ -162,6 +164,9 @@ const NowPlaying = () => {
         return;
     }
     setSortBy(which);
+    if (which) {
+      store.set('shuffle')(false);
+    }
     store.set('curIndex')(songList.indexOf(curKey));
     store.set('songList')([...songList]);
   };

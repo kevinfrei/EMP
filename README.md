@@ -24,7 +24,7 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Bugs
-* Now Playing sorting / shuffle interactions are goofy
+* Play button is non-responsive even when Now Playing is queue
 
 ### Core Capabilities
 * **both** Remember volume position between runs
