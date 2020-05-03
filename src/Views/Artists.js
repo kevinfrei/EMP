@@ -7,7 +7,15 @@ import Store from '../MyStore';
 
 import { AddArtist } from '../Playlist';
 
-function VirtualArtistRow({ index, style }: { index: number, style: Object }) {
+import type { Properties } from 'csstype';
+
+function VirtualArtistRow({
+  index,
+  style,
+}: {
+  index: number,
+  style: Properties<>,
+}) {
   const store = Store.useStore();
   const artists = store.get('Artists');
   const artistArray = store.get('ArtistArray');

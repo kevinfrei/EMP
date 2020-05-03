@@ -24,9 +24,8 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Bugs
-* Play button is non-responsive even when Now Playing is queue
-* Removing an element from Now Playing behaves weirdly
-*
+* Nothing too egregious currently...
+
 ### Core Capabilities
 * **both** Restore active tab between runs
 * **main** Get album covers from media tags as well as the folder...
@@ -53,8 +52,9 @@ keyword" kind of stuff.
 * Make broader use of the SongLine view.
 * Sorting lists by clicking headers *everywhere*
   * Indicate the sorting (and invalidate it in Now Playing when shuffled)
-* Make the virtualized views remember (roughly) where they were scrolled to
-* Improve the views for, uh, everything.
+  * Inverse sorting when clicking again
+* Make all scrollable views remember (roughly) where they were scrolled to
+* Improve the views for Albums and Artists.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
 * Make an actual "About" screen

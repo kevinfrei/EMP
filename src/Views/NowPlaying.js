@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import FormControl from 'react-bootstrap/FormControl';
@@ -34,8 +34,11 @@ const NowPlaying = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
-
-  store.on('shuffle').subscribe((val) => val && setSortBy(''));
+  // Clear sorts when shuffle gets updated
+  useEffect(() => {
+    const sub = store.on('shuffle').subscribe((val) => val && setSortBy(''));
+    return () => sub.unsubscribe();
+  });
 
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog

@@ -9,6 +9,8 @@ import Store from '../MyStore';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 
+import type { Properties } from 'csstype';
+
 import './styles/MixedSongs.css';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
@@ -38,7 +40,7 @@ export default function MixedSongView() {
     style,
   }: {
     index: number,
-    style: Object,
+    style: Properties<>,
   }) => {
     return (
       <SongLine
@@ -46,7 +48,9 @@ export default function MixedSongView() {
         key={index}
         style={style}
         className={
-          index & 1 ? 'songContainer evenMixedSong' : 'songContainer oddMixedSong'
+          index & 1
+            ? 'songContainer evenMixedSong'
+            : 'songContainer oddMixedSong'
         }
         songKey={songArray[index]}
         onDoubleClick={AddSong}

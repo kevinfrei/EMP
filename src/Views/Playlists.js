@@ -13,6 +13,7 @@ import { StartPlaylist, DeletePlaylist } from '../Playlist';
 import SongLine from '../SongLine';
 
 import type { SongKey } from '../MyStore';
+import type { Properties } from 'csstype';
 
 import './styles/Playlists.css';
 import downChevron from '../img/down-chevron.svg';
@@ -33,11 +34,13 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
   if (!thisPlaylist) {
     return <></>;
   }
-  const expanderStyle = showSongs ? {} : { transform: 'rotate(-90deg)' };
+  const expanderStyle: Properties<> = showSongs
+    ? {}
+    : { transform: 'rotate(-90deg)' };
   const theSongs = !showSongs ? (
     <></>
   ) : (
-    <div className='expandedSongList'>
+    <div className="expandedSongList">
       {thisPlaylist.map((sk: SongKey) => (
         <SongLine key={sk} songKey={sk} template="LRT" />
       ))}

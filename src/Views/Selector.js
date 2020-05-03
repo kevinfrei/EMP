@@ -4,6 +4,8 @@ import React, { useEffect } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList } from 'react-window';
 
+import Store from '../MyStore';
+
 import VirtualAlbumView from './Albums';
 import VirtualArtistView from './Artists';
 import MixedSongView from './MixedSongs';
@@ -11,13 +13,13 @@ import RecentlyAddedView from './RecentlyAdded';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
 import PlaylistsView from './Playlists';
-import Store from '../MyStore';
 
 import './styles/Selector.css';
 
+import type { Properties } from 'csstype';
 import type { ViewNames, MapNames, StoreState } from '../MyStore';
 
-type RowCreatorParams = { index: number, style: Object };
+type RowCreatorParams = { index: number, style: Properties<> };
 export type VirtualRowCreator = (param: RowCreatorParams) => React$Node;
 export type VirtualViewInfo = {
   name: MapNames,

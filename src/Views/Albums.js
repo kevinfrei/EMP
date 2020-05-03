@@ -12,6 +12,7 @@ import { AddAlbum, AddSong } from '../Playlist';
 import { GetArtistForAlbum, GetTrackListingForSong } from '../DataAccess';
 
 import type { SongKey, Album, StoreState } from '../MyStore';
+import type { Properties } from 'csstype';
 
 import downChevron from '../img/down-chevron.svg';
 
@@ -24,7 +25,13 @@ function getSongList(store: StoreState, songsList: Array<SongKey>) {
   return <ListGroup>{sl}</ListGroup>;
 }
 
-function SingleAlbum({ album, style }: { album: Album, style: Object }) {
+function SingleAlbum({
+  album,
+  style,
+}: {
+  album: Album,
+  style: Properties<>,
+}) {
   const store = Store.useStore();
   const artistName = GetArtistForAlbum(store, album);
   const adder = () => AddAlbum(store, album.key);
@@ -71,7 +78,13 @@ function SingleAlbum({ album, style }: { album: Album, style: Object }) {
   );
 }
 
-function VirtualAlbumRow({ index, style }: { index: number, style: object }) {
+function VirtualAlbumRow({
+  index,
+  style,
+}: {
+  index: number,
+  style: Properties<>,
+}) {
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');

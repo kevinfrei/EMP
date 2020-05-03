@@ -6,6 +6,7 @@ import Store from './MyStore';
 import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from './Playlist';
 
 import './styles/SongControls.css';
+import { StartSongPlaying } from './SongPlayback';
 
 const SongControls = () => {
   let store = Store.useStore();
@@ -14,6 +15,8 @@ const SongControls = () => {
   const rep = store.get('repeat');
   const shufSet = store.set('shuffle');
   const repSet = store.set('repeat');
+  const songList = store.get('songList');
+
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';
   return (
@@ -43,6 +46,8 @@ const SongControls = () => {
             ae.pause();
           } else if (ae.readyState === 4) {
             ae.play();
+          } else if (songList.length) {
+            StartSongPlaying(store, 0);
           }
         }}
       ></span>

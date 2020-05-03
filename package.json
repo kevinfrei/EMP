@@ -12,6 +12,7 @@
   "homepage": "./",
   "dependencies": {
     "bootstrap": "^4.4.1",
+    "csstype": "^2.6.10",
     "electron-is-dev": "^1.2.0",
     "media-utils": "file:./submodules/media-utils",
     "my-utils": "file:./submodules/js-freik-utils",
