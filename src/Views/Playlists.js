@@ -42,7 +42,9 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
   ) : (
     <div className="expandedSongList">
       {thisPlaylist.map((sk: SongKey) => (
-        <SongLine key={sk} songKey={sk} template="LRT" />
+        <SongLine key={sk} songKey={sk} template="LCRCT">
+          <span>&nbsp;-&nbsp;</span>
+        </SongLine>
       ))}
     </div>
   );
