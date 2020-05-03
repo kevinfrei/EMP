@@ -7,12 +7,10 @@ import Store from '../MyStore';
 import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
-import RecentlyAddedView from './RecentlyAdded';
+import PlaylistsView from './Playlists';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
-import PlaylistsView from './Playlists';
-
-import './styles/Selector.css';
+//import RecentlyAddedView from './RecentlyAdded';
 
 export default function ViewSelector() {
   let store = Store.useStore();
@@ -29,9 +27,9 @@ export default function ViewSelector() {
     case 'playlist':
       res = <PlaylistsView />;
       break;
-    case 'recent':
+/*    case 'recent':
       res = <RecentlyAddedView />;
-      break;
+      break;*/
     case 'current':
       res = <NowPlayingView />;
       break;

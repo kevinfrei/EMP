@@ -6,6 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import Media from 'react-bootstrap/Media';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import VirtualList from 'react-tiny-virtual-list';
 
 import Store from '../MyStore';
 
@@ -73,38 +74,32 @@ function SingleAlbum({ album, style }: { album: Album, style: Properties<> }) {
   );
 }
 
-function VirtualAlbumRow({
-  index,
-  style,
-}: {
-  index: number,
-  style: Properties<>,
-}) {
-  const store = Store.useStore();
-  const albums = store.get('Albums');
-  const albumArray = store.get('AlbumArray');
-  const maybeAlbum = albums.get(albumArray[index]);
-  return maybeAlbum ? (
-    <SingleAlbum style={style} album={maybeAlbum} />
-  ) : (
-    <div>Error for element {index}</div>
-  );
-}
-
 export default function AlbumView() {
   const store = Store.useStore();
   const albums = store.get('Albums');
-  const customView = ({ height, width }) => {
-    return (
-      <FixedSizeList
-        height={height}
-        width={width}
-        itemCount={albums.size}
-        itemSize={80}
-      >
-        {VirtualAlbumRow}
-      </FixedSizeList>
-    );
+  const albumArray = store.get('AlbumArray');
+  const VirtualAlbumRow = ({
+    index,
+    style,
+  }: {
+    index: number,
+    style: Properties<>,
+  }) => {
+    const maybeAlbum = albums.get(albumArray[index]);
+    if (maybeAlbum) {
+      return <SingleAlbum key={index} style={style} album={maybeAlbum} />;
+    } else {
+      return <div>Error for element {index}</div>;
+    }
   };
+  const customView = ({ height, width }) => (
+    <VirtualList
+      height={height}
+      width={width}
+      itemCount={albums.size}
+      itemSize={80}
+      renderItem={VirtualAlbumRow}
+    />
+  );
   return <AutoSizer>{customView}</AutoSizer>;
 }

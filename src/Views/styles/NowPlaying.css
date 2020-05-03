@@ -1,5 +1,18 @@
+#outerThing {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr;
+}
+
 #now-playing-header {
   margin: 3pt;
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.songHeader {
+  grid-row: 2;
+  grid-column: 1;
 }
 
 .playing {
@@ -50,7 +63,9 @@ https://github.com/IanLunn/Hover/blob/master/css/hover.css
   transition-property: color, background-color;
 }
 
-.songContainer:hover, .songContainer:focus, .songContainer:active {
+.songContainer:hover,
+.songContainer:focus,
+.songContainer:active {
   background-color: lavender;
   color: black;
 }

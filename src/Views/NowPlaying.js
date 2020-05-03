@@ -16,6 +16,7 @@ import {
 } from '../Playlist';
 import { SongBy } from '../Sorters';
 import SongLine from '../SongLine';
+import { VerticalScrollDiv } from '../Scrollables';
 
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
@@ -225,7 +226,7 @@ const NowPlaying = () => {
           Title
         </div>
       </div>
-      {songs}
+      <VerticalScrollDiv scrollId="nowPlayingPos">{songs}</VerticalScrollDiv>
     </>
   );
 };

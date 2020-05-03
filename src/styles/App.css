@@ -3,6 +3,7 @@
   height: 100vh;
   grid-template-columns: 175px 135px auto 135px;
   grid-template-rows: 44px auto;
+  overflow: hidden;
 }
 
 .grabber {
@@ -32,6 +33,7 @@
 .current-view {
   grid-row: 2;
   grid-column: 2 / 5;
+  padding: 0px;
 }
 
 .pic-button {

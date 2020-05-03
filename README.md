@@ -24,7 +24,8 @@ Playlists are the next major piece of functionality to add.
 ## Stuff to do
 
 ### Bugs
-* Nothing too egregious currently...
+* Handle audio files that don't fit my schema
+  * Probably start with iTunes schema :/
 
 ### Core Capabilities
 * **both** Restore active tab between runs
