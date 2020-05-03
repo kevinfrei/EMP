@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { FixedSizeList } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import Media from 'react-bootstrap/Media';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
@@ -25,13 +26,7 @@ function getSongList(store: StoreState, songsList: Array<SongKey>) {
   return <ListGroup>{sl}</ListGroup>;
 }
 
-function SingleAlbum({
-  album,
-  style,
-}: {
-  album: Album,
-  style: Properties<>,
-}) {
+function SingleAlbum({ album, style }: { album: Album, style: Properties<> }) {
   const store = Store.useStore();
   const artistName = GetArtistForAlbum(store, album);
   const adder = () => AddAlbum(store, album.key);
@@ -96,10 +91,20 @@ function VirtualAlbumRow({
   );
 }
 
-const VirtualAlbumView = {
-  name: 'Albums',
-  height: 80,
-  rowCreator: VirtualAlbumRow,
-};
-
-export default VirtualAlbumView;
+export default function AlbumView() {
+  const store = Store.useStore();
+  const albums = store.get('Albums');
+  const customView = ({ height, width }) => {
+    return (
+      <FixedSizeList
+        height={height}
+        width={width}
+        itemCount={albums.size}
+        itemSize={80}
+      >
+        {VirtualAlbumRow}
+      </FixedSizeList>
+    );
+  };
+  return <AutoSizer>{customView}</AutoSizer>;
+}

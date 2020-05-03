@@ -23,7 +23,7 @@ export type SongLineProps = {
   onAuxClick?: SongHandler,
   template?: string,
   children?: React$Node,
-  props?: Array<Object>,
+  props?: Array<mixed>,
 };
 
 export default function SongLine({
@@ -40,7 +40,7 @@ SongLineProps) {
   const store = Store.useStore();
   const elementTemplate = (template || 'RL#TC').toUpperCase();
   const data = GetDataForSong(store, songKey);
-  const elements = [...elementTemplate].map((chr) => {
+  const elements = [...elementTemplate].map((chr, index) => {
     switch (chr) {
       case '#':
         return (
@@ -67,7 +67,7 @@ SongLineProps) {
           </span>
         );
       case 'C':
-        return <React.Fragment key="C">{children || ''}</React.Fragment>;
+        return <React.Fragment key={`C${index}`}>{children || ''}</React.Fragment>;
       default:
         throw new Error(
           `Invalid template for SongLine: ${chr} can only be one of L, R, #, T, C`
