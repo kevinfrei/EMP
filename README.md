@@ -35,7 +35,7 @@ Playlists are the next major piece of functionality to add.
   * Support adding album covers
   * File name vs. metadata difference cleanup (this would be *awesome*)
 * **both** Add "Recently Added" capabilities
-  * Something involving no Key Reuse.
+  * Something involving no Key Reuse probably...
 * **both** Make 'Search' work.
 * **render** Make a miniplayer!
 * **both** Add 'favorite/love' attribute for songs

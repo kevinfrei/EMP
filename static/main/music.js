@@ -376,6 +376,63 @@ async function findMusic(locations: Array<string>): Promise<MusicDB> {
   return await fileNamesToDatabase(songsList, picList);
 }
 
+function addCommas(val: string): string {
+  let res = '';
+  let i;
+  for (i = val.length - 3; i > 0; i -= 3) {
+    res = ',' + val.substr(i, 3) + res;
+  }
+  res = val.substr(0, i + 3) + res;
+  if (res[0] === ',') {
+    res = res.substr(1);
+  }
+  return res;
+}
+
+function secondsToHMS(vals: string): string {
+  const decimal = vals.indexOf('.');
+  let suffix: string = decimal > 0 ? vals.substr(decimal) : '';
+  suffix = suffix.replace(/0+$/g, '');
+  suffix = suffix.length === 1 ? '' : suffix;
+  const val = parseInt(vals);
+  const expr = new Date(val * 1000).toISOString();
+  if (val < 600) {
+    return expr.substr(15, 4) + suffix;
+  } else if (val < 3600) {
+    return expr.substr(14, 5) + suffix;
+  } else if (val < 36000) {
+    return expr.substr(12, 7) + suffix;
+  } else {
+    return expr.substr(11, 8) + suffix;
+  }
+}
+
+function divGrand(val: string): string {
+  let flt = (parseFloat(val) / 1000.0).toFixed(3);
+  flt = flt.replace(/0+$/g, '');
+  flt = flt[flt.length - 1] === '.' ? flt.substr(0, flt.length - 1) : flt;
+  return flt;
+}
+
+function toKhz(val: string): string {
+  return divGrand(val) + ' KHz';
+}
+
+function toKbps(val: string): string {
+  return divGrand(val) + ' Kbps';
+}
+
+function cleanupName(val: string): string {
+  return val.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ': ');
+}
+
+const MediaInfoTranslation = new Map([
+  ['FileSize', addCommas],
+  ['Duration', secondsToHMS],
+  ['SamplingRate', toKhz],
+  ['BitRate', toKbps],
+]);
+
 function objToMap(o: Object): Map<string, string> {
   const res = new Map();
   for (let i in o) {
@@ -386,7 +443,8 @@ function objToMap(o: Object): Map<string, string> {
       o.hasOwnProperty(i) &&
       (typeof o[i] === 'string' || typeof o[i] === 'number')
     ) {
-      res.set(i, o[i].toString());
+      const translator = MediaInfoTranslation.get(i) || ((j) => j);
+      res.set(cleanupName(i), translator(o[i].toString()));
     }
   }
   return res;
@@ -399,24 +457,24 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
   const audio = objToMap(trackInfo[1]);
   // Remove some stuff I don't care about or don't handle yet
   for (let i of [
-    'AudioCount',
+    'Audio Count',
     'Cover',
-    'Cover_Type',
-    'Cover_Mime',
-    'StreamSize',
-    'OverallBitRate',
-    'OverallBitRate_Mode',
+    'Cover: Type',
+    'Cover: Mime',
+    'Stream Size',
+    'Overall Bit Rate',
+    'Overall Bit Rate: Mode',
   ]) {
     general.delete(i);
   }
   for (let j of [
-    'SamplesPerFrame',
-    'SamplingCount',
-    'FrameRate',
-    'FrameCount',
-    'StreamSize',
-    'StreamSize_Proportion',
-    ...general.keys()
+    'Samples Per Frame',
+    'Sampling Count',
+    'Frame Rate',
+    'Frame Count',
+    'Stream Size',
+    'Stream Size: Proportion',
+    ...general.keys(),
   ]) {
     audio.delete(j);
   }
