@@ -38,7 +38,7 @@
     "electron-build": "electron-builder",
     "release": "yarn prepare && yarn react-build && electron-builder --publish=always",
     "build": "yarn prepare && yarn react-build && yarn electron-build",
-    "start": "yarn prepare && concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "prepare": "flow-remove-types static/ -d public/ --all --pretty",
     "test": "react-scripts test"
   },

@@ -462,8 +462,13 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
     'Cover: Type',
     'Cover: Mime',
     'Stream Size',
+    'Header Size',
+    'Data Size',
+    'Footer Size',
     'Overall Bit Rate',
     'Overall Bit Rate: Mode',
+    'Codec ID: Compatible',
+    'Is Streamable'
   ]) {
     general.delete(i);
   }
@@ -474,6 +479,8 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
     'Frame Count',
     'Stream Size',
     'Stream Size: Proportion',
+    "Duration: Last Frame",
+    'Stream Order',
     ...general.keys(),
   ]) {
     audio.delete(j);
