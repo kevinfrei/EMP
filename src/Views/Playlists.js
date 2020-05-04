@@ -11,6 +11,7 @@ import Store from '../MyStore';
 
 import { StartPlaylist, DeletePlaylist } from '../Playlist';
 import SongLine from '../SongLine';
+import { VerticalScrollDiv } from '../Scrollables';
 
 import type { SongKey } from '../MyStore';
 import type { Properties } from 'csstype';
@@ -103,15 +104,19 @@ export default function Playlists() {
   const names = [...playlists.keys()];
   names.sort();
   return (
-    <div>
-      {names.map((name: string) => (
-        <Playlist
-          store={store}
-          key={name}
-          name={name}
-          playing={name === curPls}
-        />
-      ))}
-    </div>
+    <>
+    <div id="current-header">Playlists</div>
+      <div id="current-view" />
+      <VerticalScrollDiv scrollId="playlistsPos" layoutId="current-view">
+        {names.map((name: string) => (
+          <Playlist
+            store={store}
+            key={name}
+            name={name}
+            playing={name === curPls}
+          />
+        ))}
+      </VerticalScrollDiv>
+    </>
   );
 }

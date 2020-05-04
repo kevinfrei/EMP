@@ -199,34 +199,39 @@ const NowPlaying = () => {
   return (
     <>
       {modalDialogs}
-      {topLine}
-      <div className="songHeader">
-        <div
-          onClick={() => setSort('album')}
-          className={isSortedBy(sortBy, 'album') + ' songAlbum'}
-        >
-          Album
-        </div>
-        <div
-          onClick={() => setSort('artist')}
-          className={isSortedBy(sortBy, 'artist') + ' songArtist'}
-        >
-          Artist
-        </div>
-        <div
-          onClick={() => setSort('track')}
-          className={isSortedBy(sortBy, 'track') + ' songTrack'}
-        >
-          #
-        </div>
-        <div
-          onClick={() => setSort('title')}
-          className={isSortedBy(sortBy, 'title') + ' songTitle'}
-        >
-          Title
+      <div id="current-header">
+        {topLine}
+        <div className="songHeader">
+          <div
+            onClick={() => setSort('album')}
+            className={isSortedBy(sortBy, 'album') + ' songAlbum'}
+          >
+            Album
+          </div>
+          <div
+            onClick={() => setSort('artist')}
+            className={isSortedBy(sortBy, 'artist') + ' songArtist'}
+          >
+            Artist
+          </div>
+          <div
+            onClick={() => setSort('track')}
+            className={isSortedBy(sortBy, 'track') + ' songTrack'}
+          >
+            #
+          </div>
+          <div
+            onClick={() => setSort('title')}
+            className={isSortedBy(sortBy, 'title') + ' songTitle'}
+          >
+            Title
+          </div>
         </div>
       </div>
-      <VerticalScrollDiv scrollId="nowPlayingPos">{songs}</VerticalScrollDiv>
+      <div id="current-view" />
+      <VerticalScrollDiv scrollId="nowPlayingPos" layoutId="current-view">
+        {songs}
+      </VerticalScrollDiv>
     </>
   );
 };

@@ -10,22 +10,21 @@ import { FixedSizeList } from 'react-window';
 
 import type { Properties } from 'csstype';
 
-function log(a) {
-  console.log('PSP' + a);
-}
-
 export function VerticalScrollDiv({
   scrollId,
+  layoutId,
   children,
   className,
   ...props
 }: {
   scrollId: string,
+  layoutId: string,
   children: React$Node,
   className?: string,
   props?: Array<Properties<HTMLDivElement>>,
 }) {
   let store = Store.useStore();
+  const theDiv = useRef(null);
   const scrollData = store.get('scrollManager');
   const getScrollPosition = (ev) => {
     const pos = { x: ev.target.scrollLeft, y: ev.target.scrollTop };
@@ -33,7 +32,6 @@ export function VerticalScrollDiv({
       scrollData.set(scrollId, pos);
     }
   };
-
   const setScrollPosition = () => {
     const pos = scrollData.get(scrollId);
     if (pos) {
@@ -47,24 +45,34 @@ export function VerticalScrollDiv({
     }
   };
   useEffect(setScrollPosition);
-
+  const listenForSize = () => {
+    const theSpace = document.getElementById(layoutId);
+    const scroller = document.getElementById(scrollId);
+    if (scroller && theSpace) {
+      const rect = theSpace.getBoundingClientRect();
+      scroller.style.left = `${rect.left}px`;
+      scroller.style.top = `${rect.top}px`;
+      scroller.style.height = `${rect.height}px`;
+      scroller.style.width = `${rect.width}px`;
+    }
+  };
+  useEffect(() => {
+    listenForSize();
+    window.addEventListener('resize', listenForSize);
+    theDiv.current.addEventListener('scroll', getScrollPosition);
+    return () => {
+      window.removeEventListener('resize', listenForSize);
+      theDiv.current.removeEventListener('scroll', getScrollPosition);
+    };
+  });
   return (
-    <AutoSizer>
-      {({ height, width }) => {
-        return (
-          <div style={{height, width}}
-            id={scrollId}
-            className={
-              (className ? className + ' ' : '') + 'verticalScrollingDiv'
-            }
-            onScroll={getScrollPosition}
-            {...props}
-          >
-            {children}
-          </div>
-        );
-      }}
-    </AutoSizer>
+    <div ref={theDiv}
+      id={scrollId}
+      className={(className ? className + ' ' : '') + 'verticalScrollingDiv'}
+      {...props}
+    >
+      {children}
+    </div>
   );
 }
 

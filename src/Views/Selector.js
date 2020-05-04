@@ -15,33 +15,24 @@ import SettingsView from './Settings';
 export default function ViewSelector() {
   let store = Store.useStore();
   const which = store.get('curView');
-
-  let res;
   switch (which) {
     case 'album':
-      res = <AlbumView />;
-      break;
+      return <AlbumView />;
     case 'artist':
-      res = <ArtistView />;
-      break;
+      return <ArtistView />;
     case 'playlist':
-      res = <PlaylistsView />;
-      break;
-/*    case 'recent':
-      res = <RecentlyAddedView />;
-      break;*/
+      return <PlaylistsView />;
+    /*
+    case 'recent':
+      return <RecentlyAddedView />;
+    */
     case 'current':
-      res = <NowPlayingView />;
-      break;
+      return <NowPlayingView />;
     case 'settings':
-      res = <SettingsView />;
-      break;
+      return <SettingsView />;
     case 'song':
-      res = <MixedSongView />;
-      break;
+      return <MixedSongView />;
     default:
       return <></>;
   }
-
-  return <div className="current-view">{res}</div>;
 }

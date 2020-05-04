@@ -59,6 +59,7 @@ export default function Sidebar() {
       </div>
       <br />
       {views.map((ve, index) => getEntry(store, ve, index))}
+      <div id="data"/>
     </div>
   );
 }

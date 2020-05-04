@@ -1,14 +1,16 @@
 // @flow
 
 import * as React from 'react';
-import Store from '../MyStore';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-
 import Card from 'react-bootstrap/Card';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+
+import Store from '../MyStore';
+
+import { VerticalScrollDiv } from '../Scrollables';
 
 import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
@@ -98,54 +100,57 @@ const Settings = () => {
 
   return (
     <>
-      <Card>
-        <Card.Body>
-          <Card.Title>Music Locations</Card.Title>
-          <Container>
-            {locations}
-            <Row>
-              <Col xs={1}>
-                <img
-                  className="add-pic pic-button"
-                  src={addPic}
-                  alt="add source"
-                  onClick={() => {
-                    const locations: ?Array<string> = GetDirs();
-                    if (locations) {
-                      setConfig([...locations, ...config]);
-                    }
-                  }}
-                />
-              </Col>
-              <Col>
-                <em>Add new location to scan</em>
-              </Col>
-            </Row>
-          </Container>
-        </Card.Body>
-      </Card>
-      <Card>
-        <Card.Body>
-          <Card.Title>Sorting Preferences</Card.Title>
-          <Container>
-            {sortPopup(album)}
-            {sortPopup(artist)}
-            {sortPopup(song)}
-            <Row>
-              <Col xs={3}>
-                <span style={{ float: 'right' }}>Consider articles</span>
-              </Col>
-              <Col>
-                <input
-                  type="checkbox"
-                  checked={articles}
-                  onChange={() => setArticles(!articles)}
-                ></input>
-              </Col>
-            </Row>
-          </Container>
-        </Card.Body>
-      </Card>
+      <div id="current-view" />
+      <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
+        <Card>
+          <Card.Body>
+            <Card.Title>Music Locations</Card.Title>
+            <Container>
+              {locations}
+              <Row>
+                <Col xs={1}>
+                  <img
+                    className="add-pic pic-button"
+                    src={addPic}
+                    alt="add source"
+                    onClick={() => {
+                      const locations: ?Array<string> = GetDirs();
+                      if (locations) {
+                        setConfig([...locations, ...config]);
+                      }
+                    }}
+                  />
+                </Col>
+                <Col>
+                  <em>Add new location to scan</em>
+                </Col>
+              </Row>
+            </Container>
+          </Card.Body>
+        </Card>
+        <Card>
+          <Card.Body>
+            <Card.Title>Sorting Preferences</Card.Title>
+            <Container>
+              {sortPopup(album)}
+              {sortPopup(artist)}
+              {sortPopup(song)}
+              <Row>
+                <Col xs={3}>
+                  <span style={{ float: 'right' }}>Consider articles</span>
+                </Col>
+                <Col>
+                  <input
+                    type="checkbox"
+                    checked={articles}
+                    onChange={() => setArticles(!articles)}
+                  ></input>
+                </Col>
+              </Row>
+            </Container>
+          </Card.Body>
+        </Card>
+      </VerticalScrollDiv>
     </>
   );
 };
