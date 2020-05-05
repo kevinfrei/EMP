@@ -12,6 +12,7 @@ import { AddSong } from '../Playlist';
 import type { Properties } from 'csstype';
 
 import './styles/MixedSongs.css';
+import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines = [];
@@ -41,7 +42,7 @@ export default function MixedSongView() {
   }: {
     index: number,
     style: Properties<>,
-  }) => {
+  }):React$Node => {
     return (
       <SongLine
         template="RL#T"
@@ -87,18 +88,6 @@ export default function MixedSongView() {
     }
   }
 
-  const customView = ({ height, width }) => {
-    return (
-      <FixedSizeList
-        height={height}
-        width={width}
-        itemCount={songs.size}
-        itemSize={28}
-      >
-        {VirtualSongRow}
-      </FixedSizeList>
-    );
-  };
   return (
     <div className="songView">
       <Modal show={!!selected} onHide={handleClose}>
@@ -115,7 +104,12 @@ export default function MixedSongView() {
         <span className="songTrack">#</span>
         <span className="songTitle">Title</span>
       </div>
-      <AutoSizer>{customView}</AutoSizer>
+      <VerticalScrollFixedVirtualList
+        scrollId="mixedSongsScrollId"
+        itemCount={songs.size}
+        itemSize={28}
+        itemGenerator={VirtualSongRow}
+      />
     </div>
   );
 }

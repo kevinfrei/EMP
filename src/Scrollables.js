@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 
 import Store from './MyStore';
 
@@ -24,49 +24,49 @@ export function VerticalScrollDiv({
   props?: Array<Properties<HTMLDivElement>>,
 }) {
   let store = Store.useStore();
-  const theDiv = useRef(null);
   const scrollData = store.get('scrollManager');
   const getScrollPosition = (ev) => {
     const pos = { x: ev.target.scrollLeft, y: ev.target.scrollTop };
-    if (pos) {
-      scrollData.set(scrollId, pos);
-    }
+    scrollData.set(scrollId, pos);
   };
   const setScrollPosition = () => {
     const pos = scrollData.get(scrollId);
+    const scroller = document.getElementById(scrollId);
     if (pos) {
-      const elem = document.getElementById(scrollId);
-      if (!elem) {
-        setTimeout(setScrollPosition, 10);
+      if (!scroller) {
+        setTimeout(setScrollPosition, 1);
       } else {
-        elem.scrollTop = pos.y;
-        elem.scrollLeft = pos.x;
+        scroller.scrollTop = pos.y;
+        scroller.scrollLeft = pos.x;
       }
     }
   };
-  useEffect(setScrollPosition);
   const listenForSize = () => {
-    const theSpace = document.getElementById(layoutId);
     const scroller = document.getElementById(scrollId);
+    const theSpace = document.getElementById(layoutId);
     if (scroller && theSpace) {
       const rect = theSpace.getBoundingClientRect();
-      scroller.style.left = `${rect.left}px`;
-      scroller.style.top = `${rect.top}px`;
       scroller.style.height = `${rect.height}px`;
       scroller.style.width = `${rect.width}px`;
+      scroller.style.left = `${rect.left}px`;
+      scroller.style.top = `${rect.top}px`;
+      setScrollPosition();
     }
   };
-  useEffect(() => {
+  const eventListenerEffects = () => {
+    const scroller = document.getElementById(scrollId);
     listenForSize();
     window.addEventListener('resize', listenForSize);
-    theDiv.current.addEventListener('scroll', getScrollPosition);
+    scroller.addEventListener('scroll', getScrollPosition);
     return () => {
       window.removeEventListener('resize', listenForSize);
-      theDiv.current.removeEventListener('scroll', getScrollPosition);
+      scroller.removeEventListener('scroll', getScrollPosition);
     };
-  });
+  };
+  useLayoutEffect(setScrollPosition);
+  useLayoutEffect(eventListenerEffects);
   return (
-    <div ref={theDiv}
+    <div
       id={scrollId}
       className={(className ? className + ' ' : '') + 'verticalScrollingDiv'}
       {...props}
@@ -85,42 +85,41 @@ export function VerticalScrollFixedVirtualList({
   scrollId: string,
   itemCount: number,
   itemSize: number,
-  itemGenerator: (index: Number, style: Properties<>) => React$Node,
+  itemGenerator: (index: number, style: Properties<>) => React$Node,
 }) {
-  let store = Store.useStore();
-  const scrollData = store.get('scrollManager');
-  const getScrollPosition = (ev) => {
-    const pos = { x: ev.target.scrollLeft, y: ev.target.scrollTop };
-    if (pos) {
-      scrollData.set(scrollId, pos);
-    }
-  };
-  const setScrollPosition = () => {
-    const pos = scrollData.get(scrollId);
-    if (pos) {
-      const elem = document.getElementById(scrollId);
-      if (!elem) {
-        setTimeout(setScrollPosition, 10);
-      } else {
-        elem.scrollTop = pos.y;
-        elem.scrollLeft = pos.x;
+  if (false) {
+    let store = Store.useStore();
+    const scrollData = store.get('scrollManager');
+    const getScrollPosition = (ev) => {
+      const pos = { x: ev.target.scrollLeft, y: ev.target.scrollTop };
+      if (pos) {
+        scrollData.set(scrollId, pos);
       }
-    }
-  };
-  useEffect(setScrollPosition);
-  return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <FixedSizeList
-          id={scrollId}
-          height={height}
-          width={width}
-          itemCount={itemCount}
-          itemSize={itemSize}
-        >
-          {itemGenerator}
-        </FixedSizeList>
-      )}
-    </AutoSizer>
+    };
+    const setScrollPosition = () => {
+      const pos = scrollData.get(scrollId);
+      if (pos) {
+        const elem = document.getElementById(scrollId);
+        if (!elem) {
+          setTimeout(setScrollPosition, 10);
+        } else {
+          elem.scrollTop = pos.y;
+          elem.scrollLeft = pos.x;
+        }
+      }
+    };
+//    useEffect(setScrollPosition);
+  }
+  const customView = ({ height, width }) => (
+    <FixedSizeList
+      id={scrollId}
+      height={height}
+      width={width}
+      itemCount={itemCount}
+      itemSize={itemSize}
+    >
+      {itemGenerator}
+    </FixedSizeList>
   );
+  return <AutoSizer>{customView}</AutoSizer>;
 }
