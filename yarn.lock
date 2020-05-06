@@ -7213,8 +7213,8 @@ media-typer@0.3.0:
 "media-utils@file:./submodules/media-utils":
   version "0.1.0"
   dependencies:
-    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-2058e5d0-9111-404e-8053-33d8290358ab-1588479867253/node_modules/node-freik-utils"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-2058e5d0-9111-404e-8053-33d8290358ab-1588479867253/node_modules/js-freik-utils"
+    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-473e3053-ff7e-49d9-8124-7a96a97c1637-1588735060524/node_modules/node-freik-utils"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-473e3053-ff7e-49d9-8124-7a96a97c1637-1588735060524/node_modules/js-freik-utils"
 
 mem@^4.0.0:
   version "4.3.0"
@@ -7487,8 +7487,8 @@ mute-stream@0.0.8:
   version "0.1.0"
   dependencies:
     fs-extra "^9.0.0"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-c8680967-ea66-4aeb-9d3e-192ab0f04ce2-1588479867255/node_modules/js-freik-utils"
-    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-c8680967-ea66-4aeb-9d3e-192ab0f04ce2-1588479867255/node_modules/simplelogger"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-db9b8990-ea7d-4da1-b98a-74b89c99c536-1588735060526/node_modules/js-freik-utils"
+    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-db9b8990-ea7d-4da1-b98a-74b89c99c536-1588735060526/node_modules/simplelogger"
 
 "my-utils@file:./submodules/js-freik-utils", "my-utils@file:submodules/js-freik-utils":
   version "0.2.0"
@@ -9056,7 +9056,7 @@ prop-types-extra@^1.1.0:
     react-is "^16.3.2"
     warning "^4.0.0"
 
-prop-types@^15.5.7, prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -9391,13 +9391,6 @@ react-scripts@3.4.1:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
-
-react-tiny-virtual-list@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/react-tiny-virtual-list/-/react-tiny-virtual-list-2.2.0.tgz#eafb6fcf764e4ed41150ff9752cdaad8b35edf4a"
-  integrity sha512-MDiy2xyqfvkWrRiQNdHFdm36lfxmcLLKuYnUqcf9xIubML85cmYCgzBJrDsLNZ3uJQ5LEHH9BnxGKKSm8+C0Bw==
-  dependencies:
-    prop-types "^15.5.7"
 
 react-transition-group@^4.0.0:
   version "4.3.0"

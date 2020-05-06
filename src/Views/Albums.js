@@ -1,17 +1,15 @@
 // @flow
 
 import React, { useState } from 'react';
-import { FixedSizeList } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import Media from 'react-bootstrap/Media';
 import ListGroup from 'react-bootstrap/ListGroup';
 import ListGroupItem from 'react-bootstrap/ListGroupItem';
-import VirtualList from 'react-tiny-virtual-list';
 
 import Store from '../MyStore';
 
 import { AddAlbum, AddSong } from '../Playlist';
 import { GetArtistForAlbum, GetTrackListingForSong } from '../DataAccess';
+import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
 import type { SongKey, Album, StoreState } from '../MyStore';
 import type { Properties } from 'csstype';
@@ -92,14 +90,12 @@ export default function AlbumView() {
       return <div>Error for element {index}</div>;
     }
   };
-  const customView = ({ height, width }) => (
-    <VirtualList
-      height={height}
-      width={width}
+  return (
+    <VerticalScrollFixedVirtualList
+      scrollId="AlbumsScrollPos"
       itemCount={albums.size}
       itemSize={80}
-      renderItem={VirtualAlbumRow}
+      itemGenerator={VirtualAlbumRow}
     />
   );
-  return <AutoSizer>{customView}</AutoSizer>;
 }

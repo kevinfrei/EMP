@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 
 import Store from './MyStore';
 
@@ -87,36 +87,40 @@ export function VerticalScrollFixedVirtualList({
   itemSize: number,
   itemGenerator: (index: number, style: Properties<>) => React$Node,
 }) {
-  if (false) {
-    let store = Store.useStore();
-    const scrollData = store.get('scrollManager');
-    const getScrollPosition = (ev) => {
-      const pos = { x: ev.target.scrollLeft, y: ev.target.scrollTop };
-      if (pos) {
-        scrollData.set(scrollId, pos);
-      }
-    };
-    const setScrollPosition = () => {
-      const pos = scrollData.get(scrollId);
-      if (pos) {
-        const elem = document.getElementById(scrollId);
-        if (!elem) {
-          setTimeout(setScrollPosition, 10);
-        } else {
-          elem.scrollTop = pos.y;
-          elem.scrollLeft = pos.x;
-        }
-      }
-    };
-//    useEffect(setScrollPosition);
-  }
+  let ref = useRef(null);
+  let store = Store.useStore();
+  const scrollData = store.get('scrollManager');
+  let alreadySet = false;
+  const getScrollPosition = (ev) => {
+    if (scrollData.get(scrollId) && !alreadySet) {
+      return;
+    }
+    const pos = { x: 0, y: ev.scrollOffset };
+    scrollData.set(scrollId, pos);
+  };
+  const setScrollPosition = () => {
+    const pos = scrollData.get(scrollId);
+    if (!pos) {
+      alreadySet = true;
+      return;
+    }
+    if (!ref.current) {
+      setTimeout(setScrollPosition, 1);
+      return;
+    }
+    alreadySet = true;
+    ref.current.scrollTo(pos.y);
+  };
+  useLayoutEffect(setScrollPosition);
+
   const customView = ({ height, width }) => (
     <FixedSizeList
-      id={scrollId}
+      ref={ref}
       height={height}
       width={width}
       itemCount={itemCount}
       itemSize={itemSize}
+      onScroll={getScrollPosition}
     >
       {itemGenerator}
     </FixedSizeList>

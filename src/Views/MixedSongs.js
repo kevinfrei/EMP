@@ -1,7 +1,5 @@
 // @flow
 import React, { useState } from 'react';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList } from 'react-window';
 import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';

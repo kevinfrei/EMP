@@ -2,14 +2,12 @@
 
 import React from 'react';
 import Card from 'react-bootstrap/Card';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList } from 'react-window';
 
 import Store from '../MyStore';
 
 import { AddArtist } from '../Playlist';
+import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
-import type { StoreState } from '../MyStore';
 import type { Properties } from 'csstype';
 
 function VirtualArtistRow({
@@ -41,17 +39,12 @@ function VirtualArtistRow({
 export default function ArtistView() {
   const store = Store.useStore();
   const artists = store.get('Artists');
-  const customView = ({ height, width }) => {
-    return (
-      <FixedSizeList
-        height={height}
-        width={width}
-        itemCount={artists.size}
-        itemSize={80}
-      >
-        {VirtualArtistRow}
-      </FixedSizeList>
-    );
-  };
-  return <AutoSizer>{customView}</AutoSizer>;
+  return (
+    <VerticalScrollFixedVirtualList
+      scrollId="ArtistsScrollId"
+      itemCount={artists.size}
+      itemSize={80}
+      itemGenerator={VirtualArtistRow}
+    />
+  );
 }
