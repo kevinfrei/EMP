@@ -44,6 +44,7 @@ export default function ArtistView() {
             onClick={() => setExpandedArtist(artist.key)}
             src={downChevron}
             className="artistChevron"
+            alt="expander"
           />
         </div>
         <div className="artistSummary">

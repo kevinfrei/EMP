@@ -1,17 +1,16 @@
 // @flow
 
 import React, { useState } from 'react';
-import Media from 'react-bootstrap/Media';
 import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';
 
 import { AddAlbum, AddSong } from '../Playlist';
-import { GetArtistForAlbum, GetTrackListingForSong } from '../DataAccess';
+import { GetArtistForAlbum } from '../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
-import type { SongKey, Album, StoreState } from '../MyStore';
+import type { Album } from '../MyStore';
 import type { Properties } from 'csstype';
 
 import './styles/Albums.css';
@@ -59,12 +58,12 @@ export default function AlbumView() {
 
     return (
       <div style={style} className="albumContainer">
-          <img
-            src={`pic://album/${album.key}`}
-            onDoubleClick={() => AddAlbum(store, album.key)}
-            alt="album cover"
-            className="albumCover"
-          />
+        <img
+          src={`pic://album/${album.key}`}
+          onDoubleClick={() => AddAlbum(store, album.key)}
+          alt="album cover"
+          className="albumCover"
+        />
         <span>
           <div className="albumTitle" onDoubleClick={adder}>
             {album.title}
@@ -78,6 +77,7 @@ export default function AlbumView() {
                 onClick={() => setExpandedAlbum(album.key)}
                 src={downChevron}
                 className="albumChevron"
+                alt="expander"
               />
             </span>
           </div>
