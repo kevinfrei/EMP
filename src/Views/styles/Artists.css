@@ -9,8 +9,16 @@
 }
 
 .artistContainer {
-  padding: 5px;
+  padding: 0px 5px;
 }
+
+.artistContainer:hover,
+.artistContainer:focus,
+.artistContainer:active {
+  background-color: lavender;
+  color: black;
+}
+
 
 .artistName {
   font-size: large;
@@ -38,4 +46,10 @@
 .songForArtist .songTitle {
   grid-column: 3;
   grid-row: 1;
+}
+
+.artistChevron {
+  transform: rotate(-90deg);
+  height: 16px;
+  width: 16px;
 }

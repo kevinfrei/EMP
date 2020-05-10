@@ -50,16 +50,15 @@ keyword" kind of stuff.
 * Playlist unique-ification
 
 ### UI Improvements
-* Make broader use of the SongLine view.
 * Sorting lists by clicking headers *everywhere*
   * Indicate the sorting (and invalidate it in Now Playing when shuffled)
   * Inverse sorting when clicking again
-* Improve the views for Albums and Artists.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row
 * Make an actual "About" screen
 * Get some controls in the menu with appropriate keyboard shortcuts
 * Maybe use the album-art package to get artist pix & missing album pix
+* Improve the views for Albums and Artists.
 
 ### Other
 * Testing! Testing! Testing!

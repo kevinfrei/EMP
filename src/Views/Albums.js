@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import Media from 'react-bootstrap/Media';
-import ListGroup from 'react-bootstrap/ListGroup';
-import ListGroupItem from 'react-bootstrap/ListGroupItem';
+import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';
 
 import { AddAlbum, AddSong } from '../Playlist';
 import { GetArtistForAlbum, GetTrackListingForSong } from '../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
+import SongLine from '../SongLine';
 
 import type { SongKey, Album, StoreState } from '../MyStore';
 import type { Properties } from 'csstype';
@@ -17,66 +17,75 @@ import type { Properties } from 'csstype';
 import './styles/Albums.css';
 import downChevron from '../img/down-chevron.svg';
 
-function getSongList(store: StoreState, songsList: Array<SongKey>) {
-  const sl = songsList.map((sk: SongKey) => (
-    <ListGroupItem key={sk} onDoubleClick={() => AddSong(store, sk)}>
-      {GetTrackListingForSong(store, sk)}
-    </ListGroupItem>
-  ));
-  return <ListGroup>{sl}</ListGroup>;
-}
-
-function SingleAlbum({ album, style }: { album: Album, style: Properties<> }) {
-  const store = Store.useStore();
-  const artistName = GetArtistForAlbum(store, album);
-  const adder = () => AddAlbum(store, album.key);
-  /*
-  const [showSongs, setShowSongs] = useState(false);
-  const expanderStyle = showSongs ? {} : { transform: 'rotate(-90deg)' };
-    const songList = showSongs ? getSongList(store, album.songs) : <></>;
-
-            &nbsp;
-            <img
-              onClick={() => setShowSongs(!showSongs)}
-              width="13px"
-              height="13px"
-              src={downChevron}
-              style={expanderStyle}
-              alt="show shows"
-            />...
-            {songList}
-*/
-  return (
-    <ListGroupItem style={style}>
-      <Media>
-        <img
-          src={`pic://album/${album.key}`}
-          height="55px"
-          width="55px"
-          onDoubleClick={adder}
-          alt="album cover"
-        />
-        <Media.Body>
-          <h5 className="album-title" onDoubleClick={adder}>
-            {album.title}
-          </h5>
-          <h6 className="album-year">
-            &nbsp;
-            <span onDoubleClick={adder}>
-              {artistName}
-              {album.year ? `: ${album.year}` : ''}
-            </span>
-          </h6>
-        </Media.Body>
-      </Media>
-    </ListGroupItem>
-  );
-}
-
 export default function AlbumView() {
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');
+  const [expandedAlbum, setExpandedAlbum] = useState('');
+  const handleClose = () => setExpandedAlbum('');
+  let details = <></>;
+  let dialogHeader = '';
+
+  if (!!expandedAlbum) {
+    const album = albums.get(expandedAlbum);
+    if (album) {
+      const artistName = GetArtistForAlbum(store, album);
+      details = (
+        <div className="songListForAlbum">
+          {album.songs.map((k) => (
+            <SongLine
+              template="R#T"
+              key={k}
+              songKey={k}
+              className="songForAlbum"
+              onDoubleClick={AddSong}
+            />
+          ))}
+        </div>
+      );
+      dialogHeader = album.title + ' ' + artistName;
+    }
+  }
+
+  const SingleAlbum = ({
+    album,
+    style,
+  }: {
+    album: Album,
+    style: Properties<>,
+  }) => {
+    const artistName = GetArtistForAlbum(store, album);
+    const adder = () => AddAlbum(store, album.key);
+
+    return (
+      <div style={style} className="albumContainer">
+          <img
+            src={`pic://album/${album.key}`}
+            onDoubleClick={() => AddAlbum(store, album.key)}
+            alt="album cover"
+            className="albumCover"
+          />
+        <span>
+          <div className="albumTitle" onDoubleClick={adder}>
+            {album.title}
+          </div>
+          <div className="albumDetails">
+            &nbsp;
+            <span onDoubleClick={adder}>
+              {artistName}
+              {album.year ? `: ${album.year}` : ''} &nbsp;
+              <img
+                onClick={() => setExpandedAlbum(album.key)}
+                src={downChevron}
+                className="albumChevron"
+              />
+            </span>
+          </div>
+        </span>
+      </div>
+    );
+  };
+
   const VirtualAlbumRow = ({
     index,
     style,
@@ -93,10 +102,18 @@ export default function AlbumView() {
   };
   return (
     <div className="albumView">
+      <Modal show={!!expandedAlbum} onHide={handleClose}>
+        <Modal.Dialog>
+          <Modal.Header closeButton>
+            <Modal.Title>{dialogHeader}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>{details}</Modal.Body>
+        </Modal.Dialog>
+      </Modal>
       <VerticalScrollFixedVirtualList
         scrollId="AlbumsScrollPos"
         itemCount={albums.size}
-        itemSize={80}
+        itemSize={70}
         itemGenerator={VirtualAlbumRow}
       />
     </div>

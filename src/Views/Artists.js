@@ -12,6 +12,7 @@ import SongLine from '../SongLine';
 import type { Properties } from 'csstype';
 
 import './styles/Artists.css';
+import downChevron from '../img/down-chevron.svg';
 
 export default function ArtistView() {
   const store = Store.useStore();
@@ -36,9 +37,15 @@ export default function ArtistView() {
         className="artistContainer"
         style={style}
         onDoubleClick={() => AddArtist(store, artist.key)}
-        onAuxClick={() => setExpandedArtist(artist.key)}
       >
-        <div className="artistName">{artist.name}</div>
+        <div className="artistName">
+          {artist.name} &nbsp;
+          <img
+            onClick={() => setExpandedArtist(artist.key)}
+            src={downChevron}
+            className="artistChevron"
+          />
+        </div>
         <div className="artistSummary">
           {artist.songs.length} Songs and {artist.albums.length} Albums
         </div>
