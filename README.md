@@ -54,7 +54,6 @@ keyword" kind of stuff.
 * Sorting lists by clicking headers *everywhere*
   * Indicate the sorting (and invalidate it in Now Playing when shuffled)
   * Inverse sorting when clicking again
-* Make all scrollable views remember (roughly) where they were scrolled to
 * Improve the views for Albums and Artists.
 * Handle single & double clicking from Now Playing with onClick timeouts
   * This shows up when clicking many 'delete' icons in a row

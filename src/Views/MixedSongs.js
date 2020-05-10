@@ -6,11 +6,11 @@ import Store from '../MyStore';
 
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
+import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
 import type { Properties } from 'csstype';
 
 import './styles/MixedSongs.css';
-import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines = [];

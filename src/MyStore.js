@@ -91,6 +91,8 @@ export type State = {|
   // The list of songs in the play queue
   songList: Array<SongKey>,
 
+  searchText: string,
+
   // The current song number being played (or having stopp
   curIndex: number,
   activePlaylistName: string,
@@ -127,6 +129,8 @@ let initialState: State = {
 
   curView: 'current',
   scrollManager: new Map(),
+
+  searchText: '',
 
   songList: [],
   curIndex: -1,

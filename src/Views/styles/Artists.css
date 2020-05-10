@@ -1,0 +1,41 @@
+.artistView {
+  overflow: hidden;
+  padding: 0px;
+  margin: 0px;
+  width: 100%;
+  height: 100%;
+  grid-row: 2 / 4;
+  grid-column: 2 / 5;
+}
+
+.artistContainer {
+  padding: 5px;
+}
+
+.artistName {
+  font-size: large;
+  font-weight: bold;
+}
+
+.songForArtist {
+  display: grid;
+  grid-template-columns: 1fr 25px 1fr;
+  grid-template-rows: auto;
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.songForArtist  .songAlbum {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.songForArtist  .songTrack {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.songForArtist .songTitle {
+  grid-column: 3;
+  grid-row: 1;
+}

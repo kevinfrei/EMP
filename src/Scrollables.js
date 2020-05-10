@@ -6,8 +6,8 @@ import Store from './MyStore';
 
 import './styles/Scrollables.css';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { FixedSizeList } from 'react-window';
 
+import { FixedSizeList, VariableSizeList } from 'react-window';
 import type { Properties } from 'csstype';
 
 export function VerticalScrollDiv({
@@ -124,6 +124,62 @@ export function VerticalScrollFixedVirtualList({
     >
       {itemGenerator}
     </FixedSizeList>
+  );
+  return <AutoSizer>{customView}</AutoSizer>;
+}
+
+
+export function VerticalScrollVariableVirtualList({
+  scrollId,
+  itemCount,
+  estimatedItemSize,
+  itemSizeGenerator,
+  itemGenerator,
+}: {
+  scrollId: string,
+  itemCount: number,
+  estimatedItemSize: number,
+  itemSizeGenerator: (index:number) => number,
+  itemGenerator: (index: number, style: Properties<>) => React$Node,
+}) {
+  let ref = useRef(null);
+  let store = Store.useStore();
+  const scrollData = store.get('scrollManager');
+  let alreadySet = false;
+  const getScrollPosition = (ev) => {
+    if (scrollData.get(scrollId) && !alreadySet) {
+      return;
+    }
+    const pos = { x: 0, y: ev.scrollOffset };
+    scrollData.set(scrollId, pos);
+  };
+  const setScrollPosition = () => {
+    const pos = scrollData.get(scrollId);
+    if (!pos) {
+      alreadySet = true;
+      return;
+    }
+    if (!ref.current) {
+      setTimeout(setScrollPosition, 1);
+      return;
+    }
+    alreadySet = true;
+    ref.current.scrollTo(pos.y);
+  };
+  useLayoutEffect(setScrollPosition);
+
+  const customView = ({ height, width }) => (
+    <VariableSizeList
+      ref={ref}
+      height={height}
+      width={width}
+      itemCount={itemCount}
+      estimatedItemSize={estimatedItemSize}
+      itemSize={itemSizeGenerator}
+      onScroll={getScrollPosition}
+    >
+      {itemGenerator}
+    </VariableSizeList>
   );
   return <AutoSizer>{customView}</AutoSizer>;
 }

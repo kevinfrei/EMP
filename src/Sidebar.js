@@ -51,15 +51,22 @@ function getEntry(store: StoreState, view: ?ViewEntry, index: number) {
 
 export default function Sidebar() {
   let store = Store.useStore();
-
+  let value = store.get('searchText');
+  let setvalue = store.set('searchText');
   return (
     <div id="sidebar">
       <div className="search-bar">
-        <input id="search" type="text" placeholder="Search NYI" />
+        <input
+          id="search"
+          className="search-box"
+          type="search"
+          value={value}
+          onChange={(ev) => setvalue(ev.target.value)}
+        />
       </div>
       <br />
       {views.map((ve, index) => getEntry(store, ve, index))}
-      <div id="data"/>
+      <div id="data" />
     </div>
   );
 }

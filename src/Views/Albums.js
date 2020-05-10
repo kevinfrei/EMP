@@ -14,6 +14,7 @@ import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import type { SongKey, Album, StoreState } from '../MyStore';
 import type { Properties } from 'csstype';
 
+import './styles/Albums.css';
 import downChevron from '../img/down-chevron.svg';
 
 function getSongList(store: StoreState, songsList: Array<SongKey>) {
@@ -91,11 +92,13 @@ export default function AlbumView() {
     }
   };
   return (
-    <VerticalScrollFixedVirtualList
-      scrollId="AlbumsScrollPos"
-      itemCount={albums.size}
-      itemSize={80}
-      itemGenerator={VirtualAlbumRow}
-    />
+    <div className="albumView">
+      <VerticalScrollFixedVirtualList
+        scrollId="AlbumsScrollPos"
+        itemCount={albums.size}
+        itemSize={80}
+        itemGenerator={VirtualAlbumRow}
+      />
+    </div>
   );
 }
