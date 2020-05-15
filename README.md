@@ -13,6 +13,14 @@ and Vox is **awful** (I'm not paying a monthly fee for the privilege of
 listening to the music I've already purchased, thanks very much) and VLC is a
 bad music player (a great video player, but not great for music, IMO)
 
+What's it look like? Kind of like iTunes' ugly stepsister (#notadesigner!), but here you go:
+
+![Albums view](doc/albums.jpg)
+
+![Playlist view](doc/playlist.jpg)
+
+It's not yet 'packaged' for general consumption, but if you're a nerd, you can probably get it to work from the repository easily enough.
+
 ## What's the current state?
 
 I've got playback working. Double-clicking on artists, albums, and songs adds
