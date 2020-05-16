@@ -1,7 +1,5 @@
 // @flow
 
-import { ModuleResolutionKind } from "typescript";
-
 // Take in a function that returns the string we're indexing from the object
 // Return a trie of search terms
 

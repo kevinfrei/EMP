@@ -7242,8 +7242,8 @@ media-typer@0.3.0:
 "media-utils@file:./submodules/media-utils":
   version "0.1.0"
   dependencies:
-    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-03e6da19-5884-4e58-8a73-c91a13dd952e-1589601302338/node_modules/node-freik-utils"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-03e6da19-5884-4e58-8a73-c91a13dd952e-1589601302338/node_modules/js-freik-utils"
+    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-47eaec1d-3a9c-4d10-995c-9bf6b0ecb6db-1589601418272/node_modules/node-freik-utils"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-47eaec1d-3a9c-4d10-995c-9bf6b0ecb6db-1589601418272/node_modules/js-freik-utils"
 
 mem@^4.0.0:
   version "4.3.0"
@@ -7516,8 +7516,8 @@ mute-stream@0.0.8:
   version "0.1.0"
   dependencies:
     fs-extra "^9.0.0"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-d4a134da-9f35-4c6a-8428-22ef6bde913c-1589601302341/node_modules/js-freik-utils"
-    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-d4a134da-9f35-4c6a-8428-22ef6bde913c-1589601302341/node_modules/simplelogger"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-4b57d300-fdce-4d92-a969-90c8e7af2ae9-1589601418274/node_modules/js-freik-utils"
+    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-4b57d300-fdce-4d92-a969-90c8e7af2ae9-1589601418274/node_modules/simplelogger"
 
 "my-utils@file:./submodules/js-freik-utils", "my-utils@file:submodules/js-freik-utils":
   version "0.2.0"

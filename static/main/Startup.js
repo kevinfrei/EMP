@@ -6,7 +6,8 @@ const { FTON } = require('my-utils');
 
 const persist = require('./persist');
 const music = require('./music');
-const { SendDatabase } = require('./Communication');
+const { SendDatabase, SetIndex } = require('./Communication');
+const makeIndex = require('./search');
 
 import type { MusicDB } from './music';
 
@@ -28,6 +29,8 @@ async function getMusicDb() {
   let musicLocations = getLocations();
   let musicDB = await music.find(musicLocations);
   persist.setItem('DB', musicDB);
+  const artistIndex = makeIndex(musicDB.artists.values(), a => a.name);
+  SetIndex('artist', artistIndex);
 }
 
 function UpdateAndSendDB() {
@@ -45,7 +48,7 @@ async function Startup() {
   let musicDB = persist.getItem('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
-    setTimeout(UpdateAndSendDB, 250);
+    setTimeout(UpdateAndSendDB, 1);
   } else {
     // If we don't already have it, wait to start until we've read it.
     await getMusicDb();

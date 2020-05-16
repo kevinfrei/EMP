@@ -8,6 +8,7 @@ const { getMediaInfo } = require('./music');
 
 import type { FTONData } from 'my-utils';
 import type { SongKey, MediaInfo } from './music';
+import type { TrieNode } from './search';
 
 const log = logger.bind('Communication');
 logger.enable('Communication');
@@ -22,6 +23,8 @@ export type KVP = {
   key: string,
   value: FTONData,
 };
+
+const indices: Map<string, Map<string, TrieNode<*>>> = new Map();
 
 let win: ?WebContents = null;
 
@@ -145,6 +148,52 @@ function getMetadata(songKey: SongKey) {
     })
     .catch(console.log);
 }
+
+function SetIndex(id: string, index: Map<string, TrieNode<*>>) {
+  indices.set(id, index);
+}
+
+// Walk down the Trie following the string
+function search(val: string) {
+  let vals = null;
+  for (let i of val.split(' ')) {
+    let index = indices.get('artist');
+    if (!index) {
+      break;
+    }
+    for (let c of Array.from(i)) {
+      if (!index) {
+        break;
+      }
+      vals = index.get(c);
+      if (!vals) {
+        break;
+      }
+    }
+    if (vals) {
+      if (!res) {
+        res = new Set(vals.values);
+      } else {
+        const toRemove = [];
+        for (let i of res) {
+          if (!vals.values.has(i)) {
+            toRemove.push(i);
+          }
+        }
+        for (let i of toRemove) {
+          vals.values.delete(i);
+        }
+      }
+    }
+  }
+  if (!vals) {
+    console.log('Nothing');
+    return;
+  }
+  const results = [...vals.values].map((val) => val.key);
+  console.log(results);
+}
+
 // Called to just set stuff up (nothing has actually been done yet)
 function Init() {
   const comms = [
@@ -153,6 +202,7 @@ function Init() {
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
     mk<string>('mediainfo', SongKeyValidator, getMetadata),
+    mk<string>('search', stringValidator, search)
   ];
   for (let val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
@@ -175,4 +225,4 @@ function Begin(window) {
   SendDatabase();
 }
 
-module.exports = { Init, Begin, SendDatabase };
+module.exports = { Init, Begin, SendDatabase, SetIndex };
