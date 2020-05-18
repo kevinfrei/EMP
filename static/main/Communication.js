@@ -20,9 +20,9 @@ export type MessageHandler<T> = {
   handler: (data: T) => void,
 };
 
-export type KVP = {
+export type KVP<T> = {
   key: string,
-  value: FTONData,
+  value: T,
 };
 
 const indices: Map<string, Map<string, TrieNode<*>>> = new Map();
@@ -38,17 +38,20 @@ function getWebContents() {
   return allWnd[0].webContents;
 }
 
-function kvpValidator(val: string): ?KVP {
+function kvpValidator(val: any): ?KVP<any> {
+  if (
+    typeof val === 'object' &&
+    val !== null &&
+    typeof val.key === 'string' &&
+    typeof val.value !== 'undefined'
+  ) {
+    return { key: val.key, value: val.value };
+  }
+}
+
+function kvpFromJSONValidator(val: string): ?KVP<any> {
   try {
-    const res = FTON.parse(val);
-    if (
-      typeof res === 'object' &&
-      res !== null &&
-      typeof res.key === 'string' &&
-      typeof res.value !== 'undefined'
-    ) {
-      return { key: res.key, value: res.value };
-    }
+    return kvpValidator(FTON.parse(val));
   } catch (e) {}
   return undefined;
 }
@@ -61,7 +64,7 @@ function SongKeyValidator(val: string): ?SongKey {
   return val;
 }
 
-function setter({ key, value }: KVP) {
+function setter({ key, value }: KVP<any>) {
   log(`Persisting '${key}' to:`);
   if (key.toLowerCase() !== 'db') log(value);
   else log('{music database...}');
@@ -195,10 +198,60 @@ function search(val: string) {
   console.log(results);
 }
 
+// {key: 'item-to-pull-from-persist'}
+async function ipcGetter(data) {
+  try {
+    log(`promise-get request: ${typeof data}`);
+    if (
+      typeof data !== 'object' ||
+      !data.hasOwnProperty('key') ||
+      typeof data.key !== 'string'
+    ) {
+      log(`error: invalid promise-get data type: ${typeof data}`);
+      return undefined;
+    }
+    return await persist.getItemAsync(data.key);
+  } catch (e) {}
+  return undefined;
+}
+
+// {key: 'item-to-put-in-persist', value: {thingToSave...} }
+async function ipcSetter(data) {
+  try {
+    log(`promise-set request: ${typeof data}`);
+    const kvp = kvpValidator(data);
+    if (kvp) {
+      await persist.setItemAsync(kvp.key, kvp.value);
+      return true;
+    }
+  } catch (e) {}
+  log('Trouble with promise-set');
+  return false;
+}
+
+// {key: 'item-to-delete-from-persistence'}
+async function ipcDeleter(data) {
+  try {
+    if (
+      typeof data !== 'object' ||
+      !data.hasOwnProperty('key') ||
+      typeof data.key !== 'string'
+    ) {
+      log(`error: invalid promise-del data type: ${typeof data}`);
+      return false;
+    }
+    await persist.deleteItemAsync(data.key);
+    return true;
+  } catch (e) {}
+  return false;
+}
+
+
+
 // Called to just set stuff up (nothing has actually been done yet)
 function Init() {
   const comms = [
-    mk<KVP>('set', kvpValidator, setter),
+    mk<KVP>('set', kvpFromJSONValidator, setter),
     mk<string>('delete', stringValidator, deleter),
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
@@ -218,12 +271,21 @@ function Init() {
       }
     });
   }
-  promiseIpc.on('promise-get', (data) => {
-    log(`promise-get request: ${typeof data}`);
-    log(data);
-
-    return { b: ['result', 'anotherResult'] };
-  });
+  // Persistence stuff migrated to Recoil :)
+  promiseIpc.on('promise-get', ipcGetter);
+  promiseIpc.on('promise-set', ipcSetter);
+  promiseIpc.on('promise-del', ipcDeleter);
+  /*
+  promiseIpc.on('promise-artist', ipcArtist);
+  promiseIpc.on('promise-artists', ipcArtistKeys);
+  promiseIpc.on('promise-album', ipcAlbum);
+  promiseIpc.on('promise-albums', ipcAlbumKeys);
+  promiseIpc.on('promise-song', ipcSong);
+  promiseIpc.on('promise-songs', ipcSongKeys);
+  promiseIpc.on('promise-mediaInfo', ipcMediaInfo);
+  promiseIpc.on('promise-playlist', ipcPlaylistDetails);
+  promiseIpc.on('promise-playlists', ipcPlaylists);
+  */
 }
 
 // Called with the window handle after it's been created

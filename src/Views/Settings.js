@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import Store from '../MyStore';
 import { locations } from '../Atoms';
@@ -59,27 +59,48 @@ function sortPopup(item) {
 }
 
 const RecoilLocations = () => {
-  const recoilLocations = useRecoilValue(locations);
-  return <div>{recoilLocations}</div>;
+  const [recoilLocations, setRecoilLocations] = useRecoilState(locations);
+  return (
+    <>
+      {recoilLocations.map((elem) => (
+        <Row key={elem}>
+          <Col xs={1}>
+            <img
+              className="delete-pic pic-button"
+              src={deletePic}
+              alt="Delete Item"
+              onClick={() =>
+                setRecoilLocations(removeFromSet(recoilLocations, elem))
+              }
+            />
+          </Col>
+          <Col>{elem}</Col>
+        </Row>
+      ))}
+      <Row>
+        <Col xs={1}>
+          <img
+            className="add-pic pic-button"
+            src={addPic}
+            alt="add source"
+            onClick={() => {
+              const locs: ?Array<string> = GetDirs();
+              if (locs) {
+                setRecoilLocations([...locs, ...recoilLocations]);
+              }
+            }}
+          />
+        </Col>
+        <Col>
+          <em>Add new location to scan</em>
+        </Col>
+      </Row>
+    </>
+  );
 };
 
 const Settings = () => {
   const store = Store.useStore();
-  const config: Array<string> = store.get('locations');
-  const setConfig = store.set('locations');
-  const locs = config.map((elem) => (
-    <Row key={elem}>
-      <Col xs={1}>
-        <img
-          className="delete-pic pic-button"
-          src={deletePic}
-          alt="Delete Item"
-          onClick={() => setConfig(removeFromSet(config, elem))}
-        />
-      </Col>
-      <Col>{elem}</Col>
-    </Row>
-  ));
   const articles = store.get('SortWithArticles');
   const setArticles = store.set('SortWithArticles');
 
@@ -113,25 +134,9 @@ const Settings = () => {
           <Card.Body>
             <Card.Title>Music Locations</Card.Title>
             <Container>
-              {locs}
-              <Row>
-                <Col xs={1}>
-                  <img
-                    className="add-pic pic-button"
-                    src={addPic}
-                    alt="add source"
-                    onClick={() => {
-                      const locs: ?Array<string> = GetDirs();
-                      if (locs) {
-                        setConfig([...locs, ...config]);
-                      }
-                    }}
-                  />
-                </Col>
-                <Col>
-                  <em>Add new location to scan</em>
-                </Col>
-              </Row>
+              <React.Suspense fallback={<div>Loading</div>}>
+                <RecoilLocations />
+              </React.Suspense>
             </Container>
           </Card.Body>
         </Card>
@@ -156,10 +161,7 @@ const Settings = () => {
               </Row>
             </Container>
           </Card.Body>
-        </Card>{' '}
-        <React.Suspense fallback={<div>Loading</div>}>
-          <RecoilLocations />
-        </React.Suspense>
+        </Card>
       </VerticalScrollDiv>
     </>
   );

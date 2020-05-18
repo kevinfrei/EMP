@@ -31,6 +31,12 @@ Playlists are the next major piece of functionality to add.
 
 ## Stuff to do
 
+### *In Progress*
+
+Migrate to Recoil. One of the two key authors is on my team, it supports React
+suspense, and I've been drooling over it for about a year. Now that it's
+been open-sourced, I'm going to switch from undux to recoil.
+
 ### Bugs
 * Handle audio files that don't fit my schema
   * Probably start with iTunes schema :/

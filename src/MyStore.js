@@ -56,7 +56,7 @@ export type ViewNames =
 
 export type State = {|
   // Just a list of paths to search for music
-  locations: Array<string>,
+  // locations: Array<string>,
 
   // This is the song database
   // This should probably not need to be 'complete' but rather rely on
@@ -106,7 +106,7 @@ export type State = {|
 |};
 
 let initialState: State = {
-  locations: [],
+//  locations: [],
 
   Artists: new Map(),
   Albums: new Map(),
@@ -150,7 +150,7 @@ export const ValidKeyNames = [
   'Songs',
   'Playlists',
   'playlistLocation',
-  'locations',
+//  'locations',
   'curView',
   'songList',
   'activePlaylistName',

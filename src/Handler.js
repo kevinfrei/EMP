@@ -86,7 +86,7 @@ function makeChangeChecker<T>(
 // For each key that should be saved to main (and persisted between runs)
 // add a "change checker" here.
 const PersistedBetweenRuns: Array<SaveConfig<any>> = [
-  makeChangeChecker('locations', null, Comparisons.ArraySetEqual, 1, 10),
+  // makeChangeChecker('locations', null, Comparisons.ArraySetEqual, 1, 10),
   makeChangeChecker('songList', [], Comparisons.ArraySetEqual, 500, 1500),
   makeChangeChecker(
     'activePlaylistName',
