@@ -1,5 +1,6 @@
 // @flow
 const { ipcMain, BrowserWindow, WebContents } = require('electron');
+const promiseIpc = require('electron-promise-ipc');
 const logger = require('simplelogger');
 const { FTON } = require('my-utils');
 
@@ -202,7 +203,7 @@ function Init() {
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
     mk<string>('mediainfo', SongKeyValidator, getMetadata),
-    mk<string>('search', stringValidator, search)
+    mk<string>('search', stringValidator, search),
   ];
   for (let val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
@@ -217,6 +218,12 @@ function Init() {
       }
     });
   }
+  promiseIpc.on('promise-get', (data) => {
+    log(`promise-get request: ${typeof data}`);
+    log(data);
+
+    return { b: ['result', 'anotherResult'] };
+  });
 }
 
 // Called with the window handle after it's been created

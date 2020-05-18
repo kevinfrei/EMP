@@ -7,8 +7,10 @@ import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useRecoilValue } from 'recoil';
 
 import Store from '../MyStore';
+import { locations } from '../Atoms';
 
 import { VerticalScrollDiv } from '../Scrollables';
 
@@ -56,11 +58,16 @@ function sortPopup(item) {
   );
 }
 
+const RecoilLocations = () => {
+  const recoilLocations = useRecoilValue(locations);
+  return <div>{recoilLocations}</div>;
+};
+
 const Settings = () => {
   const store = Store.useStore();
   const config: Array<string> = store.get('locations');
   const setConfig = store.set('locations');
-  const locations = config.map((elem) => (
+  const locs = config.map((elem) => (
     <Row key={elem}>
       <Col xs={1}>
         <img
@@ -106,7 +113,7 @@ const Settings = () => {
           <Card.Body>
             <Card.Title>Music Locations</Card.Title>
             <Container>
-              {locations}
+              {locs}
               <Row>
                 <Col xs={1}>
                   <img
@@ -114,9 +121,9 @@ const Settings = () => {
                     src={addPic}
                     alt="add source"
                     onClick={() => {
-                      const locations: ?Array<string> = GetDirs();
-                      if (locations) {
-                        setConfig([...locations, ...config]);
+                      const locs: ?Array<string> = GetDirs();
+                      if (locs) {
+                        setConfig([...locs, ...config]);
                       }
                     }}
                   />
@@ -149,7 +156,10 @@ const Settings = () => {
               </Row>
             </Container>
           </Card.Body>
-        </Card>
+        </Card>{' '}
+        <React.Suspense fallback={<div>Loading</div>}>
+          <RecoilLocations />
+        </React.Suspense>
       </VerticalScrollDiv>
     </>
   );

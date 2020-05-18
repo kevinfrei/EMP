@@ -4,10 +4,10 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const electron = require('electron');
+const { ipcRenderer, remote } = require('electron');
 const isDev = require('electron-is-dev');
 const logger = require('simplelogger');
-const { ipcRenderer, remote } = electron;
+const { PromiseIpc } = require('electron-promise-ipc');
 
 const log = logger.bind('renderer');
 //logger.disable('renderer');
@@ -29,4 +29,7 @@ window.addEventListener('DOMContentLoaded', () => {
   } else {
     log('FAILURE: No window.initApp() attached.');
   }
+  console.log('Setting up PromiseIPC:');
+  window.ipcPromise = new PromiseIpc({ maxTimeoutMs: 5000 });
+  console.log(window.ipcPromise);
 });

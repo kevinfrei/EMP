@@ -14,6 +14,7 @@
     "bootstrap": "^4.5.0",
     "csstype": "^2.6.10",
     "electron-is-dev": "^1.2.0",
+    "electron-promise-ipc": "^2.1.0",
     "media-utils": "file:./submodules/media-utils",
     "my-utils": "file:./submodules/js-freik-utils",
     "node-mediainfo": "^1.0.3",

@@ -2,6 +2,7 @@
 // @format
 
 import React from 'react';
+import {RecoilRoot} from 'recoil';
 
 import Sidebar from './Sidebar';
 import ViewSelector from './Views/Selector';
@@ -16,15 +17,17 @@ import './styles/App.css';
 const App = () => {
   return (
     <Store.Container>
-      <AsyncDoodad />
-      <span className="grabber"></span>
-      <span className="left-column"></span>
-      <span className="top-row"></span>
-      <SongControls />
-      <SongPlayback />
-      <VolumeControl />
-      <Sidebar />
-      <ViewSelector />
+      <RecoilRoot>
+        <AsyncDoodad />
+        <span className="grabber"></span>
+        <span className="left-column"></span>
+        <span className="top-row"></span>
+        <SongControls />
+        <SongPlayback />
+        <VolumeControl />
+        <Sidebar />
+        <ViewSelector />
+      </RecoilRoot>
     </Store.Container>
   );
 };
