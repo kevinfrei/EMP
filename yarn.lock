@@ -7257,8 +7257,8 @@ media-typer@0.3.0:
 "media-utils@file:./submodules/media-utils":
   version "0.1.0"
   dependencies:
-    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-1e96b2f9-7438-4cc0-a8f4-5d3e69b0f905-1589748324028/node_modules/node-freik-utils"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-1e96b2f9-7438-4cc0-a8f4-5d3e69b0f905-1589748324028/node_modules/js-freik-utils"
+    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-b7948e73-6e5f-4a00-bf4f-00eb0ff629b1-1592673658154/node_modules/node-freik-utils"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-b7948e73-6e5f-4a00-bf4f-00eb0ff629b1-1592673658154/node_modules/js-freik-utils"
 
 mem@^4.0.0:
   version "4.3.0"
@@ -7531,8 +7531,8 @@ mute-stream@0.0.8:
   version "0.1.0"
   dependencies:
     fs-extra "^9.0.0"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-98246011-e875-4a0b-b164-e97427354e69-1589748324031/node_modules/js-freik-utils"
-    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-98246011-e875-4a0b-b164-e97427354e69-1589748324031/node_modules/simplelogger"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-d737b304-dbd9-44b0-9f8b-a06373cf53ae-1592673658156/node_modules/js-freik-utils"
+    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-d737b304-dbd9-44b0-9f8b-a06373cf53ae-1592673658156/node_modules/simplelogger"
 
 "my-utils@file:./submodules/js-freik-utils", "my-utils@file:submodules/js-freik-utils":
   version "0.2.0"
@@ -11610,9 +11610,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha512-nqHUnMXmBzT0w570r2JpJxfiSD1IzoI+HGVdd3aZ0yNi3ngvQ4jv1dtHt5VGxfI2yj5yqImPhOK4vmIh2xMbGg==
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   version "1.0.5"
