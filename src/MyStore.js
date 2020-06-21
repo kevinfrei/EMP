@@ -76,9 +76,6 @@ export type State = {|
   AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear',
   SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack',
 
-  // This is metadata that we've collected from the main process, on demand
-  MediaInfoCache: Map<SongKey, MediaInfo>,
-
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, Array<SongKey>>,
   playlistLocation: string,

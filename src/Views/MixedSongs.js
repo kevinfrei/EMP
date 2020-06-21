@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';
 
+import { getMediaInfoSelector } from '../Atoms';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
@@ -11,6 +12,7 @@ import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import type { Properties } from 'csstype';
 
 import './styles/MixedSongs.css';
+import { useRecoilValue } from 'recoil/dist/recoil.production';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines = [];
@@ -25,6 +27,32 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   return lines;
 }
 
+function MediaInfoTable({ id }: { id: string }) {
+  const mediaInfo = useRecoilValue(getMediaInfoSelector(id));
+  if (mediaInfo) {
+    const genLines = mediaInfoToLine('gen', mediaInfo.general);
+    const audLines = mediaInfoToLine('aud', mediaInfo.audio);
+    return (
+      <table>
+        <thead>
+          <tr>
+            <td>General</td>
+          </tr>
+        </thead>
+        <tbody>{genLines}</tbody>
+        <thead>
+          <tr>
+            <td>Audio</td>
+          </tr>
+        </thead>
+        <tbody>{audLines}</tbody>
+      </table>
+    );
+  } else {
+    return <></>;
+  }
+}
+
 export default function MixedSongView() {
   const store = Store.useStore();
   const songs = store.get('Songs');
@@ -32,7 +60,6 @@ export default function MixedSongView() {
   const [selected, setSelected] = useState('');
 
   const handleClose = () => setSelected('');
-  let details = <></>;
 
   const VirtualSongRow = ({
     index,
@@ -40,7 +67,7 @@ export default function MixedSongView() {
   }: {
     index: number,
     style: Properties<>,
-  }):React$Node => {
+  }): React$Node => {
     return (
       <SongLine
         template="RL#T"
@@ -58,44 +85,20 @@ export default function MixedSongView() {
     );
   };
 
-  if (!!selected) {
-    const mdCache = store.get('MediaInfoCache');
-    const mediaInfo = mdCache.get(selected);
-    if (mediaInfo) {
-      const genLines = mediaInfoToLine('gen', mediaInfo.general);
-      const audLines = mediaInfoToLine('aud', mediaInfo.audio);
-      details = (
-        <table>
-          <thead>
-            <tr>
-              <td>General</td>
-            </tr>
-          </thead>
-          <tbody>{genLines}</tbody>
-          <thead>
-            <tr>
-              <td>Audio</td>
-            </tr>
-          </thead>
-          <tbody>{audLines}</tbody>
-        </table>
-      );
-    } else {
-      details = 'Please wait...';
-      window.ipc.send('mediainfo', selected);
-    }
-  }
-
   return (
     <div className="songView">
-      <Modal show={!!selected} onHide={handleClose}>
-        <Modal.Dialog>
-          <Modal.Header closeButton>
-            <Modal.Title>Metadata</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{details}</Modal.Body>
-        </Modal.Dialog>
-      </Modal>
+      <React.Suspense fallback="Please wait...">
+        <Modal show={!!selected} onHide={handleClose}>
+          <Modal.Dialog>
+            <Modal.Header closeButton>
+              <Modal.Title>Metadata</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <MediaInfoTable id={selected} />
+            </Modal.Body>
+          </Modal.Dialog>
+        </Modal>
+      </React.Suspense>
       <div className="songContainer songHeader">
         <span className="songArtist">Artist</span>
         <span className="songAlbum">Album</span>

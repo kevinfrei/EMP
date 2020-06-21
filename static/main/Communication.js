@@ -246,7 +246,31 @@ async function ipcDeleter(data) {
   return false;
 }
 
+async function ipcSong(data) {}
 
+async function ipcSongs(data) {}
+
+async function ipcSongKeys(data) {}
+
+async function ipcMediaInfo(key) {
+  if (typeof key !== 'string') {
+    return;
+  }
+  const musicDB = await persist.getItemAsync('DB');
+  if (!musicDB) {
+    console.log("Can't load DB");
+    return;
+  }
+  const song = musicDB.songs.get(key);
+  if (!song) {
+    console.log("Can't find music key " + key);
+    return;
+  }
+  const data: MediaInfo = await getMediaInfo(song.path);
+  log(`Fetched the media info for ${song.path}:`);
+  log(data);
+  return { key, data };
+}
 
 // Called to just set stuff up (nothing has actually been done yet)
 function Init() {
@@ -277,12 +301,17 @@ function Init() {
   promiseIpc.on('promise-del', ipcDeleter);
   /*
   promiseIpc.on('promise-artist', ipcArtist);
-  promiseIpc.on('promise-artists', ipcArtistKeys);
+  promiseIpc.on('promise-artists', ipcArtists);
+  promiseIpc.on('promise-artistKeys', ipcArtistKeys);
   promiseIpc.on('promise-album', ipcAlbum);
-  promiseIpc.on('promise-albums', ipcAlbumKeys);
+  promiseIpc.on('promise-albums', ipcAlbums);
+  promiseIpc.on('promise-albumKeys', ipcAlbumKeys);
   promiseIpc.on('promise-song', ipcSong);
-  promiseIpc.on('promise-songs', ipcSongKeys);
+  promiseIpc.on('promise-songs', ipcSongs);
+  promiseIpc.on('promise-songKeys', ipcSongKeys);
+  */
   promiseIpc.on('promise-mediaInfo', ipcMediaInfo);
+  /*
   promiseIpc.on('promise-playlist', ipcPlaylistDetails);
   promiseIpc.on('promise-playlists', ipcPlaylists);
   */
