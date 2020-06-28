@@ -23,7 +23,7 @@
     "react-scripts": "3.4.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
-    "recoil": "^0.0.7",
+    "recoil": "^0.0.10",
     "rxjs": "^6.5.5",
     "simplelogger": "file:./submodules/simplelogger",
     "source-map-explorer": "^2.4.2",
@@ -54,15 +54,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
+    "@babel/core": "^7.10.3",
     "concurrently": "^5.2.0",
     "cross-env": "^7.0.2",
-    "electron": "^8.2.5",
-    "electron-builder": "^22.6.0",
-    "electron-devtools-installer": "^3.0.0",
-    "flow-bin": "^0.124.0",
-    "flow-remove-types": "^2.124.0",
-    "typescript": "^3.9.2",
-    "wait-on": "^5.0.0"
+    "electron": "^9.0.5",
+    "electron-builder": "^22.7.0",
+    "electron-devtools-installer": "^3.1.0",
+    "flow-bin": "^0.128.0",
+    "flow-remove-types": "^2.128.0",
+    "typescript": "^3.9.5",
+    "wait-on": "^5.0.1"
   }
 }
