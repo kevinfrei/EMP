@@ -12,21 +12,21 @@
   "homepage": "./",
   "dependencies": {
     "bootstrap": "^4.5.0",
-    "csstype": "^2.6.10",
+    "csstype": "^2.6.11",
     "electron-is-dev": "^1.2.0",
     "electron-promise-ipc": "^2.1.0",
     "media-utils": "file:./submodules/media-utils",
     "my-utils": "file:./submodules/js-freik-utils",
     "node-mediainfo": "^1.0.3",
     "react": "^16.13.1",
-    "react-bootstrap": "^1.0.1",
+    "react-bootstrap": "^1.2.2",
     "react-dom": "^16.13.1",
     "react-eternal-list": "^1.0.6",
     "react-scripts": "3.4.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "recoil": "^0.0.10",
-    "rxjs": "^6.5.5",
+    "rxjs": "^6.6.0",
     "simplelogger": "file:./submodules/simplelogger",
     "source-map-explorer": "^2.4.2",
     "undux": "^5.2.0"
@@ -56,15 +56,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
+    "@babel/core": "^7.10.5",
     "concurrently": "^5.2.0",
     "cross-env": "^7.0.2",
-    "electron": "^9.0.5",
+    "electron": "^9.1.1",
     "electron-builder": "^22.7.0",
-    "electron-devtools-installer": "^3.1.0",
-    "flow-bin": "^0.128.0",
-    "flow-remove-types": "^2.128.0",
-    "typescript": "^3.9.5",
-    "wait-on": "^5.0.1"
+    "electron-devtools-installer": "^3.1.1",
+    "flow-bin": "^0.129.0",
+    "flow-remove-types": "^2.129.0",
+    "typescript": "^3.9.7",
+    "wait-on": "^5.1.0"
   }
 }
