@@ -130,16 +130,16 @@ const Settings = () => {
     <>
       <div id="current-view" />
       <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
-        <Card>
-          <Card.Body>
-            <Card.Title>Music Locations</Card.Title>
-            <Container>
-              <React.Suspense fallback={<div>Loading</div>}>
+        <React.Suspense fallback={<div>Loading Locations...</div>}>
+          <Card>
+            <Card.Body>
+              <Card.Title>Music Locations</Card.Title>
+              <Container>
                 <RecoilLocations />
-              </React.Suspense>
-            </Container>
-          </Card.Body>
-        </Card>
+              </Container>
+            </Card.Body>
+          </Card>
+        </React.Suspense>
         <Card>
           <Card.Body>
             <Card.Title>Sorting Preferences</Card.Title>

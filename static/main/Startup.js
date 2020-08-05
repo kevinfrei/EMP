@@ -14,9 +14,10 @@ import type { MusicDB } from './music';
 const log = logger.bind('Startup');
 
 function getLocations(): Array<string> {
-  let musicLocations = FTON.arrayOfStrings(
-    FTON.parse(persist.getItem('locations'))
-  );
+  let rawLocations = persist.getItem('locations');
+  let musicLocations = rawLocations
+    ? FTON.arrayOfStrings(rawLocations)
+    : undefined;
   if (!musicLocations || musicLocations.length === 0) {
     // Default the music locations to the OS-specific "music" path
     musicLocations = [app.getPath('music')];
@@ -27,9 +28,12 @@ function getLocations(): Array<string> {
 
 async function getMusicDb() {
   let musicLocations = getLocations();
+  log('Got music locations:');
+  log(musicLocations);
   let musicDB = await music.find(musicLocations);
+  log('Got Music DB!');
   persist.setItem('DB', musicDB);
-  const artistIndex = makeIndex(musicDB.artists.values(), a => a.name);
+  const artistIndex = makeIndex(musicDB.artists.values(), (a) => a.name);
   SetIndex('artist', artistIndex);
 }
 

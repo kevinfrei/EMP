@@ -4,7 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';
 
-import { getMediaInfoSelector } from '../Atoms';
+import { getMediaInfo } from '../Atoms';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
@@ -28,7 +28,7 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
 }
 
 function MediaInfoTable({ id }: { id: string }) {
-  const mediaInfo = useRecoilValue(getMediaInfoSelector(id));
+  const mediaInfo = useRecoilValue(getMediaInfo(id));
   if (mediaInfo) {
     const genLines = mediaInfoToLine('gen', mediaInfo.general);
     const audLines = mediaInfoToLine('aud', mediaInfo.audio);
