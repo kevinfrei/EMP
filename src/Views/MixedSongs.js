@@ -1,6 +1,7 @@
 // @flow
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
+import EternalList from 'react-eternal-list';
 
 import Store from '../MyStore';
 
@@ -61,24 +62,18 @@ export default function MixedSongView() {
 
   const handleClose = () => setSelected('');
 
-  const VirtualSongRow = ({
-    index,
-    style,
-  }: {
-    index: number,
-    style: Properties<>,
-  }): React$Node => {
+  const VirtualSongRow = (item, index): React$Node => {
+    // style={style}
     return (
       <SongLine
         template="RL#T"
         key={index}
-        style={style}
         className={
           index & 1
             ? 'songContainer evenMixedSong'
             : 'songContainer oddMixedSong'
         }
-        songKey={songArray[index]}
+        songKey={item}
         onDoubleClick={AddSong}
         onAuxClick={(store, songKey) => setSelected(songKey)}
       />
@@ -105,12 +100,17 @@ export default function MixedSongView() {
         <span className="songTrack">#</span>
         <span className="songTitle">Title</span>
       </div>
-      <VerticalScrollFixedVirtualList
+      <EternalList
+        list={songArray}
+        updateRate={100}
+        component={VirtualSongRow}
+      />
+    </div>
+  );
+  /*      <VerticalScrollFixedVirtualList
         scrollId="mixedSongsScrollId"
         itemCount={songs.size}
         itemSize={28}
         itemGenerator={VirtualSongRow}
-      />
-    </div>
-  );
+      />*/
 }

@@ -8,6 +8,7 @@ import './styles/Scrollables.css';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { FixedSizeList, VariableSizeList } from 'react-window';
+
 import type { Properties } from 'csstype';
 
 export function VerticalScrollDiv({
