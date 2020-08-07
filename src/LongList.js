@@ -1,7 +1,8 @@
+// @flow
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-
+// Local styles pulled from the styles.css file
 const styles = {
   eternalList: {
     float: 'left',
@@ -34,6 +35,7 @@ const styles = {
 let containerRef = React.createRef();
 let dummyELRef = React.createRef();
 
+// I want to try re-implementing in a functional React component...
 export function AnEternalList({
   list,
   component,
@@ -44,7 +46,20 @@ export function AnEternalList({
   return <div></div>;
 }
 
-export class OldEternalList extends Component {
+type OELNode = {
+  top?: number,
+  bottom?: number,
+  height?: number,
+  visible: boolean,
+  parent: boolean,
+  data?: Array<OELNode>,
+  getparent: () => Array<OELNode>,
+};
+type OELProps = { list: Array<*>, component: Function };
+// This doesn't look consistent within the code
+type OELState = { list: OELNode | Array<OELNode> };
+
+export class OldEternalList extends Component<OELProps, OELState> {
   static propTypes = {
     list: PropTypes.array,
     component: PropTypes.func,
@@ -54,17 +69,26 @@ export class OldEternalList extends Component {
     list: [],
   };
 
-  listItemHeightShouldUpdate = true;
-  minimumStackSize = 10;
-  scrollTop = 0;
-  containerHeight = window.innerHeight;
+  listItemHeightShouldUpdate: boolean = true;
+  listItemHeight: number = -1;
+  minimumStackSize: number = 10;
+  scrollTop: number = 0;
+  containerHeight: number = window.innerHeight;
+  componentSign: ?Date;
+  totalTop: number = -1;
+  list: ?OELNode;
+  renderedContainerCount: number = 0;
+  renderedComponentCount: number = 0;
 
   // This is being invoked before the component is rendered, I think
-  UNSAFE_componentWillReceiveProps(props) {
+  UNSAFE_componentWillReceiveProps(props: OELProps) {
     this.updateeternalList(props);
   }
 
-  updateeternalList = (props = this.props) => {
+  updateeternalList = (props?: OELProps) => {
+    if (!props) {
+      props = this.props;
+    }
     let shoudUpdate = this.isComponentUpdated(props);
     shoudUpdate = this.setList(props) || shoudUpdate;
     if (shoudUpdate) {
@@ -74,13 +98,15 @@ export class OldEternalList extends Component {
   };
 
   componentDidMount() {
-    this.containerHeight = parseInt(containerRef.current.clientHeight, 10);
-    this.updateListItemHeight();
-    this.updateeternalList();
+    if (containerRef.current) {
+      this.containerHeight = parseInt(containerRef.current.clientHeight, 10);
+      this.updateListItemHeight();
+      this.updateeternalList();
+    }
   }
 
-  // What is this actually doing? It's looking for some time stamp to see if we should update somethign?
-  isComponentUpdated = (props) => {
+  // This checks to see if the size of the list item might have changed
+  isComponentUpdated = (props: OELProps) => {
     if (!this.componentSign || this.componentSign !== props.component.sign) {
       props.component.sign = Date.now();
       this.componentSign = props.component.sign;
@@ -90,8 +116,8 @@ export class OldEternalList extends Component {
     return false;
   };
 
-  updateNodeDimension = (node) => {
-    if (node.parent) {
+  updateNodeDimension = (node: OELNode) => {
+    if (node.parent && node.data) {
       node.height = 0;
       let temp;
       for (let idx = 0; idx < node.data.length; idx++) {
@@ -111,27 +137,34 @@ export class OldEternalList extends Component {
 
   updateListDimension = () => {
     this.totalTop = 0;
-    this.updateNodeDimension(this.list);
+    if (this.list) {
+      this.updateNodeDimension(this.list);
+    }
   };
 
-  isNodeVisible = (node) => {
+  isNodeVisible = (node: OELNode): boolean => {
     return (
+      node.top !== undefined &&
+      node.bottom !== undefined &&
       node.top <= this.scrollTop + this.containerHeight * 1.5 &&
       node.bottom - this.containerHeight * -0.5 >= this.scrollTop
     );
   };
 
-  updateNodeVisibility = (node) => {
+  updateNodeVisibility = (node: OELNode) => {
     node.visible = this.isNodeVisible(node);
-    if (node.visible && node.parent) {
+    if (node.visible && node.parent && node.data) {
       for (let idx = 0; idx < node.data.length; idx++) {
         this.updateNodeVisibility(node.data[idx]);
       }
     }
   };
 
+  // This appears to read the height for list items from a dummy list element.
+  // I like that you don't have to specify the element height, but this seems
+  // at least iffy, and honestly, somewhat problematic.
   updateListItemHeight = () => {
-    if (this.listItemHeightShouldUpdate === true) {
+    if (this.listItemHeightShouldUpdate === true && dummyELRef.current) {
       this.listItemHeight = dummyELRef.current.clientHeight;
       this.component = this.props.component;
       this.listItemHeightShouldUpdate = false;
@@ -141,7 +174,7 @@ export class OldEternalList extends Component {
   };
 
   updateListVisibility = () => {
-    let time = window.performance.now();
+    let time:number = window.performance.now();
     this.updateNodeVisibility(this.list);
     this.visibilityCheckTime = window.performance.now() - time;
     this.setState({ list: this.list || [] }, () => {
@@ -176,7 +209,7 @@ export class OldEternalList extends Component {
   // Being a performance-focused engineer, I dislike that 10 is hard-coded,
   // with no explanation.
   // Is 10 the right number? I have no idea. Profile!
-  recursiveSplit = (data) => {
+  recursiveSplit = (data: Array<OELNode>) => {
     if (data.length / 2 > this.minimumStackSize) {
       let mid = Math.floor(data.length / 2, 10);
       let node = {
@@ -196,11 +229,12 @@ export class OldEternalList extends Component {
   };
 
   // Lame helper to support an empty list? Not completely sure...
-  getList = () => this.state.list || {};
+  getList = (): OELNode => this.state.list || {};
 
   // This returns the binary tree of visible portions of the list,
   // but I haven't spent any time to understand what it's doing yet.
-  renderList = (node = this.getList()) => {
+  renderList = (node: ?OELNode) => {
+    node = node || this.getList();
     if (node.parent) {
       this.renderedContainerCount += (node.data || []).length;
       return (node.data || []).map((item, index) => {
