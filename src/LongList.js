@@ -3,34 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 // Local styles pulled from the styles.css file
-const styles = {
-  eternalList: {
-    float: 'left',
-    height: '100%',
-    width: '100%',
-    overflow: 'auto',
-  },
-  ilParent: {
-    float: 'left',
-    width: '100%',
-    height: '100%',
-  },
-  ilDummy: {
-    position: 'absolute',
-    width: 0,
-    height: 0,
-    overflow: 'hidden',
-    top: '-100%',
-    left: '-100%',
-  },
-  dummyContainer: {
-    float: 'left',
-  },
-  ilParent: {
-    float: 'left',
-    width: '100%',
-  },
-};
+import './styles/LongList.css';
 
 let containerRef = React.createRef();
 let dummyELRef = React.createRef();
@@ -55,7 +28,9 @@ type OELNode = {
   data?: Array<OELNode>,
   getparent: () => Array<OELNode>,
 };
+
 type OELProps = { list: Array<*>, component: Function };
+
 // This doesn't look consistent within the code
 type OELState = { list: OELNode | Array<OELNode> };
 
@@ -174,7 +149,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
   };
 
   updateListVisibility = () => {
-    let time:number = window.performance.now();
+    let time: number = window.performance.now();
     this.updateNodeVisibility(this.list);
     this.visibilityCheckTime = window.performance.now() - time;
     this.setState({ list: this.list || [] }, () => {
@@ -239,11 +214,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
       this.renderedContainerCount += (node.data || []).length;
       return (node.data || []).map((item, index) => {
         return (
-          <div
-            className={styles.ilParent}
-            key={index}
-            style={{ height: item.height }}
-          >
+          <div className="ilParent" key={index} style={{ height: item.height }}>
             {item.visible ? this.renderList(item) : ''}
           </div>
         );
@@ -274,7 +245,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
   // This is to measure the height of one of the elements, AFAICT
   renderDummy = () => {
     return (
-      <div className={styles.dummyContainer} ref={dummyELRef}>
+      <div className="dummyContainer" ref={dummyELRef}>
         {this.props.component((this.props.list || [])[0] || {})}
       </div>
     );
@@ -287,14 +258,14 @@ export class OldEternalList extends Component<OELProps, OELState> {
 
     return (
       <div
-        className={styles.eternalList}
+        className="eternalList"
         onScroll={this.handleScroll}
         ref={containerRef}
       >
-        <div className={styles.ilDummy}>
+        <div className="ilDummy">
           <this.renderDummy />
         </div>
-        <div className={styles.ilContainer}>{renderedList}</div>
+        <div className="ilContainer">{renderedList}</div>
       </div>
     );
   }

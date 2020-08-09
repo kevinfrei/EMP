@@ -1,0 +1,24 @@
+.eternalList {
+  float: left;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
+.ilDummy {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  top: -100%;
+  left: -100%;
+}
+
+.dummyContainer {
+  float: left;
+}
+
+.ilParent {
+  float: left;
+  width: 100%;
+}

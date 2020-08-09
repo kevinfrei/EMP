@@ -9,6 +9,7 @@ import { getMediaInfo } from '../Atoms';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
+import { OldEternalList } from '../LongList';
 
 import type { Properties } from 'csstype';
 
@@ -100,7 +101,7 @@ export default function MixedSongView() {
         <span className="songTrack">#</span>
         <span className="songTitle">Title</span>
       </div>
-      <EternalList
+      <OldEternalList
         list={songArray}
         updateRate={100}
         component={VirtualSongRow}
