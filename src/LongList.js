@@ -256,7 +256,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
         onScroll={this.handleScroll}
         ref={containerRef}
       >
-        {renderedList}Î
+        {renderedList}
       </div>
     );
   }
