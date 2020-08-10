@@ -6,17 +6,23 @@ import PropTypes from 'prop-types';
 import './styles/LongList.css';
 
 let containerRef = React.createRef();
-let dummyELRef = React.createRef();
 
 // I want to try re-implementing in a functional React component...
 export function AnEternalList({
   list,
   component,
+  defaultHeight,
 }: {
   list: Array<any>,
   component: Function,
+  defaultHeight?: number,
 }): React$Node {
-  return <div></div>;
+  return (
+    <div>
+      <div>eternalList</div>
+      <div>Right helper</div>
+    </div>
+  );
 }
 
 type OELNode = {
@@ -29,7 +35,7 @@ type OELNode = {
   getparent: () => Array<OELNode>,
 };
 
-type OELProps = { list: Array<*>, component: Function };
+type OELProps = { list: Array<*>, component: () => React$Node };
 
 // This doesn't look consistent within the code
 type OELState = { list: OELNode | Array<OELNode> };
@@ -139,8 +145,8 @@ export class OldEternalList extends Component<OELProps, OELState> {
   // I like that you don't have to specify the element height, but this seems
   // at least iffy, and honestly, somewhat problematic.
   updateListItemHeight = () => {
-    if (this.listItemHeightShouldUpdate === true && dummyELRef.current) {
-      this.listItemHeight = dummyELRef.current.clientHeight;
+    if (this.listItemHeightShouldUpdate === true) {
+      this.listItemHeight = 32;
       this.component = this.props.component;
       this.listItemHeightShouldUpdate = false;
       return true;
@@ -210,20 +216,17 @@ export class OldEternalList extends Component<OELProps, OELState> {
   // but I haven't spent any time to understand what it's doing yet.
   renderList = (node: ?OELNode) => {
     node = node || this.getList();
+    const data: Array<OELNode> = node.data || [];
     if (node.parent) {
-      this.renderedContainerCount += (node.data || []).length;
-      return (node.data || []).map((item, index) => {
-        return (
-          <div className="ilParent" key={index} style={{ height: item.height }}>
-            {item.visible ? this.renderList(item) : ''}
-          </div>
-        );
-      });
+      this.renderedContainerCount += data.length;
+      return data.map((item: OELNode, index: number) => (
+        <div className="ilParent" key={index} style={{ height: item.height }}>
+          {item.visible ? this.renderList(item) : ''}
+        </div>
+      ));
     } else {
-      this.renderedComponentCount += (node.data || []).length;
-      return (node.data || []).map((item, index) => {
-        return this.component(item, index);
-      });
+      this.renderedComponentCount += data.length;
+      return data.map((item, index) => this.component(item, index));
     }
   };
 
@@ -242,15 +245,6 @@ export class OldEternalList extends Component<OELProps, OELState> {
     }, this.props.updateRate || 100);
   };
 
-  // This is to measure the height of one of the elements, AFAICT
-  renderDummy = () => {
-    return (
-      <div className="dummyContainer" ref={dummyELRef}>
-        {this.props.component((this.props.list || [])[0] || {})}
-      </div>
-    );
-  };
-
   render() {
     this.renderedComponentCount = 0;
     this.renderedContainerCount = 0;
@@ -262,10 +256,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
         onScroll={this.handleScroll}
         ref={containerRef}
       >
-        <div className="ilDummy">
-          <this.renderDummy />
-        </div>
-        <div className="ilContainer">{renderedList}</div>
+        {renderedList}Î
       </div>
     );
   }
