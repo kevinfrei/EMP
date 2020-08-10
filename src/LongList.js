@@ -1,11 +1,68 @@
 // @flow
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Local styles pulled from the styles.css file
 import './styles/LongList.css';
 
 let containerRef = React.createRef();
+
+type OELNode = {
+  top?: number,
+  bottom?: number,
+  height?: number,
+  visible: boolean,
+  parent: boolean,
+  data?: Array<OELNode>,
+};
+
+type BinaryDivProps<T> = {
+  data: Array<T>,
+  component: (item: T, index: number) => React$Node,
+  index: number,
+  top: number,
+  visibleTop: number,
+  visibleBottom: number,
+  resizer: (newSize: number) => void,
+  defaultHeight?: number,
+};
+
+const cutoff = 50;
+
+function BinaryDiv({
+  data,
+  component,
+  index,
+  top,
+  visibleTop,
+  visibleBottom,
+  resizer,
+  defaultHeight,
+}: BinaryDivProps<*>): React$Node {
+  if (data.length > cutoff) {
+    let mid = Math.floor(data.length / 2);
+    <>“‘
+    return (
+        <BinaryDiv
+          data={data.slice(0, mid)}
+          component={component}
+          index={index}
+          resizer={resizer}
+          defaultHeight={defaultHeight}
+        />
+        <BinaryDiv
+          data={data.slice(mid, data.length + 1)}
+          component={component}
+          index={mid + index}
+          resizer={resizer}
+          defaultHeight={defaultHeight}
+        />
+      </>
+    );
+  } else {
+    return <>data.map(component)</>;
+  }
+}
 
 // I want to try re-implementing in a functional React component...
 export function AnEternalList({
@@ -32,7 +89,6 @@ type OELNode = {
   visible: boolean,
   parent: boolean,
   data?: Array<OELNode>,
-  getparent: () => Array<OELNode>,
 };
 
 type OELProps = { list: Array<*>, component: () => React$Node };
@@ -52,7 +108,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
 
   listItemHeightShouldUpdate: boolean = true;
   listItemHeight: number = -1;
-  minimumStackSize: number = 10;
+  minimumStackSize: number = 50;
   scrollTop: number = 0;
   containerHeight: number = window.innerHeight;
   componentSign: ?Date;
@@ -186,16 +242,15 @@ export class OldEternalList extends Component<OELProps, OELState> {
     return false;
   };
 
-  // Create's a binary tree of data until you get down to 10 elements.
-  // Being a performance-focused engineer, I dislike that 10 is hard-coded,
-  // with no explanation.
-  // Is 10 the right number? I have no idea. Profile!
+  // Create's a binary tree of data until you get down to 50 elements.
+  // Being a performance-focused engineer, I dislike that 50 is hard-coded
+  // with no explanation. It should be adaptive
+  // Is 50 the right number? I have no idea. Profile!
   recursiveSplit = (data: Array<OELNode>) => {
     if (data.length / 2 > this.minimumStackSize) {
-      let mid = Math.floor(data.length / 2, 10);
+      let mid = Math.floor(data.length / 2);
       let node = {
         parent: true,
-        getParent: () => data,
         data: [
           this.recursiveSplit(data.slice(0, mid)),
           this.recursiveSplit(data.slice(mid, data.length + 1)),
