@@ -10,7 +10,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useRecoilState } from 'recoil';
 
 import Store from '../MyStore';
-import { locations } from '../Atoms';
+import { locations, SortWithArticles } from '../Atoms';
 
 import { VerticalScrollDiv } from '../Scrollables';
 
@@ -32,9 +32,10 @@ function GetDirs() {
 }
 
 function sortPopup(item) {
+  const [value, setter] = useRecoilState(item.atom);
   const names: Array<string> = item.names;
-  const selected = item.types.indexOf(item.value);
-  const select = (key) => item.setter(key);
+  const selected = item.types.indexOf(value);
+  const select = (key) => setter(key);
   return (
     <Row>
       <Col xs={3} style={{ height: '35px' }}>
@@ -58,7 +59,7 @@ function sortPopup(item) {
   );
 }
 
-const RecoilLocations = () => {
+function RecoilLocations() {
   const [recoilLocations, setRecoilLocations] = useRecoilState(locations);
   return (
     <>
@@ -97,16 +98,32 @@ const RecoilLocations = () => {
       </Row>
     </>
   );
-};
+}
+
+function ArticleSorting() {
+  const [articles, setArticles] = useRecoilState(SortWithArticles);
+  return (
+    <Row>
+      <Col xs={3}>
+        <span style={{ float: 'right' }}>Consider articles</span>
+      </Col>
+      <Col>
+        <input
+          type="checkbox"
+          checked={articles}
+          onChange={() => setArticles(!articles)}
+        ></input>
+      </Col>
+    </Row>
+  );
+}
 
 const Settings = () => {
   const store = Store.useStore();
-  const articles = store.get('SortWithArticles');
-  const setArticles = store.set('SortWithArticles');
 
   const album = {
     title: 'Album',
-    value: store.get('AlbumListSort'),
+    atom: store.get('AlbumListSort'),
     setter: store.set('AlbumListSort'),
     types: ['AlbumTitle', 'AlbumYear', 'ArtistAlbum', 'ArtistYear'],
     names: ['Title', 'Year', 'Artist, then Title', 'Artist, then Year'],
@@ -129,8 +146,8 @@ const Settings = () => {
   return (
     <>
       <div id="current-view" />
-      <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
-        <React.Suspense fallback={<div>Loading Locations...</div>}>
+      <React.Suspense fallback={<div>Loading Locations...</div>}>
+        <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
           <Card>
             <Card.Body>
               <Card.Title>Music Locations</Card.Title>
@@ -139,30 +156,19 @@ const Settings = () => {
               </Container>
             </Card.Body>
           </Card>
-        </React.Suspense>
-        <Card>
-          <Card.Body>
-            <Card.Title>Sorting Preferences</Card.Title>
-            <Container>
-              {sortPopup(album)}
-              {sortPopup(artist)}
-              {sortPopup(song)}
-              <Row>
-                <Col xs={3}>
-                  <span style={{ float: 'right' }}>Consider articles</span>
-                </Col>
-                <Col>
-                  <input
-                    type="checkbox"
-                    checked={articles}
-                    onChange={() => setArticles(!articles)}
-                  ></input>
-                </Col>
-              </Row>
-            </Container>
-          </Card.Body>
-        </Card>
-      </VerticalScrollDiv>
+          <Card>
+            <Card.Body>
+              <Card.Title>Sorting Preferences</Card.Title>
+              <Container>
+                {sortPopup(album)}
+                {sortPopup(artist)}
+                {sortPopup(song)}
+                <ArticleSorting />
+              </Container>
+            </Card.Body>
+          </Card>
+        </VerticalScrollDiv>
+      </React.Suspense>
     </>
   );
 };

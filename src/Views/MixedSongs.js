@@ -1,7 +1,8 @@
 // @flow
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import EternalList from 'react-eternal-list';
+import VirtualizedList from '@dwqs/react-virtual-list';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 import Store from '../MyStore';
 
@@ -63,7 +64,7 @@ export default function MixedSongView() {
 
   const handleClose = () => setSelected('');
 
-  const VirtualSongRow = (item, index): React$Node => {
+  const VirtualSongRow = ({ index }: { index: number }): React$Node => {
     // style={style}
     return (
       <SongLine
@@ -74,13 +75,25 @@ export default function MixedSongView() {
             ? 'songContainer evenMixedSong'
             : 'songContainer oddMixedSong'
         }
-        songKey={item}
+        songKey={songArray[index]}
         onDoubleClick={AddSong}
         onAuxClick={(store, songKey) => setSelected(songKey)}
       />
     );
   };
-
+  // height={height}
+  const customView = ({ height, width }) => (
+    <div style={{ width, height, border:'0px' }}>
+      <VirtualizedList
+        height={height}
+        useWindow={false}
+        itemCount={songArray.length}
+        estimatedItemHeight={32}
+        renderItem={VirtualSongRow}
+        overscanCount={50}
+      />
+    </div>
+  );
   return (
     <div className="songView">
       <React.Suspense fallback="Please wait...">
@@ -101,17 +114,7 @@ export default function MixedSongView() {
         <span className="songTrack">#</span>
         <span className="songTitle">Title</span>
       </div>
-      <OldEternalList
-        list={songArray}
-        updateRate={100}
-        component={VirtualSongRow}
-      />
+      <AutoSizer>{customView}</AutoSizer>
     </div>
   );
-  /*      <VerticalScrollFixedVirtualList
-        scrollId="mixedSongsScrollId"
-        itemCount={songs.size}
-        itemSize={28}
-        itemGenerator={VirtualSongRow}
-      />*/
 }

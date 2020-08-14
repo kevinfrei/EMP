@@ -1,5 +1,5 @@
 // @flow
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 // Local styles pulled from the styles.css file
@@ -7,75 +7,19 @@ import './styles/LongList.css';
 
 let containerRef = React.createRef();
 
-type OELNode = {
-  top?: number,
-  bottom?: number,
-  height?: number,
-  visible: boolean,
-  parent: boolean,
-  data?: Array<OELNode>,
-};
-
-type BinaryDivProps<T> = {
-  data: Array<T>,
-  component: (item: T, index: number) => React$Node,
-  index: number,
-  top: number,
-  visibleTop: number,
-  visibleBottom: number,
-  resizer: (newSize: number) => void,
-  defaultHeight?: number,
-};
-
-const cutoff = 50;
-
-function BinaryDiv({
-  data,
-  component,
-  index,
-  top,
-  visibleTop,
-  visibleBottom,
-  resizer,
-  defaultHeight,
-}: BinaryDivProps<*>): React$Node {
-  if (data.length > cutoff) {
-    let mid = Math.floor(data.length / 2);
-    <>“‘
-    return (
-        <BinaryDiv
-          data={data.slice(0, mid)}
-          component={component}
-          index={index}
-          resizer={resizer}
-          defaultHeight={defaultHeight}
-        />
-        <BinaryDiv
-          data={data.slice(mid, data.length + 1)}
-          component={component}
-          index={mid + index}
-          resizer={resizer}
-          defaultHeight={defaultHeight}
-        />
-      </>
-    );
-  } else {
-    return <>data.map(component)</>;
-  }
-}
-
-// I want to try re-implementing in a functional React component...
+// I want to try re-implementing in a functional React component at some point.
 export function AnEternalList({
   list,
   component,
   defaultHeight,
 }: {
   list: Array<any>,
-  component: Function,
+  component: (item: any, index: number) => React$Node,
   defaultHeight?: number,
 }): React$Node {
+  const ref = useRef(null);
   return (
-    <div>
+    <div ref={ref} onScroll={this.handleScroll}>
       <div>eternalList</div>
       <div>Right helper</div>
     </div>
@@ -91,7 +35,17 @@ type OELNode = {
   data?: Array<OELNode>,
 };
 
-type OELProps = { list: Array<*>, component: () => React$Node };
+type OELProps = {
+  list: Array<*>,
+  component: (item: any, index: number) => React$Node,
+  onUpdate: (param: {
+    renderedComponentCount: number,
+    renderedContainerCount: number,
+    renderedDivCount: number,
+    visibilityCheckTime: number,
+  }) => void,
+  updateRate?: number,
+};
 
 // This doesn't look consistent within the code
 type OELState = { list: OELNode | Array<OELNode> };
@@ -100,6 +54,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
   static propTypes = {
     list: PropTypes.array,
     component: PropTypes.func,
+    updateRate: PropTypes.number,
   };
 
   state = {
@@ -111,11 +66,15 @@ export class OldEternalList extends Component<OELProps, OELState> {
   minimumStackSize: number = 50;
   scrollTop: number = 0;
   containerHeight: number = window.innerHeight;
+  component: (item: any, index: number) => React$Node;
   componentSign: ?Date;
   totalTop: number = -1;
   list: ?OELNode;
   renderedContainerCount: number = 0;
   renderedComponentCount: number = 0;
+  updationInterval: ?IntervalID = null;
+  updationDebounce: ?NodeJS.Timeout = null;
+  visibilityCheckTime: number = 0;
 
   // This is being invoked before the component is rendered, I think
   UNSAFE_componentWillReceiveProps(props: OELProps) {
@@ -269,7 +228,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
 
   // This returns the binary tree of visible portions of the list,
   // but I haven't spent any time to understand what it's doing yet.
-  renderList = (node: ?OELNode) => {
+  renderList = (node: ?OELNode): Array<React$Node> => {
     node = node || this.getList();
     const data: Array<OELNode> = node.data || [];
     if (node.parent) {
@@ -285,7 +244,7 @@ export class OldEternalList extends Component<OELProps, OELState> {
     }
   };
 
-  handleScroll = (e) => {
+  handleScroll = (e:Event) => {
     this.scrollTop = e.target.scrollTop;
     clearTimeout(this.updationDebounce);
     if (!this.updationInterval) {

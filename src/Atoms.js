@@ -35,3 +35,19 @@ export const getMediaInfo = selectorFamily({
     return result.data;
   },
 });
+
+export const SortWithArticles = selector({
+  key: 'sort-with-articles-selector',
+  get: async ({ get }): Promise<boolean> => {
+    const result = await window.ipcPromise.send('promise-get', {
+      key: 'sort-with-articles',
+    });
+    return !!result;
+  },
+  set: ({ set }, newValue: boolean) => {
+    const result = window.ipcPromise.send('promise-set', {
+      key: 'sort-with-articles',
+      value: newValue,
+    });
+  },
+});

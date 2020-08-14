@@ -1138,6 +1138,14 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
+"@dwqs/react-virtual-list@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@dwqs/react-virtual-list/-/react-virtual-list-1.0.0.tgz#ec75d97a94cb3f7f3e64f9c98a5d23548ece7eed"
+  integrity sha512-K62kg8yYVbI8LybC+RI8L9Wwkk2XL/DSV6BmOeFMUJoZREVyPpDztk7DdjDCtJi8GWVoS9OP0lCQsLnw72n8dw==
+  dependencies:
+    lodash.throttle "^4.1.1"
+    resize-observer-polyfill "^1.5.0"
+
 "@electron/get@^1.0.1":
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.12.2.tgz#6442066afb99be08cefb9a281e4b4692b33764f3"
@@ -7252,6 +7260,11 @@ lodash.templatesettings@^4.0.0:
   dependencies:
     lodash._reinterpolate "^3.0.0"
 
+lodash.throttle@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/lodash.throttle/-/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
+  integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
+
 lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
@@ -7385,8 +7398,8 @@ media-typer@0.3.0:
 "media-utils@file:./submodules/media-utils":
   version "0.1.0"
   dependencies:
-    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-a3feb2f5-10a3-4562-a6d7-17af89197dc3-1596261295859/node_modules/node-freik-utils"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-a3feb2f5-10a3-4562-a6d7-17af89197dc3-1596261295859/node_modules/js-freik-utils"
+    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-6ef4bd41-65aa-4483-9545-f2b06f9a166d-1597370931780/node_modules/node-freik-utils"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-6ef4bd41-65aa-4483-9545-f2b06f9a166d-1597370931780/node_modules/js-freik-utils"
 
 mem@^4.0.0:
   version "4.3.0"
@@ -7659,8 +7672,8 @@ mute-stream@0.0.8:
   version "0.1.0"
   dependencies:
     fs-extra "^9.0.0"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-c04364a4-5bed-43b2-a6da-25f49168953e-1596261295864/node_modules/js-freik-utils"
-    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-c04364a4-5bed-43b2-a6da-25f49168953e-1596261295864/node_modules/simplelogger"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-40e20426-da78-4735-bbf5-9c4f0a1913ff-1597370931783/node_modules/js-freik-utils"
+    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-40e20426-da78-4735-bbf5-9c4f0a1913ff-1597370931783/node_modules/simplelogger"
 
 "my-utils@file:./submodules/js-freik-utils", "my-utils@file:submodules/js-freik-utils":
   version "0.2.0"
@@ -9894,6 +9907,11 @@ requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
+
+resize-observer-polyfill@^1.5.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
+  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
 
 resolve-cwd@^2.0.0:
   version "2.0.0"

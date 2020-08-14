@@ -11,6 +11,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
+    "@dwqs/react-virtual-list": "^1.0.0",
     "bootstrap": "^4.5.0",
     "csstype": "^2.6.11",
     "electron-is-dev": "^1.2.0",
