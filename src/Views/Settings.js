@@ -10,7 +10,13 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { useRecoilState } from 'recoil';
 
 import Store from '../MyStore';
-import { locations, SortWithArticles } from '../Atoms';
+import {
+  locations,
+  SortWithArticles,
+  AlbumListSort,
+  ArtistListSort,
+  SongListSort,
+} from '../Atoms';
 
 import { VerticalScrollDiv } from '../Scrollables';
 
@@ -31,7 +37,7 @@ function GetDirs() {
   });
 }
 
-function sortPopup(item) {
+function SortPopup({ item }): React$Node {
   const [value, setter] = useRecoilState(item.atom);
   const names: Array<string> = item.names;
   const selected = item.types.indexOf(value);
@@ -123,22 +129,19 @@ const Settings = () => {
 
   const album = {
     title: 'Album',
-    atom: store.get('AlbumListSort'),
-    setter: store.set('AlbumListSort'),
+    atom: AlbumListSort,
     types: ['AlbumTitle', 'AlbumYear', 'ArtistAlbum', 'ArtistYear'],
     names: ['Title', 'Year', 'Artist, then Title', 'Artist, then Year'],
   };
   const artist = {
     title: 'Artist',
-    value: store.get('ArtistListSort'),
-    setter: store.set('ArtistListSort'),
+    atom: ArtistListSort,
     types: ['AlbumCount', 'ArtistName', 'SongCount'],
     names: ['# of Albums', 'Name', '# of songs'],
   };
   const song = {
     title: 'Song',
-    value: store.get('SongListSort'),
-    setter: store.set('SongListSort'),
+    atom: SongListSort,
     types: ['SongTitle', 'ArtistAlbum', 'AlbumTrack'],
     names: ['Title', 'Artist, then Album', 'Album'],
   };
@@ -160,9 +163,9 @@ const Settings = () => {
             <Card.Body>
               <Card.Title>Sorting Preferences</Card.Title>
               <Container>
-                {sortPopup(album)}
-                {sortPopup(artist)}
-                {sortPopup(song)}
+                <SortPopup item={album} />
+                <SortPopup item={artist} />
+                <SortPopup item={song} />
                 <ArticleSorting />
               </Container>
             </Card.Body>

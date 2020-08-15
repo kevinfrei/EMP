@@ -51,3 +51,50 @@ export const SortWithArticles = selector({
     });
   },
 });
+
+// These aren't correct, but they're placeholders
+export const AlbumListSort = selector({
+  key: 'album-list-sort-selector',
+  get: async ({ get }): Promise<string> => {
+    const result = await window.ipcPromise.send('promise-set', {
+      key: 'album-list-sort',
+    });
+    return result || 'AlbumTitle';
+  },
+  set: ({ set }, newValue: string) => {
+    window.ipcPromise.send('promise-set', {
+      key: 'album-list-sort',
+      value: newValue,
+    });
+  },
+});
+export const ArtistListSort = selector({
+  key: 'artist-list-sort-selector',
+  get: async ({ get }): Promise<string> => {
+    const result = await window.ipcPromise.send('promise-set', {
+      key: 'artist-list-sort',
+    });
+    return result || 'ArtistName';
+  },
+  set: ({ set }, newValue: string) => {
+    window.ipcPromise.send('promise-set', {
+      key: 'artist-list-sort',
+      value: newValue,
+    });
+  },
+});
+export const SongListSort = selector({
+  key: 'song-list-sort-selector',
+  get: async ({ get }): Promise<string> => {
+    const result = await window.ipcPromise.send('promise-set', {
+      key: 'song-list-sort',
+    });
+    return result || 'SongTitle';
+  },
+  set: ({ set }, newValue: string) => {
+    window.ipcPromise.send('promise-set', {
+      key: 'song-list-sort',
+      value: newValue,
+    });
+  },
+});
