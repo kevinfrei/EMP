@@ -11,7 +11,6 @@ import { useRecoilState } from 'recoil';
 
 import Store from '../MyStore';
 import {
-  locations,
   SortWithArticles,
   AlbumListSort,
   ArtistListSort,
@@ -39,13 +38,15 @@ function GetDirs() {
 }
 
 function SortPopup({ item }): React$Node {
-  const [value, setter] = useRecoilState(item.atom);
+  const [value, setter] = useRecoilState(item.syncedAtom.atom);
   const names: Array<string> = item.names;
   const selected = item.types.indexOf(value);
   const select = (key) => setter(key);
+  const SyncingElement = item.syncedAtom.AtomSyncer;
   return (
     <Row>
       <Col xs={3} style={{ height: '35px' }}>
+        <SyncingElement />
         <span style={{ float: 'right' }}>View {item.title} by </span>
       </Col>
       <Col>
@@ -66,20 +67,18 @@ function SortPopup({ item }): React$Node {
   );
 }
 
-function RecoilLocations() {
-  const [recoilLocations, setRecoilLocations] = useRecoilState(locations);
+function NewRecoilLocations() {
+  const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
   return (
     <>
-      {recoilLocations.map((elem) => (
+      {newLoc.map((elem) => (
         <Row key={elem}>
           <Col xs={1}>
             <img
               className="delete-pic pic-button"
               src={deletePic}
               alt="Delete Item"
-              onClick={() =>
-                setRecoilLocations(removeFromSet(recoilLocations, elem))
-              }
+              onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
             />
           </Col>
           <Col>{elem}</Col>
@@ -94,7 +93,7 @@ function RecoilLocations() {
             onClick={() => {
               const locs: ?Array<string> = GetDirs();
               if (locs) {
-                setRecoilLocations([...locs, ...recoilLocations]);
+                setNewLoc([...locs, ...newLoc]);
               }
             }}
           />
@@ -147,7 +146,7 @@ function NewRecoilLocations() {
 }
 
 function ArticleSorting() {
-  const [articles, setArticles] = useRecoilState(SortWithArticles);
+  const [articles, setArticles] = useRecoilState(SortWithArticles.atom);
   return (
     <Row>
       <Col xs={3}>
@@ -166,22 +165,22 @@ function ArticleSorting() {
 
 const Settings = () => {
   const store = Store.useStore();
-
+  debugger;
   const album = {
     title: 'Album',
-    atom: AlbumListSort,
+    syncedAtom: AlbumListSort,
     types: ['AlbumTitle', 'AlbumYear', 'ArtistAlbum', 'ArtistYear'],
     names: ['Title', 'Year', 'Artist, then Title', 'Artist, then Year'],
   };
   const artist = {
     title: 'Artist',
-    atom: ArtistListSort,
+    syncedAtom: ArtistListSort,
     types: ['AlbumCount', 'ArtistName', 'SongCount'],
     names: ['# of Albums', 'Name', '# of songs'],
   };
   const song = {
     title: 'Song',
-    atom: SongListSort,
+    syncedAtom: SongListSort,
     types: ['SongTitle', 'ArtistAlbum', 'AlbumTrack'],
     names: ['Title', 'Artist, then Album', 'Album'],
   };
@@ -193,9 +192,10 @@ const Settings = () => {
         <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
           <Card>
             <Card.Body>
-              <Card.Title>Music Locations</Card.Title>
+              <Card.Title>New Music Locations</Card.Title>
               <Container>
-                <RecoilLocations />
+                <SyncLoc.AtomSyncer />
+                <NewRecoilLocations />
               </Container>
             </Card.Body>
           </Card>

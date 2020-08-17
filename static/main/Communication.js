@@ -199,6 +199,7 @@ function search(val: string) {
 }
 
 // {key: 'item-to-pull-from-persist'}
+// This is used for the promiseIpc main-side communication
 async function ipcGetter(data) {
   try {
     log(`promise-get request: ${typeof data}`);
@@ -221,6 +222,7 @@ async function ipcGetter(data) {
 }
 
 // {key: 'item-to-put-in-persist', value: {thingToSave...} }
+// This is used for the promiseIpc main-side communication
 async function ipcSetter(data) {
   try {
     log(`promise-set request: ${typeof data}`);

@@ -9,6 +9,7 @@ import {
 } from 'recoil';
 import logger from 'simplelogger';
 import { useRef, useEffect } from 'react';
+import { FTON } from 'my-utils';
 
 import type { SongKey, Song, Artist, Album, MediaInfo } from './MyStore';
 import type { RecoilState } from 'recoil';
@@ -16,17 +17,22 @@ import type { RecoilState } from 'recoil';
 const log = logger.bind('Atoms');
 logger.enable('Atoms');
 
+export type syncedAtom<T> = {
+  atom: RecoilState<T>,
+  AtomSyncer: () => React$Node,
+};
 // This should return a server-sync'ed atom
-function mkBackAtom<T>(key: string, def: T) {
+// { atom: theAtom, AtomSyncer: AtomSubscription };
+function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
   const theAtom: RecoilState<T> = atom({ key, default: def });
-  const AtomSubscription = () => {
+  const AtomSubscription = (): React$Node => {
     const [atomValue, setAtomValue] = useRecoilState(theAtom);
     const atomRef = useRef(atomValue);
     // This makes server-side changes update the atom
     useEffect(() => {
       log(`key: ${key} effect triggered`);
       function handleChange(value) {
-        if (JSON.stringify(atomRef.current) !== JSON.stringify(value)) {
+        if (FTON.stringify(atomRef.current) !== FTON.stringify(value)) {
           log(`key: ${key} updated to "${value}"`);
           log(value);
           atomRef.current = value;
@@ -41,7 +47,7 @@ function mkBackAtom<T>(key: string, def: T) {
     }, [atomRef]);
 
     useEffect(() => {
-      if (atomValue !== atomRef.current) {
+      if (FTON.stringify(atomValue) !== FTON.stringify(atomRef.current)) {
         atomRef.current = atomValue;
         window.ipcPromise.send('promise-set', {
           key,
@@ -55,27 +61,8 @@ function mkBackAtom<T>(key: string, def: T) {
   return { atom: theAtom, AtomSyncer: AtomSubscription };
 }
 
-export const SyncLoc = mkBackAtom('newLocations', []);
-
 // This is the 'locations' for searching
-export const locations = selector({
-  key: 'locations-selector',
-  get: async ({ get }): Promise<Array<string>> => {
-    const result = await window.ipcPromise.send('promise-get', {
-      key: 'locations',
-    });
-    log(`Got the data ${typeof result}`);
-    log(result);
-    return result || [];
-  },
-  set: ({ set }, newValue: Array<string>) => {
-    // Send the array to the main process
-    const result = window.ipcPromise.send('promise-set', {
-      key: 'locations',
-      value: newValue,
-    });
-  },
-});
+export const SyncLoc = makeBackedAtom('newLocations', []);
 
 export const getMediaInfo = selectorFamily({
   key: 'mediaInfoSelector',
@@ -85,65 +72,10 @@ export const getMediaInfo = selectorFamily({
   },
 });
 
-export const SortWithArticles = selector({
-  key: 'sort-with-articles-selector',
-  get: async ({ get }): Promise<boolean> => {
-    const result = await window.ipcPromise.send('promise-get', {
-      key: 'sort-with-articles',
-    });
-    return !!result;
-  },
-  set: ({ set }, newValue: boolean) => {
-    const result = window.ipcPromise.send('promise-set', {
-      key: 'sort-with-articles',
-      value: newValue,
-    });
-  },
-});
+export const SortWithArticles = makeBackedAtom('rSortWithArticles', true);
 
-// These aren't correct, but they're placeholders
-export const AlbumListSort = selector({
-  key: 'album-list-sort-selector',
-  get: async ({ get }): Promise<string> => {
-    const result = await window.ipcPromise.send('promise-set', {
-      key: 'album-list-sort',
-    });
-    return result || 'AlbumTitle';
-  },
-  set: ({ set }, newValue: string) => {
-    window.ipcPromise.send('promise-set', {
-      key: 'album-list-sort',
-      value: newValue,
-    });
-  },
-});
-export const ArtistListSort = selector({
-  key: 'artist-list-sort-selector',
-  get: async ({ get }): Promise<string> => {
-    const result = await window.ipcPromise.send('promise-set', {
-      key: 'artist-list-sort',
-    });
-    return result || 'ArtistName';
-  },
-  set: ({ set }, newValue: string) => {
-    window.ipcPromise.send('promise-set', {
-      key: 'artist-list-sort',
-      value: newValue,
-    });
-  },
-});
-export const SongListSort = selector({
-  key: 'song-list-sort-selector',
-  get: async ({ get }): Promise<string> => {
-    const result = await window.ipcPromise.send('promise-set', {
-      key: 'song-list-sort',
-    });
-    return result || 'SongTitle';
-  },
-  set: ({ set }, newValue: string) => {
-    window.ipcPromise.send('promise-set', {
-      key: 'song-list-sort',
-      value: newValue,
-    });
-  },
-});
+export const AlbumListSort = makeBackedAtom('rAlbumListSort', 'ArtistName');
+
+export const ArtistListSort = makeBackedAtom('rArtistListSort', 'ArtistAlbum');
+
+export const SongListSort = makeBackedAtom('rSongListSort', 'ArtistAlbum');
