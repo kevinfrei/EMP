@@ -67,46 +67,7 @@ function SortPopup({ item }): React$Node {
   );
 }
 
-function NewRecoilLocations() {
-  const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
-  return (
-    <>
-      {newLoc.map((elem) => (
-        <Row key={elem}>
-          <Col xs={1}>
-            <img
-              className="delete-pic pic-button"
-              src={deletePic}
-              alt="Delete Item"
-              onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
-            />
-          </Col>
-          <Col>{elem}</Col>
-        </Row>
-      ))}
-      <Row>
-        <Col xs={1}>
-          <img
-            className="add-pic pic-button"
-            src={addPic}
-            alt="add source"
-            onClick={() => {
-              const locs: ?Array<string> = GetDirs();
-              if (locs) {
-                setNewLoc([...locs, ...newLoc]);
-              }
-            }}
-          />
-        </Col>
-        <Col>
-          <em>Add new location to scan</em>
-        </Col>
-      </Row>
-    </>
-  );
-}
-
-function NewRecoilLocations() {
+function RecoilLocations() {
   const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
   return (
     <>
@@ -165,7 +126,6 @@ function ArticleSorting() {
 
 const Settings = () => {
   const store = Store.useStore();
-  debugger;
   const album = {
     title: 'Album',
     syncedAtom: AlbumListSort,
@@ -192,19 +152,10 @@ const Settings = () => {
         <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
           <Card>
             <Card.Body>
-              <Card.Title>New Music Locations</Card.Title>
+              <Card.Title>Music Locations</Card.Title>
               <Container>
                 <SyncLoc.AtomSyncer />
-                <NewRecoilLocations />
-              </Container>
-            </Card.Body>
-          </Card>
-          <Card>
-            <Card.Body>
-              <Card.Title>New Music Locations</Card.Title>
-              <Container>
-                <SyncLoc.AtomSyncer />
-                <NewRecoilLocations />
+                <RecoilLocations />
               </Container>
             </Card.Body>
           </Card>
