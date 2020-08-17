@@ -202,6 +202,7 @@ function search(val: string) {
 async function ipcGetter(data) {
   try {
     log(`promise-get request: ${typeof data}`);
+    log(data);
     if (
       typeof data !== 'object' ||
       !data.hasOwnProperty('key') ||
@@ -210,7 +211,11 @@ async function ipcGetter(data) {
       log(`error: invalid promise-get data type: ${typeof data}`);
       return undefined;
     }
-    return await persist.getItemAsync(data.key);
+    const value = await persist.getItemAsync(data.key);
+    log(`Sending value for key ${data.key}:`);
+    log(value);
+    // send the data back as the value from disk
+    win.webContents.send('promise-response', { key: data.key, value });
   } catch (e) {}
   return undefined;
 }
@@ -219,12 +224,14 @@ async function ipcGetter(data) {
 async function ipcSetter(data) {
   try {
     log(`promise-set request: ${typeof data}`);
+    log(data);
     const kvp = kvpValidator(data);
     if (kvp) {
       await persist.setItemAsync(kvp.key, kvp.value);
       return true;
     }
   } catch (e) {}
+  // TODO
   log('Trouble with promise-set');
   return false;
 }

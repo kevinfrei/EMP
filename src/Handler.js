@@ -1,8 +1,7 @@
 // @flow
 
 import logger from 'simplelogger';
-import { FTON } from 'my-utils';
-import { Comparisons } from 'my-utils';
+import { FTON, Comparisons, SeqNum } from 'my-utils';
 
 import { ValidKeyNames } from './MyStore';
 
@@ -17,7 +16,7 @@ export type KeyValue = {
 };
 
 const log = logger.bind('handler');
-logger.disable('handler');
+logger.enable('handler');
 
 const DataFromMainHandler = (store: StoreState, message: string) => {
   try {
@@ -39,7 +38,7 @@ const DataFromMainHandler = (store: StoreState, message: string) => {
         store.set(key)(action.value);
         return;
       } else {
-        log('Invalid key name');
+        log('Invalid key name - reporting it');
       }
     }
   } catch (e) {
@@ -96,7 +95,13 @@ const PersistedBetweenRuns: Array<SaveConfig<any>> = [
     150
   ),
   makeChangeChecker('Playlists', new Map(), PlaysetsComp, 100, 1000),
-  makeChangeChecker<number>('volume', 0.8, (a, b) => Math.abs(a - b) < 1e-5, 100, 1000),
+  makeChangeChecker<number>(
+    'volume',
+    0.8,
+    (a, b) => Math.abs(a - b) < 1e-5,
+    100,
+    1000
+  ),
   makeChangeChecker<boolean>('muted', false, (a, b) => a !== b, 10, 10),
 ];
 
@@ -165,6 +170,44 @@ const ConfigureIPC = (store: StoreState) => {
     const mi = store.get('MediaInfoCache');
     mi.set(data.key, data.data);
     store.set('MediaInfoCache')(mi);
+  });
+  const listeners: Map<
+    string,
+    Map<string, (value: string) => void>
+  > = new Map();
+  const subIds = SeqNum();
+  window.ipc.promiseSub = (
+    key: string,
+    listener: (value: string) => void
+  ): string => {
+    let subs = listeners.get(key);
+    if (!subs) {
+      subs = new Map();
+      log(`Starting to listen for ${key}`);
+    }
+    const id = subIds();
+    subs.set(id, listener);
+    listeners.set(key, subs);
+    return id;
+  };
+  window.ipc.promiseUnsub = (key: string, id: string): boolean => {
+    let subs = listeners.get(key);
+    if (!subs) {
+      return false;
+    }
+    const res = subs.delete(id);
+    listeners.set(key, subs);
+    return res;
+  };
+  window.ipc.on('promise-response', (event, data) => {
+    log(`Got a response for ${data.key}:`);
+    log(data);
+    const localSubscribers = listeners.get(data.key);
+    if (localSubscribers) {
+      for (let fn of localSubscribers.values()) {
+        fn(data.value);
+      }
+    }
   });
 };
 

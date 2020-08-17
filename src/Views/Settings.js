@@ -16,6 +16,7 @@ import {
   AlbumListSort,
   ArtistListSort,
   SongListSort,
+  SyncLoc,
 } from '../Atoms';
 
 import { VerticalScrollDiv } from '../Scrollables';
@@ -106,6 +107,45 @@ function RecoilLocations() {
   );
 }
 
+function NewRecoilLocations() {
+  const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
+  return (
+    <>
+      {newLoc.map((elem) => (
+        <Row key={elem}>
+          <Col xs={1}>
+            <img
+              className="delete-pic pic-button"
+              src={deletePic}
+              alt="Delete Item"
+              onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
+            />
+          </Col>
+          <Col>{elem}</Col>
+        </Row>
+      ))}
+      <Row>
+        <Col xs={1}>
+          <img
+            className="add-pic pic-button"
+            src={addPic}
+            alt="add source"
+            onClick={() => {
+              const locs: ?Array<string> = GetDirs();
+              if (locs) {
+                setNewLoc([...locs, ...newLoc]);
+              }
+            }}
+          />
+        </Col>
+        <Col>
+          <em>Add new location to scan</em>
+        </Col>
+      </Row>
+    </>
+  );
+}
+
 function ArticleSorting() {
   const [articles, setArticles] = useRecoilState(SortWithArticles);
   return (
@@ -156,6 +196,15 @@ const Settings = () => {
               <Card.Title>Music Locations</Card.Title>
               <Container>
                 <RecoilLocations />
+              </Container>
+            </Card.Body>
+          </Card>
+          <Card>
+            <Card.Body>
+              <Card.Title>New Music Locations</Card.Title>
+              <Container>
+                <SyncLoc.AtomSyncer />
+                <NewRecoilLocations />
               </Container>
             </Card.Body>
           </Card>
