@@ -2,7 +2,6 @@
 
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
 const logger = require('simplelogger');
 
 const configureProtocols = require('./configProtocols');
@@ -11,6 +10,8 @@ const persist = require('./persist');
 import type { WindowPosition } from './persist';
 
 export type OnWindowCreated = (window: BrowserWindow) => void;
+
+const isDev = true;//require('electron-is-dev');
 
 const log = logger.bind('electronSetup');
 logger.disable('electronSetup');
@@ -32,6 +33,7 @@ const setup = (windowCreated: OnWindowCreated) => {
       webPreferences: {
         preload: path.join(__dirname, 'preload.js'),
         nodeIntegration: true,
+        enableRemoteModule: true,
         webSecurity: !isDev,
       },
       titleBarStyle: 'hiddenInset', // TODO: Only Mac
