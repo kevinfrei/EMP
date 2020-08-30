@@ -7448,8 +7448,8 @@ media-typer@0.3.0:
 "media-utils@file:./submodules/media-utils":
   version "0.1.0"
   dependencies:
-    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-6f15bd15-16fd-4589-bb94-50f80d20e79e-1598825504673/node_modules/node-freik-utils"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-6f15bd15-16fd-4589-bb94-50f80d20e79e-1598825504673/node_modules/js-freik-utils"
+    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-fee74f4a-a921-4747-8b05-ca86f67e1200-1598826162721/node_modules/node-freik-utils"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-fee74f4a-a921-4747-8b05-ca86f67e1200-1598826162721/node_modules/js-freik-utils"
 
 "memoize-one@>=3.1.1 <6":
   version "5.1.1"
@@ -7712,9 +7712,9 @@ mute-stream@0.0.8:
 "my-node-utils@file:submodules/node-freik-utils":
   version "0.1.0"
   dependencies:
+    "@freik/simplelogger" "^1.1.0"
     fs-extra "^9.0.0"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-6424b986-ca38-4e65-a863-e3df0f5119d2-1598825504676/node_modules/js-freik-utils"
-    simplelogger "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-6424b986-ca38-4e65-a863-e3df0f5119d2-1598825504676/node_modules/simplelogger"
+    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-5789f48a-ae36-4e6c-b7df-46fa9af1badb-1598826162727/node_modules/js-freik-utils"
 
 "my-utils@file:./submodules/js-freik-utils", "my-utils@file:submodules/js-freik-utils":
   version "0.2.0"
@@ -10440,9 +10440,6 @@ simple-swizzle@^0.2.2:
   integrity sha1-pNprY1/8zMoz9w0Xy5JZLeleVXo=
   dependencies:
     is-arrayish "^0.3.1"
-
-"simplelogger@file:submodules/simplelogger":
-  version "0.0.0"
 
 sisteransi@^1.0.4:
   version "1.0.5"

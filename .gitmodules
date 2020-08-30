@@ -1,6 +1,3 @@
-[submodule "submodules/simplelogger"]
-	path = submodules/simplelogger
-	url = https://github.com/kevinfrei/simplelogger.git
 [submodule "submodules/media-utils"]
 	path = submodules/media-utils
 	url = https://github.com/kevinfrei/media-utils.git
