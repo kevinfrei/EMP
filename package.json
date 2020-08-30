@@ -12,6 +12,7 @@
   "homepage": "./",
   "dependencies": {
     "@dwqs/react-virtual-list": "^1.0.0",
+    "@freik/simplelogger": "^1.1.0",
     "bootstrap": "^4.5.2",
     "csstype": "^3.0.3",
     "electron-is-dev": "^1.2.0",
@@ -29,7 +30,6 @@
     "react-window": "^1.8.5",
     "recoil": "^0.0.10",
     "rxjs": "^6.6.2",
-    "simplelogger": "file:./submodules/simplelogger",
     "source-map-explorer": "^2.5.0",
     "undux": "^5.2.0"
   },
