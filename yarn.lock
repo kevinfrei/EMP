@@ -1242,6 +1242,19 @@
     global-agent "^2.0.2"
     global-tunnel-ng "^2.7.1"
 
+"@freik/core-utils@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.3.3.tgz#29ef3ae3b887c94111447e750d3e94d4c575ae24"
+  integrity sha512-0LiB9Y+HhDXMKX0eyd4iUeAb2SEQBGuiI1v0rGz3VL3yS3PC0D+s6Lxt+wy6OAl5d4N2vYRMei1jQ/2b16si1A==
+
+"@freik/node-utils@^0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.2.3.tgz#e3299b3314b51b07f85581df4268e304743da5ac"
+  integrity sha512-mwfo5+Ujj1Z3c5NXTGC9TCIlfwcquvIeOYaSy2pMDKuEO4i1245KNzN+mbNHkXy9JB5qTdOmr/C7eq4bEnVrlA==
+  dependencies:
+    "@freik/core-utils" "^0.3.3"
+    "@freik/simplelogger" "^1.1.0"
+
 "@freik/simplelogger@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@freik/simplelogger/-/simplelogger-1.1.0.tgz#c4d8464b300b731086c7bdb3836832c84a0391fd"
@@ -5299,7 +5312,7 @@ fs-extra@^8.1.0:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
-fs-extra@^9.0.0, fs-extra@^9.0.1:
+fs-extra@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.0.1.tgz#910da0062437ba4c39fedd863f1675ccfefcb9fc"
   integrity sha512-h2iAoN838FqAFJY2/qVpzFXy+EBxfVE220PalAqQLDVsFOHLJrZvut5puAbCdNv6WJk+B8ihI+k0c7JK5erwqQ==
@@ -7448,8 +7461,8 @@ media-typer@0.3.0:
 "media-utils@file:./submodules/media-utils":
   version "0.1.0"
   dependencies:
-    my-node-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-fee74f4a-a921-4747-8b05-ca86f67e1200-1598826162721/node_modules/node-freik-utils"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-media-utils-0.1.0-fee74f4a-a921-4747-8b05-ca86f67e1200-1598826162721/node_modules/js-freik-utils"
+    "@freik/core-utils" "^0.3.3"
+    "@freik/node-utils" "^0.2.3"
 
 "memoize-one@>=3.1.1 <6":
   version "5.1.1"
@@ -7708,16 +7721,6 @@ mute-stream@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
-
-"my-node-utils@file:submodules/node-freik-utils":
-  version "0.1.0"
-  dependencies:
-    "@freik/simplelogger" "^1.1.0"
-    fs-extra "^9.0.0"
-    my-utils "file:../../Library/Caches/Yarn/v6/npm-my-node-utils-0.1.0-5789f48a-ae36-4e6c-b7df-46fa9af1badb-1598826162727/node_modules/js-freik-utils"
-
-"my-utils@file:./submodules/js-freik-utils", "my-utils@file:submodules/js-freik-utils":
-  version "0.2.0"
 
 nan@^2.12.1:
   version "2.14.1"

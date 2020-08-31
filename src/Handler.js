@@ -1,7 +1,7 @@
 // @flow
 
-import logger from 'simplelogger';
-import { FTON, Comparisons, SeqNum } from 'my-utils';
+import logger from '@freik/simplelogger';
+import { FTON, Comparisons, SeqNum } from '@freik/core-utils';
 
 import { ValidKeyNames } from './MyStore';
 

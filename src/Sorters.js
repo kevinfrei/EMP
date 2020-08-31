@@ -1,6 +1,6 @@
 // @flow
 
-import { Comparisons } from 'my-utils';
+import { Comparisons } from '@freik/core-utils';
 import { GetDataForSong, GetDataForAlbum } from './DataAccess';
 
 import type {

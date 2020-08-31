@@ -1,13 +1,13 @@
 // @flow
 const { ipcMain, BrowserWindow, WebContents } = require('electron');
 const promiseIpc = require('electron-promise-ipc');
-const logger = require('simplelogger');
-const { FTON } = require('my-utils');
+const logger = require('@freik/simplelogger');
+const { FTON } = require('@freik/core-utils');
 
 const persist = require('./persist');
 const { getMediaInfo } = require('./music');
 
-import type { FTONData } from 'my-utils';
+//import type { FTONData } from '@freik/core-utils';
 import type { SongKey, MediaInfo } from './music';
 import type { TrieNode } from './search';
 

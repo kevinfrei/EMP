@@ -1,7 +1,7 @@
 // @flow
 
 import * as React from 'react';
-import logger from 'simplelogger';
+import logger from '@freik/simplelogger';
 
 import Store from './MyStore';
 import { ConfigureIPC } from './Handler';

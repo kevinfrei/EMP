@@ -2,10 +2,10 @@
 
 const fsp = require('fs').promises;
 const path = require('path');
-const logger = require('simplelogger');
+const logger = require('@freik/simplelogger');
 const metadata = require('media-utils').Metadata;
-const { SetEqual } = require('my-utils').Comparisons;
-const { SeqNum } = require('my-utils');
+const { SetEqual } = require('@freik/core-utils').Comparisons;
+const { SeqNum } = require('@freik/core-utils');
 const mediainfo = require('node-mediainfo');
 
 const persist = require('./persist');

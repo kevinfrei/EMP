@@ -4,11 +4,11 @@ const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fsp = fs.promises;
-const logger = require('simplelogger');
-const { FTON, SeqNum } = require('my-utils');
+const logger = require('@freik/simplelogger');
+const { FTON, SeqNum } = require('@freik/core-utils');
 
 import type { Rectangle } from 'electron';
-import type { FTONData } from 'my-utils';
+//import type { FTONData } from 'my-utils';
 
 const log = logger.bind('persist');
 //logger.enable('persist');

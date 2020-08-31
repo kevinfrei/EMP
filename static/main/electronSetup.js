@@ -2,7 +2,7 @@
 
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const logger = require('simplelogger');
+const logger = require('@freik/simplelogger');
 
 const configureProtocols = require('./configProtocols');
 const persist = require('./persist');

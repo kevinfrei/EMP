@@ -7,9 +7,9 @@ import {
   selectorFamily,
   useRecoilState,
 } from 'recoil';
-import logger from 'simplelogger';
+import logger from '@freik/simplelogger';
 import { useRef, useEffect } from 'react';
-import { FTON } from 'my-utils';
+import { FTON } from '@freik/core-utils';
 
 import type { SongKey, Song, Artist, Album, MediaInfo } from './MyStore';
 import type { RecoilState } from 'recoil';

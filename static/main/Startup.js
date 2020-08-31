@@ -1,8 +1,8 @@
 // @flow
 
 const { app, ipcMain } = require('electron');
-const logger = require('simplelogger');
-const { FTON } = require('my-utils');
+const logger = require('@freik/simplelogger');
+const { FTON } = require('@freik/core-utils');
 
 const persist = require('./persist');
 const music = require('./music');
