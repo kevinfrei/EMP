@@ -7,7 +7,7 @@ import {
   selectorFamily,
   useRecoilState,
 } from 'recoil';
-import logger from '@freik/simplelogger';
+import { logger } from '@freik/simplelogger';
 import { useRef, useEffect } from 'react';
 import { FTON } from '@freik/core-utils';
 

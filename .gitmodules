@@ -1,6 +1,0 @@
-[submodule "submodules/media-utils"]
-	path = submodules/media-utils
-	url = https://github.com/kevinfrei/media-utils.git
-[submodule "submodules/build-tools"]
-	path = submodules/build-tools
-	url = https://github.com/kevinfrei/build-tools.git

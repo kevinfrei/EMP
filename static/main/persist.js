@@ -8,8 +8,9 @@ const logger = require('@freik/simplelogger');
 const { FTON, SeqNum } = require('@freik/core-utils');
 
 import type { Rectangle } from 'electron';
-//import type { FTONData } from 'my-utils';
+//import type { FTONData } from '@freik/core-utils';
 
+console.log(logger)
 const log = logger.bind('persist');
 //logger.enable('persist');
 
