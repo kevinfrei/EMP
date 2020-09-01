@@ -6,7 +6,7 @@
 // initially. It also invokes the Ready function (from main/Ready)
 // once the window has registered.
 
-const logger = require('@freik/simplelogger');
+const { logger } = require('@freik/simplelogger');
 
 const electronSetup = require('./main/electronSetup');
 const { Startup, Ready } = require('./main/Startup');

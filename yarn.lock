@@ -1203,10 +1203,10 @@
     global-agent "^2.0.2"
     global-tunnel-ng "^2.7.1"
 
-"@freik/core-utils@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.3.3.tgz#29ef3ae3b887c94111447e750d3e94d4c575ae24"
-  integrity sha512-0LiB9Y+HhDXMKX0eyd4iUeAb2SEQBGuiI1v0rGz3VL3yS3PC0D+s6Lxt+wy6OAl5d4N2vYRMei1jQ/2b16si1A==
+"@freik/core-utils@^0.3.3", "@freik/core-utils@^0.3.4":
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.3.4.tgz#8fa59276b390d37f51436a949fc2a03ce8ae10d7"
+  integrity sha512-bQCOlwtxeXFrHR/xJUy99DsbG5it1/PCGh2BjXOwwmVziY5FoiC4fIN7HVslsYESLD9WYKP7v911grMSPFZq1A==
 
 "@freik/media-utils@^0.2.2":
   version "0.2.2"

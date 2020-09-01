@@ -2,7 +2,7 @@
 
 const path = require('path');
 const { protocol } = require('electron');
-const logger = require('@freik/simplelogger');
+const { logger } = require('@freik/simplelogger');
 
 const persist = require('./persist');
 

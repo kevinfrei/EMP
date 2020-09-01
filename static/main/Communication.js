@@ -1,7 +1,7 @@
 // @flow
 const { ipcMain, BrowserWindow, WebContents } = require('electron');
 const promiseIpc = require('electron-promise-ipc');
-const logger = require('@freik/simplelogger');
+const { logger } = require('@freik/simplelogger');
 const { FTON } = require('@freik/core-utils');
 
 const persist = require('./persist');

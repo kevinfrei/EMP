@@ -4,13 +4,13 @@ const { app } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const fsp = fs.promises;
-const logger = require('@freik/simplelogger');
+const { logger } = require('@freik/simplelogger');
 const { FTON, SeqNum } = require('@freik/core-utils');
 
 import type { Rectangle } from 'electron';
 //import type { FTONData } from '@freik/core-utils';
 
-console.log(logger)
+console.log(logger);
 const log = logger.bind('persist');
 //logger.enable('persist');
 
@@ -107,7 +107,7 @@ function notify(key: string, val: FTONData) {
   // For each listener, invoke the listening function
   const ls = listeners.get(key);
   if (!ls) return;
-  for (let [,fn] of ls) {
+  for (let [, fn] of ls) {
     fn(val);
   }
 }

@@ -5,7 +5,7 @@
 // All of the Node.js APIs are available in this process.
 
 const { ipcRenderer, remote } = require('electron');
-const logger = require('@freik/simplelogger');
+const { logger } = require('@freik/simplelogger');
 const { PromiseIpc } = require('electron-promise-ipc');
 
 const isDev = true; //require('electron-is-dev');
