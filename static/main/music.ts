@@ -1,16 +1,15 @@
-// @flow
+import { promises as fsp } from 'fs';
+import path from 'path';
+import { logger } from '@freik/simplelogger';
+import { Metadata as metadata } from '@freik/media-utils';
+import { Comparisons } from '@freik/core-utils';
+import { SeqNum } from '@freik/core-utils';
+import mediainfo from 'node-mediainfo';
+const SetEqual = Comparisons.SetEqual;
 
-const fsp = require('fs').promises;
-const path = require('path');
-const { logger } = require('@freik/simplelogger');
-const metadata = require('@freik/media-utils').Metadata;
-const { SetEqual } = require('@freik/core-utils').Comparisons;
-const { SeqNum } = require('@freik/core-utils');
-const mediainfo = require('node-mediainfo');
+import * as persist from './persist';
 
-const persist = require('./persist');
-
-import type { FullMetadata } from '@freik/dmedia-utils';
+import type { FullMetadata } from '@freik/media-utils';
 
 const log = logger.bind('music');
 //logger.enable('music');
@@ -20,46 +19,46 @@ export type AlbumKey = string;
 export type ArtistKey = string;
 
 export type Song = {
-  path: string,
-  artistIds: Array<ArtistKey>,
-  secondaryIds: Array<ArtistKey>,
-  albumId: AlbumKey,
-  track: number,
-  title: string,
-  key: SongKey,
+  path: string;
+  artistIds: Array<ArtistKey>;
+  secondaryIds: Array<ArtistKey>;
+  albumId: AlbumKey;
+  track: number;
+  title: string;
+  key: SongKey;
 };
 
 export type VAType = '' | 'ost' | 'va';
 
 export type Album = {
-  year: number,
-  primaryArtists: Set<ArtistKey>,
-  title: string,
-  vatype: VAType,
-  songs: Array<SongKey>,
-  key: AlbumKey,
+  year: number;
+  primaryArtists: Set<ArtistKey>;
+  title: string;
+  vatype: VAType;
+  songs: Array<SongKey>;
+  key: AlbumKey;
 };
 
 export type Artist = {
-  name: string,
-  songs: Array<SongKey>,
-  albums: Array<AlbumKey>,
-  key: ArtistKey,
+  name: string;
+  songs: Array<SongKey>;
+  albums: Array<AlbumKey>;
+  key: ArtistKey;
 };
 
 export type MusicDB = {
-  songs: Map<SongKey, Song>,
-  albums: Map<AlbumKey, Album>,
-  artists: Map<ArtistKey, Artist>,
-  pictures: Map<AlbumKey, string>,
-  playlists: Map<string, Array<SongKey>>, // This is probably a bad idea...
-  albumTitleIndex: Map<string, Array<AlbumKey>>,
-  artistNameIndex: Map<string, ArtistKey>,
+  songs: Map<SongKey, Song>;
+  albums: Map<AlbumKey, Album>;
+  artists: Map<ArtistKey, Artist>;
+  pictures: Map<AlbumKey, string>;
+  playlists: Map<string, Array<SongKey>>; // This is probably a bad idea...
+  albumTitleIndex: Map<string, Array<AlbumKey>>;
+  artistNameIndex: Map<string, ArtistKey>;
 };
 
 export type MediaInfo = {
-  general: Map<string, string>,
-  audio: Map<string, string>,
+  general: Map<string, string>;
+  audio: Map<string, string>;
 };
 
 let existingKeys: ?Map<string, SongKey> = null;
@@ -85,7 +84,9 @@ function getSongKey(songPath: string) {
 }
 
 function getOrNewArtist(db: MusicDB, name: string): Artist {
-  const maybeKey: ?ArtistKey = db.artistNameIndex.get(name.toLowerCase());
+  const maybeKey: ArtistKey | undefined = db.artistNameIndex.get(
+    name.toLowerCase()
+  );
   if (maybeKey) {
     const art = db.artists.get(maybeKey);
     if (art) {
@@ -109,7 +110,7 @@ function getOrNewAlbum(
   vatype: VAType
 ): Album {
   // TODO: This doesn't currently handle vatypes properly :/
-  const maybeSharedNames: ?Array<AlbumKey> = db.albumTitleIndex.get(
+  const maybeSharedNames: AlbumKey[] | undefined = db.albumTitleIndex.get(
     title.toLowerCase()
   );
   let sharedNames: Array<AlbumKey>;
@@ -254,7 +255,7 @@ async function HandleAlbumCovers(db: MusicDB, pics: Array<string>) {
   }
   // Now, for each dir, find the biggest file and dump it in the database
   // for each album that has stuff in that directory
-  type SizeAndName = { size: number, name: string };
+  type SizeAndName = { size: number; name: string };
   for (let [dirName, setOfFiles] of dirsToPics) {
     const albums = dirsToAlbums.get(dirName);
     if (!albums || !albums.size) {
@@ -330,7 +331,7 @@ const isOfType = (filename: string, types: Set<string>) =>
 const isMusicType = (filename: string) => isOfType(filename, audioTypes);
 const isImageType = (filename: string) => isOfType(filename, imageTypes);
 
-async function findMusic(locations: Array<string>): Promise<MusicDB> {
+export async function find(locations: Array<string>): Promise<MusicDB> {
   // If we have too many locations, this is *baaaad* but oh well...
   const queue: Array<string> = locations;
   const songsList: Array<string> = [];
@@ -450,7 +451,7 @@ function objToMap(o: Object): Map<string, string> {
   return res;
 }
 
-async function getMediaInfo(path: string): Promise<MediaInfo> {
+export async function getMediaInfo(path: string): Promise<MediaInfo> {
   const rawMetadata = await mediainfo(path);
   const trackInfo = rawMetadata.media.track;
   const general = objToMap(trackInfo[0]);
@@ -468,7 +469,7 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
     'Overall Bit Rate',
     'Overall Bit Rate: Mode',
     'Codec ID: Compatible',
-    'Is Streamable'
+    'Is Streamable',
   ]) {
     general.delete(i);
   }
@@ -479,7 +480,7 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
     'Frame Count',
     'Stream Size',
     'Stream Size: Proportion',
-    "Duration: Last Frame",
+    'Duration: Last Frame',
     'Stream Order',
     ...general.keys(),
   ]) {
@@ -487,6 +488,3 @@ async function getMediaInfo(path: string): Promise<MediaInfo> {
   }
   return { general, audio };
 }
-
-module.exports.find = findMusic;
-module.exports.getMediaInfo = getMediaInfo;

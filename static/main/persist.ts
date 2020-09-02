@@ -1,45 +1,43 @@
 // @flow
 
-const { app } = require('electron');
-const path = require('path');
-const fs = require('fs');
-const fsp = fs.promises;
-const { logger } = require('@freik/simplelogger');
-const { FTON, SeqNum } = require('@freik/core-utils');
+import { app } from 'electron';
+import path from 'path';
+import fs, { promises as fsp } from 'fs';
+import { logger } from '@freik/simplelogger';
+import { FTON, SeqNum } from '@freik/core-utils';
 
 import type { Rectangle } from 'electron';
-//import type { FTONData } from '@freik/core-utils';
+import type { FTONData } from '@freik/core-utils';
 
-console.log(logger);
 const log = logger.bind('persist');
 //logger.enable('persist');
 
-export type MaybeRectangle = {|
-  width: number,
-  height: number,
-  x?: number,
-  y?: number,
-|};
+export type MaybeRectangle = {
+  width: number;
+  height: number;
+  x?: number;
+  y?: number;
+};
 
-export type WindowPosition = {|
-  bounds: MaybeRectangle,
-  isMaximized: boolean,
-|};
+export type WindowPosition = {
+  bounds: MaybeRectangle;
+  isMaximized: boolean;
+};
 
 export type ValueUpdateListener = (val: FTONData) => void;
 
 export type Persist = {
-  getItem: <T>(key: string) => ?T,
-  getItemAsync: <T>(key: string) => Promise<?T>,
-  setItem(key: string, value: FTONData): void,
-  setItemAsync(key: string, value: FTONData): Promise<void>,
-  deleteItem(key: string): void,
-  deleteItemAsync(key: string): Promise<void>,
-  getWindowPos(): WindowPosition,
-  setWindowPos(st: WindowPosition): void,
-  getBrowserWindowPos(st: WindowPosition): Rectangle,
-  subscribe(key: string, listener: ValueUpdateListener): string,
-  unsubscribe(id: string): boolean,
+  getItem: <T>(key: string) => T | void;
+  getItemAsync: <T>(key: string) => Promise<T | void>;
+  setItem(key: string, value: FTONData): void;
+  setItemAsync(key: string, value: FTONData): Promise<void>;
+  deleteItem(key: string): void;
+  deleteItemAsync(key: string): Promise<void>;
+  getWindowPos(): WindowPosition;
+  setWindowPos(st: WindowPosition): void;
+  getBrowserWindowPos(st: WindowPosition): Rectangle;
+  subscribe(key: string, listener: ValueUpdateListener): string;
+  unsubscribe(id: string): boolean;
 };
 
 const memoryCache: Map<string, FTONData> = new Map();
@@ -107,13 +105,13 @@ function notify(key: string, val: FTONData) {
   // For each listener, invoke the listening function
   const ls = listeners.get(key);
   if (!ls) return;
-  for (let [, fn] of ls) {
+  for (const [, fn] of ls) {
     fn(val);
   }
 }
 
 // Add a function to run when a value is persisted
-function subscribe(key: string, listener: ValueUpdateListener): string {
+export function subscribe(key: string, listener: ValueUpdateListener): string {
   const id = getNextListenerId();
   let keyListeners = listeners.get(key);
   if (!keyListeners) {
@@ -125,7 +123,7 @@ function subscribe(key: string, listener: ValueUpdateListener): string {
 }
 
 // Remove the listening function with the given id
-function unsubscribe(id: string): boolean {
+export function unsubscribe(id: string): boolean {
   const splitPt = id.indexOf('-');
   const actualId = id.substr(0, splitPt);
   const keyName = id.substr(splitPt + 1);
@@ -137,43 +135,46 @@ function unsubscribe(id: string): boolean {
 }
 
 // Get a value from disk/memory
-function getItem<T>(key: string): ?T {
+export function getItem<T>(key: string): T | void {
   log('Reading ' + key);
   const val: FTONData = readFile(key);
   if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
     log('returning this value:');
     log(val[key]);
-    return val[key];
+    return val[key] as T;
   } else {
     log('Failed to return value');
   }
 }
 
 // Get a value from disk/memory
-async function getItemAsync<T>(key: string): ?T {
+export async function getItemAsync<T>(key: string): ?T {
   log('Reading ' + key);
   const val: FTONData = await readFileAsync(key);
   if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
     log('returning this value:');
     log(val[key]);
-    return val[key];
+    return val[key] as T;
   } else {
     log('Failed to return value');
   }
 }
 
 // Save a value to disk and cache it
-function setItem(key: string, value: FTONData): void {
+export function setItem(key: string, value: FTONData): void {
   log(`Writing ${key}:`);
   log(value);
-  const val: Object = {};
+  const val: object = {};
   val[key] = value;
   writeFile(key, val);
   notify(key, value);
 }
 
 // Async Save a value to disk and cache it
-async function setItemAsync(key: string, value: FTONData): Promise<void> {
+export async function setItemAsync(
+  key: string,
+  value: FTONData
+): Promise<void> {
   log(`Writing ${key}:`);
   log(value);
   const val: Object = {};
@@ -183,13 +184,13 @@ async function setItemAsync(key: string, value: FTONData): Promise<void> {
 }
 
 // Delete an item (and remove it from the cache)
-function deleteItem(key: string): void {
+export function deleteItem(key: string): void {
   log(`deleting ${key}`);
   deleteFile(key);
 }
 
 // Async Delete an item (and remove it from the cache)
-async function deleteItemAsync(key: string): Promise<void> {
+export async function deleteItemAsync(key: string): Promise<void> {
   log(`deleting ${key}`);
   await deleteFileAsync(key);
 }
@@ -210,9 +211,9 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
   false
 );
 
-function getWindowPos(): WindowPosition {
+export function getWindowPos(): WindowPosition {
   try {
-    const tmpws: mixed = persist.getItem('windowPosition');
+    const tmpws: unknown = getItem('windowPosition');
     if (tmpws && typeof tmpws === 'object' && tmpws.bounds) {
       const bounds = tmpws.bounds;
       if (
@@ -242,11 +243,11 @@ function getWindowPos(): WindowPosition {
   return defaultWindowPosition;
 }
 
-function setWindowPos(st: WindowPosition): void {
-  persist.setItem('windowPosition', st);
+export function setWindowPos(st: WindowPosition): void {
+  setItem('windowPosition', st as FTONData);
 }
 
-function getBrowserWindowPos(st: WindowPosition): Rectangle {
+export function getBrowserWindowPos(st: WindowPosition): Rectangle {
   return {
     width: st.bounds.width,
     height: st.bounds.height,
@@ -254,19 +255,3 @@ function getBrowserWindowPos(st: WindowPosition): Rectangle {
     y: st.bounds.y == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.y,
   };
 }
-
-const persist: Persist = {
-  getItem,
-  setItem,
-  deleteItem,
-  getItemAsync,
-  setItemAsync,
-  deleteItemAsync,
-  getWindowPos,
-  setWindowPos,
-  getBrowserWindowPos,
-  subscribe,
-  unsubscribe,
-};
-
-module.exports = persist;

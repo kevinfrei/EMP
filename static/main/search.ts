@@ -1,20 +1,23 @@
-// @flow
-
 // Take in a function that returns the string we're indexing from the object
 // Return a trie of search terms
 
 export type TrieNode<T> = {
-  children: Map<string, TrieNode<T>>,
-  values: Set<T>,
+  children: Map<string, TrieNode<T>>;
+  values: Set<T>;
 };
 
 const splitter = /[- .;:]/;
 
-function addToIndex<T>(idx: number, str: string, o: T, res: Map<string, TrieNode<T>>) {
+function addToIndex<T>(
+  idx: number,
+  str: string,
+  o: T,
+  res: Map<string, TrieNode<T>>
+) {
   let chr = str[idx].toLocaleUpperCase();
   let node = res.get(chr);
   if (!node) {
-    node = {children: new Map(), values: new Set()};
+    node = { children: new Map(), values: new Set() };
     res.set(chr, node);
   }
   node.values.add(o);
@@ -24,9 +27,9 @@ function addToIndex<T>(idx: number, str: string, o: T, res: Map<string, TrieNode
   }
 }
 
-function makeIndex<T>(
+export default function makeIndex<T>(
   objects: Iterable<T>,
-  getter: (T) => string
+  getter: (arg: T) => string
 ): Map<string, TrieNode<T>> {
   let res: Map<string, TrieNode<T>> = new Map();
   for (let o of objects) {
@@ -40,5 +43,3 @@ function makeIndex<T>(
   }
   return res;
 }
-
-module.exports = makeIndex;

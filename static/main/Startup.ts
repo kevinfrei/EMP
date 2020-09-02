@@ -1,13 +1,13 @@
 // @flow
 
-const { app, ipcMain } = require('electron');
-const { logger } = require('@freik/simplelogger');
-const { FTON } = require('@freik/core-utils');
+import { app, ipcMain } from 'electron';
+import { logger } from '@freik/simplelogger';
+import { FTON } from '@freik/core-utils';
 
-const persist = require('./persist');
-const music = require('./music');
-const { SendDatabase, SetIndex } = require('./Communication');
-const makeIndex = require('./search');
+import * as persist from './persist';
+import * as music from './music';
+import { SendDatabase, SetIndex } from './Communication';
+import makeIndex from './search';
 
 import type { MusicDB } from './music';
 

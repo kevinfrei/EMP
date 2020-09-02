@@ -1,11 +1,11 @@
 // @flow
-const { ipcMain, BrowserWindow, WebContents } = require('electron');
-const promiseIpc = require('electron-promise-ipc');
-const { logger } = require('@freik/simplelogger');
-const { FTON } = require('@freik/core-utils');
+import { ipcMain, BrowserWindow, WebContents } from 'electron';
+import promiseIpc from 'electron-promise-ipc';
+import { logger } from '@freik/simplelogger';
+import { FTON } from '@freik/core-utils';
 
-const persist = require('./persist');
-const { getMediaInfo } = require('./music');
+import * as persist from './persist';
+import { getMediaInfo } from './music';
 
 //import type { FTONData } from '@freik/core-utils';
 import type { SongKey, MediaInfo } from './music';
@@ -15,14 +15,14 @@ const log = logger.bind('Communication');
 logger.enable('Communication');
 
 export type MessageHandler<T> = {
-  command: string,
-  validator: (val: string) => ?T,
-  handler: (data: T) => void,
+  command: string;
+  validator: (val: string) => ?T;
+  handler: (data: T) => void;
 };
 
 export type KVP<T> = {
-  key: string,
-  value: T,
+  key: string;
+  value: T;
 };
 
 const indices: Map<string, Map<string, TrieNode<*>>> = new Map();

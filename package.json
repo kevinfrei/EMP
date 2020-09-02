@@ -68,8 +68,6 @@
     "electron": "^10.1.0",
     "electron-builder": "^22.8.0",
     "electron-devtools-installer": "^3.1.1",
-    "flow-bin": "^0.132.0",
-    "flow-remove-types": "^2.132.0",
     "prettier": "^2.1.1",
     "ts-jest": "^26.3.0",
     "tslint": "^6.1.3",

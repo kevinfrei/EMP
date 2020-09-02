@@ -1,19 +1,17 @@
-// @flow
-
 // This is the entry point for the electron main process.
 // It uses main/electronSetup to get the first window open.
 // It invokes the Startup promise/async function (from main/General)
 // initially. It also invokes the Ready function (from main/Ready)
 // once the window has registered.
 
-const { logger } = require('@freik/simplelogger');
+import { logger } from '@freik/simplelogger';
 
-const electronSetup = require('./main/electronSetup');
-const { Startup, Ready } = require('./main/Startup');
-const { Init, Begin } = require('./main/Communication');
+import electronSetup from './electronSetup';
+import { Startup, Ready } from './Startup';
+import { Init, Begin } from './Communication';
 
 import type { BrowserWindow } from 'electron';
-import type { OnWindowCreated } from './main/electronSetup';
+import type { OnWindowCreated } from './electronSetup';
 
 const log = logger.bind('electron');
 //logger.enable('electron');

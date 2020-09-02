@@ -1,11 +1,9 @@
-// @flow
+import { app, BrowserWindow } from 'electron';
+import path from 'path';
+import { logger } from '@freik/simplelogger';
 
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
-const { logger } = require('@freik/simplelogger');
-
-const configureProtocols = require('./configProtocols');
-const persist = require('./persist');
+import configureProtocols from './configProtocols';
+import persist from './persist';
 
 import type { WindowPosition } from './persist';
 
@@ -18,9 +16,9 @@ logger.disable('electronSetup');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: ?BrowserWindow = null;
+let mainWindow: BrowserWindow | null = null;
 
-const setup = (windowCreated: OnWindowCreated) => {
+export default function setup(windowCreated: OnWindowCreated) {
   const windowPos: WindowPosition = persist.getWindowPos();
 
   const createWindow = () => {
@@ -129,5 +127,3 @@ const setup = (windowCreated: OnWindowCreated) => {
     }
   });
 };
-
-module.exports = setup;

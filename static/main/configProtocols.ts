@@ -1,10 +1,8 @@
-// @flow
+import path from 'path';
+import { protocol } from 'electron';
+import { logger } from '@freik/simplelogger';
 
-const path = require('path');
-const { protocol } = require('electron');
-const { logger } = require('@freik/simplelogger');
-
-const persist = require('./persist');
+import persist from './persist';
 
 import type { MusicDB } from './music';
 /*
@@ -16,7 +14,7 @@ protocol.registerSchemesAsPrivileged([
 const log = logger.bind('configProtocols');
 //logger.enable('configProtocols');
 
-const configureProtocols = () => {
+export default function configureProtocols() {
   protocol.registerFileProtocol('pic', (req, callback) => {
     log('pic URL request:');
     log(req);
@@ -58,6 +56,4 @@ const configureProtocols = () => {
       callback({ error: 404 });
     }
   });
-};
-
-module.exports = configureProtocols;
+}
