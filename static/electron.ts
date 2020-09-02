@@ -6,12 +6,12 @@
 
 import { logger } from '@freik/simplelogger';
 
-import electronSetup from './electronSetup';
-import { Startup, Ready } from './Startup';
-import { Init, Begin } from './Communication';
+import electronSetup from './main/electronSetup';
+import { Startup, Ready } from './main/Startup';
+import { Init, Begin } from './main/Communication';
 
 import type { BrowserWindow } from 'electron';
-import type { OnWindowCreated } from './electronSetup';
+import type { OnWindowCreated } from './main/electronSetup';
 
 const log = logger.bind('electron');
 //logger.enable('electron');

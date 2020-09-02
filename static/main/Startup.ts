@@ -1,5 +1,3 @@
-// @flow
-
 import { app, ipcMain } from 'electron';
 import { logger } from '@freik/simplelogger';
 import { FTON } from '@freik/core-utils';
@@ -47,7 +45,7 @@ function UpdateAndSendDB() {
 }
 
 // This is awaited upon initial window creation
-async function Startup() {
+export async function Startup() {
   // Scan for all music
   let musicDB = persist.getItem('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
@@ -59,10 +57,8 @@ async function Startup() {
   }
 }
 
-function Ready(window) {
+export function Ready(window) {
   // Do anything else here that needs to happen once we have the window
   // object available
   persist.subscribe('locations', UpdateAndSendDB);
 }
-
-module.exports = { Startup, Ready };

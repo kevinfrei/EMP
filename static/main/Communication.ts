@@ -8,7 +8,7 @@ import * as persist from './persist';
 import { getMediaInfo } from './music';
 
 //import type { FTONData } from '@freik/core-utils';
-import type { SongKey, MediaInfo } from './music';
+import type { SongKey, MediaInfo, MusicDB } from './music';
 import type { TrieNode } from './search';
 
 const log = logger.bind('Communication');
@@ -16,7 +16,7 @@ logger.enable('Communication');
 
 export type MessageHandler<T> = {
   command: string;
-  validator: (val: string) => ?T;
+  validator: (val: string) => T | void;
   handler: (data: T) => void;
 };
 
@@ -25,9 +25,9 @@ export type KVP<T> = {
   value: T;
 };
 
-const indices: Map<string, Map<string, TrieNode<*>>> = new Map();
+const indices: Map<string, Map<string, TrieNode<unknown>>> = new Map();
 
-let win: ?WebContents = null;
+let win: BrowserWindow | null = null;
 
 function getWebContents() {
   const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
@@ -38,7 +38,7 @@ function getWebContents() {
   return allWnd[0].webContents;
 }
 
-function kvpValidator(val: any): ?KVP<any> {
+function kvpValidator(val: any): KVP<any> | void {
   if (
     typeof val === 'object' &&
     val !== null &&
@@ -49,22 +49,22 @@ function kvpValidator(val: any): ?KVP<any> {
   }
 }
 
-function kvpFromJSONValidator(val: string): ?KVP<any> {
+function kvpFromJSONValidator(val: string): KVP<unknown> | void {
   try {
     return kvpValidator(FTON.parse(val));
   } catch (e) {}
   return undefined;
 }
 
-function stringValidator(val: string): ?string {
+function stringValidator(val: string): string | void {
   return val;
 }
 
-function SongKeyValidator(val: string): ?SongKey {
+function SongKeyValidator(val: string): SongKey | void {
   return val;
 }
 
-function setter({ key, value }: KVP<any>) {
+function setter({ key, value }: KVP<unknown>) {
   log(`Persisting '${key}' to:`);
   if (key.toLowerCase() !== 'db') log(value);
   else log('{music database...}');
@@ -102,29 +102,29 @@ function getter(key: string) {
 
 function mk<T>(
   command: string,
-  validator: (val: string) => ?T,
-  handler: (data: T) => void
+  validator: (val: string) => T | void,
+  handler: (data: T) => void,
 ): MessageHandler<T> {
   return { command, validator, handler };
 }
 
-function SendDatabase() {
-  const musicDB = persist.getItem('DB');
+export function SendDatabase() {
+  const musicDB = persist.getItem<MusicDB>('DB');
   if (!win || !musicDB) {
     setTimeout(SendDatabase, 10);
     return;
   }
   win.webContents.send(
     'data',
-    FTON.stringify({ key: 'Albums', value: musicDB.albums })
+    FTON.stringify({ key: 'Albums', value: musicDB.albums }),
   );
   win.webContents.send(
     'data',
-    FTON.stringify({ key: 'Songs', value: musicDB.songs })
+    FTON.stringify({ key: 'Songs', value: musicDB.songs }),
   );
   win.webContents.send(
     'data',
-    FTON.stringify({ key: 'Artists', value: musicDB.artists })
+    FTON.stringify({ key: 'Artists', value: musicDB.artists }),
   );
 }
 
@@ -134,7 +134,7 @@ function sendBackMediaInfo(songKey: SongKey, data: MediaInfo) {
 }
 
 function getMetadata(songKey: SongKey) {
-  const musicDB = persist.getItem('DB');
+  const musicDB = persist.getItem<MusicDB>('DB');
   if (!musicDB) {
     console.log("Can't load DB");
     return;
@@ -153,12 +153,13 @@ function getMetadata(songKey: SongKey) {
     .catch(console.log);
 }
 
-function SetIndex(id: string, index: Map<string, TrieNode<*>>) {
+export function SetIndex(id: string, index: Map<string, TrieNode<unknown>>) {
   indices.set(id, index);
 }
 
 // Walk down the Trie following the string
 function search(val: string) {
+  /*
   let vals = null;
   for (let i of val.split(' ')) {
     let index = indices.get('artist');
@@ -196,11 +197,12 @@ function search(val: string) {
   }
   const results = [...vals.values].map((val) => val.key);
   console.log(results);
+  */
 }
 
 // {key: 'item-to-pull-from-persist'}
 // This is used for the promiseIpc main-side communication
-async function ipcGetter(data) {
+async function ipcGetter(data:{key:unknown}) {
   try {
     log(`promise-get request: ${typeof data}`);
     log(data);
@@ -210,20 +212,20 @@ async function ipcGetter(data) {
       typeof data.key !== 'string'
     ) {
       log(`error: invalid promise-get data type: ${typeof data}`);
-      return undefined;
+      return;
     }
     const value = await persist.getItemAsync(data.key);
     log(`Sending value for key ${data.key}:`);
     log(value);
     // send the data back as the value from disk
-    win.webContents.send('promise-response', { key: data.key, value });
+    win!.webContents.send('promise-response', { key: data.key, value });
   } catch (e) {}
-  return undefined;
+  return;
 }
 
 // {key: 'item-to-put-in-persist', value: {thingToSave...} }
 // This is used for the promiseIpc main-side communication
-async function ipcSetter(data) {
+async function ipcSetter(data:{key:unknown, value: unknown}) {
   try {
     log(`promise-set request: ${typeof data}`);
     log(data);
@@ -239,7 +241,7 @@ async function ipcSetter(data) {
 }
 
 // {key: 'item-to-delete-from-persistence'}
-async function ipcDeleter(data) {
+async function ipcDeleter(data:{key:unknown}) {
   try {
     if (
       typeof data !== 'object' ||
@@ -255,17 +257,17 @@ async function ipcDeleter(data) {
   return false;
 }
 
-async function ipcSong(data) {}
+async function ipcSong(data:{key:unknown, value: unknown}) {}
 
-async function ipcSongs(data) {}
+async function ipcSongs(data:{key:unknown, value: unknown}) {}
 
-async function ipcSongKeys(data) {}
+async function ipcSongKeys(data:{key:unknown, value: unknown}) {}
 
-async function ipcMediaInfo(key) {
+async function ipcMediaInfo(key:{key:unknown, value: unknown}) {
   if (typeof key !== 'string') {
     return;
   }
-  const musicDB = await persist.getItemAsync('DB');
+  const musicDB = await persist.getItemAsync<MusicDB>('DB');
   if (!musicDB) {
     console.log("Can't load DB");
     return;
@@ -282,9 +284,9 @@ async function ipcMediaInfo(key) {
 }
 
 // Called to just set stuff up (nothing has actually been done yet)
-function Init() {
+export function Init() {
   const comms = [
-    mk<KVP>('set', kvpFromJSONValidator, setter),
+    mk<KVP<unknown>>('set', kvpFromJSONValidator, setter),
     mk<string>('delete', stringValidator, deleter),
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
@@ -293,7 +295,7 @@ function Init() {
   ];
   for (let val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
-      const data: ?T = val.validator(arg);
+      const data: T | undefined = val.validator(arg);
       if (data !== undefined && data !== null) {
         log(`Got data for "${val.command}":`);
         log(data);
@@ -327,9 +329,7 @@ function Init() {
 }
 
 // Called with the window handle after it's been created
-function Begin(window) {
+export function Begin(window: BrowserWindow) {
   win = window;
   SendDatabase();
 }
-
-module.exports = { Init, Begin, SendDatabase, SetIndex };
