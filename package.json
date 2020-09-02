@@ -43,7 +43,7 @@
     "release": "yarn prepare && yarn react-build && electron-builder --publish=always",
     "build": "yarn prepare && yarn react-build && yarn electron-build",
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "prepare": "flow-remove-types static/ -d public/ --all --pretty",
+    "prepare": "tsc -p tsconfig.static.json",
     "test": "react-scripts test"
   },
   "eslintConfig": {
@@ -59,6 +59,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.11.5",
+    "@types/jest": "^26.0.12",
+    "@types/node": "^14.6.2",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.8",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.2",
     "electron": "^10.1.0",

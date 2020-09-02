@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "esnext",
-    "jsx": "react",
+    "outDir": "public",
+    "module": "commonjs",
     "sourceMap": true,
     "downlevelIteration": true,
     "strict": true,
@@ -25,6 +25,6 @@
     "noEmit": true
   },
   "include": [
-    "src"
+    "static"
   ]
 }
