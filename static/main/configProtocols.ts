@@ -2,7 +2,7 @@ import path from 'path';
 import { protocol } from 'electron';
 import { logger } from '@freik/simplelogger';
 
-import persist from './persist';
+import * as persist from './persist';
 
 import type { MusicDB } from './music';
 /*
@@ -23,7 +23,10 @@ export default function configureProtocols() {
       callback({ error: -324 });
     } else if (req.url.startsWith('pic://album/')) {
       // Let's check the db to see if we've got
-      const db: MusicDB = persist.getItem('DB');
+      const db: MusicDB | void = persist.getItem('DB');
+      if (!db) {
+        return;
+      }
       const maybePath = db.pictures.get(req.url.substr(12));
       if (maybePath) {
         callback({ path: maybePath });
@@ -45,7 +48,10 @@ export default function configureProtocols() {
       callback({ error: -324 });
     } else if (req.url.startsWith('tune://song/')) {
       const key = req.url.substring(12);
-      const db: MusicDB = persist.getItem('DB');
+      const db: MusicDB | void = persist.getItem('DB');
+      if (!db) {
+        return;
+      }
       const song = db.songs.get(key);
       if (song) {
         const thePath = song.path;

@@ -1,4 +1,4 @@
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, BrowserWindow } from 'electron';
 import { logger } from '@freik/simplelogger';
 import { FTON } from '@freik/core-utils';
 
@@ -8,11 +8,12 @@ import { SendDatabase, SetIndex } from './Communication';
 import makeIndex from './search';
 
 import type { MusicDB } from './music';
+import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('Startup');
 
-function getLocations(): Array<string> {
-  let rawLocations = persist.getItem('locations');
+function getLocations(): string[] {
+  let rawLocations = persist.getItem<FTONData>('locations');
   let musicLocations = rawLocations
     ? FTON.arrayOfStrings(rawLocations)
     : undefined;
@@ -57,7 +58,7 @@ export async function Startup() {
   }
 }
 
-export function Ready(window) {
+export function Ready(window: BrowserWindow) {
   // Do anything else here that needs to happen once we have the window
   // object available
   persist.subscribe('locations', UpdateAndSendDB);

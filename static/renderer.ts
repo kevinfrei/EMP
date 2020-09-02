@@ -4,38 +4,49 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-const { ipcRenderer, remote } = require('electron');
-const { logger } = require('@freik/simplelogger');
-const { PromiseIpc } = require('electron-promise-ipc');
+import { IpcRenderer, ipcRenderer, remote } from 'electron';
+import { logger } from '@freik/simplelogger';
+import { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
+
+//mport type { PromiseIpcRenderer } from 'electron-promise-ipc';
 
 const isDev = true; //require('electron-is-dev');
 
-const log = logger.bind("renderer");
-logger.enable("renderer");
+const log = logger.bind('renderer');
+logger.enable('renderer');
+
+interface MyWindow extends Window {
+  ipc: IpcRenderer;
+  remote: Electron.Remote;
+  isDev: boolean;
+  initApp: () => void;
+  ipcPromise: PromiseIpcRenderer;
+}
+declare var window: MyWindow;
 
 // This will expose the ipcRenderer (and isDev) interfaces for use by the
 // React components, then, assuming the index.js has already be invoked, it
 // calls the function to start the app, thus ensuring that the app has access
 // to the ipcRenderer to enable asynchronous callbacks to affect the Undux store
 
-window.addEventListener("DOMContentLoaded", () => {
+window.addEventListener('DOMContentLoaded', () => {
   window.ipc = ipcRenderer;
-  log("About to attach the remote");
+  log('About to attach the remote');
   if (remote) {
     window.remote = remote;
   } else {
-    log("remote is falsy :(");
+    log('remote is falsy :(');
   }
   if (isDev) {
     window.isDev = isDev;
   }
-  log("ready");
+  log('ready');
   if (window.initApp !== undefined) {
     window.initApp();
   } else {
-    log("FAILURE: No window.initApp() attached.");
+    log('FAILURE: No window.initApp() attached.');
   }
   console.log('Setting up PromiseIPC:');
-  window.ipcPromise = new PromiseIpc({ maxTimeoutMs: 5000 });
+  window.ipcPromise = new PromiseIpcRenderer({ maxTimeoutMs: 5000 });
   console.log(window.ipcPromise);
 });

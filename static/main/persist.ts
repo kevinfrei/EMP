@@ -137,8 +137,8 @@ export function unsubscribe(id: string): boolean {
 // Get a value from disk/memory
 export function getItem<T>(key: string): T | void {
   log('Reading ' + key);
-  const val: FTONData = readFile(key);
-  if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
+  const val: any = readFile(key);
+  if (val && typeof val === 'object' && key in val) {
     log('returning this value:');
     log(val[key]);
     return val[key] as T;
@@ -148,9 +148,9 @@ export function getItem<T>(key: string): T | void {
 }
 
 // Get a value from disk/memory
-export async function getItemAsync<T>(key: string): ?T {
+export async function getItemAsync<T>(key: string): Promise<T | void> {
   log('Reading ' + key);
-  const val: FTONData = await readFileAsync(key);
+  const val: any = await readFileAsync(key);
   if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
     log('returning this value:');
     log(val[key]);
@@ -164,7 +164,7 @@ export async function getItemAsync<T>(key: string): ?T {
 export function setItem(key: string, value: FTONData): void {
   log(`Writing ${key}:`);
   log(value);
-  const val: object = {};
+  const val: { [key: string]: FTONData } = {};
   val[key] = value;
   writeFile(key, val);
   notify(key, value);
@@ -173,11 +173,11 @@ export function setItem(key: string, value: FTONData): void {
 // Async Save a value to disk and cache it
 export async function setItemAsync(
   key: string,
-  value: FTONData
+  value: FTONData,
 ): Promise<void> {
   log(`Writing ${key}:`);
   log(value);
-  const val: Object = {};
+  const val: { [key: string]: FTONData } = {};
   val[key] = value;
   await writeFileAsync(key, val);
   notify(key, value);
@@ -200,7 +200,7 @@ const makeWindowPos = (
   y: number,
   width: number,
   height: number,
-  isMaximized: boolean
+  isMaximized: boolean,
 ) => ({ bounds: { x, y, width, height }, isMaximized });
 
 const defaultWindowPosition: WindowPosition = makeWindowPos(
@@ -208,12 +208,12 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
   Number.MIN_SAFE_INTEGER,
   900,
   680,
-  false
+  false,
 );
 
 export function getWindowPos(): WindowPosition {
   try {
-    const tmpws: unknown = getItem('windowPosition');
+    const tmpws: any = getItem('windowPosition');
     if (tmpws && typeof tmpws === 'object' && tmpws.bounds) {
       const bounds = tmpws.bounds;
       if (
@@ -235,7 +235,7 @@ export function getWindowPos(): WindowPosition {
           bounds.y,
           bounds.width,
           bounds.height,
-          tmpws.isMaximized
+          tmpws.isMaximized,
         );
       }
     }
@@ -248,10 +248,22 @@ export function setWindowPos(st: WindowPosition): void {
 }
 
 export function getBrowserWindowPos(st: WindowPosition): Rectangle {
+  if (
+    st.bounds.x === Number.MIN_SAFE_INTEGER ||
+    st.bounds.y === Number.MIN_SAFE_INTEGER ||
+    st.bounds.x === undefined ||
+    st.bounds.y === undefined
+  ) {
+    return {
+      width: st.bounds.width,
+      height: st.bounds.height,
+    } as Rectangle;
+  }
+
   return {
     width: st.bounds.width,
     height: st.bounds.height,
-    x: st.bounds.x == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.x,
-    y: st.bounds.y == Number.MIN_SAFE_INTEGER ? undefined : st.bounds.y,
+    x: st.bounds.x,
+    y: st.bounds.y,
   };
 }

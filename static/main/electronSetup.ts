@@ -3,13 +3,13 @@ import path from 'path';
 import { logger } from '@freik/simplelogger';
 
 import configureProtocols from './configProtocols';
-import persist from './persist';
+import * as persist from './persist';
 
 import type { WindowPosition } from './persist';
 
 export type OnWindowCreated = (window: BrowserWindow) => void;
 
-const isDev = true;//require('electron-is-dev');
+const isDev = true; //require('electron-is-dev');
 
 const log = logger.bind('electronSetup');
 logger.disable('electronSetup');
@@ -45,7 +45,7 @@ export default function setup(windowCreated: OnWindowCreated) {
       isDev
         ? 'http://localhost:3000'
         : // If this file moves, you have to fix this to make it work for release
-          `file://${path.join(__dirname, '../../build/index.html')}`
+          `file://${path.join(__dirname, '../../build/index.html')}`,
     );
 
     // Open the DevTools.
@@ -60,7 +60,7 @@ export default function setup(windowCreated: OnWindowCreated) {
 
     app.whenReady().then(() => {
       if (isDev) {
-        console.log("Trying to install devtools");
+        console.log('Trying to install devtools');
         // Load the react developer tools if we're in development mode
         const {
           default: installExtension,
@@ -69,8 +69,8 @@ export default function setup(windowCreated: OnWindowCreated) {
         } = require('electron-devtools-installer');
 
         installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-          .then((name) => console.log(`Added Extension:  ${name}`))
-          .catch((err) => console.log('An error occurred: ', err));
+          .then((name: string) => console.log(`Added Extension:  ${name}`))
+          .catch((err: Error) => console.log('An error occurred: ', err));
       }
     });
     // Wait to show the main window until it's actually ready...
@@ -100,9 +100,9 @@ export default function setup(windowCreated: OnWindowCreated) {
       }
     };
 
-    ['resize', 'move', 'close'].forEach((e) =>
-      mainWindow.on(e, updateWindowPos)
-    );
+    mainWindow.on('resize', updateWindowPos);
+    mainWindow.on('move', updateWindowPos);
+    mainWindow.on('close', updateWindowPos);
   };
 
   // This method will be called when Electron has finished
@@ -126,4 +126,4 @@ export default function setup(windowCreated: OnWindowCreated) {
       createWindow();
     }
   });
-};
+}

@@ -9,7 +9,7 @@ const SetEqual = Comparisons.SetEqual;
 
 import * as persist from './persist';
 
-import type { FullMetadata } from '@freik/media-utils';
+import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
 
 const log = logger.bind('music');
 //logger.enable('music');
@@ -61,7 +61,7 @@ export type MediaInfo = {
   audio: Map<string, string>;
 };
 
-let existingKeys: ?Map<string, SongKey> = null;
+let existingKeys: Map<string, SongKey> | null = null;
 const newSongKey = (() => {
   let highestSongKey = persist.getItem<string>('highestSongKey');
   if (highestSongKey) {
@@ -85,7 +85,7 @@ function getSongKey(songPath: string) {
 
 function getOrNewArtist(db: MusicDB, name: string): Artist {
   const maybeKey: ArtistKey | undefined = db.artistNameIndex.get(
-    name.toLowerCase()
+    name.toLowerCase(),
   );
   if (maybeKey) {
     const art = db.artists.get(maybeKey);
@@ -107,11 +107,11 @@ function getOrNewAlbum(
   title: string,
   year: number,
   artists: Set<ArtistKey>,
-  vatype: VAType
+  vatype: VAType,
 ): Album {
   // TODO: This doesn't currently handle vatypes properly :/
   const maybeSharedNames: AlbumKey[] | undefined = db.albumTitleIndex.get(
-    title.toLowerCase()
+    title.toLowerCase(),
   );
   let sharedNames: Array<AlbumKey>;
   if (!maybeSharedNames) {
@@ -123,10 +123,10 @@ function getOrNewAlbum(
   // sharedNames is the list of existing albums with this title
   // It might be empty (coming from 5 lines up there ^^^ )
   for (let albumKey of sharedNames) {
-    const alb: ?Album = db.albums.get(albumKey);
+    const alb: Album | undefined = db.albums.get(albumKey);
     if (!alb) {
       log(
-        `DB inconsistency - album (key: ${albumKey}) by title doesn't exist in index`
+        `DB inconsistency - album (key: ${albumKey}) by title doesn't exist in index`,
       );
       // We don't have an easy recovery from this particular inconsistency
       continue;
@@ -150,7 +150,7 @@ function getOrNewAlbum(
     // If we're here, we've found the album we're looking for
     // Before returning, ensure that the artists have this album in their set
     for (let art of artists) {
-      const thisArtist: ?Artist = db.artists.get(art);
+      const thisArtist: Artist | undefined = db.artists.get(art);
       if (!thisArtist) {
         continue;
       }
@@ -184,7 +184,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   // First, get the primary artist
   // TODO: FullMetaData doesn't allow for multiple primary artists
   // Check Trent Reznor & Atticus Ross for an example where it kinda matters
-  const tmpArtist: string | Array<string> = md.Artist;
+  const tmpArtist: string | string[] = md.Artist;
   const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
   const allArtists = artists.map((a) => getOrNewArtist(db, a));
   const artistIds: Array<ArtistKey> = allArtists.map((a) => a.key);
@@ -194,7 +194,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
     md.Album,
     md.Year || 0,
     artistSet,
-    md.VAType || ''
+    md.VAType || '',
   );
   const secondaryIds: Array<ArtistKey> = [];
   if (md.MoreArtists) {
@@ -218,7 +218,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   db.songs.set(theSong.key, theSong);
 }
 
-async function HandleAlbumCovers(db: MusicDB, pics: Array<string>) {
+async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
   // Get all pictures from each directory.
   // Find the biggest and make it the album picture for any albums in that dir
   const dirsToPics: Map<string, Set<string>> = new Map();
@@ -276,8 +276,8 @@ async function HandleAlbumCovers(db: MusicDB, pics: Array<string>) {
 }
 
 async function fileNamesToDatabase(
-  files: Array<string>,
-  pics: Array<string>
+  files: string[],
+  pics: string[],
 ): Promise<MusicDB> {
   const songs: Map<SongKey, Song> = new Map();
   const albums: Map<AlbumKey, Album> = new Map();
@@ -297,17 +297,17 @@ async function fileNamesToDatabase(
   };
 
   // Get the list of existing paths to song-keys
-  existingKeys = await persist.getItemAsync<Map<string, SongKey>>(
-    'songHashIndex'
-  );
+  existingKeys =
+    (await persist.getItemAsync<Map<string, SongKey>>('songHashIndex')) ||
+    new Map();
 
   for (let file of files) {
-    const littlemd: ?Object = metadata.fromPath(file);
+    const littlemd: SimpleMetadata | void = metadata.fromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
       continue;
     }
-    const md: ?FullMetadata = metadata.FullFromObj(file, littlemd);
+    const md: FullMetadata | void = metadata.FullFromObj(file, littlemd as any);
     if (!md) {
       log('Unable to get full metadata from file ' + file);
       continue;
@@ -317,7 +317,7 @@ async function fileNamesToDatabase(
   await HandleAlbumCovers(db, pics);
   await persist.setItemAsync(
     'songHashIndex',
-    new Map([...db.songs.values()].map((val) => [val.path, val.key]))
+    new Map([...db.songs.values()].map((val) => [val.path, val.key])),
   );
   await persist.setItemAsync('highestSongKey', newSongKey());
   return db;
@@ -331,18 +331,25 @@ const isOfType = (filename: string, types: Set<string>) =>
 const isMusicType = (filename: string) => isOfType(filename, audioTypes);
 const isImageType = (filename: string) => isOfType(filename, imageTypes);
 
-export async function find(locations: Array<string>): Promise<MusicDB> {
+export async function find(locations: string[]): Promise<MusicDB> {
   // If we have too many locations, this is *baaaad* but oh well...
-  const queue: Array<string> = locations;
-  const songsList: Array<string> = [];
-  const picList: Array<string> = [];
+  const queue: string[] = locations;
+  const songsList: string[] = [];
+  const picList: string[] = [];
   while (queue.length > 0) {
     const i = queue.pop();
     let dirents;
     try {
-      dirents = await fsp.readdir(i, { withFileTypes: true });
+      if (i) {
+        dirents = await fsp.readdir(i, { withFileTypes: true });
+      } else {
+        continue;
+      }
     } catch (e) {
       log(`Unable to read ${i}`);
+      continue;
+    }
+    if (!dirents) {
       continue;
     }
     for (let dirent of dirents) {
@@ -434,18 +441,15 @@ const MediaInfoTranslation = new Map([
   ['BitRate', toKbps],
 ]);
 
-function objToMap(o: Object): Map<string, string> {
+function objToMap(o: { [key: string]: string | number }): Map<string, string> {
   const res = new Map();
   for (let i in o) {
-    if (
-      typeof i === 'string' &&
-      i.length > 0 &&
-      i[0] !== '@' &&
-      o.hasOwnProperty(i) &&
-      (typeof o[i] === 'string' || typeof o[i] === 'number')
-    ) {
-      const translator = MediaInfoTranslation.get(i) || ((j) => j);
-      res.set(cleanupName(i), translator(o[i].toString()));
+    if (typeof i === 'string' && i.length > 0 && i[0] !== '@' && i in o) {
+      const type = typeof o[i];
+      if (type === 'string' || type === 'number') {
+        const translator = MediaInfoTranslation.get(i) || ((j) => j);
+        res.set(cleanupName(i), translator(o[i].toString()));
+      }
     }
   }
   return res;
@@ -453,7 +457,7 @@ function objToMap(o: Object): Map<string, string> {
 
 export async function getMediaInfo(path: string): Promise<MediaInfo> {
   const rawMetadata = await mediainfo(path);
-  const trackInfo = rawMetadata.media.track;
+  const trackInfo: any = rawMetadata.media.track;
   const general = objToMap(trackInfo[0]);
   const audio = objToMap(trackInfo[1]);
   // Remove some stuff I don't care about or don't handle yet

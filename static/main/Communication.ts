@@ -2,7 +2,7 @@
 import { ipcMain, BrowserWindow, WebContents } from 'electron';
 import promiseIpc from 'electron-promise-ipc';
 import { logger } from '@freik/simplelogger';
-import { FTON } from '@freik/core-utils';
+import { FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
 import { getMediaInfo } from './music';
@@ -10,6 +10,7 @@ import { getMediaInfo } from './music';
 //import type { FTONData } from '@freik/core-utils';
 import type { SongKey, MediaInfo, MusicDB } from './music';
 import type { TrieNode } from './search';
+import { Listener } from 'electron-promise-ipc/build/base';
 
 const log = logger.bind('Communication');
 logger.enable('Communication');
@@ -38,7 +39,7 @@ function getWebContents() {
   return allWnd[0].webContents;
 }
 
-function kvpValidator(val: any): KVP<any> | void {
+function kvpValidator<T>(val: any): KVP<T> | void {
   if (
     typeof val === 'object' &&
     val !== null &&
@@ -49,7 +50,7 @@ function kvpValidator(val: any): KVP<any> | void {
   }
 }
 
-function kvpFromJSONValidator(val: string): KVP<unknown> | void {
+function kvpFromJSONValidator(val: string): KVP<FTONData> | void {
   try {
     return kvpValidator(FTON.parse(val));
   } catch (e) {}
@@ -68,7 +69,7 @@ function setter({ key, value }: KVP<unknown>) {
   log(`Persisting '${key}' to:`);
   if (key.toLowerCase() !== 'db') log(value);
   else log('{music database...}');
-  persist.setItem(key, FTON.stringify(value));
+  persist.setItem(key, FTON.stringify(FTON.typecheck(value)));
 }
 
 function deleter(key: string) {
@@ -231,7 +232,7 @@ async function ipcSetter(data:{key:unknown, value: unknown}) {
     log(data);
     const kvp = kvpValidator(data);
     if (kvp) {
-      await persist.setItemAsync(kvp.key, kvp.value);
+      await persist.setItemAsync(kvp.key, kvp.value as FTONData);
       return true;
     }
   } catch (e) {}
@@ -286,7 +287,7 @@ async function ipcMediaInfo(key:{key:unknown, value: unknown}) {
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init() {
   const comms = [
-    mk<KVP<unknown>>('set', kvpFromJSONValidator, setter),
+    mk<KVP<FTONData>>('set', kvpFromJSONValidator, setter),
     mk<string>('delete', stringValidator, deleter),
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
@@ -295,11 +296,11 @@ export function Init() {
   ];
   for (let val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
-      const data: T | undefined = val.validator(arg);
+      const data: string | KVP<FTONData> | void = val.validator(arg);
       if (data !== undefined && data !== null) {
         log(`Got data for "${val.command}":`);
         log(data);
-        val.handler(data);
+        val.handler(data as any);
       } else {
         log(`data validation failure while checking ${val.command}`);
         log(arg);
@@ -307,9 +308,9 @@ export function Init() {
     });
   }
   // Persistence stuff migrated to Recoil :)
-  promiseIpc.on('promise-get', ipcGetter);
-  promiseIpc.on('promise-set', ipcSetter);
-  promiseIpc.on('promise-del', ipcDeleter);
+  promiseIpc.on('promise-get', ipcGetter as Listener);
+  promiseIpc.on('promise-set', ipcSetter as Listener);
+  promiseIpc.on('promise-del', ipcDeleter as Listener);
   /*
   promiseIpc.on('promise-artist', ipcArtist);
   promiseIpc.on('promise-artists', ipcArtists);
@@ -321,7 +322,7 @@ export function Init() {
   promiseIpc.on('promise-songs', ipcSongs);
   promiseIpc.on('promise-songKeys', ipcSongKeys);
   */
-  promiseIpc.on('promise-mediaInfo', ipcMediaInfo);
+  promiseIpc.on('promise-mediaInfo', ipcMediaInfo as Listener);
   /*
   promiseIpc.on('promise-playlist', ipcPlaylistDetails);
   promiseIpc.on('promise-playlists', ipcPlaylists);
