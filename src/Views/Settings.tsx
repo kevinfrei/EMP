@@ -91,7 +91,7 @@ function RecoilLocations() {
             src={addPic}
             alt="add source"
             onClick={() => {
-              const locs: ?Array<string> = GetDirs();
+              const locs: string[] = GetDirs();
               if (locs) {
                 setNewLoc([...locs, ...newLoc]);
               }

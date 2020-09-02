@@ -1,7 +1,7 @@
 // @flow
 
 import { logger } from '@freik/simplelogger';
-import { FTON, Comparisons, SeqNum } from '@freik/core-utils';
+import { FTON, Comparisons, SeqNum, FTONData } from '@freik/core-utils';
 
 import { ValidKeyNames } from './MyStore';
 
@@ -11,8 +11,8 @@ import type { IpcRendererEvent } from 'electron';
 import type { StoreState } from './MyStore';
 
 export type KeyValue = {
-  key: string,
-  value: mixed,
+  key: string;
+  value: unknown;
 };
 
 const log = logger.bind('handler');
@@ -20,7 +20,7 @@ logger.enable('handler');
 
 const DataFromMainHandler = (store: StoreState, message: string) => {
   try {
-    const action: mixed = FTON.parse(message);
+    const action: any = FTON.parse(message);
     log('Store message from main process:');
     log(action);
     if (
@@ -35,7 +35,7 @@ const DataFromMainHandler = (store: StoreState, message: string) => {
       log(action.value);
       // Validate that the key is valid
       if (ValidKeyNames.indexOf(key) >= 0) {
-        store.set(key)(action.value);
+        store.set(key as any)(action.value);
         return;
       } else {
         log('Invalid key name - reporting it');
@@ -53,12 +53,12 @@ const DataFromMainHandler = (store: StoreState, message: string) => {
 type HasChangedFunc<T> = (value: T) => boolean;
 type Comparer<T> = (v1: T, v2: T) => boolean;
 type SaveConfig<T> = {
-  key: string,
-  hasChanged: HasChangedFunc<T>,
-  delay: number,
-  maxDelay: number,
-  timeout: ?number,
-  maxtimeout: ?number,
+  key: string;
+  hasChanged: HasChangedFunc<T>;
+  delay: number;
+  maxDelay: number;
+  timeout?: number;
+  maxtimeout?: number;
 };
 
 // This is a helper that saves a default value in the local closure, and
@@ -69,12 +69,12 @@ function makeChangeChecker<T>(
   def: T,
   comp: Comparer<T>,
   delay: number,
-  maxDelay: number
+  maxDelay: number,
 ): SaveConfig<T> {
-  let prevVal: T = FTON.parse(FTON.stringify(def));
+  let prevVal = FTON.parse(FTON.stringify(def as any));
   const hasChanged = (obj: T): boolean => {
-    if (!comp(prevVal, obj)) {
-      prevVal = FTON.parse(FTON.stringify(def));
+    if (!comp(prevVal as any, obj)) {
+      prevVal = FTON.parse(FTON.stringify(def as any));
       return true;
     }
     return false;
@@ -92,7 +92,7 @@ const PersistedBetweenRuns: Array<SaveConfig<any>> = [
     '',
     Comparisons.StringCaseInsensitiveEqual,
     50,
-    150
+    150,
   ),
   makeChangeChecker('Playlists', new Map(), PlaysetsComp, 100, 1000),
   makeChangeChecker<number>(
@@ -100,7 +100,7 @@ const PersistedBetweenRuns: Array<SaveConfig<any>> = [
     0.8,
     (a, b) => Math.abs(a - b) < 1e-5,
     100,
-    1000
+    1000,
   ),
   makeChangeChecker<boolean>('muted', false, (a, b) => a !== b, 10, 10),
 ];
@@ -178,7 +178,7 @@ const ConfigureIPC = (store: StoreState) => {
   const subIds = SeqNum();
   window.ipc.promiseSub = (
     key: string,
-    listener: (value: string) => void
+    listener: (value: string) => void,
   ): string => {
     let subs = listeners.get(key);
     if (!subs) {

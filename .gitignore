@@ -10,9 +10,9 @@
 # production
 /build
 /dist
+/public/main
 /public/*.js
-/public/main/*.js
-/public/render/*.js
+/public/*.js.map
 
 # misc
 .DS_Store

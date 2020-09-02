@@ -28,7 +28,9 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- H I don't fully grok, thanks to js module system proliferation -->
+    <script>var exports={"__esModule":true};</script>
     <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
+    <script src="%PUBLIC_URL%/renderer.js"></script>
   </body>
 </html>

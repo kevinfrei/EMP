@@ -43,7 +43,8 @@
     "release": "yarn prepare && yarn react-build && electron-builder --publish=always",
     "build": "yarn prepare && yarn react-build && yarn electron-build",
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "prepare": "tsc -p tsconfig.static.json",
+    "prepare": "rimraf public/main public/*.js public/*.js.map && tsc -p tsconfig.static.json && tsc -p tsconfig.render.json",
+    "tsc": "tsc",
     "test": "react-scripts test"
   },
   "eslintConfig": {
@@ -69,6 +70,7 @@
     "electron-builder": "^22.8.0",
     "electron-devtools-installer": "^3.1.1",
     "prettier": "^2.1.1",
+    "rimraf": "^3.0.2",
     "ts-jest": "^26.3.0",
     "tslint": "^6.1.3",
     "tslint-config-prettier": "^1.18.0",

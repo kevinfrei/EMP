@@ -11,36 +11,36 @@ export type SongKey = string;
 export type AlbumKey = string;
 export type ArtistKey = string;
 
-export type Song = {|
-  key: SongKey,
-  track: number,
-  title: string,
-  URL: string,
-  albumId: AlbumKey,
-  artistIds: Array<ArtistKey>,
-  secondaryIds: Array<ArtistKey>,
-|};
+export type Song = {
+  key: SongKey;
+  track: number;
+  title: string;
+  URL: string;
+  albumId: AlbumKey;
+  artistIds: Array<ArtistKey>;
+  secondaryIds: Array<ArtistKey>;
+};
 
-export type Artist = {|
-  key: ArtistKey,
-  name: string,
-  albums: Array<AlbumKey>,
-  songs: Array<SongKey>,
-|};
+export type Artist = {
+  key: ArtistKey;
+  name: string;
+  albums: Array<AlbumKey>;
+  songs: Array<SongKey>;
+};
 
-export type Album = {|
-  key: AlbumKey,
-  year: number,
-  title: string,
-  vatype: '' | 'va' | 'ost',
-  primaryArtists: Set<ArtistKey>,
-  songs: Array<SongKey>,
-|};
+export type Album = {
+  key: AlbumKey;
+  year: number;
+  title: string;
+  vatype: '' | 'va' | 'ost';
+  primaryArtists: Set<ArtistKey>;
+  songs: Array<SongKey>;
+};
 
-export type MediaInfo = {|
-  general: Map<string, string>,
-  audio: Map<string, string>,
-|};
+export type MediaInfo = {
+  general: Map<string, string>;
+  audio: Map<string, string>;
+};
 
 export type MapNames = 'Artists' | 'Albums' | 'Songs';
 export type ArrayOfKeys = 'ArtistArray' | 'AlbumArray' | 'SongArray';
@@ -54,7 +54,7 @@ export type ViewNames =
   | 'current'
   | 'settings';
 
-export type State = {|
+export type State = {
   // Just a list of paths to search for music
   // locations: Array<string>,
 
@@ -62,48 +62,48 @@ export type State = {|
   // This should probably not need to be 'complete' but rather rely on
   // the main process for something. I need to measure perf a bit to see
   // if it's a problem, or if it's only UI scaling issues
-  Artists: Map<ArtistKey, Artist>,
-  Albums: Map<AlbumKey, Album>,
-  Songs: Map<SongKey, Song>,
+  Artists: Map<ArtistKey, Artist>;
+  Albums: Map<AlbumKey, Album>;
+  Songs: Map<SongKey, Song>;
 
-  ArtistArray: Array<ArtistKey>,
-  AlbumArray: Array<AlbumKey>,
-  SongArray: Array<SongKey>,
+  ArtistArray: Array<ArtistKey>;
+  AlbumArray: Array<AlbumKey>;
+  SongArray: Array<SongKey>;
 
-  SortWithArticles: boolean,
+  SortWithArticles: boolean;
 
-  ArtistListSort: 'AlbumCount' | 'ArtistName' | 'SongCount',
-  AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear',
-  SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack',
+  ArtistListSort: 'AlbumCount' | 'ArtistName' | 'SongCount';
+  AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear';
+  SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack';
 
   // This one should probably NOT be saved in the same format on the server
-  Playlists: Map<string, Array<SongKey>>,
-  playlistLocation: string,
+  Playlists: Map<string, SongKey[]>;
+  playlistLocation: string;
 
   // This is about the actual stuff on screen
-  curView: ViewNames, // Which view is selected
+  curView: ViewNames; // Which view is selected
   // This is where each view is scrolled to currently
-  scrollManager: Map<string, { x: number, y: number }>,
+  scrollManager: Map<string, { x: number; y: number }>;
 
   // The list of songs in the play queue
-  songList: Array<SongKey>,
+  songList: Array<SongKey>;
 
-  searchText: string,
+  searchText: string;
 
   // The current song number being played (or having stopp
-  curIndex: number,
-  activePlaylistName: string,
+  curIndex: number;
+  activePlaylistName: string;
 
   // General state stuff
-  playing: boolean, // is a song currently playing?
-  shuffle: boolean,
-  repeat: boolean, // Have I ever wanted "repeat 1 song"? No. I have not.
-  muted: boolean,
-  volume: number,
-|};
+  playing: boolean; // is a song currently playing?
+  shuffle: boolean;
+  repeat: boolean; // Have I ever wanted "repeat 1 song"? No. I have not.
+  muted: boolean;
+  volume: number;
+};
 
 let initialState: State = {
-//  locations: [],
+  //  locations: [],
 
   Artists: new Map(),
   Albums: new Map(),
@@ -147,7 +147,7 @@ export const ValidKeyNames = [
   'Songs',
   'Playlists',
   'playlistLocation',
-//  'locations',
+  //  'locations',
   'curView',
   'songList',
   'activePlaylistName',
@@ -161,9 +161,9 @@ const combinedEffects = (store) => effects(withReduxDevtools(store));
 export default createConnectedStore<State>(initialState, combinedEffects);
 
 // Docs say: Ignore this if you're using React Hooks
-export type StoreProps = {|
-  store: Store<State>,
-|};
+export type StoreProps = {
+  store: Store<State>;
+};
 
 export type StoreState = Store<State>;
 export type StoreEffects = Effects<State>;

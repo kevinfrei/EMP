@@ -21,7 +21,7 @@ const mkEntry = (name: ViewNames, title: string, pic: mixed) => ({
   title,
 });
 
-const views: Array<?ViewEntry> = [
+const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', recentPic),
   mkEntry('album', 'Albums', albumPic),
   mkEntry('artist', 'Artists', artistPic),
@@ -32,7 +32,7 @@ const views: Array<?ViewEntry> = [
   mkEntry('settings', 'Settings', settingsPic),
 ];
 
-function getEntry(store: StoreState, view: ?ViewEntry, index: number) {
+function getEntry(store: StoreState, view: ViewEntry | null, index: number) {
   if (!view) {
     return <hr key={index} />;
   }

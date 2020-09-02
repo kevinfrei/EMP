@@ -49,7 +49,7 @@ export function PlaySongNumber(store: Store<State>, index: number) {
   const songList = store.get('songList');
   if (index < 0 || index >= songList.length) {
     console.log(
-      `PlaySongNumber: bounds error: ${index} (of ${songList.length})`
+      `PlaySongNumber: bounds error: ${index} (of ${songList.length})`,
     );
     return;
   }
@@ -95,14 +95,14 @@ const AddSongList = (store: Store<State>, keys: Array<SongKey>) => {
 };
 
 export const AddAlbum = (store: Store<State>, key: AlbumKey) => {
-  const album: ?Album = store.get('Albums').get(key);
+  const album: Album | undefined = store.get('Albums').get(key);
   if (album) {
     AddSongList(store, album.songs);
   }
 };
 
 export const AddArtist = (store: Store<State>, key: ArtistKey) => {
-  const artist: ?Artist = store.get('Artists').get(key);
+  const artist: Artist | undefined = store.get('Artists').get(key);
   if (artist) {
     AddSongList(store, artist.songs);
   }
@@ -113,7 +113,7 @@ export const AddArtist = (store: Store<State>, key: ArtistKey) => {
 export const AddToPlaylist = (
   store: Store<State>,
   key: SongKey,
-  playlist: string
+  playlist: string,
 ) => {
   const playlists = store.get('Playlists');
   const thisOne = playlists.get(playlist);
