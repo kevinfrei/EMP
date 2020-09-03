@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';
@@ -50,8 +50,8 @@ export default function AlbumView() {
     album,
     style,
   }: {
-    album: Album,
-    style: Properties<>,
+    album: Album;
+    style: CSSProperties;
   }) => {
     const artistName = GetArtistForAlbum(store, album);
     const adder = () => AddAlbum(store, album.key);
@@ -86,13 +86,10 @@ export default function AlbumView() {
     );
   };
 
-  const VirtualAlbumRow = ({
-    index,
-    style,
-  }: {
+  const VirtualAlbumRow = ({index, style}:{
     index: number,
-    style: Properties<>,
-  }) => {
+    style: CSSProperties,
+  }): JSX.Element => {
     const maybeAlbum = albums.get(albumArray[index]);
     if (maybeAlbum) {
       return <SingleAlbum key={index} style={style} album={maybeAlbum} />;

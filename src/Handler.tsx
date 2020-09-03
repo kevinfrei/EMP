@@ -9,6 +9,9 @@ import { PlaysetsComp } from './Sorters';
 
 import type { IpcRendererEvent } from 'electron';
 import type { StoreState } from './MyStore';
+import type { MyWindow } from './AsyncDoodad';
+
+declare var window: MyWindow;
 
 export type KeyValue = {
   key: string;
@@ -79,7 +82,7 @@ function makeChangeChecker<T>(
     }
     return false;
   };
-  return { key, hasChanged, delay, maxDelay, timeout: null, maxtimeout: null };
+  return { key, hasChanged, delay, maxDelay };
 }
 
 // For each key that should be saved to main (and persisted between runs)
@@ -110,7 +113,7 @@ const PersistedBetweenRuns: Array<SaveConfig<any>> = [
 const HandlePersistence = (store: StoreState) => {
   for (let key of PersistedBetweenRuns) {
     log(`key: ${key.key} subscription`);
-    store.on(key.key).subscribe((value) => {
+    store.on(key.key as any).subscribe((value) => {
       if (key.hasChanged(value)) {
         // Cancel the current scheduled update
         if (key.timeout !== null) {
@@ -120,27 +123,25 @@ const HandlePersistence = (store: StoreState) => {
         key.timeout = window.setTimeout(() => {
           // send the packet and cancel the maxDelay
           const mto = key.maxtimeout;
-          key.maxtimeout = null;
-          key.timeout = null;
-          if (mto !== null) {
+          if (!mto) {
             window.clearTimeout(mto);
           }
           if (key.hasChanged(value)) {
-            window.ipc.send('set', FTON.stringify({ key: key.key, value }));
+            window.ipc!.send('set', FTON.stringify({ key: key.key, value }));
           }
         }, key.delay);
         // If we haven't got a maxtimeout counting down, set one of those too
         if (key.maxtimeout === null) {
           key.maxtimeout = window.setTimeout(() => {
-            key.maxtimeout = null;
+            key.maxtimeout = undefined;
             if (key.hasChanged(value)) {
-              window.ipc.send('set', FTON.stringify({ key: key.key, value }));
+              window.ipc!.send('set', FTON.stringify({ key: key.key, value }));
             }
           }, key.maxDelay);
         }
       }
     });
-    window.ipc.send('get', key.key);
+    window.ipc!.send('get', key.key);
   }
 };
 
@@ -152,31 +153,33 @@ const ConfigureIPC = (store: StoreState) => {
   log(window.ipc);
   // Handle the 'automatic' persistence stuff
   HandlePersistence(store);
-  window.ipc.on('data', (event: IpcRendererEvent, message: string) => {
+  window.ipc!.on('data', (event: IpcRendererEvent, message: string) => {
     DataFromMainHandler(store, message);
   });
-  window.ipc.on('store', (event: IpcRendererEvent, message: string) => {
+  window.ipc!.on('store', (event: IpcRendererEvent, message: string) => {
     DataFromMainHandler(store, message);
   });
-  window.ipc.send('GetDatabase', 'GetDatabase');
-  window.ipc.on('mediainfo', (event: IpcRendererEvent, message: string) => {
+  window.ipc!.send('GetDatabase', 'GetDatabase');
+  window.ipc!.on('mediainfo', (event: IpcRendererEvent, message: string) => {
     log('mediainfo received');
     log(message);
     const data = FTON.parse(message);
     if (!data) return;
     if (typeof data !== 'object') return;
+    if (!('key' in data)) return;
     if (typeof data.key !== 'string') return;
+    if (!('data' in data)) return;
     if (typeof data.data !== 'object') return;
-    const mi = store.get('MediaInfoCache');
+    const mi = store.get('MediaInfoCache' as any);
     mi.set(data.key, data.data);
-    store.set('MediaInfoCache')(mi);
+    store.set('MediaInfoCache' as any)(mi);
   });
   const listeners: Map<
     string,
     Map<string, (value: string) => void>
   > = new Map();
   const subIds = SeqNum();
-  window.ipc.promiseSub = (
+  window.ipc!.promiseSub = (
     key: string,
     listener: (value: string) => void,
   ): string => {
@@ -190,7 +193,7 @@ const ConfigureIPC = (store: StoreState) => {
     listeners.set(key, subs);
     return id;
   };
-  window.ipc.promiseUnsub = (key: string, id: string): boolean => {
+  window.ipc!.promiseUnsub = (key: string, id: string): boolean => {
     let subs = listeners.get(key);
     if (!subs) {
       return false;
@@ -199,7 +202,7 @@ const ConfigureIPC = (store: StoreState) => {
     listeners.set(key, subs);
     return res;
   };
-  window.ipc.on('promise-response', (event, data) => {
+  window.ipc!.on('promise-response', (event, data) => {
     log(`Got a response for ${data.key}:`);
     log(data);
     const localSubscribers = listeners.get(data.key);

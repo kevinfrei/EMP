@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import Modal from 'react-bootstrap/Modal';
 
 import Store from '../MyStore';
@@ -24,13 +24,13 @@ export default function ArtistView() {
     index,
     style,
   }: {
-    index: number,
-    style: Properties<>,
-  }) {
+    index: number;
+    style: CSSProperties;
+  }): JSX.Element {
     const artistArray = store.get('ArtistArray');
     const artist = artists.get(artistArray[index]);
     if (!artist) {
-      return <div>Error for element {index}</div>;
+      return <div>{`Error for element ${index}`}</div>;
     }
     return (
       <div
@@ -59,7 +59,7 @@ export default function ArtistView() {
   if (!!expandedArtist) {
     const art = artists.get(expandedArtist);
     if (art) {
-      dialogHeader = 'Song list for ' + art.name;
+      dialogHeader = <>{`Song list for ${art.name}`}</>;
       details = (
         <div className="songListForArtist">
           {art.songs.map((k) => (

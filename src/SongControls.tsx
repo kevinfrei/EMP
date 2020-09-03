@@ -6,7 +6,7 @@ import Store from './MyStore';
 import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from './Playlist';
 
 import './styles/SongControls.css';
-import { StartSongPlaying } from './SongPlayback';
+import { StartSongPlaying, GetAudioElem } from './SongPlayback';
 
 const SongControls = () => {
   let store = Store.useStore();
@@ -41,7 +41,10 @@ const SongControls = () => {
         id="play-pause"
         className={playing}
         onClick={() => {
-          const ae = document.querySelector('#audioElement');
+          const ae = GetAudioElem();
+          if (!ae) {
+            return;
+          }
           if (playing === 'playing') {
             ae.pause();
           } else if (ae.readyState === 4) {

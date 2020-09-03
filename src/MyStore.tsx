@@ -1,6 +1,6 @@
 // @flow
 
-import type { Effects, Store } from 'undux';
+import type { Effects, Store, StoreDefinition } from 'undux';
 import {
   createConnectedStore,
   withReduxDevtools /*, withLogger*/,
@@ -75,6 +75,8 @@ export type State = {
   ArtistListSort: 'AlbumCount' | 'ArtistName' | 'SongCount';
   AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear';
   SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack';
+
+  MediaInfoCache: Map<SongKey, MediaInfo>,
 
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, SongKey[]>;
@@ -157,7 +159,7 @@ export const ValidKeyNames = [
 ];
 
 // I think this is how to combine different effects:
-const combinedEffects = (store) => effects(withReduxDevtools(store));
+const combinedEffects = (store:StoreDefinition<State>) => effects(withReduxDevtools(store));
 export default createConnectedStore<State>(initialState, combinedEffects);
 
 // Docs say: Ignore this if you're using React Hooks

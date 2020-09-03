@@ -2,7 +2,7 @@
 
 // @flow
 
-import React, { useState } from 'react';
+import React, { useState, CSSProperties } from 'react';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
@@ -20,7 +20,7 @@ import './styles/Playlists.css';
 import downChevron from '../img/down-chevron.svg';
 import deletePic from '../img/delete.svg';
 
-function Playlist({ name, playing }: { name: string, playing: boolean }) {
+function Playlist({ name, playing }: { name: string; playing: boolean }) {
   const store = Store.useStore();
   const [showSongs, setShowSongs] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -35,7 +35,7 @@ function Playlist({ name, playing }: { name: string, playing: boolean }) {
   if (!thisPlaylist) {
     return <></>;
   }
-  const expanderStyle: Properties<> = showSongs
+  const expanderStyle: CSSProperties = showSongs
     ? {}
     : { transform: 'rotate(-90deg)' };
   const theSongs = !showSongs ? (
@@ -105,12 +105,12 @@ export default function Playlists() {
   names.sort();
   return (
     <>
-    <div id="current-header">Playlists</div>
+      <div id="current-header">Playlists</div>
       <div id="current-view" />
       <VerticalScrollDiv scrollId="playlistsPos" layoutId="current-view">
         {names.map((name: string) => (
           <Playlist
-            store={store}
+            /*            store={store}*/
             key={name}
             name={name}
             playing={name === curPls}

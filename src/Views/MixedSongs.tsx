@@ -1,6 +1,6 @@
-// @flow
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
+//@ts-ignore
 import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -10,28 +10,27 @@ import { getMediaInfo } from '../Atoms';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
-import { OldEternalList } from '../LongList';
 
 import type { Properties } from 'csstype';
 
 import './styles/MixedSongs.css';
-import { useRecoilValue } from 'recoil/dist/recoil.production';
+import { useRecoilValue } from 'recoil';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
-  const lines = [];
+  const lines: React.ReactNode[] = [];
   strs.forEach((val, key) =>
     lines.push(
       <tr key={keyPrefix + key}>
         <td>{key}</td>
         <td colSpan={3}>{val}</td>
-      </tr>
-    )
+      </tr>,
+    ),
   );
   return lines;
 }
 
 function MediaInfoTable({ id }: { id: string }) {
-  const mediaInfo = useRecoilValue(getMediaInfo(id));
+  const mediaInfo: any = useRecoilValue(getMediaInfo(id));
   if (mediaInfo) {
     const genLines = mediaInfoToLine('gen', mediaInfo.general);
     const audLines = mediaInfoToLine('aud', mediaInfo.audio);
@@ -64,7 +63,7 @@ export default function MixedSongView() {
 
   const handleClose = () => setSelected('');
 
-  const VirtualSongRow = ({ index }: { index: number }): React$Node => {
+  const VirtualSongRow = ({ index }: { index: number }): React.ReactNode => {
     // style={style}
     return (
       <SongLine
@@ -82,8 +81,8 @@ export default function MixedSongView() {
     );
   };
   // height={height}
-  const customView = ({ height, width }) => (
-    <div style={{ width, height, border:'0px' }}>
+  const customView = ({ height, width }: { height: number; width: number }) => (
+    <div style={{ width, height, border: '0px' }}>
       <VirtualizedList
         height={height}
         useWindow={false}

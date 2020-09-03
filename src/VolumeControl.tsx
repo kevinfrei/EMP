@@ -6,6 +6,7 @@ import React from 'react';
 import Store from './MyStore';
 
 import './styles/VolumeControl.css';
+import { GetAudioElem } from './SongPlayback';
 
 export default function VolumeControl() {
   const store = Store.useStore();
@@ -15,7 +16,7 @@ export default function VolumeControl() {
   const volume = store.get('volume');
   const setVolume = store.set('volume');
 
-  let ae = document.getElementById('audioElement');
+  let ae = GetAudioElem();
 
   if (ae) {
     ae.muted = muted;

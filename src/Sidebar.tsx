@@ -14,8 +14,8 @@ import './styles/Sidebar.css';
 
 import type { ViewNames, StoreState } from './MyStore';
 
-type ViewEntry = { name: ViewNames, pic: mixed, title: string };
-const mkEntry = (name: ViewNames, title: string, pic: mixed) => ({
+type ViewEntry = { name: ViewNames, pic: string, title: string };
+const mkEntry = (name: ViewNames, title: string, pic: string) => ({
   name,
   pic,
   title,

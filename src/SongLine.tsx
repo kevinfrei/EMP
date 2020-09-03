@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { HTMLProps } from 'react';
 
 import Store from './MyStore';
 
@@ -17,13 +17,14 @@ export type SongHandler = (store: StoreState, songKey: SongKey) => void;
 // L: aLbum
 // C: Children (for adding buttons/decorators/whatnot)
 export type SongLineProps = {
-  songKey: SongKey,
-  onClick?: SongHandler,
-  onDoubleClick?: SongHandler,
-  onAuxClick?: SongHandler,
-  template?: string,
-  children?: React$Node,
-  props?: Array<mixed>,
+  songKey: SongKey;
+  onClick?: SongHandler;
+  onDoubleClick?: SongHandler;
+  onAuxClick?: SongHandler;
+  template?: string;
+  children?: React.ReactNode;
+  className?: string;
+  props?: React.Props<HTMLDivElement>;
 };
 
 export default function SongLine({
@@ -33,6 +34,7 @@ export default function SongLine({
   onAuxClick,
   template,
   children,
+  className,
   ...props
 }: /*  as,
   elemAs,*/
@@ -67,10 +69,12 @@ SongLineProps) {
           </span>
         );
       case 'C':
-        return <React.Fragment key={`C${index}`}>{children || ''}</React.Fragment>;
+        return (
+          <React.Fragment key={`C${index}`}>{children || ''}</React.Fragment>
+        );
       default:
         throw new Error(
-          `Invalid template for SongLine: ${chr} can only be one of L, R, #, T, C`
+          `Invalid template for SongLine: ${chr} can only be one of L, R, #, T, C`,
         );
     }
   });

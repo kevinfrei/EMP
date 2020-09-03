@@ -9,6 +9,11 @@ import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/index.css';
 
+declare interface MyWindow extends Window {
+  initApp: () => void;
+}
+declare var window: MyWindow;
+
 window.initApp = () => {
   const root = document.getElementById('root');
   if (root) {

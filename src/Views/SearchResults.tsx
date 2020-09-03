@@ -1,6 +1,6 @@
 // @flow
 
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import Card from 'react-bootstrap/Card';
 
 import Store from '../MyStore';
@@ -13,18 +13,12 @@ import type { Properties } from 'csstype';
 export default function SearchResultsView() {
   const store = Store.useStore();
   const searchResults = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  const SearchRowSize = (index) => {
+  const SearchRowSize = (index: number): number => {
     return 40 + 10 * (index & 1);
   };
-  const VirtualSearchRow = ({
-    index,
-    style,
-  }: {
-    index: number,
-    style: Properties<>,
-  }) => {
+  const VirtualSearchRow = (index: number, style: CSSProperties) => {
     return (
-      <div style={{ style }}>
+      <div style={style}>
         index: {index}, value: {searchResults[index]}
       </div>
     );

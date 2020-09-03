@@ -39,7 +39,7 @@ export function GetSong(store: StoreState, sk: SongKey): Song | void {
 }
 
 export function GetTrackListingForSong(store: StoreState, sk: SongKey): string {
-  const song: Song | undefined = GetSong(store, sk);
+  const song: Song | void = GetSong(store, sk);
   if (!song) {
     return '# - No Name';
   }
@@ -51,7 +51,7 @@ export function GetDataForSong(
   sk: SongKey,
 ): { title: string; track: number; artist: string; album: string } {
   let res = { title: '-', track: 0, artist: '-', album: '-' };
-  const song: Song | undefined = GetSong(store, sk);
+  const song: Song | void = GetSong(store, sk);
   if (!song) {
     return res;
   }
@@ -84,9 +84,9 @@ export function GetArtistForAlbum(
     if (!!alOrNull) {
       return 'UNDEFINED';
     }
-    alb = alOrNull;
+    alb = alOrNull!;
   }
-  const lb: Album = alb;
+  const lb: Album = alb as Album;
   if (lb.vatype === 'ost') {
     return 'Soundtrack';
   }

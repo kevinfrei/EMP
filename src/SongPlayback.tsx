@@ -1,6 +1,3 @@
-// @flow
-// @format
-
 import React, { useState } from 'react';
 import Store from './MyStore';
 import { GetDataForSong, GetAlbumKeyForSongKey } from './DataAccess';
@@ -23,20 +20,31 @@ const secondsToTime = (val: number): string => {
   }
 };
 
+declare interface MyWindow extends Window {
+  positionInterval?: number | NodeJS.Timeout;
+}
+declare var window: MyWindow;
+
+export function GetAudioElem(): HTMLMediaElement | void {
+  return document.getElementById('audioElement') as HTMLMediaElement;
+}
+
 if (window.positionInterval !== undefined) {
-  window.clearInterval(window.positionInterval);
+  window.clearInterval(window.positionInterval as number);
   delete window.positionInterval;
 }
 window.positionInterval = setInterval(() => {
   // Every .250 seconds, update the slider
-  const ae = document.getElementById('audioElement');
-  const rs = document.getElementById('song-slider');
+  const ae = GetAudioElem();
+  const rs: HTMLProgressElement | null = document.getElementById(
+    'song-slider',
+  ) as any;
   if (!ae) {
     return;
   }
   if (ae.duration >= 0 && ae.duration < Number.MAX_SAFE_INTEGER) {
     if (rs) {
-      const val = Number.parseFloat(ae.currentTime / ae.duration);
+      const val = ae.currentTime / ae.duration;
       rs.value = val;
     }
     const npct = document.getElementById('now-playing-current-time');
@@ -56,37 +64,43 @@ export function StartSongPlaying(store: StoreState, index: number) {
     return;
   }
   store.set('curIndex')(index);
-  const ae = document.getElementById('audioElement');
+  const ae = GetAudioElem();
   if (ae) {
     setTimeout(() => {
       ae.currentTime = 0;
       ae.play();
     }, 1);
-  } else {
-    console.log('unable to find audioElement!');
   }
 }
 
 export function StopSongPlaying(store: StoreState) {
   store.set('playing')(false);
-  const ae = document.getElementById('audioElement');
+  const ae = GetAudioElem();
   if (ae) {
     // Cleaning up Audio element status
     ae.src = '';
     ae.currentTime = 0;
-    const npct = document.getElementById('now-playing-current-time');
-    const nprt = document.getElementById('now-playing-remaining-time');
-    npct.innerText = '';
-    nprt.innerText = '';
-    const rs = document.getElementById('song-slider');
-    rs.value = 0;
+    const npct: HTMLDivElement | null = document.getElementById(
+      'now-playing-current-time',
+    ) as HTMLDivElement;
+    const nprt: HTMLDivElement | null = document.getElementById(
+      'now-playing-remaining-time',
+    ) as HTMLDivElement;
+    const rs: HTMLProgressElement | null = document.getElementById(
+      'song-slider',
+    ) as HTMLProgressElement;
+    if (npct && nprt && rs) {
+      npct.innerText = '';
+      nprt.innerText = '';
+      rs.value = 0;
+    }
   }
 }
 
 export default function SongPlayback() {
   const [, setPos] = useState('songPos');
 
-  let audio: React$Element<any>;
+  let audio: React.ReactElement<HTMLAudioElement>;
   let store = Store.useStore();
   const curIndex = store.get('curIndex');
   const songIndex = store.get('songList');
@@ -107,7 +121,7 @@ export default function SongPlayback() {
         onPause={() => playing(false)}
         onEnded={() => StartNextSong(store)}
       />
-    );
+    ) as React.ReactElement<HTMLAudioElement>;
     picUrl = 'pic://album/' + GetAlbumKeyForSongKey(store, songKey);
     ({ title, artist, album } = GetDataForSong(store, songKey));
     split = artist.length && album.length ? ': ' : '';
@@ -128,15 +142,15 @@ export default function SongPlayback() {
         min="0"
         max="1"
         step="1e-5"
-        onChange={(ev) => {
+        onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
           setPos(ev.target.value);
-          const ae = document.getElementById('audioElement');
+          const ae = GetAudioElem();
           if (!ae) {
             return;
           }
-          const targetTime = ae.duration * ev.target.value;
+          const targetTime = ae.duration * Number.parseFloat(ev.target.value);
           if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
-            ae.currentTime = ae.duration * ev.target.value;
+            ae.currentTime = ae.duration * Number.parseFloat(ev.target.value);
           }
         }}
       />

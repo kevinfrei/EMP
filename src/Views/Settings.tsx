@@ -16,6 +16,7 @@ import {
   ArtistListSort,
   SongListSort,
   SyncLoc,
+  syncedAtom,
 } from '../Atoms';
 
 import { VerticalScrollDiv } from '../Scrollables';
@@ -24,6 +25,18 @@ import deletePic from '../img/delete.svg';
 import addPic from '../img/add.svg';
 
 import './styles/Settings.css';
+
+declare interface MyWindow extends Window {
+  remote: Electron.Remote;
+}
+declare var window: MyWindow;
+
+declare type PopupItem = {
+  title: string;
+  syncedAtom: syncedAtom<string>;
+  types: string[];
+  names: string[];
+};
 
 const removeFromSet = (set: Array<string>, val: string): Array<string> => {
   const newSet = new Set(set);
@@ -37,11 +50,11 @@ function GetDirs() {
   });
 }
 
-function SortPopup({ item }): React$Node {
+function SortPopup({ item }: { item: PopupItem }): JSX.Element {
   const [value, setter] = useRecoilState(item.syncedAtom.atom);
   const names: Array<string> = item.names;
-  const selected = item.types.indexOf(value);
-  const select = (key) => setter(key);
+  const selected = value ? item.types.indexOf(value) : -1;
+  const select = (key: string | null) => setter(key);
   const SyncingElement = item.syncedAtom.AtomSyncer;
   return (
     <Row>
@@ -71,14 +84,14 @@ function RecoilLocations() {
   const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
   return (
     <>
-      {newLoc.map((elem) => (
+      {(newLoc || []).map((elem) => (
         <Row key={elem}>
           <Col xs={1}>
             <img
               className="delete-pic pic-button"
               src={deletePic}
               alt="Delete Item"
-              onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
+              onClick={() => setNewLoc(removeFromSet(newLoc!, elem))}
             />
           </Col>
           <Col>{elem}</Col>
@@ -91,7 +104,7 @@ function RecoilLocations() {
             src={addPic}
             alt="add source"
             onClick={() => {
-              const locs: string[] = GetDirs();
+              const locs: string[] | undefined = GetDirs();
               if (locs) {
                 setNewLoc([...locs, ...newLoc]);
               }
@@ -116,7 +129,7 @@ function ArticleSorting() {
       <Col>
         <input
           type="checkbox"
-          checked={articles}
+          checked={articles === true}
           onChange={() => setArticles(!articles)}
         ></input>
       </Col>

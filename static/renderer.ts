@@ -14,11 +14,11 @@ const log = logger.bind('renderer');
 logger.enable('renderer');
 
 interface MyWindow extends Window {
-  ipc: IpcRenderer;
-  remote: Electron.Remote;
-  isDev: boolean;
-  initApp: () => void;
-  ipcPromise: PromiseIpcRenderer;
+  ipc: IpcRenderer | undefined;
+  remote: Electron.Remote | undefined;
+  isDev: boolean | undefined;
+  initApp: undefined | (() => void);
+  ipcPromise: PromiseIpcRenderer  | undefined;
 }
 declare var window: MyWindow;
 
