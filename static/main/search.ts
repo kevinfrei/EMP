@@ -14,7 +14,7 @@ function addToIndex<T>(
   o: T,
   res: Map<string, TrieNode<T>>,
 ) {
-  let chr = str[idx].toLocaleUpperCase();
+  const chr = str[idx].toLocaleUpperCase();
   let node = res.get(chr);
   if (!node) {
     node = { children: new Map(), values: new Set() };
@@ -31,10 +31,10 @@ export default function makeIndex<T>(
   objects: Iterable<T>,
   getter: (arg: T) => string,
 ): Map<string, TrieNode<T>> {
-  let res: Map<string, TrieNode<T>> = new Map();
-  for (let o of objects) {
+  const res: Map<string, TrieNode<T>> = new Map();
+  for (const o of objects) {
     const wholeString = getter(o);
-    for (let str of wholeString.split(splitter)) {
+    for (const str of wholeString.split(splitter)) {
       // We have a string for the object 'o' that needs to be added to the trie
       if (str.length) {
         addToIndex(0, str, o, res);

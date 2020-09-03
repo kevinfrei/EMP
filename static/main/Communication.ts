@@ -6,7 +6,7 @@ import { FTON, FTONData } from '@freik/core-utils';
 import * as persist from './persist';
 import { getMediaInfo } from './music';
 
-//import type { FTONData } from '@freik/core-utils';
+// import type { FTONData } from '@freik/core-utils';
 import type { SongKey, MediaInfo, MusicDB } from './music';
 import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
@@ -52,7 +52,9 @@ function kvpValidator<T>(val: any): KVP<T> | void {
 function kvpFromJSONValidator(val: string): KVP<FTONData> | void {
   try {
     return kvpValidator(FTON.parse(val));
-  } catch (e) {}
+  } catch (e) {
+    log(e);
+  }
   return undefined;
 }
 
@@ -136,12 +138,12 @@ function sendBackMediaInfo(songKey: SongKey, data: MediaInfo) {
 function getMetadata(songKey: SongKey) {
   const musicDB = persist.getItem<MusicDB>('DB');
   if (!musicDB) {
-    console.log("Can't load DB");
+    log("Can't load DB");
     return;
   }
   const song = musicDB.songs.get(songKey);
   if (!song) {
-    console.log("Can't find music key " + songKey);
+    log("Can't find music key " + songKey);
     return;
   }
   getMediaInfo(song.path)
@@ -150,7 +152,7 @@ function getMetadata(songKey: SongKey) {
       log(data);
       sendBackMediaInfo(songKey, data);
     })
-    .catch(console.log);
+    .catch(log);
 }
 
 export function SetIndex(id: string, index: Map<string, TrieNode<unknown>>) {
@@ -219,7 +221,10 @@ async function ipcGetter(data: { key: unknown }) {
     log(value);
     // send the data back as the value from disk
     win!.webContents.send('promise-response', { key: data.key, value });
-  } catch (e) {}
+  } catch (e) {
+    log('error from ipcGetter');
+    log(e);
+  }
   return;
 }
 
@@ -234,8 +239,10 @@ async function ipcSetter(data: { key: unknown; value: unknown }) {
       await persist.setItemAsync(kvp.key, kvp.value as FTONData);
       return true;
     }
-  } catch (e) {}
-  // TODO
+  } catch (e) {
+    log('error from ipcSetter');
+    log(e);
+  }
   log('Trouble with promise-set');
   return false;
 }
@@ -253,15 +260,18 @@ async function ipcDeleter(data: { key: unknown }) {
     }
     await persist.deleteItemAsync(data.key);
     return true;
-  } catch (e) {}
+  } catch (e) {
+    log('error from ipcDeleter');
+    log(e);
+  }
   return false;
 }
 
-async function ipcSong(data: { key: unknown; value: unknown }) {}
+// async function ipcSong(data: { key: unknown; value: unknown }) {}
 
-async function ipcSongs(data: { key: unknown; value: unknown }) {}
+// async function ipcSongs(data: { key: unknown; value: unknown }) {}
 
-async function ipcSongKeys(data: { key: unknown; value: unknown }) {}
+// async function ipcSongKeys(data: { key: unknown; value: unknown }) {}
 
 async function ipcMediaInfo(key: { key: unknown; value: unknown }) {
   if (typeof key !== 'string') {
@@ -269,12 +279,12 @@ async function ipcMediaInfo(key: { key: unknown; value: unknown }) {
   }
   const musicDB = await persist.getItemAsync<MusicDB>('DB');
   if (!musicDB) {
-    console.log("Can't load DB");
+    log("Can't load DB");
     return;
   }
   const song = musicDB.songs.get(key);
   if (!song) {
-    console.log("Can't find music key " + key);
+    log("Can't find music key " + key);
     return;
   }
   const data: MediaInfo = await getMediaInfo(song.path);
@@ -293,7 +303,7 @@ export function Init() {
     mk<string>('mediainfo', SongKeyValidator, getMetadata),
     mk<string>('search', stringValidator, search),
   ];
-  for (let val of comms) {
+  for (const val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
       const data: string | KVP<FTONData> | void = val.validator(arg);
       if (data !== undefined && data !== null) {

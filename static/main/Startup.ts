@@ -13,7 +13,7 @@ import type { FTONData } from '@freik/core-utils';
 const log = logger.bind('Startup');
 
 function getLocations(): string[] {
-  let rawLocations = persist.getItem<FTONData>('locations');
+  const rawLocations = persist.getItem<FTONData>('locations');
   let musicLocations = rawLocations
     ? FTON.arrayOfStrings(rawLocations)
     : undefined;
@@ -26,10 +26,10 @@ function getLocations(): string[] {
 }
 
 async function getMusicDb() {
-  let musicLocations = getLocations();
+  const musicLocations = getLocations();
   log('Got music locations:');
   log(musicLocations);
-  let musicDB = await music.find(musicLocations);
+  const musicDB = await music.find(musicLocations);
   log('Got Music DB!');
   persist.setItem('DB', musicDB);
   const artistIndex = makeIndex(musicDB.artists.values(), (a) => a.name);
@@ -40,15 +40,15 @@ function UpdateAndSendDB() {
   getMusicDb()
     .then(SendDatabase)
     .catch((rej) => {
-      console.log('Caught an exception while trying to update the db');
-      console.log(rej);
+      log('Caught an exception while trying to update the db');
+      log(rej);
     });
 }
 
 // This is awaited upon initial window creation
 export async function Startup() {
   // Scan for all music
-  let musicDB = persist.getItem('DB');
+  const musicDB = persist.getItem('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
     setTimeout(UpdateAndSendDB, 1);

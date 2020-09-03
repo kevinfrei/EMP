@@ -12,7 +12,7 @@ import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
 
 const SetEqual = Comparisons.SetEqual;
 const log = logger.bind('music');
-//logger.enable('music');
+// logger.enable('music');
 
 export type SongKey = string;
 export type AlbumKey = string;
@@ -63,7 +63,7 @@ export type MediaInfo = {
 
 let existingKeys: Map<string, SongKey> | null = null;
 const newSongKey = (() => {
-  let highestSongKey = persist.getItem<string>('highestSongKey');
+  const highestSongKey = persist.getItem<string>('highestSongKey');
   if (highestSongKey) {
     log(`highestSongKey: ${highestSongKey}`);
     return SeqNum('S', highestSongKey);
@@ -122,7 +122,7 @@ function getOrNewAlbum(
   }
   // sharedNames is the list of existing albums with this title
   // It might be empty (coming from 5 lines up there ^^^ )
-  for (let albumKey of sharedNames) {
+  for (const albumKey of sharedNames) {
     const alb: Album | undefined = db.albums.get(albumKey);
     if (!alb) {
       log(
@@ -136,7 +136,7 @@ function getOrNewAlbum(
       log(`DB inconsistency - album title index inconsistency`);
       continue;
     }
-    if (check.year !== year || check.vatype != vatype) {
+    if (check.year !== year || check.vatype !== vatype) {
       continue;
     }
     // For VA type albums, we can ignore the artist list
@@ -149,7 +149,7 @@ function getOrNewAlbum(
     }
     // If we're here, we've found the album we're looking for
     // Before returning, ensure that the artists have this album in their set
-    for (let art of artists) {
+    for (const art of artists) {
       const thisArtist: Artist | undefined = db.artists.get(art);
       if (!thisArtist) {
         continue;
@@ -198,7 +198,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   );
   const secondaryIds: ArtistKey[] = [];
   if (md.MoreArtists) {
-    for (let sa of md.MoreArtists) {
+    for (const sa of md.MoreArtists) {
       const moreArt: Artist = getOrNewArtist(db, sa);
       allArtists.push(moreArt);
       secondaryIds.push(moreArt.key);
@@ -222,7 +222,7 @@ async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
   // Get all pictures from each directory.
   // Find the biggest and make it the album picture for any albums in that dir
   const dirsToPics: Map<string, Set<string>> = new Map();
-  for (let p of pics) {
+  for (const p of pics) {
     const dirName = path.dirname(p);
     const fileName = p.substr(dirName.length + 1);
     const val = dirsToPics.get(dirName);
@@ -233,8 +233,8 @@ async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
     }
   }
   const dirsToAlbums: Map<string, Set<Album>> = new Map();
-  for (let a of db.albums.values()) {
-    for (let s of a.songs) {
+  for (const a of db.albums.values()) {
+    for (const s of a.songs) {
       const theSong = db.songs.get(s);
       if (!theSong) {
         continue;
@@ -256,19 +256,19 @@ async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
   // Now, for each dir, find the biggest file and dump it in the database
   // for each album that has stuff in that directory
   type SizeAndName = { size: number; name: string };
-  for (let [dirName, setOfFiles] of dirsToPics) {
+  for (const [dirName, setOfFiles] of dirsToPics) {
     const albums = dirsToAlbums.get(dirName);
     if (!albums || !albums.size) {
       continue;
     }
     let largest: SizeAndName = { size: 0, name: '' };
-    for (let cur of setOfFiles.values()) {
-      let fileStat = await fsp.stat(cur);
+    for (const cur of setOfFiles.values()) {
+      const fileStat = await fsp.stat(cur);
       if (fileStat.size > largest.size) {
         largest = { size: fileStat.size, name: cur };
       }
     }
-    for (let album of albums) {
+    for (const album of albums) {
       db.pictures.set(album.key, largest.name);
     }
   }
@@ -301,7 +301,7 @@ async function fileNamesToDatabase(
     (await persist.getItemAsync<Map<string, SongKey>>('songHashIndex')) ||
     new Map();
 
-  for (let file of files) {
+  for (const file of files) {
     const littlemd: SimpleMetadata | void = metadata.fromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
@@ -352,7 +352,7 @@ export async function find(locations: string[]): Promise<MusicDB> {
     if (!dirents) {
       continue;
     }
-    for (let dirent of dirents) {
+    for (const dirent of dirents) {
       try {
         if (dirent.isSymbolicLink()) {
           const ap = await fsp.realpath(path.join(i, dirent.name));
@@ -402,7 +402,7 @@ function secondsToHMS(vals: string): string {
   let suffix: string = decimal > 0 ? vals.substr(decimal) : '';
   suffix = suffix.replace(/0+$/g, '');
   suffix = suffix.length === 1 ? '' : suffix;
-  const val = parseInt(vals);
+  const val = parseInt(vals, 10);
   const expr = new Date(val * 1000).toISOString();
   if (val < 600) {
     return expr.substr(15, 4) + suffix;
@@ -443,7 +443,7 @@ const MediaInfoTranslation = new Map([
 
 function objToMap(o: { [key: string]: string | number }): Map<string, string> {
   const res = new Map();
-  for (let i in o) {
+  for (const i in o) {
     if (typeof i === 'string' && i.length > 0 && i[0] !== '@' && i in o) {
       const type = typeof o[i];
       if (type === 'string' || type === 'number') {
@@ -455,13 +455,13 @@ function objToMap(o: { [key: string]: string | number }): Map<string, string> {
   return res;
 }
 
-export async function getMediaInfo(path: string): Promise<MediaInfo> {
-  const rawMetadata = await mediainfo(path);
+export async function getMediaInfo(mediaPath: string): Promise<MediaInfo> {
+  const rawMetadata = await mediainfo(mediaPath);
   const trackInfo: any = rawMetadata.media.track;
   const general = objToMap(trackInfo[0]);
   const audio = objToMap(trackInfo[1]);
   // Remove some stuff I don't care about or don't handle yet
-  for (let i of [
+  for (const i of [
     'Audio Count',
     'Cover',
     'Cover: Type',
@@ -477,7 +477,7 @@ export async function getMediaInfo(path: string): Promise<MediaInfo> {
   ]) {
     general.delete(i);
   }
-  for (let j of [
+  for (const j of [
     'Samples Per Frame',
     'Sampling Count',
     'Frame Rate',

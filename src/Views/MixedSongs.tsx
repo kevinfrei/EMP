@@ -70,7 +70,7 @@ export default function MixedSongView() {
         template="RL#T"
         key={index}
         className={
-          (index % 2)
+          index % 2
             ? 'songContainer evenMixedSong'
             : 'songContainer oddMixedSong'
         }

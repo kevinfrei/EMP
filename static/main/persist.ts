@@ -8,7 +8,7 @@ import type { Rectangle } from 'electron';
 import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('persist');
-//logger.enable('persist');
+// logger.enable('persist');
 
 export type MaybeRectangle = {
   width: number;
@@ -58,7 +58,10 @@ function readFile(id: string): FTONData {
     data = FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
     memoryCache.set(id, data);
     return data;
-  } catch (e) {}
+  } catch (e) {
+    log('Error occurred during readFile');
+    log(e);
+  }
   return {};
 }
 
@@ -70,8 +73,10 @@ async function readFileAsync(id: string): Promise<FTONData> {
   try {
     const contents = await fsp.readFile(storageLocation(id), 'utf8');
     data = FTON.parse(contents);
-    return data;
-  } catch (e) {}
+  } catch (e) {
+    log('Error occurred during readFileAsync');
+    log(e);
+  }
   return {};
 }
 
@@ -89,14 +94,20 @@ function deleteFile(id: string) {
   try {
     fs.unlinkSync(storageLocation(id));
     memoryCache.delete(id);
-  } catch (e) {}
+  } catch (e) {
+    log('Error occurred during deleteFile');
+    log(e);
+  }
 }
 
 async function deleteFileAsync(id: string) {
   try {
     await fsp.unlink(storageLocation(id));
     memoryCache.delete(id);
-  } catch (e) {}
+  } catch (e) {
+    log('Error occurred during deleteFileAsync');
+    log(e);
+  }
 }
 
 function notify(key: string, val: FTONData) {
@@ -237,7 +248,11 @@ export function getWindowPos(): WindowPosition {
         );
       }
     }
-  } catch (err) {}
+  } catch (e) {
+    log('Error occurred during getWindowPos');
+    log(e);
+  }
+
   return defaultWindowPosition;
 }
 

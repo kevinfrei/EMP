@@ -10,7 +10,7 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
 
-import {logger} from '@freik/simplelogger;
+import { logger } from '@freik/simplelogger';
 
 const log = logger.bind('serviceWorker');
 log.disable('serviceWorker');
@@ -134,9 +134,7 @@ function checkValidServiceWorker(swUrl: string, config: Config) {
       }
     })
     .catch(() => {
-      log(
-        'No internet connection found. App is running in offline mode.',
-      );
+      log('No internet connection found. App is running in offline mode.');
     });
 }
 

@@ -9,7 +9,7 @@ import type { WindowPosition } from './persist';
 
 export type OnWindowCreated = (window: BrowserWindow) => void;
 
-const isDev = true; //require('electron-is-dev');
+const isDev = true; // require('electron-is-dev');
 
 const log = logger.bind('electronSetup');
 logger.disable('electronSetup');
@@ -60,7 +60,7 @@ export default function setup(windowCreated: OnWindowCreated) {
 
     app.whenReady().then(() => {
       if (isDev) {
-        console.log('Trying to install devtools');
+        log('Trying to install devtools');
         // Load the react developer tools if we're in development mode
         const {
           default: installExtension,
@@ -69,8 +69,8 @@ export default function setup(windowCreated: OnWindowCreated) {
         } = require('electron-devtools-installer');
 
         installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-          .then((name: string) => console.log(`Added Extension:  ${name}`))
-          .catch((err: Error) => console.log('An error occurred: ', err));
+          .then((name: string) => log(`Added Extension:  ${name}`))
+          .catch((err: Error) => log('An error occurred: ', err));
       }
     });
     // Wait to show the main window until it's actually ready...

@@ -14,9 +14,9 @@ import type { BrowserWindow } from 'electron';
 import type { OnWindowCreated } from './main/electronSetup';
 
 const log = logger.bind('electron');
-//logger.enable('electron');
+// logger.enable('electron');
 
-let win = null;
+// const win = null;
 
 const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
   log('Window Created');
@@ -28,7 +28,7 @@ const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
       Begin(window);
     })
     .catch((e) => {
-      console.error(e);
+      log(e);
       window.webContents.send('data', '{"error":"loading"}');
     });
 };

@@ -21,7 +21,7 @@ export type SongLineProps = {
   template?: string;
   children?: React.ReactNode;
   className?: string;
-  props?: HTMLProps<HTMLDivElement>
+  props?: HTMLProps<HTMLDivElement>;
 };
 
 export default function SongLine({
@@ -75,7 +75,9 @@ SongLineProps) {
         );
     }
   });
-  const nothing: SongHandler = (theStore, key) => {/* */};
+  const nothing: SongHandler = (theStore, key) => {
+    /* */
+  };
   const click = onClick || nothing;
   const double = onDoubleClick || nothing;
   const aux = onAuxClick || nothing;

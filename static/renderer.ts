@@ -6,9 +6,7 @@ import { IpcRenderer, ipcRenderer, remote } from 'electron';
 import { logger } from '@freik/simplelogger';
 import { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
 
-//mport type { PromiseIpcRenderer } from 'electron-promise-ipc';
-
-const isDev = true; //require('electron-is-dev');
+const isDev = true; // require('electron-is-dev');
 
 const log = logger.bind('renderer');
 logger.enable('renderer');
@@ -44,7 +42,7 @@ window.addEventListener('DOMContentLoaded', () => {
   } else {
     log('FAILURE: No window.initApp() attached.');
   }
-  console.log('Setting up PromiseIPC:');
+  log('Setting up PromiseIPC:');
   window.ipcPromise = new PromiseIpcRenderer({ maxTimeoutMs: 5000 });
-  console.log(window.ipcPromise);
+  log(window.ipcPromise);
 });

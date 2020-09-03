@@ -12,7 +12,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 */
 const log = logger.bind('configProtocols');
-//logger.enable('configProtocols');
+// logger.enable('configProtocols');
 
 export default function configureProtocols() {
   protocol.registerFileProtocol('pic', (req, callback) => {
