@@ -1,16 +1,13 @@
-// @flow
-
 import React, { useLayoutEffect, useRef } from 'react';
+import { FixedSizeList, VariableSizeList } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 import Store from './MyStore';
 
-import './styles/Scrollables.css';
-import AutoSizer from 'react-virtualized-auto-sizer';
-
-import { FixedSizeList, VariableSizeList } from 'react-window';
-
 import type { Properties } from 'csstype';
 import type { ListOnScrollProps } from 'react-window';
+
+import './styles/Scrollables.css';
 
 export function VerticalScrollDiv({
   scrollId,
@@ -25,7 +22,7 @@ export function VerticalScrollDiv({
   className?: string;
   props?: Properties<HTMLDivElement>[];
 }): JSX.Element {
-  let store = Store.useStore();
+  const store = Store.useStore();
   const scrollData = store.get('scrollManager');
   const getScrollPosition = (ev: React.UIEvent<HTMLElement>) => {
     const pos = {
@@ -100,8 +97,8 @@ export function VerticalScrollFixedVirtualList({
   itemSize: number;
   itemGenerator: generator;
 }) {
-  let ref: React.MutableRefObject<FixedSizeList | null> = useRef(null);
-  let store = Store.useStore();
+  const ref: React.MutableRefObject<FixedSizeList | null> = useRef(null);
+  const store = Store.useStore();
   const scrollData = store.get('scrollManager');
   let alreadySet = false;
 
@@ -155,8 +152,8 @@ export function VerticalScrollVariableVirtualList({
   itemSizeGenerator: (index: number) => number;
   itemGenerator: (index: number, style: React.CSSProperties) => React.ReactNode;
 }) {
-  let ref: React.MutableRefObject<VariableSizeList | null> = useRef(null);
-  let store = Store.useStore();
+  const ref: React.MutableRefObject<VariableSizeList | null> = useRef(null);
+  const store = Store.useStore();
   const scrollData = store.get('scrollManager');
   let alreadySet = false;
   const getScrollPosition = (props: ListOnScrollProps) => {

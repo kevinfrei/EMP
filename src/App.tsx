@@ -1,6 +1,3 @@
-// @flow
-// @format
-
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 

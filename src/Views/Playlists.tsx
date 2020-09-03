@@ -1,7 +1,3 @@
-// @flow
-
-// @flow
-
 import React, { useState, CSSProperties } from 'react';
 import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
@@ -98,7 +94,7 @@ function Playlist({ name, playing }: { name: string; playing: boolean }) {
 }
 
 export default function Playlists() {
-  let store = Store.useStore();
+  const store = Store.useStore();
   const playlists = store.get('Playlists');
   const curPls = store.get('activePlaylistName');
   const names = [...playlists.keys()];

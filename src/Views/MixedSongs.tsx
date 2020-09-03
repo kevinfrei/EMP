@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-//@ts-ignore
+// @ts-ignore
 import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
@@ -70,13 +70,13 @@ export default function MixedSongView() {
         template="RL#T"
         key={index}
         className={
-          index & 1
+          (index % 2)
             ? 'songContainer evenMixedSong'
             : 'songContainer oddMixedSong'
         }
         songKey={songArray[index]}
         onDoubleClick={AddSong}
-        onAuxClick={(store, songKey) => setSelected(songKey)}
+        onAuxClick={(theStore, songKey) => setSelected(songKey)}
       />
     );
   };

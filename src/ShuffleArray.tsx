@@ -1,7 +1,5 @@
-//@flow
-
 function Rand(max: number): number {
-  return (Math.random() * max) | 0;
+  return Math.floor(Math.random() * max);
 }
 
 export default function ShuffleArray<T>(array: T[]): T[] {

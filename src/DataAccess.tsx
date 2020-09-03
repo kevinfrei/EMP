@@ -1,5 +1,3 @@
-// @flow
-
 import type {
   StoreState,
   SongKey,
@@ -50,7 +48,7 @@ export function GetDataForSong(
   store: StoreState,
   sk: SongKey,
 ): { title: string; track: number; artist: string; album: string } {
-  let res = { title: '-', track: 0, artist: '-', album: '-' };
+  const res = { title: '-', track: 0, artist: '-', album: '-' };
   const song: Song | void = GetSong(store, sk);
   if (!song) {
     return res;

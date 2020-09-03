@@ -1,5 +1,3 @@
-// @flow
-
 import type { Effects, Store, StoreDefinition } from 'undux';
 import {
   createConnectedStore,
@@ -104,7 +102,7 @@ export type State = {
   volume: number;
 };
 
-let initialState: State = {
+const initialState: State = {
   //  locations: [],
 
   Artists: new Map(),

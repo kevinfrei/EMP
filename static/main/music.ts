@@ -5,12 +5,12 @@ import { Metadata as metadata } from '@freik/media-utils';
 import { Comparisons } from '@freik/core-utils';
 import { SeqNum } from '@freik/core-utils';
 import mediainfo from 'node-mediainfo';
-const SetEqual = Comparisons.SetEqual;
 
 import * as persist from './persist';
 
 import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
 
+const SetEqual = Comparisons.SetEqual;
 const log = logger.bind('music');
 //logger.enable('music');
 

@@ -1,7 +1,6 @@
-// @flow
-// @format
 import ShuffleArray from './ShuffleArray';
 import { StartSongPlaying, StopSongPlaying } from './SongPlayback';
+import { logger } from '@freik/simplelogger';
 
 import type { Store } from 'undux';
 import type {
@@ -13,6 +12,9 @@ import type {
   ArtistKey,
   StoreState,
 } from './MyStore';
+
+const log = logger.bind('Playlist.tsx');
+logger.disable('Playlist.tsx');
 
 // Playlists are a named ordered (?) list of songs
 // Literally: Map<string, SongKey[]>
@@ -48,9 +50,7 @@ export function PlayingPlaylist(playlistName: string) {
 export function PlaySongNumber(store: Store<State>, index: number) {
   const songList = store.get('songList');
   if (index < 0 || index >= songList.length) {
-    console.log(
-      `PlaySongNumber: bounds error: ${index} (of ${songList.length})`,
-    );
+    log(`PlaySongNumber: bounds error: ${index} (of ${songList.length})`);
     return;
   }
   StartSongPlaying(store, index);
@@ -118,7 +118,7 @@ export const AddToPlaylist = (
   const playlists = store.get('Playlists');
   const thisOne = playlists.get(playlist);
   if (!thisOne) {
-    console.log('Attempt to add to a non-existent playlist');
+    log('Attempt to add to a non-existent playlist');
     return;
   }
   // TODO: If this song is already in the list, maybe ask for confirmation?
@@ -204,7 +204,7 @@ export function StartPlaylist(store: StoreState, name: string) {
   const pl = store.get('Playlists');
   const thePl = pl.get(name);
   if (!thePl) {
-    console.log(`Invalid playlist name ${name}`);
+    log(`Invalid playlist name ${name}`);
     return;
   }
   store.set('activePlaylistName')(name);

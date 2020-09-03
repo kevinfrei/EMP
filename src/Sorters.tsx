@@ -1,5 +1,3 @@
-// @flow
-
 import { Comparisons } from '@freik/core-utils';
 import { GetDataForSong, GetDataForAlbum } from './DataAccess';
 
@@ -228,7 +226,7 @@ export function PlaysetsComp(
   if (ps1.size !== ps2.size) {
     return false;
   }
-  for (let [k, v] of ps1) {
+  for (const [k, v] of ps1) {
     const v2 = ps2.get(k);
     if (!Comparisons.ArraySetEqual(v, v2)) {
       return false;
@@ -243,7 +241,7 @@ function sortAndStore<V>(
   name: ArrayOfKeys,
   srt: (k1: string, K2: string) => number,
 ) {
-  let keys: string[] = [...map.keys()];
+  const keys: string[] = [...map.keys()];
   keys.sort(srt);
   store.set(name)(keys);
 }

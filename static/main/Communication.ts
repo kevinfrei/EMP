@@ -1,4 +1,3 @@
-// @flow
 import { ipcMain, BrowserWindow, WebContents } from 'electron';
 import promiseIpc from 'electron-promise-ipc';
 import { logger } from '@freik/simplelogger';

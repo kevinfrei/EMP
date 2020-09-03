@@ -1,5 +1,3 @@
-// @flow
-
 import { logger } from '@freik/simplelogger';
 import { FTON, Comparisons, SeqNum, FTONData } from '@freik/core-utils';
 
@@ -111,7 +109,7 @@ const PersistedBetweenRuns: SaveConfig<any>[] = [
 // This registers store subscribers for state changes we're watching
 // and requests the initial values from the main process
 const HandlePersistence = (store: StoreState) => {
-  for (let key of PersistedBetweenRuns) {
+  for (const key of PersistedBetweenRuns) {
     log(`key: ${key.key} subscription`);
     store.on(key.key as any).subscribe((value) => {
       if (key.hasChanged(value)) {
@@ -194,7 +192,7 @@ const ConfigureIPC = (store: StoreState) => {
     return id;
   };
   window.ipc!.promiseUnsub = (key: string, id: string): boolean => {
-    let subs = listeners.get(key);
+    const subs = listeners.get(key);
     if (!subs) {
       return false;
     }
@@ -207,7 +205,7 @@ const ConfigureIPC = (store: StoreState) => {
     log(data);
     const localSubscribers = listeners.get(data.key);
     if (localSubscribers) {
-      for (let fn of localSubscribers.values()) {
+      for (const fn of localSubscribers.values()) {
         fn(data.value);
       }
     }

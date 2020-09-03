@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -174,7 +172,7 @@ const NowPlaying = () => {
     store.set('songList')([...songList]);
   };
   const songs = songList.map((songKey, idx) => {
-    let clsName = idx & 1 ? 'songContainer oddSong' : 'songContainer evenSong';
+    let clsName = idx % 2 ? 'songContainer oddSong' : 'songContainer evenSong';
     clsName += idx === curIndex ? ' playing' : ' not-playing';
     return (
       <SongLine
@@ -193,8 +191,8 @@ const NowPlaying = () => {
       </SongLine>
     );
   });
-  const isSortedBy = (sortBy: string, thisOne: string): string =>
-    sortBy === thisOne ? 'sorted-header' : 'notsorted-header';
+  const isSortedBy = (theSort: string, thisOne: string): string =>
+    theSort === thisOne ? 'sorted-header' : 'notsorted-header';
 
   return (
     <>

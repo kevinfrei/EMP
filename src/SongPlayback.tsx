@@ -101,7 +101,7 @@ export default function SongPlayback() {
   const [, setPos] = useState('songPos');
 
   let audio: React.ReactElement<HTMLAudioElement>;
-  let store = Store.useStore();
+  const store = Store.useStore();
   const curIndex = store.get('curIndex');
   const songIndex = store.get('songList');
   const songKey = curIndex >= 0 ? songIndex[curIndex] : '';

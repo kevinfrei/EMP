@@ -1,6 +1,3 @@
-// @flow
-// @format
-
 import React from 'react';
 import Store from './MyStore';
 import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from './Playlist';
@@ -9,7 +6,7 @@ import './styles/SongControls.css';
 import { StartSongPlaying, GetAudioElem } from './SongPlayback';
 
 const SongControls = () => {
-  let store = Store.useStore();
+  const store = Store.useStore();
   const playing = store.get('playing') ? 'playing' : 'paused';
   const shuf = store.get('shuffle');
   const rep = store.get('repeat');

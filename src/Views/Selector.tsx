@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import Store from '../MyStore';
@@ -10,10 +8,10 @@ import MixedSongView from './MixedSongs';
 import PlaylistsView from './Playlists';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
-//import RecentlyAddedView from './RecentlyAdded';
+// import RecentlyAddedView from './RecentlyAdded';
 
 export default function ViewSelector() {
-  let store = Store.useStore();
+  const store = Store.useStore();
   const which = store.get('curView');
   switch (which) {
     case 'album':

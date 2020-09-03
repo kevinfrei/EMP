@@ -1,5 +1,3 @@
-// @flow
-
 import React, { useState, CSSProperties } from 'react';
 import Modal from 'react-bootstrap/Modal';
 

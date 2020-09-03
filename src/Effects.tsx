@@ -1,4 +1,3 @@
-// @flow
 import type { StoreEffects } from './MyStore';
 import { SortSongs, SortAlbums, SortArtists } from './Sorters';
 

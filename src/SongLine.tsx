@@ -1,9 +1,6 @@
-// @flow
-
-import React, { HTMLProps } from 'react';
+import React, { ClassAttributes, HTMLProps } from 'react';
 
 import Store from './MyStore';
-
 import { GetDataForSong } from './DataAccess';
 
 import type { SongKey, StoreState } from './MyStore';
@@ -24,7 +21,7 @@ export type SongLineProps = {
   template?: string;
   children?: React.ReactNode;
   className?: string;
-  props?: React.Props<HTMLDivElement>;
+  props?: HTMLProps<HTMLDivElement>
 };
 
 export default function SongLine({
@@ -78,7 +75,7 @@ SongLineProps) {
         );
     }
   });
-  const nothing: SongHandler = (store, key) => {};
+  const nothing: SongHandler = (theStore, key) => {/* */};
   const click = onClick || nothing;
   const double = onDoubleClick || nothing;
   const aux = onAuxClick || nothing;

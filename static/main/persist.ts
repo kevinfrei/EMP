@@ -1,5 +1,3 @@
-// @flow
-
 import { app } from 'electron';
 import path from 'path';
 import fs, { promises as fsp } from 'fs';

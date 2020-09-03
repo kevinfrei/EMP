@@ -1,8 +1,7 @@
-// @flow
 import React from 'react';
 import Store from './MyStore';
 
-//import recentPic from './img/recent.svg';
+// import recentPic from './img/recent.svg';
 import albumPic from './img/album.svg';
 import artistPic from './img/artist.svg';
 import songPic from './img/song.svg';
@@ -50,9 +49,9 @@ function getEntry(store: StoreState, view: ViewEntry | null, index: number) {
 }
 
 export default function Sidebar() {
-  let store = Store.useStore();
-  let value = store.get('searchText');
-  let setvalue = store.set('searchText');
+  const store = Store.useStore();
+  const value = store.get('searchText');
+  const setvalue = store.set('searchText');
   return (
     <div id="sidebar">
       <div className="search-bar">
