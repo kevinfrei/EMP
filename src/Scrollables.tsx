@@ -81,7 +81,13 @@ export function VerticalScrollDiv({
   );
 }
 
-declare type generator = ({index, style}:{index:number, style:React.CSSProperties}) => JSX.Element;
+declare type generator = ({
+  index,
+  style,
+}: {
+  index: number;
+  style: React.CSSProperties;
+}) => JSX.Element;
 
 export function VerticalScrollFixedVirtualList({
   scrollId,
@@ -175,7 +181,7 @@ export function VerticalScrollVariableVirtualList({
   };
   useLayoutEffect(setScrollPosition);
 
-  const customView = ({ height, width }:{height:number, width:number}) => (
+  const customView = ({ height, width }: { height: number; width: number }) => (
     <VariableSizeList
       ref={ref}
       height={height}

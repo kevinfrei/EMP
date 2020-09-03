@@ -15,11 +15,11 @@ import type {
 } from './MyStore';
 
 // Playlists are a named ordered (?) list of songs
-// Literally: Map<string, Array<SongKey>>
+// Literally: Map<string, SongKey[]>
 
 // PlaySet is a playlist name, an ordered list of offsets,
 // a position into that list of offsets
-// { name: string, position: number, songList: Array<number> }
+// { name: string, position: number, songList: number[] }
 // This allows for shuffling & repeating
 
 // This stops playback and clears the active playlist
@@ -87,7 +87,7 @@ export const AddSong = (store: Store<State>, key: SongKey) => {
   }
 };
 
-const AddSongList = (store: Store<State>, keys: Array<SongKey>) => {
+const AddSongList = (store: Store<State>, keys: SongKey[]) => {
   keys.forEach((k) => JustAddSong(store, k));
   if (store.get('curIndex') < 0) {
     StartSongPlaying(store, 0);

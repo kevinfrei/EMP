@@ -12,7 +12,7 @@ function addToIndex<T>(
   idx: number,
   str: string,
   o: T,
-  res: Map<string, TrieNode<T>>
+  res: Map<string, TrieNode<T>>,
 ) {
   let chr = str[idx].toLocaleUpperCase();
   let node = res.get(chr);
@@ -29,7 +29,7 @@ function addToIndex<T>(
 
 export default function makeIndex<T>(
   objects: Iterable<T>,
-  getter: (arg: T) => string
+  getter: (arg: T) => string,
 ): Map<string, TrieNode<T>> {
   let res: Map<string, TrieNode<T>> = new Map();
   for (let o of objects) {

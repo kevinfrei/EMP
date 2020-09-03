@@ -139,11 +139,11 @@ export const AlbumBy = {
     return (a: AlbumKey, b: AlbumKey) => {
       const { title: aTitle, year: aYear, artist: aArtist } = GetDataForAlbum(
         store,
-        a
+        a,
       );
       const { title: bTitle, year: bYear, artist: bArtist } = GetDataForAlbum(
         store,
-        b
+        b,
       );
       return cmp(aTitle, bTitle) || aYear - bYear || cmp(aArtist, bArtist);
     };
@@ -153,11 +153,11 @@ export const AlbumBy = {
     return (a: AlbumKey, b: AlbumKey) => {
       const { title: aTitle, artist: aArtist, year: aYear } = GetDataForAlbum(
         store,
-        a
+        a,
       );
       const { title: bTitle, artist: bArtist, year: bYear } = GetDataForAlbum(
         store,
-        b
+        b,
       );
       return cmp(aTitle, bTitle) || cmp(aArtist, bArtist) || aYear - bYear;
     };
@@ -167,11 +167,11 @@ export const AlbumBy = {
     return (a: AlbumKey, b: AlbumKey) => {
       const { title: aTitle, artist: aArtist, year: aYear } = GetDataForAlbum(
         store,
-        a
+        a,
       );
       const { title: bTitle, artist: bArtist, year: bYear } = GetDataForAlbum(
         store,
-        b
+        b,
       );
       return cmp(aArtist, bArtist) || aYear - bYear || cmp(aTitle, bTitle);
     };
@@ -222,8 +222,8 @@ export const ArtistBy = {
 };
 
 export function PlaysetsComp(
-  ps1: Map<string, Array<SongKey>>,
-  ps2: Map<string, Array<SongKey>>
+  ps1: Map<string, SongKey[]>,
+  ps2: Map<string, SongKey[]>,
 ): boolean {
   if (ps1.size !== ps2.size) {
     return false;
@@ -241,9 +241,9 @@ function sortAndStore<V>(
   store: StoreState,
   map: Map<string, V>,
   name: ArrayOfKeys,
-  srt: (k1: string, K2: string) => number
+  srt: (k1: string, K2: string) => number,
 ) {
-  let keys: Array<string> = [...map.keys()];
+  let keys: string[] = [...map.keys()];
   keys.sort(srt);
   store.set(name)(keys);
 }

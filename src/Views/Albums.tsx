@@ -86,9 +86,12 @@ export default function AlbumView() {
     );
   };
 
-  const VirtualAlbumRow = ({index, style}:{
-    index: number,
-    style: CSSProperties,
+  const VirtualAlbumRow = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: CSSProperties;
   }): JSX.Element => {
     const maybeAlbum = albums.get(albumArray[index]);
     if (maybeAlbum) {

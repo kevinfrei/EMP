@@ -20,8 +20,8 @@ export type ArtistKey = string;
 
 export type Song = {
   path: string;
-  artistIds: Array<ArtistKey>;
-  secondaryIds: Array<ArtistKey>;
+  artistIds: ArtistKey[];
+  secondaryIds: ArtistKey[];
   albumId: AlbumKey;
   track: number;
   title: string;
@@ -35,14 +35,14 @@ export type Album = {
   primaryArtists: Set<ArtistKey>;
   title: string;
   vatype: VAType;
-  songs: Array<SongKey>;
+  songs: SongKey[];
   key: AlbumKey;
 };
 
 export type Artist = {
   name: string;
-  songs: Array<SongKey>;
-  albums: Array<AlbumKey>;
+  songs: SongKey[];
+  albums: AlbumKey[];
   key: ArtistKey;
 };
 
@@ -51,8 +51,8 @@ export type MusicDB = {
   albums: Map<AlbumKey, Album>;
   artists: Map<ArtistKey, Artist>;
   pictures: Map<AlbumKey, string>;
-  playlists: Map<string, Array<SongKey>>; // This is probably a bad idea...
-  albumTitleIndex: Map<string, Array<AlbumKey>>;
+  playlists: Map<string, SongKey[]>; // This is probably a bad idea...
+  albumTitleIndex: Map<string, AlbumKey[]>;
   artistNameIndex: Map<string, ArtistKey>;
 };
 
@@ -113,7 +113,7 @@ function getOrNewAlbum(
   const maybeSharedNames: AlbumKey[] | undefined = db.albumTitleIndex.get(
     title.toLowerCase(),
   );
-  let sharedNames: Array<AlbumKey>;
+  let sharedNames: AlbumKey[];
   if (!maybeSharedNames) {
     sharedNames = [];
     db.albumTitleIndex.set(title.toLowerCase(), sharedNames);
@@ -187,7 +187,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   const tmpArtist: string | string[] = md.Artist;
   const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
   const allArtists = artists.map((a) => getOrNewArtist(db, a));
-  const artistIds: Array<ArtistKey> = allArtists.map((a) => a.key);
+  const artistIds: ArtistKey[] = allArtists.map((a) => a.key);
   const artistSet: Set<ArtistKey> = new Set(artistIds);
   const album = getOrNewAlbum(
     db,
@@ -196,7 +196,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
     artistSet,
     md.VAType || '',
   );
-  const secondaryIds: Array<ArtistKey> = [];
+  const secondaryIds: ArtistKey[] = [];
   if (md.MoreArtists) {
     for (let sa of md.MoreArtists) {
       const moreArt: Artist = getOrNewArtist(db, sa);
@@ -282,8 +282,8 @@ async function fileNamesToDatabase(
   const songs: Map<SongKey, Song> = new Map();
   const albums: Map<AlbumKey, Album> = new Map();
   const artists: Map<ArtistKey, Artist> = new Map();
-  const playlists: Map<string, Array<SongKey>> = new Map();
-  const albumTitleIndex: Map<string, Array<AlbumKey>> = new Map();
+  const playlists: Map<string, SongKey[]> = new Map();
+  const albumTitleIndex: Map<string, AlbumKey[]> = new Map();
   const artistNameIndex: Map<string, ArtistKey> = new Map();
   const pictures: Map<AlbumKey, string> = new Map();
   const db: MusicDB = {

@@ -17,15 +17,15 @@ export type Song = {
   title: string;
   URL: string;
   albumId: AlbumKey;
-  artistIds: Array<ArtistKey>;
-  secondaryIds: Array<ArtistKey>;
+  artistIds: ArtistKey[];
+  secondaryIds: ArtistKey[];
 };
 
 export type Artist = {
   key: ArtistKey;
   name: string;
-  albums: Array<AlbumKey>;
-  songs: Array<SongKey>;
+  albums: AlbumKey[];
+  songs: SongKey[];
 };
 
 export type Album = {
@@ -34,7 +34,7 @@ export type Album = {
   title: string;
   vatype: '' | 'va' | 'ost';
   primaryArtists: Set<ArtistKey>;
-  songs: Array<SongKey>;
+  songs: SongKey[];
 };
 
 export type MediaInfo = {
@@ -56,7 +56,7 @@ export type ViewNames =
 
 export type State = {
   // Just a list of paths to search for music
-  // locations: Array<string>,
+  // locations: string[],
 
   // This is the song database
   // This should probably not need to be 'complete' but rather rely on
@@ -66,9 +66,9 @@ export type State = {
   Albums: Map<AlbumKey, Album>;
   Songs: Map<SongKey, Song>;
 
-  ArtistArray: Array<ArtistKey>;
-  AlbumArray: Array<AlbumKey>;
-  SongArray: Array<SongKey>;
+  ArtistArray: ArtistKey[];
+  AlbumArray: AlbumKey[];
+  SongArray: SongKey[];
 
   SortWithArticles: boolean;
 
@@ -76,7 +76,7 @@ export type State = {
   AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear';
   SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack';
 
-  MediaInfoCache: Map<SongKey, MediaInfo>,
+  MediaInfoCache: Map<SongKey, MediaInfo>;
 
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, SongKey[]>;
@@ -88,7 +88,7 @@ export type State = {
   scrollManager: Map<string, { x: number; y: number }>;
 
   // The list of songs in the play queue
-  songList: Array<SongKey>;
+  songList: SongKey[];
 
   searchText: string;
 
@@ -159,7 +159,8 @@ export const ValidKeyNames = [
 ];
 
 // I think this is how to combine different effects:
-const combinedEffects = (store:StoreDefinition<State>) => effects(withReduxDevtools(store));
+const combinedEffects = (store: StoreDefinition<State>) =>
+  effects(withReduxDevtools(store));
 export default createConnectedStore<State>(initialState, combinedEffects);
 
 // Docs say: Ignore this if you're using React Hooks

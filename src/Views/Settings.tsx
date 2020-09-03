@@ -38,7 +38,7 @@ declare type PopupItem = {
   names: string[];
 };
 
-const removeFromSet = (set: Array<string>, val: string): Array<string> => {
+const removeFromSet = (set: string[], val: string): string[] => {
   const newSet = new Set(set);
   newSet.delete(val);
   return [...newSet];
@@ -52,7 +52,7 @@ function GetDirs() {
 
 function SortPopup({ item }: { item: PopupItem }): JSX.Element {
   const [value, setter] = useRecoilState(item.syncedAtom.atom);
-  const names: Array<string> = item.names;
+  const names: string[] = item.names;
   const selected = value ? item.types.indexOf(value) : -1;
   const select = (key: string | null) => setter(key);
   const SyncingElement = item.syncedAtom.AtomSyncer;

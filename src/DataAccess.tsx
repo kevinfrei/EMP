@@ -12,13 +12,13 @@ import type {
 
 export function GetArtistString(
   store: StoreState,
-  artistList: Array<ArtistKey>,
+  artistList: ArtistKey[],
 ): string | void {
   const allArtists: Map<ArtistKey, Artist> | undefined = store.get('Artists');
   if (!allArtists) {
     return;
   }
-  const artists: Array<string> = artistList
+  const artists: string[] = artistList
     .map((ak) => {
       const art: Artist | undefined = allArtists.get(ak);
       return art ? art.name : '';

@@ -31,7 +31,7 @@ const indices: Map<string, Map<string, TrieNode<unknown>>> = new Map();
 let win: BrowserWindow | null = null;
 
 function getWebContents() {
-  const allWnd: Array<BrowserWindow> = BrowserWindow.getAllWindows();
+  const allWnd: BrowserWindow[] = BrowserWindow.getAllWindows();
   if (allWnd.length < 1) {
     log('No browser windows found in get operation.');
     return;
@@ -203,7 +203,7 @@ function search(val: string) {
 
 // {key: 'item-to-pull-from-persist'}
 // This is used for the promiseIpc main-side communication
-async function ipcGetter(data:{key:unknown}) {
+async function ipcGetter(data: { key: unknown }) {
   try {
     log(`promise-get request: ${typeof data}`);
     log(data);
@@ -226,7 +226,7 @@ async function ipcGetter(data:{key:unknown}) {
 
 // {key: 'item-to-put-in-persist', value: {thingToSave...} }
 // This is used for the promiseIpc main-side communication
-async function ipcSetter(data:{key:unknown, value: unknown}) {
+async function ipcSetter(data: { key: unknown; value: unknown }) {
   try {
     log(`promise-set request: ${typeof data}`);
     log(data);
@@ -242,7 +242,7 @@ async function ipcSetter(data:{key:unknown, value: unknown}) {
 }
 
 // {key: 'item-to-delete-from-persistence'}
-async function ipcDeleter(data:{key:unknown}) {
+async function ipcDeleter(data: { key: unknown }) {
   try {
     if (
       typeof data !== 'object' ||
@@ -258,13 +258,13 @@ async function ipcDeleter(data:{key:unknown}) {
   return false;
 }
 
-async function ipcSong(data:{key:unknown, value: unknown}) {}
+async function ipcSong(data: { key: unknown; value: unknown }) {}
 
-async function ipcSongs(data:{key:unknown, value: unknown}) {}
+async function ipcSongs(data: { key: unknown; value: unknown }) {}
 
-async function ipcSongKeys(data:{key:unknown, value: unknown}) {}
+async function ipcSongKeys(data: { key: unknown; value: unknown }) {}
 
-async function ipcMediaInfo(key:{key:unknown, value: unknown}) {
+async function ipcMediaInfo(key: { key: unknown; value: unknown }) {
   if (typeof key !== 'string') {
     return;
   }

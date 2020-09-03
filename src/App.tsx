@@ -2,7 +2,7 @@
 // @format
 
 import React from 'react';
-import {RecoilRoot} from 'recoil';
+import { RecoilRoot } from 'recoil';
 
 import Sidebar from './Sidebar';
 import ViewSelector from './Views/Selector';

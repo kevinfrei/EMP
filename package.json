@@ -45,7 +45,12 @@
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "prepare": "rimraf public/main public/*.js public/*.js.map && tsc -p tsconfig.static.json && tsc -p tsconfig.render.json",
     "tsc": "tsc",
-    "test": "react-scripts test"
+    "test": "react-scripts test",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\"",
+    "lint-src": "tslint -p tsconfig.json",
+    "lint-static": "tslint -p tsconfig.static.json",
+    "lint-render": "tslint -p tsconfig.render.json",
+    "lint": "yarn lint-src && yarn lint-static && yarn lint-render"
   },
   "eslintConfig": {
     "extends": "react-app"

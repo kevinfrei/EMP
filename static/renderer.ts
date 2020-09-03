@@ -18,7 +18,7 @@ interface MyWindow extends Window {
   remote: Electron.Remote | undefined;
   isDev: boolean | undefined;
   initApp: undefined | (() => void);
-  ipcPromise: PromiseIpcRenderer  | undefined;
+  ipcPromise: PromiseIpcRenderer | undefined;
 }
 declare var window: MyWindow;
 

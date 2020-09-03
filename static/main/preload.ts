@@ -2,7 +2,7 @@
 // It has the same sandbox as a Chrome extension.
 // This is invoked before everything else for the windows, thanks to electron
 window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector:string , text: string) => {
+  const replaceText = (selector: string, text: string) => {
     const element = document.getElementById(selector);
     if (element) {
       element.innerText = text;
