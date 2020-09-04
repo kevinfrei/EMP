@@ -96,7 +96,7 @@ export function VerticalScrollFixedVirtualList({
   itemCount: number;
   itemSize: number;
   itemGenerator: generator;
-}) {
+}): JSX.Element {
   const ref: React.MutableRefObject<FixedSizeList | null> = useRef(null);
   const store = Store.useStore();
   const scrollData = store.get('scrollManager');
@@ -151,7 +151,7 @@ export function VerticalScrollVariableVirtualList({
   estimatedItemSize: number;
   itemSizeGenerator: (index: number) => number;
   itemGenerator: (index: number, style: React.CSSProperties) => React.ReactNode;
-}) {
+}): JSX.Element {
   const ref: React.MutableRefObject<VariableSizeList | null> = useRef(null);
   const store = Store.useStore();
   const scrollData = store.get('scrollManager');

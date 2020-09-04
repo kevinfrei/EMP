@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-// @ts-ignore
 import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { useRecoilValue } from 'recoil';
 
 import Store from '../MyStore';
 
@@ -11,10 +11,9 @@ import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
-import type { Properties } from 'csstype';
+import type { MediaInfo } from '../Atoms';
 
 import './styles/MixedSongs.css';
-import { useRecoilValue } from 'recoil';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines: React.ReactNode[] = [];
@@ -30,7 +29,7 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
 }
 
 function MediaInfoTable({ id }: { id: string }) {
-  const mediaInfo: any = useRecoilValue(getMediaInfo(id));
+  const mediaInfo = useRecoilValue(getMediaInfo(id)) as MediaInfo;
   if (mediaInfo) {
     const genLines = mediaInfoToLine('gen', mediaInfo.general);
     const audLines = mediaInfoToLine('aud', mediaInfo.audio);
@@ -55,7 +54,7 @@ function MediaInfoTable({ id }: { id: string }) {
   }
 }
 
-export default function MixedSongView() {
+export default function MixedSongView(): JSX.Element {
   const store = Store.useStore();
   const songs = store.get('Songs');
   const songArray = store.get('SongArray');

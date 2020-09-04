@@ -1,7 +1,7 @@
 import type { Effects, Store, StoreDefinition } from 'undux';
 import {
   createConnectedStore,
-  withReduxDevtools /*, withLogger*/,
+  withReduxDevtools /* , withLogger*/,
 } from 'undux';
 import effects from './Effects';
 
@@ -105,9 +105,9 @@ export type State = {
 const initialState: State = {
   //  locations: [],
 
-  Artists: new Map(),
-  Albums: new Map(),
-  Songs: new Map(),
+  Artists: new Map<ArtistKey, Artist>(),
+  Albums: new Map<AlbumKey, Album>(),
+  Songs: new Map<SongKey, Song>(),
 
   ArtistArray: [],
   AlbumArray: [],
@@ -119,13 +119,13 @@ const initialState: State = {
   AlbumListSort: 'ArtistAlbum',
   SongListSort: 'ArtistAlbum',
 
-  MediaInfoCache: new Map(),
+  MediaInfoCache: new Map<SongKey, MediaInfo>(),
 
-  Playlists: new Map(),
+  Playlists: new Map<string, SongKey[]>(),
   playlistLocation: '',
 
   curView: 'current',
-  scrollManager: new Map(),
+  scrollManager: new Map<string, { x: number; y: number }>(),
 
   searchText: '',
 

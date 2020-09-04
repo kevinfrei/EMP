@@ -18,6 +18,13 @@ import { VerticalScrollDiv } from '../Scrollables';
 
 import './styles/NowPlaying.css';
 import deletePic from '../img/delete.svg';
+import {
+  Observable,
+  Subscribable,
+  Subscription,
+  SubscriptionLike,
+  Unsubscribable,
+} from 'rxjs';
 
 const NowPlaying = () => {
   const store = Store.useStore();
@@ -35,7 +42,10 @@ const NowPlaying = () => {
   const [sortBy, setSortBy] = useState('');
   // Clear sorts when shuffle gets updated
   useEffect(() => {
-    const sub = store.on('shuffle').subscribe((val) => val && setSortBy(''));
+    // eslint-disable-next-line
+    const sub:SubscriptionLike = store
+      .on('shuffle')
+      .subscribe((val) => val && setSortBy('')) as SubscriptionLike;
     return () => sub.unsubscribe();
   });
 

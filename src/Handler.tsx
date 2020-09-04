@@ -1,35 +1,42 @@
 import { logger } from '@freik/simplelogger';
-import { FTON, Comparisons, SeqNum, FTONData } from '@freik/core-utils';
+import { FTON, Comparisons, SeqNum } from '@freik/core-utils';
 
 import { ValidKeyNames } from './MyStore';
 
 import { PlaysetsComp } from './Sorters';
 
 import type { IpcRendererEvent } from 'electron';
-import type { StoreState } from './MyStore';
+import type { FTONData } from '@freik/core-utils';
+import type { StoreState, SongKey, MediaInfo } from './MyStore';
 import type { MyWindow } from './AsyncDoodad';
 
-declare var window: MyWindow;
+declare let window: MyWindow;
 
 export type KeyValue = {
   key: string;
   value: unknown;
 };
+declare type RemoteDataTypes = SongKey[] &
+  string &
+  Map<string, SongKey[]> &
+  number &
+  boolean;
+declare type ListenerType = Map<string, (val: string) => void>;
 
 const log = logger.bind('handler');
 logger.enable('handler');
 
 const DataFromMainHandler = (store: StoreState, message: string) => {
   try {
-    const action: any = FTON.parse(message);
+    const action: FTONData = FTON.parse(message);
     log('Store message from main process:');
     log(action);
     if (
       typeof action === 'object' &&
       action !== null &&
-      action.hasOwnProperty('key') &&
+      'key' in action &&
       typeof action.key === 'string' &&
-      action.hasOwnProperty('value')
+      'value' in action
     ) {
       const key: string = action.key;
       log(`Message to set ${key} to `);
@@ -85,17 +92,29 @@ function makeChangeChecker<T>(
 
 // For each key that should be saved to main (and persisted between runs)
 // add a "change checker" here.
-const PersistedBetweenRuns: SaveConfig<any>[] = [
+const PersistedBetweenRuns: SaveConfig<RemoteDataTypes>[] = [
   // makeChangeChecker('locations', null, Comparisons.ArraySetEqual, 1, 10),
-  makeChangeChecker('songList', [], Comparisons.ArraySetEqual, 500, 1500),
-  makeChangeChecker(
+  makeChangeChecker<SongKey[]>(
+    'songList',
+    [],
+    Comparisons.ArraySetEqual,
+    500,
+    1500,
+  ),
+  makeChangeChecker<string>(
     'activePlaylistName',
     '',
     Comparisons.StringCaseInsensitiveEqual,
     50,
     150,
   ),
-  makeChangeChecker('Playlists', new Map(), PlaysetsComp, 100, 1000),
+  makeChangeChecker<Map<string, SongKey[]>>(
+    'Playlists',
+    new Map(),
+    PlaysetsComp,
+    100,
+    1000,
+  ),
   makeChangeChecker<number>(
     'volume',
     0.8,
@@ -111,40 +130,46 @@ const PersistedBetweenRuns: SaveConfig<any>[] = [
 const HandlePersistence = (store: StoreState) => {
   for (const key of PersistedBetweenRuns) {
     log(`key: ${key.key} subscription`);
-    store.on(key.key as any).subscribe((value) => {
-      if (key.hasChanged(value)) {
-        // Cancel the current scheduled update
-        if (key.timeout !== null) {
-          window.clearTimeout(key.timeout);
-        }
-        // Set this to update in key.delay ms
-        key.timeout = window.setTimeout(() => {
-          // send the packet and cancel the maxDelay
-          const mto = key.maxtimeout;
-          if (!mto) {
-            window.clearTimeout(mto);
+    // eslint-disable-next-line
+    store
+      .on((key.key as unknown) as RemoteDataTypes)
+      .subscribe((value: RemoteDataTypes) => {
+        if (key.hasChanged(value)) {
+          // Cancel the current scheduled update
+          if (key.timeout !== null) {
+            window.clearTimeout(key.timeout);
           }
-          if (key.hasChanged(value)) {
-            window.ipc!.send('set', FTON.stringify({ key: key.key, value }));
-          }
-        }, key.delay);
-        // If we haven't got a maxtimeout counting down, set one of those too
-        if (key.maxtimeout === null) {
-          key.maxtimeout = window.setTimeout(() => {
-            key.maxtimeout = undefined;
+          // Set this to update in key.delay ms
+          key.timeout = window.setTimeout(() => {
+            // send the packet and cancel the maxDelay
+            const mto = key.maxtimeout;
+            if (!mto) {
+              window.clearTimeout(mto);
+            }
             if (key.hasChanged(value)) {
               window.ipc!.send('set', FTON.stringify({ key: key.key, value }));
             }
-          }, key.maxDelay);
+          }, key.delay);
+          // If we haven't got a maxtimeout counting down, set one of those too
+          if (key.maxtimeout === null) {
+            key.maxtimeout = window.setTimeout(() => {
+              delete key.maxtimeout;
+              if (key.hasChanged(value)) {
+                window.ipc!.send(
+                  'set',
+                  FTON.stringify({ key: key.key, value }),
+                );
+              }
+            }, key.maxDelay);
+          }
         }
-      }
-    });
+      });
     window.ipc!.send('get', key.key);
   }
 };
 
 // For anything that should be synchronized, update the effects in Effects.js
-const ConfigureIPC = (store: StoreState) => {
+export function ConfigureIPC(store: StoreState): void {
   log('Store:');
   log(store);
   log('window.ipc');
@@ -168,14 +193,12 @@ const ConfigureIPC = (store: StoreState) => {
     if (typeof data.key !== 'string') return;
     if (!('data' in data)) return;
     if (typeof data.data !== 'object') return;
-    const mi = store.get('MediaInfoCache' as any);
-    mi.set(data.key, data.data);
+    const mi = store.get('MediaInfoCache');
+    mi.set(data.key, (data.data as unknown) as MediaInfo);
     store.set('MediaInfoCache' as any)(mi);
   });
-  const listeners: Map<
-    string,
-    Map<string, (value: string) => void>
-  > = new Map();
+  // eslint-disable-next-line
+  const listeners: Map<string, ListenerType> = new Map<string, ListenerType>();
   const subIds = SeqNum();
   window.ipc!.promiseSub = (
     key: string,
@@ -200,16 +223,17 @@ const ConfigureIPC = (store: StoreState) => {
     listeners.set(key, subs);
     return res;
   };
-  window.ipc!.on('promise-response', (event, data) => {
-    log(`Got a response for ${data.key}:`);
-    log(data);
-    const localSubscribers = listeners.get(data.key);
-    if (localSubscribers) {
-      for (const fn of localSubscribers.values()) {
-        fn(data.value);
+  window.ipc!.on(
+    'promise-response',
+    (event: Event, data: { key: string; value: RemoteDataTypes }) => {
+      log(`Got a response for ${data.key}:`);
+      log(data);
+      const localSubscribers = listeners.get(data.key);
+      if (localSubscribers) {
+        for (const fn of localSubscribers.values()) {
+          fn(data.value);
+        }
       }
-    }
-  });
-};
-
-export { ConfigureIPC };
+    },
+  );
+}

@@ -11,7 +11,7 @@ import VolumeControl from './VolumeControl';
 
 import './styles/App.css';
 
-const App = () => {
+export default function App(): JSX.Element {
   return (
     <Store.Container>
       <RecoilRoot>
@@ -27,5 +27,4 @@ const App = () => {
       </RecoilRoot>
     </Store.Container>
   );
-};
-export default App;
+}

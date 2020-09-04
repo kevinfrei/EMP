@@ -27,7 +27,7 @@ import './styles/Settings.css';
 declare interface MyWindow extends Window {
   remote: Electron.Remote;
 }
-declare var window: MyWindow;
+declare let window: MyWindow;
 
 declare type PopupItem = {
   title: string;

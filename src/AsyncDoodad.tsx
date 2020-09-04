@@ -27,17 +27,17 @@ export interface MyWindow extends Window {
   ipcPromise: PromiseIpcRenderer | undefined;
   ipcSet: boolean | undefined;
 }
-declare var window: MyWindow;
+declare let window: MyWindow;
 
 // This is a react component to enable the IPC subsystem to talk to the store
 // It uses a hook to get the store, then passes that on to the IPC subsystem
 // It's not clear to me if this forces any sort of re-rendering  :/ ?
-const AsyncDoodad = () => {
+export default function AsyncDoodad(): JSX.Element {
   const store = Store.useStore();
   // Store subscription change notifications go here
-  if (window.ipc === undefined) {
+  if (!window.ipc) {
     log('No IPC');
-  } else if (window.ipcSet === undefined) {
+  } else if (!window.ipcSet) {
     log('IPC initialized');
     window.ipcSet = true;
     ConfigureIPC(store);
@@ -45,6 +45,4 @@ const AsyncDoodad = () => {
 
   // Invisible, because this is just for listening to the main process
   return <div id="async-doodad" style={{ display: 'none' }} />;
-};
-
-export default AsyncDoodad;
+}

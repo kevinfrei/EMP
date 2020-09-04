@@ -23,26 +23,26 @@ const secondsToTime = (val: number): string => {
 declare interface MyWindow extends Window {
   positionInterval?: number | NodeJS.Timeout;
 }
-declare var window: MyWindow;
+declare let window: MyWindow;
 
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;
 }
 
-if (window.positionInterval !== undefined) {
+if ('positionInterval' in window) {
   window.clearInterval(window.positionInterval as number);
   delete window.positionInterval;
 }
 window.positionInterval = setInterval(() => {
   // Every .250 seconds, update the slider
   const ae = GetAudioElem();
-  const rs: HTMLProgressElement | null = document.getElementById(
+  const rs = document.getElementById(
     'song-slider',
-  ) as any;
+  ) as HTMLProgressElement | null;
   if (!ae) {
     return;
   }
-  if (ae.duration >= 0 && ae.duration < Number.MAX_SAFE_INTEGER) {
+  if (ae.duration >= 0 && ae.duration < 525600 * 60) {
     if (rs) {
       const val = ae.currentTime / ae.duration;
       rs.value = val;
@@ -58,7 +58,7 @@ window.positionInterval = setInterval(() => {
   }
 }, 250);
 
-export function StartSongPlaying(store: StoreState, index: number) {
+export function StartSongPlaying(store: StoreState, index: number): void {
   const changing = store.get('curIndex') !== index;
   if (!changing) {
     return;
@@ -68,12 +68,12 @@ export function StartSongPlaying(store: StoreState, index: number) {
   if (ae) {
     setTimeout(() => {
       ae.currentTime = 0;
-      ae.play();
+      void ae.play();
     }, 1);
   }
 }
 
-export function StopSongPlaying(store: StoreState) {
+export function StopSongPlaying(store: StoreState): void {
   store.set('playing')(false);
   const ae = GetAudioElem();
   if (ae) {
@@ -97,7 +97,7 @@ export function StopSongPlaying(store: StoreState) {
   }
 }
 
-export default function SongPlayback() {
+export default function SongPlayback(): JSX.Element {
   const [, setPos] = useState('songPos');
 
   let audio: React.ReactElement<HTMLAudioElement>;
@@ -148,10 +148,12 @@ export default function SongPlayback() {
           if (!ae) {
             return;
           }
+          /* eslint-disable id-blacklist */
           const targetTime = ae.duration * Number.parseFloat(ev.target.value);
           if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
             ae.currentTime = ae.duration * Number.parseFloat(ev.target.value);
           }
+          /* eslint-enable id-blacklist */
         }}
       />
       <span id="now-playing-remaining-time"></span>

@@ -8,6 +8,8 @@ import type {
   Artist,
 } from './MyStore';
 
+export type AlbumInfo = { title: string; year: number; artist: string };
+
 export function GetArtistString(
   store: StoreState,
   artistList: ArtistKey[],
@@ -25,7 +27,7 @@ export function GetArtistString(
   if (artists.length === 1) {
     return artists[0];
   } else {
-    const lastPart = ' & ' + artists.pop();
+    const lastPart = ' & ' + (artists.pop() || 'OOPS!');
     return artists.join(', ') + lastPart;
   }
 }
@@ -108,7 +110,10 @@ export function GetAlbumKeyForSongKey(
   return song.albumId;
 }
 
-export function GetDataForAlbum(store: StoreState, albumKey: AlbumKey) {
+export function GetDataForAlbum(
+  store: StoreState,
+  albumKey: AlbumKey,
+): AlbumInfo {
   const album = store.get('Albums').get(albumKey);
   if (!album) {
     return { title: 'UNDEFINED', year: 0, artist: 'UNDEFINED' };

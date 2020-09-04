@@ -5,7 +5,7 @@ import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from './Playlist';
 import './styles/SongControls.css';
 import { StartSongPlaying, GetAudioElem } from './SongPlayback';
 
-const SongControls = () => {
+export default function SongControls(): JSX.Element {
   const store = Store.useStore();
   const playing = store.get('playing') ? 'playing' : 'paused';
   const shuf = store.get('shuffle');
@@ -45,7 +45,7 @@ const SongControls = () => {
           if (playing === 'playing') {
             ae.pause();
           } else if (ae.readyState === 4) {
-            ae.play();
+            void ae.play();
           } else if (songList.length) {
             StartSongPlaying(store, 0);
           }
@@ -60,5 +60,4 @@ const SongControls = () => {
       &nbsp;
     </span>
   );
-};
-export default SongControls;
+}

@@ -10,7 +10,7 @@ import './styles/index.css';
 declare interface MyWindow extends Window {
   initApp: () => void;
 }
-declare var window: MyWindow;
+declare let window: MyWindow;
 
 window.initApp = () => {
   const root = document.getElementById('root');

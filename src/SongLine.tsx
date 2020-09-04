@@ -1,4 +1,4 @@
-import React, { ClassAttributes, HTMLProps } from 'react';
+import React, { HTMLProps } from 'react';
 
 import Store from './MyStore';
 import { GetDataForSong } from './DataAccess';
@@ -33,9 +33,7 @@ export default function SongLine({
   children,
   className,
   ...props
-}: /*  as,
-  elemAs,*/
-SongLineProps) {
+}: SongLineProps): JSX.Element {
   const store = Store.useStore();
   const elementTemplate = (template || 'RL#TC').toUpperCase();
   const data = GetDataForSong(store, songKey);

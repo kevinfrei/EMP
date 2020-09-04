@@ -2,7 +2,7 @@ import React from 'react';
 import Store from './MyStore';
 
 // import recentPic from './img/recent.svg';
-import albumPic from './img/album.svg';
+import albumPic from "./img/album.svg";
 import artistPic from './img/artist.svg';
 import songPic from './img/song.svg';
 import playlistPic from './img/playlist.svg';
@@ -48,7 +48,7 @@ function getEntry(store: StoreState, view: ViewEntry | null, index: number) {
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar(): JSX.Element {
   const store = Store.useStore();
   const value = store.get('searchText');
   const setvalue = store.set('searchText');

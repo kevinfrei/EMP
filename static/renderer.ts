@@ -18,7 +18,7 @@ interface MyWindow extends Window {
   initApp: undefined | (() => void);
   ipcPromise: PromiseIpcRenderer | undefined;
 }
-declare var window: MyWindow;
+declare let window: MyWindow;
 
 // This will expose the ipcRenderer (and isDev) interfaces for use by the
 // React components, then, assuming the index.js has already be invoked, it
