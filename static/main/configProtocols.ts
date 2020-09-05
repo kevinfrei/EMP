@@ -14,7 +14,7 @@ protocol.registerSchemesAsPrivileged([
 const log = logger.bind('configProtocols');
 // logger.enable('configProtocols');
 
-export default function configureProtocols() {
+export default function configureProtocols(): void {
   protocol.registerFileProtocol('pic', (req, callback) => {
     log('pic URL request:');
     log(req);

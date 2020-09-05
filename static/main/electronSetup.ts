@@ -18,7 +18,7 @@ logger.disable('electronSetup');
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: BrowserWindow | null = null;
 
-export default function setup(windowCreated: OnWindowCreated) {
+export default function setup(windowCreated: OnWindowCreated): void {
   const windowPos: WindowPosition = persist.getWindowPos();
 
   const createWindow = () => {
@@ -41,12 +41,14 @@ export default function setup(windowCreated: OnWindowCreated) {
       minHeight: 260,
     });
     // Load the base URL
-    mainWindow.loadURL(
-      isDev
-        ? 'http://localhost:3000'
-        : // If this file moves, you have to fix this to make it work for release
-          `file://${path.join(__dirname, '../../build/index.html')}`,
-    );
+    mainWindow
+      .loadURL(
+        isDev
+          ? 'http://localhost:3000'
+          : // If this file moves, you have to fix this to make it work for release
+            `file://${path.join(__dirname, '../../build/index.html')}`,
+      )
+      .catch(log);
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
@@ -58,21 +60,26 @@ export default function setup(windowCreated: OnWindowCreated) {
       mainWindow = null;
     });
 
-    app.whenReady().then(() => {
-      if (isDev) {
-        log('Trying to install devtools');
-        // Load the react developer tools if we're in development mode
-        const {
-          default: installExtension,
-          REACT_DEVELOPER_TOOLS,
-          REDUX_DEVTOOLS,
-        } = require('electron-devtools-installer');
+    app
+      .whenReady()
+      .then(() => {
+        if (isDev) {
+          log('Trying to install devtools');
+          // Load the react developer tools if we're in development mode
+          /* eslint-disable */
+          const {
+            default: installExtension,
+            REACT_DEVELOPER_TOOLS,
+            REDUX_DEVTOOLS,
+          } = require('electron-devtools-installer');
 
-        installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
-          .then((name: string) => log(`Added Extension:  ${name}`))
-          .catch((err: Error) => log('An error occurred: ', err));
-      }
-    });
+          installExtension([REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS])
+            .then((name: string) => log(`Added Extension:  ${name}`))
+            .catch((err: Error) => log('An error occurred: ', err));
+          /* eslint-enable */
+        }
+      })
+      .catch(log);
     // Wait to show the main window until it's actually ready...
     mainWindow.on('ready-to-show', () => {
       if (mainWindow) {

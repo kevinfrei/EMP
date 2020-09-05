@@ -1,17 +1,21 @@
 import React from 'react';
 import Store from './MyStore';
 
-// import recentPic from './img/recent.svg';
-import albumPic from "./img/album.svg";
-import artistPic from './img/artist.svg';
-import songPic from './img/song.svg';
-import playlistPic from './img/playlist.svg';
-import nowPlayingPic from './img/playing.svg';
-import settingsPic from './img/settings.svg';
 
 import './styles/Sidebar.css';
 
 import type { ViewNames, StoreState } from './MyStore';
+
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+// import recentPic from './img/recent.svg';
+const albumPic = require('./img/album.svg') as string;
+const artistPic = require('./img/artist.svg') as string;
+const songPic = require('./img/song.svg') as string;
+const playlistPic = require('./img/playlist.svg') as string;
+const nowPlayingPic = require('./img/playing.svg') as string;
+const settingsPic = require('./img/settings.svg') as string;
+/* eslint-enable */
 
 type ViewEntry = { name: ViewNames; pic: string; title: string };
 const mkEntry = (name: ViewNames, title: string, pic: string) => ({

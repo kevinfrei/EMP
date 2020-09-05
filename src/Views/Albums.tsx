@@ -9,12 +9,13 @@ import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
 import type { Album } from '../MyStore';
-import type { Properties } from 'csstype';
 
 import './styles/Albums.css';
-import downChevron from '../img/down-chevron.svg';
 
-export default function AlbumView() {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const downChevron = require('../img/down-chevron.svg') as string;
+
+export default function AlbumView(): JSX.Element {
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');

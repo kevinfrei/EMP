@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, WebContents } from 'electron';
+import { ipcMain, BrowserWindow } from 'electron';
 import promiseIpc from 'electron-promise-ipc';
 import { logger } from '@freik/simplelogger';
 import { FTON, FTONData } from '@freik/core-utils';
@@ -25,10 +25,11 @@ export type KVP<T> = {
   value: T;
 };
 
-const indices: Map<string, Map<string, TrieNode<unknown>>> = new Map();
+const indices = new Map<string, Map<string, TrieNode<unknown>>>();
 
 let win: BrowserWindow | null = null;
 
+/*
 function getWebContents() {
   const allWnd: BrowserWindow[] = BrowserWindow.getAllWindows();
   if (allWnd.length < 1) {
@@ -37,15 +38,17 @@ function getWebContents() {
   }
   return allWnd[0].webContents;
 }
+*/
 
 function kvpValidator<T>(val: any): KVP<T> | void {
   if (
     typeof val === 'object' &&
     val !== null &&
-    typeof val.key === 'string' &&
-    typeof val.value !== 'undefined'
+    'value' in val &&
+    'key' in val &&
+    typeof val.key === 'string' // eslint-disable-line
   ) {
-    return { key: val.key, value: val.value };
+    return { key: val.key, value: val.value as T }; // eslint-disable-line
   }
 }
 
@@ -55,7 +58,7 @@ function kvpFromJSONValidator(val: string): KVP<FTONData> | void {
   } catch (e) {
     log(e);
   }
-  return undefined;
+  return;
 }
 
 function stringValidator(val: string): string | void {
@@ -110,7 +113,7 @@ function mk<T>(
   return { command, validator, handler };
 }
 
-export function SendDatabase() {
+export function SendDatabase(): void {
   const musicDB = persist.getItem<MusicDB>('DB');
   if (!win || !musicDB) {
     setTimeout(SendDatabase, 10);
@@ -155,7 +158,10 @@ function getMetadata(songKey: SongKey) {
     .catch(log);
 }
 
-export function SetIndex(id: string, index: Map<string, TrieNode<unknown>>) {
+export function SetIndex(
+  id: string,
+  index: Map<string, TrieNode<unknown>>,
+): void {
   indices.set(id, index);
 }
 
@@ -273,7 +279,7 @@ async function ipcDeleter(data: { key: unknown }) {
 
 // async function ipcSongKeys(data: { key: unknown; value: unknown }) {}
 
-async function ipcMediaInfo(key: { key: unknown; value: unknown }) {
+async function ipcMediaInfo(key: string) {
   if (typeof key !== 'string') {
     return;
   }
@@ -294,7 +300,7 @@ async function ipcMediaInfo(key: { key: unknown; value: unknown }) {
 }
 
 // Called to just set stuff up (nothing has actually been done yet)
-export function Init() {
+export function Init(): void {
   const comms = [
     mk<KVP<FTONData>>('set', kvpFromJSONValidator, setter),
     mk<string>('delete', stringValidator, deleter),
@@ -306,7 +312,7 @@ export function Init() {
   for (const val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
       const data: string | KVP<FTONData> | void = val.validator(arg);
-      if (data !== undefined && data !== null) {
+      if (data || typeof data === 'string') {
         log(`Got data for "${val.command}":`);
         log(data);
         val.handler(data as any);
@@ -339,7 +345,7 @@ export function Init() {
 }
 
 // Called with the window handle after it's been created
-export function Begin(window: BrowserWindow) {
+export function Begin(window: BrowserWindow): void {
   win = window;
   SendDatabase();
 }

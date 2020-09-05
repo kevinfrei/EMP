@@ -37,7 +37,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.isDev = isDev;
   }
   log('ready');
-  if (window.initApp !== undefined) {
+  if (window.initApp) {
     window.initApp();
   } else {
     log('FAILURE: No window.initApp() attached.');

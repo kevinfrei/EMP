@@ -246,7 +246,7 @@ function sortAndStore<V>(
   store.set(name)(keys);
 }
 
-export function SortAlbums(store: StoreState) {
+export function SortAlbums(store: StoreState): void {
   const map = store.get('Albums');
   const whichSort = store.get('AlbumListSort');
   let srt: sorter;
@@ -268,7 +268,7 @@ export function SortAlbums(store: StoreState) {
   sortAndStore(store, map, 'AlbumArray', srt);
 }
 
-export function SortArtists(store: StoreState) {
+export function SortArtists(store: StoreState): void {
   const map = store.get('Artists');
   const whichSort = store.get('ArtistListSort');
   let srt: sorter;
@@ -287,7 +287,7 @@ export function SortArtists(store: StoreState) {
   sortAndStore(store, map, 'ArtistArray', srt);
 }
 
-export function SortSongs(store: StoreState) {
+export function SortSongs(store: StoreState): void {
   const map = store.get('Songs');
   const whichSort = store.get('SongListSort');
   let srt: sorter;

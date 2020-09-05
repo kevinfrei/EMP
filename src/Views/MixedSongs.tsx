@@ -9,7 +9,6 @@ import Store from '../MyStore';
 import { getMediaInfo } from '../Atoms';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
-import { VerticalScrollFixedVirtualList } from '../Scrollables';
 
 import type { MediaInfo } from '../Atoms';
 
@@ -56,7 +55,6 @@ function MediaInfoTable({ id }: { id: string }) {
 
 export default function MixedSongView(): JSX.Element {
   const store = Store.useStore();
-  const songs = store.get('Songs');
   const songArray = store.get('SongArray');
   const [selected, setSelected] = useState('');
 

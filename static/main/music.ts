@@ -9,6 +9,7 @@ import mediainfo from 'node-mediainfo';
 import * as persist from './persist';
 
 import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
+import type { Dirent } from 'fs';
 
 const SetEqual = Comparisons.SetEqual;
 const log = logger.bind('music');
@@ -221,10 +222,9 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
 async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
   // Get all pictures from each directory.
   // Find the biggest and make it the album picture for any albums in that dir
-  const dirsToPics: Map<string, Set<string>> = new Map();
+  const dirsToPics = new Map<string, Set<string>>();
   for (const p of pics) {
     const dirName = path.dirname(p);
-    const fileName = p.substr(dirName.length + 1);
     const val = dirsToPics.get(dirName);
     if (val) {
       val.add(p);
@@ -232,7 +232,7 @@ async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
       dirsToPics.set(dirName, new Set([p]));
     }
   }
-  const dirsToAlbums: Map<string, Set<Album>> = new Map();
+  const dirsToAlbums = new Map<string, Set<Album>>();
   for (const a of db.albums.values()) {
     for (const s of a.songs) {
       const theSong = db.songs.get(s);
@@ -279,13 +279,13 @@ async function fileNamesToDatabase(
   files: string[],
   pics: string[],
 ): Promise<MusicDB> {
-  const songs: Map<SongKey, Song> = new Map();
-  const albums: Map<AlbumKey, Album> = new Map();
-  const artists: Map<ArtistKey, Artist> = new Map();
-  const playlists: Map<string, SongKey[]> = new Map();
-  const albumTitleIndex: Map<string, AlbumKey[]> = new Map();
-  const artistNameIndex: Map<string, ArtistKey> = new Map();
-  const pictures: Map<AlbumKey, string> = new Map();
+  const songs = new Map<SongKey, Song>();
+  const albums = new Map<AlbumKey, Album>();
+  const artists = new Map<ArtistKey, Artist>();
+  const playlists = new Map<string, SongKey[]>();
+  const albumTitleIndex = new Map<string, AlbumKey[]>();
+  const artistNameIndex = new Map<string, ArtistKey>();
+  const pictures = new Map<AlbumKey, string>();
   const db: MusicDB = {
     songs,
     albums,
@@ -338,7 +338,7 @@ export async function find(locations: string[]): Promise<MusicDB> {
   const picList: string[] = [];
   while (queue.length > 0) {
     const i = queue.pop();
-    let dirents;
+    let dirents: Dirent[] | null = null;
     try {
       if (i) {
         dirents = await fsp.readdir(i, { withFileTypes: true });
@@ -346,7 +346,7 @@ export async function find(locations: string[]): Promise<MusicDB> {
         continue;
       }
     } catch (e) {
-      log(`Unable to read ${i}`);
+      log(`Unable to read ${i || '<unknown>'}`);
       continue;
     }
     if (!dirents) {
@@ -376,7 +376,8 @@ export async function find(locations: string[]): Promise<MusicDB> {
           }
         }
       } catch (e) {
-        log(`Unable to process ${dirent}`);
+        log('Unable to process dirent:');
+        log(dirent);
         continue;
       }
     }
@@ -442,7 +443,7 @@ const MediaInfoTranslation = new Map([
 ]);
 
 function objToMap(o: { [key: string]: string | number }): Map<string, string> {
-  const res = new Map();
+  const res = new Map<string, string>();
   for (const i in o) {
     if (typeof i === 'string' && i.length > 0 && i[0] !== '@' && i in o) {
       const type = typeof o[i];
@@ -457,7 +458,9 @@ function objToMap(o: { [key: string]: string | number }): Map<string, string> {
 
 export async function getMediaInfo(mediaPath: string): Promise<MediaInfo> {
   const rawMetadata = await mediainfo(mediaPath);
-  const trackInfo: any = rawMetadata.media.track;
+  const trackInfo = (rawMetadata.media.track as unknown) as {
+    [key: string]: string | number;
+  }[];
   const general = objToMap(trackInfo[0]);
   const audio = objToMap(trackInfo[1]);
   // Remove some stuff I don't care about or don't handle yet

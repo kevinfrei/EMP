@@ -17,16 +17,12 @@ import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
 import './styles/NowPlaying.css';
-import deletePic from '../img/delete.svg';
-import {
-  Observable,
-  Subscribable,
-  Subscription,
-  SubscriptionLike,
-  Unsubscribable,
-} from 'rxjs';
+import { SubscriptionLike } from 'rxjs';
 
-const NowPlaying = () => {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const deletePic = require('../img/delete.svg') as string;
+
+export default function NowPlaying(): JSX.Element {
   const store = Store.useStore();
 
   const nowPlaying: string = store.get('activePlaylistName');
@@ -43,7 +39,7 @@ const NowPlaying = () => {
   // Clear sorts when shuffle gets updated
   useEffect(() => {
     // eslint-disable-next-line
-    const sub:SubscriptionLike = store
+    const sub: SubscriptionLike = store
       .on('shuffle')
       .subscribe((val) => val && setSortBy('')) as SubscriptionLike;
     return () => sub.unsubscribe();
@@ -242,6 +238,4 @@ const NowPlaying = () => {
       </VerticalScrollDiv>
     </>
   );
-};
-
-export default NowPlaying;
+}

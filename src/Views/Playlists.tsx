@@ -10,11 +10,12 @@ import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
 import type { SongKey } from '../MyStore';
-import type { Properties } from 'csstype';
 
 import './styles/Playlists.css';
-import downChevron from '../img/down-chevron.svg';
-import deletePic from '../img/delete.svg';
+/* eslint-disable @typescript-eslint/no-var-requires */
+const downChevron = require('../img/down-chevron.svg') as string;
+const deletePic = require('../img/delete.svg') as string;
+/* eslint-enable */
 
 function Playlist({ name, playing }: { name: string; playing: boolean }) {
   const store = Store.useStore();
@@ -93,7 +94,7 @@ function Playlist({ name, playing }: { name: string; playing: boolean }) {
   );
 }
 
-export default function Playlists() {
+export default function Playlists():JSX.Element {
   const store = Store.useStore();
   const playlists = store.get('Playlists');
   const curPls = store.get('activePlaylistName');

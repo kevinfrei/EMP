@@ -17,7 +17,7 @@ function addToIndex<T>(
   const chr = str[idx].toLocaleUpperCase();
   let node = res.get(chr);
   if (!node) {
-    node = { children: new Map(), values: new Set() };
+    node = { children: new Map<string, TrieNode<T>>(), values: new Set() };
     res.set(chr, node);
   }
   node.values.add(o);
@@ -31,7 +31,7 @@ export default function makeIndex<T>(
   objects: Iterable<T>,
   getter: (arg: T) => string,
 ): Map<string, TrieNode<T>> {
-  const res: Map<string, TrieNode<T>> = new Map();
+  const res = new Map<string, TrieNode<T>>();
   for (const o of objects) {
     const wholeString = getter(o);
     for (const str of wholeString.split(splitter)) {

@@ -10,7 +10,7 @@ import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
 // import RecentlyAddedView from './RecentlyAdded';
 
-export default function ViewSelector() {
+export default function ViewSelector(): JSX.Element {
   const store = Store.useStore();
   const which = store.get('curView');
   switch (which) {

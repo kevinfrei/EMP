@@ -7,7 +7,6 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useRecoilState } from 'recoil';
 
-import Store from '../MyStore';
 import {
   SortWithArticles,
   AlbumListSort,
@@ -19,10 +18,12 @@ import {
 
 import { VerticalScrollDiv } from '../Scrollables';
 
-import deletePic from '../img/delete.svg';
-import addPic from '../img/add.svg';
-
 import './styles/Settings.css';
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+const addPic = require('../img/add.svg') as string;
+const deletePic = require('../img/delete.svg') as string;
+/* eslint-enable */
 
 declare interface MyWindow extends Window {
   remote: Electron.Remote;
@@ -135,8 +136,7 @@ function ArticleSorting() {
   );
 }
 
-const Settings = () => {
-  const store = Store.useStore();
+function Settings(): JSX.Element {
   const album = {
     title: 'Album',
     syncedAtom: AlbumListSort,
@@ -185,5 +185,5 @@ const Settings = () => {
       </React.Suspense>
     </>
   );
-};
+}
 export default Settings;

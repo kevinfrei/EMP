@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import { logger } from '@freik/simplelogger';
 import { FTON } from '@freik/core-utils';
 
@@ -7,22 +7,17 @@ import * as music from './music';
 import { SendDatabase, SetIndex } from './Communication';
 import makeIndex from './search';
 
-import type { MusicDB } from './music';
 import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('Startup');
 
 function getLocations(): string[] {
   const rawLocations = persist.getItem<FTONData>('locations');
-  let musicLocations = rawLocations
-    ? FTON.arrayOfStrings(rawLocations)
-    : undefined;
-  if (!musicLocations || musicLocations.length === 0) {
-    // Default the music locations to the OS-specific "music" path
-    musicLocations = [app.getPath('music')];
-    persist.setItem('locations', musicLocations);
-  }
-  return musicLocations;
+  return (
+    (rawLocations && FTON.arrayOfStrings(rawLocations)) || [
+      app.getPath('music'),
+    ]
+  );
 }
 
 async function getMusicDb() {
@@ -46,7 +41,7 @@ function UpdateAndSendDB() {
 }
 
 // This is awaited upon initial window creation
-export async function Startup() {
+export async function Startup(): Promise<void> {
   // Scan for all music
   const musicDB = persist.getItem('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
@@ -58,7 +53,7 @@ export async function Startup() {
   }
 }
 
-export function Ready(window: BrowserWindow) {
+export function Ready(window: BrowserWindow): void {
   // Do anything else here that needs to happen once we have the window
   // object available
   persist.subscribe('locations', UpdateAndSendDB);

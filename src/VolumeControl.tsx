@@ -5,7 +5,7 @@ import { GetAudioElem } from './SongPlayback';
 
 import './styles/VolumeControl.css';
 
-export default function VolumeControl() {
+export default function VolumeControl(): JSX.Element {
   const store = Store.useStore();
 
   const muted = store.get('muted');

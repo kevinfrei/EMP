@@ -7,12 +7,12 @@ import { AddArtist, AddSong } from '../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
-import type { Properties } from 'csstype';
-
 import './styles/Artists.css';
-import downChevron from '../img/down-chevron.svg';
 
-export default function ArtistView() {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const downChevron = require('../img/down-chevron.svg') as string;
+
+export default function ArtistView(): JSX.Element {
   const store = Store.useStore();
   const artists = store.get('Artists');
   const [expandedArtist, setExpandedArtist] = useState('');

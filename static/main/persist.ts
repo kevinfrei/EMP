@@ -38,8 +38,8 @@ export type Persist = {
   unsubscribe(id: string): boolean;
 };
 
-const memoryCache: Map<string, FTONData> = new Map();
-const listeners: Map<string, Map<string, ValueUpdateListener>> = new Map();
+const memoryCache = new Map<string, FTONData>();
+const listeners = new Map<string, Map<string, ValueUpdateListener>>();
 const getNextListenerId = SeqNum();
 
 // Here's a place for app settings & stuff...
@@ -147,10 +147,10 @@ export function unsubscribe(id: string): boolean {
 export function getItem<T>(key: string): T | void {
   log('Reading ' + key);
   const val: any = readFile(key);
-  if (val && typeof val === 'object' && key in val) {
+  if (val && typeof val === 'object' && 'key' in val) {
     log('returning this value:');
-    log(val[key]);
-    return val[key] as T;
+    log(val[key]); // eslint-disable-line
+    return val[key] as T; // eslint-disable-line
   } else {
     log('Failed to return value');
   }
@@ -160,10 +160,10 @@ export function getItem<T>(key: string): T | void {
 export async function getItemAsync<T>(key: string): Promise<T | void> {
   log('Reading ' + key);
   const val: any = await readFileAsync(key);
-  if (val && typeof val === 'object' && val.hasOwnProperty(key)) {
+  if (val && typeof val === 'object' && 'key' in val) {
     log('returning this value:');
-    log(val[key]);
-    return val[key] as T;
+    log(val[key]); // eslint-disable-line
+    return val[key] as T; // eslint-disable-line
   } else {
     log('Failed to return value');
   }
@@ -213,8 +213,8 @@ const makeWindowPos = (
 ) => ({ bounds: { x, y, width, height }, isMaximized });
 
 const defaultWindowPosition: WindowPosition = makeWindowPos(
-  Number.MIN_SAFE_INTEGER,
-  Number.MIN_SAFE_INTEGER,
+  Number.MIN_SAFE_INTEGER, // eslint-disable-line id-blacklist
+  Number.MIN_SAFE_INTEGER, // eslint-disable-line id-blacklist
   900,
   680,
   false,
@@ -222,21 +222,21 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
 
 export function getWindowPos(): WindowPosition {
   try {
-    const tmpws: any = getItem('windowPosition');
-    if (tmpws && typeof tmpws === 'object' && tmpws.bounds) {
+    const tmpws = getItem('windowPosition');
+    if (tmpws && typeof tmpws === 'object' && 'bounds' in tmpws) {
+      /* eslint-disable */
       const bounds = tmpws.bounds;
       if (
         typeof bounds === 'object' &&
-        bounds.x !== undefined &&
+        'x' in bounds &&
         typeof bounds.x === 'number' &&
-        bounds.y !== undefined &&
+        'y' in bounds &&
         typeof bounds.y === 'number' &&
-        bounds.width !== undefined &&
+        'width' in bounds &&
         typeof bounds.width === 'number' &&
-        bounds.height !== undefined &&
+        'height' in bounds &&
         typeof bounds.height === 'number' &&
-        tmpws.isMaximized !== undefined &&
-        tmpws.isMaximized !== null &&
+        'isMaximized' in tmpws &&
         typeof tmpws.isMaximized === 'boolean'
       ) {
         return makeWindowPos(
@@ -247,6 +247,7 @@ export function getWindowPos(): WindowPosition {
           tmpws.isMaximized,
         );
       }
+      /* eslint-enable */
     }
   } catch (e) {
     log('Error occurred during getWindowPos');
@@ -262,10 +263,10 @@ export function setWindowPos(st: WindowPosition): void {
 
 export function getBrowserWindowPos(st: WindowPosition): Rectangle {
   if (
-    st.bounds.x === Number.MIN_SAFE_INTEGER ||
-    st.bounds.y === Number.MIN_SAFE_INTEGER ||
-    st.bounds.x === undefined ||
-    st.bounds.y === undefined
+    st.bounds.x === Number.MIN_SAFE_INTEGER || // eslint-disable-line id-blacklist
+    st.bounds.y === Number.MIN_SAFE_INTEGER || // eslint-disable-line id-blacklist
+    !('x' in st.bounds) ||
+    !('y' in st.bounds)
   ) {
     return {
       width: st.bounds.width,

@@ -1,7 +1,5 @@
 import {
   atom,
-  // selector,
-  // atomFamily,
   selectorFamily,
   useRecoilState,
 } from 'recoil';
