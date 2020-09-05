@@ -105,7 +105,7 @@ function RecoilLocations() {
             onClick={() => {
               const locs: string[] | undefined = GetDirs();
               if (locs) {
-                setNewLoc([...locs, ...newLoc]);
+                setNewLoc([...locs, ...(newLoc || [])]);
               }
             }}
           />
