@@ -12,7 +12,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 */
 const log = logger.bind('configProtocols');
-// logger.enable('configProtocols');
+logger.enable('configProtocols');
 
 export default function configureProtocols(): void {
   protocol.registerFileProtocol('pic', (req, callback) => {
@@ -23,6 +23,7 @@ export default function configureProtocols(): void {
       callback({ error: -324 });
     } else if (req.url.startsWith('pic://album/')) {
       // Let's check the db to see if we've got
+      log('Trying to get the DB');
       const db: MusicDB | void = persist.getItem('DB');
       if (!db) {
         return;

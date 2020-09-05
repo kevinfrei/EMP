@@ -8,7 +8,7 @@ import type { Rectangle } from 'electron';
 import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('persist');
-// logger.enable('persist');
+logger.enable('persist');
 
 export type MaybeRectangle = {
   width: number;
@@ -147,7 +147,7 @@ export function unsubscribe(id: string): boolean {
 export function getItem<T>(key: string): T | void {
   log('Reading ' + key);
   const val: any = readFile(key);
-  if (val && typeof val === 'object' && 'key' in val) {
+  if (val && typeof val === 'object' && key in val) {
     log('returning this value:');
     log(val[key]); // eslint-disable-line
     return val[key] as T; // eslint-disable-line
@@ -158,9 +158,9 @@ export function getItem<T>(key: string): T | void {
 
 // Get a value from disk/memory
 export async function getItemAsync<T>(key: string): Promise<T | void> {
-  log('Reading ' + key);
+  log('Async Reading ' + key);
   const val: any = await readFileAsync(key);
-  if (val && typeof val === 'object' && 'key' in val) {
+  if (val && typeof val === 'object' && key in val) {
     log('returning this value:');
     log(val[key]); // eslint-disable-line
     return val[key] as T; // eslint-disable-line
@@ -176,6 +176,7 @@ export function setItem(key: string, value: FTONData): void {
   const val: { [key: string]: FTONData } = {};
   val[key] = value;
   writeFile(key, val);
+  log(`Notifying ${key}`);
   notify(key, value);
 }
 
@@ -184,11 +185,12 @@ export async function setItemAsync(
   key: string,
   value: FTONData,
 ): Promise<void> {
-  log(`Writing ${key}:`);
+  log(`Async Writing ${key}:`);
   log(value);
   const val: { [key: string]: FTONData } = {};
   val[key] = value;
   await writeFileAsync(key, val);
+  log(`Async Notifying ${key}`);
   notify(key, value);
 }
 

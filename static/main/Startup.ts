@@ -10,6 +10,7 @@ import makeIndex from './search';
 import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('Startup');
+logger.enable('Startup');
 
 function getLocations(): string[] {
   const rawLocations = persist.getItem<FTONData>('locations');
@@ -43,11 +44,14 @@ function UpdateAndSendDB() {
 // This is awaited upon initial window creation
 export async function Startup(): Promise<void> {
   // Scan for all music
+  log('Trying to get DB');
   const musicDB = persist.getItem('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
+    log('Got the DB');
     setTimeout(UpdateAndSendDB, 1);
   } else {
+    log('No DB available');
     // If we don't already have it, wait to start until we've read it.
     await getMusicDb();
   }
