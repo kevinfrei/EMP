@@ -1,8 +1,4 @@
-import {
-  atom,
-  selectorFamily,
-  useRecoilState,
-} from 'recoil';
+import { atom, selectorFamily, useRecoilState } from 'recoil';
 import { logger } from '@freik/simplelogger';
 import { useRef, useEffect } from 'react';
 import { FTON } from '@freik/core-utils';
@@ -11,10 +7,12 @@ import type { SongKey } from './MyStore';
 import type { RecoilState } from 'recoil';
 import type { MyWindow } from './AsyncDoodad';
 import type { FTONData } from '@freik/core-utils';
+// import RecentlyAdded from './Views/RecentlyAdded';
+
 declare let window: MyWindow;
 
 const log = logger.bind('Atoms');
-logger.enable('Atoms');
+// logger.enable('Atoms');
 
 export type syncedAtom<T> = {
   atom: RecoilState<T | null>;
@@ -25,6 +23,24 @@ export type MediaInfo = {
   general: Map<string, string>;
   audio: Map<string, string>;
 };
+
+// vvv That's a bug, pretty clearly :/
+// eslint-disable-next-line no-shadow
+export enum CurrentView {
+  None = 0,
+  Recent = 1,
+  Album = 2,
+  Artist = 3,
+  Song = 4,
+  Playlist = 5,
+  Current = 6,
+  Settings = 7,
+}
+
+export const CurViewAtom = atom<CurrentView>({
+  key: 'CurrentView',
+  default: CurrentView.Current,
+});
 
 // This should return a server-sync'ed atom
 // { atom: theAtom, AtomSyncer: AtomSubscription };
@@ -58,11 +74,13 @@ function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
 
     // This updates the server whenever the value or the ref changes
     useEffect(() => {
+      log(`ref change triggered for ${key}`);
       if (
         FTON.stringify(atomValue as any) !==
         FTON.stringify(atomRef.current as any)
       ) {
         atomRef.current = atomValue;
+        log(`Sending update for ${key}`);
         void window.ipcPromise!.send('promise-set', {
           key,
           value: atomValue,
@@ -76,7 +94,7 @@ function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
 }
 
 // This is the 'locations' for searching
-export const SyncLoc = makeBackedAtom<string[]>('newLocations', []);
+export const SyncLoc = makeBackedAtom<string[]>('locations', []);
 
 export const getMediaInfo = selectorFamily<any, SongKey>({
   key: 'mediaInfoSelector',

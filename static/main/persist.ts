@@ -8,7 +8,7 @@ import type { Rectangle } from 'electron';
 import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('persist');
-logger.enable('persist');
+// logger.enable('persist');
 
 export type MaybeRectangle = {
   width: number;

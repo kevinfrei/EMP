@@ -9,7 +9,7 @@ import { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
 const isDev = true; // require('electron-is-dev');
 
 const log = logger.bind('renderer');
-logger.enable('renderer');
+// logger.enable('renderer');
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;

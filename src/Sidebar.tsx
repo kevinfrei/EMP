@@ -1,11 +1,11 @@
 import React from 'react';
-import Store from './MyStore';
+import { useRecoilState } from 'recoil';
 
+import Store from './MyStore';
+import { CurrentView, CurViewAtom } from './Atoms';
 
 import './styles/Sidebar.css';
-
-import type { ViewNames, StoreState } from './MyStore';
-
+import { SetterOrUpdater } from 'recoil';
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import recentPic from './img/recent.svg';
@@ -17,8 +17,8 @@ const nowPlayingPic = require('./img/playing.svg') as string;
 const settingsPic = require('./img/settings.svg') as string;
 /* eslint-enable */
 
-type ViewEntry = { name: ViewNames; pic: string; title: string };
-const mkEntry = (name: ViewNames, title: string, pic: string) => ({
+type ViewEntry = { name: CurrentView; pic: string; title: string };
+const mkEntry = (name: CurrentView, title: string, pic: string) => ({
   name,
   pic,
   title,
@@ -26,25 +26,30 @@ const mkEntry = (name: ViewNames, title: string, pic: string) => ({
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', recentPic),
-  mkEntry('album', 'Albums', albumPic),
-  mkEntry('artist', 'Artists', artistPic),
-  mkEntry('song', 'All Songs', songPic),
-  mkEntry('playlist', 'Playlists', playlistPic),
-  mkEntry('current', 'Now Playing', nowPlayingPic),
+  mkEntry(CurrentView.Album, 'Albums', albumPic),
+  mkEntry(CurrentView.Artist, 'Artists', artistPic),
+  mkEntry(CurrentView.Song, 'All Songs', songPic),
+  mkEntry(CurrentView.Playlist, 'Playlists', playlistPic),
+  mkEntry(CurrentView.Current, 'Now Playing', nowPlayingPic),
   null,
-  mkEntry('settings', 'Settings', settingsPic),
+  mkEntry(CurrentView.Settings, 'Settings', settingsPic),
 ];
 
-function getEntry(store: StoreState, view: ViewEntry | null, index: number) {
+function getEntry(
+  curView: CurrentView,
+  setCurView: SetterOrUpdater<CurrentView>,
+  view: ViewEntry | null,
+  index: number,
+) {
   if (!view) {
     return <hr key={index} />;
   }
-  const extra = store.get('curView') === view.name ? ' sidebar-selected' : '';
+  const extra = curView === view.name ? ' sidebar-selected' : '';
   return (
     <div
       key={index}
       className={`sidebar-container${extra}`}
-      onClick={() => store.set('curView')(view.name)}
+      onClick={() => setCurView(view.name)}
     >
       <img src={view.pic} className="sidebar-icon" alt={view.title}></img>
       <span className="sidebar-text">{view.title}</span>
@@ -56,6 +61,7 @@ export default function Sidebar(): JSX.Element {
   const store = Store.useStore();
   const value = store.get('searchText');
   const setvalue = store.set('searchText');
+  const [curView, setCurView] = useRecoilState(CurViewAtom);
   return (
     <div id="sidebar">
       <div className="search-bar">
@@ -68,7 +74,7 @@ export default function Sidebar(): JSX.Element {
         />
       </div>
       <br />
-      {views.map((ve, index) => getEntry(store, ve, index))}
+      {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}
       <div id="data" />
     </div>
   );

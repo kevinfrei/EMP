@@ -6,6 +6,7 @@ import Card from 'react-bootstrap/Card';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { useRecoilState } from 'recoil';
+import { logger } from '@freik/simplelogger';
 
 import {
   SortWithArticles,
@@ -15,10 +16,11 @@ import {
   SyncLoc,
   syncedAtom,
 } from '../Atoms';
-
 import { VerticalScrollDiv } from '../Scrollables';
 
 import './styles/Settings.css';
+const log = logger.bind('View-Settings');
+// logger.enable('View-Settings');
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const addPic = require('../img/add.svg') as string;
@@ -52,12 +54,12 @@ function GetDirs() {
 function SortPopup({ item }: { item: PopupItem }): JSX.Element {
   const [value, setter] = useRecoilState(item.syncedAtom.atom);
   const names: string[] = item.names;
-  const selected = value ? item.types.indexOf(value) : -1;
+  const selected = Math.max(0, value ? item.types.indexOf(value) : 0);
   const select = (key: string | null) => setter(key);
   const SyncingElement = item.syncedAtom.AtomSyncer;
   return (
     <Row>
-      <Col xs={3} style={{ height: '35px' }}>
+      <Col xs={6} style={{ height: '35px' }}>
         <SyncingElement />
         <span style={{ float: 'right' }}>View {item.title} by </span>
       </Col>
@@ -79,7 +81,7 @@ function SortPopup({ item }: { item: PopupItem }): JSX.Element {
   );
 }
 
-function RecoilLocations() {
+function RecoilLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
   return (
     <>
@@ -118,25 +120,31 @@ function RecoilLocations() {
   );
 }
 
-function ArticleSorting() {
+function ArticleSorting(): JSX.Element {
   const [articles, setArticles] = useRecoilState(SortWithArticles.atom);
+  log('Articles: ' + (articles ? 'true' : 'false'));
+  const switcher = (val: boolean) => {
+    log(`new value: ${val ? 'T' : 'F'}`);
+    setArticles(val);
+  };
   return (
     <Row>
-      <Col xs={3}>
+      <Col xs={6}>
+        <SortWithArticles.AtomSyncer />
         <span style={{ float: 'right' }}>Consider articles</span>
       </Col>
       <Col>
         <input
           type="checkbox"
           checked={articles === true}
-          onChange={() => setArticles(!articles)}
+          onChange={() => switcher(!articles)}
         ></input>
       </Col>
     </Row>
   );
 }
 
-function Settings(): JSX.Element {
+export default function Settings(): JSX.Element {
   const album = {
     title: 'Album',
     syncedAtom: AlbumListSort,
@@ -186,4 +194,3 @@ function Settings(): JSX.Element {
     </>
   );
 }
-export default Settings;

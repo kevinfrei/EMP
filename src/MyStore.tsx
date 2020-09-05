@@ -42,15 +42,6 @@ export type MediaInfo = {
 
 export type MapNames = 'Artists' | 'Albums' | 'Songs';
 export type ArrayOfKeys = 'ArtistArray' | 'AlbumArray' | 'SongArray';
-export type ViewNames =
-  | 'none'
-  | 'recent'
-  | 'album'
-  | 'artist'
-  | 'song'
-  | 'playlist'
-  | 'current'
-  | 'settings';
 
 export type State = {
   // Just a list of paths to search for music
@@ -80,8 +71,6 @@ export type State = {
   Playlists: Map<string, SongKey[]>;
   playlistLocation: string;
 
-  // This is about the actual stuff on screen
-  curView: ViewNames; // Which view is selected
   // This is where each view is scrolled to currently
   scrollManager: Map<string, { x: number; y: number }>;
 
@@ -124,7 +113,6 @@ const initialState: State = {
   Playlists: new Map<string, SongKey[]>(),
   playlistLocation: '',
 
-  curView: 'current',
   scrollManager: new Map<string, { x: number; y: number }>(),
 
   searchText: '',
@@ -148,7 +136,6 @@ export const ValidKeyNames = [
   'Playlists',
   'playlistLocation',
   //  'locations',
-  'curView',
   'songList',
   'activePlaylistName',
   'curIndex',

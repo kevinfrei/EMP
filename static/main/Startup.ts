@@ -45,7 +45,7 @@ function UpdateAndSendDB() {
 export async function Startup(): Promise<void> {
   // Scan for all music
   log('Trying to get DB');
-  const musicDB = persist.getItem('DB');
+  const musicDB = await persist.getItemAsync<music.MusicDB>('DB');
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
     log('Got the DB');

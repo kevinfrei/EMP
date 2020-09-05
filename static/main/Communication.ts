@@ -12,7 +12,7 @@ import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
 
 const log = logger.bind('Communication');
-logger.enable('Communication');
+// logger.enable('Communication');
 
 export type MessageHandler<T> = {
   command: string;
@@ -116,7 +116,7 @@ function mk<T>(
 export function SendDatabase(): void {
   const musicDB = persist.getItem<MusicDB>('DB');
   if (!win || !musicDB) {
-    setTimeout(SendDatabase, 10);
+    setTimeout(SendDatabase, 100);
     return;
   }
   win.webContents.send(
