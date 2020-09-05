@@ -222,9 +222,9 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
 
 export function getWindowPos(): WindowPosition {
   try {
-    const tmpws = getItem('windowPosition');
+    /* eslint-disable */
+    const tmpws: any = getItem('windowPosition');
     if (tmpws && typeof tmpws === 'object' && 'bounds' in tmpws) {
-      /* eslint-disable */
       const bounds = tmpws.bounds;
       if (
         typeof bounds === 'object' &&
