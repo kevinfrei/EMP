@@ -11,27 +11,24 @@ import { Startup, Ready } from './main/Startup';
 import { Init, Begin } from './main/Communication';
 
 import type { BrowserWindow } from 'electron';
-import type { OnWindowCreated } from './main/electronSetup';
 
 const log = logger.bind('electron');
 // logger.enable('electron');
 
-// const win = null;
-
-const onWindowCreated: OnWindowCreated = (window: BrowserWindow): void => {
-  log('Window Created');
-  Startup()
-    .then(() => {
-      log('Invoking main/Startup/Ready');
-      Ready(window);
-      log('Invoking main/Communication/Begin');
-      Begin(window);
-    })
-    .catch((e) => {
-      log(e);
-      window.webContents.send('data', '{"error":"loading"}');
-    });
-};
-
 Init();
+
+async function onWindowCreated(window: BrowserWindow): Promise<void> {
+  try {
+    log('Window Created');
+    await Startup();
+    log('Invoking main/Startup/Ready');
+    Ready(window);
+    log('Invoking main/Communication/Begin');
+    Begin(window);
+  } catch (e) {
+    log(e);
+    window.webContents.send('data', '{"error":"loading"}');
+  }
+}
+
 electronSetup(onWindowCreated);

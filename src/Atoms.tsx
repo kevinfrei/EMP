@@ -45,12 +45,16 @@ export const CurViewAtom = atom<CurrentView>({
 // This should return a server-sync'ed atom
 // { atom: theAtom, AtomSyncer: AtomSubscription };
 export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
+  // This is the atom that holds the sync'ed data
   const theAtom: RecoilState<T> = atom<T>({ key, default: def });
+  // This is the React element that ensures's the synchronization takes place
   const AtomSyncer = (): JSX.Element | null => {
+    // Getter/Setter
     const [atomValue, setAtomValue] = useRecoilState(theAtom);
+    // Get a reference to the value
     const atomRef = useRef<T | null>(atomValue);
 
-    // This makes server-side changes update the atom
+    // Register an effect to pull server side changes into the atom
     useEffect(() => {
       log(`key: ${key} effect triggered`);
       function handleChange(value: T) {

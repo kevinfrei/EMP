@@ -7,7 +7,7 @@ import * as persist from './persist';
 
 import type { WindowPosition } from './persist';
 
-export type OnWindowCreated = (window: BrowserWindow) => void;
+export type OnWindowCreated = (window: BrowserWindow) => Promise<void>;
 
 const isDev = true; // require('electron-is-dev');
 
@@ -91,7 +91,7 @@ export default function setup(windowCreated: OnWindowCreated): void {
           mainWindow.maximize();
         }
         // Call the user specified "ready to go" function
-        windowCreated(mainWindow);
+        windowCreated(mainWindow).catch((e) => log(e));
       }
     });
 

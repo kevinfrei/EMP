@@ -13,7 +13,7 @@ import {
   AlbumListSort,
   ArtistListSort,
   SongListSort,
-  SyncLoc,
+  SyncedLocations,
 } from '../SettingsAtoms';
 import { VerticalScrollDiv } from '../Scrollables';
 
@@ -83,7 +83,7 @@ function SortPopup({ item }: { item: PopupItem }): JSX.Element {
 }
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useRecoilState(SyncLoc.atom);
+  const [newLoc, setNewLoc] = useRecoilState(SyncedLocations.atom);
   return (
     <>
       {(newLoc || []).map((elem) => (
@@ -174,7 +174,7 @@ export default function Settings(): JSX.Element {
             <Card.Body>
               <Card.Title>Music Locations</Card.Title>
               <Container>
-                <SyncLoc.AtomSyncer />
+                <SyncedLocations.AtomSyncer />
                 <RecoilLocations />
               </Container>
             </Card.Body>

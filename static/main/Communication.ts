@@ -1,10 +1,11 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import promiseIpc from 'electron-promise-ipc';
+import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
 import { logger } from '@freik/simplelogger';
 import { FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
-import { getMediaInfo } from './music';
+import { getMediaInfo } from './metadata';
 
 // import type { FTONData } from '@freik/core-utils';
 import type { SongKey, MediaInfo, MusicDB } from './music';
@@ -279,7 +280,9 @@ async function ipcDeleter(data: { key: unknown }) {
 
 // async function ipcSongKeys(data: { key: unknown; value: unknown }) {}
 
-async function ipcMediaInfo(key: string) {
+async function ipcMediaInfo(
+  key: string,
+): Promise<{ key: SongKey; data: MediaInfo } | void> {
   if (typeof key !== 'string') {
     return;
   }
@@ -301,6 +304,7 @@ async function ipcMediaInfo(key: string) {
 
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init(): void {
+  // Stuff from the pre-recoil days
   const comms = [
     mk<KVP<FTONData>>('set', kvpFromJSONValidator, setter),
     mk<string>('delete', stringValidator, deleter),
@@ -322,28 +326,27 @@ export function Init(): void {
       }
     });
   }
-  // Persistence stuff migrated to Recoil :)
+  // Persistence stuff migrated to Recoil - before better-ipc
   promiseIpc.on('promise-get', ipcGetter as Listener);
   promiseIpc.on('promise-set', ipcSetter as Listener);
   promiseIpc.on('promise-del', ipcDeleter as Listener);
-  /*
-  promiseIpc.on('promise-artist', ipcArtist);
-  promiseIpc.on('promise-artists', ipcArtists);
-  promiseIpc.on('promise-artistKeys', ipcArtistKeys);
-  promiseIpc.on('promise-album', ipcAlbum);
-  promiseIpc.on('promise-albums', ipcAlbums);
-  promiseIpc.on('promise-albumKeys', ipcAlbumKeys);
-  promiseIpc.on('promise-song', ipcSong);
-  promiseIpc.on('promise-songs', ipcSongs);
-  promiseIpc.on('promise-songKeys', ipcSongKeys);
-  */
   promiseIpc.on('promise-mediaInfo', ipcMediaInfo as Listener);
-  /*
-  promiseIpc.on('promise-playlist', ipcPlaylistDetails);
-  promiseIpc.on('promise-playlists', ipcPlaylists);
-  */
-}
 
+  // I like this API much better, particularly in the render process
+
+  // No additional parameter for this one:
+  betterIpc.answerRenderer('get-song-keys', () => {
+    //    const musicDB = await getMusic();
+    //  if (!musicDB) return []; // TODO: return an error
+    // TODO: Now send the song keys
+    return [];
+  });
+  // Asking for media info for a particular song
+  betterIpc.answerRenderer('get-media-info', async (key: SongKey) => {
+    const mediaInfo = await ipcMediaInfo(key);
+    return mediaInfo || {}; // TODO: return an error
+  });
+}
 // Called with the window handle after it's been created
 export function Begin(window: BrowserWindow): void {
   win = window;

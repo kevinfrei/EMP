@@ -13,6 +13,7 @@
   "dependencies": {
     "@dwqs/react-virtual-list": "^1.0.0",
     "@freik/core-utils": "^0.3.4",
+    "@freik/electron-better-ipc": "^1.1.1",
     "@freik/media-utils": "^0.2.2",
     "@freik/simplelogger": "^1.1.3",
     "bootstrap": "^4.5.2",

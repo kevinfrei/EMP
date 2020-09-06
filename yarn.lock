@@ -1208,6 +1208,13 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.3.4.tgz#8fa59276b390d37f51436a949fc2a03ce8ae10d7"
   integrity sha512-bQCOlwtxeXFrHR/xJUy99DsbG5it1/PCGh2BjXOwwmVziY5FoiC4fIN7HVslsYESLD9WYKP7v911grMSPFZq1A==
 
+"@freik/electron-better-ipc@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@freik/electron-better-ipc/-/electron-better-ipc-1.1.1.tgz#6e19178d566778f0a5b31fa8ce729ceb675db5a8"
+  integrity sha512-zhDYZb3CQKwzJUcji2wxvmpETuiWOI8xjT/Aq4n0xStoP8hj/foCur8DBOevxNkhguEoCZbbrTc11day+8CMEQ==
+  dependencies:
+    serialize-error "^5.0.0"
+
 "@freik/media-utils@^0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.2.2.tgz#ff829c9361692f73dc9686304d72ee4876bc1dda"

@@ -1,7 +1,7 @@
 import { makeBackedAtom } from './Atoms';
 
 // This is the 'locations' for searching
-export const SyncLoc = makeBackedAtom<string[]>('locations', []);
+export const SyncedLocations = makeBackedAtom<string[]>('locations', []);
 
 export const SortWithArticles = makeBackedAtom<boolean>(
   'rSortWithArticles',

@@ -77,7 +77,17 @@ keyword" kind of stuff.
 ### Other
 * Testing! Testing! Testing!
 
+# Redoing main/render state synchronization with Recoil
+
+Originally, there was an idea of "initial state". But with Recoil automagically
+pulling state on demand, there shouldn't be any initialization of state required
+by the render or main process. Walking the music DB could (should?) be done
+as a 'prefetch' (the enemy of all performance :/ ) but everything else can be
+done on-demand.
+
 ## Stuff to remember
+
+This is all deprecated with Recoil.
 
 ### Persisting stuff across runs
 
