@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { logger } from '@freik/simplelogger';
 
-import configureProtocols from './configProtocols';
+import { configureProtocols } from './configure';
 import * as persist from './persist';
 
 import type { WindowPosition } from './persist';
