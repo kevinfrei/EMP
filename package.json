@@ -255,7 +255,8 @@
       {
         "files": [
           "static/main/*.ts",
-          "static/electron.ts"
+          "static/electron.ts",
+          "static/main.d.ts"
         ],
         "parserOptions": {
           "project": "tsconfig.static.json"

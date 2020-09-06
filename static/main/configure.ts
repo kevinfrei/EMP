@@ -57,7 +57,17 @@ function tuneProtocol(req: ProtocolRequest, callback: HandlerCallback) {
   }
 }
 
+// This sets up all protocol handlers
 export function configureProtocols(): void {
   protocol.registerFileProtocol('pic', picProtocol);
   protocol.registerFileProtocol('tune', tuneProtocol);
+}
+
+// This sets up reactive responses to changes, for example:
+// locations change, so music needs to be rescanned
+export function configureListeners(): void {
+  persist.subscribe('locations', (newLocationsValue) => {
+    // If locations changed, update the music database
+    // TODO: Update the music database here
+  });
 }

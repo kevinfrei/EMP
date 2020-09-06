@@ -93,7 +93,7 @@ function RecoilLocations(): JSX.Element {
               className="delete-pic pic-button"
               src={deletePic}
               alt="Delete Item"
-              onClick={() => setNewLoc(removeFromSet(newLoc!, elem))}
+              onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
             />
           </Col>
           <Col>{elem}</Col>
