@@ -15,7 +15,7 @@ const log = logger.bind('Atoms');
 // logger.enable('Atoms');
 
 export type syncedAtom<T> = {
-  atom: RecoilState<T | null>;
+  atom: RecoilState<T>;
   AtomSyncer: () => JSX.Element | null;
 };
 
@@ -44,8 +44,8 @@ export const CurViewAtom = atom<CurrentView>({
 
 // This should return a server-sync'ed atom
 // { atom: theAtom, AtomSyncer: AtomSubscription };
-function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
-  const theAtom: RecoilState<T | null> = atom<T | null>({ key, default: def });
+export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
+  const theAtom: RecoilState<T> = atom<T>({ key, default: def });
   const AtomSyncer = (): JSX.Element | null => {
     const [atomValue, setAtomValue] = useRecoilState(theAtom);
     const atomRef = useRef<T | null>(atomValue);
@@ -93,9 +93,6 @@ function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
   return { atom: theAtom, AtomSyncer };
 }
 
-// This is the 'locations' for searching
-export const SyncLoc = makeBackedAtom<string[]>('locations', []);
-
 export const getMediaInfo = selectorFamily<any, SongKey>({
   key: 'mediaInfoSelector',
   // eslint-disable-next-line
@@ -105,22 +102,3 @@ export const getMediaInfo = selectorFamily<any, SongKey>({
   }) as any,
 });
 
-export const SortWithArticles = makeBackedAtom<boolean>(
-  'rSortWithArticles',
-  true,
-);
-
-export const AlbumListSort = makeBackedAtom<string>(
-  'rAlbumListSort',
-  'ArtistName',
-);
-
-export const ArtistListSort = makeBackedAtom<string>(
-  'rArtistListSort',
-  'ArtistAlbum',
-);
-
-export const SongListSort = makeBackedAtom<string>(
-  'rSongListSort',
-  'ArtistAlbum',
-);

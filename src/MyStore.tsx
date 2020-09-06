@@ -135,7 +135,6 @@ export const ValidKeyNames = [
   'Songs',
   'Playlists',
   'playlistLocation',
-  //  'locations',
   'songList',
   'activePlaylistName',
   'curIndex',

@@ -14,9 +14,10 @@ import {
   ArtistListSort,
   SongListSort,
   SyncLoc,
-  syncedAtom,
-} from '../Atoms';
+} from '../SettingsAtoms';
 import { VerticalScrollDiv } from '../Scrollables';
+
+import type { syncedAtom } from '../Atoms';
 
 import './styles/Settings.css';
 const log = logger.bind('View-Settings');
@@ -55,7 +56,7 @@ function SortPopup({ item }: { item: PopupItem }): JSX.Element {
   const [value, setter] = useRecoilState(item.syncedAtom.atom);
   const names: string[] = item.names;
   const selected = Math.max(0, value ? item.types.indexOf(value) : 0);
-  const select = (key: string | null) => setter(key);
+  const select = (key: string | null) => setter(key!);
   const SyncingElement = item.syncedAtom.AtomSyncer;
   return (
     <Row>

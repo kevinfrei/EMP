@@ -123,6 +123,123 @@ export const SongBy = {
   },
 };
 
+const SortSongBy = {
+  ArtistAlbumNumberTitle: (
+    store: StoreState,
+    withArticles: boolean,
+  ): sorter => {
+    const cmp = withArticles ? strCmp : theCmp;
+    return (a: SongKey, b: SongKey) => {
+      const {
+        title: aTitle,
+        track: aTrack,
+        album: aAlbum,
+        artist: aArtist,
+      } = GetDataForSong(store, a);
+      const {
+        title: bTitle,
+        track: bTrack,
+        album: bAlbum,
+        artist: bArtist,
+      } = GetDataForSong(store, b);
+      return (
+        cmp(aArtist, bArtist) ||
+        cmp(aAlbum, bAlbum) ||
+        aTrack - bTrack ||
+        cmp(aTitle, bTitle)
+      );
+    };
+  },
+  AlbumAristNumberTitle: (store: StoreState, withArticles: boolean): sorter => {
+    const cmp = withArticles ? strCmp : theCmp;
+    return (a: SongKey, b: SongKey) => {
+      const {
+        title: aTitle,
+        track: aTrack,
+        album: aAlbum,
+        artist: aArtist,
+      } = GetDataForSong(store, a);
+      const {
+        title: bTitle,
+        track: bTrack,
+        album: bAlbum,
+        artist: bArtist,
+      } = GetDataForSong(store, b);
+      return (
+        cmp(aAlbum, bAlbum) ||
+        cmp(aArtist, bArtist) ||
+        aTrack - bTrack ||
+        cmp(aTitle, bTitle)
+      );
+    };
+  },
+  NumberAlbumArtistTitle: (
+    store: StoreState,
+    withArticles: boolean,
+  ): sorter => {
+    const cmp = withArticles ? strCmp : theCmp;
+    return (a: SongKey, b: SongKey) => {
+      const {
+        title: aTitle,
+        track: aTrack,
+        album: aAlbum,
+        artist: aArtist,
+      } = GetDataForSong(store, a);
+      const {
+        title: bTitle,
+        track: bTrack,
+        album: bAlbum,
+        artist: bArtist,
+      } = GetDataForSong(store, b);
+      return (
+        aTrack - bTrack ||
+        cmp(aAlbum, bAlbum) ||
+        cmp(aArtist, bArtist) ||
+        cmp(aTitle, bTitle)
+      );
+    };
+  },
+  TitleAlbumAristNumber: (store: StoreState, withArticles: boolean): sorter => {
+    const cmp = withArticles ? strCmp : theCmp;
+    return (a: SongKey, b: SongKey) => {
+      const {
+        title: aTitle,
+        track: aTrack,
+        album: aAlbum,
+        artist: aArtist,
+      } = GetDataForSong(store, a);
+      const {
+        title: bTitle,
+        track: bTrack,
+        album: bAlbum,
+        artist: bArtist,
+      } = GetDataForSong(store, b);
+      return (
+        cmp(aTitle, bTitle) ||
+        cmp(aAlbum, bAlbum) ||
+        cmp(aArtist, bArtist) ||
+        aTrack - bTrack
+      );
+    };
+  },
+};
+
+export function GetSongSorter(
+  store: StoreState | null,
+  songSort: string | null,
+  withArticles: boolean,
+): sorter {
+  switch (songSort) {
+    case 'SongTitle':
+      return SortSongBy.TitleAlbumAristNumber(store!, withArticles);
+    case 'AlbumTrack':
+      return SortSongBy.AlbumAristNumberTitle(store!, withArticles);
+    case 'ArtistAlbum':
+    default:
+      return SortSongBy.ArtistAlbumNumberTitle(store!, withArticles);
+  }
+}
+
 export const AlbumBy = {
   TitleArtistYear: (store: StoreState): sorter => {
     const cmp = store.get('SortWithArticles') ? strCmp : theCmp;
