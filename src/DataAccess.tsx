@@ -1,3 +1,4 @@
+import { AllSongsSel } from './MusicDbAtoms';
 import type {
   StoreState,
   SongKey,
@@ -37,7 +38,11 @@ export function GetSong(store: StoreState, sk: SongKey): Song | void {
     return allSongs.get(sk);
   }
 }
-
+export function RecoilSong(get: GetRecoilValue, sk: SongKey): Song | void {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const allSongs = get(AllSongsSel);
+  return allSongs?.get(sk);
+}
 export function GetTrackListingForSong(store: StoreState, sk: SongKey): string {
   const song: Song | void = GetSong(store, sk);
   if (!song) {
@@ -52,6 +57,33 @@ export function GetDataForSong(
 ): { title: string; track: number; artist: string; album: string } {
   const res = { title: '-', track: 0, artist: '-', album: '-' };
   const song: Song | void = GetSong(store, sk);
+  if (!song) {
+    return res;
+  }
+  res.title = song.title;
+  res.track = song.track;
+  const allAlbums: Map<AlbumKey, Album> | undefined = store.get('Albums');
+  if (!allAlbums) {
+    return res;
+  }
+  const album: Album | undefined = allAlbums.get(song.albumId);
+  if (album) {
+    res.album = album.title;
+  }
+  const maybeArtistName = GetArtistString(store, song.artistIds);
+  if (!maybeArtistName) {
+    return res;
+  }
+  res.artist = maybeArtistName;
+  return res;
+}
+
+export function RecoilDataForSong(
+  get: GetRecoilValue,
+  sk: SongKey,
+): { title: string; track: number; artist: string; album: string } {
+  const res = { title: '-', track: 0, artist: '-', album: '-' };
+  const song: Song | void = RecoilSong(get, sk);
   if (!song) {
     return res;
   }

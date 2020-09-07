@@ -5,6 +5,9 @@
 import { IpcRenderer, ipcRenderer, remote } from 'electron';
 import { logger } from '@freik/simplelogger';
 import { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
+import { ipcRenderer as betterIpc } from '@freik/electron-better-ipc';
+
+import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 
 const isDev = true; // require('electron-is-dev');
 
@@ -17,6 +20,7 @@ interface MyWindow extends Window {
   isDev: boolean | undefined;
   initApp: undefined | (() => void);
   ipcPromise: PromiseIpcRenderer | undefined;
+  betterIpc: RendererProcessIpc | undefined;
 }
 declare let window: MyWindow;
 
@@ -45,4 +49,6 @@ window.addEventListener('DOMContentLoaded', () => {
   log('Setting up PromiseIPC:');
   window.ipcPromise = new PromiseIpcRenderer({ maxTimeoutMs: 5000 });
   log(window.ipcPromise);
+  log('adding betterIpc');
+  window.betterIpc = betterIpc;
 });

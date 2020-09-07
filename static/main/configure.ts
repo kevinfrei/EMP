@@ -5,7 +5,7 @@ import { logger } from '@freik/simplelogger';
 import * as persist from './persist';
 
 import type { ProtocolRequest, ProtocolResponse } from 'electron';
-import type { MusicDB } from './music';
+import type { MusicDB } from './MusicScanner';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 

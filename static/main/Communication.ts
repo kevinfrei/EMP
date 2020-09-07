@@ -8,9 +8,11 @@ import * as persist from './persist';
 import { getMediaInfo } from './metadata';
 
 // import type { FTONData } from '@freik/core-utils';
-import type { SongKey, MediaInfo, MusicDB } from './music';
+import type { SongKey, MediaInfo, MusicDB } from './MusicScanner';
 import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
+import { async } from 'rxjs';
+import { getAllAlbums, getAllArtists, getAllPlaylists, getAllSongs } from './MusicAccess';
 
 const log = logger.bind('Communication');
 // logger.enable('Communication');
@@ -334,18 +336,15 @@ export function Init(): void {
 
   // I like this API much better, particularly in the render process
 
-  // No additional parameter for this one:
-  betterIpc.answerRenderer('get-song-keys', () => {
-    //    const musicDB = await getMusic();
-    //  if (!musicDB) return []; // TODO: return an error
-    // TODO: Now send the song keys
-    return [];
-  });
   // Asking for media info for a particular song
   betterIpc.answerRenderer('get-media-info', async (key: SongKey) => {
     const mediaInfo = await ipcMediaInfo(key);
     return mediaInfo || {}; // TODO: return an error
   });
+  betterIpc.answerRenderer('get-all-songs', getAllSongs);
+  betterIpc.answerRenderer('get-all-albums', getAllAlbums);
+  betterIpc.answerRenderer('get-all-artists',getAllArtists);
+  betterIpc.answerRenderer('get-all-playlists', getAllPlaylists);
 }
 // Called with the window handle after it's been created
 export function Begin(window: BrowserWindow): void {

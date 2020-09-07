@@ -3,7 +3,7 @@ import { logger } from '@freik/simplelogger';
 import { FTON } from '@freik/core-utils';
 
 import * as persist from './persist';
-import * as music from './music';
+import * as music from './MusicScanner';
 import { SendDatabase, SetIndex } from './Communication';
 import makeIndex from './search';
 
@@ -58,7 +58,7 @@ export async function Startup(): Promise<void> {
 }
 
 export function Ready(window: BrowserWindow): void {
-  // Do anything else here that needs to happen once we have the window
+  // Do anything here that needs to happen once we have the window
   // object available
   persist.subscribe('locations', UpdateAndSendDB);
 }

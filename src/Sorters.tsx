@@ -1,4 +1,5 @@
 import { Comparisons } from '@freik/core-utils';
+import { GetRecoilValue } from 'recoil';
 import { GetDataForSong, GetDataForAlbum } from './DataAccess';
 
 import type {
@@ -125,7 +126,7 @@ export const SongBy = {
 
 const SortSongBy = {
   ArtistAlbumNumberTitle: (
-    store: StoreState,
+    get: GetRecoilValue,
     withArticles: boolean,
   ): sorter => {
     const cmp = withArticles ? strCmp : theCmp;
@@ -135,13 +136,13 @@ const SortSongBy = {
         track: aTrack,
         album: aAlbum,
         artist: aArtist,
-      } = GetDataForSong(store, a);
+      } = RecoilDataForSong(get, a);
       const {
         title: bTitle,
         track: bTrack,
         album: bAlbum,
         artist: bArtist,
-      } = GetDataForSong(store, b);
+      } = RecoilDataForSong(get, b);
       return (
         cmp(aArtist, bArtist) ||
         cmp(aAlbum, bAlbum) ||
@@ -225,18 +226,18 @@ const SortSongBy = {
 };
 
 export function GetSongSorter(
-  store: StoreState | null,
-  songSort: string | null,
+  songSort: string,
+  get: GetRecoilValue,
   withArticles: boolean,
 ): sorter {
   switch (songSort) {
     case 'SongTitle':
-      return SortSongBy.TitleAlbumAristNumber(store!, withArticles);
+      return SortSongBy.TitleAlbumAristNumber;
     case 'AlbumTrack':
-      return SortSongBy.AlbumAristNumberTitle(store!, withArticles);
+      return SortSongBy.AlbumAristNumberTitle;
     case 'ArtistAlbum':
     default:
-      return SortSongBy.ArtistAlbumNumberTitle(store!, withArticles);
+      return SortSongBy.ArtistAlbumNumberTitle;
   }
 }
 

@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { logger } from '@freik/simplelogger';
 
-import type { IpcRenderer } from 'electron';
-import type { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
-
 import Store from './MyStore';
 import { ConfigureIPC } from './Handler';
+
+import type { IpcRenderer } from 'electron';
+import type { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
+import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 
 const log = logger.bind('async');
 logger.disable('async');
@@ -26,6 +27,7 @@ export interface MyWindow extends Window {
   initApp: undefined | (() => void);
   ipcPromise: PromiseIpcRenderer | undefined;
   ipcSet: boolean | undefined;
+  betterIpc: RendererProcessIpc | undefined;
 }
 declare let window: MyWindow;
 
