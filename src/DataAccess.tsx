@@ -1,4 +1,9 @@
-import { AllSongsSel } from './MusicDbAtoms';
+import {
+  ArtistByKey,
+  SongByKey,
+  AlbumByKey,
+  GetRecoilValue,
+} from './MusicDbAtoms';
 import type {
   StoreState,
   SongKey,
@@ -10,6 +15,24 @@ import type {
 } from './MyStore';
 
 export type AlbumInfo = { title: string; year: number; artist: string };
+
+export function RecoilArtistString(
+  get: GetRecoilValue,
+  artistList: ArtistKey[],
+): string | void {
+  const artists: string[] = artistList
+    .map((ak) => {
+      const art: Artist = get(ArtistByKey(ak));
+      return art ? art.name : '';
+    })
+    .filter((a: string) => a.length > 0);
+  if (artists.length === 1) {
+    return artists[0];
+  } else {
+    const lastPart = ' & ' + (artists.pop() || 'OOPS!');
+    return artists.join(', ') + lastPart;
+  }
+}
 
 export function GetArtistString(
   store: StoreState,
@@ -38,11 +61,7 @@ export function GetSong(store: StoreState, sk: SongKey): Song | void {
     return allSongs.get(sk);
   }
 }
-export function RecoilSong(get: GetRecoilValue, sk: SongKey): Song | void {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const allSongs = get(AllSongsSel);
-  return allSongs?.get(sk);
-}
+
 export function GetTrackListingForSong(store: StoreState, sk: SongKey): string {
   const song: Song | void = GetSong(store, sk);
   if (!song) {
@@ -83,21 +102,20 @@ export function RecoilDataForSong(
   sk: SongKey,
 ): { title: string; track: number; artist: string; album: string } {
   const res = { title: '-', track: 0, artist: '-', album: '-' };
-  const song: Song | void = RecoilSong(get, sk);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const song: Song = get(SongByKey(sk));
   if (!song) {
     return res;
   }
   res.title = song.title;
   res.track = song.track;
-  const allAlbums: Map<AlbumKey, Album> | undefined = store.get('Albums');
-  if (!allAlbums) {
-    return res;
-  }
-  const album: Album | undefined = allAlbums.get(song.albumId);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  const album: Album = get(AlbumByKey(song.albumId));
   if (album) {
     res.album = album.title;
   }
-  const maybeArtistName = GetArtistString(store, song.artistIds);
+  const maybeArtistName = RecoilArtistString(get, song.artistIds);
   if (!maybeArtistName) {
     return res;
   }

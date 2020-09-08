@@ -1,6 +1,9 @@
 import { Comparisons } from '@freik/core-utils';
-import { GetRecoilValue } from 'recoil';
-import { GetDataForSong, GetDataForAlbum } from './DataAccess';
+import {
+  RecoilDataForSong,
+  GetDataForSong,
+  GetDataForAlbum,
+} from './DataAccess';
 
 import type {
   SongKey,
@@ -9,6 +12,7 @@ import type {
   AlbumKey,
   ArtistKey,
 } from './MyStore';
+import type { GetRecoilValue } from './MusicDbAtoms';
 
 export type sorter = (a: string, b: string) => number;
 
@@ -151,31 +155,8 @@ const SortSongBy = {
       );
     };
   },
-  AlbumAristNumberTitle: (store: StoreState, withArticles: boolean): sorter => {
-    const cmp = withArticles ? strCmp : theCmp;
-    return (a: SongKey, b: SongKey) => {
-      const {
-        title: aTitle,
-        track: aTrack,
-        album: aAlbum,
-        artist: aArtist,
-      } = GetDataForSong(store, a);
-      const {
-        title: bTitle,
-        track: bTrack,
-        album: bAlbum,
-        artist: bArtist,
-      } = GetDataForSong(store, b);
-      return (
-        cmp(aAlbum, bAlbum) ||
-        cmp(aArtist, bArtist) ||
-        aTrack - bTrack ||
-        cmp(aTitle, bTitle)
-      );
-    };
-  },
-  NumberAlbumArtistTitle: (
-    store: StoreState,
+  AlbumAristNumberTitle: (
+    get: GetRecoilValue,
     withArticles: boolean,
   ): sorter => {
     const cmp = withArticles ? strCmp : theCmp;
@@ -185,13 +166,39 @@ const SortSongBy = {
         track: aTrack,
         album: aAlbum,
         artist: aArtist,
-      } = GetDataForSong(store, a);
+      } = RecoilDataForSong(get, a);
       const {
         title: bTitle,
         track: bTrack,
         album: bAlbum,
         artist: bArtist,
-      } = GetDataForSong(store, b);
+      } = RecoilDataForSong(get, b);
+      return (
+        cmp(aAlbum, bAlbum) ||
+        cmp(aArtist, bArtist) ||
+        aTrack - bTrack ||
+        cmp(aTitle, bTitle)
+      );
+    };
+  },
+  NumberAlbumArtistTitle: (
+    get: GetRecoilValue,
+    withArticles: boolean,
+  ): sorter => {
+    const cmp = withArticles ? strCmp : theCmp;
+    return (a: SongKey, b: SongKey) => {
+      const {
+        title: aTitle,
+        track: aTrack,
+        album: aAlbum,
+        artist: aArtist,
+      } = RecoilDataForSong(get, a);
+      const {
+        title: bTitle,
+        track: bTrack,
+        album: bAlbum,
+        artist: bArtist,
+      } = RecoilDataForSong(get, b);
       return (
         aTrack - bTrack ||
         cmp(aAlbum, bAlbum) ||
@@ -200,7 +207,7 @@ const SortSongBy = {
       );
     };
   },
-  TitleAlbumAristNumber: (store: StoreState, withArticles: boolean): sorter => {
+  TitleAlbumAristNumber: (get: GetRecoilValue, withArticles: boolean): sorter => {
     const cmp = withArticles ? strCmp : theCmp;
     return (a: SongKey, b: SongKey) => {
       const {
@@ -208,13 +215,13 @@ const SortSongBy = {
         track: aTrack,
         album: aAlbum,
         artist: aArtist,
-      } = GetDataForSong(store, a);
+      } = RecoilDataForSong(get, a);
       const {
         title: bTitle,
         track: bTrack,
         album: bAlbum,
         artist: bArtist,
-      } = GetDataForSong(store, b);
+      } = RecoilDataForSong(get, b);
       return (
         cmp(aTitle, bTitle) ||
         cmp(aAlbum, bAlbum) ||
@@ -226,18 +233,18 @@ const SortSongBy = {
 };
 
 export function GetSongSorter(
-  songSort: string,
   get: GetRecoilValue,
+  songSort: string,
   withArticles: boolean,
 ): sorter {
   switch (songSort) {
     case 'SongTitle':
-      return SortSongBy.TitleAlbumAristNumber;
+      return SortSongBy.TitleAlbumAristNumber(get, withArticles);
     case 'AlbumTrack':
-      return SortSongBy.AlbumAristNumberTitle;
+      return SortSongBy.AlbumAristNumberTitle(get, withArticles);
     case 'ArtistAlbum':
     default:
-      return SortSongBy.ArtistAlbumNumberTitle;
+      return SortSongBy.ArtistAlbumNumberTitle(get, withArticles);
   }
 }
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Store from './MyStore';
 import { GetDataForSong, GetAlbumKeyForSongKey } from './DataAccess';
 import { StartNextSong } from './Playlist';
+import { ConfigurePositionInterval } from './MyWindow';
 
 import type { StoreState } from './MyStore';
 
@@ -29,12 +30,8 @@ export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;
 }
 
-if ('positionInterval' in window) {
-  window.clearInterval(window.positionInterval as number);
-  delete window.positionInterval;
-}
-window.positionInterval = setInterval(() => {
-  // Every .250 seconds, update the slider
+ConfigurePositionInterval(() => {
+  // Every couple hundred milliseconds, update the slider
   const ae = GetAudioElem();
   const rs = document.getElementById(
     'song-slider',
@@ -56,7 +53,7 @@ window.positionInterval = setInterval(() => {
       nprt.innerText = '-' + secondsToTime(ae.duration - ae.currentTime);
     }
   }
-}, 250);
+}, 223); // Cuz prime numbers are fun
 
 export function StartSongPlaying(store: StoreState, index: number): void {
   const changing = store.get('curIndex') !== index;

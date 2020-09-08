@@ -11,8 +11,13 @@ import { getMediaInfo } from './metadata';
 import type { SongKey, MediaInfo, MusicDB } from './MusicScanner';
 import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
-import { async } from 'rxjs';
-import { getAllAlbums, getAllArtists, getAllPlaylists, getAllSongs } from './MusicAccess';
+import {
+  getAllAlbums,
+  getAllArtists,
+  getAllPlaylists,
+  getAllSongs,
+  getMediaInfoForSong,
+} from './MusicAccess';
 
 const log = logger.bind('Communication');
 // logger.enable('Communication');
@@ -335,16 +340,11 @@ export function Init(): void {
   promiseIpc.on('promise-mediaInfo', ipcMediaInfo as Listener);
 
   // I like this API much better, particularly in the render process
-
-  // Asking for media info for a particular song
-  betterIpc.answerRenderer('get-media-info', async (key: SongKey) => {
-    const mediaInfo = await ipcMediaInfo(key);
-    return mediaInfo || {}; // TODO: return an error
-  });
   betterIpc.answerRenderer('get-all-songs', getAllSongs);
   betterIpc.answerRenderer('get-all-albums', getAllAlbums);
-  betterIpc.answerRenderer('get-all-artists',getAllArtists);
+  betterIpc.answerRenderer('get-all-artists', getAllArtists);
   betterIpc.answerRenderer('get-all-playlists', getAllPlaylists);
+  betterIpc.answerRenderer('get-media-info', getMediaInfoForSong);
 }
 // Called with the window handle after it's been created
 export function Begin(window: BrowserWindow): void {

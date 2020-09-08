@@ -3,16 +3,20 @@ import { logger } from '@freik/simplelogger';
 import { useRef, useEffect } from 'react';
 import { FTON } from '@freik/core-utils';
 
+import {
+  PromiseSubscribe,
+  PromiseUnsubscribe,
+  PromiseSend,
+  CallMain,
+} from './MyWindow';
+
 import type { SongKey } from './MyStore';
 import type { RecoilState } from 'recoil';
-import type { MyWindow } from './AsyncDoodad';
 import type { FTONData } from '@freik/core-utils';
 // import RecentlyAdded from './Views/RecentlyAdded';
 
-declare let window: MyWindow;
-
 const log = logger.bind('Atoms');
-// logger.enable('Atoms');
+logger.enable('Atoms');
 
 export type syncedAtom<T> = {
   atom: RecoilState<T>;
@@ -70,9 +74,9 @@ export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
         }
       }
       // Register the listener
-      const theID = window.ipc!.promiseSub(key, handleChange as any);
+      const theID = PromiseSubscribe(key, handleChange as any);
       return function cleanup() {
-        window.ipc!.promiseUnsub(key, theID);
+        PromiseUnsubscribe(key, theID);
       };
     }, [atomRef, setAtomValue]);
 
@@ -85,24 +89,26 @@ export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
       ) {
         atomRef.current = atomValue;
         log(`Sending update for ${key}`);
-        void window.ipcPromise!.send('promise-set', {
+        void PromiseSend('promise-set', {
           key,
           value: atomValue,
         });
       }
-      void window.ipcPromise!.send('promise-get', { key });
+      void PromiseSend('promise-get', { key });
     }, [atomValue, atomRef]);
     return null;
   };
   return { atom: theAtom, AtomSyncer };
 }
 
-export const getMediaInfo = selectorFamily<any, SongKey>({
+export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
   key: 'mediaInfoSelector',
   // eslint-disable-next-line
-  get: ((id: SongKey) => async (param: SongKey) => {
-    const result = await window.ipcPromise!.send('promise-mediaInfo', id);
-    return (result as any).data; // eslint-disable-line
-  }) as any,
+  get: (sk: SongKey) => async ({ get }): Promise<MediaInfo> => {
+    const result = await CallMain<SongKey, MediaInfo>('get-media-info', sk);
+    if (!result) throw new Error(sk);
+    log(`Got media info for ${sk}:`);
+    log(result);
+    return result;
+  },
 });
-

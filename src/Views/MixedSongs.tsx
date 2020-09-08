@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import { Modal as FluentModal} from "@fluentui/react";
 import { useRecoilValue } from 'recoil';
+import {logger} from '@freik/simplelogger';
 
 import Store from '../MyStore';
 
@@ -14,8 +16,13 @@ import type { MediaInfo } from '../Atoms';
 
 import './styles/MixedSongs.css';
 
+const log = logger.bind('MixedSongs');
+logger.enable('MixedSongs');
+
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
-  const lines: React.ReactNode[] = [];
+  const lines: JSX.Element[] = [];
+  log(keyPrefix);
+  log(strs);
   strs.forEach((val, key) =>
     lines.push(
       <tr key={keyPrefix + key}>
@@ -28,9 +35,12 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
 }
 
 function MediaInfoTable({ id }: { id: string }) {
-  const mediaInfo = useRecoilValue(getMediaInfo(id)) as MediaInfo;
+  const mediaInfo = useRecoilValue(getMediaInfo(id));
   if (mediaInfo) {
+    log('Here we are');
+    log(mediaInfo);
     const genLines = mediaInfoToLine('gen', mediaInfo.general);
+    log('Here we are again');
     const audLines = mediaInfoToLine('aud', mediaInfo.audio);
     return (
       <table>

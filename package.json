@@ -12,10 +12,13 @@
   "homepage": "./",
   "dependencies": {
     "@dwqs/react-virtual-list": "^1.0.0",
+    "@fluentui/react": "^7.134.3",
     "@freik/core-utils": "^0.3.4",
     "@freik/electron-better-ipc": "^1.1.1",
     "@freik/media-utils": "^0.2.2",
     "@freik/simplelogger": "^1.1.3",
+    "@uifabric/icons": "^7.5.0",
+    "@uifabric/react-hooks": "^7.12.0",
     "bootstrap": "^4.5.2",
     "csstype": "^3.0.3",
     "electron-is-dev": "^1.2.0",

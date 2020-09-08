@@ -1,13 +1,17 @@
 import * as React from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
-import DropdownButton from 'react-bootstrap/DropdownButton';
-import Dropdown from 'react-bootstrap/Dropdown';
 import { useRecoilState } from 'recoil';
 import { logger } from '@freik/simplelogger';
-
+import {
+  Toggle,
+  Dropdown,
+  IDropdownOption,
+  Stack,
+  DefaultButton,
+  Label,
+  IconButton,
+  Separator,
+  Text,
+} from '@fluentui/react';
 import {
   SortWithArticles,
   AlbumListSort,
@@ -20,13 +24,9 @@ import { VerticalScrollDiv } from '../Scrollables';
 import type { syncedAtom } from '../Atoms';
 
 import './styles/Settings.css';
+import { ShowOpenDialog } from '../MyWindow';
 const log = logger.bind('View-Settings');
 // logger.enable('View-Settings');
-
-/* eslint-disable @typescript-eslint/no-var-requires */
-const addPic = require('../img/add.svg') as string;
-const deletePic = require('../img/delete.svg') as string;
-/* eslint-enable */
 
 declare interface MyWindow extends Window {
   remote: Electron.Remote;
@@ -36,8 +36,7 @@ declare let window: MyWindow;
 declare type PopupItem = {
   title: string;
   syncedAtom: syncedAtom<string>;
-  types: string[];
-  names: string[];
+  options: IDropdownOption[];
 };
 
 const removeFromSet = (set: string[], val: string): string[] => {
@@ -46,39 +45,30 @@ const removeFromSet = (set: string[], val: string): string[] => {
   return [...newSet];
 };
 
-function GetDirs() {
-  return window.remote.dialog.showOpenDialogSync({
-    properties: ['openDirectory'],
-  });
+function GetDirs(): string[] | void {
+  return ShowOpenDialog({ properties: ['openDirectory'] });
 }
 
-function SortPopup({ item }: { item: PopupItem }): JSX.Element {
-  const [value, setter] = useRecoilState(item.syncedAtom.atom);
-  const names: string[] = item.names;
-  const selected = Math.max(0, value ? item.types.indexOf(value) : 0);
-  const select = (key: string | null) => setter(key!);
-  const SyncingElement = item.syncedAtom.AtomSyncer;
+function SortPopup({ data }: { data: PopupItem }): JSX.Element {
+  const [value, setter] = useRecoilState(data.syncedAtom.atom);
+  const onChange = (
+    event: React.FormEvent<HTMLDivElement>,
+    item?: IDropdownOption,
+  ): void => {
+    if (item) setter(item.key.toString());
+  };
+  const SyncingElement = data.syncedAtom.AtomSyncer;
   return (
-    <Row>
-      <Col xs={6} style={{ height: '35px' }}>
-        <SyncingElement />
-        <span style={{ float: 'right' }}>View {item.title} by </span>
-      </Col>
-      <Col>
-        <DropdownButton size="sm" title={item.names[selected]}>
-          {names.map((val, index) => (
-            <Dropdown.Item
-              key={index}
-              eventKey={item.types[index]}
-              active={index === selected}
-              onSelect={select}
-            >
-              {val}
-            </Dropdown.Item>
-          ))}
-        </DropdownButton>
-      </Col>
-    </Row>
+    <>
+      <SyncingElement />
+      <Dropdown
+        label={`View ${data.title} by`}
+        options={data.options}
+        // eslint-disable-next-line id-blacklist
+        selectedKey={value ? value : undefined}
+        onChange={onChange}
+      />
+    </>
   );
 }
 
@@ -87,36 +77,26 @@ function RecoilLocations(): JSX.Element {
   return (
     <>
       {(newLoc || []).map((elem) => (
-        <Row key={elem}>
-          <Col xs={1}>
-            <img
-              className="delete-pic pic-button"
-              src={deletePic}
-              alt="Delete Item"
-              onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
-            />
-          </Col>
-          <Col>{elem}</Col>
-        </Row>
-      ))}
-      <Row>
-        <Col xs={1}>
-          <img
-            className="add-pic pic-button"
-            src={addPic}
-            alt="add source"
-            onClick={() => {
-              const locs: string[] | undefined = GetDirs();
-              if (locs) {
-                setNewLoc([...locs, ...(newLoc || [])]);
-              }
-            }}
+        <Stack horizontal key={elem}>
+          <IconButton
+            onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
+            iconProps={{ iconName: 'Delete' }}
           />
-        </Col>
-        <Col>
-          <em>Add new location to scan</em>
-        </Col>
-      </Row>
+          <Label>{elem}</Label>
+        </Stack>
+      ))}
+      <Stack horizontal>
+        <DefaultButton
+          text="Add Location"
+          onClick={() => {
+            const locs: string[] | void = GetDirs();
+            if (locs) {
+              setNewLoc([...locs, ...(newLoc || [])]);
+            }
+          }}
+          iconProps={{ iconName: 'Add' }}
+        />
+      </Stack>
     </>
   );
 }
@@ -124,24 +104,21 @@ function RecoilLocations(): JSX.Element {
 function ArticleSorting(): JSX.Element {
   const [articles, setArticles] = useRecoilState(SortWithArticles.atom);
   log('Articles: ' + (articles ? 'true' : 'false'));
-  const switcher = (val: boolean) => {
-    log(`new value: ${val ? 'T' : 'F'}`);
-    setArticles(val);
-  };
+  function onChange(ev: React.MouseEvent<HTMLElement>, checked?: boolean) {
+    setArticles(checked ? true : false);
+  }
   return (
-    <Row>
-      <Col xs={6}>
-        <SortWithArticles.AtomSyncer />
-        <span style={{ float: 'right' }}>Consider articles</span>
-      </Col>
-      <Col>
-        <input
-          type="checkbox"
-          checked={articles === true}
-          onChange={() => switcher(!articles)}
-        ></input>
-      </Col>
-    </Row>
+    <>
+      <SortWithArticles.AtomSyncer />
+      <Toggle
+        label="Consider articles when sorting"
+        checked={articles}
+        inlineLabel
+        onText="On"
+        offText="Off"
+        onChange={onChange}
+      />
+    </>
   );
 }
 
@@ -149,20 +126,30 @@ export default function Settings(): JSX.Element {
   const album = {
     title: 'Album',
     syncedAtom: AlbumListSort,
-    types: ['AlbumTitle', 'AlbumYear', 'ArtistAlbum', 'ArtistYear'],
-    names: ['Title', 'Year', 'Artist, then Title', 'Artist, then Year'],
+    options: [
+      { key: 'AlbumTitle', text: 'Title' },
+      { key: 'AlbumYear', text: 'Year' },
+      { key: 'ArtistAlbum', text: 'Artist, then Title' },
+      { key: 'ArtistYear', text: 'Artist, then Year' },
+    ],
   };
   const artist = {
     title: 'Artist',
     syncedAtom: ArtistListSort,
-    types: ['AlbumCount', 'ArtistName', 'SongCount'],
-    names: ['# of Albums', 'Name', '# of songs'],
+    options: [
+      { key: 'AlbumCount', text: '# of Albums' },
+      { key: 'ArtistName', text: 'Name' },
+      { key: 'SongCount', text: '# of Songs' },
+    ],
   };
   const song = {
     title: 'Song',
     syncedAtom: SongListSort,
-    types: ['SongTitle', 'ArtistAlbum', 'AlbumTrack'],
-    names: ['Title', 'Artist, then Album', 'Album'],
+    options: [
+      { key: 'SongTitle', text: 'Title' },
+      { key: 'ArtistAlbum', text: 'Artist, then Album' },
+      { key: 'AlbumTrack', text: 'Album' },
+    ],
   };
 
   return (
@@ -170,26 +157,20 @@ export default function Settings(): JSX.Element {
       <div id="current-view" />
       <React.Suspense fallback={<div>Loading Locations...</div>}>
         <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
-          <Card>
-            <Card.Body>
-              <Card.Title>Music Locations</Card.Title>
-              <Container>
-                <SyncedLocations.AtomSyncer />
-                <RecoilLocations />
-              </Container>
-            </Card.Body>
-          </Card>
-          <Card>
-            <Card.Body>
-              <Card.Title>Sorting Preferences</Card.Title>
-              <Container>
-                <SortPopup item={album} />
-                <SortPopup item={artist} />
-                <SortPopup item={song} />
-                <ArticleSorting />
-              </Container>
-            </Card.Body>
-          </Card>
+          <Stack>
+            <Separator alignContent="start">
+              <Text variant="mediumPlus">Music Locations</Text>
+            </Separator>
+            <SyncedLocations.AtomSyncer />
+            <RecoilLocations />
+            <Separator alignContent="start">
+              <Text variant="mediumPlus">Sorting Preferences</Text>
+            </Separator>
+            <SortPopup data={album} />
+            <SortPopup data={artist} />
+            <SortPopup data={song} />
+            <ArticleSorting />
+          </Stack>
         </VerticalScrollDiv>
       </React.Suspense>
     </>

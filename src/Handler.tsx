@@ -1,5 +1,5 @@
 import { logger } from '@freik/simplelogger';
-import { FTON, Comparisons, SeqNum } from '@freik/core-utils';
+import { FTON, Comparisons } from '@freik/core-utils';
 
 import { ValidKeyNames } from './MyStore';
 
@@ -8,20 +8,23 @@ import { PlaysetsComp } from './Sorters';
 import type { IpcRendererEvent } from 'electron';
 import type { FTONData } from '@freik/core-utils';
 import type { StoreState, SongKey, MediaInfo } from './MyStore';
-import type { MyWindow } from './AsyncDoodad';
-
-declare let window: MyWindow;
+import {
+  ClearTimeout,
+  IpcOn,
+  IpcSend,
+  SetPromiseFuncs,
+  SetTimeout,
+} from './MyWindow';
 
 export type KeyValue = {
   key: string;
   value: unknown;
 };
-declare type RemoteDataTypes = SongKey[] &
+export declare type RemoteDataTypes = SongKey[] &
   string &
   Map<string, SongKey[]> &
   number &
   boolean;
-declare type ListenerType = Map<string, (val: string) => void>;
 
 const log = logger.bind('handler');
 logger.enable('handler');
@@ -137,53 +140,46 @@ const HandlePersistence = (store: StoreState) => {
         if (key.hasChanged(value)) {
           // Cancel the current scheduled update
           if (key.timeout !== null) {
-            window.clearTimeout(key.timeout);
+            ClearTimeout(key.timeout);
           }
           // Set this to update in key.delay ms
-          key.timeout = window.setTimeout(() => {
+          key.timeout = SetTimeout(() => {
             // send the packet and cancel the maxDelay
             const mto = key.maxtimeout;
             if (!mto) {
-              window.clearTimeout(mto);
+              ClearTimeout(mto);
             }
             if (key.hasChanged(value)) {
-              window.ipc!.send('set', FTON.stringify({ key: key.key, value }));
+              IpcSend('set', FTON.stringify({ key: key.key, value }));
             }
           }, key.delay);
           // If we haven't got a maxtimeout counting down, set one of those too
           if (key.maxtimeout === null) {
-            key.maxtimeout = window.setTimeout(() => {
+            key.maxtimeout = SetTimeout(() => {
               delete key.maxtimeout;
               if (key.hasChanged(value)) {
-                window.ipc!.send(
-                  'set',
-                  FTON.stringify({ key: key.key, value }),
-                );
+                IpcSend('set', FTON.stringify({ key: key.key, value }));
               }
             }, key.maxDelay);
           }
         }
       });
-    window.ipc!.send('get', key.key);
+    IpcSend('get', key.key);
   }
 };
 
 // For anything that should be synchronized, update the effects in Effects.js
 export function ConfigureIPC(store: StoreState): void {
-  log('Store:');
-  log(store);
-  log('window.ipc');
-  log(window.ipc);
   // Handle the 'automatic' persistence stuff
   HandlePersistence(store);
-  window.ipc!.on('data', (event: IpcRendererEvent, message: string) => {
+  IpcOn('data', (event: IpcRendererEvent, message: string) => {
     DataFromMainHandler(store, message);
   });
-  window.ipc!.on('store', (event: IpcRendererEvent, message: string) => {
+  IpcOn('store', (event: IpcRendererEvent, message: string) => {
     DataFromMainHandler(store, message);
   });
-  window.ipc!.send('GetDatabase', 'GetDatabase');
-  window.ipc!.on('mediainfo', (event: IpcRendererEvent, message: string) => {
+  IpcSend('GetDatabase', 'GetDatabase');
+  IpcOn('mediainfo', (event: IpcRendererEvent, message: string) => {
     log('mediainfo received');
     log(message);
     const data = FTON.parse(message);
@@ -197,43 +193,5 @@ export function ConfigureIPC(store: StoreState): void {
     mi.set(data.key, (data.data as unknown) as MediaInfo);
     store.set('MediaInfoCache' as any)(mi);
   });
-  // eslint-disable-next-line
-  const listeners: Map<string, ListenerType> = new Map<string, ListenerType>();
-  const subIds = SeqNum();
-  window.ipc!.promiseSub = (
-    key: string,
-    listener: (value: string) => void,
-  ): string => {
-    let subs = listeners.get(key);
-    if (!subs) {
-      subs = new Map();
-      log(`Starting to listen for ${key}`);
-    }
-    const id = subIds();
-    subs.set(id, listener);
-    listeners.set(key, subs);
-    return id;
-  };
-  window.ipc!.promiseUnsub = (key: string, id: string): boolean => {
-    const subs = listeners.get(key);
-    if (!subs) {
-      return false;
-    }
-    const res = subs.delete(id);
-    listeners.set(key, subs);
-    return res;
-  };
-  window.ipc!.on(
-    'promise-response',
-    (event: Event, data: { key: string; value: RemoteDataTypes }) => {
-      log(`Got a response for ${data.key}:`);
-      log(data);
-      const localSubscribers = listeners.get(data.key);
-      if (localSubscribers) {
-        for (const fn of localSubscribers.values()) {
-          fn(data.value);
-        }
-      }
-    },
-  );
+  SetPromiseFuncs();
 }
