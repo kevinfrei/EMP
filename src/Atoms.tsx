@@ -1,4 +1,10 @@
-import { atom, selectorFamily, useRecoilState } from 'recoil';
+import {
+  atom,
+  selector,
+  selectorFamily,
+  useRecoilState,
+  DefaultValue,
+} from 'recoil';
 import { logger } from '@freik/simplelogger';
 import { useRef, useEffect } from 'react';
 import { FTON } from '@freik/core-utils';
@@ -17,6 +23,11 @@ import type { FTONData } from '@freik/core-utils';
 
 const log = logger.bind('Atoms');
 logger.enable('Atoms');
+
+export type MediaTime = {
+  duration: number;
+  position: number;
+};
 
 export type syncedAtom<T> = {
   atom: RecoilState<T>;
@@ -110,5 +121,54 @@ export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
     log(`Got media info for ${sk}:`);
     log(result);
     return result;
+  },
+});
+
+const secondsToTime = (val: number): string => {
+  const expr = new Date(val * 1000).toISOString();
+  if (val < 600) {
+    return expr.substr(15, 4);
+  } else if (val < 3600) {
+    return expr.substr(14, 5);
+  } else if (val < 36000) {
+    return expr.substr(12, 7);
+  } else {
+    return expr.substr(11, 8);
+  }
+};
+
+export const mediaTimeAtom = atom<MediaTime>({
+  key: 'mediaTime',
+  default: { duration: 0, position: 0 },
+});
+
+export const mediaTimePositionSel = selector<string>({
+  key: 'mediaTimePosition',
+  get: ({ get }): string => {
+    const { position } = get(mediaTimeAtom);
+    return position > 0 ? secondsToTime(position) : '';
+  },
+});
+
+export const mediaTimeRemainingSel = selector<string>({
+  key: 'mediaTimeRemaining',
+  get: ({ get }): string => {
+    const { position, duration } = get(mediaTimeAtom);
+    return duration > 0 ? '-' + secondsToTime(duration - position) : '';
+  },
+});
+
+export const mediaTimePercentRWSel = selector<number>({
+  key: 'mediaTimePercent',
+  get: ({ get }): number => {
+    const { position, duration } = get(mediaTimeAtom);
+    return duration > 0 ? position / duration : 0;
+  },
+  set: ({ get, set }, newValue) => {
+    const { duration } = get(mediaTimeAtom);
+    const newVal: number = newValue instanceof DefaultValue ? 0 : newValue;
+    if (duration > 0) {
+      set(mediaTimeAtom, { position: duration * newVal, duration });
+    }
   },
 });

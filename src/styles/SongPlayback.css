@@ -64,7 +64,10 @@
   white-space:nowrap;
 }
 
-#song-slider {
+.song-slider {
   grid-row: 3;
   grid-column: 2 / 5;
+  margin: 0px;
+  border: 0px;
+  padding: 0px;
 }

@@ -1,25 +1,22 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { Slider } from '@fluentui/react';
+import { useRecoilState, useRecoilValue, SetterOrUpdater } from 'recoil';
+
 import Store from './MyStore';
 import { GetDataForSong, GetAlbumKeyForSongKey } from './DataAccess';
 import { StartNextSong } from './Playlist';
 import { ConfigurePositionInterval } from './MyWindow';
+import {
+  mediaTimeAtom,
+  mediaTimeRemainingSel,
+  mediaTimePositionSel,
+  mediaTimePercentRWSel,
+} from './Atoms';
 
+import type { MediaTime } from './Atoms';
 import type { StoreState } from './MyStore';
 
 import './styles/SongPlayback.css';
-
-const secondsToTime = (val: number): string => {
-  const expr = new Date(val * 1000).toISOString();
-  if (val < 600) {
-    return expr.substr(15, 4);
-  } else if (val < 3600) {
-    return expr.substr(14, 5);
-  } else if (val < 36000) {
-    return expr.substr(12, 7);
-  } else {
-    return expr.substr(11, 8);
-  }
-};
 
 declare interface MyWindow extends Window {
   positionInterval?: number | NodeJS.Timeout;
@@ -30,29 +27,16 @@ export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;
 }
 
+let setTime: SetterOrUpdater<MediaTime> | null = null;
+
 ConfigurePositionInterval(() => {
   // Every couple hundred milliseconds, update the slider
+  if (!setTime) return;
   const ae = GetAudioElem();
-  const rs = document.getElementById(
-    'song-slider',
-  ) as HTMLProgressElement | null;
-  if (!ae) {
+  if (!ae || ae.duration <= 0) {
     return;
   }
-  if (ae.duration >= 0 && ae.duration < 525600 * 60) {
-    if (rs) {
-      const val = ae.currentTime / ae.duration;
-      rs.value = val;
-    }
-    const npct = document.getElementById('now-playing-current-time');
-    const nprt = document.getElementById('now-playing-remaining-time');
-    if (npct) {
-      npct.innerText = secondsToTime(ae.currentTime);
-    }
-    if (nprt) {
-      nprt.innerText = '-' + secondsToTime(ae.duration - ae.currentTime);
-    }
-  }
+  setTime({ position: ae.currentTime, duration: ae.duration });
 }, 223); // Cuz prime numbers are fun
 
 export function StartSongPlaying(store: StoreState, index: number): void {
@@ -72,30 +56,15 @@ export function StartSongPlaying(store: StoreState, index: number): void {
 
 export function StopSongPlaying(store: StoreState): void {
   store.set('playing')(false);
-  const ae = GetAudioElem();
-  if (ae) {
-    // Cleaning up Audio element status
-    ae.src = '';
-    ae.currentTime = 0;
-    const npct: HTMLDivElement | null = document.getElementById(
-      'now-playing-current-time',
-    ) as HTMLDivElement;
-    const nprt: HTMLDivElement | null = document.getElementById(
-      'now-playing-remaining-time',
-    ) as HTMLDivElement;
-    const rs: HTMLProgressElement | null = document.getElementById(
-      'song-slider',
-    ) as HTMLProgressElement;
-    if (npct && nprt && rs) {
-      npct.innerText = '';
-      nprt.innerText = '';
-      rs.value = 0;
-    }
-  }
 }
 
 export default function SongPlayback(): JSX.Element {
-  const [, setPos] = useState('songPos');
+  const [, setMediaTime] = useRecoilState(mediaTimeAtom);
+  const [mediaTimePercent, setMediaTimePercent] = useRecoilState(
+    mediaTimePercentRWSel,
+  );
+  const mediaTimePosition = useRecoilValue(mediaTimePositionSel);
+  const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingSel);
 
   let audio: React.ReactElement<HTMLAudioElement>;
   const store = Store.useStore();
@@ -125,6 +94,12 @@ export default function SongPlayback(): JSX.Element {
   } else {
     audio = <audio id="audioElement" />;
   }
+  useEffect(() => {
+    setTime = setMediaTime;
+    return () => {
+      setTime = null;
+    };
+  });
   return (
     <span id="song-container">
       <span id="song-cover-art">
@@ -132,28 +107,28 @@ export default function SongPlayback(): JSX.Element {
       </span>
       <span id="song-name">{title}</span>
       <span id="artist-name">{`${artist}${split}${album}`}</span>
-      <span id="now-playing-current-time"></span>
-      <input
-        type="range"
-        id="song-slider"
-        min="0"
-        max="1"
-        step="1e-5"
-        onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
-          setPos(ev.target.value);
+      <span id="now-playing-current-time">{mediaTimePosition}</span>
+      <Slider
+        className="song-slider"
+        value={mediaTimePercent}
+        min={0}
+        max={1}
+        step={1e-5}
+        onChange={(value: number) => {
           const ae = GetAudioElem();
           if (!ae) {
             return;
           }
-          /* eslint-disable id-blacklist */
-          const targetTime = ae.duration * Number.parseFloat(ev.target.value);
+          const targetTime = ae.duration * value;
+          // eslint-disable-next-line id-blacklist
           if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
-            ae.currentTime = ae.duration * Number.parseFloat(ev.target.value);
+            ae.currentTime = ae.duration * value;
           }
-          /* eslint-enable id-blacklist */
+          setMediaTimePercent(value);
         }}
+        showValue={false}
       />
-      <span id="now-playing-remaining-time"></span>
+      <span id="now-playing-remaining-time">{mediaTimeRemaining}</span>
       {audio}
     </span>
   );

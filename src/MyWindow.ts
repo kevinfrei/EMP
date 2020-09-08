@@ -106,6 +106,7 @@ export function CallMain<Type, Result>(
   return window.betterIpc!.callMain<Type, Result>(channel, key);
 }
 
+
 // eslint-disable-next-line
 const listeners: Map<string, ListenerType> = new Map<string, ListenerType>();
 const subIds = SeqNum();

@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconButton, CommandBarButton, Slider, Stack } from '@fluentui/react';
 
 import Store from './MyStore';
 import { GetAudioElem } from './SongPlayback';
@@ -20,28 +21,25 @@ export default function VolumeControl(): JSX.Element {
     ae.volume = volume;
   }
   return (
-    <span id="volume-container">
-      <span
-        id="mute"
-        className={muted ? 'muted' : 'not-muted'}
+    <Stack id="volume-container" horizontal>
+      <IconButton
+        className="mute"
+        iconProps={{ iconName: muted ? 'Volume0' : 'Volume3' }}
         onClick={() => setMuted(!muted)}
-      >
-        &nbsp;
-      </span>
-      <input
-        type="range"
-        id="volume-slider"
+        allowDisabledFocus={false}
+      />
+      <Slider
+        className="volume-slider"
         min={0}
         max={1}
         value={volume}
         step={0.01}
-        onChange={(ev) => {
-          setVolume(ev.target.valueAsNumber);
-          if (muted) {
-            setMuted(false);
-          }
+        showValue={false}
+        onChange={(value: number) => {
+          setVolume(value);
+          if (muted) setMuted(false);
         }}
       />
-    </span>
+    </Stack>
   );
 }
