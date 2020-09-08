@@ -3,13 +3,13 @@ import Card from 'react-bootstrap/Card';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
-import Store from '../MyStore';
+import Store from '../../MyStore';
 
-import { StartPlaylist, DeletePlaylist } from '../Playlist';
+import { StartPlaylist, DeletePlaylist } from '../../Playlist';
 import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
-import type { SongKey } from '../MyStore';
+import type { SongKey } from '../../MyStore';
 
 import './styles/Playlists.css';
 /* eslint-disable @typescript-eslint/no-var-requires */

@@ -18,13 +18,13 @@ import {
   ArtistListSort,
   SongListSort,
   SyncedLocations,
-} from '../Recoil/SettingsAtoms';
+} from '../../Recoil/SettingsAtoms';
 import { VerticalScrollDiv } from '../Scrollables';
 
-import type { syncedAtom } from '../Recoil/Atoms';
+import type { syncedAtom } from '../../Recoil/Atoms';
 
 import './styles/Settings.css';
-import { ShowOpenDialog } from '../MyWindow';
+import { ShowOpenDialog } from '../../MyWindow';
 const log = logger.bind('View-Settings');
 // logger.enable('View-Settings');
 

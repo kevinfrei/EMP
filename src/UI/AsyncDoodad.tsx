@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import Store from './MyStore';
-import { InitialWireUp } from './MyWindow';
+import Store from '../MyStore';
+import { InitialWireUp } from '../MyWindow';
 
 // This is a react component to enable the IPC subsystem to talk to the store
 // It uses a hook to get the store, then passes that on to the IPC subsystem

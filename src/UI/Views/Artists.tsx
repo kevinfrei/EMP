@@ -1,9 +1,9 @@
 import React, { useState, CSSProperties } from 'react';
 import Modal from 'react-bootstrap/Modal';
 
-import Store from '../MyStore';
+import Store from '../../MyStore';
 
-import { AddArtist, AddSong } from '../Playlist';
+import { AddArtist, AddSong } from '../../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 

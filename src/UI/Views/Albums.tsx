@@ -1,14 +1,14 @@
 import React, { useState, CSSProperties } from 'react';
 import Modal from 'react-bootstrap/Modal';
 
-import Store from '../MyStore';
+import Store from '../../MyStore';
 
-import { AddAlbum, AddSong } from '../Playlist';
-import { GetArtistForAlbum } from '../DataAccess';
+import { AddAlbum, AddSong } from '../../Playlist';
+import { GetArtistForAlbum } from '../../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
-import type { Album } from '../MyStore';
+import type { Album } from '../../MyStore';
 
 import './styles/Albums.css';
 

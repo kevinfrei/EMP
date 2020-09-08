@@ -1,5 +1,5 @@
 import ShuffleArray from './ShuffleArray';
-import { StartSongPlaying, StopSongPlaying } from './SongPlayback';
+import { StartSongPlaying, StopSongPlaying } from './UI/SongPlayback';
 import { logger } from '@freik/simplelogger';
 
 import type { Store } from 'undux';

@@ -6,13 +6,13 @@ import { Modal as FluentModal} from "@fluentui/react";
 import { useRecoilValue } from 'recoil';
 import {logger} from '@freik/simplelogger';
 
-import Store from '../MyStore';
+import Store from '../../MyStore';
 
-import { getMediaInfo } from '../Recoil/Atoms';
+import { getMediaInfo } from '../../Recoil/Atoms';
 import SongLine from '../SongLine';
-import { AddSong } from '../Playlist';
+import { AddSong } from '../../Playlist';
 
-import type { MediaInfo } from '../Recoil/Atoms';
+import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
 

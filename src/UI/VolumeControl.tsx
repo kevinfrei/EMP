@@ -1,7 +1,7 @@
 import React from 'react';
-import { IconButton, CommandBarButton, Slider, Stack } from '@fluentui/react';
+import { IconButton, Slider, Stack } from '@fluentui/react';
 
-import Store from './MyStore';
+import Store from '../MyStore';
 import { GetAudioElem } from './SongPlayback';
 
 import './styles/VolumeControl.css';

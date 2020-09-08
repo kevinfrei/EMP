@@ -2,19 +2,19 @@ import React, { useEffect } from 'react';
 import { Slider } from '@fluentui/react';
 import { useRecoilState, useRecoilValue, SetterOrUpdater } from 'recoil';
 
-import Store from './MyStore';
-import { GetDataForSong, GetAlbumKeyForSongKey } from './DataAccess';
-import { StartNextSong } from './Playlist';
-import { ConfigurePositionInterval } from './MyWindow';
+import Store from '../MyStore';
+import { GetDataForSong, GetAlbumKeyForSongKey } from '../DataAccess';
+import { StartNextSong } from '../Playlist';
+import { ConfigurePositionInterval } from '../MyWindow';
 import {
   mediaTimeAtom,
   mediaTimeRemainingSel,
   mediaTimePositionSel,
   mediaTimePercentRWSel,
-} from './Recoil/Atoms';
+} from '../Recoil/Atoms';
 
-import type { MediaTime } from './Recoil/Atoms';
-import type { StoreState } from './MyStore';
+import type { MediaTime } from '../Recoil/Atoms';
+import type { StoreState } from '../MyStore';
 
 import './styles/SongPlayback.css';
 

@@ -1,9 +1,10 @@
 import React from 'react';
-import Store from './MyStore';
-import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from './Playlist';
+
+import Store from '../MyStore';
+import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from '../Playlist';
+import { StartSongPlaying, GetAudioElem } from './SongPlayback';
 
 import './styles/SongControls.css';
-import { StartSongPlaying, GetAudioElem } from './SongPlayback';
 
 export default function SongControls(): JSX.Element {
   const store = Store.useStore();

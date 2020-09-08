@@ -1,9 +1,9 @@
 import React, { HTMLProps } from 'react';
 
-import Store from './MyStore';
-import { GetDataForSong } from './DataAccess';
+import Store from '../MyStore';
+import { GetDataForSong } from '../DataAccess';
 
-import type { SongKey, StoreState } from './MyStore';
+import type { SongKey, StoreState } from '../MyStore';
 
 export type SongHandler = (store: StoreState, songKey: SongKey) => void;
 

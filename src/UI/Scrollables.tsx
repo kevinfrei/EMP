@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react';
 import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
-import Store from './MyStore';
+import Store from '../MyStore';
 
 import type { Properties } from 'csstype';
 import type { ListOnScrollProps } from 'react-window';

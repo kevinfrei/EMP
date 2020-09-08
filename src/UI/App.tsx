@@ -3,7 +3,7 @@ import { RecoilRoot } from 'recoil';
 
 import Sidebar from './Sidebar';
 import ViewSelector from './Views/Selector';
-import Store from './MyStore';
+import Store from '../MyStore';
 import AsyncDoodad from './AsyncDoodad';
 import SongControls from './SongControls';
 import SongPlayback from './SongPlayback';

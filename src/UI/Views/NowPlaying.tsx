@@ -4,15 +4,15 @@ import Modal from 'react-bootstrap/Modal';
 import FormControl from 'react-bootstrap/FormControl';
 import { Comparisons } from '@freik/core-utils';
 
-import Store from '../MyStore';
+import Store from '../../MyStore';
 
 import {
   PlayingPlaylist,
   PlaySongNumber,
   StopAndClear,
   RemoveSongNumber,
-} from '../Playlist';
-import { SongBy } from '../Sorters';
+} from '../../Playlist';
+import { SongBy } from '../../Sorters';
 import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
