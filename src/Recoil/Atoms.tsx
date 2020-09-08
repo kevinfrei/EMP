@@ -14,9 +14,9 @@ import {
   PromiseUnsubscribe,
   PromiseSend,
   CallMain,
-} from './MyWindow';
+} from '../MyWindow';
 
-import type { SongKey } from './MyStore';
+import type { SongKey } from '../MyStore';
 import type { RecoilState } from 'recoil';
 import type { FTONData } from '@freik/core-utils';
 // import RecentlyAdded from './Views/RecentlyAdded';
@@ -172,3 +172,7 @@ export const mediaTimePercentRWSel = selector<number>({
     }
   },
 });
+
+export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
+export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
+export const playingAtom = atom<boolean>({ key: 'playing', default: false });

@@ -11,9 +11,9 @@ import {
   mediaTimeRemainingSel,
   mediaTimePositionSel,
   mediaTimePercentRWSel,
-} from './Atoms';
+} from './Recoil/Atoms';
 
-import type { MediaTime } from './Atoms';
+import type { MediaTime } from './Recoil/Atoms';
 import type { StoreState } from './MyStore';
 
 import './styles/SongPlayback.css';

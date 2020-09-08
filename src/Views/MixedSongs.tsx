@@ -8,11 +8,11 @@ import {logger} from '@freik/simplelogger';
 
 import Store from '../MyStore';
 
-import { getMediaInfo } from '../Atoms';
+import { getMediaInfo } from '../Recoil/Atoms';
 import SongLine from '../SongLine';
 import { AddSong } from '../Playlist';
 
-import type { MediaInfo } from '../Atoms';
+import type { MediaInfo } from '../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
 

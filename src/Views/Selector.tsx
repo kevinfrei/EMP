@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CurrentView, CurViewAtom } from '../Atoms';
+import { CurrentView, CurViewAtom } from '../Recoil/Atoms';
 
 import AlbumView from './Albums';
 import ArtistView from './Artists';

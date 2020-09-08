@@ -12,7 +12,7 @@ import type {
   AlbumKey,
   ArtistKey,
 } from './MyStore';
-import type { GetRecoilValue } from './MusicDbAtoms';
+import type { GetRecoilValue } from './Recoil/MusicDbAtoms';
 
 export type sorter = (a: string, b: string) => number;
 

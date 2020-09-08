@@ -5,7 +5,7 @@ import {
   SortWithArticles,
   SyncedLocations,
 } from './SettingsAtoms';
-import { GetSongSorter, sorter } from './Sorters';
+import { GetSongSorter, sorter } from '../Sorters';
 
 import type {
   Artist,
@@ -14,10 +14,10 @@ import type {
   AlbumKey,
   Song,
   SongKey,
-} from './MyStore';
+} from '../MyStore';
 
 import { selectorFamily } from 'recoil';
-import { CallMain } from './MyWindow';
+import { CallMain } from '../MyWindow';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 

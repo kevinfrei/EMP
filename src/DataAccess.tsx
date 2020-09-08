@@ -3,7 +3,7 @@ import {
   SongByKey,
   AlbumByKey,
   GetRecoilValue,
-} from './MusicDbAtoms';
+} from './Recoil/MusicDbAtoms';
 import type {
   StoreState,
   SongKey,

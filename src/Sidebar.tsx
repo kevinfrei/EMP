@@ -2,7 +2,7 @@ import React from 'react';
 import { useRecoilState } from 'recoil';
 
 import Store from './MyStore';
-import { CurrentView, CurViewAtom } from './Atoms';
+import { CurrentView, CurViewAtom } from './Recoil/Atoms';
 
 import './styles/Sidebar.css';
 import { SetterOrUpdater } from 'recoil';
