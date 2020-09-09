@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
 import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { Modal as FluentModal} from "@fluentui/react";
+import { Dialog, DialogType } from '@fluentui/react';
 import { useRecoilValue } from 'recoil';
-import {logger} from '@freik/simplelogger';
+import { logger } from '@freik/simplelogger';
 
 import Store from '../../MyStore';
 
@@ -103,16 +102,13 @@ export default function MixedSongView(): JSX.Element {
   return (
     <div className="songView">
       <React.Suspense fallback="Please wait...">
-        <Modal show={!!selected} onHide={handleClose}>
-          <Modal.Dialog>
-            <Modal.Header closeButton>
-              <Modal.Title>Metadata</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <MediaInfoTable id={selected} />
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal>
+        <Dialog
+          hidden={!selected}
+          onDismiss={handleClose}
+          dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
+        >
+          <MediaInfoTable id={selected} />
+        </Dialog>
       </React.Suspense>
       <div className="songContainer songHeader">
         <span className="songArtist">Artist</span>

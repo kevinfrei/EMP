@@ -1,5 +1,5 @@
 import React, { useState, CSSProperties } from 'react';
-import Modal from 'react-bootstrap/Modal';
+import { Dialog, DialogType } from '@fluentui/react';
 
 import Store from '../../MyStore';
 
@@ -75,14 +75,13 @@ export default function ArtistView(): JSX.Element {
   }
   return (
     <div className="artistView">
-      <Modal show={!!expandedArtist} onHide={handleClose}>
-        <Modal.Dialog>
-          <Modal.Header closeButton>
-            <Modal.Title>{dialogHeader}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>{details}</Modal.Body>
-        </Modal.Dialog>
-      </Modal>
+      <Dialog
+        hidden={!expandedArtist}
+        onDismiss={handleClose}
+        dialogContentProps={{ type: DialogType.close, title: dialogHeader }}
+      >
+        {details}
+      </Dialog>
       <VerticalScrollFixedVirtualList
         scrollId="ArtistsScrollId"
         itemCount={artists.size}
