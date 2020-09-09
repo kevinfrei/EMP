@@ -7,7 +7,7 @@ import App from './UI/App';
 import * as serviceWorker from './serviceWorker';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/index.css';
+import './UI/styles/index.css';
 
 SetInit(() => {
   initializeIcons();
