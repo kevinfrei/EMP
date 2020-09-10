@@ -1,5 +1,4 @@
-import { logger } from '@freik/simplelogger';
-import { FTON, Comparisons } from '@freik/core-utils';
+import { Logger, FTON, Comparisons } from '@freik/core-utils';
 
 import { ValidKeyNames } from './MyStore';
 
@@ -26,8 +25,8 @@ export declare type RemoteDataTypes = SongKey[] &
   number &
   boolean;
 
-const log = logger.bind('handler');
-logger.enable('handler');
+const log = Logger.bind('handler');
+Logger.enable('handler');
 
 const DataFromMainHandler = (store: StoreState, message: string) => {
   try {

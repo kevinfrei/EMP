@@ -1,5 +1,5 @@
 import * as persist from './persist';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 
 import type {
   SongKey,
@@ -13,8 +13,8 @@ import type {
 } from './MusicScanner';
 import { getMediaInfo } from './metadata';
 
-const log = logger.bind('MusicAccess');
-logger.enable('MusicAccess');
+const log = Logger.bind('MusicAccess');
+Logger.enable('MusicAccess');
 
 export async function getMusicDB(): Promise<MusicDB | void> {
   try {

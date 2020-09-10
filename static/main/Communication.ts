@@ -1,13 +1,11 @@
 import { ipcMain, BrowserWindow } from 'electron';
 import promiseIpc from 'electron-promise-ipc';
 import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
-import { logger } from '@freik/simplelogger';
-import { FTON, FTONData } from '@freik/core-utils';
+import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
 import { getMediaInfo } from './metadata';
 
-// import type { FTONData } from '@freik/core-utils';
 import type { SongKey, MediaInfo, MusicDB } from './MusicScanner';
 import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
@@ -19,8 +17,8 @@ import {
   getMediaInfoForSong,
 } from './MusicAccess';
 
-const log = logger.bind('Communication');
-// logger.enable('Communication');
+const log = Logger.bind('Communication');
+// Logger.enable('Communication');
 
 export type MessageHandler<T> = {
   command: string;

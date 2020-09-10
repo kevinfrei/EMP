@@ -1,6 +1,5 @@
 import { app, BrowserWindow } from 'electron';
-import { logger } from '@freik/simplelogger';
-import { FTON } from '@freik/core-utils';
+import { Logger, FTON } from '@freik/core-utils';
 
 import * as persist from './persist';
 import * as music from './MusicScanner';
@@ -9,8 +8,8 @@ import makeIndex from './search';
 
 import type { FTONData } from '@freik/core-utils';
 
-const log = logger.bind('Startup');
-logger.enable('Startup');
+const log = Logger.bind('Startup');
+Logger.enable('Startup');
 
 function getLocations(): string[] {
   const rawLocations = persist.getItem<FTONData>('locations');

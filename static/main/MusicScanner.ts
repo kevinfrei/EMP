@@ -1,10 +1,7 @@
 import { promises as fsp } from 'fs';
 import path from 'path';
-import { logger } from '@freik/simplelogger';
 import { Metadata as metadata } from '@freik/media-utils';
-import { Comparisons } from '@freik/core-utils';
-import { SeqNum } from '@freik/core-utils';
-
+import { Comparisons, Logger, SeqNum } from '@freik/core-utils';
 
 import * as persist from './persist';
 
@@ -12,8 +9,8 @@ import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
 import type { Dirent } from 'fs';
 
 const SetEqual = Comparisons.SetEqual;
-const log = logger.bind('music');
-// logger.enable('music');
+const log = Logger.bind('music');
+// Logger.enable('music');
 
 export type SongKey = string;
 export type AlbumKey = string;

@@ -1,6 +1,6 @@
 import ShuffleArray from './ShuffleArray';
 import { StartSongPlaying, StopSongPlaying } from './UI/SongPlayback';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 
 import type { Store } from 'undux';
 import type {
@@ -13,8 +13,8 @@ import type {
   StoreState,
 } from './MyStore';
 
-const log = logger.bind('Playlist.tsx');
-logger.disable('Playlist.tsx');
+const log = Logger.bind('Playlist.tsx');
+Logger.disable('Playlist.tsx');
 
 // Playlists are a named ordered (?) list of songs
 // Literally: Map<string, SongKey[]>

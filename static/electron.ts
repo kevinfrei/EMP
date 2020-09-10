@@ -4,7 +4,7 @@
 // initially. It also invokes the Ready function (from main/Ready)
 // once the window has registered.
 
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 
 import electronSetup from './main/electronSetup';
 import { Startup, Ready } from './main/Startup';
@@ -12,8 +12,8 @@ import { Init, Begin } from './main/Communication';
 
 import type { BrowserWindow } from 'electron';
 
-const log = logger.bind('electron');
-// logger.enable('electron');
+const log = Logger.bind('electron');
+// Logger.enable('electron');
 
 Init();
 

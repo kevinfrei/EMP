@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRecoilState } from 'recoil';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 import {
   Toggle,
   Dropdown,
@@ -25,8 +25,8 @@ import type { syncedAtom } from '../../Recoil/Atoms';
 
 import './styles/Settings.css';
 import { ShowOpenDialog } from '../../MyWindow';
-const log = logger.bind('View-Settings');
-// logger.enable('View-Settings');
+const log = Logger.bind('View-Settings');
+// Logger.enable('View-Settings');
 
 declare interface MyWindow extends Window {
   remote: Electron.Remote;

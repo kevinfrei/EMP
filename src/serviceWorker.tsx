@@ -10,10 +10,10 @@
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
 
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 
-const log = logger.bind('serviceWorker');
-logger.disable('serviceWorker');
+const log = Logger.bind('serviceWorker');
+Logger.disable('serviceWorker');
 
 declare interface Config {
   onUpdate: (reg: ServiceWorkerRegistration) => void;

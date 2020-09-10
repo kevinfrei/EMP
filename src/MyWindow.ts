@@ -1,7 +1,6 @@
 // This is for getting at "global" stuff from the window object
 import { ConfigureIPC } from './Handler';
-import { SeqNum } from '@freik/core-utils';
-import { logger } from '@freik/simplelogger';
+import { SeqNum, Logger } from '@freik/core-utils';
 
 import type { IpcRenderer } from 'electron';
 import type { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
@@ -11,8 +10,8 @@ import type { StoreState } from './MyStore';
 import type { RemoteDataTypes } from './Handler';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 
-const log = logger.bind('MyWindow');
-// logger.enable('MyWindow');
+const log = Logger.bind('MyWindow');
+// Logger.enable('MyWindow');
 
 declare type listenerFunc = (value: unknown) => void;
 declare type subFunc = (key: string, listener: listenerFunc) => string;

@@ -1,6 +1,6 @@
 import path from 'path';
 import { protocol } from 'electron';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 
 import * as persist from './persist';
 
@@ -9,8 +9,8 @@ import type { MusicDB } from './MusicScanner';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 
-const log = logger.bind('configure');
-// logger.enable('configure');
+const log = Logger.bind('configure');
+// Logger.enable('configure');
 
 function picProtocol(req: ProtocolRequest, callback: HandlerCallback) {
   log('pic URL request:');

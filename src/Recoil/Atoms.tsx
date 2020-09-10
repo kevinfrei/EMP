@@ -5,9 +5,8 @@ import {
   useRecoilState,
   DefaultValue,
 } from 'recoil';
-import { logger } from '@freik/simplelogger';
 import { useRef, useEffect } from 'react';
-import { FTON } from '@freik/core-utils';
+import { Logger, FTON } from '@freik/core-utils';
 
 import {
   PromiseSubscribe,
@@ -21,8 +20,8 @@ import type { RecoilState } from 'recoil';
 import type { FTONData } from '@freik/core-utils';
 // import RecentlyAdded from './Views/RecentlyAdded';
 
-const log = logger.bind('Atoms');
-logger.enable('Atoms');
+const log = Logger.bind('Atoms');
+Logger.enable('Atoms');
 
 export type MediaTime = {
   duration: number;

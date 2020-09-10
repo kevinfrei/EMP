@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 import { IpcRenderer, ipcRenderer, remote } from 'electron';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 import { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
 import { ipcRenderer as betterIpc } from '@freik/electron-better-ipc';
 
@@ -11,8 +11,8 @@ import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 
 const isDev = true; // require('electron-is-dev');
 
-const log = logger.bind('renderer');
-// logger.enable('renderer');
+const log = Logger.bind('renderer');
+// Logger.enable('renderer');
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;

@@ -3,7 +3,7 @@ import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Dialog, DialogType } from '@fluentui/react';
 import { useRecoilValue } from 'recoil';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 
 import Store from '../../MyStore';
 
@@ -15,8 +15,8 @@ import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
 
-const log = logger.bind('MixedSongs');
-logger.enable('MixedSongs');
+const log = Logger.bind('MixedSongs');
+Logger.enable('MixedSongs');
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines: JSX.Element[] = [];

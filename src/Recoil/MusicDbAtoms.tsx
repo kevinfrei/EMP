@@ -1,5 +1,5 @@
 import { RecoilValue, selector } from 'recoil';
-import { logger } from '@freik/simplelogger';
+import { Logger } from '@freik/core-utils';
 import {
   SongListSort,
   SortWithArticles,
@@ -21,8 +21,8 @@ import { CallMain } from '../MyWindow';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
-const log = logger.bind('MusicDbAtoms');
-// logger.enable('MusicDbAtoms')
+const log = Logger.bind('MusicDbAtoms');
+// Logger.enable('MusicDbAtoms')
 
 export const AllSongs = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
