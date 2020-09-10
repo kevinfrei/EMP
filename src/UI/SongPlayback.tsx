@@ -18,11 +18,6 @@ import type { StoreState } from '../MyStore';
 
 import './styles/SongPlayback.css';
 
-declare interface MyWindow extends Window {
-  positionInterval?: number | NodeJS.Timeout;
-}
-declare let window: MyWindow;
-
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;
 }

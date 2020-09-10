@@ -34,7 +34,7 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
 }
 
 function MediaInfoTable({ id }: { id: string }) {
-  const mediaInfo = useRecoilValue(getMediaInfo(id));
+  const mediaInfo: MediaInfo = useRecoilValue(getMediaInfo(id));
   if (mediaInfo) {
     log('Here we are');
     log(mediaInfo);

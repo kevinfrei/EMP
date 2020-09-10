@@ -28,11 +28,6 @@ import { ShowOpenDialog } from '../../MyWindow';
 const log = Logger.bind('View-Settings');
 // Logger.enable('View-Settings');
 
-declare interface MyWindow extends Window {
-  remote: Electron.Remote;
-}
-declare let window: MyWindow;
-
 declare type PopupItem = {
   title: string;
   syncedAtom: syncedAtom<string>;

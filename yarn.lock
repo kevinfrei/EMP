@@ -1272,10 +1272,10 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.3.4.tgz#8fa59276b390d37f51436a949fc2a03ce8ae10d7"
   integrity sha512-bQCOlwtxeXFrHR/xJUy99DsbG5it1/PCGh2BjXOwwmVziY5FoiC4fIN7HVslsYESLD9WYKP7v911grMSPFZq1A==
 
-"@freik/core-utils@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.4.1.tgz#3e14a3984cebd5a00ba53f81566b9dcf4cec2a8d"
-  integrity sha512-mgcpCO9+67GiGM8b7or9R3bJyWxmgBgH1Mh/NrhIPJM6RBBjVR6Nd739DGUDFpcYovE3Iekm5l7nf1K8WhweLA==
+"@freik/core-utils@^0.4.1", "@freik/core-utils@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.4.2.tgz#cb6d412fac1f8b8964ed4854dc1928e4d53c32fd"
+  integrity sha512-8ceTALX0LR2Z+BpzPxMPZvgaJErBtnjOMMfMhjNq8X5WqPHE4eo3nmV2vneWbuluEOvipnS7YQ80weNiSjpoDQ==
 
 "@freik/electron-better-ipc@^1.1.1":
   version "1.1.1"

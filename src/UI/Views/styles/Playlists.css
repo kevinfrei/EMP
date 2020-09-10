@@ -1,23 +1,7 @@
-.playing .card-title{
+.playing .card-title {
   font-weight: bold;
-  font-size: x-large;
 }
 
-.card-title .h5 {
-  width: 100%;
-}
-
-.delete-playlist {
-  float: right;
-}
-
-.not-playing .card-title,
-.playing .card-text,
-.playing .expandedSongList {
+.not-playing {
   font-weight: normal;
 }
-
-.expandedSongList {
-  margin-left: 35pt;
-}
-

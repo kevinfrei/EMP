@@ -1,100 +1,117 @@
-import React, { useState, CSSProperties } from 'react';
-import Card from 'react-bootstrap/Card';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
+import React, { useState } from 'react';
+import {
+  Dialog,
+  DefaultButton,
+  IconButton,
+  DetailsList,
+  DetailsRow,
+  IDetailsRowProps,
+  IDetailsRowStyles,
+  IRenderFunction,
+  IColumn,
+  SelectionMode,
+  PrimaryButton,
+  Text,
+  Stack,
+  getTheme,
+} from '@fluentui/react';
 
 import Store from '../../MyStore';
 
 import { StartPlaylist, DeletePlaylist } from '../../Playlist';
-import SongLine from '../SongLine';
-import { VerticalScrollDiv } from '../Scrollables';
-
-import type { SongKey } from '../../MyStore';
 
 import './styles/Playlists.css';
-/* eslint-disable @typescript-eslint/no-var-requires */
-const downChevron = require('../img/down-chevron.svg') as string;
-const deletePic = require('../img/delete.svg') as string;
-/* eslint-enable */
 
-function Playlist({ name, playing }: { name: string; playing: boolean }) {
-  const store = Store.useStore();
-  const [showSongs, setShowSongs] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-  const playlists = store.get('Playlists');
-  const thisPlaylist = playlists.get(name);
+const theme = getTheme();
 
-  const closeConfirmation = () => setShowConfirmation(false);
-  const approvedConfirmation = () => {
-    DeletePlaylist(store, name);
-    closeConfirmation();
-  };
-  if (!thisPlaylist) {
-    return <></>;
+const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
+  const customStyle: Partial<IDetailsRowStyles> = {};
+  if (props) {
+    if (props.itemIndex % 2 === 0) {
+      customStyle.root = { backgroundColor: theme.palette.themeLighterAlt };
+    }
+    return <DetailsRow {...props} styles={customStyle} />;
   }
-  const expanderStyle: CSSProperties = showSongs
-    ? {}
-    : { transform: 'rotate(-90deg)' };
-  const theSongs = !showSongs ? (
-    <></>
-  ) : (
-    <div className="expandedSongList">
-      {thisPlaylist.map((sk: SongKey) => (
-        <SongLine key={sk} songKey={sk} template="LCRCT">
-          <span>&nbsp;-&nbsp;</span>
-        </SongLine>
-      ))}
-    </div>
-  );
+  return null;
+};
+
+export default function Playlister(): JSX.Element {
+  const store = Store.useStore();
+  const playlists = store.get('Playlists');
+  const [selPlaylist, setSelPlaylist] = useState('');
+  const [hidden, setHidden] = useState(true);
+  const columns: IColumn[] = [
+    {
+      key: 'del',
+      name: ' ',
+      minWidth: 25,
+      maxWidth: 25,
+      onRender: (item: [string, string[]]) => (
+        <IconButton
+          style={{ height: '17px' }}
+          iconProps={{ iconName: 'Delete' }}
+          onClick={() => {
+            setSelPlaylist(item[0]);
+            setHidden(false);
+          }}
+        />
+      ),
+    },
+    {
+      key: 'title',
+      name: 'Playlist Title',
+      minWidth: 100,
+      onRender: (item: [string, string[]]) => item[0],
+    },
+    {
+      key: 'count',
+      name: '# of songs',
+      minWidth: 75,
+      onRender: (item: [string, string[]]) => {
+        return item[1].length;
+      },
+    },
+  ];
 
   return (
-    <Card
-      className={playing ? 'playing' : 'not-playing'}
-      onDoubleClick={() => StartPlaylist(store, name)}
-    >
-      <Modal show={showConfirmation} onHide={closeConfirmation}>
-        <Modal.Header closeButton>
-          <Modal.Title>Please Confirm</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Are you sure you want to delete the playlist "{name}"?
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={approvedConfirmation}>Yes</Button>
-          <Button onClick={closeConfirmation}>No</Button>
-        </Modal.Footer>
-      </Modal>
-      <Card.Body>
-        <Card.Title>
-          <span>{name}</span>
-          <img
-            className="pic-button delete-playlist"
-            src={deletePic}
-            alt="Remove"
-            onClick={() => setShowConfirmation(true)}
-          ></img>
-        </Card.Title>
-        <Card.Text>
-          {' '}
-          &nbsp;
-          <img
-            onClick={() => setShowSongs(!showSongs)}
-            width="13px"
-            height="13px"
-            src={downChevron}
-            style={expanderStyle}
-            alt="show shows"
-          />
-          &nbsp;
-          {thisPlaylist.length} songs
-        </Card.Text>
-      </Card.Body>
-      {theSongs}
-    </Card>
+    <div id="current-view">
+      <Dialog
+        hidden={hidden}
+        onDismiss={() => setHidden(true)}
+        title="Are you sure?"
+      >
+        <Stack>
+          <Text>
+            Do you really want to delete the playlist "{selPlaylist}"?
+          </Text>
+          <Stack horizontal>
+            <DefaultButton
+              onClick={() => {
+                setHidden(true);
+                DeletePlaylist(store, selPlaylist);
+              }}
+              text="Yes"
+            />
+            &nbsp;
+            <PrimaryButton onClick={() => setHidden(true)} text="No" />
+          </Stack>
+        </Stack>
+      </Dialog>
+      <DetailsList
+        items={[...playlists.entries()]}
+        selectionMode={SelectionMode.none}
+        columns={columns}
+        onRenderRow={renderRow}
+        onItemInvoked={(item: [string, string[]]) =>
+          StartPlaylist(store, item[0])
+        }
+      />
+    </div>
   );
 }
 
-export default function Playlists():JSX.Element {
+/*
+function Playlists(): JSX.Element {
   const store = Store.useStore();
   const playlists = store.get('Playlists');
   const curPls = store.get('activePlaylistName');
@@ -103,17 +120,14 @@ export default function Playlists():JSX.Element {
   return (
     <>
       <div id="current-header">Playlists</div>
-      <div id="current-view" />
-      <VerticalScrollDiv scrollId="playlistsPos" layoutId="current-view">
-        {names.map((name: string) => (
-          <Playlist
-            /*            store={store}*/
-            key={name}
-            name={name}
-            playing={name === curPls}
-          />
-        ))}
-      </VerticalScrollDiv>
+      <div id="current-view">
+        <VerticalScrollDiv scrollId="playlistsPos" layoutId="current-view">
+          {names.map((name: string) => (
+            <Playlist key={name} name={name} playing={name === curPls} />
+          ))}
+        </VerticalScrollDiv>
+      </div>
     </>
   );
 }
+*/

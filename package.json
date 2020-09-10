@@ -13,7 +13,7 @@
   "dependencies": {
     "@dwqs/react-virtual-list": "^1.0.0",
     "@fluentui/react": "^7.136.0",
-    "@freik/core-utils": "^0.4.1",
+    "@freik/core-utils": "^0.4.2",
     "@freik/electron-better-ipc": "^1.1.1",
     "@freik/media-utils": "^0.2.2",
     "@uifabric/icons": "^7.5.0",
