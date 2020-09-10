@@ -38,8 +38,11 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 export default function Playlister(): JSX.Element {
   const store = Store.useStore();
   const playlists = store.get('Playlists');
+  // TODO: Recoil: Add active playlist
+  // Some local state
   const [selPlaylist, setSelPlaylist] = useState('');
-  const [hidden, setHidden] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
+
   const columns: IColumn[] = [
     {
       key: 'del',
@@ -52,7 +55,7 @@ export default function Playlister(): JSX.Element {
           iconProps={{ iconName: 'Delete' }}
           onClick={() => {
             setSelPlaylist(item[0]);
-            setHidden(false);
+            setShowDialog(false);
           }}
         />
       ),
@@ -67,17 +70,15 @@ export default function Playlister(): JSX.Element {
       key: 'count',
       name: '# of songs',
       minWidth: 75,
-      onRender: (item: [string, string[]]) => {
-        return item[1].length;
-      },
+      onRender: (item: [string, string[]]) => item[1].length,
     },
   ];
 
   return (
     <div id="current-view">
       <Dialog
-        hidden={hidden}
-        onDismiss={() => setHidden(true)}
+        hidden={!showDialog}
+        onDismiss={() => setShowDialog(false)}
         title="Are you sure?"
       >
         <Stack>
@@ -87,13 +88,13 @@ export default function Playlister(): JSX.Element {
           <Stack horizontal>
             <DefaultButton
               onClick={() => {
-                setHidden(true);
+                setShowDialog(false);
                 DeletePlaylist(store, selPlaylist);
               }}
               text="Yes"
             />
             &nbsp;
-            <PrimaryButton onClick={() => setHidden(true)} text="No" />
+            <PrimaryButton onClick={() => setShowDialog(false)} text="No" />
           </Stack>
         </Stack>
       </Dialog>
