@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
 import {
   Dialog,
   DefaultButton,
@@ -17,6 +18,7 @@ import {
 } from '@fluentui/react';
 
 import Store from '../../MyStore';
+import { activePlaylistAtom } from '../../Recoil/Atoms';
 
 import { StartPlaylist, DeletePlaylist } from '../../Playlist';
 
@@ -38,7 +40,9 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 export default function Playlister(): JSX.Element {
   const store = Store.useStore();
   const playlists = store.get('Playlists');
-  // TODO: Recoil: Add active playlist
+  const [activePlaylist, setActivePlaylist] = useRecoilState<string>(
+    activePlaylistAtom,
+  );
   // Some local state
   const [selPlaylist, setSelPlaylist] = useState('');
   const [showDialog, setShowDialog] = useState(false);
