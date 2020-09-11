@@ -4,9 +4,7 @@ import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
 import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
-import { getMediaInfo } from './metadata';
-
-import type { SongKey, MediaInfo, MusicDB } from './MusicScanner';
+import type { SongKey, MusicDB } from './MusicScanner';
 import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
 import {
@@ -139,30 +137,6 @@ export function SendDatabase(): void {
   );
 }
 
-function sendBackMediaInfo(songKey: SongKey, data: MediaInfo) {
-  if (!win) return;
-  win.webContents.send('mediainfo', FTON.stringify({ key: songKey, data }));
-}
-
-function getMetadata(songKey: SongKey) {
-  const musicDB = persist.getItem<MusicDB>('DB');
-  if (!musicDB) {
-    log("Can't load DB");
-    return;
-  }
-  const song = musicDB.songs.get(songKey);
-  if (!song) {
-    log("Can't find music key " + songKey);
-    return;
-  }
-  getMediaInfo(song.path)
-    .then((data: MediaInfo) => {
-      log(`Fetched the media info for ${song.path}:`);
-      log(data);
-      sendBackMediaInfo(songKey, data);
-    })
-    .catch(log);
-}
 
 export function SetIndex(
   id: string,
@@ -279,33 +253,6 @@ async function ipcDeleter(data: { key: unknown }) {
   return false;
 }
 
-// async function ipcSong(data: { key: unknown; value: unknown }) {}
-
-// async function ipcSongs(data: { key: unknown; value: unknown }) {}
-
-// async function ipcSongKeys(data: { key: unknown; value: unknown }) {}
-
-async function ipcMediaInfo(
-  key: string,
-): Promise<{ key: SongKey; data: MediaInfo } | void> {
-  if (typeof key !== 'string') {
-    return;
-  }
-  const musicDB = await persist.getItemAsync<MusicDB>('DB');
-  if (!musicDB) {
-    log("Can't load DB");
-    return;
-  }
-  const song = musicDB.songs.get(key);
-  if (!song) {
-    log("Can't find music key " + key);
-    return;
-  }
-  const data: MediaInfo = await getMediaInfo(song.path);
-  log(`Fetched the media info for ${song.path}:`);
-  log(data);
-  return { key, data };
-}
 
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init(): void {
@@ -315,7 +262,6 @@ export function Init(): void {
     mk<string>('delete', stringValidator, deleter),
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
-    mk<string>('mediainfo', SongKeyValidator, getMetadata),
     mk<string>('search', stringValidator, search),
   ];
   for (const val of comms) {
@@ -335,7 +281,6 @@ export function Init(): void {
   promiseIpc.on('promise-get', ipcGetter as Listener);
   promiseIpc.on('promise-set', ipcSetter as Listener);
   promiseIpc.on('promise-del', ipcDeleter as Listener);
-  promiseIpc.on('promise-mediaInfo', ipcMediaInfo as Listener);
 
   // I like this API much better, particularly in the render process
   betterIpc.answerRenderer('get-all-songs', getAllSongs);

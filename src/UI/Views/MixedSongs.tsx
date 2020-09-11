@@ -66,8 +66,7 @@ export default function MixedSongView(): JSX.Element {
   const store = Store.useStore();
   const songArray = store.get('SongArray');
   const [selected, setSelected] = useState('');
-
-  const handleClose = () => setSelected('');
+  const [showDialog, setShowDialog] = useState(false);
 
   const VirtualSongRow = ({ index }: { index: number }): React.ReactNode => {
     // style={style}
@@ -82,7 +81,10 @@ export default function MixedSongView(): JSX.Element {
         }
         songKey={songArray[index]}
         onDoubleClick={AddSong}
-        onAuxClick={(theStore, songKey) => setSelected(songKey)}
+        onAuxClick={(theStore, songKey) => {
+          setSelected(songKey);
+          setShowDialog(true);
+        }}
       />
     );
   };
@@ -103,8 +105,8 @@ export default function MixedSongView(): JSX.Element {
     <div className="songView">
       <React.Suspense fallback="Please wait...">
         <Dialog
-          hidden={!selected}
-          onDismiss={handleClose}
+          hidden={!showDialog}
+          onDismiss={() => setShowDialog(false)}
           dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
         >
           <MediaInfoTable id={selected} />

@@ -65,8 +65,6 @@ export type State = {
   AlbumListSort: 'AlbumTitle' | 'AlbumYear' | 'ArtistAlbum' | 'ArtistYear';
   SongListSort: 'SongTitle' | 'ArtistAlbum' | 'AlbumTrack';
 
-  MediaInfoCache: Map<SongKey, MediaInfo>;
-
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, SongKey[]>;
 
@@ -97,8 +95,6 @@ const initialState: State = {
   ArtistListSort: 'ArtistName',
   AlbumListSort: 'ArtistAlbum',
   SongListSort: 'ArtistAlbum',
-
-  MediaInfoCache: new Map<SongKey, MediaInfo>(),
 
   Playlists: new Map<string, SongKey[]>(),
 

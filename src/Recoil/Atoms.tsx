@@ -115,6 +115,11 @@ export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
   key: 'mediaInfoSelector',
   // eslint-disable-next-line
   get: (sk: SongKey) => async ({ get }): Promise<MediaInfo> => {
+    if (!sk)
+      return {
+        general: new Map<string, string>(),
+        audio: new Map<string, string>(),
+      };
     const result = await CallMain<SongKey, MediaInfo>('get-media-info', sk);
     if (!result) throw new Error(sk);
     log(`Got media info for ${sk}:`);

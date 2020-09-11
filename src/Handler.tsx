@@ -178,19 +178,5 @@ export function ConfigureIPC(store: StoreState): void {
     DataFromMainHandler(store, message);
   });
   IpcSend('GetDatabase', 'GetDatabase');
-  IpcOn('mediainfo', (event: IpcRendererEvent, message: string) => {
-    log('mediainfo received');
-    log(message);
-    const data = FTON.parse(message);
-    if (!data) return;
-    if (typeof data !== 'object') return;
-    if (!('key' in data)) return;
-    if (typeof data.key !== 'string') return;
-    if (!('data' in data)) return;
-    if (typeof data.data !== 'object') return;
-    const mi = store.get('MediaInfoCache');
-    mi.set(data.key, (data.data as unknown) as MediaInfo);
-    store.set('MediaInfoCache' as any)(mi);
-  });
   SetPromiseFuncs();
 }
