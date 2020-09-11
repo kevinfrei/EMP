@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecoilState, SetterOrUpdater } from 'recoil';
 
-import Store from '../MyStore';
 import { CurrentView, CurViewAtom } from '../Recoil/Atoms';
 
 import './styles/Sidebar.css';
@@ -57,9 +56,7 @@ function getEntry(
 }
 
 export default function Sidebar(): JSX.Element {
-  const store = Store.useStore();
-  const value = store.get('searchText');
-  const setvalue = store.set('searchText');
+  const [searchText, setSearchText] = useState('');
   const [curView, setCurView] = useRecoilState(CurViewAtom);
   return (
     <div id="sidebar">
@@ -68,8 +65,8 @@ export default function Sidebar(): JSX.Element {
           id="search"
           className="search-box"
           type="search"
-          value={value}
-          onChange={(ev) => setvalue(ev.target.value)}
+          value={searchText}
+          onChange={(ev) => setSearchText(ev.target.value)}
         />
       </div>
       <br />

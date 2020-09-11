@@ -69,15 +69,12 @@ export type State = {
 
   // This one should probably NOT be saved in the same format on the server
   Playlists: Map<string, SongKey[]>;
-  playlistLocation: string;
 
   // This is where each view is scrolled to currently
   scrollManager: Map<string, { x: number; y: number }>;
 
   // The list of songs in the play queue
   songList: SongKey[];
-
-  searchText: string;
 
   // The current song number being played (or having stopp
   curIndex: number;
@@ -104,11 +101,8 @@ const initialState: State = {
   MediaInfoCache: new Map<SongKey, MediaInfo>(),
 
   Playlists: new Map<string, SongKey[]>(),
-  playlistLocation: '',
 
   scrollManager: new Map<string, { x: number; y: number }>(),
-
-  searchText: '',
 
   songList: [],
   curIndex: -1,
@@ -121,7 +115,6 @@ export const ValidKeyNames = [
   'Albums',
   'Songs',
   'Playlists',
-  'playlistLocation',
   'songList',
   'activePlaylistName',
   'curIndex',
