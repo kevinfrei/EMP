@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import FormControl from 'react-bootstrap/FormControl';
+import {
+  Dialog,
+  TextField,
+  PrimaryButton,
+  DefaultButton,
+  Stack,
+  Text,
+} from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
 
 import Store from '../../MyStore';
@@ -66,40 +71,41 @@ export default function NowPlaying(): JSX.Element {
     closeConfirmation();
   };
 
-  const modalDialogs = (
-    <>
-      <Modal show={showSaveAs} onHide={justCloseSaveAs}>
-        <Modal.Header closeButton>
-          <Modal.Title>Save Playlist as...</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <FormControl
-            type="input"
-            placeholder="Playlist name"
-            value={inputName}
-            onChange={(ev) => setInputName(ev.target.value)}
-          ></FormControl>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={justCloseSaveAs}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={saveAndClose}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <Modal show={showConfirmation} onHide={closeConfirmation}>
-        <Modal.Header closeButton>
-          <Modal.Title>Please Confirm</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to clear the play queue?</Modal.Body>
-        <Modal.Footer>
-          <Button onClick={approvedConfirmation}>Yes</Button>
-          <Button onClick={closeConfirmation}>No</Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+  const dlgSavePlaylist = (
+    <Dialog
+      title="Save Playlist as..."
+      hidden={!showSaveAs}
+      onDismiss={justCloseSaveAs}
+    >
+      <Stack>
+        <TextField
+          value={inputName}
+          onChange={(ev, newValue) =>
+            setInputName(newValue ? newValue : inputName)
+          }
+          label="Playlist name"
+        />
+        <Stack horizontal>
+          <PrimaryButton onClick={justCloseSaveAs}>Cancel</PrimaryButton>
+          <DefaultButton onClick={saveAndClose}>Save</DefaultButton>
+        </Stack>
+      </Stack>
+    </Dialog>
+  );
+  const dlgConfirm = (
+    <Dialog
+      title="Please Confirm"
+      hidden={!showConfirmation}
+      onDismiss={closeConfirmation}
+    >
+      <Stack>
+        <Text>Are you sure you want to clear the play queue?</Text>
+        <Stack horizontal>
+          <DefaultButton onClick={approvedConfirmation}>Yes</DefaultButton>
+          <PrimaryButton onClick={closeConfirmation}>No</PrimaryButton>
+        </Stack>
+      </Stack>
+    </Dialog>
   );
 
   let header;
@@ -115,9 +121,9 @@ export default function NowPlaying(): JSX.Element {
     const disabled =
       !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
     button = (
-      <Button size="sm" onClick={save} id="save-playlist" disabled={disabled}>
+      <DefaultButton onClick={save} className="save-playlist" disabled={disabled}>
         Save
-      </Button>
+      </DefaultButton>
     );
   } else {
     header = 'Now Playing';
@@ -126,8 +132,7 @@ export default function NowPlaying(): JSX.Element {
   const topLine = (
     <h4 id="now-playing-header">
       {header}&nbsp;
-      <Button
-        size="sm"
+      <DefaultButton
         onClick={() => {
           if (PlayingPlaylist(nowPlaying)) {
             StopAndClear(store);
@@ -138,15 +143,14 @@ export default function NowPlaying(): JSX.Element {
         disabled={emptyQueue}
       >
         Clear Queue
-      </Button>
-      <Button
-        size="sm"
-        id="save-playlist-as"
+      </DefaultButton>
+      <DefaultButton
+        className="save-playlist-as"
         onClick={showSaveDialog}
         disabled={emptyQueue}
       >
         Save As...
-      </Button>
+      </DefaultButton>
       {button}
     </h4>
   );
@@ -202,7 +206,8 @@ export default function NowPlaying(): JSX.Element {
 
   return (
     <>
-      {modalDialogs}
+      {dlgSavePlaylist}
+      {dlgConfirm}
       <div id="current-header">
         {topLine}
         <div className="songHeader">

@@ -23,8 +23,8 @@
   float: right;
 }
 
-#save-playlist,
-#save-playlist-as {
+.save-playlist,
+.save-playlist-as {
   float: right;
   margin: 2px;
 }

@@ -6,7 +6,6 @@ import { SetInit } from './MyWindow';
 import App from './UI/App';
 import * as serviceWorker from './serviceWorker';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './UI/styles/index.css';
 
 SetInit(() => {
