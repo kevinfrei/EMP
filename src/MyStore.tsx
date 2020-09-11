@@ -82,13 +82,6 @@ export type State = {
   // The current song number being played (or having stopp
   curIndex: number;
   activePlaylistName: string;
-
-  // General state stuff
-  playing: boolean; // is a song currently playing?
-  shuffle: boolean;
-  repeat: boolean; // Have I ever wanted "repeat 1 song"? No. I have not.
-  muted: boolean;
-  volume: number;
 };
 
 const initialState: State = {
@@ -120,12 +113,6 @@ const initialState: State = {
   songList: [],
   curIndex: -1,
   activePlaylistName: '',
-
-  playing: false,
-  shuffle: false,
-  repeat: false,
-  muted: false,
-  volume: 0.8,
 };
 
 // This is the white-list of stuff that can be sent from the main process
@@ -138,8 +125,6 @@ export const ValidKeyNames = [
   'songList',
   'activePlaylistName',
   'curIndex',
-  'muted',
-  'volume',
 ];
 
 // I think this is how to combine different effects:

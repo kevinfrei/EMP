@@ -1,18 +1,18 @@
 import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import Store from '../MyStore';
 import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from '../Playlist';
 import { StartSongPlaying, GetAudioElem } from './SongPlayback';
+import { playingAtom, repeatAtom, shuffleAtom } from '../Recoil/Atoms';
 
 import './styles/SongControls.css';
 
 export default function SongControls(): JSX.Element {
   const store = Store.useStore();
-  const playing = store.get('playing') ? 'playing' : 'paused';
-  const shuf = store.get('shuffle');
-  const rep = store.get('repeat');
-  const shufSet = store.set('shuffle');
-  const repSet = store.set('repeat');
+  const playing = useRecoilValue(playingAtom) ? 'playing' : 'paused';
+  const [shuf, shufSet] = useRecoilState(shuffleAtom);
+  const [rep, repSet] = useRecoilState(repeatAtom);
   const songList = store.get('songList');
 
   const shufClass = shuf ? 'enabled' : 'disabled';
@@ -32,7 +32,7 @@ export default function SongControls(): JSX.Element {
       >
         &nbsp;
       </span>
-      <span id="prev" onClick={() => StartPrevSong(store)}>
+      <span id="prev" onClick={() => StartPrevSong(store, rep)}>
         &nbsp;
       </span>
       <span
@@ -52,7 +52,7 @@ export default function SongControls(): JSX.Element {
           }
         }}
       ></span>
-      <span id="next" onClick={() => StartNextSong(store)}>
+      <span id="next" onClick={() => StartNextSong(store, shuf, rep)}>
         &nbsp;
       </span>
       <span id="repeat" className={repClass} onClick={() => repSet(!rep)}>

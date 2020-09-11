@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   TextField,
@@ -6,6 +6,7 @@ import {
   DefaultButton,
   Stack,
   Text,
+  IconButton,
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
 
@@ -22,10 +23,8 @@ import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
 import './styles/NowPlaying.css';
-import { SubscriptionLike } from 'rxjs';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const deletePic = require('../img/delete.svg') as string;
+import { useRecoilState } from 'recoil';
+import { playingAtom, shuffleAtom } from '../../Recoil/Atoms';
 
 export default function NowPlaying(): JSX.Element {
   const store = Store.useStore();
@@ -41,7 +40,11 @@ export default function NowPlaying(): JSX.Element {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
+  const [, setPlaying] = useRecoilState(playingAtom);
+  const [, setShuffle] = useRecoilState(shuffleAtom);
   // Clear sorts when shuffle gets updated
+  /*
+  TODO
   useEffect(() => {
     // eslint-disable-next-line
     const sub: SubscriptionLike = store
@@ -49,7 +52,7 @@ export default function NowPlaying(): JSX.Element {
       .subscribe((val) => val && setSortBy('')) as SubscriptionLike;
     return () => sub.unsubscribe();
   });
-
+  */
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
   const justCloseSaveAs = () => setShowSaveAs(false);
@@ -67,7 +70,7 @@ export default function NowPlaying(): JSX.Element {
   // Helpers for the Confirm Delete dialog
   const closeConfirmation = () => setShowConfirmation(false);
   const approvedConfirmation = () => {
-    StopAndClear(store);
+    StopAndClear(store, setPlaying);
     closeConfirmation();
   };
 
@@ -121,7 +124,11 @@ export default function NowPlaying(): JSX.Element {
     const disabled =
       !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
     button = (
-      <DefaultButton onClick={save} className="save-playlist" disabled={disabled}>
+      <DefaultButton
+        onClick={save}
+        className="save-playlist"
+        disabled={disabled}
+      >
         Save
       </DefaultButton>
     );
@@ -135,7 +142,7 @@ export default function NowPlaying(): JSX.Element {
       <DefaultButton
         onClick={() => {
           if (PlayingPlaylist(nowPlaying)) {
-            StopAndClear(store);
+            StopAndClear(store, setPlaying);
           } else {
             setShowConfirmation(true);
           }
@@ -176,7 +183,7 @@ export default function NowPlaying(): JSX.Element {
     }
     setSortBy(which);
     if (which) {
-      store.set('shuffle')(false);
+      setShuffle(false);
     }
     store.set('curIndex')(songList.indexOf(curKey));
     store.set('songList')([...songList]);
@@ -192,10 +199,9 @@ export default function NowPlaying(): JSX.Element {
         className={clsName}
         template="CLR#T"
       >
-        <img
-          className="delete-pic pic-button"
-          src={deletePic}
-          alt="Remove"
+        <IconButton
+          style={{ height: '28px', width: '28px' }}
+          iconProps={{ iconName: 'Delete' }}
           onClick={() => RemoveSongNumber(store, idx)}
         />
       </SongLine>

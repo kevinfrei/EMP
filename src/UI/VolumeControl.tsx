@@ -1,18 +1,16 @@
 import React from 'react';
 import { IconButton, Slider, Stack } from '@fluentui/react';
+import { useRecoilState } from 'recoil';
 
-import Store from '../MyStore';
+import { mutedAtom, volumeAtom } from '../Recoil/Atoms';
+
 import { GetAudioElem } from './SongPlayback';
 
 import './styles/VolumeControl.css';
 
 export default function VolumeControl(): JSX.Element {
-  const store = Store.useStore();
-
-  const muted = store.get('muted');
-  const setMuted = store.set('muted');
-  const volume = store.get('volume');
-  const setVolume = store.set('volume');
+  const [muted, setMuted] = useRecoilState(mutedAtom);
+  const [volume, setVolume] = useRecoilState(volumeAtom);
 
   const ae = GetAudioElem();
 

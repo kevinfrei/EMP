@@ -176,3 +176,5 @@ export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
 export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
 export const playingAtom = atom<boolean>({ key: 'playing', default: false });
 export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
+export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
+export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });

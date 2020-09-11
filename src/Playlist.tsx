@@ -1,5 +1,5 @@
 import ShuffleArray from './ShuffleArray';
-import { StartSongPlaying, StopSongPlaying } from './UI/SongPlayback';
+import { StartSongPlaying } from './UI/SongPlayback';
 import { Logger } from '@freik/core-utils';
 
 import type { Store } from 'undux';
@@ -12,6 +12,7 @@ import type {
   ArtistKey,
   StoreState,
 } from './MyStore';
+import { SetterOrUpdater } from 'recoil';
 
 const log = Logger.bind('Playlist.tsx');
 Logger.disable('Playlist.tsx');
@@ -25,11 +26,14 @@ Logger.disable('Playlist.tsx');
 // This allows for shuffling & repeating
 
 // This stops playback and clears the active playlist
-export function StopAndClear(store: StoreState): void {
+export function StopAndClear(
+  store: StoreState,
+  setPlaying: SetterOrUpdater<boolean>,
+): void {
   store.set('songList')([]);
   store.set('curIndex')(-1);
   store.set('activePlaylistName')('');
-  StopSongPlaying(store);
+  setPlaying(false);
 }
 
 export function DeletePlaylist(store: StoreState, playlist: string): void {
@@ -153,7 +157,11 @@ export function ShuffleNowPlaying(store: Store<State>): void {
 
 // Moves the current playset forward
 // Should handle repeat & shuffle as well
-export function StartNextSong(store: Store<State>): void {
+export function StartNextSong(
+  store: Store<State>,
+  shuffle: boolean,
+  repeat: boolean,
+): void {
   let curIndex = store.get('curIndex');
   if (curIndex < 0) {
     return;
@@ -163,13 +171,12 @@ export function StartNextSong(store: Store<State>): void {
   let songList = store.get('songList');
   if (curIndex >= songList.length) {
     // If we've past the end of the list, check to see if we're repeating
-    const repeat = store.get('repeat');
     if (!repeat) {
       store.set('curIndex')(-1);
       return;
     }
     curIndex = 0;
-    if (store.get('shuffle')) {
+    if (shuffle) {
       songList = ShuffleArray(songList);
       store.set('songList')(songList);
     }
@@ -179,7 +186,7 @@ export function StartNextSong(store: Store<State>): void {
 }
 
 // Moves the current playset backward
-export function StartPrevSong(store: StoreState): void {
+export function StartPrevSong(store: StoreState, repeat: boolean): void {
   let curIndex = store.get('curIndex');
   if (curIndex < 0) {
     return;
@@ -189,7 +196,6 @@ export function StartPrevSong(store: StoreState): void {
   const songList = store.get('songList');
   if (curIndex < 0) {
     // If we've past the end of the list, check to see if we're repeating
-    const repeat = store.get('repeat');
     if (!repeat) {
       store.set('curIndex')(-1);
       return;

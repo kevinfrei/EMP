@@ -11,6 +11,9 @@ import {
   mediaTimeRemainingSel,
   mediaTimePositionSel,
   mediaTimePercentRWSel,
+  playingAtom,
+  shuffleAtom,
+  repeatAtom,
 } from '../Recoil/Atoms';
 
 import type { MediaTime } from '../Recoil/Atoms';
@@ -49,10 +52,6 @@ export function StartSongPlaying(store: StoreState, index: number): void {
   }
 }
 
-export function StopSongPlaying(store: StoreState): void {
-  store.set('playing')(false);
-}
-
 export default function SongPlayback(): JSX.Element {
   const [, setMediaTime] = useRecoilState(mediaTimeAtom);
   const [mediaTimePercent, setMediaTimePercent] = useRecoilState(
@@ -66,7 +65,9 @@ export default function SongPlayback(): JSX.Element {
   const curIndex = store.get('curIndex');
   const songIndex = store.get('songList');
   const songKey = curIndex >= 0 ? songIndex[curIndex] : '';
-  const playing = store.set('playing');
+  const [, setPlaying] = useRecoilState(playingAtom);
+  const shuf = useRecoilValue(shuffleAtom);
+  const rep = useRecoilValue(repeatAtom);
   let title = '';
   let artist = '';
   let album = '';
@@ -78,9 +79,9 @@ export default function SongPlayback(): JSX.Element {
         id="audioElement"
         autoPlay
         src={'tune://song/' + songKey}
-        onPlay={() => playing(true)}
-        onPause={() => playing(false)}
-        onEnded={() => StartNextSong(store)}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => StartNextSong(store, shuf, rep)}
       />
     ) as React.ReactElement<HTMLAudioElement>;
     picUrl = 'pic://album/' + GetAlbumKeyForSongKey(store, songKey);
