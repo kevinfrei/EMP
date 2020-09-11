@@ -6,6 +6,9 @@ import {
   SyncedLocations,
 } from './SettingsAtoms';
 import { GetSongSorter, sorter } from '../Sorters';
+import { selectorFamily } from 'recoil';
+import * as ipc from '../ipc';
+
 
 import type {
   Artist,
@@ -16,13 +19,23 @@ import type {
   SongKey,
 } from '../MyStore';
 
-import { selectorFamily } from 'recoil';
-import { CallMain } from '../MyWindow';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
 const log = Logger.bind('MusicDbAtoms');
 // Logger.enable('MusicDbAtoms')
+
+type Collection<K, T> = {
+  All: T[];
+  ByKey: Map<K, T>;
+  Keys: K[];
+};
+
+const Songs: Collection<SongKey, Song> = {
+  All: [],
+  ByKey: new Map<SongKey, Song>(),
+  Keys: [],
+};
 
 export const AllSongs = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
@@ -31,7 +44,7 @@ export const AllSongs = selector<Map<SongKey, Song>>({
     // we get the new song list
     const locations = get(SyncedLocations.atom);
     log(locations.length);
-    const res = await CallMain<void, Map<SongKey, Song>>('get-all-songs');
+    const res = await ipc.GetAllSongs();
     return res || new Map<SongKey, Song>();
   },
 });
@@ -63,7 +76,7 @@ export const AllAlbums = selector<Map<AlbumKey, Album>>({
     // we get the new song list
     const locations = get(SyncedLocations.atom);
     log(locations.length);
-    const res = await CallMain<void, Map<AlbumKey, Album>>('get-all-albums');
+    const res = await ipc.GetAllAlbums();
     return res || new Map<AlbumKey, Album>();
   },
 });
@@ -95,7 +108,7 @@ export const AllArtists = selector<Map<ArtistKey, Artist>>({
     // we get the new song list
     const locations = get(SyncedLocations.atom);
     log(locations.length);
-    const res = await CallMain<void, Map<ArtistKey, Artist>>('get-all-artists');
+    const res = await ipc.GetAllArtsists();
     return res || new Map<ArtistKey, Artist>();
   },
 });

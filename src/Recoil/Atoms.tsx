@@ -12,13 +12,12 @@ import {
   PromiseSubscribe,
   PromiseUnsubscribe,
   PromiseSend,
-  CallMain,
 } from '../MyWindow';
+import * as ipc from '../ipc';
 
 import type { SongKey } from '../MyStore';
 import type { RecoilState } from 'recoil';
 import type { FTONData } from '@freik/core-utils';
-// import RecentlyAdded from './Views/RecentlyAdded';
 
 const log = Logger.bind('Atoms');
 Logger.enable('Atoms');
@@ -120,7 +119,7 @@ export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
         general: new Map<string, string>(),
         audio: new Map<string, string>(),
       };
-    const result = await CallMain<SongKey, MediaInfo>('get-media-info', sk);
+    const result = await ipc.GetMediaInfo(sk);
     if (!result) throw new Error(sk);
     log(`Got media info for ${sk}:`);
     log(result);

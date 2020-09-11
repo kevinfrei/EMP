@@ -6,7 +6,16 @@ import type { IpcRenderer } from 'electron';
 import type { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
 import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 
-import type { StoreState } from './MyStore';
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  MediaInfo,
+  Song,
+  SongKey,
+  StoreState,
+} from './MyStore';
 import type { RemoteDataTypes } from './Handler';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 
@@ -104,7 +113,6 @@ export function CallMain<Type, Result>(
 ): Promise<Result | void> {
   return window.betterIpc!.callMain<Type, Result>(channel, key);
 }
-
 
 // eslint-disable-next-line
 const listeners: Map<string, ListenerType> = new Map<string, ListenerType>();
