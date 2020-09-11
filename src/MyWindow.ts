@@ -6,16 +6,7 @@ import type { IpcRenderer } from 'electron';
 import type { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
 import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 
-import {
-  Album,
-  AlbumKey,
-  Artist,
-  ArtistKey,
-  MediaInfo,
-  Song,
-  SongKey,
-  StoreState,
-} from './MyStore';
+import { StoreState } from './MyStore';
 import type { RemoteDataTypes } from './Handler';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 

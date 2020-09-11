@@ -4,7 +4,7 @@ import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
 import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
-import type { SongKey, MusicDB } from './MusicScanner';
+import type { MusicDB } from './MusicScanner';
 import type { TrieNode } from './search';
 import { Listener } from 'electron-promise-ipc/build/base';
 import {
@@ -66,10 +66,6 @@ function kvpFromJSONValidator(val: string): KVP<FTONData> | void {
 }
 
 function stringValidator(val: string): string | void {
-  return val;
-}
-
-function SongKeyValidator(val: string): SongKey | void {
   return val;
 }
 
@@ -137,7 +133,6 @@ export function SendDatabase(): void {
   );
 }
 
-
 export function SetIndex(
   id: string,
   index: Map<string, TrieNode<unknown>>,
@@ -146,8 +141,8 @@ export function SetIndex(
 }
 
 // Walk down the Trie following the string
+/*
 function search(val: string) {
-  /*
   let vals = null;
   for (let i of val.split(' ')) {
     let index = indices.get('artist');
@@ -185,8 +180,8 @@ function search(val: string) {
   }
   const results = [...vals.values].map((val) => val.key);
   console.log(results);
-  */
-}
+
+}*/
 
 // {key: 'item-to-pull-from-persist'}
 // This is used for the promiseIpc main-side communication
@@ -253,7 +248,6 @@ async function ipcDeleter(data: { key: unknown }) {
   return false;
 }
 
-
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init(): void {
   // Stuff from the pre-recoil days
@@ -262,7 +256,6 @@ export function Init(): void {
     mk<string>('delete', stringValidator, deleter),
     mk<string>('get', stringValidator, getter),
     mk<string>('GetDatabase', stringValidator, SendDatabase),
-    mk<string>('search', stringValidator, search),
   ];
   for (const val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {

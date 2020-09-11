@@ -25,17 +25,17 @@ export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 const log = Logger.bind('MusicDbAtoms');
 // Logger.enable('MusicDbAtoms')
 
+/*
 type Collection<K, T> = {
   All: T[];
   ByKey: Map<K, T>;
   Keys: K[];
 };
-
 const Songs: Collection<SongKey, Song> = {
   All: [],
   ByKey: new Map<SongKey, Song>(),
   Keys: [],
-};
+};*/
 
 export const AllSongs = selector<Map<SongKey, Song>>({
   key: 'AllSongs',

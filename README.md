@@ -33,9 +33,45 @@ Playlists are the next major piece of functionality to add.
 
 ### *In Progress*
 
-Migrate to Recoil. One of the two key authors is on my team, it supports React
-suspense, and I've been drooling over it for about a year. Now that it's
-been open-sourced, I'm going to switch from undux to recoil.
+Migrate to Recoil. One of the two key authors is on my team, and it was kinda
+"his idea". It supports React suspense, and I've been drooling over it for
+about a year. Now that it's been open-sourced, I'm going to switch from undux
+to recoil.
+
+### Recoil Notes
+
+For data that "lives" on the server/in the main process, there are a couple
+different models. If it's "read only" that can be trivially modeled using
+*selectors*. Just make the getter download data from the server. Even if it
+might change (i.e. the user changes the paths to search for music from, thus
+changing the music DB) you can make the dependency clear by invoking the getter
+on the thing the read-only value depends on (even if you don't use it on the
+client side).
+
+For data that is changing, but is also stored on the server/in the main
+process, there's a big more complex data flow necessary. You can't really model
+the dependency of the data accurately in just *atoms* and *selectors*. Instead,
+you need to include a React Effect that will pull the initial value from the
+server and ansynchronously dump it into a piece of recoil state.
+
+My current thinking is that the recoild state should be in an *atom* because I
+want fully synchonized data to be stored somewhere explicitly rather than just
+relying on some sort of caching mechanism deep in the bowels of Recoil. It also
+makes more sense when you recognize *selectors* as functional state of their
+dependents.
+
+So there are 3 separate React Effects we need:
+
+1. Request an initial value for the atom.
+2. Subscribe to changes on the server side and reflect they back to the atom.
+3. Send updated values of the atom back to the server side.
+
+It's not completely clear how #1 and #2 might interact. In addition it's
+probably worth preventing #2 from triggering an infinite loop between #2 and
+#3.
+
+## This stuff is all out of date
+I should review it once I'm happy with the state of my recoil-iness.
 
 ### Bugs
 * Handle audio files that don't fit my schema

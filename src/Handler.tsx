@@ -6,7 +6,7 @@ import { PlaysetsComp } from './Sorters';
 
 import type { IpcRendererEvent } from 'electron';
 import type { FTONData } from '@freik/core-utils';
-import type { StoreState, SongKey, MediaInfo } from './MyStore';
+import type { StoreState, SongKey } from './MyStore';
 import {
   ClearTimeout,
   IpcOn,
