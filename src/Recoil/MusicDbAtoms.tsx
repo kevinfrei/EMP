@@ -89,6 +89,14 @@ export const AlbumByKey = selectorFamily<Album, AlbumKey>({
   },
 });
 
+export const MaybeAlbumByKey = selectorFamily<Album | null, AlbumKey>({
+  key: 'MaybeAlbumByKey',
+  get: (ak: AlbumKey) => ({ get }) => {
+    if (ak.length === 0) return null;
+    return get(AlbumByKey(ak));
+  },
+});
+
 export const AllAlbumKeys = selector<AlbumKey[]>({
   key: 'AllAlbumKeys',
   get: ({ get }) => {
@@ -118,6 +126,15 @@ export const ArtistByKey = selectorFamily<Artist, ArtistKey>({
     const artist = Artists.get(ak);
     if (!artist) throw new Error(ak);
     return artist;
+  },
+});
+
+
+export const MaybeArtistByKey = selectorFamily<Album | null, ArtistKey>({
+  key: 'MaybeArtistByKey',
+  get: (ak: ArtistKey) => ({ get }) => {
+    if (ak.length === 0) return null;
+    return get(ArtistByKey(ak));
   },
 });
 

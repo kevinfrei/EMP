@@ -1,180 +1,34 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
-import { atom, selector, DefaultValue, useRecoilValue } from 'recoil';
+import {
+  atom,
+  selector,
+  DefaultValue,
+  useRecoilValue,
+  useRecoilState,
+  useResetRecoilState,
+} from 'recoil';
 import { GetAudioElem } from '../UI/SongPlayback';
 import { Logger } from '@freik/core-utils';
 
-import type { SongKey, AlbumKey, ArtistKey } from '../MyStore';
+import * as api from './api';
 import {
   AlbumByKey,
   ArtistByKey,
   CurrentIndexAtom,
+  MaybeAlbumByKey,
+  MaybeArtistByKey,
   NowPlayingAtom,
   PlaylistsAtom,
   SongListAtom,
 } from './MusicDbAtoms';
 import { activePlaylistAtom } from './Atoms';
-import { useRecoilState } from 'recoil';
-import { useResetRecoilState } from 'recoil';
-import { start } from 'repl';
+
+import type { SongKey, AlbumKey, ArtistKey } from '../MyStore';
 
 const log = Logger.bind('Manip.tsx');
 Logger.disable('Manip.tsx');
 
-export const StartSongPlayingAtom = atom<number>({
-  key: 'StartSongPlaying',
-  default: -1,
-});
-
-// This stops playback and clears the active playlist
-export const StopAndClearAtom = atom<boolean>({
-  key: 'StopAndClear',
-  default: false,
-});
-
-export const DeletePlaylistAtom = atom<string>({
-  key: 'DeletePlaylist',
-  default: '',
-});
-
-// True if we're playing from a playlist and not a random song list
-export function PlayingPlaylist(playlistName: string): boolean {
-  return playlistName.length > 0;
-}
-
-export function Manip(): JSX.Element {
-  // "Functions"
-  const startSongPlaying = useRecoilValue(StartSongPlayingAtom);
-  const stopAndClear = useRecoilValue(StopAndClearAtom);
-  const deletePlaylist = useRecoilValue(DeletePlaylistAtom);
-
-  // State input
-  const [currentIndex, setCurrentIndex] = useRecoilState(CurrentIndexAtom);
-
-  // Resetters
-  const resetStartSongPlaying = useResetRecoilState(StartSongPlayingAtom);
-  const resetStopAndClear = useResetRecoilState(StopAndClearAtom);
-  const resetDeletePlaylist = useResetRecoilState(DeletePlaylistAtom);
-
-  const resetSongList = useResetRecoilState(SongListAtom);
-  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
-  const resetNowPlaying = useResetRecoilState(NowPlayingAtom);
-  const resetCurrentIndex = useResetRecoilState(CurrentIndexAtom);
-
-  if (startSongPlaying >= 0) {
-    setCurrentIndex(startSongPlaying);
-    setTimeout(() => {
-      const ae = GetAudioElem();
-      if (ae) {
-        ae.currentTime = 0;
-        void ae.play();
-      }
-    }, 1);
-    resetStartSongPlaying();
-  }
-  if (stopAndClear) {
-    resetSongList();
-    resetCurrentIndex();
-    resetActivePlaylist();
-    resetNowPlaying();
-    resetStopAndClear();
-  }
-if (deletePlaylist !== '') {
-  const delplaylist = ({ get, set }, newValue): void => {
-    if (newValue instanceof DefaultValue) return;
-    const playlists = get(PlaylistsAtom);
-    playlists.delete(newValue);
-    set(PlaylistsAtom, playlists);
-    if (newValue === get(activePlaylistAtom)) {
-      set(activePlaylistAtom, '');
-    }
-  };
-  return <div style={{ visibility: 'hidden' }} />;
-}
-
-// This starts playing the song index from the songList
-export const PlaySongNumberSel = selector<number>({
-  key: 'PlaySongNum',
-  get: () => -1,
-  set: ({ get, set }, newValue) => {
-    if (newValue instanceof DefaultValue) {
-      set(StopAndClearSel, true);
-    } else {
-      const songList = get(SongListAtom);
-      if (newValue < 0 || newValue >= songList.length) {
-        log(`PSNSel: bounds error: ${newValue} (of ${songList.length})`);
-        return;
-      }
-      set(StartSongPlayingSel, newValue);
-    }
-  },
-});
-
-// Removes the given index from the current songList
-// If it's active, move the current to the previous song
-export const RemoveSongNumberSel = selector<number>({
-  key: 'RemoveSongNumber',
-  get: () => -1,
-  set: ({ get, set }, index) => {
-    if (index instanceof DefaultValue) return;
-    const songList = get(SongListAtom);
-    const curIndex = get(CurrentIndexAtom);
-    songList.splice(index, 1);
-    if (curIndex === index && index > 0) {
-      set(PlaySongNumberSel, index - 1);
-    } else if (curIndex > index) {
-      set(CurrentIndexAtom, curIndex - 1);
-    }
-    set(SongListAtom, songList);
-  },
-});
-
-// Adds a song to the end of the song list
-const AddSongListSel = selector<SongKey[]>({
-  key: 'AddSongList',
-  get: () => [],
-  set: ({ get, set }, keys) => {
-    if (keys instanceof DefaultValue) return;
-    const songList = get(SongListAtom);
-    set(SongListAtom, songList.concat(keys));
-    if (get(CurrentIndexAtom) < 0) {
-      set(StartSongPlayingSel, 0);
-    }
-  },
-});
-
-// Add a specific song to the now playing set. Start it playing if
-// nothing's already playing.
-export const AddSongSel = selector<SongKey>({
-  key: 'AddSong',
-  get: () => '',
-  set: ({ get, set }, key) => {
-    if (key instanceof DefaultValue) return;
-    set(AddSongListSel, [key]);
-  },
-});
-
-export const AddAlbumSel = selector<AlbumKey>({
-  key: 'AddAlbum',
-  get: () => '',
-  set: ({ get, set }, key) => {
-    if (key instanceof DefaultValue) return;
-    const album = get(AlbumByKey(key));
-    set(AddSongListSel, album.songs);
-  },
-});
-
-export const AddArtistSel = selector<ArtistKey>({
-  key: 'AddArtist',
-  get: () => '',
-  set: ({ get, set }, key) => {
-    if (key instanceof DefaultValue) return;
-    const artist = get(ArtistByKey(key));
-    set(AddSongListSel, artist.songs);
-  },
-});
-
-/*
 // Adds a song to a specific playlist
 // If that playlist is playing, add it to the end of the playset as well
 export function AddToPlaylist(
@@ -268,7 +122,6 @@ export function StartPrevSong(store: StoreState, repeat: boolean): void {
   // K, we've got pos moved forward, let's queue up the song
   StartSongPlaying(store, curIndex);
 }
-*/
 
 export const StartPlaylistSel = selector<string>({
   key: 'StartPlaylist',
@@ -286,3 +139,113 @@ export const StartPlaylistSel = selector<string>({
     set(StartSongPlayingSel, 0);
   },
 });
+
+// True if we're playing from a playlist and not a random song list
+export function PlayingPlaylist(playlistName: string): boolean {
+  return playlistName.length > 0;
+}
+
+export function Manip(): JSX.Element {
+  // "Functions"
+  const [startSongPlaying, setStartSongPlaying] = useRecoilValue(
+    api.StartSongPlayingAtom,
+  );
+  const stopAndClear = useRecoilValue(api.StopAndClearAtom);
+  const deletePlaylist = useRecoilValue(api.DeletePlaylistAtom);
+  const removeSongNumber = useRecoilValue(api.RemoveSongNumberAtom);
+  const addSongList = useRecoilValue(api.AddSongListAtom);
+  const addSong = useRecoilValue(api.AddSongAtom);
+  const addAlbum = useRecoilValue(api.AddAlbumAtom);
+  const addArtist = useRecoilValue(api.AddArtistAtom);
+
+  // Resetters
+  const resetStartSongPlaying = useResetRecoilState(api.StartSongPlayingAtom);
+  const resetStopAndClear = useResetRecoilState(api.StopAndClearAtom);
+  const resetDeletePlaylist = useResetRecoilState(api.DeletePlaylistAtom);
+  const resetRemoveSongNumber = useResetRecoilState(api.RemoveSongNumberAtom);
+  const resetAddSongList = useResetRecoilState(api.AddSongListAtom);
+  const resetAddSong = useResetRecoilState(api.AddSongAtom);
+  const resetAddAlbum = useResetRecoilState(api.AddAlbumAtom);
+  const resetAddArtist = useResetRecoilState(api.AddArtistAtom);
+
+  // State input
+  const [currentIndex, setCurrentIndex] = useRecoilState(CurrentIndexAtom);
+  const [playlists, setPlaylists] = useRecoilState(PlaylistsAtom);
+  const activePlaylist = useRecoilValue(ActivePlaylistAtom);
+  const [songList, setSongList] = useRecoilState(SongListAtom);
+
+  const resetSongList = useResetRecoilState(SongListAtom);
+  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
+  const resetNowPlaying = useResetRecoilState(NowPlayingAtom);
+  const resetCurrentIndex = useResetRecoilState(CurrentIndexAtom);
+
+  if (startSongPlaying >= 0) {
+    setCurrentIndex(startSongPlaying);
+    setTimeout(() => {
+      const ae = GetAudioElem();
+      if (ae) {
+        ae.currentTime = 0;
+        void ae.play();
+      }
+    }, 1);
+    resetStartSongPlaying();
+  }
+  if (stopAndClear) {
+    resetSongList();
+    resetCurrentIndex();
+    resetActivePlaylist();
+    resetNowPlaying();
+    resetStopAndClear();
+  }
+  if (deletePlaylist !== '') {
+    playlists.delete(deletePlaylist);
+    setPlaylists(playlists);
+    if (deletePlaylist === activePlaylist) {
+      resetActivePlaylist();
+    }
+    resetDeletePlaylist();
+  }
+  // Removes the given index from the current songList
+  // If it's active, move the current to the previous song
+  if (removeSongNumber >= 0) {
+    songList.splice(removeSongNumber, 1);
+    if (currentIndex === removeSongNumber && removeSongNumber > 0) {
+      setStartSongPlaying(removeSongNumber - 1);
+    } else if (currentIndex > removeSongNumber) {
+      setCurrentIndex(currentIndex - 1);
+    }
+    setSongList(songList);
+    resetRemoveSongNumber();
+  }
+
+  const artistToAdd = useRecoilValue(MaybeArtistByKey(addArtist));
+  const albumToAdd = useRecoilValue(MaybeAlbumByKey(addArtist));
+  const artistList = artistToAdd === null ? [] : artistToAdd.songs;
+  const albumList = albumToAdd === null ? [] : albumToAdd.songs;
+  // Adds a song to the end of the song list
+  for (const [list, reset] of [
+    [addSongList, resetAddSong],
+    [albumList, resetAddAlbum],
+    [artistList, resetAddArtist],
+  ]) {
+    if (list.length > 0) {
+      setSongList(songList.concat(list));
+      if (currentIndex < 0) {
+        setStartSongPlaying(0);
+      }
+      reset();
+    }
+  }
+  // Add a specific song to the now playing set. Start it playing if
+  // nothing's already playing.
+  if (addSong.length > 0) {
+    songList.push(addSong);
+    setSongList(songList);
+    if (currentIndex < 0) {
+      setStartSongPlaying(0);
+    }
+    resetAddSong();
+  }
+
+  return <div style={{ visibility: 'hidden' }} />;
+}
