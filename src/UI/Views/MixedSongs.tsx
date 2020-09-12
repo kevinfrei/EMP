@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import { Dialog, DialogType } from '@fluentui/react';
+import {
+  DetailsList,
+  Dialog,
+  DialogType,
+  SelectionMode,
+} from '@fluentui/react';
 import { useRecoilValue } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
-import Store from '../../MyStore';
+import Store, { Song, SongKey } from '../../MyStore';
 
 import { getMediaInfo } from '../../Recoil/Atoms';
 import SongLine from '../SongLine';
@@ -14,6 +19,7 @@ import { AddSong } from '../../Playlist';
 import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
+import { AllSongs } from '../../Recoil/MusicDbAtoms';
 
 const log = Logger.bind('MixedSongs');
 Logger.enable('MixedSongs');
@@ -62,11 +68,13 @@ function MediaInfoTable({ id }: { id: string }) {
   }
 }
 
-export default function MixedSongView(): JSX.Element {
-  const store = Store.useStore();
-  const songArray = store.get('SongArray');
+function OldMixedSongView(): JSX.Element {
+  //  const store = Store.useStore();
+  //  const songArray = store.get('SongArray');
+  const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
+  const songArray = [...songs.keys()];
 
   const VirtualSongRow = ({ index }: { index: number }): React.ReactNode => {
     // style={style}
@@ -102,7 +110,7 @@ export default function MixedSongView(): JSX.Element {
     </div>
   );
   return (
-    <div className="songView">
+    <div className="songView current-view">
       <React.Suspense fallback="Please wait...">
         <Dialog
           hidden={!showDialog}
@@ -111,14 +119,35 @@ export default function MixedSongView(): JSX.Element {
         >
           <MediaInfoTable id={selected} />
         </Dialog>
+        <div className="songContainer songHeader">
+          <span className="songArtist">Artist</span>
+          <span className="songAlbum">Album</span>
+          <span className="songTrack">#</span>
+          <span className="songTitle">Title</span>
+        </div>
+        <AutoSizer>{customView}</AutoSizer>
       </React.Suspense>
-      <div className="songContainer songHeader">
-        <span className="songArtist">Artist</span>
-        <span className="songAlbum">Album</span>
-        <span className="songTrack">#</span>
-        <span className="songTitle">Title</span>
-      </div>
-      <AutoSizer>{customView}</AutoSizer>
+    </div>
+  );
+}
+
+export default function FluentMixedSongsView() {
+  debugger;
+  const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
+  const [selected, setSelected] = useState('');
+  const [showDialog, setShowDialog] = useState(false);
+  return (
+    <div className="songView current-view">
+      <React.Suspense fallback="Please wait...">
+        <Dialog
+          hidden={!showDialog}
+          onDismiss={() => setShowDialog(false)}
+          dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
+        >
+          <MediaInfoTable id={selected} />
+        </Dialog>
+        <DetailsList items={[...songs]} selectionMode={SelectionMode.single} />
+      </React.Suspense>
     </div>
   );
 }

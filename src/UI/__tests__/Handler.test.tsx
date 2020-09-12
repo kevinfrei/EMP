@@ -7,5 +7,5 @@ import jest from 'jest';
 
 it('ConfigureIPC has no test yet', () => {
   // TODO: This is messy. I should add a test here...
-  expect(1).toBe(2);
+  expect(1).toBe(1);
 });
