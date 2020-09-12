@@ -52,7 +52,7 @@ export enum CurrentView {
 
 export const CurViewAtom = atom<CurrentView>({
   key: 'CurrentView',
-  default: CurrentView.Current,
+  default: CurrentView.Settings,
 });
 
 // This should return a server-sync'ed atom

@@ -1,5 +1,5 @@
 import React, { useState, CSSProperties } from 'react';
-import { Dialog, DialogType } from '@fluentui/react';
+import { Dialog, DialogType, List } from '@fluentui/react';
 
 import Store from '../../MyStore';
 
@@ -11,11 +11,13 @@ import SongLine from '../SongLine';
 import type { Album } from '../../MyStore';
 
 import './styles/Albums.css';
+import { useRecoilValue } from 'recoil';
+import { AllAlbums } from '../../Recoil/MusicDbAtoms';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
-export default function AlbumView(): JSX.Element {
+export function AlbumView(): JSX.Element {
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');
@@ -115,5 +117,17 @@ export default function AlbumView(): JSX.Element {
         itemGenerator={VirtualAlbumRow}
       />
     </div>
+  );
+}
+
+function TheList() {
+  const allAlbums = useRecoilValue(AllAlbums);
+  return <List items={[...allAlbums.values()]} />;
+}
+export default function NewAlbumView(): JSX.Element {
+  return (
+    <React.Suspense fallback="Please Hold...">
+      <TheList />
+    </React.Suspense>
   );
 }

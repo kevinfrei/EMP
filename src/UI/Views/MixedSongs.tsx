@@ -3,8 +3,12 @@ import VirtualizedList from '@dwqs/react-virtual-list';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import {
   DetailsList,
+  DetailsRow,
   Dialog,
   DialogType,
+  getTheme,
+  IDetailsListProps,
+  IDetailsRowStyles,
   SelectionMode,
 } from '@fluentui/react';
 import { useRecoilValue } from 'recoil';
@@ -131,22 +135,52 @@ function OldMixedSongView(): JSX.Element {
   );
 }
 
-export default function FluentMixedSongsView() {
-  debugger;
+const theme = getTheme();
+
+function MixedSongsList() {
   const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
+  const renderRow: IDetailsListProps['onRenderRow'] = (props) => {
+    const customStyles: Partial<IDetailsRowStyles> = {};
+    if (props) {
+      if (props.itemIndex % 2 === 0) {
+        // Every other row renders with a different background color
+        customStyles.root = { backgroundColor: theme.palette.themeLighterAlt };
+      }
+
+      return <DetailsRow {...props} styles={customStyles} />;
+    }
+    return null;
+  };
+
+  return (
+    <>
+      <Dialog
+        hidden={!showDialog}
+        onDismiss={() => setShowDialog(false)}
+        dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
+      >
+        <MediaInfoTable id={selected} />
+      </Dialog>
+      <DetailsList
+        items={[...songs.values()]}
+        selectionMode={SelectionMode.none}
+        onRenderRow={renderRow}
+        onItemInvoked={(item: Song) => {
+          setSelected(item.key);
+          setShowDialog(true);
+        }}
+      />
+    </>
+  );
+}
+
+export default function FluentMixedSongsView(): JSX.Element {
   return (
     <div className="songView current-view">
       <React.Suspense fallback="Please wait...">
-        <Dialog
-          hidden={!showDialog}
-          onDismiss={() => setShowDialog(false)}
-          dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
-        >
-          <MediaInfoTable id={selected} />
-        </Dialog>
-        <DetailsList items={[...songs]} selectionMode={SelectionMode.single} />
+        <MixedSongsList />
       </React.Suspense>
     </div>
   );

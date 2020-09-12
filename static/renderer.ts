@@ -30,6 +30,7 @@ declare let window: MyWindow;
 // to the ipcRenderer to enable asynchronous callbacks to affect the Undux store
 
 window.addEventListener('DOMContentLoaded', () => {
+  if (false) debugger;
   window.ipc = ipcRenderer;
   log('About to attach the remote');
   if (remote) {
@@ -40,15 +41,15 @@ window.addEventListener('DOMContentLoaded', () => {
   if (isDev) {
     window.isDev = isDev;
   }
+  log('Setting up PromiseIPC:');
+  window.ipcPromise = new PromiseIpcRenderer({ maxTimeoutMs: 5000 });
+  log(window.ipcPromise);
+  log('adding betterIpc');
+  window.betterIpc = betterIpc;
   log('ready');
   if (window.initApp) {
     window.initApp();
   } else {
     log('FAILURE: No window.initApp() attached.');
   }
-  log('Setting up PromiseIPC:');
-  window.ipcPromise = new PromiseIpcRenderer({ maxTimeoutMs: 5000 });
-  log(window.ipcPromise);
-  log('adding betterIpc');
-  window.betterIpc = betterIpc;
 });
