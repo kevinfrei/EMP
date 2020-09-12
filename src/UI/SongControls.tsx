@@ -1,18 +1,21 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import Store from '../MyStore';
 import { StartNextSong, StartPrevSong, ShuffleNowPlaying } from '../Playlist';
-import { StartSongPlaying, GetAudioElem } from './SongPlayback';
+import { GetAudioElem } from './SongPlayback';
 import { playingAtom, repeatAtom, shuffleAtom } from '../Recoil/Atoms';
 
 import './styles/SongControls.css';
+import { StartSongPlayingSel } from '../Recoil/Manip';
 
 export default function SongControls(): JSX.Element {
   const store = Store.useStore();
   const playing = useRecoilValue(playingAtom) ? 'playing' : 'paused';
   const [shuf, shufSet] = useRecoilState(shuffleAtom);
   const [rep, repSet] = useRecoilState(repeatAtom);
+  const [, StartSongPlaying] = useRecoilState(StartSongPlayingSel);
   const songList = store.get('songList');
 
   const shufClass = shuf ? 'enabled' : 'disabled';
@@ -48,7 +51,7 @@ export default function SongControls(): JSX.Element {
           } else if (ae.readyState === 4) {
             void ae.play();
           } else if (songList.length) {
-            StartSongPlaying(store, 0);
+            StartSongPlaying(0);
           }
         }}
       ></span>

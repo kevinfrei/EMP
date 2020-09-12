@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState } from 'react';
 import {
   Dialog,
@@ -16,11 +17,11 @@ import {
   getTheme,
 } from '@fluentui/react';
 
-import Store from '../../MyStore';
-
-import { StartPlaylist, DeletePlaylist } from '../../Playlist';
-
 import './styles/Playlists.css';
+import { useRecoilState } from 'recoil';
+import { DeletePlaylistSel, StartPlaylistSel } from '../../Recoil/Manip';
+import { useRecoilValue } from 'recoil';
+import { PlaylistsAtom } from '../../Recoil/MusicDbAtoms';
 
 const theme = getTheme();
 
@@ -36,9 +37,9 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 };
 
 export default function Playlister(): JSX.Element {
-  const store = Store.useStore();
-  const playlists = store.get('Playlists');
-
+  const playlists = useRecoilValue(PlaylistsAtom);
+  const [, DeletePlaylist] = useRecoilState(DeletePlaylistSel);
+  const [, StartPlaylist] = useRecoilState(StartPlaylistSel);
   // Some local state
   const [selPlaylist, setSelPlaylist] = useState('');
   const [showDialog, setShowDialog] = useState(false);
@@ -89,7 +90,7 @@ export default function Playlister(): JSX.Element {
             <DefaultButton
               onClick={() => {
                 setShowDialog(false);
-                DeletePlaylist(store, selPlaylist);
+                DeletePlaylist(selPlaylist);
               }}
               text="Yes"
             />
@@ -104,7 +105,7 @@ export default function Playlister(): JSX.Element {
         columns={columns}
         onRenderRow={renderRow}
         onItemInvoked={(item: [string, string[]]) =>
-          StartPlaylist(store, item[0])
+          StartPlaylist(item[0])
         }
       />
     </div>

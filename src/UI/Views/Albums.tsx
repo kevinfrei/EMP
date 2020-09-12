@@ -1,9 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState, CSSProperties } from 'react';
 import { Dialog, DialogType, List } from '@fluentui/react';
 
 import Store from '../../MyStore';
 
-import { AddAlbum, AddSong } from '../../Playlist';
 import { GetArtistForAlbum } from '../../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
@@ -13,11 +13,15 @@ import type { Album } from '../../MyStore';
 import './styles/Albums.css';
 import { useRecoilValue } from 'recoil';
 import { AllAlbums } from '../../Recoil/MusicDbAtoms';
+import { useRecoilState } from 'recoil';
+import { AddAlbumSel, AddSongSel } from '../../Recoil/Manip';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export function AlbumView(): JSX.Element {
+  const [, AddSong] = useRecoilState(AddSongSel);
+  const [, AddAlbum] = useRecoilState(AddAlbumSel);
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');
@@ -38,7 +42,7 @@ export function AlbumView(): JSX.Element {
               key={k}
               songKey={k}
               className="songForAlbum"
-              onDoubleClick={AddSong}
+              onDoubleClick={(st, songKey) => AddSong(songKey)}
             />
           ))}
         </div>
@@ -55,13 +59,13 @@ export function AlbumView(): JSX.Element {
     style: CSSProperties;
   }) => {
     const artistName = GetArtistForAlbum(store, album);
-    const adder = () => AddAlbum(store, album.key);
+    const adder = () => AddAlbum(album.key);
 
     return (
       <div style={style} className="albumContainer">
         <img
           src={`pic://album/${album.key}`}
-          onDoubleClick={() => AddAlbum(store, album.key)}
+          onDoubleClick={() => AddAlbum(album.key)}
           alt="album cover"
           className="albumCover"
         />

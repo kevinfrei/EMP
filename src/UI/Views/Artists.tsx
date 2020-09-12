@@ -1,18 +1,22 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState, CSSProperties } from 'react';
 import { Dialog, DialogType } from '@fluentui/react';
 
 import Store from '../../MyStore';
 
-import { AddArtist, AddSong } from '../../Playlist';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
 import './styles/Artists.css';
+import { useRecoilState } from 'recoil';
+import { AddArtistSel, AddSongSel } from '../../Recoil/Manip';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export default function ArtistView(): JSX.Element {
+  const [, AddSong] = useRecoilState(AddSongSel);
+  const [, AddArtist] = useRecoilState(AddArtistSel);
   const store = Store.useStore();
   const artists = store.get('Artists');
   const [expandedArtist, setExpandedArtist] = useState('');
@@ -34,7 +38,7 @@ export default function ArtistView(): JSX.Element {
       <div
         className="artistContainer"
         style={style}
-        onDoubleClick={() => AddArtist(store, artist.key)}
+        onDoubleClick={() => AddArtist(artist.key)}
       >
         <div className="artistName">
           {artist.name} &nbsp;
@@ -66,7 +70,7 @@ export default function ArtistView(): JSX.Element {
               key={k}
               className="songForArtist"
               songKey={k}
-              onDoubleClick={AddSong}
+              onDoubleClick={(s, sk) => AddSong(sk)}
             />
           ))}
         </div>

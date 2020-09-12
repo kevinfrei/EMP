@@ -1,4 +1,4 @@
-import { RecoilValue, selector } from 'recoil';
+import { RecoilValue, selector, atom } from 'recoil';
 import { Logger } from '@freik/core-utils';
 import {
   SongListSort,
@@ -9,7 +9,6 @@ import { GetSongSorter, sorter } from '../Sorters';
 import { selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 
-
 import type {
   Artist,
   ArtistKey,
@@ -18,7 +17,6 @@ import type {
   Song,
   SongKey,
 } from '../MyStore';
-
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -147,4 +145,24 @@ export const SortedSongsSelector = selector<SongKey[]>({
     allSongs.sort(comp);
     return allSongs;
   },
+});
+
+export const NowPlayingAtom = atom<string>({
+  key: 'nowPlaying',
+  default: '',
+});
+
+export const PlaylistsAtom = atom<Map<string, SongKey[]>>({
+  key: 'Playlists',
+  default: new Map<string, SongKey[]>(),
+});
+
+export const SongListAtom = atom<SongKey[]>({
+  key: 'currentSongList',
+  default: [],
+});
+
+export const CurrentIndexAtom = atom<number>({
+  key: 'currentIndex',
+  default: -1,
 });

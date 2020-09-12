@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useEffect } from 'react';
 import { Slider } from '@fluentui/react';
 import { useRecoilState, useRecoilValue, SetterOrUpdater } from 'recoil';
@@ -17,7 +18,6 @@ import {
 } from '../Recoil/Atoms';
 
 import type { MediaTime } from '../Recoil/Atoms';
-import type { StoreState } from '../MyStore';
 
 import './styles/SongPlayback.css';
 
@@ -36,21 +36,6 @@ ConfigurePositionInterval(() => {
   }
   setTime({ position: ae.currentTime, duration: ae.duration });
 }, 223); // Cuz prime numbers are fun
-
-export function StartSongPlaying(store: StoreState, index: number): void {
-  const changing = store.get('curIndex') !== index;
-  if (!changing) {
-    return;
-  }
-  store.set('curIndex')(index);
-  const ae = GetAudioElem();
-  if (ae) {
-    setTimeout(() => {
-      ae.currentTime = 0;
-      void ae.play();
-    }, 1);
-  }
-}
 
 export default function SongPlayback(): JSX.Element {
   const [, setMediaTime] = useRecoilState(mediaTimeAtom);

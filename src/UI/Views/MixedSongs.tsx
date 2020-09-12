@@ -1,6 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState } from 'react';
-import VirtualizedList from '@dwqs/react-virtual-list';
-import AutoSizer from 'react-virtualized-auto-sizer';
 import {
   DetailsList,
   DetailsRow,
@@ -14,16 +13,15 @@ import {
 import { useRecoilValue } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
-import Store, { Song, SongKey } from '../../MyStore';
-
 import { getMediaInfo } from '../../Recoil/Atoms';
-import SongLine from '../SongLine';
-import { AddSong } from '../../Playlist';
+import { AllSongs } from '../../Recoil/MusicDbAtoms';
 
+import type { Song, SongKey } from '../../MyStore';
 import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
-import { AllSongs } from '../../Recoil/MusicDbAtoms';
+import { useRecoilState } from 'recoil';
+import { AddSongSel } from '../../Recoil/Manip';
 
 const log = Logger.bind('MixedSongs');
 Logger.enable('MixedSongs');
@@ -71,7 +69,7 @@ function MediaInfoTable({ id }: { id: string }) {
     return <></>;
   }
 }
-
+/*
 function OldMixedSongView(): JSX.Element {
   //  const store = Store.useStore();
   //  const songArray = store.get('SongArray');
@@ -92,7 +90,7 @@ function OldMixedSongView(): JSX.Element {
             : 'songContainer oddMixedSong'
         }
         songKey={songArray[index]}
-        onDoubleClick={AddSong}
+       onDoubleClick={AddSong}
         onAuxClick={(theStore, songKey) => {
           setSelected(songKey);
           setShowDialog(true);
@@ -134,13 +132,14 @@ function OldMixedSongView(): JSX.Element {
     </div>
   );
 }
-
+*/
 const theme = getTheme();
 
 function MixedSongsList() {
   const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
+  const [, AddSong] = useRecoilState(AddSongSel);
   const renderRow: IDetailsListProps['onRenderRow'] = (props) => {
     const customStyles: Partial<IDetailsRowStyles> = {};
     if (props) {
@@ -167,10 +166,11 @@ function MixedSongsList() {
         items={[...songs.values()]}
         selectionMode={SelectionMode.none}
         onRenderRow={renderRow}
-        onItemInvoked={(item: Song) => {
+        onItemContextMenu={(item: Song) => {
           setSelected(item.key);
           setShowDialog(true);
         }}
+        onItemInvoked={(item: Song) => AddSong(item.key)}
       />
     </>
   );
