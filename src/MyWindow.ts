@@ -1,11 +1,10 @@
 // This is for getting at "global" stuff from the window object
-import { ConfigureIPC } from './Handler';
 import { SeqNum, Logger } from '@freik/core-utils';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 
 import type { IpcRenderer } from 'electron';
 import type { RendererProcessIpc } from '@freik/electron-better-ipc';
-import type { RemoteDataTypes } from './Handler';
+import type { SongKey } from './MyStore';
 
 const log = Logger.bind('MyWindow');
 // Logger.enable('MyWindow');
@@ -14,6 +13,15 @@ declare type listenerFunc = (value: unknown) => void;
 declare type subFunc = (key: string, listener: listenerFunc) => string;
 declare type unsubFunc = (key: string, id: string) => boolean;
 declare type ListenerType = Map<string, (val: string) => void>;
+export type KeyValue = {
+  key: string;
+  value: unknown;
+};
+export declare type RemoteDataTypes = SongKey[] &
+  string &
+  Map<string, SongKey[]> &
+  number &
+  boolean;
 
 declare interface MyIpcRenderer extends IpcRenderer {
   promiseSub: subFunc;
@@ -66,7 +74,7 @@ export function SetInit(func: () => void): void {
 export function InitialWireUp(): void {
   if (window.betterIpc && !window.ipcSet) {
     window.ipcSet = true;
-    ConfigureIPC();
+    SetPromiseFuncs();
   }
 }
 
