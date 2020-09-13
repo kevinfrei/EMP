@@ -1,7 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
 import { RecoilRoot } from 'recoil';
 
 import Sidebar from './Sidebar';
+import Manip from '../Recoil/Manip';
 import ViewSelector from './Views/Selector';
 import Store from '../MyStore';
 import AsyncDoodad from './AsyncDoodad';
@@ -16,6 +18,7 @@ export default function App(): JSX.Element {
     <Store.Container>
       <RecoilRoot>
         <AsyncDoodad />
+        <Manip />
         <span className="grabber"></span>
         <span className="left-column"></span>
         <span className="top-row"></span>

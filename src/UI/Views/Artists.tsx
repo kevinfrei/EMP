@@ -1,24 +1,23 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState, CSSProperties } from 'react';
 import { Dialog, DialogType } from '@fluentui/react';
-
-import Store from '../../MyStore';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
 import './styles/Artists.css';
-import { useRecoilState } from 'recoil';
-import { AddArtistSel, AddSongSel } from '../../Recoil/Manip';
+import { AddArtistAtom, AddSongAtom } from '../../Recoil/api';
+import { AllArtists } from '../../Recoil/MusicDbAtoms';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export default function ArtistView(): JSX.Element {
-  const [, AddSong] = useRecoilState(AddSongSel);
-  const [, AddArtist] = useRecoilState(AddArtistSel);
-  const store = Store.useStore();
-  const artists = store.get('Artists');
+  const [, AddSong] = useRecoilState(AddSongAtom);
+  const [, AddArtist] = useRecoilState(AddArtistAtom);
+  const artists = useRecoilValue(AllArtists);
+  const artistArray = [...artists.values()];
   const [expandedArtist, setExpandedArtist] = useState('');
   const handleClose = () => setExpandedArtist('');
 
@@ -29,8 +28,7 @@ export default function ArtistView(): JSX.Element {
     index: number;
     style: CSSProperties;
   }): JSX.Element {
-    const artistArray = store.get('ArtistArray');
-    const artist = artists.get(artistArray[index]);
+    const artist = artistArray[index];
     if (!artist) {
       return <div>{`Error for element ${index}`}</div>;
     }

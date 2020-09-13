@@ -1,12 +1,10 @@
 import { ipcMain, BrowserWindow } from 'electron';
-import promiseIpc from 'electron-promise-ipc';
 import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
 import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
-import type { MusicDB } from './MusicScanner';
+// import type { MusicDB } from './MusicScanner';
 import type { TrieNode } from './search';
-import { Listener } from 'electron-promise-ipc/build/base';
 import {
   getAllAlbums,
   getAllArtists,
@@ -112,7 +110,7 @@ function mk<T>(
 ): MessageHandler<T> {
   return { command, validator, handler };
 }
-
+/*
 export function SendDatabase(): void {
   const musicDB = persist.getItem<MusicDB>('DB');
   if (!win || !musicDB) {
@@ -132,7 +130,7 @@ export function SendDatabase(): void {
     FTON.stringify({ key: 'Artists', value: musicDB.artists }),
   );
 }
-
+*/
 export function SetIndex(
   id: string,
   index: Map<string, TrieNode<unknown>>,
@@ -181,8 +179,7 @@ function search(val: string) {
   const results = [...vals.values].map((val) => val.key);
   console.log(results);
 
-}*/
-
+}
 // {key: 'item-to-pull-from-persist'}
 // This is used for the promiseIpc main-side communication
 async function ipcGetter(data: { key: unknown }) {
@@ -247,7 +244,33 @@ async function ipcDeleter(data: { key: unknown }) {
   }
   return false;
 }
+*/
+async function getGeneral(name: string) {
+  try {
+    log(`getGeneral(${name})`);
+    const value = await persist.getItemAsync(name);
+    log(`Sending value ${name}:`);
+    log(value);
+    return value;
+  } catch (e) {
+    log(`error from getGeneral(${name})`);
+    log(e);
+  }
+  return 'error';
+}
 
+async function setGeneral(keyValuePair: string) {
+  try {
+    const pos = keyValuePair.indexOf(':');
+    const name = keyValuePair.substring(0, pos);
+    const value = keyValuePair.substring(pos + 1);
+    log(`setGeneral(${name} : ${value})`);
+    await persist.setItemAsync(name, value);
+  } catch (e) {
+    log(`error from getGeneral(${keyValuePair})`);
+    log(e);
+  }
+}
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init(): void {
   // Stuff from the pre-recoil days
@@ -255,7 +278,6 @@ export function Init(): void {
     mk<KVP<FTONData>>('set', kvpFromJSONValidator, setter),
     mk<string>('delete', stringValidator, deleter),
     mk<string>('get', stringValidator, getter),
-    mk<string>('GetDatabase', stringValidator, SendDatabase),
   ];
   for (const val of comms) {
     ipcMain.on(val.command, (event, arg: string) => {
@@ -270,10 +292,12 @@ export function Init(): void {
       }
     });
   }
+  /*
   // Persistence stuff migrated to Recoil - before better-ipc
   promiseIpc.on('promise-get', ipcGetter as Listener);
   promiseIpc.on('promise-set', ipcSetter as Listener);
   promiseIpc.on('promise-del', ipcDeleter as Listener);
+  */
 
   // I like this API much better, particularly in the render process
   betterIpc.answerRenderer('get-all-songs', getAllSongs);
@@ -281,9 +305,10 @@ export function Init(): void {
   betterIpc.answerRenderer('get-all-artists', getAllArtists);
   betterIpc.answerRenderer('get-all-playlists', getAllPlaylists);
   betterIpc.answerRenderer('get-media-info', getMediaInfoForSong);
+  betterIpc.answerRenderer('get-general', getGeneral);
+  betterIpc.answerRenderer('set-general', setGeneral);
 }
 // Called with the window handle after it's been created
 export function Begin(window: BrowserWindow): void {
   win = window;
-  SendDatabase();
 }

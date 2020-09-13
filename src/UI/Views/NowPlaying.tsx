@@ -16,7 +16,7 @@ import { Comparisons } from '@freik/core-utils';
 import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
-import { shuffleAtom } from '../../Recoil/Atoms';
+import { ShuffleAtom } from '../../Recoil/Atoms';
 import {
   CurrentIndexAtom,
   NowPlayingAtom,
@@ -26,11 +26,11 @@ import {
 
 import './styles/NowPlaying.css';
 import {
-  PlayingPlaylist,
-  PlaySongNumberSel,
-  RemoveSongNumberSel,
-  StopAndClearSel,
-} from '../../Recoil/Manip';
+  StartSongPlayingAtom,
+  RemoveSongNumberAtom,
+  StopAndClearAtom,
+} from '../../Recoil/api';
+import { PlayingPlaylist } from '../../Playlist';
 
 export default function NowPlaying(): JSX.Element {
   const [nowPlaying, setNowPlaying] = useRecoilState(NowPlayingAtom);
@@ -43,11 +43,11 @@ export default function NowPlaying(): JSX.Element {
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
   //  const [, setPlaying] = useRecoilState(playingAtom);
-  const [, setShuffle] = useRecoilState(shuffleAtom);
+  const [, setShuffle] = useRecoilState(ShuffleAtom);
 
-  const [, StopAndClear] = useRecoilState(StopAndClearSel);
-  const [, PlaySongNumber] = useRecoilState(PlaySongNumberSel);
-  const [, RemoveSongNumber] = useRecoilState(RemoveSongNumberSel);
+  const [, StopAndClear] = useRecoilState(StopAndClearAtom);
+  const [, PlaySongNumber] = useRecoilState(StartSongPlayingAtom);
+  const [, RemoveSongNumber] = useRecoilState(RemoveSongNumberAtom);
   // Clear sorts when shuffle gets updated
   /*
   TODO

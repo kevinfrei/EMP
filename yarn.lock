@@ -4695,16 +4695,6 @@ electron-is-dev@^1.2.0:
   resolved "https://registry.yarnpkg.com/electron-is-dev/-/electron-is-dev-1.2.0.tgz#2e5cea0a1b3ccf1c86f577cee77363ef55deb05e"
   integrity sha512-R1oD5gMBPS7PVU8gJwH6CtT0e6VSoD0+SzSnYpNm+dBkcijgA+K7VAMHDfnRq/lkKPZArpzplTW6jfiMYosdzw==
 
-electron-promise-ipc@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/electron-promise-ipc/-/electron-promise-ipc-2.2.1.tgz#a69794b41ea3568d035c5dff519e4dd80131ceb7"
-  integrity sha512-RJkA+34EUVLRTRz8x+Tqb+PMqU9uvt1lQFCeo/Sho1qTc94JzNq2q1qqPFBp/6tVLikP27et7Kp6EmiokzjkrQ==
-  dependencies:
-    is-electron-renderer "^2.0.1"
-    object.entries "^1.1.1"
-    serialize-error "^5.0.0"
-    uuid "^3.0.1"
-
 electron-publish@22.8.0:
   version "22.8.0"
   resolved "https://registry.yarnpkg.com/electron-publish/-/electron-publish-22.8.0.tgz#7f410fe043abc5d3d896c4ee9eea7a43ea352c7d"
@@ -6794,11 +6784,6 @@ is-docker@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/is-docker/-/is-docker-2.1.1.tgz#4125a88e44e450d384e09047ede71adc2d144156"
   integrity sha512-ZOoqiXfEwtGknTiuDEy8pN2CfE3TxMHprvNer1mXiqwkOT77Rw3YVrUQ52EqAOU3QAWDQ+bQdx7HJzrv7LS2Hw==
-
-is-electron-renderer@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/is-electron-renderer/-/is-electron-renderer-2.0.1.tgz#a469d056f975697c58c98c6023eb0aa79af895a2"
-  integrity sha1-pGnQVvl1aXxYyYxgI+sKp5r4laI=
 
 is-extendable@^0.1.0, is-extendable@^0.1.1:
   version "0.1.1"
@@ -12413,7 +12398,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@^3.0.1, uuid@^3.3.2, uuid@^3.4.0:
+uuid@^3.3.2, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==

@@ -1,9 +1,5 @@
 import { Comparisons } from '@freik/core-utils';
-import {
-  RecoilDataForSong,
-  GetDataForSong,
-  GetDataForAlbum,
-} from './DataAccess';
+import { GetDataForAlbum } from './DataAccess';
 
 import type {
   SongKey,
@@ -12,7 +8,6 @@ import type {
   AlbumKey,
   ArtistKey,
 } from './MyStore';
-import type { GetRecoilValue } from './Recoil/MusicDbAtoms';
 
 export type sorter = (a: string, b: string) => number;
 
@@ -32,7 +27,7 @@ const strCmp = (a: string, b: string): number =>
 
 const theCmp = (a: string, b: string): number =>
   noArticles(a).localeCompare(noArticles(b));
-
+/*
 export const SongBy = {
   ArtistAlbumNumberTitle: (store: StoreState): sorter => {
     const cmp = store.get('SortWithArticles') ? strCmp : theCmp;
@@ -247,7 +242,6 @@ export function GetSongSorter(
       return SortSongBy.ArtistAlbumNumberTitle(get, withArticles);
   }
 }
-
 export const AlbumBy = {
   TitleArtistYear: (store: StoreState): sorter => {
     const cmp = store.get('SortWithArticles') ? strCmp : theCmp;
@@ -343,7 +337,7 @@ export const ArtistBy = {
     };
   },
 };
-
+*/
 export function PlaysetsComp(
   ps1: Map<string, SongKey[]>,
   ps2: Map<string, SongKey[]>,
@@ -359,7 +353,7 @@ export function PlaysetsComp(
   }
   return true;
 }
-
+/*
 function sortAndStore<V>(
   store: StoreState,
   map: Map<string, V>,
@@ -430,3 +424,4 @@ export function SortSongs(store: StoreState): void {
   }
   sortAndStore(store, map, 'SongArray', srt);
 }
+*/

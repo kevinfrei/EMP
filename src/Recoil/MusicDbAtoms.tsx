@@ -5,7 +5,7 @@ import {
   SortWithArticles,
   SyncedLocations,
 } from './SettingsAtoms';
-import { GetSongSorter, sorter } from '../Sorters';
+import { sorter } from '../Sorters';
 import { selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 
@@ -17,6 +17,7 @@ import type {
   Song,
   SongKey,
 } from '../MyStore';
+import SongPlayback from '../UI/SongPlayback';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -129,8 +130,7 @@ export const ArtistByKey = selectorFamily<Artist, ArtistKey>({
   },
 });
 
-
-export const MaybeArtistByKey = selectorFamily<Album | null, ArtistKey>({
+export const MaybeArtistByKey = selectorFamily<Artist | null, ArtistKey>({
   key: 'MaybeArtistByKey',
   get: (ak: ArtistKey) => ({ get }) => {
     if (ak.length === 0) return null;
@@ -148,6 +148,7 @@ export const AllArtistKeys = selector<ArtistKey[]>({
   },
 });
 
+/*
 // This handles sorting the AllSongs list according to the
 // user preferences
 export const SortedSongsSelector = selector<SongKey[]>({
@@ -163,6 +164,7 @@ export const SortedSongsSelector = selector<SongKey[]>({
     return allSongs;
   },
 });
+*/
 
 export const NowPlayingAtom = atom<string>({
   key: 'nowPlaying',
@@ -182,4 +184,83 @@ export const SongListAtom = atom<SongKey[]>({
 export const CurrentIndexAtom = atom<number>({
   key: 'currentIndex',
   default: -1,
+});
+
+export const CurrentSongKeySel = selector<SongKey>({
+  key: 'currentSongKey',
+  get: ({ get }) => {
+    const curIndex = get(CurrentIndexAtom);
+    const songList = get(SongListAtom);
+    if (curIndex >= 0 && curIndex < songList.length) {
+      return songList[curIndex];
+    } else {
+      return '';
+    }
+  },
+});
+
+export const AlbumKeyForSongKeySel = selectorFamily<AlbumKey, SongKey>({
+  key: 'AlbumKeyForSongKey',
+  get: (sk: SongKey) => ({ get }) => {
+    if (sk.length > 0) {
+      const song: Song = get(SongByKey(sk));
+      return song.albumId;
+    } else {
+      return '';
+    }
+  },
+});
+
+export type SongData = {
+  title: string;
+  track: number;
+  artist: string;
+  album: string;
+};
+
+export const ArtistStringSel = selectorFamily<string, ArtistKey[]>({
+  key: 'ArtistString',
+
+  get: (artistList: ArtistKey[]) => ({ get }) => {
+    const artists: string[] = artistList
+      .map((ak) => {
+        const art: Artist = get(ArtistByKey(ak));
+        return art ? art.name : '';
+      })
+      .filter((a: string) => a.length > 0);
+    if (artists.length === 1) {
+      return artists[0];
+    } else {
+      const lastPart = ' & ' + (artists.pop() || 'OOPS!');
+      return artists.join(', ') + lastPart;
+    }
+  },
+});
+
+export const DataForSongSel = selectorFamily<SongData, SongKey>({
+  key: 'DataForSong',
+  get: (sk: SongKey) => ({ get }) => {
+    const res = { title: '-', track: 0, artist: '-', album: '-' };
+
+    if (sk.length === 0) {
+      return res;
+    }
+    const song: Song = get(SongByKey(sk));
+    if (!song) {
+      return res;
+    }
+    res.title = song.title;
+    res.track = song.track;
+
+    const album: Album = get(AlbumByKey(song.albumId));
+    if (album) {
+      res.album = album.title;
+    }
+    const maybeArtistName = get(ArtistStringSel(song.artistIds));
+    if (!maybeArtistName) {
+      return res;
+    }
+    res.artist = maybeArtistName;
+    return res;
+  },
 });

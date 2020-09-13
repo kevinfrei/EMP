@@ -168,9 +168,9 @@ const HandlePersistence = (store: StoreState) => {
 };
 
 // For anything that should be synchronized, update the effects in Effects.js
-export function ConfigureIPC(store: StoreState): void {
+export function ConfigureIPC(): void {
   // Handle the 'automatic' persistence stuff
-  HandlePersistence(store);
+/*  HandlePersistence(store);
   IpcOn('data', (event: IpcRendererEvent, message: string) => {
     DataFromMainHandler(store, message);
   });
@@ -178,5 +178,6 @@ export function ConfigureIPC(store: StoreState): void {
     DataFromMainHandler(store, message);
   });
   IpcSend('GetDatabase', 'GetDatabase');
+  */
   SetPromiseFuncs();
 }

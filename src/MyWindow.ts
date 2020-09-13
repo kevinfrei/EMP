@@ -1,14 +1,11 @@
 // This is for getting at "global" stuff from the window object
 import { ConfigureIPC } from './Handler';
 import { SeqNum, Logger } from '@freik/core-utils';
+import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 
 import type { IpcRenderer } from 'electron';
-import type { PromiseIpcRenderer } from 'electron-promise-ipc/build/renderer';
 import type { RendererProcessIpc } from '@freik/electron-better-ipc';
-
-import { StoreState } from './MyStore';
 import type { RemoteDataTypes } from './Handler';
-import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 
 const log = Logger.bind('MyWindow');
 // Logger.enable('MyWindow');
@@ -28,7 +25,7 @@ interface MyWindow extends Window {
   remote: Electron.Remote | undefined;
   isDev: boolean | undefined;
   initApp: undefined | (() => void);
-  ipcPromise: PromiseIpcRenderer | undefined;
+  // ipcPromise: PromiseIpcRenderer | undefined;
   ipcSet: boolean | undefined;
   betterIpc: RendererProcessIpc | undefined;
 }
@@ -66,10 +63,10 @@ export function SetInit(func: () => void): void {
   window.initApp = func;
 }
 
-export function InitialWireUp(store: StoreState): void {
-  if (window.ipc && !window.ipcSet) {
+export function InitialWireUp(): void {
+  if (window.betterIpc && !window.ipcSet) {
     window.ipcSet = true;
-    ConfigureIPC(store);
+    ConfigureIPC();
   }
 }
 
@@ -90,13 +87,14 @@ export function PromiseSubscribe(key: string, listener: listenerFunc): string {
 export function PromiseUnsubscribe(key: string, id: string): void {
   window.ipc!.promiseUnsub(key, id);
 }
-
+/*
 export async function PromiseSend(
   cmd: string,
   obj: { key: string; value?: unknown },
 ): Promise<unknown> {
   return window.ipcPromise!.send(cmd, obj);
 }
+*/
 
 export function CallMain<Type, Result>(
   channel: string,

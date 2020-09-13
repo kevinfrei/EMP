@@ -3,7 +3,7 @@ import { Logger, FTON } from '@freik/core-utils';
 
 import * as persist from './persist';
 import * as music from './MusicScanner';
-import { SendDatabase, SetIndex } from './Communication';
+import {  SetIndex } from './Communication';
 import makeIndex from './search';
 
 import type { FTONData } from '@freik/core-utils';
@@ -31,9 +31,8 @@ async function getMusicDb() {
   SetIndex('artist', artistIndex);
 }
 
-function UpdateAndSendDB() {
+function UpdateDb() {
   getMusicDb()
-    .then(SendDatabase)
     .catch((rej) => {
       log('Caught an exception while trying to update the db');
       log(rej);
@@ -48,7 +47,7 @@ export async function Startup(): Promise<void> {
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
     log('Got the DB');
-    setTimeout(UpdateAndSendDB, 1);
+    setTimeout(UpdateDb, 1);
   } else {
     log('No DB available');
     // If we don't already have it, wait to start until we've read it.
@@ -59,5 +58,5 @@ export async function Startup(): Promise<void> {
 export function Ready(window: BrowserWindow): void {
   // Do anything here that needs to happen once we have the window
   // object available
-  persist.subscribe('locations', UpdateAndSendDB);
+  persist.subscribe('locations', UpdateDb);
 }

@@ -20,7 +20,6 @@
     "@uifabric/react-hooks": "^7.12.0",
     "csstype": "^3.0.3",
     "electron-is-dev": "^1.2.0",
-    "electron-promise-ipc": "^2.2.1",
     "electron-react-devtools": "^0.5.3",
     "node-mediainfo": "^1.0.3",
     "package.json": "^2.0.1",

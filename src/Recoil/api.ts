@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import type { SongKey } from '../MyStore';
+import type { SongKey, AlbumKey, ArtistKey } from '../MyStore';
 
 export const StartSongPlayingAtom = atom<number>({
   key: 'StartSongPlaying',
@@ -41,4 +41,24 @@ export const AddAlbumAtom = atom<AlbumKey>({
 export const AddArtistAtom = atom<ArtistKey>({
   key: 'AddArtist',
   default: '',
+});
+
+export const StartPlaylistAtom = atom<string>({
+  key: 'StartPlaylist',
+  default: '',
+});
+
+export const StartNextSongAtom = atom<boolean>({
+  key: 'nextTrack',
+  default: false,
+});
+
+export const StartPrevSongAtom = atom<boolean>({
+  key: 'prevTrack',
+  default: false,
+});
+
+export const ShuffleNowPlayingAtom = atom<boolean>({
+  key: 'shuffleNowPlaying',
+  default: false,
 });

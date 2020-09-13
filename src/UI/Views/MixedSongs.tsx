@@ -10,18 +10,17 @@ import {
   IDetailsRowStyles,
   SelectionMode,
 } from '@fluentui/react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
 import { getMediaInfo } from '../../Recoil/Atoms';
 import { AllSongs } from '../../Recoil/MusicDbAtoms';
+import { AddSongAtom } from '../../Recoil/api';
 
 import type { Song, SongKey } from '../../MyStore';
 import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
-import { useRecoilState } from 'recoil';
-import { AddSongSel } from '../../Recoil/Manip';
 
 const log = Logger.bind('MixedSongs');
 Logger.enable('MixedSongs');
@@ -139,7 +138,7 @@ function MixedSongsList() {
   const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
-  const [, AddSong] = useRecoilState(AddSongSel);
+  const [, AddSong] = useRecoilState(AddSongAtom);
   const renderRow: IDetailsListProps['onRenderRow'] = (props) => {
     const customStyles: Partial<IDetailsRowStyles> = {};
     if (props) {
@@ -147,7 +146,6 @@ function MixedSongsList() {
         // Every other row renders with a different background color
         customStyles.root = { backgroundColor: theme.palette.themeLighterAlt };
       }
-
       return <DetailsRow {...props} styles={customStyles} />;
     }
     return null;

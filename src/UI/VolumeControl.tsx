@@ -3,15 +3,15 @@ import React from 'react';
 import { IconButton, Slider, Stack } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
 
-import { mutedAtom, volumeAtom } from '../Recoil/Atoms';
+import { MutedAtom, VolumeAtom } from '../Recoil/Atoms';
 
 import { GetAudioElem } from './SongPlayback';
 
 import './styles/VolumeControl.css';
 
 export default function VolumeControl(): JSX.Element {
-  const [muted, setMuted] = useRecoilState(mutedAtom);
-  const [volume, setVolume] = useRecoilState(volumeAtom);
+  const [muted, setMuted] = useRecoilState(MutedAtom);
+  const [volume, setVolume] = useRecoilState(VolumeAtom);
 
   const ae = GetAudioElem();
 

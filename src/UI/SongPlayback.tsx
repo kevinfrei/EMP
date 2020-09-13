@@ -3,23 +3,27 @@ import React, { useEffect } from 'react';
 import { Slider } from '@fluentui/react';
 import { useRecoilState, useRecoilValue, SetterOrUpdater } from 'recoil';
 
-import Store from '../MyStore';
-import { GetDataForSong, GetAlbumKeyForSongKey } from '../DataAccess';
-import { StartNextSong } from '../Playlist';
+import { GetDataForSong } from '../DataAccess';
+import { StartNextSongAtom } from '../Recoil/api';
 import { ConfigurePositionInterval } from '../MyWindow';
 import {
   mediaTimeAtom,
   mediaTimeRemainingSel,
   mediaTimePositionSel,
   mediaTimePercentRWSel,
-  playingAtom,
-  shuffleAtom,
-  repeatAtom,
+  PlayingAtom,
+  ShuffleAtom,
+  RepeatAtom,
 } from '../Recoil/Atoms';
 
 import type { MediaTime } from '../Recoil/Atoms';
 
 import './styles/SongPlayback.css';
+import {
+  AlbumKeyForSongKeySel,
+  CurrentSongKeySel,
+  DataForSongSel,
+} from '../Recoil/MusicDbAtoms';
 
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;
@@ -46,16 +50,11 @@ export default function SongPlayback(): JSX.Element {
   const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingSel);
 
   let audio: React.ReactElement<HTMLAudioElement>;
-  const store = Store.useStore();
-  const curIndex = store.get('curIndex');
-  const songIndex = store.get('songList');
-  const songKey = curIndex >= 0 ? songIndex[curIndex] : '';
-  const [, setPlaying] = useRecoilState(playingAtom);
-  const shuf = useRecoilValue(shuffleAtom);
-  const rep = useRecoilValue(repeatAtom);
-  let title = '';
-  let artist = '';
-  let album = '';
+  const songKey = useRecoilValue(CurrentSongKeySel);
+  const [, StartNextSong] = useRecoilState(StartNextSongAtom);
+  const [, setPlaying] = useRecoilState(PlayingAtom);
+  const albumKey = useRecoilValue(AlbumKeyForSongKeySel(songKey));
+  const {title, artist, album} = useRecoilValue(DataForSongSel(songKey));
   let split = '';
   let picUrl = 'pic://pic/pic.svg';
   if (songKey !== '') {
@@ -66,11 +65,10 @@ export default function SongPlayback(): JSX.Element {
         src={'tune://song/' + songKey}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        onEnded={() => StartNextSong(store, shuf, rep)}
+        onEnded={() => StartNextSong(true)}
       />
     ) as React.ReactElement<HTMLAudioElement>;
-    picUrl = 'pic://album/' + GetAlbumKeyForSongKey(store, songKey);
-    ({ title, artist, album } = GetDataForSong(store, songKey));
+    picUrl = 'pic://album/' + albumKey;
     split = artist.length && album.length ? ': ' : '';
   } else {
     audio = <audio id="audioElement" />;

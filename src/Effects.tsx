@@ -1,5 +1,5 @@
 import type { StoreEffects } from './MyStore';
-import { SortSongs, SortAlbums, SortArtists } from './Sorters';
+/*import { SortSongs, SortAlbums, SortArtists } from './Sorters';
 
 const effects: StoreEffects = (store) => {
   // We need to combine this stuff to get the sorted lists correctly.
@@ -30,3 +30,4 @@ const effects: StoreEffects = (store) => {
 };
 
 export default effects;
+*/

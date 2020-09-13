@@ -3,7 +3,7 @@ import {
   createConnectedStore,
   withReduxDevtools /* , withLogger*/,
 } from 'undux';
-import effects from './Effects';
+// import effects from './Effects';
 
 export type SongKey = string;
 export type AlbumKey = string;
@@ -118,7 +118,8 @@ export const ValidKeyNames = [
 
 // I think this is how to combine different effects:
 const combinedEffects = (store: StoreDefinition<State>) =>
-  effects(withReduxDevtools(store));
+  //  effects(withReduxDevtools(store));
+  withReduxDevtools(store);
 export default createConnectedStore<State>(initialState, combinedEffects);
 
 // Docs say: Ignore this if you're using React Hooks

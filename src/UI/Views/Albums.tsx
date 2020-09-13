@@ -8,20 +8,21 @@ import { GetArtistForAlbum } from '../../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
-import type { Album } from '../../MyStore';
-
-import './styles/Albums.css';
 import { useRecoilValue } from 'recoil';
 import { AllAlbums } from '../../Recoil/MusicDbAtoms';
 import { useRecoilState } from 'recoil';
-import { AddAlbumSel, AddSongSel } from '../../Recoil/Manip';
+import { AddAlbumAtom, AddSongAtom } from '../../Recoil/api';
+
+import type { Album } from '../../MyStore';
+
+import './styles/Albums.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export function AlbumView(): JSX.Element {
-  const [, AddSong] = useRecoilState(AddSongSel);
-  const [, AddAlbum] = useRecoilState(AddAlbumSel);
+  const [, AddSong] = useRecoilState(AddSongAtom);
+  const [, AddAlbum] = useRecoilState(AddAlbumAtom);
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');
