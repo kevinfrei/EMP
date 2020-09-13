@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRecoilState, SetterOrUpdater } from 'recoil';
 
-import { CurrentView, CurViewAtom } from '../Recoil/Atoms';
+import { CurrentView, curViewAtom } from '../Recoil/Atoms';
 
 import './styles/Sidebar.css';
 
@@ -25,13 +25,13 @@ const mkEntry = (name: CurrentView, title: string, pic: string) => ({
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', recentPic),
-  mkEntry(CurrentView.Album, 'Albums', albumPic),
-  mkEntry(CurrentView.Artist, 'Artists', artistPic),
-  mkEntry(CurrentView.Song, 'All Songs', songPic),
-  mkEntry(CurrentView.Playlist, 'Playlists', playlistPic),
-  mkEntry(CurrentView.Current, 'Now Playing', nowPlayingPic),
+  mkEntry(CurrentView.album, 'Albums', albumPic),
+  mkEntry(CurrentView.artist, 'Artists', artistPic),
+  mkEntry(CurrentView.song, 'All Songs', songPic),
+  mkEntry(CurrentView.playlist, 'Playlists', playlistPic),
+  mkEntry(CurrentView.current, 'Now Playing', nowPlayingPic),
   null,
-  mkEntry(CurrentView.Settings, 'Settings', settingsPic),
+  mkEntry(CurrentView.settings, 'Settings', settingsPic),
 ];
 
 function getEntry(
@@ -58,7 +58,7 @@ function getEntry(
 
 export default function Sidebar(): JSX.Element {
   const [searchText, setSearchText] = useState('');
-  const [curView, setCurView] = useRecoilState(CurViewAtom);
+  const [curView, setCurView] = useRecoilState(curViewAtom);
   return (
     <div id="sidebar">
       <div className="search-bar">

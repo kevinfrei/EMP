@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { CurrentView, CurViewAtom } from '../../Recoil/Atoms';
+import { CurrentView, curViewAtom } from '../../Recoil/Atoms';
 
 import AlbumView from './Albums';
 import ArtistView from './Artists';
@@ -12,21 +12,21 @@ import { useRecoilValue } from 'recoil';
 import RecentlyAddedView from './RecentlyAdded';
 
 export default function ViewSelector(): JSX.Element {
-  const which = useRecoilValue<CurrentView>(CurViewAtom);
+  const which = useRecoilValue<CurrentView>(curViewAtom);
   switch (which) {
-    case CurrentView.Album:
+    case CurrentView.album:
       return <AlbumView />;
-    case CurrentView.Artist:
+    case CurrentView.artist:
       return <ArtistView />;
-    case CurrentView.Playlist:
+    case CurrentView.playlist:
       return <PlaylistsView />;
-    case CurrentView.Recent:
+    case CurrentView.recent:
       return <RecentlyAddedView />;
-    case CurrentView.Current:
+    case CurrentView.current:
       return <NowPlayingView />;
-    case CurrentView.Settings:
+    case CurrentView.settings:
       return <SettingsView />;
-    case CurrentView.Song:
+    case CurrentView.song:
       return <MixedSongView />;
     default:
       return <></>;
