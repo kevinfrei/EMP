@@ -2,63 +2,63 @@ import { atom } from 'recoil';
 
 import type { SongKey, AlbumKey, ArtistKey } from '../MyStore';
 
-export const StartSongPlayingAtom = atom<number>({
+export const startSongPlayingAtom = atom<number>({
   key: 'StartSongPlaying',
   default: -1,
 });
 
 // This stops playback and clears the active playlist
-export const StopAndClearAtom = atom<boolean>({
+export const stopAndClearAtom = atom<boolean>({
   key: 'StopAndClear',
   default: false,
 });
 
-export const DeletePlaylistAtom = atom<string>({
+export const deletePlaylistAtom = atom<string>({
   key: 'DeletePlaylist',
   default: '',
 });
 
-export const RemoveSongNumberAtom = atom<number>({
+export const removeSongNumberAtom = atom<number>({
   key: 'RemoveSongNumber',
   default: -1,
 });
 
-export const AddSongListAtom = atom<SongKey[]>({
+export const addSongListAtom = atom<SongKey[]>({
   key: 'AddSongList',
   default: [],
 });
 
-export const AddSongAtom = atom<SongKey>({
+export const addSongAtom = atom<SongKey>({
   key: 'AddSong',
   default: '',
 });
 
-export const AddAlbumAtom = atom<AlbumKey>({
+export const addAlbumAtom = atom<AlbumKey>({
   key: 'AddAlbum',
   default: '',
 });
 
-export const AddArtistAtom = atom<ArtistKey>({
+export const addArtistAtom = atom<ArtistKey>({
   key: 'AddArtist',
   default: '',
 });
 
-export const StartPlaylistAtom = atom<string>({
+export const startPlaylistAtom = atom<string>({
   key: 'StartPlaylist',
   default: '',
 });
 
-export const StartNextSongAtom = atom<boolean>({
+export const startNextSongAtom = atom<boolean>({
   key: 'nextTrack',
   default: false,
 });
 
-export const StartPrevSongAtom = atom<boolean>({
+export const startPrevSongAtom = atom<boolean>({
   key: 'prevTrack',
   default: false,
 });
 
-export const ShuffleNowPlayingAtom = atom<boolean>({
+export const shuffleNowPlayingAtom = atom<boolean>({
   key: 'shuffleNowPlaying',
   default: false,
 });

@@ -7,17 +7,20 @@ import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
 import './styles/Artists.css';
-import { AddArtistAtom, AddSongAtom } from '../../Recoil/api';
-import { AllArtists } from '../../Recoil/MusicDbAtoms';
+import { addArtistAtom, addSongAtom } from '../../Recoil/api';
+import { allArtistsSel } from '../../Recoil/MusicDbAtoms';
+
+import type { Artist } from '../../MyStore';
+
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export default function ArtistView(): JSX.Element {
-  const [, AddSong] = useRecoilState(AddSongAtom);
-  const [, AddArtist] = useRecoilState(AddArtistAtom);
-  const artists = useRecoilValue(AllArtists);
-  const artistArray = [...artists.values()];
+  const [, addSong] = useRecoilState(addSongAtom);
+  const [, addArtist] = useRecoilState(addArtistAtom);
+  const artists = useRecoilValue(allArtistsSel);
+  const artistArray: Artist[] = [...artists.values()];
   const [expandedArtist, setExpandedArtist] = useState('');
   const handleClose = () => setExpandedArtist('');
 
@@ -36,7 +39,7 @@ export default function ArtistView(): JSX.Element {
       <div
         className="artistContainer"
         style={style}
-        onDoubleClick={() => AddArtist(artist.key)}
+        onDoubleClick={() => addArtist(artist.key)}
       >
         <div className="artistName">
           {artist.name} &nbsp;
@@ -68,7 +71,7 @@ export default function ArtistView(): JSX.Element {
               key={k}
               className="songForArtist"
               songKey={k}
-              onDoubleClick={(s, sk) => AddSong(sk)}
+              onDoubleClick={(s, sk) => addSong(sk)}
             />
           ))}
         </div>

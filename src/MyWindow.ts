@@ -9,9 +9,9 @@ import type { SongKey } from './MyStore';
 const log = Logger.bind('MyWindow');
 // Logger.enable('MyWindow');
 
-declare type listenerFunc = (value: unknown) => void;
-declare type subFunc = (key: string, listener: listenerFunc) => string;
-declare type unsubFunc = (key: string, id: string) => boolean;
+declare type ListenerFunc = (value: unknown) => void;
+declare type SubFunc = (key: string, listener: ListenerFunc) => string;
+declare type UnsubFunc = (key: string, id: string) => boolean;
 declare type ListenerType = Map<string, (val: string) => void>;
 export type KeyValue = {
   key: string;
@@ -24,8 +24,8 @@ export declare type RemoteDataTypes = SongKey[] &
   boolean;
 
 declare interface MyIpcRenderer extends IpcRenderer {
-  promiseSub: subFunc;
-  promiseUnsub: unsubFunc;
+  promiseSub: SubFunc;
+  promiseUnsub: UnsubFunc;
 }
 
 interface MyWindow extends Window {
@@ -88,7 +88,7 @@ export function IpcOn(
   window.ipc!.on(channel, listener);
 }
 
-export function PromiseSubscribe(key: string, listener: listenerFunc): string {
+export function PromiseSubscribe(key: string, listener: ListenerFunc): string {
   return window.ipc!.promiseSub(key, listener);
 }
 

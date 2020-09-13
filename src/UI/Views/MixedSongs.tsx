@@ -14,8 +14,8 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
 import { getMediaInfo } from '../../Recoil/Atoms';
-import { AllSongs } from '../../Recoil/MusicDbAtoms';
-import { AddSongAtom } from '../../Recoil/api';
+import { allSongsSel } from '../../Recoil/MusicDbAtoms';
+import { addSongAtom } from '../../Recoil/api';
 
 import type { Song, SongKey } from '../../MyStore';
 import type { MediaInfo } from '../../Recoil/Atoms';
@@ -134,11 +134,11 @@ function OldMixedSongView(): JSX.Element {
 */
 const theme = getTheme();
 
-export default function MixedSongsList() {
-  const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
+export default function MixedSongsList(): JSX.Element {
+  const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
-  const [, AddSong] = useRecoilState(AddSongAtom);
+  const [, addSong] = useRecoilState(addSongAtom);
   const renderRow: IDetailsListProps['onRenderRow'] = (props) => {
     const customStyles: Partial<IDetailsRowStyles> = {};
     if (props) {
@@ -168,9 +168,8 @@ export default function MixedSongsList() {
           setSelected(item.key);
           setShowDialog(true);
         }}
-        onItemInvoked={(item: Song) => AddSong(item.key)}
+        onItemInvoked={(item: Song) => addSong(item.key)}
       />
     </div>
   );
 }
-

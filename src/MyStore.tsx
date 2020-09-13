@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { Effects, Store, StoreDefinition } from 'undux';
 import {
   createConnectedStore,
@@ -13,7 +14,7 @@ export type Song = {
   key: SongKey;
   track: number;
   title: string;
-  URL: string;
+  url: string;
   albumId: AlbumKey;
   artistIds: ArtistKey[];
   secondaryIds: ArtistKey[];
@@ -106,7 +107,7 @@ const initialState: State = {
 };
 
 // This is the white-list of stuff that can be sent from the main process
-export const ValidKeyNames = [
+export const validKeyNames = [
   'Artists',
   'Albums',
   'Songs',

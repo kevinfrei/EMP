@@ -1,12 +1,8 @@
 import { RecoilValue, selector, atom } from 'recoil';
 import { Logger } from '@freik/core-utils';
-import {
-  SongListSort,
-  SortWithArticles,
-  SyncedLocations,
-} from './SettingsAtoms';
-import { sorter } from '../Sorters';
 import { selectorFamily } from 'recoil';
+
+import { syncedLocations } from './SettingsAtoms';
 import * as ipc from '../ipc';
 
 import type {
@@ -17,7 +13,6 @@ import type {
   Song,
   SongKey,
 } from '../MyStore';
-import SongPlayback from '../UI/SongPlayback';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -36,114 +31,114 @@ const Songs: Collection<SongKey, Song> = {
   Keys: [],
 };*/
 
-export const AllSongs = selector<Map<SongKey, Song>>({
+export const allSongsSel = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
   get: async ({ get }): Promise<Map<SongKey, Song>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(SyncedLocations.atom);
+    const locations = get(syncedLocations.atom);
     log(locations.length);
     const res = await ipc.GetAllSongs();
     return res || new Map<SongKey, Song>();
   },
 });
 
-export const SongByKey = selectorFamily<Song, SongKey>({
+export const songByKeySel = selectorFamily<Song, SongKey>({
   key: 'SongByKey',
   get: (sk: SongKey) => ({ get }) => {
-    const songs = get(AllSongs);
+    const songs = get(allSongsSel);
     const song = songs.get(sk);
     if (!song) throw new Error(sk);
     return song;
   },
 });
 
-export const AllSongKeys = selector<SongKey[]>({
+export const allSongKeysSel = selector<SongKey[]>({
   key: 'AllSongKeys',
   get: ({ get }) => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const songs = get(AllSongs);
+    const songs = get(allSongsSel);
     return [...songs.keys()];
   },
 });
 
-export const AllAlbums = selector<Map<AlbumKey, Album>>({
+export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
   key: 'AllAlbums',
   get: async ({ get }): Promise<Map<AlbumKey, Album>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(SyncedLocations.atom);
+    const locations = get(syncedLocations.atom);
     log(locations.length);
     const res = await ipc.GetAllAlbums();
     return res || new Map<AlbumKey, Album>();
   },
 });
 
-export const AlbumByKey = selectorFamily<Album, AlbumKey>({
+export const albumByKeySel = selectorFamily<Album, AlbumKey>({
   key: 'AlbumByKey',
   get: (ak: AlbumKey) => ({ get }) => {
-    const Albums = get(AllAlbums);
-    const album = Albums.get(ak);
+    const albums = get(allAlbumsSel);
+    const album = albums.get(ak);
     if (!album) throw new Error(ak);
     return album;
   },
 });
 
-export const MaybeAlbumByKey = selectorFamily<Album | null, AlbumKey>({
+export const maybeAlbumByKeySel = selectorFamily<Album | null, AlbumKey>({
   key: 'MaybeAlbumByKey',
   get: (ak: AlbumKey) => ({ get }) => {
     if (ak.length === 0) return null;
-    return get(AlbumByKey(ak));
+    return get(albumByKeySel(ak));
   },
 });
 
-export const AllAlbumKeys = selector<AlbumKey[]>({
+export const allAlbumKeysSel = selector<AlbumKey[]>({
   key: 'AllAlbumKeys',
   get: ({ get }) => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const albums = get(AllAlbums);
+    const albums = get(allAlbumsSel);
     return [...albums.keys()];
   },
 });
 
-export const AllArtists = selector<Map<ArtistKey, Artist>>({
+export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
   key: 'AllArtists',
   get: async ({ get }): Promise<Map<ArtistKey, Artist>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(SyncedLocations.atom);
+    const locations = get(syncedLocations.atom);
     log(locations.length);
     const res = await ipc.GetAllArtsists();
     return res || new Map<ArtistKey, Artist>();
   },
 });
 
-export const ArtistByKey = selectorFamily<Artist, ArtistKey>({
+export const aertistByKeySel = selectorFamily<Artist, ArtistKey>({
   key: 'ArtistByKey',
   get: (ak: ArtistKey) => ({ get }) => {
-    const Artists = get(AllArtists);
-    const artist = Artists.get(ak);
+    const artists = get(allArtistsSel);
+    const artist = artists.get(ak);
     if (!artist) throw new Error(ak);
     return artist;
   },
 });
 
-export const MaybeArtistByKey = selectorFamily<Artist | null, ArtistKey>({
+export const maybeArtistByKeySel = selectorFamily<Artist | null, ArtistKey>({
   key: 'MaybeArtistByKey',
   get: (ak: ArtistKey) => ({ get }) => {
     if (ak.length === 0) return null;
-    return get(ArtistByKey(ak));
+    return get(aertistByKeySel(ak));
   },
 });
 
-export const AllArtistKeys = selector<ArtistKey[]>({
+export const allArtistKeysSel = selector<ArtistKey[]>({
   key: 'AllArtistKeys',
   get: ({ get }) => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const artists = get(AllArtists);
+    const artists = get(allArtistsSel);
     return [...artists.keys()];
   },
 });
@@ -166,31 +161,31 @@ export const SortedSongsSelector = selector<SongKey[]>({
 });
 */
 
-export const NowPlayingAtom = atom<string>({
+export const nowPlayingAtom = atom<string>({
   key: 'nowPlaying',
   default: '',
 });
 
-export const PlaylistsAtom = atom<Map<string, SongKey[]>>({
+export const playlistsAtom = atom<Map<string, SongKey[]>>({
   key: 'Playlists',
   default: new Map<string, SongKey[]>(),
 });
 
-export const SongListAtom = atom<SongKey[]>({
+export const songListAtom = atom<SongKey[]>({
   key: 'currentSongList',
   default: [],
 });
 
-export const CurrentIndexAtom = atom<number>({
+export const currentIndexAtom = atom<number>({
   key: 'currentIndex',
   default: -1,
 });
 
-export const CurrentSongKeySel = selector<SongKey>({
+export const currentSongKeySel = selector<SongKey>({
   key: 'currentSongKey',
   get: ({ get }) => {
-    const curIndex = get(CurrentIndexAtom);
-    const songList = get(SongListAtom);
+    const curIndex = get(currentIndexAtom);
+    const songList = get(songListAtom);
     if (curIndex >= 0 && curIndex < songList.length) {
       return songList[curIndex];
     } else {
@@ -199,11 +194,11 @@ export const CurrentSongKeySel = selector<SongKey>({
   },
 });
 
-export const AlbumKeyForSongKeySel = selectorFamily<AlbumKey, SongKey>({
+export const albumKeyForSongKeySel = selectorFamily<AlbumKey, SongKey>({
   key: 'AlbumKeyForSongKey',
   get: (sk: SongKey) => ({ get }) => {
     if (sk.length > 0) {
-      const song: Song = get(SongByKey(sk));
+      const song: Song = get(songByKeySel(sk));
       return song.albumId;
     } else {
       return '';
@@ -218,13 +213,13 @@ export type SongData = {
   album: string;
 };
 
-export const ArtistStringSel = selectorFamily<string, ArtistKey[]>({
+export const artistStringSel = selectorFamily<string, ArtistKey[]>({
   key: 'ArtistString',
 
   get: (artistList: ArtistKey[]) => ({ get }) => {
     const artists: string[] = artistList
       .map((ak) => {
-        const art: Artist = get(ArtistByKey(ak));
+        const art: Artist = get(aertistByKeySel(ak));
         return art ? art.name : '';
       })
       .filter((a: string) => a.length > 0);
@@ -237,7 +232,7 @@ export const ArtistStringSel = selectorFamily<string, ArtistKey[]>({
   },
 });
 
-export const DataForSongSel = selectorFamily<SongData, SongKey>({
+export const dataForSongSel = selectorFamily<SongData, SongKey>({
   key: 'DataForSong',
   get: (sk: SongKey) => ({ get }) => {
     const res = { title: '-', track: 0, artist: '-', album: '-' };
@@ -245,18 +240,18 @@ export const DataForSongSel = selectorFamily<SongData, SongKey>({
     if (sk.length === 0) {
       return res;
     }
-    const song: Song = get(SongByKey(sk));
+    const song: Song = get(songByKeySel(sk));
     if (!song) {
       return res;
     }
     res.title = song.title;
     res.track = song.track;
 
-    const album: Album = get(AlbumByKey(song.albumId));
+    const album: Album = get(albumByKeySel(song.albumId));
     if (album) {
       res.album = album.title;
     }
-    const maybeArtistName = get(ArtistStringSel(song.artistIds));
+    const maybeArtistName = get(artistStringSel(song.artistIds));
     if (!maybeArtistName) {
       return res;
     }

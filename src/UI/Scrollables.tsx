@@ -78,7 +78,7 @@ export function VerticalScrollDiv({
   );
 }
 
-declare type generator = ({
+declare type Generator = ({
   index,
   style,
 }: {
@@ -95,7 +95,7 @@ export function VerticalScrollFixedVirtualList({
   scrollId: string;
   itemCount: number;
   itemSize: number;
-  itemGenerator: generator;
+  itemGenerator: Generator;
 }): JSX.Element {
   const ref: React.MutableRefObject<FixedSizeList | null> = useRef(null);
   const store = Store.useStore();

@@ -5,9 +5,7 @@ import { Logger } from '@freik/core-utils';
 import * as persist from './persist';
 
 import type { ProtocolRequest, ProtocolResponse } from 'electron';
-import type { MusicDB } from './MusicScanner';
 import { getMusicDB } from './MusicAccess';
-import { DefaultValue } from 'recoil';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 

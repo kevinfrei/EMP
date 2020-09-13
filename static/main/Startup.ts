@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { BrowserWindow } from 'electron';
 import { Logger, FTON } from '@freik/core-utils';
 
 import * as persist from './persist';
@@ -6,7 +6,6 @@ import * as music from './MusicScanner';
 import { SetIndex } from './Communication';
 import makeIndex from './search';
 
-import type { FTONData } from '@freik/core-utils';
 import { getMusicDB } from './MusicAccess';
 
 const log = Logger.bind('Startup');

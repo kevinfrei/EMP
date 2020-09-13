@@ -9,9 +9,9 @@ import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 
 import { useRecoilValue } from 'recoil';
-import { AllAlbums } from '../../Recoil/MusicDbAtoms';
+import { allAlbumsSel } from '../../Recoil/MusicDbAtoms';
 import { useRecoilState } from 'recoil';
-import { AddAlbumAtom, AddSongAtom } from '../../Recoil/api';
+import { addAlbumAtom, addSongAtom } from '../../Recoil/api';
 
 import type { Album } from '../../MyStore';
 
@@ -21,8 +21,8 @@ import './styles/Albums.css';
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export function AlbumView(): JSX.Element {
-  const [, AddSong] = useRecoilState(AddSongAtom);
-  const [, AddAlbum] = useRecoilState(AddAlbumAtom);
+  const [, addSong] = useRecoilState(addSongAtom);
+  const [, addAlbum] = useRecoilState(addAlbumAtom);
   const store = Store.useStore();
   const albums = store.get('Albums');
   const albumArray = store.get('AlbumArray');
@@ -43,7 +43,7 @@ export function AlbumView(): JSX.Element {
               key={k}
               songKey={k}
               className="songForAlbum"
-              onDoubleClick={(st, songKey) => AddSong(songKey)}
+              onDoubleClick={(st, songKey) => addSong(songKey)}
             />
           ))}
         </div>
@@ -52,21 +52,21 @@ export function AlbumView(): JSX.Element {
     }
   }
 
-  const SingleAlbum = ({
+  function SingleAlbum({
     album,
     style,
   }: {
     album: Album;
     style: CSSProperties;
-  }) => {
+  }) {
     const artistName = GetArtistForAlbum(store, album);
-    const adder = () => AddAlbum(album.key);
+    const adder = () => addAlbum(album.key);
 
     return (
       <div style={style} className="albumContainer">
         <img
           src={`pic://album/${album.key}`}
-          onDoubleClick={() => AddAlbum(album.key)}
+          onDoubleClick={() => addAlbum(album.key)}
           alt="album cover"
           className="albumCover"
         />
@@ -90,22 +90,22 @@ export function AlbumView(): JSX.Element {
         </span>
       </div>
     );
-  };
+  }
 
-  const VirtualAlbumRow = ({
+  function VirtualAlbumRow({
     index,
     style,
   }: {
     index: number;
     style: CSSProperties;
-  }): JSX.Element => {
+  }): JSX.Element {
     const maybeAlbum = albums.get(albumArray[index]);
     if (maybeAlbum) {
       return <SingleAlbum key={index} style={style} album={maybeAlbum} />;
     } else {
       return <div>Error for element {index}</div>;
     }
-  };
+  }
   return (
     <div className="albumView">
       <Dialog
@@ -126,6 +126,6 @@ export function AlbumView(): JSX.Element {
 }
 
 export default function NewAlbumView(): JSX.Element {
-  const allAlbums = useRecoilValue(AllAlbums);
-  return <List items={[...allAlbums.values()]} />;
+  const allAlbums = useRecoilValue(allAlbumsSel);
+  return <List items={[...(allAlbums.values() as Iterable<Album>)]} />;
 }

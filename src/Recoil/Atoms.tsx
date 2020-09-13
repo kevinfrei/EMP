@@ -5,7 +5,7 @@ import {
   useRecoilState,
   DefaultValue,
 } from 'recoil';
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Logger, FTON } from '@freik/core-utils';
 
 // import { PromiseSubscribe, PromiseUnsubscribe, PromiseSend } from '../MyWindow';
@@ -23,9 +23,9 @@ export type MediaTime = {
   position: number;
 };
 
-export type syncedAtom<T> = {
+export type SyncedAtom<T> = {
   atom: RecoilState<T>;
-  AtomSyncer: () => JSX.Element | null;
+  atomSyncer: () => JSX.Element;
 };
 
 export type MediaInfo = {
@@ -36,28 +36,29 @@ export type MediaInfo = {
 // vvv That's a bug, pretty clearly :/
 // eslint-disable-next-line no-shadow
 export enum CurrentView {
-  None = 0,
-  Recent = 1,
-  Album = 2,
-  Artist = 3,
-  Song = 4,
-  Playlist = 5,
-  Current = 6,
-  Settings = 7,
+  none = 0,
+  recent = 1,
+  album = 2,
+  artist = 3,
+  song = 4,
+  playlist = 5,
+  current = 6,
+  settings = 7,
 }
 
-export const CurViewAtom = atom<CurrentView>({
+export const curViewAtom = atom<CurrentView>({
   key: 'CurrentView',
-  default: CurrentView.Settings,
+  default: CurrentView.settings,
 });
 
 // This should return a server-sync'ed atom
 // { atom: theAtom, AtomSyncer: AtomSubscription };
-export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
+export function makeBackedAtom<T>(key: string, def: T): SyncedAtom<T> {
   // This is the atom that holds the sync'ed data
   const theAtom: RecoilState<T> = atom<T>({ key, default: def });
   // This is the React element that ensures's the synchronization takes place
-  const AtomSyncer = (): JSX.Element | null => {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const AtomSyncer = (): JSX.Element => {
     // Getter/Setter
     const [atomValue, setAtomValue] = useRecoilState(theAtom);
     // Get a reference to the value
@@ -108,9 +109,9 @@ export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
           });
       }
     }, [atomValue, atomRef]);
-    return null;
+    return <></>;
   };
-  return { atom: theAtom, AtomSyncer };
+  return { atom: theAtom, atomSyncer: AtomSyncer };
 }
 
 export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
@@ -179,9 +180,9 @@ export const mediaTimePercentRWSel = selector<number>({
   },
 });
 
-export const ShuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
-export const RepeatAtom = atom<boolean>({ key: 'repeat', default: false });
-export const PlayingAtom = atom<boolean>({ key: 'playing', default: false });
-export const ActivePlaylistAtom = atom<string>({ key: 'active', default: '' });
-export const MutedAtom = atom<boolean>({ key: 'mute', default: false });
-export const VolumeAtom = atom<number>({ key: 'volume', default: 0.5 });
+export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
+export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
+export const playingAtom = atom<boolean>({ key: 'playing', default: false });
+export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
+export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
+export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });

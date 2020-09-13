@@ -14,15 +14,15 @@ import {
   Text,
 } from '@fluentui/react';
 import {
-  SortWithArticles,
-  AlbumListSort,
-  ArtistListSort,
-  SongListSort,
-  SyncedLocations,
+  sortWithArticles,
+  albumListSort,
+  artistListSort,
+  songListSort,
+  syncedLocations,
 } from '../../Recoil/SettingsAtoms';
 import { VerticalScrollDiv } from '../Scrollables';
 
-import type { syncedAtom } from '../../Recoil/Atoms';
+import type { SyncedAtom } from '../../Recoil/Atoms';
 
 import './styles/Settings.css';
 import { ShowOpenDialog } from '../../MyWindow';
@@ -31,7 +31,7 @@ const log = Logger.bind('View-Settings');
 
 declare type PopupItem = {
   title: string;
-  syncedAtom: syncedAtom<string>;
+  syncedAtom: SyncedAtom<string>;
   options: IDropdownOption[];
 };
 
@@ -53,7 +53,8 @@ function SortPopup({ data }: { data: PopupItem }): JSX.Element {
   ): void => {
     if (item) setter(item.key.toString());
   };
-  const SyncingElement = data.syncedAtom.AtomSyncer;
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const SyncingElement: () => JSX.Element = data.syncedAtom.atomSyncer;
   return (
     <>
       <SyncingElement />
@@ -69,7 +70,7 @@ function SortPopup({ data }: { data: PopupItem }): JSX.Element {
 }
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useRecoilState(SyncedLocations.atom);
+  const [newLoc, setNewLoc] = useRecoilState(syncedLocations.atom);
   log(newLoc);
   return (
     <>
@@ -99,14 +100,14 @@ function RecoilLocations(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const [articles, setArticles] = useRecoilState(SortWithArticles.atom);
+  const [articles, setArticles] = useRecoilState(sortWithArticles.atom);
   log('Articles: ' + (articles ? 'true' : 'false'));
   function onChange(ev: React.MouseEvent<HTMLElement>, checked?: boolean) {
     setArticles(checked ? true : false);
   }
   return (
     <>
-      <SortWithArticles.AtomSyncer />
+      <sortWithArticles.atomSyncer />
       <Toggle
         label="Consider articles when sorting"
         checked={articles}
@@ -122,7 +123,7 @@ function ArticleSorting(): JSX.Element {
 export default function Settings(): JSX.Element {
   const album = {
     title: 'Album',
-    syncedAtom: AlbumListSort,
+    syncedAtom: albumListSort,
     options: [
       { key: 'AlbumTitle', text: 'Title' },
       { key: 'AlbumYear', text: 'Year' },
@@ -132,7 +133,7 @@ export default function Settings(): JSX.Element {
   };
   const artist = {
     title: 'Artist',
-    syncedAtom: ArtistListSort,
+    syncedAtom: artistListSort,
     options: [
       { key: 'AlbumCount', text: '# of Albums' },
       { key: 'ArtistName', text: 'Name' },
@@ -141,7 +142,7 @@ export default function Settings(): JSX.Element {
   };
   const song = {
     title: 'Song',
-    syncedAtom: SongListSort,
+    syncedAtom: songListSort,
     options: [
       { key: 'SongTitle', text: 'Title' },
       { key: 'ArtistAlbum', text: 'Artist, then Album' },
@@ -157,7 +158,7 @@ export default function Settings(): JSX.Element {
           <Separator alignContent="start">
             <Text variant="mediumPlus">Music Locations</Text>
           </Separator>
-          <SyncedLocations.AtomSyncer />
+          <syncedLocations.atomSyncer />
           <RecoilLocations />
           <Separator alignContent="start">
             <Text variant="mediumPlus">Sorting Preferences</Text>

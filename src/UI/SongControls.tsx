@@ -3,26 +3,26 @@ import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { GetAudioElem } from './SongPlayback';
-import { PlayingAtom, RepeatAtom, ShuffleAtom } from '../Recoil/Atoms';
-import { SongListAtom } from '../Recoil/MusicDbAtoms';
+import { playingAtom, repeatAtom, shuffleAtom } from '../Recoil/Atoms';
+import { songListAtom } from '../Recoil/MusicDbAtoms';
 import {
-  StartNextSongAtom,
-  StartPrevSongAtom,
-  ShuffleNowPlayingAtom,
-  StartSongPlayingAtom,
+  startNextSongAtom,
+  startPrevSongAtom,
+  shuffleNowPlayingAtom,
+  startSongPlayingAtom,
 } from '../Recoil/api';
 
 import './styles/SongControls.css';
 
 export default function SongControls(): JSX.Element {
-  const playing = useRecoilValue(PlayingAtom) ? 'playing' : 'paused';
-  const [shuf, shufSet] = useRecoilState(ShuffleAtom);
-  const [rep, repSet] = useRecoilState(RepeatAtom);
-  const [, StartSongPlaying] = useRecoilState(StartSongPlayingAtom);
-  const [, StartNextSong] = useRecoilState(StartNextSongAtom);
-  const [, StartPrevSong] = useRecoilState(StartPrevSongAtom);
-  const songList = useRecoilValue(SongListAtom);
-  const [, ShuffleNowPlaying] = useRecoilState(ShuffleNowPlayingAtom);
+  const playing = useRecoilValue(playingAtom) ? 'playing' : 'paused';
+  const [shuf, shufSet] = useRecoilState(shuffleAtom);
+  const [rep, repSet] = useRecoilState(repeatAtom);
+  const [, startSongPlaying] = useRecoilState(startSongPlayingAtom);
+  const [, startNextSong] = useRecoilState(startNextSongAtom);
+  const [, startPrevSong] = useRecoilState(startPrevSongAtom);
+  const songList = useRecoilValue(songListAtom);
+  const [, shuffleNowPlaying] = useRecoilState(shuffleNowPlayingAtom);
 
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';
@@ -34,14 +34,14 @@ export default function SongControls(): JSX.Element {
         onClick={() => {
           if (!shuf) {
             // If we're turning shuffle on, shuffle the Now Playing list
-            ShuffleNowPlaying(true);
+            shuffleNowPlaying(true);
           }
           shufSet(!shuf);
         }}
       >
         &nbsp;
       </span>
-      <span id="prev" onClick={() => StartPrevSong(true)}>
+      <span id="prev" onClick={() => startPrevSong(true)}>
         &nbsp;
       </span>
       <span
@@ -57,11 +57,11 @@ export default function SongControls(): JSX.Element {
           } else if (ae.readyState === 4) {
             void ae.play();
           } else if (songList.length) {
-            StartSongPlaying(0);
+            startSongPlaying(0);
           }
         }}
       ></span>
-      <span id="next" onClick={() => StartNextSong(true)}>
+      <span id="next" onClick={() => startNextSong(true)}>
         &nbsp;
       </span>
       <span id="repeat" className={repClass} onClick={() => repSet(!rep)}>

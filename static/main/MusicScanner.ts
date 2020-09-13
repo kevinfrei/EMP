@@ -8,9 +8,10 @@ import * as persist from './persist';
 import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
 import type { Dirent } from 'fs';
 
-const SetEqual = Comparisons.SetEqual;
 const log = Logger.bind('music');
 // Logger.enable('music');
+
+const setEqual = Comparisons.SetEqual;
 
 export type SongKey = string;
 export type AlbumKey = string;
@@ -142,7 +143,7 @@ function getOrNewAlbum(
       return check;
     }
     // Set equality...
-    if (!SetEqual(check.primaryArtists, artists)) {
+    if (!setEqual(check.primaryArtists, artists)) {
       continue;
     }
     // If we're here, we've found the album we're looking for

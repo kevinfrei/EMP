@@ -1,16 +1,10 @@
 import { Comparisons } from '@freik/core-utils';
-import { GetDataForAlbum } from './DataAccess';
 
-import type {
-  SongKey,
-  StoreState,
-  ArrayOfKeys,
-  AlbumKey,
-  ArtistKey,
-} from './MyStore';
+import type { SongKey } from './MyStore';
 
-export type sorter = (a: string, b: string) => number;
+export type Sorter = (a: string, b: string) => number;
 
+/*
 function noArticles(phrase: string): string {
   const res = phrase.toLocaleUpperCase();
   if (res.startsWith('THE ')) {
@@ -27,7 +21,7 @@ const strCmp = (a: string, b: string): number =>
 
 const theCmp = (a: string, b: string): number =>
   noArticles(a).localeCompare(noArticles(b));
-/*
+
 export const SongBy = {
   ArtistAlbumNumberTitle: (store: StoreState): sorter => {
     const cmp = store.get('SortWithArticles') ? strCmp : theCmp;

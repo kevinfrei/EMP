@@ -52,7 +52,7 @@ function cleanupName(val: string): string {
   return val.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/_/g, ': ');
 }
 
-const MediaInfoTranslation = new Map([
+const mediaInfoTranslation = new Map([
   ['FileSize', addCommas],
   ['Duration', secondsToHMS],
   ['SamplingRate', toKhz],
@@ -65,7 +65,7 @@ function objToMap(o: { [key: string]: string | number }): Map<string, string> {
     if (typeof i === 'string' && i.length > 0 && i[0] !== '@' && i in o) {
       const type = typeof o[i];
       if (type === 'string' || type === 'number') {
-        const translator = MediaInfoTranslation.get(i) || ((j) => j);
+        const translator = mediaInfoTranslation.get(i) || ((j) => j);
         res.set(cleanupName(i), translator(o[i].toString()));
       }
     }

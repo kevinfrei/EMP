@@ -3,26 +3,24 @@ import React, { useEffect } from 'react';
 import { Slider } from '@fluentui/react';
 import { useRecoilState, useRecoilValue, SetterOrUpdater } from 'recoil';
 
-import { GetDataForSong } from '../DataAccess';
-import { StartNextSongAtom } from '../Recoil/api';
+import { startNextSongAtom } from '../Recoil/api';
 import { ConfigurePositionInterval } from '../MyWindow';
 import {
   mediaTimeAtom,
   mediaTimeRemainingSel,
   mediaTimePositionSel,
   mediaTimePercentRWSel,
-  PlayingAtom,
-  ShuffleAtom,
-  RepeatAtom,
+  playingAtom,
 } from '../Recoil/Atoms';
 
 import type { MediaTime } from '../Recoil/Atoms';
 
 import './styles/SongPlayback.css';
 import {
-  AlbumKeyForSongKeySel,
-  CurrentSongKeySel,
-  DataForSongSel,
+  albumKeyForSongKeySel,
+  currentSongKeySel,
+  dataForSongSel,
+  SongData,
 } from '../Recoil/MusicDbAtoms';
 
 export function GetAudioElem(): HTMLMediaElement | void {
@@ -50,11 +48,13 @@ export default function SongPlayback(): JSX.Element {
   const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingSel);
 
   let audio: React.ReactElement<HTMLAudioElement>;
-  const songKey = useRecoilValue(CurrentSongKeySel);
-  const [, StartNextSong] = useRecoilState(StartNextSongAtom);
-  const [, setPlaying] = useRecoilState(PlayingAtom);
-  const albumKey = useRecoilValue(AlbumKeyForSongKeySel(songKey));
-  const {title, artist, album} = useRecoilValue(DataForSongSel(songKey));
+  const songKey = useRecoilValue(currentSongKeySel);
+  const [, startNextSong] = useRecoilState(startNextSongAtom);
+  const [, setPlaying] = useRecoilState(playingAtom);
+  const albumKey = useRecoilValue(albumKeyForSongKeySel(songKey));
+  const { title, artist, album }: SongData = useRecoilValue(
+    dataForSongSel(songKey),
+  );
   let split = '';
   let picUrl = 'pic://pic/pic.svg';
   if (songKey !== '') {
@@ -65,7 +65,7 @@ export default function SongPlayback(): JSX.Element {
         src={'tune://song/' + songKey}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        onEnded={() => StartNextSong(true)}
+        onEnded={() => startNextSong(true)}
       />
     ) as React.ReactElement<HTMLAudioElement>;
     picUrl = 'pic://album/' + albumKey;

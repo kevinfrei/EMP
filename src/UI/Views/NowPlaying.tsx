@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   Dialog,
@@ -16,38 +16,39 @@ import { Comparisons } from '@freik/core-utils';
 import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
 
-import { ShuffleAtom } from '../../Recoil/Atoms';
+import { shuffleAtom } from '../../Recoil/Atoms';
 import {
-  CurrentIndexAtom,
-  NowPlayingAtom,
-  PlaylistsAtom,
-  SongListAtom,
+  currentIndexAtom,
+  nowPlayingAtom,
+  playlistsAtom,
+  songListAtom,
 } from '../../Recoil/MusicDbAtoms';
 
 import './styles/NowPlaying.css';
 import {
-  StartSongPlayingAtom,
-  RemoveSongNumberAtom,
-  StopAndClearAtom,
+  startSongPlayingAtom,
+  removeSongNumberAtom,
+  stopAndClearAtom,
 } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
+import { SongKey } from '../../MyStore';
 
 export default function NowPlaying(): JSX.Element {
-  const [nowPlaying, setNowPlaying] = useRecoilState(NowPlayingAtom);
-  const [curPls, setCurPls] = useRecoilState(PlaylistsAtom);
-  const [curIndex, setCurIndex] = useRecoilState(CurrentIndexAtom);
-  const [songList, setSongList] = useRecoilState(SongListAtom);
+  const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
+  const [curPls, setCurPls] = useRecoilState(playlistsAtom);
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const [songList, setSongList] = useRecoilState(songListAtom);
 
   const [showSaveAs, setShowSaveAs] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
   //  const [, setPlaying] = useRecoilState(playingAtom);
-  const [, setShuffle] = useRecoilState(ShuffleAtom);
+  const [, setShuffle] = useRecoilState(shuffleAtom);
 
-  const [, StopAndClear] = useRecoilState(StopAndClearAtom);
-  const [, PlaySongNumber] = useRecoilState(StartSongPlayingAtom);
-  const [, RemoveSongNumber] = useRecoilState(RemoveSongNumberAtom);
+  const [, stopAndClear] = useRecoilState(stopAndClearAtom);
+  const [, playSongNumber] = useRecoilState(startSongPlayingAtom);
+  const [, removeSongNumber] = useRecoilState(removeSongNumberAtom);
   // Clear sorts when shuffle gets updated
   /*
   TODO
@@ -77,7 +78,7 @@ export default function NowPlaying(): JSX.Element {
   // Helpers for the Confirm Delete dialog
   const closeConfirmation = () => setShowConfirmation(false);
   const approvedConfirmation = () => {
-    StopAndClear(true);
+    stopAndClear(true);
     closeConfirmation();
   };
 
@@ -149,7 +150,7 @@ export default function NowPlaying(): JSX.Element {
       <DefaultButton
         onClick={() => {
           if (PlayingPlaylist(nowPlaying)) {
-            StopAndClear(true);
+            stopAndClear(true);
           } else {
             setShowConfirmation(true);
           }
@@ -171,7 +172,7 @@ export default function NowPlaying(): JSX.Element {
 
   const setSort = (which: string) => {
     if (which === sortBy) return;
-    const curKey = songList[curIndex];
+    const curKey: SongKey = songList[curIndex];
     switch (which) {
       case 'album':
         //        songList.sort(SongBy.AlbumAristNumberTitle(store));
@@ -202,14 +203,14 @@ export default function NowPlaying(): JSX.Element {
       <SongLine
         key={songKey}
         songKey={songKey}
-        onDoubleClick={() => PlaySongNumber(idx)}
+        onDoubleClick={() => playSongNumber(idx)}
         className={clsName}
         template="CLR#T"
       >
         <IconButton
           style={{ height: '28px', width: '28px' }}
           iconProps={{ iconName: 'Delete' }}
-          onClick={() => RemoveSongNumber(idx)}
+          onClick={() => removeSongNumber(idx)}
         />
       </SongLine>
     );

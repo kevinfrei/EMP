@@ -9,14 +9,14 @@ import {
 
 import * as api from './api';
 import {
-  CurrentIndexAtom,
-  MaybeAlbumByKey,
-  MaybeArtistByKey,
-  NowPlayingAtom,
-  PlaylistsAtom,
-  SongListAtom,
+  currentIndexAtom,
+  maybeAlbumByKeySel,
+  maybeArtistByKeySel,
+  nowPlayingAtom,
+  playlistsAtom,
+  songListAtom,
 } from './MusicDbAtoms';
-import { ActivePlaylistAtom, RepeatAtom, ShuffleAtom } from './Atoms';
+import { activePlaylistAtom, repeatAtom, shuffleAtom } from './Atoms';
 import ShuffleArray from '../ShuffleArray';
 import { GetAudioElem } from '../UI/SongPlayback';
 
@@ -24,53 +24,53 @@ import type { SongKey } from '../MyStore';
 
 // TODO: Break this out into smaller chunks so that any random state change
 // doesn't incur a full rerun of all this code...
-export default function Manip(): JSX.Element {
+export default function ApiManipulation(): JSX.Element {
   // "Functions"
-  const startPlaylist = useRecoilValue(api.StartPlaylistAtom);
-  const startNextSong = useRecoilState(api.StartNextSongAtom);
-  const startPrevSong = useRecoilState(api.StartPrevSongAtom);
+  const startPlaylist = useRecoilValue(api.startPlaylistAtom);
+  const startNextSong = useRecoilState(api.startNextSongAtom);
+  const startPrevSong = useRecoilState(api.startPrevSongAtom);
   const [constStartSongPlaying, setStartSongPlaying] = useRecoilState(
-    api.StartSongPlayingAtom,
+    api.startSongPlayingAtom,
   );
-  let startSongPlaying = constStartSongPlaying;
-  const stopAndClear = useRecoilValue(api.StopAndClearAtom);
-  const deletePlaylist = useRecoilValue(api.DeletePlaylistAtom);
-  const removeSongNumber = useRecoilValue(api.RemoveSongNumberAtom);
-  const addSongList = useRecoilValue(api.AddSongListAtom);
-  const addSong = useRecoilValue(api.AddSongAtom);
-  const addAlbum = useRecoilValue(api.AddAlbumAtom);
-  const addArtist = useRecoilValue(api.AddArtistAtom);
-  const shuffleNowPlaying = useRecoilValue(api.ShuffleNowPlayingAtom);
+  let startSongPlaying: number = constStartSongPlaying;
+  const stopAndClear = useRecoilValue(api.stopAndClearAtom);
+  const deletePlaylist = useRecoilValue(api.deletePlaylistAtom);
+  const removeSongNumber = useRecoilValue(api.removeSongNumberAtom);
+  const addSongList = useRecoilValue(api.addSongListAtom);
+  const addSong = useRecoilValue(api.addSongAtom);
+  const addAlbum = useRecoilValue(api.addAlbumAtom);
+  const addArtist = useRecoilValue(api.addArtistAtom);
+  const shuffleNowPlaying = useRecoilValue(api.shuffleNowPlayingAtom);
 
   // Resetters
-  const resetStartPlaylist = useResetRecoilState(api.StartPlaylistAtom);
-  const resetStartNextSong = useResetRecoilState(api.StartNextSongAtom);
-  const resetStartPrevSong = useResetRecoilState(api.StartPrevSongAtom);
-  const resetStartSongPlaying = useResetRecoilState(api.StartSongPlayingAtom);
-  const resetStopAndClear = useResetRecoilState(api.StopAndClearAtom);
-  const resetDeletePlaylist = useResetRecoilState(api.DeletePlaylistAtom);
-  const resetRemoveSongNumber = useResetRecoilState(api.RemoveSongNumberAtom);
-  const resetAddSongList = useResetRecoilState(api.AddSongListAtom);
-  const resetAddSong = useResetRecoilState(api.AddSongAtom);
-  const resetAddAlbum = useResetRecoilState(api.AddAlbumAtom);
-  const resetAddArtist = useResetRecoilState(api.AddArtistAtom);
-  const resetShuffleNowPlaying = useResetRecoilState(api.ShuffleNowPlayingAtom);
+  const resetStartPlaylist = useResetRecoilState(api.startPlaylistAtom);
+  const resetStartNextSong = useResetRecoilState(api.startNextSongAtom);
+  const resetStartPrevSong = useResetRecoilState(api.startPrevSongAtom);
+  const resetStartSongPlaying = useResetRecoilState(api.startSongPlayingAtom);
+  const resetStopAndClear = useResetRecoilState(api.stopAndClearAtom);
+  const resetDeletePlaylist = useResetRecoilState(api.deletePlaylistAtom);
+  const resetRemoveSongNumber = useResetRecoilState(api.removeSongNumberAtom);
+  const resetAddSongList = useResetRecoilState(api.addSongListAtom);
+  const resetAddSong = useResetRecoilState(api.addSongAtom);
+  const resetAddAlbum = useResetRecoilState(api.addAlbumAtom);
+  const resetAddArtist = useResetRecoilState(api.addArtistAtom);
+  const resetShuffleNowPlaying = useResetRecoilState(api.shuffleNowPlayingAtom);
 
   // State input
-  const [currentIndex, setCurrentIndex] = useRecoilState(CurrentIndexAtom);
-  const [playlists, setPlaylists] = useRecoilState(PlaylistsAtom);
+  const [currentIndex, setCurrentIndex] = useRecoilState(currentIndexAtom);
+  const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
   const [activePlaylist, setActivePlaylist] = useRecoilState(
-    ActivePlaylistAtom,
+    activePlaylistAtom,
   );
-  const [constSongList, setSongList] = useRecoilState(SongListAtom);
+  const [constSongList, setSongList] = useRecoilState(songListAtom);
   let songList = constSongList;
-  const repeat = useRecoilValue(RepeatAtom);
-  const shuffle = useRecoilValue(ShuffleAtom);
+  const repeat = useRecoilValue(repeatAtom);
+  const shuffle = useRecoilValue(shuffleAtom);
 
-  const resetSongList = useResetRecoilState(SongListAtom);
-  const resetActivePlaylist = useResetRecoilState(ActivePlaylistAtom);
-  const resetNowPlaying = useResetRecoilState(NowPlayingAtom);
-  const resetCurrentIndex = useResetRecoilState(CurrentIndexAtom);
+  const resetSongList = useResetRecoilState(songListAtom);
+  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
+  const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
+  const resetCurrentIndex = useResetRecoilState(currentIndexAtom);
 
   // Start playing a particular playlist
   if (startPlaylist.length > 0) {
@@ -157,8 +157,8 @@ export default function Manip(): JSX.Element {
     resetRemoveSongNumber();
   }
 
-  const artistToAdd = useRecoilValue(MaybeArtistByKey(addArtist));
-  const albumToAdd = useRecoilValue(MaybeAlbumByKey(addAlbum));
+  const artistToAdd = useRecoilValue(maybeArtistByKeySel(addArtist));
+  const albumToAdd = useRecoilValue(maybeAlbumByKeySel(addAlbum));
   const artistList: SongKey[] = artistToAdd === null ? [] : artistToAdd.songs;
   const albumList: SongKey[] = albumToAdd === null ? [] : albumToAdd.songs;
   const justASong: SongKey[] = addSong.length > 0 ? [addSong] : [];
