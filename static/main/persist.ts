@@ -1,13 +1,12 @@
 import { app } from 'electron';
 import path from 'path';
 import fs, { promises as fsp } from 'fs';
-import { Logger, FTON, SeqNum } from '@freik/core-utils';
+import { Logger, FTON, SeqNum, FTONData } from '@freik/core-utils';
 
 import type { Rectangle } from 'electron';
-import type { FTONData } from '@freik/core-utils';
 
 const log = Logger.bind('persist');
-// Logger.enable('persist');
+Logger.enable('persist');
 
 export type MaybeRectangle = {
   width: number;
@@ -21,13 +20,13 @@ export type WindowPosition = {
   isMaximized: boolean;
 };
 
-export type ValueUpdateListener = (val: FTONData) => void;
+export type ValueUpdateListener = (val: string) => void;
 
 export type Persist = {
-  getItem: <T>(key: string) => T | void;
-  getItemAsync: <T>(key: string) => Promise<T | void>;
-  setItem(key: string, value: FTONData): void;
-  setItemAsync(key: string, value: FTONData): Promise<void>;
+  getItem: (key: string) => string | void;
+  getItemAsync: (key: string) => Promise<string | void>;
+  setItem(key: string, value: string): void;
+  setItemAsync(key: string, value: string): Promise<void>;
   deleteItem(key: string): void;
   deleteItemAsync(key: string): Promise<void>;
   getWindowPos(): WindowPosition;
@@ -37,7 +36,7 @@ export type Persist = {
   unsubscribe(id: string): boolean;
 };
 
-const memoryCache = new Map<string, FTONData>();
+const memoryCache = new Map<string, string>();
 const listeners = new Map<string, Map<string, ValueUpdateListener>>();
 const getNextListenerId = SeqNum();
 
@@ -48,44 +47,44 @@ function storageLocation(id: string): string {
 
 log(`User data location: ${storageLocation('test')}`);
 
-function readFile(id: string): FTONData {
+function readFile(id: string): string | void {
   let data = memoryCache.get(id);
   if (data) {
     return data;
   }
   try {
-    data = FTON.parse(fs.readFileSync(storageLocation(id), 'utf8'));
+    data = fs.readFileSync(storageLocation(id), 'utf8');
     memoryCache.set(id, data);
     return data;
   } catch (e) {
     log('Error occurred during readFile');
     log(e);
   }
-  return {};
 }
 
-async function readFileAsync(id: string): Promise<FTONData> {
-  let data = memoryCache.get(id);
+async function readFileAsync(id: string): Promise<string | void> {
+  const data = memoryCache.get(id);
   if (data) {
+    log('returning cached data for ' + id);
     return data;
   }
   try {
     const contents = await fsp.readFile(storageLocation(id), 'utf8');
-    data = FTON.parse(contents);
+    memoryCache.set(id, contents);
+    return contents;
   } catch (e) {
     log('Error occurred during readFileAsync');
     log(e);
   }
-  return {};
 }
 
-function writeFile(id: string, val: FTONData): void {
-  fs.writeFileSync(storageLocation(id), FTON.stringify(val), 'utf8');
+function writeFile(id: string, val: string): void {
+  fs.writeFileSync(storageLocation(id), val, 'utf8');
   memoryCache.set(id, val);
 }
 
-async function writeFileAsync(id: string, val: FTONData): Promise<void> {
-  await fsp.writeFile(storageLocation(id), FTON.stringify(val), 'utf8');
+async function writeFileAsync(id: string, val: string): Promise<void> {
+  await fsp.writeFile(storageLocation(id), val, 'utf8');
   memoryCache.set(id, val);
 }
 
@@ -109,7 +108,7 @@ async function deleteFileAsync(id: string) {
   }
 }
 
-function notify(key: string, val: FTONData) {
+function notify(key: string, val: string) {
   // For each listener, invoke the listening function
   const ls = listeners.get(key);
   if (!ls) return;
@@ -143,52 +142,31 @@ export function unsubscribe(id: string): boolean {
 }
 
 // Get a value from disk/memory
-export function getItem<T>(key: string): T | void {
+export function getItem(key: string): string | void {
   log('Reading ' + key);
-  const val: any = readFile(key);
-  if (val && typeof val === 'object' && key in val) {
-    log('returning this value:');
-    log(val[key]); // eslint-disable-line
-    return val[key] as T; // eslint-disable-line
-  } else {
-    log('Failed to return value');
-  }
+  return readFile(key);
 }
 
 // Get a value from disk/memory
-export async function getItemAsync<T>(key: string): Promise<T | void> {
+export async function getItemAsync(key: string): Promise<string | void> {
   log('Async Reading ' + key);
-  const val: any = await readFileAsync(key);
-  if (val && typeof val === 'object' && key in val) {
-    log('returning this value:');
-    log(val[key]); // eslint-disable-line
-    return val[key] as T; // eslint-disable-line
-  } else {
-    log('Failed to return value');
-  }
+  return await readFileAsync(key);
 }
 
 // Save a value to disk and cache it
-export function setItem(key: string, value: FTONData): void {
+export function setItem(key: string, value: string): void {
   log(`Writing ${key}:`);
   log(value);
-  const val: { [key: string]: FTONData } = {};
-  val[key] = value;
-  writeFile(key, val);
+  writeFile(key, value);
   log(`Notifying ${key}`);
   notify(key, value);
 }
 
 // Async Save a value to disk and cache it
-export async function setItemAsync(
-  key: string,
-  value: FTONData,
-): Promise<void> {
+export async function setItemAsync(key: string, value: string): Promise<void> {
   log(`Async Writing ${key}:`);
   log(value);
-  const val: { [key: string]: FTONData } = {};
-  val[key] = value;
-  await writeFileAsync(key, val);
+  await writeFileAsync(key, value);
   log(`Async Notifying ${key}`);
   notify(key, value);
 }
@@ -223,11 +201,14 @@ const defaultWindowPosition: WindowPosition = makeWindowPos(
 
 export function getWindowPos(): WindowPosition {
   try {
-    /* eslint-disable */
-    const tmpws: any = getItem('windowPosition');
+    const tmp = getItem('windowPosition');
+    if (!tmp) {
+      return defaultWindowPosition;
+    }
+    const tmpws = FTON.parse(tmp);
     if (tmpws && typeof tmpws === 'object' && 'bounds' in tmpws) {
       const bounds = tmpws.bounds;
-      if (
+      if (bounds &&
         typeof bounds === 'object' &&
         'x' in bounds &&
         typeof bounds.x === 'number' &&
@@ -248,7 +229,6 @@ export function getWindowPos(): WindowPosition {
           tmpws.isMaximized,
         );
       }
-      /* eslint-enable */
     }
   } catch (e) {
     log('Error occurred during getWindowPos');
@@ -259,7 +239,7 @@ export function getWindowPos(): WindowPosition {
 }
 
 export function setWindowPos(st: WindowPosition): void {
-  setItem('windowPosition', st as FTONData);
+  setItem('windowPosition', FTON.stringify(st as FTONData));
 }
 
 export function getBrowserWindowPos(st: WindowPosition): Rectangle {

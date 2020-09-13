@@ -1,5 +1,5 @@
 import * as persist from './persist';
-import { Logger } from '@freik/core-utils';
+import { FTON, Logger } from '@freik/core-utils';
 
 import type {
   SongKey,
@@ -18,8 +18,10 @@ Logger.enable('MusicAccess');
 
 export async function getMusicDB(): Promise<MusicDB | void> {
   try {
-    const musicDB = await persist.getItemAsync<MusicDB>('DB');
-    return musicDB;
+    const musicDBstr = await persist.getItemAsync('DB');
+    if (musicDBstr) {
+      return (FTON.parse(musicDBstr) as unknown) as MusicDB;
+    }
   } catch (e) {
     return;
   }

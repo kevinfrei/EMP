@@ -8,11 +8,7 @@ import {
 import { useRef, useEffect } from 'react';
 import { Logger, FTON } from '@freik/core-utils';
 
-import {
-  PromiseSubscribe,
-  PromiseUnsubscribe,
-  PromiseSend,
-} from '../MyWindow';
+// import { PromiseSubscribe, PromiseUnsubscribe, PromiseSend } from '../MyWindow';
 import * as ipc from '../ipc';
 
 import type { SongKey } from '../MyStore';
@@ -70,40 +66,47 @@ export function makeBackedAtom<T>(key: string, def: T): syncedAtom<T> {
     // Register an effect to pull server side changes into the atom
     useEffect(() => {
       log(`key: ${key} effect triggered`);
-      function handleChange(value: T) {
-        if (
-          atomRef &&
-          FTON.stringify(atomRef.current as FTONData) !==
-            FTON.stringify((value as unknown) as FTONData)
-        ) {
-          log(`key: ${key} updated to:`);
+      ipc
+        .GetGeneral(key)
+        .then((value: string | void) => {
+          log(`GetGeneral(${key}) promise completed`);
           log(value);
-          atomRef.current = value;
-          setAtomValue(value);
-        }
-      }
-      // Register the listener
-      const theID = PromiseSubscribe(key, handleChange as any);
-      return function cleanup() {
-        PromiseUnsubscribe(key, theID);
-      };
+          if (
+            value &&
+            atomRef &&
+            FTON.stringify((atomRef.current as unknown) as FTONData) !== value
+          ) {
+            log(`key: ${key} updated to:`);
+            log(value);
+            const newVal: T = (FTON.parse(value) as unknown) as T;
+            atomRef.current = newVal;
+            setAtomValue(newVal);
+          }
+        })
+        .catch((reason) => {
+          log('GetGeneral failed!');
+          log(reason);
+        });
     }, [atomRef, setAtomValue]);
 
     // This updates the server whenever the value or the ref changes
     useEffect(() => {
       log(`ref change triggered for ${key}`);
       if (
+        atomRef &&
+        atomRef.current &&
         FTON.stringify(atomValue as any) !==
-        FTON.stringify(atomRef.current as any)
+          FTON.stringify(atomRef.current as any)
       ) {
         atomRef.current = atomValue;
         log(`Sending update for ${key}`);
-        void PromiseSend('promise-set', {
-          key,
-          value: atomValue,
-        });
+        ipc
+          .SetGeneral(key, FTON.stringify(atomValue as any))
+          .catch((reason) => {
+            log('SetGeneral failed!');
+            log(reason);
+          });
       }
-      void PromiseSend('promise-get', { key });
     }, [atomValue, atomRef]);
     return null;
   };

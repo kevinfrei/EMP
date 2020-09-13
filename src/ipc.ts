@@ -31,3 +31,11 @@ export async function GetAllPlaylists(): Promise<Map<
 export async function GetMediaInfo(key: SongKey): Promise<MediaInfo | void> {
   return await CallMain<SongKey, MediaInfo>('get-media-info', key);
 }
+
+export async function GetGeneral(key: string): Promise<string | void> {
+  return await CallMain<string, string>('get-general', key);
+}
+
+export async function SetGeneral(key: string, data: string): Promise<void> {
+  return await CallMain<string, void>('set-general', key + ':' + data);
+}

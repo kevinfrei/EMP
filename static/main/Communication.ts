@@ -3,7 +3,7 @@ import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
 import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
-// import type { MusicDB } from './MusicScanner';
+
 import type { TrieNode } from './search';
 import {
   getAllAlbums,

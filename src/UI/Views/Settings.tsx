@@ -70,6 +70,7 @@ function SortPopup({ data }: { data: PopupItem }): JSX.Element {
 
 function RecoilLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(SyncedLocations.atom);
+  log(newLoc);
   return (
     <>
       {(newLoc || []).map((elem) => (

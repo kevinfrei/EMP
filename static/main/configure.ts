@@ -6,6 +6,8 @@ import * as persist from './persist';
 
 import type { ProtocolRequest, ProtocolResponse } from 'electron';
 import type { MusicDB } from './MusicScanner';
+import { getMusicDB } from './MusicAccess';
+import { DefaultValue } from 'recoil';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 
@@ -19,20 +21,27 @@ function picProtocol(req: ProtocolRequest, callback: HandlerCallback) {
     log('No URL specified in pic request');
     return callback({ error: -324 });
   }
+  const defaultValue = () => {
+    const thePath = path.join(__dirname, '..', 'img-album.svg');
+    log(`Non-album cover pic:// Returning ${thePath}`);
+    callback({ path: thePath });
+  };
   if (req.url.startsWith('pic://album/')) {
     // Let's check the db to see if we've got
     log('Trying to get the DB');
-    const db: MusicDB | void = persist.getItem('DB');
-    if (db) {
-      const maybePath = db.pictures.get(req.url.substr(12));
-      if (maybePath) {
-        return callback({ path: maybePath });
-      }
-    }
+    getMusicDB()
+      .then((db) => {
+        if (db) {
+          const maybePath = db.pictures.get(req.url.substr(12));
+          if (maybePath) {
+            callback({ path: maybePath });
+          }
+        }
+        defaultValue();
+      })
+      .catch(defaultValue);
   }
-  const thePath = path.join(__dirname, '..', 'img-album.svg');
-  log(`Non-album cover pic:// Returning ${thePath}`);
-  return callback({ path: thePath });
+  defaultValue();
 }
 
 function tuneProtocol(req: ProtocolRequest, callback: HandlerCallback) {
@@ -42,16 +51,20 @@ function tuneProtocol(req: ProtocolRequest, callback: HandlerCallback) {
     callback({ error: -324 });
   } else if (req.url.startsWith('tune://song/')) {
     const key = req.url.substring(12);
-    const db: MusicDB | void = persist.getItem('DB');
-    if (!db) {
-      return;
-    }
-    const song = db.songs.get(key);
-    if (song) {
-      const thePath = song.path;
-      log('Returning path ' + thePath);
-      callback({ path: thePath });
-    }
+    getMusicDB()
+      .then((db) => {
+        if (!db) {
+          callback({ error: 404 });
+        } else {
+          const song = db.songs.get(key);
+          if (song) {
+            const thePath = song.path;
+            log('Returning path ' + thePath);
+            callback({ path: thePath });
+          }
+        }
+      })
+      .catch((e) => callback({ error: 404 }));
   } else {
     callback({ error: 404 });
   }

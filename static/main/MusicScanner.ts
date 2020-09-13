@@ -1,7 +1,7 @@
 import { promises as fsp } from 'fs';
 import path from 'path';
 import { Metadata as metadata } from '@freik/media-utils';
-import { Comparisons, Logger, SeqNum } from '@freik/core-utils';
+import { Comparisons, FTON, Logger, SeqNum } from '@freik/core-utils';
 
 import * as persist from './persist';
 
@@ -61,7 +61,7 @@ export type MediaInfo = {
 
 let existingKeys: Map<string, SongKey> | null = null;
 const newSongKey = (() => {
-  const highestSongKey = persist.getItem<string>('highestSongKey');
+  const highestSongKey = persist.getItem('highestSongKey');
   if (highestSongKey) {
     log(`highestSongKey: ${highestSongKey}`);
     return SeqNum('S', highestSongKey);
@@ -294,9 +294,10 @@ async function fileNamesToDatabase(
   };
 
   // Get the list of existing paths to song-keys
-  existingKeys =
-    (await persist.getItemAsync<Map<string, SongKey>>('songHashIndex')) ||
-    new Map();
+  const shiStr = await persist.getItemAsync('songHashIndex');
+  existingKeys = shiStr
+    ? (FTON.parse(shiStr) as Map<string, SongKey>)
+    : new Map();
 
   for (const file of files) {
     const littlemd: SimpleMetadata | void = metadata.fromPath(file);
@@ -314,7 +315,9 @@ async function fileNamesToDatabase(
   await HandleAlbumCovers(db, pics);
   await persist.setItemAsync(
     'songHashIndex',
-    new Map([...db.songs.values()].map((val) => [val.path, val.key])),
+    FTON.stringify(
+      new Map([...db.songs.values()].map((val) => [val.path, val.key])),
+    ),
   );
   await persist.setItemAsync('highestSongKey', newSongKey());
   return db;
