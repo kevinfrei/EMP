@@ -125,14 +125,7 @@ export function AlbumView(): JSX.Element {
   );
 }
 
-function TheList() {
+export default function NewAlbumView(): JSX.Element {
   const allAlbums = useRecoilValue(AllAlbums);
   return <List items={[...allAlbums.values()]} />;
-}
-export default function NewAlbumView(): JSX.Element {
-  return (
-    <React.Suspense fallback="Please Hold...">
-      <TheList />
-    </React.Suspense>
-  );
 }

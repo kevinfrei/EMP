@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   Dialog,
@@ -59,6 +59,7 @@ export default function NowPlaying(): JSX.Element {
     return () => sub.unsubscribe();
   });
   */
+
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
   const justCloseSaveAs = () => setShowSaveAs(false);

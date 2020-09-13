@@ -152,24 +152,22 @@ export default function Settings(): JSX.Element {
   return (
     <>
       <div id="current-view" />
-      <React.Suspense fallback={<div>Loading Locations...</div>}>
-        <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
-          <Stack>
-            <Separator alignContent="start">
-              <Text variant="mediumPlus">Music Locations</Text>
-            </Separator>
-            <SyncedLocations.AtomSyncer />
-            <RecoilLocations />
-            <Separator alignContent="start">
-              <Text variant="mediumPlus">Sorting Preferences</Text>
-            </Separator>
-            <SortPopup data={album} />
-            <SortPopup data={artist} />
-            <SortPopup data={song} />
-            <ArticleSorting />
-          </Stack>
-        </VerticalScrollDiv>
-      </React.Suspense>
+      <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
+        <Stack>
+          <Separator alignContent="start">
+            <Text variant="mediumPlus">Music Locations</Text>
+          </Separator>
+          <SyncedLocations.AtomSyncer />
+          <RecoilLocations />
+          <Separator alignContent="start">
+            <Text variant="mediumPlus">Sorting Preferences</Text>
+          </Separator>
+          <SortPopup data={album} />
+          <SortPopup data={artist} />
+          <SortPopup data={song} />
+          <ArticleSorting />
+        </Stack>
+      </VerticalScrollDiv>
     </>
   );
 }

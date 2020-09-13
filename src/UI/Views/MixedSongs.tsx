@@ -134,7 +134,7 @@ function OldMixedSongView(): JSX.Element {
 */
 const theme = getTheme();
 
-function MixedSongsList() {
+export default function MixedSongsList() {
   const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
@@ -152,7 +152,7 @@ function MixedSongsList() {
   };
 
   return (
-    <>
+    <div className="songView current-view">
       <Dialog
         hidden={!showDialog}
         onDismiss={() => setShowDialog(false)}
@@ -170,16 +170,7 @@ function MixedSongsList() {
         }}
         onItemInvoked={(item: Song) => AddSong(item.key)}
       />
-    </>
-  );
-}
-
-export default function FluentMixedSongsView(): JSX.Element {
-  return (
-    <div className="songView current-view">
-      <React.Suspense fallback="Please wait...">
-        <MixedSongsList />
-      </React.Suspense>
     </div>
   );
 }
+

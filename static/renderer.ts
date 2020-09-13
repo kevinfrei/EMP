@@ -29,6 +29,7 @@ declare let window: MyWindow;
 // to the ipcRenderer to enable asynchronous callbacks to affect the Undux store
 
 window.addEventListener('DOMContentLoaded', () => {
+  // eslint-disable-next-line no-debugger
   if (false) debugger;
   window.ipc = ipcRenderer;
   log('About to attach the remote');
