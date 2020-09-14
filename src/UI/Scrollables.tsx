@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useLayoutEffect, useRef } from 'react';
 import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';

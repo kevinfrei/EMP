@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
+import React, { useRef, useEffect } from 'react';
 import {
   atom,
   selector,
@@ -5,7 +7,6 @@ import {
   useRecoilState,
   DefaultValue,
 } from 'recoil';
-import React, { useRef, useEffect } from 'react';
 import { Logger, FTON } from '@freik/core-utils';
 
 import * as ipc from '../ipc';
