@@ -9,7 +9,7 @@ import SongLine from '../SongLine';
 import { allAlbumsSel } from '../../Recoil/MusicDbAtoms';
 import { addAlbumAtom, addSongAtom } from '../../Recoil/api';
 
-import type { Album } from '../../MyStore';
+import type { Album } from '../../DataSchema';
 
 import './styles/Albums.css';
 

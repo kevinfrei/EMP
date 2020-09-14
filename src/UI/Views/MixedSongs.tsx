@@ -32,7 +32,7 @@ import type {
   ArtistKey,
   Song,
   SongKey,
-} from '../../MyStore';
+} from '../../DataSchema';
 import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
@@ -103,8 +103,10 @@ export default function MixedSongsList(): JSX.Element {
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
   const [, addSong] = useRecoilState(addSongAtom);
-  const [sortedItems, setSortedItems] = useState([...songs.values()]);
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('rl');
+  const [sortedItems, setSortedItems] = useState(
+    SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
+  );
 
   const setSort = (which: string) => {
     // This rearranges the sort order string

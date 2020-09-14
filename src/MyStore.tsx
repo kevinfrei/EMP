@@ -4,42 +4,16 @@ import {
   withReduxDevtools /* , withLogger*/,
 } from 'undux';
 
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+  SongKey,
+} from './DataSchema';
+
 import type { Effects, Store, StoreDefinition } from 'undux';
-
-export type SongKey = string;
-export type AlbumKey = string;
-export type ArtistKey = string;
-
-export type Song = {
-  key: SongKey;
-  track: number;
-  title: string;
-  url: string;
-  albumId: AlbumKey;
-  artistIds: ArtistKey[];
-  secondaryIds: ArtistKey[];
-};
-
-export type Artist = {
-  key: ArtistKey;
-  name: string;
-  albums: AlbumKey[];
-  songs: SongKey[];
-};
-
-export type Album = {
-  key: AlbumKey;
-  year: number;
-  title: string;
-  vatype: '' | 'va' | 'ost';
-  primaryArtists: Set<ArtistKey>;
-  songs: SongKey[];
-};
-
-export type MediaInfo = {
-  general: Map<string, string>;
-  audio: Map<string, string>;
-};
 
 export type MapNames = 'Artists' | 'Albums' | 'Songs';
 export type ArrayOfKeys = 'ArtistArray' | 'AlbumArray' | 'SongArray';

@@ -29,7 +29,7 @@ import {
 } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
 
-import type  { SongKey } from '../../MyStore';
+import type  { SongKey } from '../../DataSchema';
 
 import './styles/NowPlaying.css';
 

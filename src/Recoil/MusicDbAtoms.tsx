@@ -11,7 +11,7 @@ import type {
   AlbumKey,
   Song,
   SongKey,
-} from '../MyStore';
+} from '../DataSchema';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 

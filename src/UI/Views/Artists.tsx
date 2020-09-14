@@ -8,7 +8,7 @@ import SongLine from '../SongLine';
 import { addArtistAtom, addSongAtom } from '../../Recoil/api';
 import { allArtistsSel } from '../../Recoil/MusicDbAtoms';
 
-import type { Artist } from '../../MyStore';
+import type { Artist } from '../../DataSchema';
 
 import './styles/Artists.css';
 

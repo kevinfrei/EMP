@@ -11,7 +11,7 @@ import { Logger, FTON } from '@freik/core-utils';
 
 import * as ipc from '../ipc';
 
-import type { SongKey } from '../MyStore';
+import type { SongKey } from '../DataSchema';
 import type { RecoilState } from 'recoil';
 import type { FTONData } from '@freik/core-utils';
 

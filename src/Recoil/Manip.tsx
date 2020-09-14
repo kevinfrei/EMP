@@ -20,7 +20,7 @@ import { activePlaylistAtom, repeatAtom, shuffleAtom } from './Atoms';
 import ShuffleArray from '../ShuffleArray';
 import { GetAudioElem } from '../UI/SongPlayback';
 
-import type { SongKey } from '../MyStore';
+import type { SongKey } from '../DataSchema';
 
 // TODO: Break this out into smaller chunks so that any random state change
 // doesn't incur a full rerun of all this code...

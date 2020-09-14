@@ -1,4 +1,6 @@
-import {
+import { CallMain } from './MyWindow';
+
+import type {
   Album,
   AlbumKey,
   Artist,
@@ -6,8 +8,7 @@ import {
   MediaInfo,
   Song,
   SongKey,
-} from './MyStore';
-import { CallMain } from './MyWindow';
+} from './DataSchema';
 
 export async function GetAllSongs(): Promise<Map<SongKey, Song> | void> {
   return await CallMain<void, Map<SongKey, Song>>('get-all-songs');

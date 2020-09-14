@@ -4,7 +4,7 @@ import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 
 import type { IpcRenderer } from 'electron';
 import type { RendererProcessIpc } from '@freik/electron-better-ipc';
-import type { SongKey } from './MyStore';
+import type { SongKey } from './DataSchema';
 
 const log = Logger.bind('MyWindow');
 // Logger.enable('MyWindow');

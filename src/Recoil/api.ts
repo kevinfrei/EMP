@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import type { SongKey, AlbumKey, ArtistKey } from '../MyStore';
+import type { SongKey, AlbumKey, ArtistKey } from '../DataSchema';
 
 export const startSongPlayingAtom = atom<number>({
   key: 'StartSongPlaying',

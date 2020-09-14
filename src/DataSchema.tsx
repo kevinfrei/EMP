@@ -1,14 +1,46 @@
-import type {
-  StoreState,
-  SongKey,
-  AlbumKey,
-  ArtistKey,
-  Song,
-  Album,
-  Artist,
-} from './MyStore';
+export type SongKey = string;
+export type AlbumKey = string;
+export type ArtistKey = string;
 
-export type AlbumInfo = { title: string; year: number; artist: string };
+export type Song = {
+  key: SongKey;
+  track: number;
+  title: string;
+  url: string;
+  albumId: AlbumKey;
+  artistIds: ArtistKey[];
+  secondaryIds: ArtistKey[];
+};
+
+export type Artist = {
+  key: ArtistKey;
+  name: string;
+  albums: AlbumKey[];
+  songs: SongKey[];
+};
+
+export type Album = {
+  key: AlbumKey;
+  year: number;
+  title: string;
+  vatype: '' | 'va' | 'ost';
+  primaryArtists: Set<ArtistKey>;
+  songs: SongKey[];
+};
+
+export type MediaInfo = {
+  general: Map<string, string>;
+  audio: Map<string, string>;
+};
+
+export type SongData = {
+  title: string;
+  track: number;
+  artist: string;
+  album: string;
+};
+
+export type AlbumData = { title: string; year: number; artist: string };
 
 export function GetArtistString(
   artistList: ArtistKey[],
@@ -32,7 +64,7 @@ export function GetDataForSong(
   song: Song,
   allAlbums: Map<AlbumKey, Album>,
   allArtists: Map<ArtistKey, Artist>,
-): { title: string; track: number; artist: string; album: string } {
+): SongData {
   const res = { title: '-', track: 0, artist: '-', album: '-' };
   if (!song) {
     return res;
@@ -70,7 +102,7 @@ export function GetArtistForAlbum(
 export function GetDataForAlbum(
   album: Album,
   artists: Map<ArtistKey, Artist>,
-): AlbumInfo {
+): AlbumData {
   const artist = GetArtistForAlbum(album, artists);
   return { title: album.title, year: album.year, artist };
 }
