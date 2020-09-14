@@ -110,24 +110,3 @@ export default function Playlister(): JSX.Element {
   );
 }
 
-/*
-function Playlists(): JSX.Element {
-  const store = Store.useStore();
-  const playlists = store.get('Playlists');
-  const curPls = store.get('activePlaylistName');
-  const names = [...playlists.keys()];
-  names.sort();
-  return (
-    <>
-      <div id="current-header">Playlists</div>
-      <div id="current-view">
-        <VerticalScrollDiv scrollId="playlistsPos" layoutId="current-view">
-          {names.map((name: string) => (
-            <Playlist key={name} name={name} playing={name === curPls} />
-          ))}
-        </VerticalScrollDiv>
-      </div>
-    </>
-  );
-}
-*/
