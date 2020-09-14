@@ -1,5 +1,7 @@
-import * as persist from './persist';
 import { FTON, Logger } from '@freik/core-utils';
+
+import * as persist from './persist';
+import { getMediaInfo } from './metadata';
 
 import type {
   SongKey,
@@ -11,7 +13,6 @@ import type {
   Album,
   MediaInfo,
 } from './MusicScanner';
-import { getMediaInfo } from './metadata';
 
 const log = Logger.bind('MusicAccess');
 Logger.enable('MusicAccess');

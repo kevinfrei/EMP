@@ -1,6 +1,5 @@
-import { RecoilValue, selector, atom } from 'recoil';
+import { RecoilValue, selector, atom, selectorFamily } from 'recoil';
 import { Logger } from '@freik/core-utils';
-import { selectorFamily } from 'recoil';
 
 import { syncedLocations } from './SettingsAtoms';
 import * as ipc from '../ipc';

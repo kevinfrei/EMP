@@ -12,16 +12,16 @@ import {
   mediaTimePercentRWSel,
   playingAtom,
 } from '../Recoil/Atoms';
-
-import type { MediaTime } from '../Recoil/Atoms';
-
-import './styles/SongPlayback.css';
 import {
   albumKeyForSongKeySel,
   currentSongKeySel,
   dataForSongSel,
   SongData,
 } from '../Recoil/MusicDbAtoms';
+
+import type { MediaTime } from '../Recoil/Atoms';
+
+import './styles/SongPlayback.css';
 
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;

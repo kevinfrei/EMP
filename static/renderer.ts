@@ -41,9 +41,6 @@ window.addEventListener('DOMContentLoaded', () => {
   if (isDev) {
     window.isDev = isDev;
   }
-  // log('Setting up PromiseIPC:');
-  // window.ipcPromise = new PromiseIpcRenderer({ maxTimeoutMs: 5000 });
-  // log(window.ipcPromise);
   log('adding betterIpc');
   window.betterIpc = betterIpc;
   log('ready');

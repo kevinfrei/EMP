@@ -1,14 +1,13 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { CurrentView, curViewAtom } from '../../Recoil/Atoms';
-
 import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
 import PlaylistsView from './Playlists';
 import NowPlayingView from './NowPlaying';
 import SettingsView from './Settings';
-import { useRecoilValue } from 'recoil';
 import RecentlyAddedView from './RecentlyAdded';
 
 export default function ViewSelector(): JSX.Element {

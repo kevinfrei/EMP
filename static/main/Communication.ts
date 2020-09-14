@@ -3,8 +3,6 @@ import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
 import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
-
-import type { TrieNode } from './search';
 import {
   getAllAlbums,
   getAllArtists,
@@ -12,6 +10,8 @@ import {
   getAllSongs,
   getMediaInfoForSong,
 } from './MusicAccess';
+
+import type { TrieNode } from './search';
 
 const log = Logger.bind('Communication');
 // Logger.enable('Communication');
@@ -110,27 +110,7 @@ function mk<T>(
 ): MessageHandler<T> {
   return { command, validator, handler };
 }
-/*
-export function SendDatabase(): void {
-  const musicDB = persist.getItem<MusicDB>('DB');
-  if (!win || !musicDB) {
-    setTimeout(SendDatabase, 100);
-    return;
-  }
-  win.webContents.send(
-    'data',
-    FTON.stringify({ key: 'Albums', value: musicDB.albums }),
-  );
-  win.webContents.send(
-    'data',
-    FTON.stringify({ key: 'Songs', value: musicDB.songs }),
-  );
-  win.webContents.send(
-    'data',
-    FTON.stringify({ key: 'Artists', value: musicDB.artists }),
-  );
-}
-*/
+
 export function SetIndex(
   id: string,
   index: Map<string, TrieNode<unknown>>,
@@ -138,113 +118,6 @@ export function SetIndex(
   indices.set(id, index);
 }
 
-// Walk down the Trie following the string
-/*
-function search(val: string) {
-  let vals = null;
-  for (let i of val.split(' ')) {
-    let index = indices.get('artist');
-    if (!index) {
-      break;
-    }
-    for (let c of Array.from(i)) {
-      if (!index) {
-        break;
-      }
-      vals = index.get(c);
-      if (!vals) {
-        break;
-      }
-    }
-    if (vals) {
-      if (!res) {
-        res = new Set(vals.values);
-      } else {
-        const toRemove = [];
-        for (let i of res) {
-          if (!vals.values.has(i)) {
-            toRemove.push(i);
-          }
-        }
-        for (let i of toRemove) {
-          vals.values.delete(i);
-        }
-      }
-    }
-  }
-  if (!vals) {
-    console.log('Nothing');
-    return;
-  }
-  const results = [...vals.values].map((val) => val.key);
-  console.log(results);
-
-}
-// {key: 'item-to-pull-from-persist'}
-// This is used for the promiseIpc main-side communication
-async function ipcGetter(data: { key: unknown }) {
-  try {
-    log(`promise-get request: ${typeof data}`);
-    log(data);
-    if (
-      typeof data !== 'object' ||
-      !data.hasOwnProperty('key') ||
-      typeof data.key !== 'string'
-    ) {
-      log(`error: invalid promise-get data type: ${typeof data}`);
-      return;
-    }
-    const value = await persist.getItemAsync(data.key);
-    log(`Sending value for key ${data.key}:`);
-    log(value);
-    // send the data back as the value from disk
-    win!.webContents.send('promise-response', { key: data.key, value });
-  } catch (e) {
-    log('error from ipcGetter');
-    log(e);
-  }
-  return;
-}
-
-// {key: 'item-to-put-in-persist', value: {thingToSave...} }
-// This is used for the promiseIpc main-side communication
-async function ipcSetter(data: { key: unknown; value: unknown }) {
-  try {
-    log(`promise-set request: ${typeof data}`);
-    log(data);
-    const kvp = kvpValidator(data);
-    if (kvp) {
-      await persist.setItemAsync(kvp.key, kvp.value as FTONData);
-      return true;
-    }
-  } catch (e) {
-    log('error from ipcSetter');
-    log(e);
-  }
-  log('Trouble with promise-set');
-  return false;
-}
-
-// {key: 'item-to-delete-from-persistence'}
-async function ipcDeleter(data: { key: unknown }) {
-  try {
-    if (
-      typeof data !== 'object' ||
-      !data.hasOwnProperty('key') ||
-      typeof data.key !== 'string'
-    ) {
-      log(`error: invalid promise-del data type: ${typeof data}`);
-      return false;
-    }
-    await persist.deleteItemAsync(data.key);
-    return true;
-  } catch (e) {
-    log('error from ipcDeleter');
-    log(e);
-  }
-  return false;
-}
-*/
 async function getGeneral(name: string) {
   try {
     log(`getGeneral(${name})`);
@@ -292,12 +165,6 @@ export function Init(): void {
       }
     });
   }
-  /*
-  // Persistence stuff migrated to Recoil - before better-ipc
-  promiseIpc.on('promise-get', ipcGetter as Listener);
-  promiseIpc.on('promise-set', ipcSetter as Listener);
-  promiseIpc.on('promise-del', ipcDeleter as Listener);
-  */
 
   // I like this API much better, particularly in the render process
   betterIpc.answerRenderer('get-all-songs', getAllSongs);
@@ -308,6 +175,7 @@ export function Init(): void {
   betterIpc.answerRenderer('get-general', getGeneral);
   betterIpc.answerRenderer('set-general', setGeneral);
 }
+
 // Called with the window handle after it's been created
 export function Begin(window: BrowserWindow): void {
   win = window;

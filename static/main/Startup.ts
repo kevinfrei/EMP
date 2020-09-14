@@ -5,7 +5,6 @@ import * as persist from './persist';
 import * as music from './MusicScanner';
 import { SetIndex } from './Communication';
 import makeIndex from './search';
-
 import { getMusicDB } from './MusicAccess';
 
 const log = Logger.bind('Startup');

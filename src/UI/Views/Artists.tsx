@@ -5,12 +5,12 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
-
-import './styles/Artists.css';
 import { addArtistAtom, addSongAtom } from '../../Recoil/api';
 import { allArtistsSel } from '../../Recoil/MusicDbAtoms';
 
 import type { Artist } from '../../MyStore';
+
+import './styles/Artists.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;

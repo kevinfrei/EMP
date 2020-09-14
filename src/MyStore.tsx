@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { Effects, Store, StoreDefinition } from 'undux';
 import {
   createConnectedStore,
   withReduxDevtools /* , withLogger*/,
 } from 'undux';
-// import effects from './Effects';
+
+import type { Effects, Store, StoreDefinition } from 'undux';
 
 export type SongKey = string;
 export type AlbumKey = string;

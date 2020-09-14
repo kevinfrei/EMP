@@ -15,7 +15,6 @@ import { Comparisons } from '@freik/core-utils';
 // import { SongBy } from '../../Sorters';
 import SongLine from '../SongLine';
 import { VerticalScrollDiv } from '../Scrollables';
-
 import { shuffleAtom } from '../../Recoil/Atoms';
 import {
   currentIndexAtom,
@@ -23,15 +22,16 @@ import {
   playlistsAtom,
   songListAtom,
 } from '../../Recoil/MusicDbAtoms';
-
-import './styles/NowPlaying.css';
 import {
   startSongPlayingAtom,
   removeSongNumberAtom,
   stopAndClearAtom,
 } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
-import { SongKey } from '../../MyStore';
+
+import type  { SongKey } from '../../MyStore';
+
+import './styles/NowPlaying.css';
 
 export default function NowPlaying(): JSX.Element {
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);

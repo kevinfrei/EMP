@@ -8,7 +8,6 @@ import {
 import React, { useRef, useEffect } from 'react';
 import { Logger, FTON } from '@freik/core-utils';
 
-// import { PromiseSubscribe, PromiseUnsubscribe, PromiseSend } from '../MyWindow';
 import * as ipc from '../ipc';
 
 import type { SongKey } from '../MyStore';

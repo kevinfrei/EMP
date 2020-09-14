@@ -4,7 +4,6 @@ import { IconButton, Slider, Stack } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
 
 import { mutedAtom, volumeAtom } from '../Recoil/Atoms';
-
 import { GetAudioElem } from './SongPlayback';
 
 import './styles/VolumeControl.css';

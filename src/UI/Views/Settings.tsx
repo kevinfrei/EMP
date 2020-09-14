@@ -13,6 +13,7 @@ import {
   Separator,
   Text,
 } from '@fluentui/react';
+
 import {
   sortWithArticles,
   albumListSort,
@@ -21,11 +22,12 @@ import {
   syncedLocations,
 } from '../../Recoil/SettingsAtoms';
 import { VerticalScrollDiv } from '../Scrollables';
+import { ShowOpenDialog } from '../../MyWindow';
 
 import type { SyncedAtom } from '../../Recoil/Atoms';
 
 import './styles/Settings.css';
-import { ShowOpenDialog } from '../../MyWindow';
+
 const log = Logger.bind('View-Settings');
 // Logger.enable('View-Settings');
 

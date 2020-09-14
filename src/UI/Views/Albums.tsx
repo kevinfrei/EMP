@@ -1,16 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState, CSSProperties } from 'react';
 import { Dialog, DialogType, List } from '@fluentui/react';
+import { useRecoilValue, useRecoilState } from 'recoil';
 
 import Store from '../../MyStore';
-
 import { GetArtistForAlbum } from '../../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
-
-import { useRecoilValue } from 'recoil';
 import { allAlbumsSel } from '../../Recoil/MusicDbAtoms';
-import { useRecoilState } from 'recoil';
 import { addAlbumAtom, addSongAtom } from '../../Recoil/api';
 
 import type { Album } from '../../MyStore';

@@ -3,9 +3,9 @@ import { protocol } from 'electron';
 import { Logger } from '@freik/core-utils';
 
 import * as persist from './persist';
+import { getMusicDB } from './MusicAccess';
 
 import type { ProtocolRequest, ProtocolResponse } from 'electron';
-import { getMusicDB } from './MusicAccess';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 
