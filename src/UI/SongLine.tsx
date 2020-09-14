@@ -1,7 +1,6 @@
 import React, { HTMLProps } from 'react';
 
 import Store from '../MyStore';
-import { GetDataForSong } from '../DataAccess';
 
 import type { SongKey, StoreState } from '../MyStore';
 
@@ -36,7 +35,7 @@ export default function SongLine({
 }: SongLineProps): JSX.Element {
   const store = Store.useStore();
   const elementTemplate = (template || 'RL#TC').toUpperCase();
-  const data = GetDataForSong(store, songKey);
+  const data = {track: 1, album: 'album', artist: 'artist', title: 'title'};// GetDataForSong(store, songKey);
   const elements = [...elementTemplate].map((chr, index) => {
     switch (chr) {
       case '#':

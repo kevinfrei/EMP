@@ -21,7 +21,6 @@ import {
   songListSort,
   syncedLocations,
 } from '../../Recoil/SettingsAtoms';
-import { VerticalScrollDiv } from '../Scrollables';
 import { ShowOpenDialog } from '../../MyWindow';
 
 import type { SyncedAtom } from '../../Recoil/Atoms';
@@ -153,24 +152,21 @@ export default function Settings(): JSX.Element {
   };
 
   return (
-    <>
-      <div id="current-view" />
-      <VerticalScrollDiv scrollId="settingsPos" layoutId="current-view">
-        <Stack>
-          <Separator alignContent="start">
-            <Text variant="mediumPlus">Music Locations</Text>
-          </Separator>
-          <syncedLocations.atomSyncer />
-          <RecoilLocations />
-          <Separator alignContent="start">
-            <Text variant="mediumPlus">Sorting Preferences</Text>
-          </Separator>
-          <SortPopup data={album} />
-          <SortPopup data={artist} />
-          <SortPopup data={song} />
-          <ArticleSorting />
-        </Stack>
-      </VerticalScrollDiv>
-    </>
+    <div className="current-view">
+      <Stack className="settings-view">
+        <Separator alignContent="start">
+          <Text variant="mediumPlus">Music Locations</Text>
+        </Separator>
+        <syncedLocations.atomSyncer />
+        <RecoilLocations />
+        <Separator alignContent="start">
+          <Text variant="mediumPlus">Sorting Preferences</Text>
+        </Separator>
+        <SortPopup data={album} />
+        <SortPopup data={artist} />
+        <SortPopup data={song} />
+        <ArticleSorting />
+      </Stack>
+    </div>
   );
 }

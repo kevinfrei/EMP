@@ -4,7 +4,6 @@ import { Dialog, DialogType, List } from '@fluentui/react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
 import Store from '../../MyStore';
-import { GetArtistForAlbum } from '../../DataAccess';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
 import { allAlbumsSel } from '../../Recoil/MusicDbAtoms';
@@ -31,7 +30,7 @@ export function AlbumView(): JSX.Element {
   if (!!expandedAlbum) {
     const album = albums.get(expandedAlbum);
     if (album) {
-      const artistName = GetArtistForAlbum(store, album);
+      const artistName = album.key; // GetArtistForAlbum(store, album);
       details = (
         <div className="songListForAlbum">
           {album.songs.map((k) => (
@@ -56,7 +55,7 @@ export function AlbumView(): JSX.Element {
     album: Album;
     style: CSSProperties;
   }) {
-    const artistName = GetArtistForAlbum(store, album);
+    const artistName = [...album.primaryArtists.keys()].join(' & ');// GetArtistForAlbum(store, album);
     const adder = () => addAlbum(album.key);
 
     return (
@@ -104,7 +103,7 @@ export function AlbumView(): JSX.Element {
     }
   }
   return (
-    <div className="albumView">
+    <div className="albumView current-view">
       <Dialog
         hidden={!expandedAlbum}
         onDismiss={handleClose}

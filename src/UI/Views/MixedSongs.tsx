@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogType,
   getTheme,
+  IColumn,
   IDetailsListProps,
   IDetailsRowStyles,
   SelectionMode,
@@ -14,13 +15,28 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
 import { getMediaInfo } from '../../Recoil/Atoms';
-import { allSongsSel } from '../../Recoil/MusicDbAtoms';
+import {
+  albumByKeySel,
+  allAlbumsSel,
+  allArtistsSel,
+  allSongsSel,
+  artistStringSel,
+} from '../../Recoil/MusicDbAtoms';
 import { addSongAtom } from '../../Recoil/api';
+import { SortSongs } from '../../Sorters';
 
-import type { Song, SongKey } from '../../MyStore';
+import type {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+  SongKey,
+} from '../../MyStore';
 import type { MediaInfo } from '../../Recoil/Atoms';
 
 import './styles/MixedSongs.css';
+import { sortWithArticles } from '../../Recoil/SettingsAtoms';
 
 const log = Logger.bind('MixedSongs');
 Logger.enable('MixedSongs');
@@ -68,77 +84,77 @@ function MediaInfoTable({ id }: { id: string }) {
     return <></>;
   }
 }
-/*
-function OldMixedSongView(): JSX.Element {
-  //  const store = Store.useStore();
-  //  const songArray = store.get('SongArray');
-  const songs: Map<SongKey, Song> = useRecoilValue(AllSongs);
-  const [selected, setSelected] = useState('');
-  const [showDialog, setShowDialog] = useState(false);
-  const songArray = [...songs.keys()];
 
-  const VirtualSongRow = ({ index }: { index: number }): React.ReactNode => {
-    // style={style}
-    return (
-      <SongLine
-        template="RL#T"
-        key={index}
-        className={
-          index % 2
-            ? 'songContainer evenMixedSong'
-            : 'songContainer oddMixedSong'
-        }
-        songKey={songArray[index]}
-       onDoubleClick={AddSong}
-        onAuxClick={(theStore, songKey) => {
-          setSelected(songKey);
-          setShowDialog(true);
-        }}
-      />
-    );
-  };
-  // height={height}
-  const customView = ({ height, width }: { height: number; width: number }) => (
-    <div style={{ width, height, border: '0px' }}>
-      <VirtualizedList
-        height={height}
-        useWindow={false}
-        itemCount={songArray.length}
-        estimatedItemHeight={32}
-        renderItem={VirtualSongRow}
-        overscanCount={50}
-      />
-    </div>
-  );
-  return (
-    <div className="songView current-view">
-      <React.Suspense fallback="Please wait...">
-        <Dialog
-          hidden={!showDialog}
-          onDismiss={() => setShowDialog(false)}
-          dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
-        >
-          <MediaInfoTable id={selected} />
-        </Dialog>
-        <div className="songContainer songHeader">
-          <span className="songArtist">Artist</span>
-          <span className="songAlbum">Album</span>
-          <span className="songTrack">#</span>
-          <span className="songTitle">Title</span>
-        </div>
-        <AutoSizer>{customView}</AutoSizer>
-      </React.Suspense>
-    </div>
-  );
-}
-*/
 const theme = getTheme();
+
+function ArtistName({ artists }: { artists: ArtistKey[] }) {
+  return <>{useRecoilValue(artistStringSel(artists))}</>;
+}
+
+function AlbumName({ albumId }: { albumId: AlbumKey }) {
+  return <>{useRecoilValue(albumByKeySel(albumId)).title}</>;
+}
 
 export default function MixedSongsList(): JSX.Element {
   const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
+  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
+  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
+  const articles = useRecoilValue(sortWithArticles.atom);
   const [selected, setSelected] = useState('');
   const [showDialog, setShowDialog] = useState(false);
   const [, addSong] = useRecoilState(addSongAtom);
+  const [sortedItems, setSortedItems] = useState([...songs.values()]);
+  const [sortOrder, setSortOrder] = useState('');
+
+  const setSort = (which: string) => {
+    // This rearranges the sort order string
+    let sort = which;
+    // Handle clicking twice to invert the order
+    const flip = sortOrder.toLowerCase().startsWith(which);
+    if (flip && sortOrder[0] === which) {
+      sort = sort.toUpperCase();
+    }
+    const newSort = sortOrder
+      .replaceAll(which.toLowerCase(), '')
+      .replaceAll(which.toUpperCase(), '');
+    // set the sort order
+    setSortOrder(sort + newSort);
+    // TODO: Actually sort the values
+    setSortedItems(
+      SortSongs(sort + newSort, sortedItems, albums, artists, articles),
+    );
+  };
+
+  const makeColumn = (
+    name: string,
+    fieldName: string,
+    minWidth: number,
+    maxWidth: number,
+    key: string,
+    render?: (item: Song) => JSX.Element,
+  ) => ({
+    key,
+    name,
+    fieldName,
+    minWidth,
+    maxWidth,
+    isResizable: true,
+    isSorted: sortOrder.toLocaleLowerCase().startsWith(key),
+    isSortedDescending: sortOrder.startsWith(key.toUpperCase()),
+    onColumnClick: () => setSort(key),
+    onRender: render,
+  });
+  const columns: IColumn[] = [
+    makeColumn('#', 'track', 30, 30, 'n'),
+    makeColumn('Artist(s)', 'artistIds', 150, 450, 'r', (item: Song) => (
+      <ArtistName artists={item.artistIds} />
+    )),
+    makeColumn('Album', 'albumId', 150, 450, 'l', (item: Song) => (
+      <AlbumName albumId={item.albumId} />
+    )),
+    makeColumn('Title', 'title', 150, 450, 't'),
+  ];
+
   const renderRow: IDetailsListProps['onRenderRow'] = (props) => {
     const customStyles: Partial<IDetailsRowStyles> = {};
     if (props) {
@@ -152,8 +168,10 @@ export default function MixedSongsList(): JSX.Element {
   };
 
   return (
-    <div className="songView current-view">
+    <div className="songView current-view" data-is-scrollable="true">
       <Dialog
+        minWidth={450}
+        maxWidth={750}
         hidden={!showDialog}
         onDismiss={() => setShowDialog(false)}
         dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
@@ -161,13 +179,15 @@ export default function MixedSongsList(): JSX.Element {
         <MediaInfoTable id={selected} />
       </Dialog>
       <DetailsList
-        items={[...songs.values()]}
+        compact={true}
+        items={sortedItems}
         selectionMode={SelectionMode.none}
         onRenderRow={renderRow}
         onItemContextMenu={(item: Song) => {
           setSelected(item.key);
           setShowDialog(true);
         }}
+        columns={columns}
         onItemInvoked={(item: Song) => addSong(item.key)}
       />
     </div>
