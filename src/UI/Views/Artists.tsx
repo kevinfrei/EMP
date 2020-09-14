@@ -12,7 +12,6 @@ import { allArtistsSel } from '../../Recoil/MusicDbAtoms';
 
 import type { Artist } from '../../MyStore';
 
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 

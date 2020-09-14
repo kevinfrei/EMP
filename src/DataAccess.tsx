@@ -10,7 +10,6 @@ import type {
 
 export type AlbumInfo = { title: string; year: number; artist: string };
 
-
 export function GetArtistString(
   store: StoreState,
   artistList: ArtistKey[],
@@ -73,7 +72,6 @@ export function GetDataForSong(
   res.artist = maybeArtistName;
   return res;
 }
-
 
 export function GetArtistForAlbum(
   store: StoreState,

@@ -6,14 +6,26 @@ It represents the closest reasonable ESLint configuration to this
 project's original TSLint configuration.
 
 We recommend eventually switching this configuration to extend from
-the recommended rulesets in typescript-eslint. 
+the recommended rulesets in typescript-eslint.
 https://github.com/typescript-eslint/tslint-to-eslint-config/blob/master/docs/FAQs.md
 
 Happy linting! 💖
 */
 {
   "search.exclude": {
-    "public/**/*.js": true
+    "public/**/*.js": true,
+    "public/**/*.js.map": true,
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "node_modules": true,
+    "build":true,
+    "dist":true,
+    "yarn*.l*":true
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }

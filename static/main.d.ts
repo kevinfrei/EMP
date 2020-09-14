@@ -1,3 +1,1 @@
-declare module 'an-unknown-module' {
-
-}
+declare module 'an-unknown-module' {}

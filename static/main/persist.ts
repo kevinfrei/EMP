@@ -208,7 +208,8 @@ export function getWindowPos(): WindowPosition {
     const tmpws = FTON.parse(tmp);
     if (tmpws && typeof tmpws === 'object' && 'bounds' in tmpws) {
       const bounds = tmpws.bounds;
-      if (bounds &&
+      if (
+        bounds &&
         typeof bounds === 'object' &&
         'x' in bounds &&
         typeof bounds.x === 'number' &&
