@@ -36,7 +36,7 @@ import './styles/NowPlaying.css';
 
 export default function NowPlaying(): JSX.Element {
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
-  const [curPls, setCurPls] = useRecoilState(playlistsAtom);
+  const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
 
@@ -67,11 +67,11 @@ export default function NowPlaying(): JSX.Element {
   const justCloseSaveAs = () => setShowSaveAs(false);
   const showSaveDialog = () => setShowSaveAs(true);
   const saveAndClose = () => {
-    if (curPls.get(inputName)) {
+    if (playlists.get(inputName)) {
       window.alert('Cowardly refusing to overwrite existing playlist.');
     } else {
-      curPls.set(inputName, [...songList]);
-      setCurPls(curPls);
+      playlists.set(inputName, [...songList]);
+      setPlaylists(playlists);
       setNowPlaying(inputName);
     }
     justCloseSaveAs();
@@ -112,13 +112,13 @@ export default function NowPlaying(): JSX.Element {
   let header;
   let button;
   const save = () => {
-    curPls.set(nowPlaying, [...songList]);
-    setCurPls(curPls);
+    playlists.set(nowPlaying, [...songList]);
+    setPlaylists(playlists);
   };
   if (PlayingPlaylist(nowPlaying)) {
     header = nowPlaying;
     // Only use this button if it's been modified?
-    const curPlList = curPls.get(nowPlaying);
+    const curPlList = playlists.get(nowPlaying);
     const disabled =
       !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
     button = (
