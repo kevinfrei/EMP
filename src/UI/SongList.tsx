@@ -32,9 +32,11 @@ export function makeColumns(
     if (flip && curSort.startsWith(which.toLowerCase())) {
       sort = sort.toUpperCase();
     }
-    const newSort = sort + curSort
-      .replaceAll(which.toLowerCase(), '')
-      .replaceAll(which.toUpperCase(), '');
+    const newSort =
+      sort +
+      curSort
+        .replaceAll(which.toLowerCase(), '')
+        .replaceAll(which.toUpperCase(), '');
     // set the sort order
     performSort(newSort);
   };

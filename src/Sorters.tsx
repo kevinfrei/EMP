@@ -1,12 +1,6 @@
 import { GetDataForSong } from './DataSchema';
 
-import type {
-  Album,
-  AlbumKey,
-  Artist,
-  ArtistKey,
-  Song,
-} from './DataSchema';
+import type { Album, AlbumKey, Artist, ArtistKey, Song } from './DataSchema';
 
 export type Sorter = (a: string, b: string) => number;
 

@@ -55,7 +55,7 @@ export function AlbumView(): JSX.Element {
     album: Album;
     style: CSSProperties;
   }) {
-    const artistName = [...album.primaryArtists.keys()].join(' & ');// GetArtistForAlbum(store, album);
+    const artistName = [...album.primaryArtists.keys()].join(' & '); // GetArtistForAlbum(store, album);
     const adder = () => addAlbum(album.key);
 
     return (

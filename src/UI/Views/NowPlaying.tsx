@@ -7,7 +7,6 @@ import {
   PrimaryButton,
   DefaultButton,
   Stack,
-  Text,
   IconButton,
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
@@ -42,7 +41,7 @@ export default function NowPlaying(): JSX.Element {
 
   const [showSaveAs, setShowSaveAs] = useState(false);
   const confirmationState = useState(false);
-  const [,setShowConfirmation] = confirmationState;
+  const [, setShowConfirmation] = confirmationState;
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
   const [, setShuffle] = useRecoilState(shuffleAtom);
