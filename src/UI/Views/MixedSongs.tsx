@@ -47,9 +47,10 @@ export default function MixedSongsList(): JSX.Element {
 
   const columns = makeColumns(
     () => sortOrder,
-    setSortOrder,
-    (srt: string) =>
-      setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles)),
+    (srt: string) => {
+      setSortOrder(srt);
+      setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles));
+    },
     ['n', 'track', '#', 30, 30],
     ['r', 'artistIds', 'Artists(s)', 150, 450, artName],
     ['l', 'albumId', 'Album', 150, 450, albName],
@@ -60,7 +61,6 @@ export default function MixedSongsList(): JSX.Element {
     <div className="songView current-view" data-is-scrollable="true">
       <Dialog
         minWidth={450}
-        maxWidth={750}
         hidden={selected === ''}
         onDismiss={() => setSelected('')}
         dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}

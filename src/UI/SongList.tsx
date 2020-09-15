@@ -13,7 +13,6 @@ import { albumByKeySel, artistStringSel } from '../Recoil/MusicDbAtoms';
 
 export function makeColumns(
   getSort: () => string,
-  setSort: (key: string) => void,
   performSort: (srt: string) => void,
   ...renderers: [
     key: string,
@@ -29,16 +28,15 @@ export function makeColumns(
     // This rearranges the sort order string
     let sort = which;
     // Handle clicking twice to invert the order
-    const flip = curSort.toLowerCase().startsWith(which);
-    if (flip && curSort === which) {
+    const flip = curSort.toLowerCase().startsWith(which.toLowerCase());
+    if (flip && curSort.startsWith(which.toLowerCase())) {
       sort = sort.toUpperCase();
     }
-    const newSort = curSort
+    const newSort = sort + curSort
       .replaceAll(which.toLowerCase(), '')
       .replaceAll(which.toUpperCase(), '');
     // set the sort order
-    setSort(sort + newSort);
-    performSort(sort + newSort);
+    performSort(newSort);
   };
 
   return renderers.map(

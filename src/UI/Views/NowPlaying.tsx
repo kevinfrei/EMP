@@ -28,8 +28,9 @@ import {
   stopAndClearAtom,
 } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
+import ConfirmationDialog from '../ConfirmationDialog';
 
-import type  { SongKey } from '../../DataSchema';
+import type { SongKey } from '../../DataSchema';
 
 import './styles/NowPlaying.css';
 
@@ -40,10 +41,10 @@ export default function NowPlaying(): JSX.Element {
   const [songList, setSongList] = useRecoilState(songListAtom);
 
   const [showSaveAs, setShowSaveAs] = useState(false);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const confirmationState = useState(false);
+  const [,setShowConfirmation] = confirmationState;
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
-  //  const [, setPlaying] = useRecoilState(playingAtom);
   const [, setShuffle] = useRecoilState(shuffleAtom);
 
   const [, stopAndClear] = useRecoilState(stopAndClearAtom);
@@ -75,13 +76,6 @@ export default function NowPlaying(): JSX.Element {
     }
     justCloseSaveAs();
   };
-  // Helpers for the Confirm Delete dialog
-  const closeConfirmation = () => setShowConfirmation(false);
-  const approvedConfirmation = () => {
-    stopAndClear(true);
-    closeConfirmation();
-  };
-
   const dlgSavePlaylist = (
     <Dialog
       title="Save Playlist as..."
@@ -91,32 +85,28 @@ export default function NowPlaying(): JSX.Element {
       <Stack>
         <TextField
           value={inputName}
-          onChange={(ev, newValue) =>
-            setInputName(newValue ? newValue : inputName)
-          }
-          label="Playlist name"
+          onChange={(ev, newValue) => setInputName(newValue ?? inputName)}
         />
-        <Stack horizontal>
-          <PrimaryButton onClick={justCloseSaveAs}>Cancel</PrimaryButton>
-          <DefaultButton onClick={saveAndClose}>Save</DefaultButton>
-        </Stack>
+        <br />
+        <div>
+          <PrimaryButton style={{ float: 'left' }} onClick={justCloseSaveAs}>
+            Cancel
+          </PrimaryButton>
+          <DefaultButton style={{ float: 'right' }} onClick={saveAndClose}>
+            Save
+          </DefaultButton>
+        </div>
       </Stack>
     </Dialog>
   );
-  const dlgConfirm = (
-    <Dialog
-      title="Please Confirm"
-      hidden={!showConfirmation}
-      onDismiss={closeConfirmation}
-    >
-      <Stack>
-        <Text>Are you sure you want to clear the play queue?</Text>
-        <Stack horizontal>
-          <DefaultButton onClick={approvedConfirmation}>Yes</DefaultButton>
-          <PrimaryButton onClick={closeConfirmation}>No</PrimaryButton>
-        </Stack>
-      </Stack>
-    </Dialog>
+
+  const dlgConfirm = ConfirmationDialog(
+    confirmationState,
+    'Please Confirm',
+    'Are you sure you want to clear the play queue?',
+    'Yes',
+    'No',
+    () => stopAndClear(true),
   );
 
   let header;
