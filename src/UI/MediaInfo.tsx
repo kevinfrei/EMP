@@ -16,7 +16,11 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   return lines;
 }
 
-export default function MediaInfoTable({ forSong }: { forSong: SongKey }) {
+export default function MediaInfoTable({
+  forSong,
+}: {
+  forSong: SongKey;
+}): JSX.Element {
   const mediaInfo: MediaInfo = useRecoilValue(getMediaInfo(forSong));
   const genLines = mediaInfoToLine('gen', mediaInfo.general);
   const audLines = mediaInfoToLine('aud', mediaInfo.audio);
