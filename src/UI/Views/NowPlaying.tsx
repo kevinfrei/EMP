@@ -1,65 +1,58 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   Dialog,
+  Text,
   TextField,
   PrimaryButton,
   DefaultButton,
   Stack,
   IconButton,
+  DetailsList,
+  SelectionMode,
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
 
 // import { SongBy } from '../../Sorters';
-import SongLine from '../SongLine';
-import { VerticalScrollDiv } from '../Scrollables';
-import { shuffleAtom } from '../../Recoil/Atoms';
+// import { shuffleAtom } from '../../Recoil/Atoms';
 import {
-  currentIndexAtom,
+  allSongsSel,
+  //  currentIndexAtom,
   nowPlayingAtom,
   playlistsAtom,
   songListAtom,
 } from '../../Recoil/MusicDbAtoms';
-import {
-  startSongPlayingAtom,
-  removeSongNumberAtom,
-  stopAndClearAtom,
-} from '../../Recoil/api';
+import { startSongPlayingAtom, stopAndClearAtom } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
 
-import type { SongKey } from '../../DataSchema';
+import type { Song } from '../../DataSchema';
 
 import './styles/NowPlaying.css';
+import {
+  AlbumFromSong,
+  ArtistsFromSong,
+  makeColumns,
+  renderAltRow,
+} from '../SongList';
 
 export default function NowPlaying(): JSX.Element {
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  //  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
+  const allSongs = useRecoilValue(allSongsSel);
 
   const [showSaveAs, setShowSaveAs] = useState(false);
   const confirmationState = useState(false);
   const [, setShowConfirmation] = confirmationState;
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
-  const [, setShuffle] = useRecoilState(shuffleAtom);
+  //  const [, setShuffle] = useRecoilState(shuffleAtom);
 
   const [, stopAndClear] = useRecoilState(stopAndClearAtom);
   const [, playSongNumber] = useRecoilState(startSongPlayingAtom);
-  const [, removeSongNumber] = useRecoilState(removeSongNumberAtom);
-  // Clear sorts when shuffle gets updated
-  /*
-  TODO
-  useEffect(() => {
-    // eslint-disable-next-line
-    const sub: SubscriptionLike = store
-      .on('shuffle')
-      .subscribe((val) => val && setSortBy('')) as SubscriptionLike;
-    return () => sub.unsubscribe();
-  });
-  */
 
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
@@ -133,117 +126,85 @@ export default function NowPlaying(): JSX.Element {
     header = 'Now Playing';
     button = <></>;
   }
+  const clearQueue = (
+    <DefaultButton
+      className="np-clear-queue"
+      onClick={() => {
+        if (PlayingPlaylist(nowPlaying)) {
+          stopAndClear(true);
+        } else {
+          setShowConfirmation(true);
+        }
+      }}
+      disabled={emptyQueue}
+    >
+      Clear Queue
+    </DefaultButton>
+  );
+  const nameOrHeader = (
+    <Text
+      className="np-current-playlist"
+      variant="large"
+      block={true}
+      nowrap={true}
+    >
+      {header}
+    </Text>
+  );
+  const saveAs = (
+    <DefaultButton
+      className="save-playlist-as"
+      onClick={showSaveDialog}
+      disabled={emptyQueue}
+    >
+      Save As...
+    </DefaultButton>
+  );
   const topLine = (
-    <h4 id="now-playing-header">
-      {header}&nbsp;
-      <DefaultButton
-        onClick={() => {
-          if (PlayingPlaylist(nowPlaying)) {
-            stopAndClear(true);
-          } else {
-            setShowConfirmation(true);
-          }
-        }}
-        disabled={emptyQueue}
-      >
-        Clear Queue
-      </DefaultButton>
-      <DefaultButton
-        className="save-playlist-as"
-        onClick={showSaveDialog}
-        disabled={emptyQueue}
-      >
-        Save As...
-      </DefaultButton>
+    <div id="now-playing-header">
+      {clearQueue}
+      {nameOrHeader}
+      {saveAs}
       {button}
-    </h4>
+    </div>
   );
 
-  const setSort = (which: string) => {
-    if (which === sortBy) return;
-    const curKey: SongKey = songList[curIndex];
-    switch (which) {
-      case 'album':
-        //        songList.sort(SongBy.AlbumAristNumberTitle(store));
-        break;
-      case 'artist':
-        //      songList.sort(SongBy.ArtistAlbumNumberTitle(store));
-        break;
-      case 'track':
-        //    songList.sort(SongBy.NumberAlbumArtistTitle(store));
-        break;
-      case 'title':
-        //  songList.sort(SongBy.TitleAlbumAristNumber(store));
-        break;
-      default:
-        return;
-    }
-    setSortBy(which);
-    if (which) {
-      setShuffle(false);
-    }
-    setCurIndex(songList.indexOf(curKey));
-    setSongList([...songList]);
-  };
-  const songs = songList.map((songKey, idx) => {
-    let clsName = idx % 2 ? 'songContainer oddSong' : 'songContainer evenSong';
-    clsName += idx === curIndex ? ' playing' : ' not-playing';
-    return (
-      <SongLine
-        key={songKey}
-        songKey={songKey}
-        onDoubleClick={() => playSongNumber(idx)}
-        className={clsName}
-        template="CLR#T"
-      >
-        <IconButton
-          style={{ height: '28px', width: '28px' }}
-          iconProps={{ iconName: 'Delete' }}
-          onClick={() => removeSongNumber(idx)}
-        />
-      </SongLine>
-    );
-  });
-  const isSortedBy = (theSort: string, thisOne: string): string =>
-    theSort === thisOne ? 'sorted-header' : 'notsorted-header';
+  const drawDeleter = (song: Song) => (
+    <IconButton
+      style={{ height: '18px', width: '18px' }}
+      iconProps={{ iconName: 'Delete' }}
+      onClick={() => setSongList(songList.filter((v) => v !== song.key))}
+    />
+  );
+
+  const columns = makeColumns(
+    () => sortBy,
+    (srt: string) => {
+      setSortBy(srt);
+      /* TODO: Get the sort effected */
+    },
+    ['X', '', '', 25, 25, drawDeleter],
+    ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
+    ['r', 'artistIds', 'Artist(s)', 150, 450, ArtistsFromSong],
+    ['n', 'track', '#', 30, 30],
+    ['t', 'title', 'Title', 150],
+  );
 
   return (
     <>
       {dlgSavePlaylist}
       {dlgConfirm}
-      <div id="current-header">
-        {topLine}
-        <div className="songHeader">
-          <div
-            onClick={() => setSort('album')}
-            className={isSortedBy(sortBy, 'album') + ' songAlbum'}
-          >
-            Album
-          </div>
-          <div
-            onClick={() => setSort('artist')}
-            className={isSortedBy(sortBy, 'artist') + ' songArtist'}
-          >
-            Artist
-          </div>
-          <div
-            onClick={() => setSort('track')}
-            className={isSortedBy(sortBy, 'track') + ' songTrack'}
-          >
-            #
-          </div>
-          <div
-            onClick={() => setSort('title')}
-            className={isSortedBy(sortBy, 'title') + ' songTitle'}
-          >
-            Title
-          </div>
-        </div>
+      <div id="current-header">{topLine}</div>
+      <div className="current-view">
+        <DetailsList
+          compact={true}
+          items={songList.map((sl) => allSongs.get(sl))}
+          selectionMode={SelectionMode.none}
+          onRenderRow={renderAltRow}
+          columns={columns}
+          onItemInvoked={(item, index) => playSongNumber(index ?? -1)}
+        />
       </div>
-      <div id="current-view" />
-      <VerticalScrollDiv scrollId="nowPlayingPos" layoutId="current-view">
-        {songs}
-      </VerticalScrollDiv>
     </>
   );
 }

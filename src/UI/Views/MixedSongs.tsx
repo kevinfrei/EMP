@@ -16,7 +16,12 @@ import {
 import { addSongAtom } from '../../Recoil/api';
 import { SortSongs } from '../../Sorters';
 import { sortWithArticles } from '../../Recoil/SettingsAtoms';
-import { renderAltRow, makeColumns, ArtistName, AlbumName } from '../SongList';
+import {
+  renderAltRow,
+  makeColumns,
+  ArtistsFromSong,
+  AlbumFromSong,
+} from '../SongList';
 import MediaInfoTable from '../MediaInfo';
 
 import type {
@@ -42,9 +47,6 @@ export default function MixedSongsList(): JSX.Element {
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
   );
 
-  const artName = (item: Song) => <ArtistName artists={item.artistIds} />;
-  const albName = (item: Song) => <AlbumName albumId={item.albumId} />;
-
   const columns = makeColumns(
     () => sortOrder,
     (srt: string) => {
@@ -52,8 +54,8 @@ export default function MixedSongsList(): JSX.Element {
       setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles));
     },
     ['n', 'track', '#', 30, 30],
-    ['r', 'artistIds', 'Artists(s)', 150, 450, artName],
-    ['l', 'albumId', 'Album', 150, 450, albName],
+    ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
+    ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
     ['t', 'title', 'Title', 150],
   );
 

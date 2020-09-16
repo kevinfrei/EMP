@@ -41,19 +41,21 @@ export function makeColumns(
     performSort(newSort);
   };
 
-  return renderers.map(
-    ([key, fieldName, name, minWidth, maxWidth, onRender]) => ({
-      key,
-      name,
-      fieldName,
-      minWidth,
-      maxWidth,
-      onRender,
-      isResizable: true,
-      isSorted: getSort().toLowerCase().startsWith(key),
-      isSortedDescending: getSort().startsWith(key.toUpperCase()),
-      onColumnClick: () => localSort(key),
-    }),
+  return renderers.map(([key, fieldName, name, minWidth, maxWidth, onRender]) =>
+    fieldName !== ''
+      ? {
+          key,
+          name,
+          fieldName,
+          minWidth,
+          maxWidth,
+          onRender,
+          isResizable: true,
+          isSorted: getSort().toLowerCase().startsWith(key),
+          isSortedDescending: getSort().startsWith(key.toUpperCase()),
+          onColumnClick: () => localSort(key),
+        }
+      : { key, name, minWidth, maxWidth, onRender, isResizable: true },
   );
 }
 
@@ -71,10 +73,22 @@ export const renderAltRow: IDetailsListProps['onRenderRow'] = (props) => {
   return null;
 };
 
-export function ArtistName({ artists }: { artists: ArtistKey[] }): JSX.Element {
-  return <>{useRecoilValue(artistStringSel(artists))}</>;
+export function ArtistName({
+  artistIds,
+}: {
+  artistIds: ArtistKey[];
+}): JSX.Element {
+  return <>{useRecoilValue(artistStringSel(artistIds))}</>;
 }
 
 export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
   return <>{useRecoilValue(albumByKeySel(albumId)).title}</>;
+}
+
+export function ArtistsFromSong(song: Song): JSX.Element {
+  return <ArtistName artistIds={song.artistIds} />;
+}
+
+export function AlbumFromSong(song: Song): JSX.Element {
+  return <AlbumName albumId={song.albumId} />;
 }

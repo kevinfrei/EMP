@@ -51,3 +51,8 @@
   padding: 4px;
   cursor: pointer;
 }
+
+/* This gets rid of the extra spacing above the headers */
+.ms-DetailsList-headerWrapper {
+  margin-top: -15px;
+}

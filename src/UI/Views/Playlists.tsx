@@ -52,7 +52,7 @@ export default function Playlister(): JSX.Element {
       maxWidth: 25,
       onRender: (item: [string, string[]]) => (
         <IconButton
-          style={{ height: '17px' }}
+          style={{ height: '20px' }}
           iconProps={{ iconName: 'Delete' }}
           onClick={() => {
             setSelPlaylist(item[0]);
@@ -104,6 +104,7 @@ export default function Playlister(): JSX.Element {
         selectionMode={SelectionMode.none}
         columns={columns}
         onRenderRow={renderRow}
+        compact={true}
         onItemInvoked={(item: [string, string[]]) => startPlaylist(item[0])}
       />
     </div>
