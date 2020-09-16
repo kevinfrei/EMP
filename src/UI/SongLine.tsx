@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { HTMLProps } from 'react';
 
 import Store from '../MyStore';
