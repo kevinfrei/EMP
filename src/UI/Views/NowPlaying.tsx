@@ -184,10 +184,10 @@ export default function NowPlaying(): JSX.Element {
       /* TODO: Get the sort effected */
     },
     ['X', '', '', 25, 25, drawDeleter],
-    ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
-    ['r', 'artistIds', 'Artist(s)', 150, 450, ArtistsFromSong],
-    ['n', 'track', '#', 30, 30],
-    ['t', 'title', 'Title', 150],
+    ['l', 'albumId', 'Album', 50, 450, AlbumFromSong],
+    ['r', 'artistIds', 'Artist(s)', 50, 450, ArtistsFromSong],
+    ['n', 'track', '#', 10, 40],
+    ['t', 'title', 'Title', 50],
   );
 
   return (
