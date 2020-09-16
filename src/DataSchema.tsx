@@ -1,6 +1,8 @@
 export type SongKey = string;
 export type AlbumKey = string;
 export type ArtistKey = string;
+export type PlaylistName = string;
+export type Playlist = SongKey[];
 
 export type Song = {
   key: SongKey;

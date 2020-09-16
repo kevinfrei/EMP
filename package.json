@@ -30,7 +30,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn format && yarn lint"
+      "pre-push": "yarn format && yarn lint && yarn run check"
     }
   },
   "scripts": {
@@ -44,6 +44,7 @@
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "prepare": "rimraf public/main public/*.js public/*.js.map && tsc -p tsconfig.static.json && tsc -p tsconfig.render.json",
     "tsc": "tsc",
+    "check": "tsc --noEmit && tsc --noEmit -p tsconfig.static.json && tsc --noEmit -p tsconfig.render.json",
     "test": "jest --config jest.jsdom.config.js && jest --config jest.node.config.js",
     "testui": "jest --config jest.jsdom.config.js --watch",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\"",

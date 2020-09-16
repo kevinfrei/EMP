@@ -11,6 +11,8 @@ import type {
   AlbumKey,
   Song,
   SongKey,
+  PlaylistName,
+  Playlist,
 } from '../DataSchema';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
@@ -29,6 +31,19 @@ const Songs: Collection<SongKey, Song> = {
   ByKey: new Map<SongKey, Song>(),
   Keys: [],
 };*/
+
+export const allPlaylists = atom<Map<PlaylistName, Playlist>>({
+  key: 'allPlaylists',
+  default: new Map<PlaylistName, Playlist>(),
+});
+
+export const playlistSel = selectorFamily<Playlist, PlaylistName>({
+  key: 'playlist',
+  get: (pl: PlaylistName) => ({ get }) => {
+    const playlists = get(allPlaylists);
+    return playlists.get(pl) ?? [];
+  },
+});
 
 export const allSongsSel = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
