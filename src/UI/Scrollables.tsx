@@ -1,83 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-
-import Store from '../MyStore';
-
-import type { Properties } from 'csstype';
 import type { ListOnScrollProps } from 'react-window';
 
 import './styles/Scrollables.css';
-
-export function VerticalScrollDiv({
-  scrollId,
-  layoutId,
-  children,
-  className,
-  ...props
-}: {
-  scrollId: string;
-  layoutId: string;
-  children: React.ReactNode;
-  className?: string;
-  props?: Properties<HTMLDivElement>[];
-}): JSX.Element {
-  const store = Store.useStore();
-  const scrollData = store.get('scrollManager');
-  const getScrollPosition = (ev: React.UIEvent<HTMLElement>) => {
-    const pos = {
-      x: ev.currentTarget.scrollLeft,
-      y: ev.currentTarget.scrollTop,
-    };
-    scrollData.set(scrollId, pos);
-  };
-  const setScrollPosition = () => {
-    const pos = scrollData.get(scrollId);
-    const scroller = document.getElementById(scrollId);
-    if (pos) {
-      if (!scroller) {
-        setTimeout(setScrollPosition, 1);
-      } else {
-        scroller.scrollTop = pos.y;
-        scroller.scrollLeft = pos.x;
-      }
-    }
-  };
-  const listenForSize = () => {
-    const scroller = document.getElementById(scrollId);
-    const theSpace = document.getElementById(layoutId);
-    if (scroller && theSpace) {
-      const rect = theSpace.getBoundingClientRect();
-      scroller.style.height = `${rect.height}px`;
-      scroller.style.width = `${rect.width}px`;
-      scroller.style.left = `${rect.left}px`;
-      scroller.style.top = `${rect.top}px`;
-      setScrollPosition();
-    }
-  };
-  const eventListenerEffects = () => {
-    const scroller = document.getElementById(scrollId);
-    listenForSize();
-    window.addEventListener('resize', listenForSize);
-    scroller!.addEventListener('scroll', getScrollPosition as any);
-    return () => {
-      window.removeEventListener('resize', listenForSize);
-      scroller!.removeEventListener('scroll', getScrollPosition as any);
-    };
-  };
-  useLayoutEffect(setScrollPosition);
-  useLayoutEffect(eventListenerEffects);
-  return (
-    <div
-      id={scrollId}
-      className={(className ? className + ' ' : '') + 'verticalScrollingDiv'}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
 
 declare type Generator = ({
   index,
@@ -86,6 +13,8 @@ declare type Generator = ({
   index: number;
   style: React.CSSProperties;
 }) => JSX.Element;
+
+type Point = { x: number; y: number };
 
 export function VerticalScrollFixedVirtualList({
   scrollId,
@@ -99,8 +28,8 @@ export function VerticalScrollFixedVirtualList({
   itemGenerator: Generator;
 }): JSX.Element {
   const ref: React.MutableRefObject<FixedSizeList | null> = useRef(null);
-  const store = Store.useStore();
-  const scrollData = store.get('scrollManager');
+  // const store = Store.useStore();
+  const [scrollData] = useState(new Map<string, Point>());
   let alreadySet = false;
 
   const getScrollPosition = (props: ListOnScrollProps) => {
@@ -154,8 +83,8 @@ export function VerticalScrollVariableVirtualList({
   itemGenerator: (index: number, style: React.CSSProperties) => React.ReactNode;
 }): JSX.Element {
   const ref: React.MutableRefObject<VariableSizeList | null> = useRef(null);
-  const store = Store.useStore();
-  const scrollData = store.get('scrollManager');
+  // const store = Store.useStore();
+  const [scrollData] = useState(new Map<string, Point>());
   let alreadySet = false;
   const getScrollPosition = (props: ListOnScrollProps) => {
     if (scrollData.get(scrollId) && !alreadySet) {

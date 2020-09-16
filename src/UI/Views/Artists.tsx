@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
-import { addArtistAtom, addSongAtom } from '../../Recoil/api';
+import { addArtistAtom } from '../../Recoil/api';
 import { allArtistsSel } from '../../Recoil/MusicDbAtoms';
 
 import type { Artist } from '../../DataSchema';
@@ -16,7 +16,6 @@ import './styles/Artists.css';
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export default function ArtistView(): JSX.Element {
-  const [, addSong] = useRecoilState(addSongAtom);
   const [, addArtist] = useRecoilState(addArtistAtom);
   const artists = useRecoilValue(allArtistsSel);
   const artistArray: Artist[] = [...artists.values()];
@@ -65,13 +64,7 @@ export default function ArtistView(): JSX.Element {
       details = (
         <div className="songListForArtist">
           {art.songs.map((k) => (
-            <SongLine
-              template="L#T"
-              key={k}
-              className="songForArtist"
-              songKey={k}
-              onDoubleClick={(s, sk) => addSong(sk)}
-            />
+            <SongLine />
           ))}
         </div>
       );

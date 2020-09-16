@@ -3,11 +3,10 @@ import React, { useState, CSSProperties } from 'react';
 import { Dialog, DialogType, List } from '@fluentui/react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import Store from '../../MyStore';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import SongLine from '../SongLine';
-import { allAlbumsSel } from '../../Recoil/MusicDbAtoms';
-import { addAlbumAtom, addSongAtom } from '../../Recoil/api';
+import { allAlbumKeysSel, allAlbumsSel } from '../../Recoil/MusicDbAtoms';
+import { addAlbumAtom /* , addSongAtom */ } from '../../Recoil/api';
 
 import type { Album } from '../../DataSchema';
 
@@ -17,11 +16,9 @@ import './styles/Albums.css';
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export function AlbumView(): JSX.Element {
-  const [, addSong] = useRecoilState(addSongAtom);
   const [, addAlbum] = useRecoilState(addAlbumAtom);
-  const store = Store.useStore();
-  const albums = store.get('Albums');
-  const albumArray = store.get('AlbumArray');
+  const albums = useRecoilValue(allAlbumsSel);
+  const albumArray = useRecoilValue(allAlbumKeysSel);
   const [expandedAlbum, setExpandedAlbum] = useState('');
   const handleClose = () => setExpandedAlbum('');
   let details = <></>;
@@ -34,13 +31,7 @@ export function AlbumView(): JSX.Element {
       details = (
         <div className="songListForAlbum">
           {album.songs.map((k) => (
-            <SongLine
-              template="R#T"
-              key={k}
-              songKey={k}
-              className="songForAlbum"
-              onDoubleClick={(st, songKey) => addSong(songKey)}
-            />
+            <SongLine />
           ))}
         </div>
       );
