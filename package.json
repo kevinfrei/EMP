@@ -37,7 +37,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn format && yarn lint"
+      "pre-push": "yarn format && yarn lint"
     }
   },
   "scripts": {
