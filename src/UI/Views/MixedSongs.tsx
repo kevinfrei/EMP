@@ -23,7 +23,7 @@ import {
 } from '../../Recoil/MusicDbAtoms';
 import { addSongAtom } from '../../Recoil/api';
 import { SortSongs } from '../../Sorters';
-import { sortWithArticles } from '../../Recoil/SettingsAtoms';
+import { sortWithArticlesAtom } from '../../Recoil/SettingsAtoms';
 import {
   renderAltRow,
   makeColumns,
@@ -47,7 +47,7 @@ export default function MixedSongsList(): JSX.Element {
   const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
-  const articles = useRecoilValue(sortWithArticles.atom);
+  const articles = useRecoilValue(sortWithArticlesAtom);
   const [selected, setSelected] = useState('');
   const [, addSong] = useRecoilState(addSongAtom);
   const [sortOrder, setSortOrder] = useState('rl');

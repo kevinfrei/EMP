@@ -1,7 +1,7 @@
 import { RecoilValue, selector, atom, selectorFamily } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
-import { syncedLocations } from './SettingsAtoms';
+import { locationsAtom } from './SettingsAtoms';
 import * as ipc from '../ipc';
 
 import type {
@@ -37,7 +37,7 @@ export const allSongsSel = selector<Map<SongKey, Song>>({
   get: async ({ get }): Promise<Map<SongKey, Song>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(syncedLocations.atom);
+    const locations = get(locationsAtom);
     log(locations.length);
     const res = await ipc.GetAllSongs();
     return res || new Map<SongKey, Song>();
@@ -69,7 +69,7 @@ export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
   get: async ({ get }): Promise<Map<AlbumKey, Album>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(syncedLocations.atom);
+    const locations = get(locationsAtom);
     log(locations.length);
     const res = await ipc.GetAllAlbums();
     return res || new Map<AlbumKey, Album>();
@@ -109,7 +109,7 @@ export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
   get: async ({ get }): Promise<Map<ArtistKey, Artist>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(syncedLocations.atom);
+    const locations = get(locationsAtom);
     log(locations.length);
     const res = await ipc.GetAllArtsists();
     return res || new Map<ArtistKey, Artist>();

@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import * as React from 'react';
-import { useRecoilState } from 'recoil';
+import { RecoilState, useRecoilState } from 'recoil';
 import { Logger } from '@freik/core-utils';
 import {
   Toggle,
@@ -15,15 +15,13 @@ import {
 } from '@fluentui/react';
 
 import {
-  sortWithArticles,
-  albumListSort,
-  artistListSort,
-  songListSort,
-  syncedLocations,
+  sortWithArticlesAtom,
+  albumListSortAtom,
+  artistListSortAtom,
+  songListSortAtom,
+  locationsAtom,
 } from '../../Recoil/SettingsAtoms';
 import { ShowOpenDialog } from '../../MyWindow';
-
-import type { SyncedAtom } from '../../Recoil/Atoms';
 
 import './styles/Settings.css';
 
@@ -32,7 +30,7 @@ const log = Logger.bind('View-Settings');
 
 declare type PopupItem = {
   title: string;
-  syncedAtom: SyncedAtom<string>;
+  atom: RecoilState<string>;
   options: IDropdownOption[];
 };
 
@@ -47,31 +45,26 @@ function GetDirs(): string[] | void {
 }
 
 function SortPopup({ data }: { data: PopupItem }): JSX.Element {
-  const [value, setter] = useRecoilState(data.syncedAtom.atom);
+  const [value, setter] = useRecoilState(data.atom);
   const onChange = (
     event: React.FormEvent<HTMLDivElement>,
     item?: IDropdownOption,
   ): void => {
     if (item) setter(item.key.toString());
   };
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  const SyncingElement: () => JSX.Element = data.syncedAtom.atomSyncer;
   return (
-    <>
-      <SyncingElement />
-      <Dropdown
-        label={`View ${data.title} by`}
-        options={data.options}
-        // eslint-disable-next-line id-blacklist
-        selectedKey={value ? value : undefined}
-        onChange={onChange}
-      />
-    </>
+    <Dropdown
+      label={`View ${data.title} by`}
+      options={data.options}
+      // eslint-disable-next-line id-blacklist
+      selectedKey={value ? value : undefined}
+      onChange={onChange}
+    />
   );
 }
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useRecoilState(syncedLocations.atom);
+  const [newLoc, setNewLoc] = useRecoilState(locationsAtom);
   log(newLoc);
   return (
     <>
@@ -101,30 +94,27 @@ function RecoilLocations(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const [articles, setArticles] = useRecoilState(sortWithArticles.atom);
+  const [articles, setArticles] = useRecoilState(sortWithArticlesAtom);
   log('Articles: ' + (articles ? 'true' : 'false'));
   function onChange(ev: React.MouseEvent<HTMLElement>, checked?: boolean) {
     setArticles(checked ? true : false);
   }
   return (
-    <>
-      <sortWithArticles.atomSyncer />
-      <Toggle
-        label="Consider articles when sorting"
-        checked={articles}
-        inlineLabel
-        onText="On"
-        offText="Off"
-        onChange={onChange}
-      />
-    </>
+    <Toggle
+      label="Consider articles when sorting"
+      checked={articles}
+      inlineLabel
+      onText="On"
+      offText="Off"
+      onChange={onChange}
+    />
   );
 }
 
 export default function Settings(): JSX.Element {
   const album = {
     title: 'Album',
-    syncedAtom: albumListSort,
+    atom: albumListSortAtom,
     options: [
       { key: 'AlbumTitle', text: 'Title' },
       { key: 'AlbumYear', text: 'Year' },
@@ -134,7 +124,7 @@ export default function Settings(): JSX.Element {
   };
   const artist = {
     title: 'Artist',
-    syncedAtom: artistListSort,
+    atom: artistListSortAtom,
     options: [
       { key: 'AlbumCount', text: '# of Albums' },
       { key: 'ArtistName', text: 'Name' },
@@ -143,7 +133,7 @@ export default function Settings(): JSX.Element {
   };
   const song = {
     title: 'Song',
-    syncedAtom: songListSort,
+    atom: songListSortAtom,
     options: [
       { key: 'SongTitle', text: 'Title' },
       { key: 'ArtistAlbum', text: 'Artist, then Album' },
@@ -157,7 +147,6 @@ export default function Settings(): JSX.Element {
         <Separator alignContent="start">
           <Text variant="mediumPlus">Music Locations</Text>
         </Separator>
-        <syncedLocations.atomSyncer />
         <RecoilLocations />
         <Separator alignContent="start">
           <Text variant="mediumPlus">Sorting Preferences</Text>

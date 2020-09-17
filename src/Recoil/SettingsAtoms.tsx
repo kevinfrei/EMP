@@ -1,24 +1,27 @@
-import { makeBackedAtom } from './Atoms';
+import { atom } from 'recoil';
 
 // This is the 'locations' for searching
-export const syncedLocations = makeBackedAtom<string[]>('locations', []);
+export const locationsAtom = atom<string[]>({
+  key: 'locations',
+  default: [],
+});
 
-export const sortWithArticles = makeBackedAtom<boolean>(
-  'rSortWithArticles',
-  true,
-);
+export const sortWithArticlesAtom = atom<boolean>({
+  key: 'rSortWithArticles',
+  default: true,
+});
 
-export const albumListSort = makeBackedAtom<string>(
-  'rAlbumListSort',
-  'ArtistName',
-);
+export const albumListSortAtom = atom<string>({
+  key: 'rAlbumListSort',
+  default: 'ArtistName',
+});
 
-export const artistListSort = makeBackedAtom<string>(
-  'rArtistListSort',
-  'ArtistAlbum',
-);
+export const artistListSortAtom = atom<string>({
+  key: 'rArtistListSort',
+  default: 'ArtistAlbum',
+});
 
-export const songListSort = makeBackedAtom<string>(
-  'rSongListSort',
-  'ArtistAlbum',
-);
+export const songListSortAtom = atom<string>({
+  key: 'rSongListSort',
+  default: 'ArtistAlbum',
+});
