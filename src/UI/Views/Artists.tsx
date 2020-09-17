@@ -1,16 +1,21 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState, CSSProperties } from 'react';
-import { Dialog, DialogType } from '@fluentui/react';
+import {
+  DetailsList,
+  Dialog,
+  DialogType,
+  SelectionMode,
+} from '@fluentui/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
-import SongLine from '../SongLine';
-import { addArtistAtom } from '../../Recoil/api';
-import { allArtistsSel } from '../../Recoil/MusicDbAtoms';
+import { addArtistAtom, addSongAtom } from '../../Recoil/api';
+import { allArtistsSel, allSongsSel } from '../../Recoil/MusicDbAtoms';
 
-import type { Artist } from '../../DataSchema';
+import type { Artist, Song } from '../../DataSchema';
 
 import './styles/Artists.css';
+import { AlbumFromSong, makeColumns } from '../SongList';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
@@ -19,7 +24,11 @@ export default function ArtistView(): JSX.Element {
   const [, addArtist] = useRecoilState(addArtistAtom);
   const artists = useRecoilValue(allArtistsSel);
   const artistArray: Artist[] = [...artists.values()];
+  const allSongs = useRecoilValue(allSongsSel);
   const [expandedArtist, setExpandedArtist] = useState('');
+
+  const [, addSong] = useRecoilState(addSongAtom);
+
   const handleClose = () => setExpandedArtist('');
 
   function VirtualArtistRow({
@@ -56,16 +65,29 @@ export default function ArtistView(): JSX.Element {
   }
 
   let details = <></>;
-  let dialogHeader = <></>;
+  let dialogHeader = '';
   if (!!expandedArtist) {
     const art = artists.get(expandedArtist);
     if (art) {
-      dialogHeader = <>{`Song list for ${art.name}`}</>;
+      const songColumns = makeColumns<Song>(
+        // TODO: Add sorting back
+        () => '',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        ['l', 'albumId', 'Album', 50, 150, AlbumFromSong],
+        ['n', 'track', '#', 10, 40],
+        ['t', 'title', 'Title', 50],
+      );
+      dialogHeader = `Song list for ${art.name}`;
       details = (
-        <div className="songListForArtist">
-          {art.songs.map((k) => (
-            <SongLine />
-          ))}
+        <div className="songListForArtist" data-is-scrollable="true">
+          <DetailsList
+            compact={true}
+            items={art.songs.map((sl) => allSongs.get(sl))}
+            selectionMode={SelectionMode.none}
+            columns={songColumns}
+            onItemInvoked={(item: Song) => addSong(item.key)}
+          />
         </div>
       );
     }
@@ -76,6 +98,8 @@ export default function ArtistView(): JSX.Element {
         hidden={!expandedArtist}
         onDismiss={handleClose}
         dialogContentProps={{ type: DialogType.close, title: dialogHeader }}
+        minWidth={450}
+        maxWidth={650}
       >
         {details}
       </Dialog>

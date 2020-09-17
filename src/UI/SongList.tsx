@@ -8,11 +8,11 @@ import {
   IDetailsRowStyles,
 } from '@fluentui/react';
 
-import type { AlbumKey, ArtistKey, Song } from '../DataSchema';
+import type { Album, AlbumKey, ArtistKey, Song } from '../DataSchema';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/MusicDbAtoms';
 
-export function makeColumns(
+export function makeColumns<T>(
   getSort: () => string,
   performSort: (srt: string) => void,
   ...renderers: [
@@ -21,7 +21,7 @@ export function makeColumns(
     name: string,
     minWidth: number,
     maxWidth?: number,
-    render?: (song: Song) => JSX.Element,
+    render?: (song: T) => JSX.Element,
   ][]
 ): IColumn[] {
   const localSort = (which: string) => {
@@ -92,4 +92,8 @@ export function ArtistsFromSong(song: Song): JSX.Element {
 
 export function AlbumFromSong(song: Song): JSX.Element {
   return <AlbumName albumId={song.albumId} />;
+}
+
+export function ArtistsFromAlbum(album: Album): JSX.Element {
+  return <ArtistName artistIds={[...album.primaryArtists]} />;
 }

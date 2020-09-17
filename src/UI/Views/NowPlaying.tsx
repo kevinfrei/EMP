@@ -177,7 +177,7 @@ export default function NowPlaying(): JSX.Element {
     />
   );
 
-  const columns = makeColumns(
+  const columns = makeColumns<Song>(
     () => sortBy,
     (srt: string) => {
       setSortBy(srt);

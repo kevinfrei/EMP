@@ -4,7 +4,15 @@ import {
   DetailsList,
   Dialog,
   DialogType,
+  IDetailsColumnRenderTooltipProps,
+  IDetailsHeaderProps,
+  IRenderFunction,
+  ScrollablePane,
+  ScrollbarVisibility,
   SelectionMode,
+  Sticky,
+  StickyPositionType,
+  TooltipHost,
 } from '@fluentui/react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
@@ -47,7 +55,7 @@ export default function MixedSongsList(): JSX.Element {
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
   );
 
-  const columns = makeColumns(
+  const columns = makeColumns<Song>(
     () => sortOrder,
     (srt: string) => {
       setSortOrder(srt);
@@ -58,28 +66,49 @@ export default function MixedSongsList(): JSX.Element {
     ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
     ['t', 'title', 'Title', 150],
   );
-
+  const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
+    props,
+    defaultRender,
+  ) => {
+    if (!props) {
+      return null;
+    }
+    const onRenderColumnHeaderTooltip: IRenderFunction<IDetailsColumnRenderTooltipProps> = (
+      tooltipHostProps,
+    ) => <TooltipHost {...tooltipHostProps} />;
+    return (
+      <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
+        {defaultRender!({
+          ...props,
+          onRenderColumnHeaderTooltip,
+        })}
+      </Sticky>
+    );
+  };
   return (
-    <div className="songView current-view" data-is-scrollable="true">
-      <Dialog
-        minWidth={450}
-        hidden={selected === ''}
-        onDismiss={() => setSelected('')}
-        dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
-      >
-        <MediaInfoTable forSong={selected} />
-      </Dialog>
-      <DetailsList
-        compact={true}
-        items={sortedItems}
-        selectionMode={SelectionMode.none}
-        onRenderRow={renderAltRow}
-        onItemContextMenu={(item: Song) => {
-          setSelected(item.key);
-        }}
-        columns={columns}
-        onItemInvoked={(item: Song) => addSong(item.key)}
-      />
+    <div className="current-view songView" data-is-scrollable="true">
+      <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
+        <Dialog
+          minWidth={450}
+          hidden={selected === ''}
+          onDismiss={() => setSelected('')}
+          dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
+        >
+          <MediaInfoTable forSong={selected} />
+        </Dialog>
+        <DetailsList
+          items={sortedItems}
+          columns={columns}
+          compact={true}
+          selectionMode={SelectionMode.none}
+          onRenderRow={renderAltRow}
+          onRenderDetailsHeader={onRenderDetailsHeader}
+          onItemContextMenu={(item: Song) => {
+            setSelected(item.key);
+          }}
+          onItemInvoked={(item: Song) => addSong(item.key)}
+        />
+      </ScrollablePane>
     </div>
   );
 }

@@ -32,19 +32,6 @@ const Songs: Collection<SongKey, Song> = {
   Keys: [],
 };*/
 
-export const allPlaylists = atom<Map<PlaylistName, Playlist>>({
-  key: 'allPlaylists',
-  default: new Map<PlaylistName, Playlist>(),
-});
-
-export const playlistSel = selectorFamily<Playlist, PlaylistName>({
-  key: 'playlist',
-  get: (pl: PlaylistName) => ({ get }) => {
-    const playlists = get(allPlaylists);
-    return playlists.get(pl) ?? [];
-  },
-});
-
 export const allSongsSel = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
   get: async ({ get }): Promise<Map<SongKey, Song>> => {
@@ -180,9 +167,17 @@ export const nowPlayingAtom = atom<string>({
   default: '',
 });
 
-export const playlistsAtom = atom<Map<string, SongKey[]>>({
+export const playlistsAtom = atom<Map<PlaylistName, Playlist>>({
   key: 'Playlists',
-  default: new Map<string, SongKey[]>(),
+  default: new Map<PlaylistName, SongKey[]>(),
+});
+
+export const playlistSel = selectorFamily<Playlist, PlaylistName>({
+  key: 'playlist',
+  get: (pl: PlaylistName) => ({ get }) => {
+    const playlists = get(playlistsAtom);
+    return playlists ? playlists.get(pl) ?? [] : [];
+  },
 });
 
 export const songListAtom = atom<SongKey[]>({
