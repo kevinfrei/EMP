@@ -1,16 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
 import { IconButton, Slider, Stack } from '@fluentui/react';
-import { useRecoilState } from 'recoil';
 
 import { mutedAtom, volumeAtom } from '../Recoil/Atoms';
 import { GetAudioElem } from './SongPlayback';
+import { useBackedState } from '../Recoil/helpers';
 
 import './styles/VolumeControl.css';
 
 export default function VolumeControl(): JSX.Element {
-  const [muted, setMuted] = useRecoilState(mutedAtom);
-  const [volume, setVolume] = useRecoilState(volumeAtom);
+  const [muted, setMuted] = useBackedState(mutedAtom);
+  const [volume, setVolume] = useBackedState(volumeAtom);
 
   const ae = GetAudioElem();
 

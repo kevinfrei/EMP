@@ -7,7 +7,7 @@ import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 import type { SongKey } from './DataSchema';
 
 const log = Logger.bind('MyWindow');
-// Logger.enable('MyWindow');
+Logger.enable('MyWindow');
 
 declare type ListenerFunc = (value: unknown) => void;
 declare type SubFunc = (key: string, listener: ListenerFunc) => string;
@@ -104,11 +104,15 @@ export async function PromiseSend(
 }
 */
 
-export function CallMain<Type, Result>(
+export async function CallMain<Type, Result>(
   channel: string,
   key?: Type,
 ): Promise<Result | void> {
-  return window.betterIpc!.callMain<Type, Result>(channel, key);
+  log(`Calling main("${channel}", "${(key as any) as string}")`);
+  const result = await window.betterIpc!.callMain<Type, Result>(channel, key);
+  log(`main ("${channel}" "${(key as any) as string}") returned:`);
+  log(result);
+  return result;
 }
 
 // eslint-disable-next-line

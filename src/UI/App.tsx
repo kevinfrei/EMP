@@ -10,18 +10,22 @@ import SongPlayback from './SongPlayback';
 import VolumeControl from './VolumeControl';
 
 import './styles/App.css';
+import { PersistenceObserver } from '../Recoil/helpers';
 
 export default function App(): JSX.Element {
   return (
     <RecoilRoot>
-      <Utilities />
-      <span className="grabber"></span>
-      <span className="left-column"></span>
-      <span className="top-row"></span>
-      <SongControls />
-      <SongPlayback />
-      <VolumeControl />
-      <Sidebar />
+      <React.Suspense fallback="Initializing...">
+        <PersistenceObserver />
+        <Utilities />
+        <span className="grabber"></span>
+        <span className="left-column"></span>
+        <span className="top-row"></span>
+        <SongControls />
+        <SongPlayback />
+        <VolumeControl />
+        <Sidebar />
+      </React.Suspense>
       <React.Suspense fallback="Please wait...">
         <ViewSelector />
       </React.Suspense>

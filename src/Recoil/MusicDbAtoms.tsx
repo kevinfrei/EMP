@@ -17,8 +17,15 @@ import type {
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
+export type SongData = {
+  title: string;
+  track: number;
+  artist: string;
+  album: string;
+};
+
 const log = Logger.bind('MusicDbAtoms');
-// Logger.enable('MusicDbAtoms')
+Logger.enable('MusicDbAtoms');
 
 /*
 type Collection<K, T> = {
@@ -37,9 +44,10 @@ export const allSongsSel = selector<Map<SongKey, Song>>({
   get: async ({ get }): Promise<Map<SongKey, Song>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(locationsAtom);
-    log(locations.length);
+    log('AllSongs');
+    get(locationsAtom);
     const res = await ipc.GetAllSongs();
+    log(`Got ${(res || new Map<SongKey, Song>()).size} entries`);
     return res || new Map<SongKey, Song>();
   },
 });
@@ -69,8 +77,7 @@ export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
   get: async ({ get }): Promise<Map<AlbumKey, Album>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(locationsAtom);
-    log(locations.length);
+    get(locationsAtom);
     const res = await ipc.GetAllAlbums();
     return res || new Map<AlbumKey, Album>();
   },
@@ -109,8 +116,7 @@ export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
   get: async ({ get }): Promise<Map<ArtistKey, Artist>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
-    const locations = get(locationsAtom);
-    log(locations.length);
+    get(locationsAtom);
     const res = await ipc.GetAllArtsists();
     return res || new Map<ArtistKey, Artist>();
   },
@@ -214,13 +220,6 @@ export const albumKeyForSongKeySel = selectorFamily<AlbumKey, SongKey>({
     }
   },
 });
-
-export type SongData = {
-  title: string;
-  track: number;
-  artist: string;
-  album: string;
-};
 
 export const artistStringSel = selectorFamily<string, ArtistKey[]>({
   key: 'ArtistString',

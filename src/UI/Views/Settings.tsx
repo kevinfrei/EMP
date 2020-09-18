@@ -24,6 +24,7 @@ import {
 import { ShowOpenDialog } from '../../MyWindow';
 
 import './styles/Settings.css';
+import { useBackedState } from '../../Recoil/helpers';
 
 const log = Logger.bind('View-Settings');
 // Logger.enable('View-Settings');
@@ -64,7 +65,8 @@ function SortPopup({ data }: { data: PopupItem }): JSX.Element {
 }
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useRecoilState(locationsAtom);
+  const [newLoc, setNewLoc] = useBackedState<string[]>(locationsAtom);
+  log(`Locations (${locationsAtom.key}) value at render:`);
   log(newLoc);
   return (
     <>

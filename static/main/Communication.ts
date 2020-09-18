@@ -121,6 +121,9 @@ export function SetIndex(
 async function getGeneral(name: string) {
   try {
     log(`getGeneral(${name})`);
+    if (name.startsWith('sync_')) {
+      name = name.substr(5);
+    }
     const value = await persist.getItemAsync(name);
     log(`Sending value ${name}:`);
     log(value);
@@ -135,8 +138,11 @@ async function getGeneral(name: string) {
 async function setGeneral(keyValuePair: string) {
   try {
     const pos = keyValuePair.indexOf(':');
-    const name = keyValuePair.substring(0, pos);
+    let name = keyValuePair.substring(0, pos);
     const value = keyValuePair.substring(pos + 1);
+    if (name.startsWith('sync_')) {
+      name = name.substr(5);
+    }
     log(`setGeneral(${name} : ${value})`);
     await persist.setItemAsync(name, value);
   } catch (e) {

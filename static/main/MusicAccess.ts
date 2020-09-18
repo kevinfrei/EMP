@@ -19,34 +19,48 @@ Logger.enable('MusicAccess');
 
 export async function getMusicDB(): Promise<MusicDB | void> {
   try {
+    log('get-music-db called');
     const musicDBstr = await persist.getItemAsync('DB');
     if (musicDBstr) {
+      log(`get-music.db: ${musicDBstr.length} bytes in the JSON blob.`);
       return (FTON.parse(musicDBstr) as unknown) as MusicDB;
     }
+    log('get-music-db result is empty');
   } catch (e) {
+    log('get-music-db exception:');
+    log(e);
     return;
   }
 }
 
 export async function getAllSongs(): Promise<Map<SongKey, Song> | void> {
+  log('get-all-songs called');
   const musicDB = await getMusicDB();
   if (musicDB) {
+    log(`get-all-songs: ${musicDB.songs.size} total songs`);
     return musicDB.songs;
   }
+  log('get-all-songs result is empty');
 }
 
 export async function getAllArtists(): Promise<Map<ArtistKey, Artist> | void> {
+  log('get-all-artists called');
   const musicDB = await getMusicDB();
   if (musicDB) {
+    log(`get-all-artists: ${musicDB.artists.size} total artists`);
     return musicDB.artists;
   }
+  log('get-all-artists result is empty');
 }
 
 export async function getAllAlbums(): Promise<Map<AlbumKey, Album> | void> {
+  log('get-all-albums called');
   const musicDB = await getMusicDB();
   if (musicDB) {
+    log(`get-all-albums: ${musicDB.albums.size} total albums`);
     return musicDB.albums;
   }
+  log('get-all-albums result is empty');
 }
 
 export async function getAllPlaylists(): Promise<Map<
