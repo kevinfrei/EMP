@@ -1,12 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState } from 'react';
-import { FTON, FTONData } from '@freik/core-utils';
+import { Logger, FTON, FTONData } from '@freik/core-utils';
 import {
   RecoilState,
-  atom,
   selectorFamily,
   useRecoilState,
-  DefaultValue,
   useRecoilValue,
   useRecoilTransactionObserver_UNSTABLE,
   Snapshot,
@@ -14,84 +12,69 @@ import {
 } from 'recoil';
 import { GetGeneral, SetGeneral } from '../ipc';
 
+const log = Logger.bind('helpers');
+Logger.enable('helpers');
+
+const atomsToSync = new Map<string, RecoilState<unknown>>();
+
 const backerSelFamily = selectorFamily({
   key: 'sync',
-  get: (param: string) => async ({ get }): Promise<string> => {
+  get: (param: string) => async (): Promise<string> => {
     const serverVal = await GetGeneral(param);
     return serverVal || '';
-  },
-  set: (param: string) => (
-    { get, set, reset },
-    newVal: string | DefaultValue,
-  ): void => {
-  	' ';
   },
 });
 
 // This will trigger a server side pull of the initial value, then use local
 // state for all subsequent sets. This must be used in tandem with the
 // PersistenceObserver transaction watcher and the syncAtom maker
-export function useBackedState<T>(theAtom: RecoilState<T>): [T, (val: T) => void] {
+export function useBackedState<T>(
+  theAtom: RecoilState<T>,
+): [T, (val: T) => void] {
   const [alreadyRead, setAlreadyRead] = useState(false);
   const [atomValue, setAtomValue] = useRecoilState<T>(theAtom);
   const selector = useRecoilValue<string>(backerSelFamily(theAtom.key));
   // If we haven't already read the thing, ask it from the selector
   let value: T;
   if (!alreadyRead) {
-    value = (FTON.parse(selector) as unknown) as T;
-    setAtomValue(value);
-    setAlreadyRead(true);
+    // First time through, add this to the list of stuff to sync to main
+    try {
+      atomsToSync.set(theAtom.key, theAtom as RecoilState<unknown>);
+      value = (FTON.parse(selector) as unknown) as T;
+      setAtomValue(value);
+      setAlreadyRead(true);
+    } catch (e) {
+      value = atomValue;
+    }
   } else {
     value = atomValue;
   }
-  const setter = (val: T) => {
-    setAtomValue(val);
-  };
-  return [value, setter];
-}
-
-const atoms = new Map<string, RecoilState<unknown>>();
-const sync = new Map<string, RecoilState<unknown>>();
-
-export function makeAtom<T>(key: string, defaultValue: T): RecoilState<T> {
-  const theAtom = atom<T>({ key: 'local_' + key, default: defaultValue });
-  atoms.set(key, theAtom as RecoilState<unknown>);
-  return theAtom;
-}
-
-// For a synchronized state, I need the 'backed' atom to register with the
-// persistence observer, and the "public" selector to query from the server
-export function syncAtom<T>(key: string, defaultValue: T): RecoilState<T> {
-  const theAtom = atom<T>({ key: 'sync_' + key, default: defaultValue });
-  sync.set(key, theAtom as RecoilState<unknown>);
-  return theAtom;
+  return [value, setAtomValue]; // [atomValue, setAtomValue];
 }
 
 export function syncedAtoms(): Iterable<RecoilState<unknown>> {
-  return sync.values();
+  return atomsToSync.values();
+}
+
+function saveToServer({ snapshot }: { snapshot: Snapshot }) {
+  for (const modAtom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
+    if (atomsToSync.has(modAtom.key)) {
+      const theAtom = snapshot.getLoadable<FTONData>(
+        modAtom as RecoilValue<FTONData>,
+      );
+      if (theAtom.state === 'hasValue') {
+        // TODO: Debounce this. It's way to chatty
+        log(`Saving state to main process for key ${modAtom.key}`);
+        SetGeneral(modAtom.key, FTON.stringify(theAtom.contents)).catch((e) => {
+          log(`Error trying to save ${modAtom.key} value to server:`);
+          log(e);
+        });
+      }
+    }
+  }
 }
 
 export function PersistenceObserver(): JSX.Element {
-  useRecoilTransactionObserver_UNSTABLE(
-    ({ snapshot }: { snapshot: Snapshot }) => {
-      for (const modifiedAtom of snapshot.getNodes_UNSTABLE({
-        isModified: true,
-      })) {
-        if (sync.has(modifiedAtom.key)) {
-          const atomLoadable = snapshot.getLoadable<FTONData>(
-            modifiedAtom as RecoilValue<FTONData>,
-          );
-          if (atomLoadable.state === 'hasValue') {
-            SetGeneral(
-              modifiedAtom.key,
-              FTON.stringify(atomLoadable.contents),
-            ).catch((e) => {
-              // check it
-            });
-          }
-        }
-      }
-    },
-  );
+  useRecoilTransactionObserver_UNSTABLE(saveToServer);
   return <></>;
 }

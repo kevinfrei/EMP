@@ -15,17 +15,19 @@ import { PersistenceObserver } from '../Recoil/helpers';
 export default function App(): JSX.Element {
   return (
     <RecoilRoot>
-      <React.Suspense fallback="Initializing...">
+      <React.Suspense fallback="">
         <PersistenceObserver />
         <Utilities />
-        <span className="grabber"></span>
-        <span className="left-column"></span>
-        <span className="top-row"></span>
+      </React.Suspense>
+      <span className="grabber"></span>
+      <span className="left-column"></span>
+      <span className="top-row"></span>
+      <React.Suspense fallback="Initializing...">
         <SongControls />
         <SongPlayback />
         <VolumeControl />
-        <Sidebar />
       </React.Suspense>
+      <Sidebar />
       <React.Suspense fallback="Please wait...">
         <ViewSelector />
       </React.Suspense>

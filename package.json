@@ -30,7 +30,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn format && yarn lint && yarn run check"
+      "pre-push": "yarn chk"
     }
   },
   "scripts": {
@@ -44,11 +44,12 @@
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "prepare": "rimraf public/main public/*.js public/*.js.map && tsc -p tsconfig.static.json && tsc -p tsconfig.render.json",
     "tsc": "tsc",
-    "check": "tsc --noEmit && tsc --noEmit -p tsconfig.static.json && tsc --noEmit -p tsconfig.render.json",
-    "test": "jest --config jest.jsdom.config.js && jest --config jest.node.config.js",
+    "compile": "tsc --noEmit && tsc --noEmit -p tsconfig.static.json && tsc --noEmit -p tsconfig.render.json",
+    "test": "jest --config jest.jsdom.config.js && jest --config jest.node.config.js --passWithNoTests",
     "testui": "jest --config jest.jsdom.config.js --watch",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\"",
-    "lint": "yarn eslint --fix --ext .ts --ext .tsx ./"
+    "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
+    "chk": "yarn format && yarn lint && yarn compile && yarn test"
   },
   "eslintConfig": {
     "root": true,
@@ -337,6 +338,7 @@
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.1.2",
     "husky": "^4.3.0",
+    "jest-transform-css": "^2.0.0",
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",

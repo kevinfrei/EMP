@@ -1,10 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import { selector, selectorFamily, DefaultValue } from 'recoil';
+import { selector, selectorFamily, DefaultValue, atom } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
 import * as ipc from '../ipc';
-import { makeAtom, syncAtom } from './helpers';
-
 import type { SongKey } from '../DataSchema';
 
 const log = Logger.bind('Atoms');
@@ -33,15 +31,14 @@ export enum CurrentView {
   settings = 7,
 }
 
-export const curViewAtom = makeAtom<CurrentView>(
-  'CurrentView',
-  CurrentView.settings,
-);
+export const curViewAtom = atom<CurrentView>({
+  key: 'CurrentView',
+  default: CurrentView.settings,
+});
 
 export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
   key: 'mediaInfoSelector',
-  // eslint-disable-next-line
-  get: (sk: SongKey) => async ({ get }): Promise<MediaInfo> => {
+  get: (sk: SongKey) => async (): Promise<MediaInfo> => {
     if (!sk)
       return {
         general: new Map<string, string>(),
@@ -68,9 +65,12 @@ const secondsToTime = (val: number): string => {
   }
 };
 
-export const mediaTimeAtom = makeAtom<MediaTime>('mediaTime', {
-  duration: 0,
-  position: 0,
+export const mediaTimeAtom = atom<MediaTime>({
+  key: 'mediaTime',
+  default: {
+    duration: 0,
+    position: 0,
+  },
 });
 
 export const mediaTimePositionSel = selector<string>({
@@ -104,9 +104,9 @@ export const mediaTimePercentRWSel = selector<number>({
   },
 });
 
-export const shuffleAtom = syncAtom<boolean>('shuffle', false);
-export const repeatAtom = syncAtom<boolean>('repeat', false);
-export const playingAtom = makeAtom<boolean>('playing', false);
-export const activePlaylistAtom = syncAtom<string>('active', '');
-export const mutedAtom = syncAtom<boolean>('mute', false);
-export const volumeAtom = syncAtom<number>('volume', 0.5);
+export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
+export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
+export const playingAtom = atom<boolean>({ key: 'playing', default: false });
+export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
+export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
+export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });

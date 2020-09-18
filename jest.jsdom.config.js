@@ -105,7 +105,7 @@ module.exports = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  // rootDir: null,
+  rootDir: "src",
 
   // A list of paths to directories that Jest should use to search for files in
   // roots: [
@@ -121,7 +121,7 @@ module.exports = {
   // Runs special logic, such as cleaning up components
   // when using React Testing Library and adds special
   // extended assertions to Jest
-//  setupFilesAfterEnv: [    '@testing-library/react/cleanup-after-each',    '@testing-library/jest-dom/extend-expect',  ],
+  //  setupFilesAfterEnv: [    '@testing-library/react/cleanup-after-each',    '@testing-library/jest-dom/extend-expect',  ],
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
 
@@ -158,7 +158,11 @@ module.exports = {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  transform: { '^.+\\.tsx?$': 'ts-jest' },
+  transform: {
+    '^.+\\.tsx?$': 'ts-jest',
+    '.+\\.(css|styl|less|sass|scss)$': 'jest-transform-css',
+    "^.+\\.svg$": "../jest-svg-transform.js"
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: ['/node_modules/'],
@@ -173,5 +177,5 @@ module.exports = {
   // watchPathIgnorePatterns: [],
 
   // Whether to use watchman for file crawling
-   watchman: false,
+  watchman: false,
 };

@@ -1,9 +1,7 @@
 import { atom } from 'recoil';
 
-import { syncAtom } from './helpers';
-
 // This is the 'locations' for searching
-export const locationsAtom = syncAtom<string[]>('locations', []);
+export const locationsAtom = atom<string[]>({ key: 'locations', default: [] });
 
 export const sortWithArticlesAtom = atom<boolean>({
   key: 'rSortWithArticles',
