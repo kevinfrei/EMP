@@ -1,5 +1,5 @@
 import { RecoilValue, selector, atom, selectorFamily } from 'recoil';
-import { Logger } from '@freik/core-utils';
+import { FTON, Logger } from '@freik/core-utils';
 
 import { locationsAtom } from './SettingsAtoms';
 import * as ipc from '../ipc';
@@ -46,9 +46,29 @@ export const allSongsSel = selector<Map<SongKey, Song>>({
     // we get the new song list
     log('AllSongs');
     get(locationsAtom);
-    const res = await ipc.GetAllSongs();
-    log(`Got ${(res || new Map<SongKey, Song>()).size} entries`);
-    return res || new Map<SongKey, Song>();
+    //    const res = await ipc.GetAllSongs();
+    const resStr = await ipc.GetGeneral('all-songs');
+    if (resStr) {
+      const parsed = FTON.parse(resStr);
+      if (parsed) {
+        const res = new Map<SongKey, Song>(
+          (parsed as Song[]).map((val) => [val.key, val]),
+        );
+        log(`Got ${res.size} entries`);
+        return res;
+      }
+    }
+    return new Map<SongKey, Song>();
+  },
+});
+
+export const songFromKey = selectorFamily<Song, SongKey>({
+  key: 'songFromKey',
+  get: (sk: SongKey) => async ({ get }) => {
+    get(locationsAtom);
+    const song = await ipc.GetSongFromKey(sk);
+    if (!song) throw new Error(sk);
+    return song;
   },
 });
 

@@ -158,7 +158,6 @@ export function setItem(key: string, value: string): void {
   log(`Writing ${key}:`);
   log(value);
   writeFile(key, value);
-  log(`Notifying ${key}`);
   notify(key, value);
 }
 
@@ -167,7 +166,6 @@ export async function setItemAsync(key: string, value: string): Promise<void> {
   log(`Async Writing ${key}:`);
   log(value);
   await writeFileAsync(key, value);
-  log(`Async Notifying ${key}`);
   notify(key, value);
 }
 

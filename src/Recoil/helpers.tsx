@@ -15,9 +15,14 @@ import { GetGeneral, SetGeneral } from '../ipc';
 const log = Logger.bind('helpers');
 Logger.enable('helpers');
 
+// This is the list of atoms that we're sync'ing back to the main process
 const atomsToSync = new Map<string, RecoilState<unknown>>();
 
-const backerSelFamily = selectorFamily({
+// This is a selector to acquire a particular value from the server
+// Any values wind up being "read once" and the actual atom winds
+// up containing the current server value. This *does not work* for
+// server-originating changes!!!
+export const backerSelFamily = selectorFamily({
   key: 'sync',
   get: (param: string) => async (): Promise<string> => {
     const serverVal = await GetGeneral(param);
@@ -31,29 +36,34 @@ const backerSelFamily = selectorFamily({
 export function useBackedState<T>(
   theAtom: RecoilState<T>,
 ): [T, (val: T) => void] {
+  // A little 'local' state
   const [alreadyRead, setAlreadyRead] = useState(false);
+  // The 'backed' atom access
   const [atomValue, setAtomValue] = useRecoilState<T>(theAtom);
+  // Pull the initial value from the server
   const selector = useRecoilValue<string>(backerSelFamily(theAtom.key));
   // If we haven't already read the thing, ask it from the selector
-  let value: T;
   if (!alreadyRead) {
     // First time through, add this to the list of stuff to sync to main
     try {
+      // This side-effect should probably go in an effect
+      // but I'm not concerned about letting the server-watching
+      // hash table "bloat" right now...
       atomsToSync.set(theAtom.key, theAtom as RecoilState<unknown>);
-      value = (FTON.parse(selector) as unknown) as T;
-      setAtomValue(value);
-      setAlreadyRead(true);
-    } catch (e) {
-      value = atomValue;
-    }
-  } else {
-    value = atomValue;
-  }
-  return [value, setAtomValue]; // [atomValue, setAtomValue];
-}
 
-export function syncedAtoms(): Iterable<RecoilState<unknown>> {
-  return atomsToSync.values();
+      // Parse the data from the server (maybe this throws...)
+      const value = (FTON.parse(selector) as unknown) as T;
+      // set the backer atom to the value pulled from the server
+      setAtomValue(value);
+      // Flag as already-read, so we won't try to reset the value
+      setAlreadyRead(true);
+      return [value, setAtomValue];
+    } catch (e) {
+      log(`Error pulling value from server for ${theAtom.key}:`);
+      log(e);
+    }
+  }
+  return [atomValue, setAtomValue]; // [atomValue, setAtomValue];
 }
 
 function saveToServer({ snapshot }: { snapshot: Snapshot }) {

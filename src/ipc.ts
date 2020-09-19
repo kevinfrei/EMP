@@ -9,9 +9,14 @@ import type {
   Song,
   SongKey,
 } from './DataSchema';
+import { FTON } from '@freik/core-utils';
 
 export async function GetAllSongs(): Promise<Map<SongKey, Song> | void> {
-  return await CallMain<void, Map<SongKey, Song>>('get-all-songs');
+  const blob = await CallMain<void, string>('get-all-songs');
+  if (blob) {
+    const data = FTON.parse(blob);
+    return data as Map<SongKey, Song>;
+  }
 }
 
 export async function GetAllAlbums(): Promise<Map<AlbumKey, Album> | void> {
@@ -31,6 +36,13 @@ export async function GetAllPlaylists(): Promise<Map<
 
 export async function GetMediaInfo(key: SongKey): Promise<MediaInfo | void> {
   return await CallMain<SongKey, MediaInfo>('get-media-info', key);
+}
+
+export async function GetSongFromKey(key: SongKey): Promise<Song | void> {
+  const blob = await CallMain<SongKey, string>('get-song-by-key', key);
+  if (blob) {
+    return FTON.parse(blob) as Song;
+  }
 }
 
 export async function GetGeneral(key: string): Promise<string | void> {

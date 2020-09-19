@@ -3,8 +3,6 @@ import { Logger, FTON } from '@freik/core-utils';
 
 import * as persist from './persist';
 import * as music from './MusicScanner';
-import { SetIndex } from './Communication';
-import makeIndex from './search';
 import { getMusicDB } from './MusicAccess';
 
 const log = Logger.bind('Startup');
@@ -22,9 +20,7 @@ async function createMusicDb() {
   log(musicLocations);
   const musicDB = await music.find(musicLocations);
   log('Got Music DB!');
-  persist.setItem('DB', FTON.stringify(musicDB));
-  const artistIndex = makeIndex(musicDB.artists.values(), (a) => a.name);
-  SetIndex('artist', artistIndex);
+  await persist.setItemAsync('DB', FTON.stringify(musicDB));
 }
 
 function UpdateDb() {

@@ -1,4 +1,4 @@
-import { FTON, Logger } from '@freik/core-utils';
+import { FTON, FTONData, Logger } from '@freik/core-utils';
 
 import * as persist from './persist';
 import { getMediaInfo } from './metadata';
@@ -33,12 +33,24 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   }
 }
 
-export async function getAllSongs(): Promise<Map<SongKey, Song> | void> {
+export async function getSongKeys(): Promise<string> {
+  const musicDB = await getMusicDB();
+  if (!musicDB) return '';
+  return [...musicDB.songs.keys()].join(';');
+}
+
+export async function getSongByKey(songKey: SongKey): Promise<Song | void> {
+  const musicDb = await getMusicDB();
+  if (!musicDb) return;
+  return musicDb.songs.get(songKey);
+}
+
+export async function getAllSongs(): Promise<FTONData | void> {
   log('get-all-songs called');
   const musicDB = await getMusicDB();
   if (musicDB) {
     log(`get-all-songs: ${musicDB.songs.size} total songs`);
-    return musicDB.songs;
+    return FTON.stringify(musicDB.songs);
   }
   log('get-all-songs result is empty');
 }
