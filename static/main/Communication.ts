@@ -59,6 +59,7 @@ async function setGeneral(keyValuePair: string) {
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init(): void {
   // I like this API much better, particularly in the render process
+  log(betterIpc);
   betterIpc.answerRenderer('get-song-keys', getSongKeys);
   betterIpc.answerRenderer('get-song-by-key', getSongByKey);
   betterIpc.answerRenderer('get-all-songs', getAllSongs);

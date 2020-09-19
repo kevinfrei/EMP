@@ -90,13 +90,8 @@ export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
   return <>{useRecoilValue(albumByKeySel(albumId)).title}</>;
 }
 
-export function ArtistsFromSong(songKey: SongKey): JSX.Element {
-  const theSong = useRecoilValue<Song>(songFromKey(songKey));
-  if (theSong) {
-    return <ArtistName artistIds={theSong.artistIds} />;
-  } else {
-    return <>Artist name failure for sk:{songKey}</>;
-  }
+export function ArtistsFromSong(theSong: Song): JSX.Element {
+  return <ArtistName artistIds={theSong.artistIds} />;
 }
 
 export function AlbumFromSong(song: Song): JSX.Element {

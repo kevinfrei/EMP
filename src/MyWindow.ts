@@ -35,7 +35,7 @@ interface MyWindow extends Window {
   initApp: undefined | (() => void);
   // ipcPromise: PromiseIpcRenderer | undefined;
   ipcSet: boolean | undefined;
-  betterIpc: RendererProcessIpc | undefined;
+  betterIpc: RendererProcessIpc;
 }
 
 declare let window: MyWindow;
@@ -109,7 +109,7 @@ export async function CallMain<Type, Result>(
   key?: Type,
 ): Promise<Result | void> {
   log(`Calling main("${channel}", "${(key as any) as string}")`);
-  const result = await window.betterIpc!.callMain<Type, Result>(channel, key);
+  const result = await window.betterIpc.callMain<Type, Result>(channel, key);
   log(`main ("${channel}" "${(key as any) as string}") returned:`);
   log(result);
   return result;
