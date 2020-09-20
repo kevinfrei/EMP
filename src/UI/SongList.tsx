@@ -10,11 +10,7 @@ import {
 
 import type { Album, AlbumKey, ArtistKey, Song, SongKey } from '../DataSchema';
 import { useRecoilValue } from 'recoil';
-import {
-  albumByKeySel,
-  artistStringSel,
-  songFromKey,
-} from '../Recoil/MusicDbAtoms';
+import { albumByKeySel, artistStringSel } from '../Recoil/MusicDbAtoms';
 
 export function makeColumns<T>(
   getSort: () => string,

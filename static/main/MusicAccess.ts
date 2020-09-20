@@ -33,24 +33,12 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   }
 }
 
-export async function getSongKeys(): Promise<string> {
-  const musicDB = await getMusicDB();
-  if (!musicDB) return '';
-  return [...musicDB.songs.keys()].join(';');
-}
-
-export async function getSongByKey(songKey: SongKey): Promise<Song | void> {
-  const musicDb = await getMusicDB();
-  if (!musicDb) return;
-  return musicDb.songs.get(songKey);
-}
-
-export async function getAllSongs(): Promise<FTONData | void> {
+export async function getAllSongs(): Promise<Map<SongKey, Song> | void> {
   log('get-all-songs called');
   const musicDB = await getMusicDB();
   if (musicDB) {
     log(`get-all-songs: ${musicDB.songs.size} total songs`);
-    return FTON.stringify(musicDB.songs);
+    return musicDB.songs;
   }
   log('get-all-songs result is empty');
 }
@@ -86,9 +74,9 @@ export async function getAllPlaylists(): Promise<Map<
 }
 
 export async function getMediaInfoForSong(
-  key: string,
+  key?: string,
 ): Promise<MediaInfo | void> {
-  if (typeof key !== 'string') {
+  if (!key || typeof key !== 'string') {
     return;
   }
   const musicDB = await getMusicDB();

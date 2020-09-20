@@ -27,18 +27,6 @@ export type SongData = {
 const log = Logger.bind('MusicDbAtoms');
 Logger.enable('MusicDbAtoms');
 
-/*
-type Collection<K, T> = {
-  All: T[];
-  ByKey: Map<K, T>;
-  Keys: K[];
-};
-const Songs: Collection<SongKey, Song> = {
-  All: [],
-  ByKey: new Map<SongKey, Song>(),
-  Keys: [],
-};*/
-
 export const allSongsSel = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
   get: async ({ get }): Promise<Map<SongKey, Song>> => {
@@ -46,29 +34,13 @@ export const allSongsSel = selector<Map<SongKey, Song>>({
     // we get the new song list
     log('AllSongs');
     get(locationsAtom);
-    //    const res = await ipc.GetAllSongs();
-    const resStr = await ipc.GetGeneral('all-songs');
-    if (resStr) {
-      const parsed = FTON.parse(resStr);
-      if (parsed) {
-        const res = new Map<SongKey, Song>(
-          (parsed as Song[]).map((val) => [val.key, val]),
-        );
-        log(`Got ${res.size} entries`);
-        return res;
-      }
+    const res = await ipc.GetAllSongs();
+    if (res) {
+      log(`Got ${res.size} entries:`);
+      log(res);
+      return res;
     }
     return new Map<SongKey, Song>();
-  },
-});
-
-export const songFromKey = selectorFamily<Song, SongKey>({
-  key: 'songFromKey',
-  get: (sk: SongKey) => async ({ get }) => {
-    get(locationsAtom);
-    const song = await ipc.GetSongFromKey(sk);
-    if (!song) throw new Error(sk);
-    return song;
   },
 });
 
@@ -142,7 +114,7 @@ export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
   },
 });
 
-export const aertistByKeySel = selectorFamily<Artist, ArtistKey>({
+export const artistByKeySel = selectorFamily<Artist, ArtistKey>({
   key: 'ArtistByKey',
   get: (ak: ArtistKey) => ({ get }) => {
     const artists = get(allArtistsSel);
@@ -156,7 +128,7 @@ export const maybeArtistByKeySel = selectorFamily<Artist | null, ArtistKey>({
   key: 'MaybeArtistByKey',
   get: (ak: ArtistKey) => ({ get }) => {
     if (ak.length === 0) return null;
-    return get(aertistByKeySel(ak));
+    return get(artistByKeySel(ak));
   },
 });
 
@@ -247,7 +219,7 @@ export const artistStringSel = selectorFamily<string, ArtistKey[]>({
   get: (artistList: ArtistKey[]) => ({ get }) => {
     const artists: string[] = artistList
       .map((ak) => {
-        const art: Artist = get(aertistByKeySel(ak));
+        const art: Artist = get(artistByKeySel(ak));
         return art ? art.name : '';
       })
       .filter((a: string) => a.length > 0);

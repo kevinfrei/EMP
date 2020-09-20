@@ -4,7 +4,7 @@ import { Slider } from '@fluentui/react';
 import { useRecoilState, useRecoilValue, SetterOrUpdater } from 'recoil';
 
 import { startNextSongAtom } from '../Recoil/api';
-import { ConfigurePositionInterval } from '../MyWindow';
+import { SetInterval } from '../MyWindow';
 import {
   mediaTimeAtom,
   mediaTimeRemainingSel,
@@ -29,7 +29,7 @@ export function GetAudioElem(): HTMLMediaElement | void {
 
 let setTime: SetterOrUpdater<MediaTime> | null = null;
 
-ConfigurePositionInterval(() => {
+SetInterval(() => {
   // Every couple hundred milliseconds, update the slider
   if (!setTime) return;
   const ae = GetAudioElem();

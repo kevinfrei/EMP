@@ -13,7 +13,6 @@
   "dependencies": {
     "@fluentui/react": "^7.138.0",
     "@freik/core-utils": "^0.4.2",
-    "@freik/electron-better-ipc": "^1.2.0-b",
     "@freik/media-utils": "^0.2.2",
     "@uifabric/icons": "^7.5.5",
     "@uifabric/react-hooks": "^7.13.4",

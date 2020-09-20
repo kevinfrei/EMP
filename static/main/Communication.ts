@@ -1,6 +1,5 @@
-import { BrowserWindow } from 'electron';
-import { ipcMain as betterIpc } from '@freik/electron-better-ipc';
-import { Logger } from '@freik/core-utils';
+import { BrowserWindow, ipcMain } from 'electron';
+import { FTON, FTONData, Logger } from '@freik/core-utils';
 
 import * as persist from './persist';
 import {
@@ -8,10 +7,9 @@ import {
   getAllArtists,
   getAllPlaylists,
   getAllSongs,
-  getSongKeys,
-  getSongByKey,
   getMediaInfoForSong,
 } from './MusicAccess';
+import { IpcMainInvokeEvent } from 'electron/main';
 
 const log = Logger.bind('Communication');
 Logger.enable('Communication');
@@ -27,7 +25,10 @@ function getWebContents() {
 }
 */
 
-async function getGeneral(name: string) {
+type Handler<T> = (arg?: string) => Promise<T | void>;
+
+async function getGeneral(name?: string) {
+  if (!name) return;
   try {
     log(`getGeneral(${name})`);
     const value = await persist.getItemAsync(name);
@@ -41,7 +42,8 @@ async function getGeneral(name: string) {
   return 'error';
 }
 
-async function setGeneral(keyValuePair: string) {
+async function setGeneral(keyValuePair?: string) {
+  if (!keyValuePair) return;
   try {
     // First, split off the key name:
     const pos = keyValuePair.indexOf(':');
@@ -56,19 +58,46 @@ async function setGeneral(keyValuePair: string) {
     log(e);
   }
 }
+
+function registerFlattened<T>(key: string, handleIt: Handler<T>) {
+  ipcMain.handle(
+    key,
+    async (event: IpcMainInvokeEvent, arg?: any): Promise<string | void> => {
+      if (typeof arg === 'string' || !arg) {
+        const res = await handleIt(arg);
+        if (res) {
+          return FTON.stringify((res as unknown) as FTONData);
+        }
+      } else {
+        log(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
+      }
+    },
+  );
+}
+
+function register(key: string, handleIt: Handler<string>) {
+  ipcMain.handle(
+    key,
+    async (event: IpcMainInvokeEvent, arg: any): Promise<string | void> => {
+      if (typeof arg === 'string') {
+        return await handleIt(arg);
+      } else {
+        log(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
+      }
+    },
+  );
+}
+
 // Called to just set stuff up (nothing has actually been done yet)
 export function Init(): void {
   // I like this API much better, particularly in the render process
-  log(betterIpc);
-  betterIpc.answerRenderer('get-song-keys', getSongKeys);
-  betterIpc.answerRenderer('get-song-by-key', getSongByKey);
-  betterIpc.answerRenderer('get-all-songs', getAllSongs);
-  betterIpc.answerRenderer('get-all-albums', getAllAlbums);
-  betterIpc.answerRenderer('get-all-artists', getAllArtists);
-  betterIpc.answerRenderer('get-all-playlists', getAllPlaylists);
-  betterIpc.answerRenderer('get-media-info', getMediaInfoForSong);
-  betterIpc.answerRenderer('get-general', getGeneral);
-  betterIpc.answerRenderer('set-general', setGeneral);
+  registerFlattened('get-all-songs', getAllSongs);
+  registerFlattened('get-all-albums', getAllAlbums);
+  registerFlattened('get-all-artists', getAllArtists);
+  registerFlattened('get-all-playlists', getAllPlaylists);
+  registerFlattened('get-media-info', getMediaInfoForSong);
+  register('get-general', getGeneral);
+  register('set-general', setGeneral);
 }
 
 // Called with the window handle after it's been created

@@ -4,9 +4,6 @@
 
 import { IpcRenderer, ipcRenderer, remote } from 'electron';
 import { Logger } from '@freik/core-utils';
-import { ipcRenderer as betterIpc } from '@freik/electron-better-ipc';
-
-import type { RendererProcessIpc } from '@freik/electron-better-ipc';
 
 const isDev = true; // require('electron-is-dev');
 
@@ -18,9 +15,9 @@ interface MyWindow extends Window {
   remote: Electron.Remote | undefined;
   isDev: boolean | undefined;
   initApp: undefined | (() => void);
-  //  ipcPromise: PromiseIpcRenderer | undefined;
-  betterIpc: RendererProcessIpc | undefined;
+  ipcSet: boolean | undefined;
 }
+
 declare let window: MyWindow;
 
 // This will expose the ipcRenderer (and isDev) interfaces for use by the
@@ -31,6 +28,7 @@ declare let window: MyWindow;
 window.addEventListener('DOMContentLoaded', () => {
   // eslint-disable-next-line no-debugger
   if (false) debugger;
+
   window.ipc = ipcRenderer;
   log('About to attach the remote');
   if (remote) {
@@ -41,8 +39,6 @@ window.addEventListener('DOMContentLoaded', () => {
   if (isDev) {
     window.isDev = isDev;
   }
-  log('adding betterIpc');
-  window.betterIpc = betterIpc;
   log('ready');
   if (window.initApp) {
     window.initApp();
