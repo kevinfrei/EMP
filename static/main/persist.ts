@@ -6,7 +6,7 @@ import { Logger, FTON, SeqNum, FTONData } from '@freik/core-utils';
 import type { Rectangle } from 'electron';
 
 const log = Logger.bind('persist');
-Logger.enable('persist');
+// Logger.enable('persist');
 
 export type MaybeRectangle = {
   width: number;
@@ -155,18 +155,26 @@ export async function getItemAsync(key: string): Promise<string | void> {
 
 // Save a value to disk and cache it
 export function setItem(key: string, value: string): void {
-  log(`Writing ${key}:`);
-  log(value);
-  writeFile(key, value);
-  notify(key, value);
+  if (getItem(key) === value) {
+    log(`No change to ${key} - not re-writing`);
+  } else {
+    log(`Writing ${key}:`);
+    log(value);
+    writeFile(key, value);
+    notify(key, value);
+  }
 }
 
 // Async Save a value to disk and cache it
 export async function setItemAsync(key: string, value: string): Promise<void> {
-  log(`Async Writing ${key}:`);
-  log(value);
-  await writeFileAsync(key, value);
-  notify(key, value);
+  if ((await getItemAsync(key)) === value) {
+    log(`No change to ${key} - not re-writing`);
+  } else {
+    log(`Async Writing ${key}:`);
+    log(value);
+    await writeFileAsync(key, value);
+    notify(key, value);
+  }
 }
 
 // Delete an item (and remove it from the cache)

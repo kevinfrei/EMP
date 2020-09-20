@@ -13,7 +13,7 @@ import {
 import { GetGeneral, SetGeneral } from '../ipc';
 
 const log = Logger.bind('helpers');
-Logger.enable('helpers');
+// Logger.enable('helpers');
 
 // This is the list of atoms that we're sync'ing back to the main process
 const atomsToSync = new Map<string, RecoilState<unknown>>();

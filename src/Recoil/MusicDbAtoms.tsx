@@ -1,5 +1,5 @@
 import { RecoilValue, selector, atom, selectorFamily } from 'recoil';
-import { FTON, Logger } from '@freik/core-utils';
+import { Logger } from '@freik/core-utils';
 
 import { locationsAtom } from './SettingsAtoms';
 import * as ipc from '../ipc';
@@ -141,24 +141,6 @@ export const allArtistKeysSel = selector<ArtistKey[]>({
     return [...artists.keys()];
   },
 });
-
-/*
-// This handles sorting the AllSongs list according to the
-// user preferences
-export const SortedSongsSelector = selector<SongKey[]>({
-  key: 'SortedSongs',
-  get: ({ get }): SongKey[] => {
-    const songSort = get(SongListSort.atom);
-    const allSongs = get(AllSongKeys);
-    const articlesSort = get(SortWithArticles.atom);
-    // TODO: I don't yet have the music DB available in Atoms
-    // Gotta fix that before continuing...
-    const comp: sorter = GetSongSorter(get, songSort, articlesSort);
-    allSongs.sort(comp);
-    return allSongs;
-  },
-});
-*/
 
 export const nowPlayingAtom = atom<string>({
   key: 'nowPlaying',

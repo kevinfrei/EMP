@@ -1,4 +1,4 @@
-import { FTON, FTONData, Logger } from '@freik/core-utils';
+import { FTON, Logger } from '@freik/core-utils';
 
 import * as persist from './persist';
 import { getMediaInfo } from './metadata';
@@ -15,7 +15,7 @@ import type {
 } from './MusicScanner';
 
 const log = Logger.bind('MusicAccess');
-Logger.enable('MusicAccess');
+// Logger.enable('MusicAccess');
 
 export async function getMusicDB(): Promise<MusicDB | void> {
   try {

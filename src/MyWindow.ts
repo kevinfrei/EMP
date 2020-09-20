@@ -5,7 +5,7 @@ import { OpenDialogSyncOptions } from 'electron/main';
 import type { IpcRenderer } from 'electron';
 
 const log = Logger.bind('MyWindow');
-Logger.enable('MyWindow');
+// Logger.enable('MyWindow');
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;

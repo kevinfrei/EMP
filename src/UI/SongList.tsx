@@ -8,7 +8,7 @@ import {
   IDetailsRowStyles,
 } from '@fluentui/react';
 
-import type { Album, AlbumKey, ArtistKey, Song, SongKey } from '../DataSchema';
+import type { Album, AlbumKey, ArtistKey, Song } from '../DataSchema';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/MusicDbAtoms';
 

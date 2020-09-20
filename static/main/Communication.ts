@@ -12,7 +12,7 @@ import {
 import { IpcMainInvokeEvent } from 'electron/main';
 
 const log = Logger.bind('Communication');
-Logger.enable('Communication');
+// Logger.enable('Communication');
 
 /*
 function getWebContents() {
