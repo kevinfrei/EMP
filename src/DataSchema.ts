@@ -8,7 +8,6 @@ export type Song = {
   key: SongKey;
   track: number;
   title: string;
-  url: string;
   albumId: AlbumKey;
   artistIds: ArtistKey[];
   secondaryIds: ArtistKey[];

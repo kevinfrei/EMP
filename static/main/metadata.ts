@@ -1,6 +1,6 @@
 import mediainfo from 'node-mediainfo';
 
-import type { MediaInfo } from './MusicScanner';
+import type { MediaInfo } from '../../src/DataSchema';
 
 function addCommas(val: string): string {
   let res = '';

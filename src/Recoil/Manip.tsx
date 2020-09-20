@@ -24,6 +24,8 @@ import type { SongKey } from '../DataSchema';
 
 // TODO: Break this out into smaller chunks so that any random state change
 // doesn't incur a full rerun of all this code...
+
+// TODO: I dislike almost everything about this. I need a better solution :/
 export default function ApiManipulation(): JSX.Element {
   // "Functions"
   const startPlaylist = useRecoilValue(api.startPlaylistAtom);

@@ -5,7 +5,6 @@ import * as persist from './persist';
 import {
   getAllAlbums,
   getAllArtists,
-  getAllPlaylists,
   getAllSongs,
   getMediaInfoForSong,
 } from './MusicAccess';
@@ -28,21 +27,35 @@ function getWebContents() {
 
 type Handler<T> = (arg?: string) => Promise<T | void>;
 
-export async function getGeneral(name?: string): Promise<string> {
-  if (!name) return;
+/**
+ * Read a value from persistence by name, returning it's unprocessed contents
+ *
+ * @async @function
+ * @param {string=} name - the name of the value to read
+ * @return {Promise<string>} The raw string contents of the value
+ */
+export async function GetGeneral(name?: string): Promise<string> {
+  if (!name) return '';
   try {
     log(`getGeneral(${name})`);
     const value = await persist.getItemAsync(name);
     log(`Sending ${name} response:`);
     log(value);
-    return value || 'error';
+    return value || '';
   } catch (e) {
     log(`error from getGeneral(${name})`);
     log(e);
   }
-  return 'error';
+  return '';
 }
 
+/**
+ * Write a value to persistence by name.
+ *
+ * @async @function
+ * @param {string=} keyValuePair - The key:value string to write
+ * @returns {void}
+ */
 export async function setGeneral(keyValuePair?: string): Promise<void> {
   if (!keyValuePair) return;
   try {
@@ -60,6 +73,17 @@ export async function setGeneral(keyValuePair?: string): Promise<void> {
   }
 }
 
+/**
+ * Registers with `ipcMain.handle` a function that takes an optional string
+ * (from the query) and returns UNFLATTENED data, which will then be returned
+ * using the Flat Type Object Notation stingifier
+ *
+ * @function
+ * @param {string} key - the name of the "channel" to respond to
+ * @param {Handler<T>} handleIt - the function that takes a string and returns
+ *  the corresponding object value for the channel
+ * @returns {void}
+ */
 function registerFlattened<T>(key: string, handleIt: Handler<T>) {
   ipcMain.handle(
     key,
@@ -76,7 +100,17 @@ function registerFlattened<T>(key: string, handleIt: Handler<T>) {
   );
 }
 
-function register(key: string, handleIt: Handler<string>) {
+/**
+ * Registers with `ipcMain.handle` a function that takes an optional string
+ * (from the query) and returns *string* data, which is returned, untouched
+ *
+ * @function
+ * @param {string} key - the name of the "channel" to respond to
+ * @param {Handler<string>} handleIt - the function that takes a string and
+ *   returns a string
+ * @returns void
+ */
+function register(key: string, handleIt: Handler<string>): void {
   ipcMain.handle(
     key,
     async (event: IpcMainInvokeEvent, arg: any): Promise<string | void> => {
@@ -89,22 +123,32 @@ function register(key: string, handleIt: Handler<string>) {
   );
 }
 
-// Called to just set stuff up (nothing has actually been done yet)
+/**
+ * Called to set stuff up before anything else has been done.
+ * Currently, it register stuff with with `ipcMain.handle`
+ *
+ * @function
+ * @returns void
+ */
 export function Init(): void {
   // I like this API much better, particularly in the render process
   registerFlattened('get-all-songs', getAllSongs);
   registerFlattened('get-all-albums', getAllAlbums);
   registerFlattened('get-all-artists', getAllArtists);
-  registerFlattened('get-all-playlists', getAllPlaylists);
   registerFlattened('get-media-info', getMediaInfoForSong);
   registerFlattened('get-playlist-names', GetPlaylistNames);
   register('set-playlist', SavePlaylist);
   register('get-playlist', GetPlaylist);
-  register('get-general', getGeneral);
+  register('get-general', GetGeneral);
   register('set-general', setGeneral);
 }
 
-// Called with the window handle after it's been created
+/**
+ * Invoked after the window has been created.
+ *
+ * @param  {BrowserWindow} window - the window handle
+ * @returns void
+ */
 export function Begin(window: BrowserWindow): void {
   // win = window;
 }

@@ -1,5 +1,5 @@
 import { BrowserWindow } from 'electron';
-import { Logger, FTON } from '@freik/core-utils';
+import { Logger, FTON, FTONData } from '@freik/core-utils';
 
 import * as persist from './persist';
 import * as music from './MusicScanner';
@@ -20,7 +20,10 @@ async function createMusicDb() {
   log(musicLocations);
   const musicDB = await music.find(musicLocations);
   log('Got Music DB!');
-  await persist.setItemAsync('DB', FTON.stringify(musicDB));
+  await persist.setItemAsync(
+    'DB',
+    FTON.stringify((musicDB as unknown) as FTONData),
+  );
 }
 
 function UpdateDb() {

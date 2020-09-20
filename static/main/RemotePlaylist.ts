@@ -1,7 +1,6 @@
-import { FTON, FTONData, Logger } from '@freik/core-utils';
-import { promises } from 'fs';
-import { PlaylistName, SongKey } from '../../src/DataSchema';
-import { getGeneral, setGeneral } from './Communication';
+import { FTON, Logger } from '@freik/core-utils';
+import { PlaylistName } from '../../src/DataSchema';
+import { GetGeneral, setGeneral } from './Communication';
 
 import * as persist from './persist';
 
@@ -35,11 +34,13 @@ async function getPlaylistsSet() {
 }
 
 export async function GetPlaylist(name?: string): Promise<string> {
+  if (!name) return '';
   const { playlistsSet } = await getPlaylistsSet();
   if (!playlistsSet.has(name.toLowerCase())) {
     return '';
   }
-  return await getGeneral('-PL-' + name.toLowerCase());
+  const data = await GetGeneral('-PL-' + name.toLowerCase());
+  return data;
 }
 
 export async function SavePlaylist(nameAndList?: string): Promise<void> {

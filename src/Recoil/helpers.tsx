@@ -18,10 +18,12 @@ const log = Logger.bind('helpers');
 // This is the list of atoms that we're sync'ing back to the main process
 const atomsToSync = new Map<string, RecoilState<unknown>>();
 
-// This is a selector to acquire a particular value from the server
-// Any values wind up being "read once" and the actual atom winds
-// up containing the current server value. This *does not work* for
-// server-originating changes!!!
+/**
+ * This is a selector to acquire a particular value from the server.
+ * Any values wind up being "read once" and the actual atom winds up containing
+ * the current server value. This *does not work* for server-originating
+ * changes!!!
+ */
 export const backerSelFamily = selectorFamily({
   key: 'sync',
   get: (param: string) => async (): Promise<string> => {
@@ -30,9 +32,11 @@ export const backerSelFamily = selectorFamily({
   },
 });
 
-// This will trigger a server side pull of the initial value, then use local
-// state for all subsequent sets. This must be used in tandem with the
-// PersistenceObserver transaction watcher and the syncAtom maker
+/**
+ * This will trigger a server side pull of the initial value, then use local
+ * state for all subsequent sets. This must be used in tandem with the
+ * PersistenceObserver transaction watcher and the syncAtom maker
+ */
 export function useBackedState<T>(
   theAtom: RecoilState<T>,
 ): [T, (val: T) => void] {
@@ -66,6 +70,9 @@ export function useBackedState<T>(
   return [atomValue, setAtomValue]; // [atomValue, setAtomValue];
 }
 
+/**
+ * save any changed atoms that we've registers as "backed" to the server
+ */
 function saveToServer({ snapshot }: { snapshot: Snapshot }) {
   for (const modAtom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
     if (atomsToSync.has(modAtom.key)) {
@@ -84,6 +91,9 @@ function saveToServer({ snapshot }: { snapshot: Snapshot }) {
   }
 }
 
+/**
+ * The utility component to watch for persistence
+ */
 export function PersistenceObserver(): JSX.Element {
   useRecoilTransactionObserver_UNSTABLE(saveToServer);
   return <></>;

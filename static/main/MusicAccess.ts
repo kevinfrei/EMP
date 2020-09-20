@@ -3,20 +3,26 @@ import { FTON, Logger } from '@freik/core-utils';
 import * as persist from './persist';
 import { getMediaInfo } from './metadata';
 
+import type { ServerSong, MusicDB } from './MusicScanner';
 import type {
   SongKey,
-  Song,
-  MusicDB,
   ArtistKey,
   Artist,
   AlbumKey,
   Album,
   MediaInfo,
-} from './MusicScanner';
+} from '../../src/DataSchema';
 
 const log = Logger.bind('MusicAccess');
 // Logger.enable('MusicAccess');
 
+/**
+ * Read the Music Database *from persistence*. This does *not* re-scan locations
+ * or any other stuff. It just handles un-flattening the data from storage.
+ *
+ * @async @function
+ * @returns {Promise<MusicDB|void>} MusicDB or void
+ */
 export async function getMusicDB(): Promise<MusicDB | void> {
   try {
     log('get-music-db called');
@@ -33,7 +39,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   }
 }
 
-export async function getAllSongs(): Promise<Map<SongKey, Song> | void> {
+export async function getAllSongs(): Promise<Map<SongKey, ServerSong> | void> {
   log('get-all-songs called');
   const musicDB = await getMusicDB();
   if (musicDB) {
@@ -61,16 +67,6 @@ export async function getAllAlbums(): Promise<Map<AlbumKey, Album> | void> {
     return musicDB.albums;
   }
   log('get-all-albums result is empty');
-}
-
-export async function getAllPlaylists(): Promise<Map<
-  string,
-  SongKey[]
-> | void> {
-  const musicDB = await getMusicDB();
-  if (musicDB) {
-    return musicDB.playlists;
-  }
 }
 
 export async function getMediaInfoForSong(

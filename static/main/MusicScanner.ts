@@ -8,56 +8,32 @@ import * as persist from './persist';
 import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
 import type { Dirent } from 'fs';
 
+import type {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+  SongKey,
+} from '../../src/DataSchema';
+
+export interface ServerSong extends Song {
+  path: string;
+}
 const log = Logger.bind('music');
 // Logger.enable('music');
 
 const setEqual = Comparisons.SetEqual;
 
-export type SongKey = string;
-export type AlbumKey = string;
-export type ArtistKey = string;
-
-export type Song = {
-  path: string;
-  artistIds: ArtistKey[];
-  secondaryIds: ArtistKey[];
-  albumId: AlbumKey;
-  track: number;
-  title: string;
-  key: SongKey;
-};
-
 export type VAType = '' | 'ost' | 'va';
 
-export type Album = {
-  year: number;
-  primaryArtists: Set<ArtistKey>;
-  title: string;
-  vatype: VAType;
-  songs: SongKey[];
-  key: AlbumKey;
-};
-
-export type Artist = {
-  name: string;
-  songs: SongKey[];
-  albums: AlbumKey[];
-  key: ArtistKey;
-};
-
 export type MusicDB = {
-  songs: Map<SongKey, Song>;
+  songs: Map<SongKey, ServerSong>;
   albums: Map<AlbumKey, Album>;
   artists: Map<ArtistKey, Artist>;
   pictures: Map<AlbumKey, string>;
-  playlists: Map<string, SongKey[]>; // This is probably a bad idea...
   albumTitleIndex: Map<string, AlbumKey[]>;
   artistNameIndex: Map<string, ArtistKey>;
-};
-
-export type MediaInfo = {
-  general: Map<string, string>;
-  audio: Map<string, string>;
 };
 
 let existingKeys: Map<string, SongKey> | null = null;
@@ -203,7 +179,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
       secondaryIds.push(moreArt.key);
     }
   }
-  const theSong: Song = {
+  const theSong: ServerSong = {
     path: md.OriginalPath,
     artistIds,
     secondaryIds,
@@ -277,10 +253,9 @@ async function fileNamesToDatabase(
   files: string[],
   pics: string[],
 ): Promise<MusicDB> {
-  const songs = new Map<SongKey, Song>();
+  const songs = new Map<SongKey, ServerSong>();
   const albums = new Map<AlbumKey, Album>();
   const artists = new Map<ArtistKey, Artist>();
-  const playlists = new Map<string, SongKey[]>();
   const albumTitleIndex = new Map<string, AlbumKey[]>();
   const artistNameIndex = new Map<string, ArtistKey>();
   const pictures = new Map<AlbumKey, string>();
@@ -289,7 +264,6 @@ async function fileNamesToDatabase(
     albums,
     artists,
     pictures,
-    playlists,
     albumTitleIndex,
     artistNameIndex,
   };
