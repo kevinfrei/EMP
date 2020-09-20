@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import * as React from 'react';
-import { RecoilState, useRecoilState } from 'recoil';
+import { RecoilState } from 'recoil';
 import { Logger } from '@freik/core-utils';
 import {
   Toggle,
@@ -46,7 +46,7 @@ function GetDirs(): string[] | void {
 }
 
 function SortPopup({ data }: { data: PopupItem }): JSX.Element {
-  const [value, setter] = useRecoilState(data.atom);
+  const [value, setter] = useBackedState(data.atom);
   const onChange = (
     event: React.FormEvent<HTMLDivElement>,
     item?: IDropdownOption,
@@ -118,28 +118,28 @@ export default function Settings(): JSX.Element {
     title: 'Album',
     atom: albumListSortAtom,
     options: [
-      { key: 'AlbumTitle', text: 'Title' },
-      { key: 'AlbumYear', text: 'Year' },
-      { key: 'ArtistAlbum', text: 'Artist, then Title' },
-      { key: 'ArtistYear', text: 'Artist, then Year' },
+      { key: 'lt', text: 'Title' },
+      { key: 'ly', text: 'Year' },
+      { key: 'rl', text: 'Artist, then Title' },
+      { key: 'ry', text: 'Artist, then Year' },
     ],
   };
   const artist = {
     title: 'Artist',
     atom: artistListSortAtom,
     options: [
-      { key: 'AlbumCount', text: '# of Albums' },
-      { key: 'ArtistName', text: 'Name' },
-      { key: 'SongCount', text: '# of Songs' },
+      { key: 'q', text: '# of Albums' },
+      { key: 'r', text: 'Name' },
+      { key: 's', text: '# of Songs' },
     ],
   };
   const song = {
     title: 'Song',
     atom: songListSortAtom,
     options: [
-      { key: 'SongTitle', text: 'Title' },
-      { key: 'ArtistAlbum', text: 'Artist, then Album' },
-      { key: 'AlbumTrack', text: 'Album' },
+      { key: 't', text: 'Title' },
+      { key: 'rl', text: 'Artist, then Album' },
+      { key: 'lt', text: 'Album' },
     ],
   };
 
