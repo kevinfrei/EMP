@@ -10,6 +10,7 @@ import {
   getMediaInfoForSong,
 } from './MusicAccess';
 import { IpcMainInvokeEvent } from 'electron/main';
+import { GetPlaylist, GetPlaylistNames, SavePlaylist } from './RemotePlaylist';
 
 const log = Logger.bind('Communication');
 // Logger.enable('Communication');
@@ -27,14 +28,14 @@ function getWebContents() {
 
 type Handler<T> = (arg?: string) => Promise<T | void>;
 
-async function getGeneral(name?: string) {
+export async function getGeneral(name?: string): Promise<string> {
   if (!name) return;
   try {
     log(`getGeneral(${name})`);
     const value = await persist.getItemAsync(name);
     log(`Sending ${name} response:`);
     log(value);
-    return value;
+    return value || 'error';
   } catch (e) {
     log(`error from getGeneral(${name})`);
     log(e);
@@ -42,7 +43,7 @@ async function getGeneral(name?: string) {
   return 'error';
 }
 
-async function setGeneral(keyValuePair?: string) {
+export async function setGeneral(keyValuePair?: string): Promise<void> {
   if (!keyValuePair) return;
   try {
     // First, split off the key name:
@@ -96,6 +97,9 @@ export function Init(): void {
   registerFlattened('get-all-artists', getAllArtists);
   registerFlattened('get-all-playlists', getAllPlaylists);
   registerFlattened('get-media-info', getMediaInfoForSong);
+  registerFlattened('get-playlist-names', GetPlaylistNames);
+  register('set-playlist', SavePlaylist);
+  register('get-playlist', GetPlaylist);
   register('get-general', getGeneral);
   register('set-general', setGeneral);
 }
