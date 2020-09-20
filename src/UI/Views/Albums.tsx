@@ -3,7 +3,7 @@ import React from 'react';
 import { DetailsList, SelectionMode } from '@fluentui/react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import { allAlbumsSel } from '../../Recoil/MusicDbAtoms';
+import { allAlbumsSel } from '../../Recoil/ReadOnly';
 import { addSongListAtom } from '../../Recoil/api';
 
 import type { Album } from '../../DataSchema';

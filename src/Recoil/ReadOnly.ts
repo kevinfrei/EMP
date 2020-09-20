@@ -1,7 +1,7 @@
-import { RecoilValue, selector, atom, selectorFamily } from 'recoil';
+import { RecoilValue, selector, selectorFamily } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
-import { locationsAtom } from './SettingsAtoms';
+import { locationsAtom } from './ReadWrite';
 import * as ipc from '../ipc';
 
 import type {
@@ -11,8 +11,7 @@ import type {
   AlbumKey,
   Song,
   SongKey,
-  PlaylistName,
-  Playlist,
+  MediaInfo,
 } from '../DataSchema';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
@@ -24,8 +23,24 @@ export type SongData = {
   album: string;
 };
 
-const log = Logger.bind('MusicDbAtoms');
-Logger.enable('MusicDbAtoms');
+const log = Logger.bind('RORemote');
+// Logger.enable('RORemote');
+
+export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
+  key: 'mediaInfoSelector',
+  get: (sk: SongKey) => async (): Promise<MediaInfo> => {
+    if (!sk)
+      return {
+        general: new Map<string, string>(),
+        audio: new Map<string, string>(),
+      };
+    const result = await ipc.GetMediaInfo(sk);
+    if (!result) throw new Error(sk);
+    log(`Got media info for ${sk}:`);
+    log(result);
+    return result;
+  },
+});
 
 export const allSongsSel = selector<Map<SongKey, Song>>({
   key: 'AllSongs',
@@ -139,47 +154,6 @@ export const allArtistKeysSel = selector<ArtistKey[]>({
     // we get the new song list
     const artists = get(allArtistsSel);
     return [...artists.keys()];
-  },
-});
-
-export const nowPlayingAtom = atom<string>({
-  key: 'nowPlaying',
-  default: '',
-});
-
-export const playlistsAtom = atom<Map<PlaylistName, Playlist>>({
-  key: 'Playlists',
-  default: new Map<PlaylistName, SongKey[]>(),
-});
-
-export const playlistSel = selectorFamily<Playlist, PlaylistName>({
-  key: 'playlist',
-  get: (pl: PlaylistName) => ({ get }) => {
-    const playlists = get(playlistsAtom);
-    return playlists ? playlists.get(pl) ?? [] : [];
-  },
-});
-
-export const songListAtom = atom<SongKey[]>({
-  key: 'currentSongList',
-  default: [],
-});
-
-export const currentIndexAtom = atom<number>({
-  key: 'currentIndex',
-  default: -1,
-});
-
-export const currentSongKeySel = selector<SongKey>({
-  key: 'currentSongKey',
-  get: ({ get }) => {
-    const curIndex = get(currentIndexAtom);
-    const songList = get(songListAtom);
-    if (curIndex >= 0 && curIndex < songList.length) {
-      return songList[curIndex];
-    } else {
-      return '';
-    }
   },
 });
 

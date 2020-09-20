@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { MediaInfo, SongKey } from '../DataSchema';
-import { getMediaInfo } from '../Recoil/Atoms';
+import { getMediaInfo } from '../Recoil/ReadOnly';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines: JSX.Element[] = [];

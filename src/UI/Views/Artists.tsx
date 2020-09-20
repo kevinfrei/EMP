@@ -10,7 +10,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import { addArtistAtom, addSongAtom } from '../../Recoil/api';
-import { allArtistsSel, allSongsSel } from '../../Recoil/MusicDbAtoms';
+import { allArtistsSel, allSongsSel } from '../../Recoil/ReadOnly';
 
 import type { Artist, Song } from '../../DataSchema';
 

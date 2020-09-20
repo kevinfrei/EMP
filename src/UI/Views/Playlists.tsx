@@ -19,7 +19,7 @@ import {
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { deletePlaylistAtom, startPlaylistAtom } from '../../Recoil/api';
-import { playlistsAtom } from '../../Recoil/MusicDbAtoms';
+import { playlistsAtom } from '../../Recoil/Local';
 
 import './styles/Playlists.css';
 

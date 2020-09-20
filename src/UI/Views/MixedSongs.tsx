@@ -20,10 +20,10 @@ import {
   allAlbumsSel,
   allArtistsSel,
   allSongsSel,
-} from '../../Recoil/MusicDbAtoms';
+} from '../../Recoil/ReadOnly';
 import { addSongAtom } from '../../Recoil/api';
 import { SortSongs } from '../../Sorters';
-import { sortWithArticlesAtom } from '../../Recoil/SettingsAtoms';
+import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import {
   renderAltRow,
   makeColumns,

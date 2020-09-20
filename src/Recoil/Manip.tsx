@@ -8,15 +8,15 @@ import {
 } from 'recoil';
 
 import * as api from './api';
+import { maybeAlbumByKeySel, maybeArtistByKeySel } from './ReadOnly';
 import {
   currentIndexAtom,
-  maybeAlbumByKeySel,
-  maybeArtistByKeySel,
   nowPlayingAtom,
   playlistsAtom,
   songListAtom,
-} from './MusicDbAtoms';
-import { activePlaylistAtom, repeatAtom, shuffleAtom } from './Atoms';
+} from './Local';
+
+import { activePlaylistAtom, repeatAtom, shuffleAtom } from './Local';
 import ShuffleArray from '../ShuffleArray';
 import { GetAudioElem } from '../UI/SongPlayback';
 

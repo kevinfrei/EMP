@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRecoilState, SetterOrUpdater } from 'recoil';
 
-import { CurrentView, curViewAtom } from '../Recoil/Atoms';
+import { CurrentView, curViewAtom } from '../Recoil/Local';
 
 import './styles/Sidebar.css';
 

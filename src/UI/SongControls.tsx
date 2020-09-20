@@ -3,8 +3,12 @@ import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { GetAudioElem } from './SongPlayback';
-import { playingAtom, repeatAtom, shuffleAtom } from '../Recoil/Atoms';
-import { songListAtom } from '../Recoil/MusicDbAtoms';
+import {
+  playingAtom,
+  songListAtom,
+  repeatAtom,
+  shuffleAtom,
+} from '../Recoil/Local';
 import {
   startNextSongAtom,
   startPrevSongAtom,
@@ -15,7 +19,7 @@ import {
 import './styles/SongControls.css';
 
 export default function SongControls(): JSX.Element {
-  const playing = useRecoilValue(playingAtom) ? 'playing' : 'paused';
+  const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);
   const [shuf, shufSet] = useRecoilState(shuffleAtom);
   const [rep, repSet] = useRecoilState(repeatAtom);
   const [, startSongPlaying] = useRecoilState(startSongPlayingAtom);
@@ -46,21 +50,24 @@ export default function SongControls(): JSX.Element {
       </span>
       <span
         id="play-pause"
-        className={playing}
+        className={isPlaying ? 'playing' : 'paused'}
         onClick={() => {
           const ae = GetAudioElem();
           if (!ae) {
             return;
           }
-          if (playing === 'playing') {
+          if (isPlaying) {
             ae.pause();
+            setIsPlaying(false);
           } else if (ae.readyState === 4) {
-            void ae.play();
+            ae.play()
+              .then(() => setIsPlaying(true))
+              .catch((e) => '');
           } else if (songList.length) {
             startSongPlaying(0);
           }
         }}
-      ></span>
+      />
       <span id="next" onClick={() => startNextSong(true)}>
         &nbsp;
       </span>

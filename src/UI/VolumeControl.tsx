@@ -2,7 +2,7 @@
 import React from 'react';
 import { IconButton, Slider, Stack } from '@fluentui/react';
 
-import { mutedAtom, volumeAtom } from '../Recoil/Atoms';
+import { mutedAtom, volumeAtom } from '../Recoil/Local';
 import { GetAudioElem } from './SongPlayback';
 import { useBackedState } from '../Recoil/helpers';
 

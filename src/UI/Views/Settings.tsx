@@ -20,7 +20,7 @@ import {
   artistListSortAtom,
   songListSortAtom,
   locationsAtom,
-} from '../../Recoil/SettingsAtoms';
+} from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../MyWindow';
 
 import './styles/Settings.css';
@@ -96,7 +96,7 @@ function RecoilLocations(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const [articles, setArticles] = useRecoilState(sortWithArticlesAtom);
+  const [articles, setArticles] = useBackedState(sortWithArticlesAtom);
   log('Articles: ' + (articles ? 'true' : 'false'));
   function onChange(ev: React.MouseEvent<HTMLElement>, checked?: boolean) {
     setArticles(checked ? true : false);

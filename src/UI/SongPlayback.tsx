@@ -11,15 +11,15 @@ import {
   mediaTimePositionSel,
   mediaTimePercentRWSel,
   playingAtom,
-} from '../Recoil/Atoms';
+  currentSongKeySel,
+} from '../Recoil/Local';
 import {
   albumKeyForSongKeySel,
-  currentSongKeySel,
   dataForSongSel,
   SongData,
-} from '../Recoil/MusicDbAtoms';
+} from '../Recoil/ReadOnly';
 
-import type { MediaTime } from '../Recoil/Atoms';
+import type { MediaTime } from '../Recoil/Local';
 
 import './styles/SongPlayback.css';
 
@@ -61,7 +61,7 @@ export default function SongPlayback(): JSX.Element {
     audio = (
       <audio
         id="audioElement"
-        autoPlay
+        autoPlay={true}
         src={'tune://song/' + songKey}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}

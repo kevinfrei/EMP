@@ -1,21 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { selector, selectorFamily, DefaultValue, atom } from 'recoil';
-import { Logger } from '@freik/core-utils';
-
-import * as ipc from '../ipc';
-import type { SongKey } from '../DataSchema';
-
-const log = Logger.bind('Atoms');
-Logger.enable('Atoms');
+import { Playlist, PlaylistName, SongKey } from '../DataSchema';
 
 export type MediaTime = {
   duration: number;
   position: number;
-};
-
-export type MediaInfo = {
-  general: Map<string, string>;
-  audio: Map<string, string>;
 };
 
 // vvv That's a bug, pretty clearly :/
@@ -34,22 +23,6 @@ export enum CurrentView {
 export const curViewAtom = atom<CurrentView>({
   key: 'CurrentView',
   default: CurrentView.settings,
-});
-
-export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
-  key: 'mediaInfoSelector',
-  get: (sk: SongKey) => async (): Promise<MediaInfo> => {
-    if (!sk)
-      return {
-        general: new Map<string, string>(),
-        audio: new Map<string, string>(),
-      };
-    const result = await ipc.GetMediaInfo(sk);
-    if (!result) throw new Error(sk);
-    log(`Got media info for ${sk}:`);
-    log(result);
-    return result;
-  },
 });
 
 const secondsToTime = (val: number): string => {
@@ -110,3 +83,41 @@ export const playingAtom = atom<boolean>({ key: 'playing', default: false });
 export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
 export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
 export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });
+export const nowPlayingAtom = atom<string>({ key: 'nowPlaying', default: '' });
+
+// This stuff is actually synchronized
+export const playlistsAtom = atom<Map<PlaylistName, Playlist>>({
+  key: 'Playlists',
+  default: new Map<PlaylistName, SongKey[]>(),
+});
+
+export const playlistSel = selectorFamily<Playlist, PlaylistName>({
+  key: 'playlist',
+  get: (pl: PlaylistName) => ({ get }) => {
+    const playlists = get(playlistsAtom);
+    return playlists ? playlists.get(pl) ?? [] : [];
+  },
+});
+
+export const songListAtom = atom<SongKey[]>({
+  key: 'currentSongList',
+  default: [],
+});
+
+export const currentIndexAtom = atom<number>({
+  key: 'currentIndex',
+  default: -1,
+});
+
+export const currentSongKeySel = selector<SongKey>({
+  key: 'currentSongKey',
+  get: ({ get }) => {
+    const curIndex = get(currentIndexAtom);
+    const songList = get(songListAtom);
+    if (curIndex >= 0 && curIndex < songList.length) {
+      return songList[curIndex];
+    } else {
+      return '';
+    }
+  },
+});

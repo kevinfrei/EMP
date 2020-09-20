@@ -2,7 +2,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { CurrentView, curViewAtom } from '../../Recoil/Atoms';
+import { CurrentView, curViewAtom } from '../../Recoil/Local';
 import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';

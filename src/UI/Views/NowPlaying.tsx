@@ -19,10 +19,12 @@ import { Comparisons } from '@freik/core-utils';
 import {
   allSongsSel,
   //  currentIndexAtom,
+} from '../../Recoil/ReadOnly';
+import {
   nowPlayingAtom,
   playlistsAtom,
   songListAtom,
-} from '../../Recoil/MusicDbAtoms';
+} from '../../Recoil/Local';
 import { startSongPlayingAtom, stopAndClearAtom } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
