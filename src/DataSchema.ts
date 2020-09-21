@@ -1,4 +1,4 @@
-import { Album, AlbumKey, Artist, ArtistKey, Song } from "@freik/media-utils";
+import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
 
 export type SongData = {
   title: string;
