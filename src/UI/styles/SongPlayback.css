@@ -55,7 +55,7 @@
   white-space:nowrap;
 }
 
-#artist-name {
+#artist-album {
   font-weight: bold;
   grid-row: 2;
   grid-column: 2 / 5;

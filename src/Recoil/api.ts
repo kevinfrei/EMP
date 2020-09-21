@@ -48,11 +48,6 @@ export const startPlaylistAtom = atom<string>({
   default: '',
 });
 
-export const startNextSongAtom = atom<boolean>({
-  key: 'nextTrack',
-  default: false,
-});
-
 export const startPrevSongAtom = atom<boolean>({
   key: 'prevTrack',
   default: false,

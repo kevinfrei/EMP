@@ -14,12 +14,12 @@ import {
   hasPrevSongSel,
 } from '../Recoil/Local';
 import {
-  startNextSongAtom,
   startPrevSongAtom,
   startSongPlayingAtom,
 } from '../Recoil/api';
 
 import './styles/SongControls.css';
+import { MaybePlayNextSong } from '../Recoil/Manip';
 
 const log = Logger.bind('SongControls');
 Logger.enable('SongControls');
@@ -30,12 +30,14 @@ export default function SongControls(): JSX.Element {
   const [rep, repSet] = useRecoilState(repeatAtom);
   /*
   const [, startSongPlaying] = useRecoilState(startSongPlayingAtom);
-  const [, startNextSong] = useRecoilState(startNextSongAtom);
   const [, startPrevSong] = useRecoilState(startPrevSongAtom);
   */
-  const songList = useRecoilValue(songListAtom);
   const hasNextSong = useRecoilValue(hasNextSongSel);
   const hasPrevSong = useRecoilValue(hasPrevSongSel);
+  const [songList, setSongList] = useRecoilState(songListAtom);
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const [, setPlaying] = useRecoilState(playingAtom);
+
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';
   const playPauseClass = isPlaying
@@ -72,10 +74,15 @@ export default function SongControls(): JSX.Element {
     }
   };
   const clickNext = () => {
-    if (hasNextSong) {
-      log('next track');
-      //      startNextSong(true);
-    }
+    MaybePlayNextSong(
+      curIndex,
+      setCurIndex,
+      rep,
+      shuf,
+      songList,
+      setSongList,
+      setPlaying,
+    );
   };
   return (
     <span className="control-container">

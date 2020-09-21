@@ -191,7 +191,7 @@ export const artistStringSel = selectorFamily<string, ArtistKey[]>({
 export const dataForSongSel = selectorFamily<SongData, SongKey>({
   key: 'DataForSong',
   get: (sk: SongKey) => ({ get }) => {
-    const res = { title: '-', track: 0, artist: '-', album: '-' };
+    const res = { title: '', track: 0, artist: '', album: '' };
 
     if (sk.length === 0) {
       return res;
