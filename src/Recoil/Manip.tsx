@@ -16,7 +16,7 @@ import {
   songListAtom,
 } from './Local';
 
-import { activePlaylistAtom, repeatAtom, shuffleAtom } from './Local';
+import { activePlaylistAtom } from './Local';
 import ShuffleArray from '../ShuffleArray';
 import { GetAudioElem } from '../UI/SongPlayback';
 
@@ -25,33 +25,10 @@ import type { SongKey } from '@freik/media-utils';
 // TODO: Break this out into smaller chunks so that any random state change
 // doesn't incur a full rerun of all this code...
 
-export function MaybePlayNextSong(
-  curIndex: number,
-  setCurIndex: (val: number) => void,
-  repeat: boolean,
-  shuffle: boolean,
-  songList: SongKey[],
-  setSongList: (val: SongKey[]) => void,
-  setPlaying: (val: boolean) => void,
-): void {
-  if (curIndex + 1 < songList.length) {
-    setCurIndex(curIndex + 1);
-  } else if (repeat) {
-    setCurIndex(0);
-    if (shuffle) {
-      songList = ShuffleArray(songList);
-      setSongList(songList);
-    }
-  } else {
-    setPlaying(false);
-  }
-}
-
 // TODO: I dislike almost everything about this. I need a better solution :/
 export default function ApiManipulation(): JSX.Element {
   // "Functions"
   const startPlaylist = useRecoilValue(api.startPlaylistAtom);
-  const startPrevSong = useRecoilState(api.startPrevSongAtom);
   const [constStartSongPlaying, setStartSongPlaying] = useRecoilState(
     api.startSongPlayingAtom,
   );
@@ -67,7 +44,6 @@ export default function ApiManipulation(): JSX.Element {
 
   // Resetters
   const resetStartPlaylist = useResetRecoilState(api.startPlaylistAtom);
-  const resetStartPrevSong = useResetRecoilState(api.startPrevSongAtom);
   const resetStartSongPlaying = useResetRecoilState(api.startSongPlayingAtom);
   const resetStopAndClear = useResetRecoilState(api.stopAndClearAtom);
   const resetDeletePlaylist = useResetRecoilState(api.deletePlaylistAtom);
@@ -86,8 +62,6 @@ export default function ApiManipulation(): JSX.Element {
   );
   const [constSongList, setSongList] = useRecoilState(songListAtom);
   let songList = constSongList;
-  const repeat = useRecoilValue(repeatAtom);
-  const shuffle = useRecoilValue(shuffleAtom);
 
   const resetSongList = useResetRecoilState(songListAtom);
   const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
@@ -104,20 +78,6 @@ export default function ApiManipulation(): JSX.Element {
       startSongPlaying = 0;
     }
     resetStartPlaylist();
-  }
-
-  // Moves the current playset backward
-  if (startPrevSong && currentIndex >= 0) {
-    startSongPlaying = currentIndex - 1;
-    if (startSongPlaying < 0) {
-      // If we've past the end of the list, check to see if we're repeating
-      if (repeat) {
-        startSongPlaying = songList.length - 1;
-      } else {
-        resetCurrentIndex();
-      }
-    }
-    resetStartPrevSong();
   }
 
   if (startSongPlaying >= 0) {

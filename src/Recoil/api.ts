@@ -1,6 +1,44 @@
 import { atom } from 'recoil';
 
 import type { SongKey, AlbumKey, ArtistKey } from '@freik/media-utils';
+import ShuffleArray from '../ShuffleArray';
+
+export function MaybePlayNextSong(
+  curIndex: number,
+  setCurIndex: (val: number) => void,
+  repeat: boolean,
+  shuffle: boolean,
+  songList: SongKey[],
+  setSongList: (val: SongKey[]) => void,
+): boolean {
+  if (curIndex + 1 < songList.length) {
+    setCurIndex(curIndex + 1);
+  } else if (repeat) {
+    setCurIndex(0);
+    if (shuffle) {
+      songList = ShuffleArray(songList);
+      setSongList(songList);
+    }
+  } else {
+    return false;
+  }
+  return true;
+}
+
+export function MaybePlayPrevSong(
+  curIndex: number,
+  setCurIndex: (val: number) => void,
+  repeat: boolean,
+  songListLength: number,
+): void {
+  if (songListLength > 0) {
+    if (curIndex > 0) {
+      setCurIndex(curIndex - 1);
+    } else if (repeat) {
+      setCurIndex(songListLength - 1);
+    }
+  }
+}
 
 export const startSongPlayingAtom = atom<number>({
   key: 'StartSongPlaying',
@@ -46,11 +84,6 @@ export const addArtistAtom = atom<ArtistKey>({
 export const startPlaylistAtom = atom<string>({
   key: 'StartPlaylist',
   default: '',
-});
-
-export const startPrevSongAtom = atom<boolean>({
-  key: 'prevTrack',
-  default: false,
 });
 
 export const shuffleNowPlayingAtom = atom<boolean>({
