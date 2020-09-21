@@ -13,7 +13,7 @@
   "dependencies": {
     "@fluentui/react": "^7.138.0",
     "@freik/core-utils": "^0.4.2",
-    "@freik/media-utils": "^0.2.2",
+    "@freik/media-utils": "^0.2.3",
     "@uifabric/icons": "^7.5.5",
     "@uifabric/react-hooks": "^7.13.4",
     "electron-is-dev": "^1.2.0",
@@ -341,7 +341,7 @@
     "prettier": "^2.1.2",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",
-    "ts-jest": "^26.3.0",
+    "ts-jest": "^26.4.0",
     "typescript": "^4.0.3",
     "wait-on": "^5.2.0"
   }

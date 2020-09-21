@@ -1,8 +1,9 @@
 import { FTON, Logger } from '@freik/core-utils';
-import { PlaylistName } from '../../src/DataSchema';
 import { GetGeneral, setGeneral } from './Communication';
 
 import * as persist from './persist';
+
+type PlaylistName = string;
 
 const log = Logger.bind('RemotePlaylist');
 

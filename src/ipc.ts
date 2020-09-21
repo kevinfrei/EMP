@@ -8,7 +8,7 @@ import type {
   MediaInfo,
   Song,
   SongKey,
-} from './DataSchema';
+} from '@freik/media-utils';
 import { FTON } from '@freik/core-utils';
 
 export async function GetAllSongs(): Promise<Map<SongKey, Song> | void> {

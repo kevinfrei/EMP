@@ -11,7 +11,7 @@ import type {
   AlbumKey,
   Album,
   MediaInfo,
-} from '../../src/DataSchema';
+} from '@freik/media-utils';
 
 const log = Logger.bind('MusicAccess');
 // Logger.enable('MusicAccess');

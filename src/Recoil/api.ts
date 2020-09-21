@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import type { SongKey, AlbumKey, ArtistKey } from '../DataSchema';
+import type { SongKey, AlbumKey, ArtistKey } from '@freik/media-utils';
 
 export const startSongPlayingAtom = atom<number>({
   key: 'StartSongPlaying',

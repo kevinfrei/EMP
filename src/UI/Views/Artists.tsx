@@ -11,11 +11,11 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import { addArtistAtom, addSongAtom } from '../../Recoil/api';
 import { allArtistsSel, allSongsSel } from '../../Recoil/ReadOnly';
+import { AlbumFromSong, makeColumns } from '../SongList';
 
-import type { Artist, Song } from '../../DataSchema';
+import type { Artist, Song } from '@freik/media-utils';
 
 import './styles/Artists.css';
-import { AlbumFromSong, makeColumns } from '../SongList';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;

@@ -39,7 +39,7 @@ import type {
   ArtistKey,
   Song,
   SongKey,
-} from '../../DataSchema';
+} from '@freik/media-utils';
 
 import './styles/MixedSongs.css';
 

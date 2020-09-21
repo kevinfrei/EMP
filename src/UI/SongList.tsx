@@ -8,9 +8,10 @@ import {
   IDetailsRowStyles,
 } from '@fluentui/react';
 
-import type { Album, AlbumKey, ArtistKey, Song } from '../DataSchema';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
+
+import type { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 
 export function makeColumns<T>(
   getSort: () => string,

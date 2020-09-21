@@ -1,6 +1,12 @@
 import { GetDataForSong } from './DataSchema';
 
-import type { Album, AlbumKey, Artist, ArtistKey, Song } from './DataSchema';
+import type {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+} from '@freik/media-utils';
 
 export type Sorter = (a: string, b: string) => number;
 

@@ -12,7 +12,7 @@ import type {
   Song,
   SongKey,
   MediaInfo,
-} from '../DataSchema';
+} from '@freik/media-utils';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 

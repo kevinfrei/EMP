@@ -1,38 +1,4 @@
-export type SongKey = string;
-export type AlbumKey = string;
-export type ArtistKey = string;
-export type PlaylistName = string;
-export type Playlist = SongKey[];
-
-export type Song = {
-  key: SongKey;
-  track: number;
-  title: string;
-  albumId: AlbumKey;
-  artistIds: ArtistKey[];
-  secondaryIds: ArtistKey[];
-};
-
-export type Artist = {
-  key: ArtistKey;
-  name: string;
-  albums: AlbumKey[];
-  songs: SongKey[];
-};
-
-export type Album = {
-  key: AlbumKey;
-  year: number;
-  title: string;
-  vatype: '' | 'va' | 'ost';
-  primaryArtists: Set<ArtistKey>;
-  songs: SongKey[];
-};
-
-export type MediaInfo = {
-  general: Map<string, string>;
-  audio: Map<string, string>;
-};
+import { Album, AlbumKey, Artist, ArtistKey, Song } from "@freik/media-utils";
 
 export type SongData = {
   title: string;

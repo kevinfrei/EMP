@@ -1,6 +1,6 @@
 import mediainfo from 'node-mediainfo';
 
-import type { MediaInfo } from '../../src/DataSchema';
+import type { MediaInfo } from '@freik/media-utils';
 
 function addCommas(val: string): string {
   let res = '';

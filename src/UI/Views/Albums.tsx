@@ -5,11 +5,11 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { allAlbumsSel } from '../../Recoil/ReadOnly';
 import { addSongListAtom } from '../../Recoil/api';
+import { ArtistsFromAlbum, makeColumns } from '../SongList';
 
-import type { Album } from '../../DataSchema';
+import type { Album } from '@freik/media-utils';
 
 import './styles/Albums.css';
-import { ArtistsFromAlbum, makeColumns } from '../SongList';
 
 export default function NewAlbumView(): JSX.Element {
   const allAlbums = useRecoilValue(allAlbumsSel);

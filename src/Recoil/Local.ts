@@ -1,6 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { selector, selectorFamily, DefaultValue, atom } from 'recoil';
-import { Playlist, PlaylistName, SongKey } from '../DataSchema';
+import { Playlist, SongKey } from '@freik/media-utils';
+
+export type PlaylistName = string;
 
 export type MediaTime = {
   duration: number;

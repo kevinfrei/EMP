@@ -15,7 +15,7 @@ import type {
   ArtistKey,
   Song,
   SongKey,
-} from '../../src/DataSchema';
+} from '@freik/media-utils';
 
 export interface ServerSong extends Song {
   path: string;

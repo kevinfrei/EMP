@@ -28,16 +28,16 @@ import {
 import { startSongPlayingAtom, stopAndClearAtom } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
-
-import type { Song } from '../../DataSchema';
-
-import './styles/NowPlaying.css';
 import {
   AlbumFromSong,
   ArtistsFromSong,
   makeColumns,
   renderAltRow,
 } from '../SongList';
+
+import type { Song } from '@freik/media-utils';
+
+import './styles/NowPlaying.css';
 
 export default function NowPlaying(): JSX.Element {
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
