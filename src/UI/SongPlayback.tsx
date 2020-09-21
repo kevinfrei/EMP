@@ -1,10 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Slider } from '@fluentui/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Logger } from '@freik/core-utils';
 
-import { SetInterval } from '../MyWindow';
 import {
   mediaTimeAtom,
   mediaTimeRemainingSel,
@@ -23,10 +22,8 @@ import {
   SongData,
 } from '../Recoil/ReadOnly';
 
-import type { MediaTime } from '../Recoil/Local';
-
 import './styles/SongPlayback.css';
-import { MaybePlayNextSong } from '../Recoil/Manip';
+import { MaybePlayNextSong } from '../Recoil/api';
 
 const log = Logger.bind('SongPlayback');
 Logger.enable('SongPlayback');
@@ -60,6 +57,7 @@ function MediaTimeRemaining(): JSX.Element {
 }
 
 function MediaTimeSlider(): JSX.Element {
+  const songKey = useRecoilValue(currentSongKeySel);
   const [mediaTimePercent, setMediaTimePercent] = useRecoilState(
     mediaTimePercentRWSel,
   );
@@ -69,6 +67,7 @@ function MediaTimeSlider(): JSX.Element {
       value={mediaTimePercent}
       min={0}
       max={1}
+      disabled={songKey.length === 0}
       step={1e-5}
       onChange={(value: number) => {
         const ae = GetAudioElem();
@@ -103,36 +102,27 @@ function ArtistAlbum(): JSX.Element {
     return <span id="artist-album" />;
   }
 }
-let setTime: ((val: MediaTime) => void) | null = null;
-
-SetInterval(() => {
-  // Every couple hundred milliseconds, update the slider
-  if (!setTime) return;
-  const ae = GetAudioElem();
-  if (!ae || ae.duration <= 0) {
-    return;
-  }
-  setTime({ position: ae.currentTime, duration: ae.duration });
-}, 223); // Cuz prime numbers are fun
 
 export default function SongPlayback(): JSX.Element {
-  const [, setMediaTime] = useRecoilState(mediaTimeAtom);
+  const [mediaTime, setMediaTime] = useRecoilState(mediaTimeAtom);
   let audio: React.ReactElement<HTMLAudioElement>;
   const songKey = useRecoilValue(currentSongKeySel);
-  const [isPlaying, setPlaying] = useRecoilState(playingAtom);
+  const [, setPlaying] = useRecoilState(playingAtom);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
   const rep = useRecoilValue(repeatAtom);
   const shuf = useRecoilValue(shuffleAtom);
   const maybeNextSong = () => {
-    MaybePlayNextSong(
-      curIndex,
-      setCurIndex,
-      rep,
-      shuf,
-      songList,
-      setSongList,
-      setPlaying,
+    log('Heading to the next song!!!');
+    setPlaying(
+      MaybePlayNextSong(
+        curIndex,
+        setCurIndex,
+        rep,
+        shuf,
+        songList,
+        setSongList,
+      ),
     );
   };
   if (songKey !== '') {
@@ -144,21 +134,24 @@ export default function SongPlayback(): JSX.Element {
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={maybeNextSong}
+        onTimeUpdate={(ev: React.SyntheticEvent<HTMLMediaElement>) => {
+          const ae = ev.target as HTMLMediaElement;
+          if (
+            !Number.isNaN(ae.duration) && // eslint-disable-line id-blacklist
+            (Math.trunc(ae.duration) !== Math.trunc(mediaTime.duration) ||
+              Math.trunc(ae.currentTime) !== Math.trunc(mediaTime.position))
+          ) {
+            log(
+              `${ae.readyState}: Duration: ${ae.duration} Current time: ${ae.currentTime}`,
+            );
+            setMediaTime({ position: ae.currentTime, duration: ae.duration });
+          }
+        }}
       />
     ) as React.ReactElement<HTMLAudioElement>;
   } else {
     audio = <audio id="audioElement" />;
   }
-  useEffect(() => {
-    setTime = (val: MediaTime) => {
-      if (isPlaying) {
-        setMediaTime(val);
-      }
-    };
-    return () => {
-      setTime = null;
-    };
-  });
   return (
     <span id="song-container">
       <CoverArt />

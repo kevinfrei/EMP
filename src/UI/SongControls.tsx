@@ -13,13 +13,9 @@ import {
   hasNextSongSel,
   hasPrevSongSel,
 } from '../Recoil/Local';
-import {
-  startPrevSongAtom,
-  startSongPlayingAtom,
-} from '../Recoil/api';
 
 import './styles/SongControls.css';
-import { MaybePlayNextSong } from '../Recoil/Manip';
+import { MaybePlayNextSong, MaybePlayPrevSong } from '../Recoil/api';
 
 const log = Logger.bind('SongControls');
 Logger.enable('SongControls');
@@ -28,15 +24,11 @@ export default function SongControls(): JSX.Element {
   const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);
   const [shuf, shufSet] = useRecoilState(shuffleAtom);
   const [rep, repSet] = useRecoilState(repeatAtom);
-  /*
-  const [, startSongPlaying] = useRecoilState(startSongPlayingAtom);
-  const [, startPrevSong] = useRecoilState(startPrevSongAtom);
-  */
-  const hasNextSong = useRecoilValue(hasNextSongSel);
-  const hasPrevSong = useRecoilValue(hasPrevSongSel);
   const [songList, setSongList] = useRecoilState(songListAtom);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
-  const [, setPlaying] = useRecoilState(playingAtom);
+
+  const hasNextSong = useRecoilValue(hasNextSongSel);
+  const hasPrevSong = useRecoilValue(hasPrevSongSel);
 
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';
@@ -46,7 +38,7 @@ export default function SongControls(): JSX.Element {
     ? 'paused'
     : 'paused disabled';
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
-  const prevClass = hasNextSong ? 'enabled' : 'disabled';
+  const prevClass = hasPrevSong ? 'enabled' : 'disabled';
   // TODO: Change the current song list when this is changed
   const clickShuffle = () => shufSet(!shuf);
   const clickRepeat = () => repSet(!rep);
@@ -63,26 +55,26 @@ export default function SongControls(): JSX.Element {
       ae.play()
         .then(() => setIsPlaying(true))
         .catch((e) => '');
-    } else if (songList.length) {
-      log('Should start a song playing, apparently');
-      //      startSongPlaying(0);
+    } else {
+      log(`We're not playing, but also not state 4: ${ae.readyState}`);
     }
   };
   const clickPrev = () => {
     if (hasPrevSong) {
-      log('prev track');
+      MaybePlayPrevSong(curIndex, setCurIndex, rep, songList.length);
     }
   };
   const clickNext = () => {
-    MaybePlayNextSong(
-      curIndex,
-      setCurIndex,
-      rep,
-      shuf,
-      songList,
-      setSongList,
-      setPlaying,
-    );
+    if (hasNextSong) {
+      MaybePlayNextSong(
+        curIndex,
+        setCurIndex,
+        rep,
+        shuf,
+        songList,
+        setSongList,
+      );
+    }
   };
   return (
     <span className="control-container">

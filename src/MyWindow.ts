@@ -17,24 +17,6 @@ interface MyWindow extends Window {
 
 declare let window: MyWindow;
 
-// The basics (I never want to use window directly, I think...
-export function SetTimeout(handler: () => any, timeout?: number): number {
-  return window.setTimeout(handler, timeout);
-}
-
-export function ClearTimeout(handle?: number): void {
-  window.clearTimeout(handle);
-}
-
-let posIntervalId: number | undefined;
-export function SetInterval(func: () => void, time: number): void {
-  // eslint-disable-next-line id-blacklist
-  if (posIntervalId !== undefined) {
-    window.clearInterval(posIntervalId);
-  }
-  posIntervalId = window.setInterval(func, time);
-}
-
 export function ShowOpenDialog(
   options: OpenDialogSyncOptions,
 ): string[] | undefined {
