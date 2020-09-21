@@ -105,7 +105,7 @@ module.exports = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  rootDir: "src",
+  rootDir: 'src',
 
   // A list of paths to directories that Jest should use to search for files in
   // roots: [
@@ -161,7 +161,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
     '.+\\.(css|styl|less|sass|scss)$': 'jest-transform-css',
-    "^.+\\.svg$": "../jest-svg-transform.js"
+    '^.+\\.svg$': '../jest-svg-transform.js',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

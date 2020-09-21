@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-
     "target": "es5",
     "module": "esnext",
     "jsx": "react",
@@ -13,11 +12,7 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -25,7 +20,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": [
-    "src/**/*.tsx", "src/custom.d.ts"
-  ]
+  "include": ["src/**/*.tsx", "src/custom.d.ts"]
 }

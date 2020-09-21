@@ -46,7 +46,7 @@
     "compile": "tsc --noEmit && tsc --noEmit -p tsconfig.static.json && tsc --noEmit -p tsconfig.render.json",
     "test": "jest --config jest.jsdom.config.js && jest --config jest.node.config.js --passWithNoTests",
     "testui": "jest --config jest.jsdom.config.js --watch",
-    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"*.js\" \"*.json\" \"*.md\"",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
     "chk": "yarn format && yarn lint && yarn compile && yarn test"
   },
