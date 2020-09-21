@@ -137,7 +137,7 @@ export default function SongPlayback(): JSX.Element {
         onTimeUpdate={(ev: React.SyntheticEvent<HTMLMediaElement>) => {
           const ae = ev.target as HTMLMediaElement;
           if (
-            !Number.isNaN(ae.duration) &&
+            !Number.isNaN(ae.duration) && // eslint-disable-line id-blacklist
             (Math.trunc(ae.duration) !== Math.trunc(mediaTime.duration) ||
               Math.trunc(ae.currentTime) !== Math.trunc(mediaTime.position))
           ) {
