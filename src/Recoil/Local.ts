@@ -123,3 +123,32 @@ export const currentSongKeySel = selector<SongKey>({
     }
   },
 });
+
+// Is there a 'next song' to play?
+export const hasNextSongSel = selector<boolean>({
+  key: 'hasNextSong',
+  get: ({ get }) => {
+    const songList = get(songListAtom);
+    if (songList.length === 0) {
+      return false;
+    }
+    const curIndex = get(currentIndexAtom);
+    if (curIndex >= 0 && curIndex < songList.length - 1) {
+      return true;
+    }
+    return get(repeatAtom);
+  },
+});
+
+// Is there a 'previous song' to play?
+export const hasPrevSongSel = selector<boolean>({
+  key: 'hasPrevSong',
+  get: ({ get }) => {
+    const songList = get(songListAtom);
+    if (songList.length === 0) {
+      return false;
+    }
+    const curIndex = get(currentIndexAtom);
+    return curIndex > 0 || get(repeatAtom);
+  },
+});
