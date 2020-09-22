@@ -24,7 +24,14 @@ here you go:
 ![Playlist view](doc/playlist.jpg)
 
 It's not yet 'packaged' for general consumption, but if you're a nerd, you can
-probably get it to work from the repository easily enough.
+probably get it to work from the repository easily enough. (Those screen shots
+from the 'bootstrap' version. I've moved on to FluenUI since then...)
+
+Also, I migrated everything from Flow to TypeScript, because support from all
+the modules I use is much better in TypeScript. Honestly, the only other thing
+that seems better to me about TypeScript over Flow is documentation. TypeScript
+is kind of dumb (it doesn't get value propagation as well as Flow) and holy crap
+is it _slow_. 5-10 seconds to type check my 5000 lines of code :o
 
 ## What's the current state?
 
@@ -127,9 +134,9 @@ I should review it once I'm happy with the state of my recoil-iness.
 To generally communicate, you'll need to have a message name registered on both
 sides. In the **main** process, you'll need to register it in the `Init`
 function in
-[Communication.js](https://github.com/kevinfrei/EMP/blob/main/src/Communication.js).
+[Communication.ts](https://github.com/kevinfrei/EMP/blob/main/src/Communication.ts).
 In the **render** process, you should add a function that handles any data
-validation in [ipc.js](https://github.com/kevinfrei/EMP/blob/main/src/ipc.js).
+validation in [ipc.ts](https://github.com/kevinfrei/EMP/blob/main/src/ipc.ts).
 The 'mediainfo' message is a reasonable example to check out. Nothing is
 persisted between runs, it's just a simple little "please give me the data for
 this song" RPC.
