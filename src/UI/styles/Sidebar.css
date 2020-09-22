@@ -3,23 +3,8 @@
   overflow-y: hidden;
 }
 
-#search {
-  width: 125px;
-  background: url(../img/search.svg) no-repeat;
-  background-size: 16px;
-  background-position: 3px 3px;
-  background-color: white;
-  border: 1px solid #444444;
-  border-radius: 5px;
-  height: 24px;
-  width: 160px;
-  padding-left: 24px;
-  margin: -2px 0px 4px 0px;
-  font-size: small;
-}
-
 ::placeholder {
-  color: rgba(0, 0, 0, .2);
+  color: rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-container {
@@ -39,13 +24,14 @@ hr {
 }
 
 .sidebar-icon {
-  background-color: rgba(200, 200, 200, 0.5);
+/*  background-color: rgba(200, 200, 200, 0.5);*/
   border: solid 3px rgba(200, 200, 200, 0);
   border-radius: 3px;
   grid-column: 1;
   height: 16px;
   width: 16px;
   margin: 4px;
+/*   filter:invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);*/
 }
 
 .sidebar-text {

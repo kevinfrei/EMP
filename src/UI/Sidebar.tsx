@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState } from 'react';
 import { useRecoilState, SetterOrUpdater } from 'recoil';
+import { SearchBox } from '@fluentui/react';
 
 import { CurrentView, curViewAtom } from '../Recoil/Local';
 
@@ -57,19 +58,14 @@ function getEntry(
 }
 
 export default function Sidebar(): JSX.Element {
-  const [searchText, setSearchText] = useState('');
   const [curView, setCurView] = useRecoilState(curViewAtom);
+  const [, setSearch] = useState('');
   return (
     <div id="sidebar">
-      <div className="search-bar">
-        <input
-          id="search"
-          className="search-box"
-          type="search"
-          value={searchText}
-          onChange={(ev) => setSearchText(ev.target.value)}
-        />
-      </div>
+      <SearchBox
+        placeholder="Search NYI"
+        onSearch={(newValue) => setSearch(newValue)}
+      />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}
       <div id="data" />
