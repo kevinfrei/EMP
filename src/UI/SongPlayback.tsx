@@ -26,7 +26,7 @@ import './styles/SongPlayback.css';
 import { MaybePlayNextSong } from '../Recoil/api';
 
 const log = Logger.bind('SongPlayback');
-Logger.enable('SongPlayback');
+// Logger.enable('SongPlayback');
 
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;

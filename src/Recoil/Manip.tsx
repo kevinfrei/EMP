@@ -17,7 +17,6 @@ import {
 } from './Local';
 
 import { activePlaylistAtom } from './Local';
-import ShuffleArray from '../ShuffleArray';
 import { GetAudioElem } from '../UI/SongPlayback';
 
 import type { SongKey } from '@freik/media-utils';
@@ -40,7 +39,6 @@ export default function ApiManipulation(): JSX.Element {
   const addSong = useRecoilValue(api.addSongAtom);
   const addAlbum = useRecoilValue(api.addAlbumAtom);
   const addArtist = useRecoilValue(api.addArtistAtom);
-  const shuffleNowPlaying = useRecoilValue(api.shuffleNowPlayingAtom);
 
   // Resetters
   const resetStartPlaylist = useResetRecoilState(api.startPlaylistAtom);
@@ -52,7 +50,6 @@ export default function ApiManipulation(): JSX.Element {
   const resetAddSong = useResetRecoilState(api.addSongAtom);
   const resetAddAlbum = useResetRecoilState(api.addAlbumAtom);
   const resetAddArtist = useResetRecoilState(api.addArtistAtom);
-  const resetShuffleNowPlaying = useResetRecoilState(api.shuffleNowPlayingAtom);
 
   // State input
   const [currentIndex, setCurrentIndex] = useRecoilState(currentIndexAtom);
@@ -140,21 +137,5 @@ export default function ApiManipulation(): JSX.Element {
     }
   }
 
-  // This shuffles now playing without changing what's currently playing
-  // If something is playing, it's the first song in the shuffled playlist
-  if (shuffleNowPlaying) {
-    if (currentIndex < 0) {
-      songList = ShuffleArray(songList);
-    } else {
-      // if we're currently playing something, remove it from the array
-      const curKey = songList[currentIndex];
-      songList.splice(currentIndex, 1);
-      // Now put it at the top of the list
-      songList = [curKey, ...ShuffleArray(songList)];
-      setCurrentIndex(0);
-    }
-    setSongList(songList);
-    resetShuffleNowPlaying();
-  }
   return <div style={{ display: 'none' }} />;
 }

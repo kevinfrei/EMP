@@ -86,7 +86,32 @@ export const startPlaylistAtom = atom<string>({
   default: '',
 });
 
-export const shuffleNowPlayingAtom = atom<boolean>({
-  key: 'shuffleNowPlaying',
-  default: false,
-});
+/**
+ * This shuffles now playing without changing what's currently playing
+ * If something is playing, it's the first song in the shuffled playlist
+ * @function
+ * @param  {number} currentIndex - current index value
+ * @param  {(val:number)=>void} setCurrentIndex - func to set new index value
+ * @param  {SongKey[]} songList - current song list
+ * @param  {(val:SongKey[])=>void} setSongList - func to set the new song list
+ */
+export function ShuffleNowPlaying(
+  currentIndex: number,
+  setCurrentIndex: (val: number) => void,
+  songList: SongKey[],
+  setSongList: (val: SongKey[]) => void,
+) {
+  let newSongs;
+  if (currentIndex < 0) {
+    newSongs = ShuffleArray(songList);
+  } else {
+    // if we're currently playing something, remove it from the array
+    const curKey = songList[currentIndex];
+    newSongs = [...songList];
+    newSongs.splice(currentIndex, 1);
+    // Now put it at the top of the list
+    newSongs = [curKey, ...ShuffleArray(newSongs)];
+    setCurrentIndex(0);
+  }
+  setSongList(newSongs);
+}

@@ -11,6 +11,10 @@ import {
   IconButton,
   DetailsList,
   SelectionMode,
+  IDetailsListProps,
+  IDetailsRowStyles,
+  DetailsRow,
+  getTheme,
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
 
@@ -21,28 +25,26 @@ import {
   //  currentIndexAtom,
 } from '../../Recoil/ReadOnly';
 import {
+  currentIndexAtom,
   nowPlayingAtom,
   playlistsAtom,
   songListAtom,
 } from '../../Recoil/Local';
-import { startSongPlayingAtom, stopAndClearAtom } from '../../Recoil/api';
+import { stopAndClearAtom } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
-import {
-  AlbumFromSong,
-  ArtistsFromSong,
-  makeColumns,
-  renderAltRow,
-} from '../SongList';
+import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
 
 import type { Song } from '@freik/media-utils';
 
 import './styles/NowPlaying.css';
 
+const theme = getTheme();
+
 export default function NowPlaying(): JSX.Element {
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
-  //  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
   const allSongs = useRecoilValue(allSongsSel);
 
@@ -54,7 +56,6 @@ export default function NowPlaying(): JSX.Element {
   //  const [, setShuffle] = useRecoilState(shuffleAtom);
 
   const [, stopAndClear] = useRecoilState(stopAndClearAtom);
-  const [, playSongNumber] = useRecoilState(startSongPlayingAtom);
 
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
@@ -192,6 +193,23 @@ export default function NowPlaying(): JSX.Element {
     ['t', 'title', 'Title', 50],
   );
 
+  const renderAltRow: IDetailsListProps['onRenderRow'] = (props) => {
+    const customStyles: Partial<IDetailsRowStyles> = {};
+    if (props) {
+      let backgroundColor = '';
+      let fontWeight = 'normal';
+      if (props.itemIndex === curIndex) {
+        fontWeight = 'bold';
+      }
+      if (props.itemIndex % 2 === 0) {
+        backgroundColor = theme.palette.themeLighterAlt;
+      }
+      customStyles.root = { backgroundColor, fontWeight };
+      return <DetailsRow {...props} styles={customStyles} />;
+    }
+    return null;
+  };
+
   return (
     <>
       {dlgSavePlaylist}
@@ -204,7 +222,7 @@ export default function NowPlaying(): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           columns={columns}
-          onItemInvoked={(item, index) => playSongNumber(index ?? -1)}
+          onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
         />
       </div>
     </>

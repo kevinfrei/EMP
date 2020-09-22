@@ -15,10 +15,14 @@ import {
 } from '../Recoil/Local';
 
 import './styles/SongControls.css';
-import { MaybePlayNextSong, MaybePlayPrevSong } from '../Recoil/api';
+import {
+  MaybePlayNextSong,
+  MaybePlayPrevSong,
+  ShuffleNowPlaying,
+} from '../Recoil/api';
 
 const log = Logger.bind('SongControls');
-Logger.enable('SongControls');
+// Logger.enable('SongControls');
 
 export default function SongControls(): JSX.Element {
   const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);
@@ -39,8 +43,13 @@ export default function SongControls(): JSX.Element {
     : 'paused disabled';
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
-  // TODO: Change the current song list when this is changed
-  const clickShuffle = () => shufSet(!shuf);
+
+  const clickShuffle = () => {
+    shufSet(!shuf);
+    if (!shuf) {
+      ShuffleNowPlaying(curIndex, setCurIndex, songList, setSongList);
+    }
+  };
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = () => {
     const ae = GetAudioElem();
