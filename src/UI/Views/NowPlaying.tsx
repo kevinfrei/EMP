@@ -25,12 +25,12 @@ import {
   //  currentIndexAtom,
 } from '../../Recoil/ReadOnly';
 import {
+  activePlaylistAtom,
   currentIndexAtom,
   nowPlayingAtom,
   playlistsAtom,
   songListAtom,
 } from '../../Recoil/Local';
-import { stopAndClearAtom } from '../../Recoil/api';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
 import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
@@ -38,6 +38,8 @@ import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
 import type { Song } from '@freik/media-utils';
 
 import './styles/NowPlaying.css';
+import { StopAndClear } from '../../Recoil/api';
+import { useResetRecoilState } from 'recoil';
 
 const theme = getTheme();
 
@@ -53,9 +55,11 @@ export default function NowPlaying(): JSX.Element {
   const [, setShowConfirmation] = confirmationState;
   const [inputName, setInputName] = useState(nowPlaying);
   const [sortBy, setSortBy] = useState('');
-  //  const [, setShuffle] = useRecoilState(shuffleAtom);
 
-  const [, stopAndClear] = useRecoilState(stopAndClearAtom);
+  const resetSongList = useResetRecoilState(songListAtom);
+  const resetCurIndex = useResetRecoilState(currentIndexAtom);
+  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
+  const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
 
   const emptyQueue = songList.length === 0;
   // Helpers for the SaveAs dialog
@@ -71,6 +75,13 @@ export default function NowPlaying(): JSX.Element {
     }
     justCloseSaveAs();
   };
+  const stopAndClear = () =>
+    StopAndClear(
+      resetSongList,
+      resetCurIndex,
+      resetActivePlaylist,
+      resetNowPlaying,
+    );
   const dlgSavePlaylist = (
     <Dialog
       title="Save Playlist as..."
@@ -101,7 +112,7 @@ export default function NowPlaying(): JSX.Element {
     'Are you sure you want to clear the play queue?',
     'Yes',
     'No',
-    () => stopAndClear(true),
+    stopAndClear,
   );
 
   let header;
@@ -129,12 +140,13 @@ export default function NowPlaying(): JSX.Element {
     header = 'Now Playing';
     button = <></>;
   }
+
   const clearQueue = (
     <DefaultButton
       className="np-clear-queue"
       onClick={() => {
         if (PlayingPlaylist(nowPlaying)) {
-          stopAndClear(true);
+          stopAndClear();
         } else {
           setShowConfirmation(true);
         }
@@ -144,6 +156,7 @@ export default function NowPlaying(): JSX.Element {
       Clear Queue
     </DefaultButton>
   );
+
   const nameOrHeader = (
     <Text
       className="np-current-playlist"
@@ -154,6 +167,7 @@ export default function NowPlaying(): JSX.Element {
       {header}
     </Text>
   );
+
   const saveAs = (
     <DefaultButton
       className="save-playlist-as"
@@ -163,6 +177,7 @@ export default function NowPlaying(): JSX.Element {
       Save As...
     </DefaultButton>
   );
+
   const topLine = (
     <div id="now-playing-header">
       {clearQueue}

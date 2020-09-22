@@ -9,25 +9,25 @@ import {
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { VerticalScrollFixedVirtualList } from '../Scrollables';
-import { addArtistAtom, addSongAtom } from '../../Recoil/api';
+import { AddSongList } from '../../Recoil/api';
 import { allArtistsSel, allSongsSel } from '../../Recoil/ReadOnly';
 import { AlbumFromSong, makeColumns } from '../SongList';
 
 import type { Artist, Song } from '@freik/media-utils';
 
 import './styles/Artists.css';
+import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;
 
 export default function ArtistView(): JSX.Element {
-  const [, addArtist] = useRecoilState(addArtistAtom);
   const artists = useRecoilValue(allArtistsSel);
   const artistArray: Artist[] = [...artists.values()];
   const allSongs = useRecoilValue(allSongsSel);
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const [songList, setSongList] = useRecoilState(songListAtom);
   const [expandedArtist, setExpandedArtist] = useState('');
-
-  const [, addSong] = useRecoilState(addSongAtom);
 
   const handleClose = () => setExpandedArtist('');
 
@@ -38,7 +38,7 @@ export default function ArtistView(): JSX.Element {
     index: number;
     style: CSSProperties;
   }): JSX.Element {
-    const artist = artistArray[index];
+    const artist: Artist = artistArray[index];
     if (!artist) {
       return <div>{`Error for element ${index}`}</div>;
     }
@@ -46,7 +46,15 @@ export default function ArtistView(): JSX.Element {
       <div
         className="artistContainer"
         style={style}
-        onDoubleClick={() => addArtist(artist.key)}
+        onDoubleClick={() =>
+          AddSongList(
+            artist.songs,
+            curIndex,
+            setCurIndex,
+            songList,
+            setSongList,
+          )
+        }
       >
         <div className="artistName">
           {artist.name} &nbsp;
@@ -86,7 +94,15 @@ export default function ArtistView(): JSX.Element {
             items={art.songs.map((sl) => allSongs.get(sl))}
             selectionMode={SelectionMode.none}
             columns={songColumns}
-            onItemInvoked={(item: Song) => addSong(item.key)}
+            onItemInvoked={(item: Song) =>
+              AddSongList(
+                [item.key],
+                curIndex,
+                setCurIndex,
+                songList,
+                setSongList,
+              )
+            }
           />
         </div>
       );

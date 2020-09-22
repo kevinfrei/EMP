@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-import type { SongKey, AlbumKey, ArtistKey } from '@freik/media-utils';
+import type { SongKey } from '@freik/media-utils';
 import ShuffleArray from '../ShuffleArray';
 
 export function MaybePlayNextSong(
@@ -40,44 +40,8 @@ export function MaybePlayPrevSong(
   }
 }
 
-export const startSongPlayingAtom = atom<number>({
-  key: 'StartSongPlaying',
-  default: -1,
-});
-
-// This stops playback and clears the active playlist
-export const stopAndClearAtom = atom<boolean>({
-  key: 'StopAndClear',
-  default: false,
-});
-
 export const deletePlaylistAtom = atom<string>({
   key: 'DeletePlaylist',
-  default: '',
-});
-
-export const removeSongNumberAtom = atom<number>({
-  key: 'RemoveSongNumber',
-  default: -1,
-});
-
-export const addSongListAtom = atom<SongKey[]>({
-  key: 'AddSongList',
-  default: [],
-});
-
-export const addSongAtom = atom<SongKey>({
-  key: 'AddSong',
-  default: '',
-});
-
-export const addAlbumAtom = atom<AlbumKey>({
-  key: 'AddAlbum',
-  default: '',
-});
-
-export const addArtistAtom = atom<ArtistKey>({
-  key: 'AddArtist',
   default: '',
 });
 
@@ -85,6 +49,35 @@ export const startPlaylistAtom = atom<string>({
   key: 'StartPlaylist',
   default: '',
 });
+
+// Adds a list of songs to the end of the current song list
+export function AddSongList(
+  listToAdd: SongKey[],
+  curIndex: number,
+  setCurIndex: (val: number) => void,
+  songList: SongKey[],
+  setSongList: (val: SongKey[]) => void,
+): void {
+  if (listToAdd.length > 0) {
+    setSongList([...songList, ...listToAdd]);
+    if (curIndex < 0) {
+      setCurIndex(0);
+    }
+  }
+}
+
+// This stops playback and clears the active playlist
+export function StopAndClear(
+  resetSongList: () => void,
+  resetCurrentIndex: () => void,
+  resetActivePlaylist: () => void,
+  resetNowPlaying: () => void,
+): void {
+  resetSongList();
+  resetCurrentIndex();
+  resetActivePlaylist();
+  resetNowPlaying();
+}
 
 /**
  * This shuffles now playing without changing what's currently playing
@@ -100,7 +93,7 @@ export function ShuffleNowPlaying(
   setCurrentIndex: (val: number) => void,
   songList: SongKey[],
   setSongList: (val: SongKey[]) => void,
-) {
+): void {
   let newSongs;
   if (currentIndex < 0) {
     newSongs = ShuffleArray(songList);

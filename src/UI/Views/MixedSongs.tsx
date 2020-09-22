@@ -21,7 +21,7 @@ import {
   allArtistsSel,
   allSongsSel,
 } from '../../Recoil/ReadOnly';
-import { addSongAtom } from '../../Recoil/api';
+import { AddSongList } from '../../Recoil/api';
 import { SortSongs } from '../../Sorters';
 import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import {
@@ -42,14 +42,16 @@ import type {
 } from '@freik/media-utils';
 
 import './styles/MixedSongs.css';
+import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
 
 export default function MixedSongsList(): JSX.Element {
   const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const [songList, setSongList] = useRecoilState(songListAtom);
   const [selected, setSelected] = useState('');
-  const [, addSong] = useRecoilState(addSongAtom);
   const [sortOrder, setSortOrder] = useState('rl');
   const [sortedItems, setSortedItems] = useState(
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
@@ -106,7 +108,15 @@ export default function MixedSongsList(): JSX.Element {
           onItemContextMenu={(item: Song) => {
             setSelected(item.key);
           }}
-          onItemInvoked={(item: Song) => addSong(item.key)}
+          onItemInvoked={(item: Song) =>
+            AddSongList(
+              [item.key],
+              curIndex,
+              setCurIndex,
+              songList,
+              setSongList,
+            )
+          }
         />
       </ScrollablePane>
     </div>
