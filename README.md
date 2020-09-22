@@ -41,7 +41,13 @@ Playlists are the next major piece of functionality to add.
 Migrate to Recoil. One of the two key authors is on my team, and it was kinda
 "his idea". It supports React suspense, and I've been drooling over it for about
 a year. Now that it's been open-sourced, I'm going to switch from undux to
-recoil.
+recoil. Undux is completely gone, but I'm not quite back up to feature parity.
+During the conversion, I kept hitting weird React issues with some of the
+virtualized lists tech I was using, so I said screw it and also started
+migrating off of Bootstrap and onto FluentUI. Honestly FluentUI isn't the
+prettiest, but it's defaults certainly look better than Bootstrap, plus it's
+Microsoft tech, so it's relatively well documented, and super-duper scalable.
+The `DetailsList` component is almost magical. I highly recommend it.
 
 ### Recoil Notes
 
@@ -55,24 +61,18 @@ client side).
 
 For data that is changing, but is also stored on the server/in the main process,
 there's a big more complex data flow necessary. You can't really model the
-dependency of the data accurately in just _atoms_ and _selectors_. Instead, you
-need to include a React Effect that will pull the initial value from the server
-and ansynchronously dump it into a piece of recoil state.
+dependency of the data accurately in just _atoms_ and _selectors_. There's a new
+[API](https://recoiljs.org/docs/api-reference/core/useRecoilTransactionObserver)
+for watching changes so that you can do things like encode the data in a URL, or
+save it back to the server.
 
-My current thinking is that the recoild state should be in an _atom_ because I
-want fully synchonized data to be stored somewhere explicitly rather than just
-relying on some sort of caching mechanism deep in the bowels of Recoil. It also
-makes more sense when you recognize _selectors_ as functional state of their
-dependents.
-
-So there are 3 separate React Effects we need:
-
-1. Request an initial value for the atom.
-2. Subscribe to changes on the server side and reflect they back to the atom.
-3. Send updated values of the atom back to the server side.
-
-It's not completely clear how #1 and #2 might interact. In addition it's
-probably worth preventing #2 from triggering an infinite loop between #2 and #3.
+You can try to do similar stuff with Effects, but I whipped up a
+`useBackedState` hook, and it seems to work quite nicely. Instead of
+`useRecoilState`, use `useBackedState` with a default, and it will
+asynchronously query the server for the initial value (falling back to the
+atom's default if the server fails) as well as _register it to be recorded_
+using the API mentioned above. Perfect! ering an infinite loop between #2 and
+#3.
 
 ## This stuff is all out of date
 
@@ -105,6 +105,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 - Filter song lists down to actual songKeys that exist
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
+  - The "work" for this is already in my `@freik/media-utils` module.
 - Playlist unique-ification
 
 ### UI Improvements
@@ -112,8 +113,6 @@ I should review it once I'm happy with the state of my recoil-iness.
 - Sorting lists by clicking headers _everywhere_
   - Indicate the sorting (and invalidate it in Now Playing when shuffled)
   - Inverse sorting when clicking again
-- Handle single & double clicking from Now Playing with onClick timeouts
-  - This shows up when clicking many 'delete' icons in a row
 - Make an actual "About" screen
 - Get some controls in the menu with appropriate keyboard shortcuts
 - Maybe use the album-art package to get artist pix & missing album pix
@@ -123,37 +122,17 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 - Testing! Testing! Testing!
 
-# Redoing main/render state synchronization with Recoil
-
-Originally, there was an idea of "initial state". But with Recoil automagically
-pulling state on demand, there shouldn't be any initialization of state required
-by the render or main process. Walking the music DB could (should?) be done as a
-'prefetch' (the enemy of all performance :/ ) but everything else can be done
-on-demand.
-
-## Stuff to remember
-
-This is all deprecated with Recoil.
-
-### Persisting stuff across runs
-
-In order to persist important state across runs of the app, you need to add the
-name of the key to the `ValidKeyNames` list in
-[MyStore.js](https://github.com/kevinfrei/music/blob/master/src/MyStore.js).
-Next, add it to the `PersistedBetweenRuns` array in
-[Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js).
-
 ### "Other" communication
 
 To generally communicate, you'll need to have a message name registered on both
 sides. In the **main** process, you'll need to register it in the `Init`
 function in
-[Communication.js](https://github.com/kevinfrei/music/blob/master/src/Communication.js).
-In the **render** process, you should register it in `ConfigureIPC` found in
-[Handler.js](https://github.com/kevinfrei/music/blob/master/src/Handler.js). The
-'mediainfo' message is a reasonable example to check out. Nothing is persisted
-between runs, it's just a simple little "please give me the data for this song"
-RPC.
+[Communication.js](https://github.com/kevinfrei/EMP/blob/main/src/Communication.js).
+In the **render** process, you should add a function that handles any data
+validation in [ipc.js](https://github.com/kevinfrei/EMP/blob/main/src/ipc.js).
+The 'mediainfo' message is a reasonable example to check out. Nothing is
+persisted between runs, it's just a simple little "please give me the data for
+this song" RPC.
 
 ## Old stuff
 
@@ -161,7 +140,7 @@ This started as a `create-react-app` and `electron-quick-start` shoved together
 with a very anemic
 [AmplitudeJS](https://521dimensions.com/open-source/amplitudejs/)-based play
 back thingamajig. I ripped out Amplitude (it was overkill, and didn't mesh well
-with React/Undux) and I've got a core set of capabilities working.
+with React) and I've got a core set of capabilities working.
 
 Music player stuff. First: I have a _lot_ of media. Last time I checked it was
 over 20,000 songs spread across about 2000 albums and the same general number of
