@@ -1,8 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
 
+import { PersistenceObserver } from '../Recoil/helpers';
 import { InitialWireUp } from '../MyWindow';
-import ApiManipulation from '../Recoil/Manip';
 
 // This is a react component to enable the IPC subsystem to talk to the store
 // It uses a hook to get the store, then passes that on to the IPC subsystem
@@ -11,5 +11,5 @@ export default function Utilities(): JSX.Element {
   // Store subscription change notifications go here
   React.useEffect(InitialWireUp);
   // Invisible, because this is just for listening to the main process
-  return <ApiManipulation />;
+  return <PersistenceObserver />;
 }

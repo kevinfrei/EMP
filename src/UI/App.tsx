@@ -10,15 +10,11 @@ import SongPlayback from './SongPlayback';
 import VolumeControl from './VolumeControl';
 
 import './styles/App.css';
-import { PersistenceObserver } from '../Recoil/helpers';
 
 export default function App(): JSX.Element {
   return (
     <RecoilRoot>
-      <React.Suspense fallback="">
-        <PersistenceObserver />
-        <Utilities />
-      </React.Suspense>
+      <Utilities />
       <span className="grabber"></span>
       <span className="left-column"></span>
       <span className="top-row"></span>

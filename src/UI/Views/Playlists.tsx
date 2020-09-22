@@ -16,9 +16,9 @@ import {
   Stack,
   getTheme,
 } from '@fluentui/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { deletePlaylistAtom, startPlaylistAtom } from '../../Recoil/api';
+// import { deletePlaylistAtom, startPlaylistAtom } from '../../Recoil/api';
 import { playlistsAtom } from '../../Recoil/Local';
 
 import './styles/Playlists.css';
@@ -38,8 +38,10 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 
 export default function Playlister(): JSX.Element {
   const playlists = useRecoilValue(playlistsAtom);
-  const [, deletePlaylist] = useRecoilState(deletePlaylistAtom);
-  const [, startPlaylist] = useRecoilState(startPlaylistAtom);
+  // const [, deletePlaylist] = useRecoilState(deletePlaylistAtom);
+  // const [, startPlaylist] = useRecoilState(startPlaylistAtom);
+  const deletePlaylist = (plName: string) => 0;
+  const startPlaylist = (plName: string) => 0;
   // Some local state
   const [selPlaylist, setSelPlaylist] = useState('');
   const [showDialog, setShowDialog] = useState(false);
