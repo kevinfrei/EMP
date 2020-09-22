@@ -134,7 +134,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 To generally communicate, you'll need to have a message name registered on both
 sides. In the **main** process, you'll need to register it in the `Init`
 function in
-[Communication.ts](https://github.com/kevinfrei/EMP/blob/main/src/Communication.ts).
+[Communication.ts](https://github.com/kevinfrei/EMP/blob/main/static/main/Communication.ts).
 In the **render** process, you should add a function that handles any data
 validation in [ipc.ts](https://github.com/kevinfrei/EMP/blob/main/src/ipc.ts).
 The 'mediainfo' message is a reasonable example to check out. Nothing is
