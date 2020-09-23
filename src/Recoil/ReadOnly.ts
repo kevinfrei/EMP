@@ -13,6 +13,7 @@ import type {
   SongKey,
   MediaInfo,
 } from '@freik/media-utils';
+import { songListAtom } from './Local';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -185,6 +186,14 @@ export const artistStringSel = selectorFamily<string, ArtistKey[]>({
       const lastPart = ' & ' + (artists.pop() || 'OOPS!');
       return artists.join(', ') + lastPart;
     }
+  },
+});
+
+export const curSongsSel = selector<Song[]>({
+  key: 'curSongs',
+  get: ({ get }) => {
+    const curList = get(songListAtom);
+    return curList.map((sk: SongKey) => get(songByKeySel(sk)));
   },
 });
 

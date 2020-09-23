@@ -21,40 +21,57 @@ import { Comparisons } from '@freik/core-utils';
 // import { SongBy } from '../../Sorters';
 // import { shuffleAtom } from '../../Recoil/Atoms';
 import {
-  allSongsSel,
-  //  currentIndexAtom,
+  allAlbumsSel,
+  allArtistsSel,
+  curSongsSel,
 } from '../../Recoil/ReadOnly';
 import {
   activePlaylistAtom,
   currentIndexAtom,
   nowPlayingAtom,
   playlistsAtom,
+  shuffleAtom,
   songListAtom,
 } from '../../Recoil/Local';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
 import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
 
-import type { Song } from '@freik/media-utils';
+import type {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+  SongKey,
+} from '@freik/media-utils';
 
 import './styles/NowPlaying.css';
 import { StopAndClear } from '../../Recoil/api';
 import { useResetRecoilState } from 'recoil';
+import { SortSongs } from '../../Sorters';
+import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 
 const theme = getTheme();
 
 export default function NowPlaying(): JSX.Element {
+  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
+  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
+  const articles = useRecoilValue(sortWithArticlesAtom);
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
-  const allSongs = useRecoilValue(allSongsSel);
+  const curSongs = useRecoilValue(curSongsSel);
+  const [shuffle, setShuffle] = useRecoilState(shuffleAtom);
+
+  const [sortBy, setSortBy] = useState('');
+  const [sortedItems, setSortedItems] = useState(curSongs);
 
   const [showSaveAs, setShowSaveAs] = useState(false);
   const confirmationState = useState(false);
   const [, setShowConfirmation] = confirmationState;
   const [inputName, setInputName] = useState(nowPlaying);
-  const [sortBy, setSortBy] = useState('');
 
   const resetSongList = useResetRecoilState(songListAtom);
   const resetCurIndex = useResetRecoilState(currentIndexAtom);
@@ -191,15 +208,40 @@ export default function NowPlaying(): JSX.Element {
     <IconButton
       style={{ height: '18px', width: '18px' }}
       iconProps={{ iconName: 'Delete' }}
-      onClick={() => setSongList(songList.filter((v) => v !== song.key))}
+      onClick={() => {
+        setSortedItems(sortedItems.filter((v) => v.key !== song.key));
+        setSongList(songList.filter((k) => k !== song.key));
+      }}
     />
   );
 
   const columns = makeColumns<Song>(
     () => sortBy,
     (srt: string) => {
+      const sortedSongs = SortSongs(
+        srt,
+        sortedItems,
+        albums,
+        artists,
+        articles,
+      );
+      const curKey: SongKey = songList[curIndex];
+      let newKey = -1;
+      const newSongList = sortedSongs.map((song: Song, index: number) => {
+        if (song.key === curKey) {
+          newKey = index;
+        }
+        return song.key;
+      });
       setSortBy(srt);
-      /* TODO: Get the sort effected */
+      if (srt !== '') {
+        setSortedItems(sortedSongs);
+        setSongList(newSongList);
+        setCurIndex(newKey);
+        if (shuffle) {
+          setShuffle(false);
+        }
+      }
     },
     ['X', '', '', 25, 25, drawDeleter],
     ['l', 'albumId', 'Album', 50, 450, AlbumFromSong],
@@ -233,7 +275,7 @@ export default function NowPlaying(): JSX.Element {
       <div className="current-view">
         <DetailsList
           compact={true}
-          items={songList.map((sl) => allSongs.get(sl))}
+          items={sortedItems}
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           columns={columns}
