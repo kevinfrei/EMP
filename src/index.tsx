@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { initializeIcons } from '@uifabric/icons';
 
-import { SetInit } from './MyWindow';
+import { SetInit } from './Tools';
 import App from './UI/App';
 import * as serviceWorker from './serviceWorker';
 

@@ -1,4 +1,4 @@
-import ShuffleArray from '../ShuffleArray';
+import { ShuffleArray } from '../Tools';
 
 import type { SongKey } from '@freik/media-utils';
 

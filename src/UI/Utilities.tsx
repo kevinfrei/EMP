@@ -2,7 +2,7 @@
 import React from 'react';
 
 import { PersistenceObserver } from '../Recoil/helpers';
-import { InitialWireUp } from '../MyWindow';
+import { InitialWireUp } from '../Tools';
 
 // This is a react component to enable the IPC subsystem to talk to the store
 // It uses a hook to get the store, then passes that on to the IPC subsystem

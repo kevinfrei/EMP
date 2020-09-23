@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import {
   Text,
   DefaultButton,
@@ -14,8 +14,6 @@ import {
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
 
-// import { SongBy } from '../../Sorters';
-// import { shuffleAtom } from '../../Recoil/Atoms';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -30,7 +28,10 @@ import {
   songListAtom,
   nowPlayingSortAtom,
 } from '../../Recoil/Local';
-import { PlayingPlaylist } from '../../Playlist';
+import { StopAndClear } from '../../Recoil/api';
+import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { useBoolState } from '../../Recoil/helpers';
+import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
 
@@ -44,56 +45,17 @@ import type {
 } from '@freik/media-utils';
 
 import './styles/NowPlaying.css';
-import { StopAndClear } from '../../Recoil/api';
-import { useResetRecoilState } from 'recoil';
-import { SortSongs } from '../../Sorters';
-import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
-import { useBoolState } from '../../Recoil/helpers';
 
 // const log = Logger.bind('NowPlaying');
 // Logger.enable('NowPlaying');
 
 const theme = getTheme();
 
-// The Save Playlist As dialog
-function SavePlaylistAs({
-  hidden,
-  hide,
-}: {
-  hidden: boolean;
-  hide: () => void;
-}): JSX.Element {
-  const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
-  const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
-  const songList = useRecoilValue(songListAtom);
-  const saveIt = (inputName: string) => {
-    if (playlists.get(inputName)) {
-      window.alert('Cowardly refusing to overwrite existing playlist.');
-    } else {
-      playlists.set(inputName, [...songList]);
-      setPlaylists(playlists);
-      setNowPlaying(inputName);
-    }
-  };
-  return (
-    <TextInputDialog
-      hidden={hidden}
-      hide={hide}
-      confirmFunc={saveIt}
-      title="Save Playlist as..."
-      text="What would you like the playlist to be named?"
-      initialValue={nowPlaying}
-      yesText="Save"
-      noText="Cancel"
-    />
-  );
-}
-
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
+  const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
 
-  const nowPlaying = useRecoilValue(nowPlayingAtom);
   const songList = useRecoilValue(songListAtom);
 
   const [saveAsState, showSaveAs, hideSaveAs] = useBoolState(true);
@@ -103,6 +65,16 @@ function TopLine(): JSX.Element {
   const resetCurIndex = useResetRecoilState(currentIndexAtom);
   const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
   const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
+
+  const saveListAs = (inputName: string) => {
+    if (playlists.get(inputName)) {
+      window.alert('Cowardly refusing to overwrite existing playlist.');
+    } else {
+      playlists.set(inputName, [...songList]);
+      setPlaylists(playlists);
+      setNowPlaying(inputName);
+    }
+  };
 
   const emptyQueue = songList.length === 0;
 
@@ -114,15 +86,23 @@ function TopLine(): JSX.Element {
       resetNowPlaying,
     );
   };
+  const clickClearQueue = () => {
+    if (isPlaylist(nowPlaying)) {
+      stopAndClear();
+    } else {
+      showConfirm();
+    }
+  };
   let header;
   let button;
   const save = () => {
     playlists.set(nowPlaying, [...songList]);
     setPlaylists(playlists);
   };
-  if (PlayingPlaylist(nowPlaying)) {
+  if (isPlaylist(nowPlaying)) {
     header = nowPlaying;
-    // Only use this button if it's been modified?
+    // Only enable this button if the playlist has been *modified*
+    // (not just sorted)
     const curPlList = playlists.get(nowPlaying);
     const disabled =
       !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
@@ -140,46 +120,18 @@ function TopLine(): JSX.Element {
     button = <></>;
   }
 
-  const clearQueue = (
-    <DefaultButton
-      className="np-clear-queue"
-      onClick={() => {
-        if (PlayingPlaylist(nowPlaying)) {
-          stopAndClear();
-        } else {
-          showConfirm();
-        }
-      }}
-      disabled={emptyQueue}
-    >
-      Clear Queue
-    </DefaultButton>
-  );
-
-  const nameOrHeader = (
-    <Text
-      className="np-current-playlist"
-      variant="large"
-      block={true}
-      nowrap={true}
-    >
-      {header}
-    </Text>
-  );
-
-  const saveAs = (
-    <DefaultButton
-      className="save-playlist-as"
-      onClick={showSaveAs}
-      disabled={emptyQueue}
-    >
-      Save As...
-    </DefaultButton>
-  );
-
   return (
     <div id="current-header">
-      <SavePlaylistAs hidden={saveAsState} hide={hideSaveAs} />
+      <TextInputDialog
+        hidden={saveAsState}
+        hide={hideSaveAs}
+        confirmFunc={saveListAs}
+        title="Save Playlist as..."
+        text="What would you like the playlist to be named?"
+        initialValue={nowPlaying}
+        yesText="Save"
+        noText="Cancel"
+      />
       <ConfirmationDialog
         hidden={confirmState}
         hide={hideConfirm}
@@ -188,9 +140,28 @@ function TopLine(): JSX.Element {
         text="Are you sure you want to clear the play queue?"
       />
       <div id="now-playing-header">
-        {clearQueue}
-        {nameOrHeader}
-        {saveAs}
+        <DefaultButton
+          className="np-clear-queue"
+          onClick={clickClearQueue}
+          disabled={emptyQueue}
+        >
+          Clear Queue
+        </DefaultButton>
+        <Text
+          className="np-current-playlist"
+          variant="large"
+          block={true}
+          nowrap={true}
+        >
+          {header}
+        </Text>
+        <DefaultButton
+          className="save-playlist-as"
+          onClick={showSaveAs}
+          disabled={emptyQueue}
+        >
+          Save As...
+        </DefaultButton>
         {button}
       </div>
     </div>

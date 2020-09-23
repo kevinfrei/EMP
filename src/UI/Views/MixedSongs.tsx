@@ -22,7 +22,7 @@ import {
   allSongsSel,
 } from '../../Recoil/ReadOnly';
 import { AddSongList } from '../../Recoil/api';
-import { SortSongs } from '../../Sorters';
+import { SortSongs } from '../../Tools';
 import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import {
   renderAltRow,

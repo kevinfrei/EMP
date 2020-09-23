@@ -1,4 +1,4 @@
-import { InvokeMain } from './MyWindow';
+import { InvokeMain } from './Tools';
 
 import type {
   Album,

@@ -21,7 +21,7 @@ import {
   songListSortAtom,
   locationsAtom,
 } from '../../Recoil/ReadWrite';
-import { ShowOpenDialog } from '../../MyWindow';
+import { ShowOpenDialog } from '../../Tools';
 
 import './styles/Settings.css';
 import { useBackedState } from '../../Recoil/helpers';

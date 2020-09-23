@@ -1,5 +1,10 @@
+// This is for getting at "global" stuff from the window object
+import { Logger } from '@freik/core-utils';
+import { OpenDialogSyncOptions } from 'electron/main';
+
 import { GetDataForSong } from './DataSchema';
 
+import type { IpcRenderer } from 'electron';
 import type {
   Album,
   AlbumKey,
@@ -7,6 +12,62 @@ import type {
   ArtistKey,
   Song,
 } from '@freik/media-utils';
+
+const log = Logger.bind('Tools');
+// Logger.enable('Tools');
+
+/****************************
+ * "Window" stuff goes here *
+ ****************************/
+
+interface MyWindow extends Window {
+  ipc: IpcRenderer | undefined;
+  remote: Electron.Remote | undefined;
+  isDev: boolean | undefined;
+  initApp: undefined | (() => void);
+  ipcSet: boolean | undefined;
+}
+
+declare let window: MyWindow;
+
+export function ShowOpenDialog(
+  options: OpenDialogSyncOptions,
+): string[] | undefined {
+  return window.remote!.dialog.showOpenDialogSync(options);
+}
+
+export function SetInit(func: () => void): void {
+  window.initApp = func;
+}
+
+export function InitialWireUp(): void {
+  if (!window.ipcSet) {
+    window.ipcSet = true;
+    // Nothing to do here, actually
+  }
+}
+
+export async function InvokeMain(
+  channel: string,
+  key?: string,
+): Promise<string | void> {
+  let result;
+  if (key) {
+    log(`Invoking main("${channel}", "${key}")`);
+    result = (await window.ipc!.invoke(channel, key)) as string;
+    log(`Invoke main ("${channel}" "${key}") returned:`);
+  } else {
+    log(`Invoking main("${channel}")`);
+    result = (await window.ipc!.invoke(channel)) as string;
+    log(`Invoke main ("${channel}") returned:`);
+  }
+  log(result);
+  return result;
+}
+
+/***********
+ * Sorting *
+ ***********/
 
 export type Sorter = (a: string, b: string) => number;
 
@@ -95,4 +156,27 @@ export function SortSongs(
     ...GetDataForSong(song, albums, artists),
   }));
   return records.sort(selectComparator(articles, sortOrder)).map((r) => r.song);
+}
+
+/***************
+ * Miscellaney *
+ ***************/
+
+export function isPlaylist(playlist: string): boolean {
+  return playlist.length > 0;
+}
+
+function Rand(max: number): number {
+  return Math.floor(Math.random() * max);
+}
+
+export function ShuffleArray<T>(array: T[]): T[] {
+  const res: T[] = [];
+  const remove: T[] = [...array];
+  while (remove.length > 0) {
+    const i = Rand(remove.length);
+    res.push(remove[i]);
+    remove.splice(i, 1);
+  }
+  return res;
 }
