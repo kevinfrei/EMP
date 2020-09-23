@@ -1,11 +1,13 @@
+import { Logger } from '@freik/core-utils';
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { Logger } from '@freik/core-utils';
-
 import { configureProtocols } from './configure';
-import * as persist from './persist';
-
-import type { WindowPosition } from './persist';
+import {
+  getBrowserWindowPos,
+  getWindowPos,
+  setWindowPos,
+  WindowPosition,
+} from './persist';
 
 export type OnWindowCreated = (window: BrowserWindow) => Promise<void>;
 
@@ -19,13 +21,13 @@ Logger.disable('electronSetup');
 let mainWindow: BrowserWindow | null = null;
 
 export default function setup(windowCreated: OnWindowCreated): void {
-  const windowPos: WindowPosition = persist.getWindowPos();
+  const windowPos: WindowPosition = getWindowPos();
 
   const createWindow = () => {
     configureProtocols();
     // Create the window, but don't show it just yet
     mainWindow = new BrowserWindow({
-      ...persist.getBrowserWindowPos(windowPos),
+      ...getBrowserWindowPos(windowPos),
       title: 'EMP: Electron Music Player',
       //    backgroundColor: '#282c34', // Unnecessary if you're not showing :)
       webPreferences: {
@@ -103,7 +105,7 @@ export default function setup(windowCreated: OnWindowCreated): void {
           // only update bounds if the window isn’t currently maximized
           windowPos.bounds = mainWindow.getBounds();
         }
-        persist.setWindowPos(windowPos);
+        setWindowPos(windowPos);
       }
     };
 

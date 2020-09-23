@@ -1,15 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
 import { RecoilRoot } from 'recoil';
-
 import Sidebar from './Sidebar';
-import ViewSelector from './Views/Selector';
-import Utilities from './Utilities';
 import SongControls from './SongControls';
 import SongPlayback from './SongPlayback';
-import VolumeControl from './VolumeControl';
-
 import './styles/App.css';
+import Utilities from './Utilities';
+import ViewSelector from './Views/Selector';
+import VolumeControl from './VolumeControl';
 
 export default function App(): JSX.Element {
   return (

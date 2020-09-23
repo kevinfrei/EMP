@@ -1,22 +1,19 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useState, CSSProperties } from 'react';
 import {
   DetailsList,
   Dialog,
   DialogType,
   SelectionMode,
 } from '@fluentui/react';
+import { Artist, Song } from '@freik/media-utils';
+import React, { CSSProperties, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-
-import { VerticalScrollFixedVirtualList } from '../Scrollables';
 import { AddSongList } from '../../Recoil/api';
-import { allArtistsSel, allSongsSel } from '../../Recoil/ReadOnly';
-import { AlbumFromSong, makeColumns } from '../SongList';
-
-import type { Artist, Song } from '@freik/media-utils';
-
-import './styles/Artists.css';
 import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
+import { allArtistsSel, allSongsSel } from '../../Recoil/ReadOnly';
+import { VerticalScrollFixedVirtualList } from '../Scrollables';
+import { AlbumFromSong, makeColumns } from '../SongList';
+import './styles/Artists.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const downChevron = require('../img/down-chevron.svg') as string;

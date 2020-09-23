@@ -1,26 +1,23 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useState } from 'react';
 import {
-  Dialog,
   DefaultButton,
-  IconButton,
   DetailsList,
   DetailsRow,
+  Dialog,
+  getTheme,
+  IColumn,
+  IconButton,
   IDetailsRowProps,
   IDetailsRowStyles,
   IRenderFunction,
-  IColumn,
-  SelectionMode,
   PrimaryButton,
-  Text,
+  SelectionMode,
   Stack,
-  getTheme,
+  Text,
 } from '@fluentui/react';
+import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-
-// import { deletePlaylistAtom, startPlaylistAtom } from '../../Recoil/api';
 import { playlistsAtom } from '../../Recoil/Local';
-
 import './styles/Playlists.css';
 
 const theme = getTheme();

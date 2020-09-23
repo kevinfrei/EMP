@@ -1,26 +1,24 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
+import { Logger } from '@freik/core-utils';
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Logger } from '@freik/core-utils';
-
-import { GetAudioElem } from './SongPlayback';
-import {
-  playingAtom,
-  songListAtom,
-  repeatAtom,
-  shuffleAtom,
-  currentIndexAtom,
-  hasNextSongSel,
-  hasPrevSongSel,
-  nowPlayingSortAtom,
-} from '../Recoil/Local';
-
-import './styles/SongControls.css';
 import {
   MaybePlayNextSong,
   MaybePlayPrevSong,
   ShuffleNowPlaying,
 } from '../Recoil/api';
+import {
+  currentIndexAtom,
+  hasNextSongSel,
+  hasPrevSongSel,
+  nowPlayingSortAtom,
+  playingAtom,
+  repeatAtom,
+  shuffleAtom,
+  songListAtom,
+} from '../Recoil/Local';
+import { GetAudioElem } from './SongPlayback';
+import './styles/SongControls.css';
 
 const log = Logger.bind('SongControls');
 // Logger.enable('SongControls');

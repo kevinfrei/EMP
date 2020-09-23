@@ -1,5 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useState } from 'react';
 import {
   DetailsList,
   Dialog,
@@ -14,25 +13,7 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { useRecoilValue, useRecoilState } from 'recoil';
-
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  allSongsSel,
-} from '../../Recoil/ReadOnly';
-import { AddSongList } from '../../Recoil/api';
-import { SortSongs } from '../../Tools';
-import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
-import {
-  renderAltRow,
-  makeColumns,
-  ArtistsFromSong,
-  AlbumFromSong,
-} from '../SongList';
-import MediaInfoTable from '../MediaInfo';
-
-import type {
   Album,
   AlbumKey,
   Artist,
@@ -40,9 +21,25 @@ import type {
   Song,
   SongKey,
 } from '@freik/media-utils';
-
-import './styles/MixedSongs.css';
+import React, { useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { AddSongList } from '../../Recoil/api';
 import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
+import {
+  allAlbumsSel,
+  allArtistsSel,
+  allSongsSel,
+} from '../../Recoil/ReadOnly';
+import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { SortSongs } from '../../Tools';
+import MediaInfoTable from '../MediaInfo';
+import {
+  AlbumFromSong,
+  ArtistsFromSong,
+  makeColumns,
+  renderAltRow,
+} from '../SongList';
+import './styles/MixedSongs.css';
 
 export default function MixedSongsList(): JSX.Element {
   const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);

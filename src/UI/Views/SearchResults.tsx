@@ -1,5 +1,4 @@
 import React, { CSSProperties } from 'react';
-
 import { VerticalScrollVariableVirtualList } from '../Scrollables';
 
 export default function SearchResultsView(): JSX.Element {

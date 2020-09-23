@@ -1,15 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-
 import { CurrentView, curViewAtom } from '../../Recoil/Local';
 import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
-import PlaylistsView from './Playlists';
 import NowPlayingView from './NowPlaying';
-import SettingsView from './Settings';
+import PlaylistsView from './Playlists';
 import RecentlyAddedView from './RecentlyAdded';
+import SettingsView from './Settings';
 
 export default function ViewSelector(): JSX.Element {
   const which = useRecoilValue<CurrentView>(curViewAtom);

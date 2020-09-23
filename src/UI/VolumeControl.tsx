@@ -1,11 +1,9 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React from 'react';
 import { IconButton, Slider, Stack } from '@fluentui/react';
-
+import React from 'react';
+import { useBackedState } from '../Recoil/helpers';
 import { mutedAtom, volumeAtom } from '../Recoil/Local';
 import { GetAudioElem } from './SongPlayback';
-import { useBackedState } from '../Recoil/helpers';
-
 import './styles/VolumeControl.css';
 
 export default function VolumeControl(): JSX.Element {

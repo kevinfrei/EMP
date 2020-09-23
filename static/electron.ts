@@ -5,12 +5,10 @@
 // once the window has registered.
 
 import { Logger } from '@freik/core-utils';
-
+import { BrowserWindow } from 'electron';
+import { Begin, Init } from './main/Communication';
 import electronSetup from './main/electronSetup';
-import { Startup, Ready } from './main/Startup';
-import { Init, Begin } from './main/Communication';
-
-import type { BrowserWindow } from 'electron';
+import { Ready, Startup } from './main/Startup';
 
 const log = Logger.bind('electron');
 // Logger.enable('electron');

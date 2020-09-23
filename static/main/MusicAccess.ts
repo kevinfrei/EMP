@@ -1,17 +1,15 @@
 import { FTON, Logger } from '@freik/core-utils';
-
-import * as persist from './persist';
-import { getMediaInfo } from './metadata';
-
-import type { ServerSong, MusicDB } from './MusicScanner';
-import type {
-  SongKey,
-  ArtistKey,
-  Artist,
-  AlbumKey,
+import {
   Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
   MediaInfo,
+  SongKey,
 } from '@freik/media-utils';
+import { getMediaInfo } from './metadata';
+import { MusicDB, ServerSong } from './MusicScanner';
+import * as persist from './persist';
 
 const log = Logger.bind('MusicAccess');
 // Logger.enable('MusicAccess');

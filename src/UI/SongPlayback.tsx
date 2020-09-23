@@ -1,29 +1,27 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React from 'react';
 import { Slider } from '@fluentui/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { Logger } from '@freik/core-utils';
-
+import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { MaybePlayNextSong } from '../Recoil/api';
 import {
-  mediaTimeAtom,
-  mediaTimeRemainingSel,
-  mediaTimePositionSel,
-  mediaTimePercentRWSel,
-  playingAtom,
-  currentSongKeySel,
   currentIndexAtom,
-  songListAtom,
+  currentSongKeySel,
+  mediaTimeAtom,
+  mediaTimePercentRWSel,
+  mediaTimePositionSel,
+  mediaTimeRemainingSel,
+  playingAtom,
   repeatAtom,
   shuffleAtom,
+  songListAtom,
 } from '../Recoil/Local';
 import {
   albumKeyForSongKeySel,
   dataForSongSel,
   SongData,
 } from '../Recoil/ReadOnly';
-
 import './styles/SongPlayback.css';
-import { MaybePlayNextSong } from '../Recoil/api';
 
 const log = Logger.bind('SongPlayback');
 // Logger.enable('SongPlayback');

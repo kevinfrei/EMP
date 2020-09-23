@@ -1,11 +1,8 @@
-import path from 'path';
-import { protocol } from 'electron';
 import { Logger } from '@freik/core-utils';
-
-import * as persist from './persist';
+import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
+import path from 'path';
 import { getMusicDB } from './MusicAccess';
-
-import type { ProtocolRequest, ProtocolResponse } from 'electron';
+import * as persist from './persist';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 

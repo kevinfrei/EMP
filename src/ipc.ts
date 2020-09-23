@@ -1,6 +1,5 @@
-import { InvokeMain } from './Tools';
-
-import type {
+import { FTON } from '@freik/core-utils';
+import {
   Album,
   AlbumKey,
   Artist,
@@ -9,7 +8,7 @@ import type {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import { FTON } from '@freik/core-utils';
+import { InvokeMain } from './Tools';
 
 export async function GetAllSongs(): Promise<Map<SongKey, Song> | void> {
   const blob = await InvokeMain('get-all-songs');

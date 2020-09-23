@@ -1,19 +1,17 @@
-import { RecoilValue, selector, selectorFamily } from 'recoil';
 import { Logger } from '@freik/core-utils';
-
-import { locationsAtom } from './ReadWrite';
-import * as ipc from '../ipc';
-
-import type {
-  Artist,
-  ArtistKey,
+import {
   Album,
   AlbumKey,
+  Artist,
+  ArtistKey,
+  MediaInfo,
   Song,
   SongKey,
-  MediaInfo,
 } from '@freik/media-utils';
+import { RecoilValue, selector, selectorFamily } from 'recoil';
+import * as ipc from '../ipc';
 import { songListAtom } from './Local';
+import { locationsAtom } from './ReadWrite';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 

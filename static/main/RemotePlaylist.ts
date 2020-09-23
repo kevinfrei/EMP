@@ -1,6 +1,5 @@
 import { FTON, Logger } from '@freik/core-utils';
 import { GetGeneral, setGeneral } from './Communication';
-
 import * as persist from './persist';
 
 type PlaylistName = string;

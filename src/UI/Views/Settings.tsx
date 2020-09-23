@@ -1,30 +1,28 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
+import {
+  DefaultButton,
+  Dropdown,
+  IconButton,
+  IDropdownOption,
+  Label,
+  Separator,
+  Stack,
+  Text,
+  Toggle,
+} from '@fluentui/react';
+import { Logger } from '@freik/core-utils';
 import * as React from 'react';
 import { RecoilState } from 'recoil';
-import { Logger } from '@freik/core-utils';
+import { useBackedState } from '../../Recoil/helpers';
 import {
-  Toggle,
-  Dropdown,
-  IDropdownOption,
-  Stack,
-  DefaultButton,
-  Label,
-  IconButton,
-  Separator,
-  Text,
-} from '@fluentui/react';
-
-import {
-  sortWithArticlesAtom,
   albumListSortAtom,
   artistListSortAtom,
-  songListSortAtom,
   locationsAtom,
+  songListSortAtom,
+  sortWithArticlesAtom,
 } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
-
 import './styles/Settings.css';
-import { useBackedState } from '../../Recoil/helpers';
 
 const log = Logger.bind('View-Settings');
 // Logger.enable('View-Settings');

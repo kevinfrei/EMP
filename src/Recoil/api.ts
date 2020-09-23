@@ -1,6 +1,5 @@
+import { SongKey } from '@freik/media-utils';
 import { ShuffleArray } from '../Tools';
-
-import type { SongKey } from '@freik/media-utils';
 
 /**
  * Try to play the next song in the playlist

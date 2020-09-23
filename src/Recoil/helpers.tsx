@@ -1,14 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
+import { FTON, FTONData, Logger } from '@freik/core-utils';
 import React, { useState } from 'react';
-import { Logger, FTON, FTONData } from '@freik/core-utils';
 import {
   RecoilState,
-  selectorFamily,
-  useRecoilState,
-  useRecoilValue,
-  useRecoilTransactionObserver_UNSTABLE,
-  Snapshot,
   RecoilValue,
+  selectorFamily,
+  Snapshot,
+  useRecoilState,
+  useRecoilTransactionObserver_UNSTABLE,
+  useRecoilValue,
 } from 'recoil';
 import { GetGeneral, SetGeneral } from '../ipc';
 

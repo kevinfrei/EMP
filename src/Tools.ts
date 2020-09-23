@@ -1,24 +1,16 @@
 // This is for getting at "global" stuff from the window object
 import { Logger } from '@freik/core-utils';
+import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
+import { IpcRenderer } from 'electron';
 import { OpenDialogSyncOptions } from 'electron/main';
-
 import { GetDataForSong } from './DataSchema';
-
-import type { IpcRenderer } from 'electron';
-import type {
-  Album,
-  AlbumKey,
-  Artist,
-  ArtistKey,
-  Song,
-} from '@freik/media-utils';
 
 const log = Logger.bind('Tools');
 // Logger.enable('Tools');
 
-/****************************
- * "Window" stuff goes here *
- ****************************/
+/*
+ * "Window" stuff goes here
+ */
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;
@@ -65,9 +57,9 @@ export async function InvokeMain(
   return result;
 }
 
-/***********
- * Sorting *
- ***********/
+/*
+ * Sorting
+ */
 
 export type Sorter = (a: string, b: string) => number;
 
@@ -158,9 +150,9 @@ export function SortSongs(
   return records.sort(selectComparator(articles, sortOrder)).map((r) => r.song);
 }
 
-/***************
- * Miscellaney *
- ***************/
+/*
+ * Miscellaney
+ */
 
 export function isPlaylist(playlist: string): boolean {
   return playlist.length > 0;

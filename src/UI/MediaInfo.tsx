@@ -1,9 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
+import { MediaInfo, SongKey } from '@freik/media-utils';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { getMediaInfo } from '../Recoil/ReadOnly';
-
-import type { MediaInfo, SongKey } from '@freik/media-utils';
 
 function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   const lines: JSX.Element[] = [];

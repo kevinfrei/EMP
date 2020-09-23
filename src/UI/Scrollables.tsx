@@ -1,9 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React, { useLayoutEffect, useRef, useState } from 'react';
-import { FixedSizeList, VariableSizeList } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
-import type { ListOnScrollProps } from 'react-window';
-
+import {
+  FixedSizeList,
+  ListOnScrollProps,
+  VariableSizeList,
+} from 'react-window';
 import './styles/Scrollables.css';
 
 declare type Generator = ({

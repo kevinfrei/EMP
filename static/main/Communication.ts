@@ -1,14 +1,13 @@
-import { BrowserWindow, ipcMain } from 'electron';
 import { FTON, FTONData, Logger } from '@freik/core-utils';
-
-import * as persist from './persist';
+import { BrowserWindow, ipcMain } from 'electron';
+import { IpcMainInvokeEvent } from 'electron/main';
 import {
   getAllAlbums,
   getAllArtists,
   getAllSongs,
   getMediaInfoForSong,
 } from './MusicAccess';
-import { IpcMainInvokeEvent } from 'electron/main';
+import * as persist from './persist';
 import { GetPlaylist, GetPlaylistNames, SavePlaylist } from './RemotePlaylist';
 
 const log = Logger.bind('Communication');

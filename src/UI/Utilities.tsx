@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import React from 'react';
-
 import { PersistenceObserver } from '../Recoil/helpers';
 import { InitialWireUp } from '../Tools';
 

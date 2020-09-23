@@ -1,5 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React from 'react';
 import {
   DetailsRow,
   getTheme,
@@ -7,11 +6,10 @@ import {
   IDetailsListProps,
   IDetailsRowStyles,
 } from '@fluentui/react';
-
+import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
+import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
-
-import type { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 
 export function makeColumns<T>(
   getSort: () => string,

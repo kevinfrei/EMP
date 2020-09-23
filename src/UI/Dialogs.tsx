@@ -1,5 +1,4 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useState } from 'react';
 import {
   DefaultButton,
   Dialog,
@@ -8,6 +7,7 @@ import {
   Text,
   TextField,
 } from '@fluentui/react';
+import React, { useState } from 'react';
 
 export type TextInputDialogProps = {
   hidden: boolean;

@@ -1,41 +1,17 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React, { useState } from 'react';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import {
-  Text,
   DefaultButton,
-  IconButton,
   DetailsList,
-  SelectionMode,
-  IDetailsListProps,
-  IDetailsRowStyles,
   DetailsRow,
   getTheme,
+  IconButton,
+  IDetailsListProps,
+  IDetailsRowStyles,
+  SelectionMode,
+  Text,
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
-
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  curSongsSel,
-} from '../../Recoil/ReadOnly';
-import {
-  activePlaylistAtom,
-  currentIndexAtom,
-  nowPlayingAtom,
-  playlistsAtom,
-  shuffleAtom,
-  songListAtom,
-  nowPlayingSortAtom,
-} from '../../Recoil/Local';
-import { StopAndClear } from '../../Recoil/api';
-import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
-import { useBoolState } from '../../Recoil/helpers';
-import { isPlaylist, SortSongs } from '../../Tools';
-import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
-
-import type {
   Album,
   AlbumKey,
   Artist,
@@ -43,7 +19,28 @@ import type {
   Song,
   SongKey,
 } from '@freik/media-utils';
-
+import React, { useState } from 'react';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { StopAndClear } from '../../Recoil/api';
+import { useBoolState } from '../../Recoil/helpers';
+import {
+  activePlaylistAtom,
+  currentIndexAtom,
+  nowPlayingAtom,
+  nowPlayingSortAtom,
+  playlistsAtom,
+  shuffleAtom,
+  songListAtom,
+} from '../../Recoil/Local';
+import {
+  allAlbumsSel,
+  allArtistsSel,
+  curSongsSel,
+} from '../../Recoil/ReadOnly';
+import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { isPlaylist, SortSongs } from '../../Tools';
+import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
+import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
 import './styles/NowPlaying.css';
 
 // const log = Logger.bind('NowPlaying');

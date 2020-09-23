@@ -1,21 +1,18 @@
-import { promises as fsp } from 'fs';
-import path from 'path';
-import { Metadata as metadata } from '@freik/media-utils';
 import { Comparisons, FTON, Logger, SeqNum } from '@freik/core-utils';
-
-import * as persist from './persist';
-
-import type { FullMetadata, SimpleMetadata } from '@freik/media-utils';
-import type { Dirent } from 'fs';
-
-import type {
+import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
+  FullMetadata,
+  Metadata as metadata,
+  SimpleMetadata,
   Song,
   SongKey,
 } from '@freik/media-utils';
+import { Dirent, promises as fsp } from 'fs';
+import path from 'path';
+import * as persist from './persist';
 
 export interface ServerSong extends Song {
   path: string;

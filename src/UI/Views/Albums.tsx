@@ -1,16 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React from 'react';
 import { DetailsList, SelectionMode } from '@fluentui/react';
-import { useRecoilValue, useRecoilState } from 'recoil';
-
-import { allAlbumsSel } from '../../Recoil/ReadOnly';
+import { Album } from '@freik/media-utils';
+import React from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
-import { ArtistsFromAlbum, makeColumns } from '../SongList';
-
-import type { Album } from '@freik/media-utils';
-
-import './styles/Albums.css';
 import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
+import { allAlbumsSel } from '../../Recoil/ReadOnly';
+import { ArtistsFromAlbum, makeColumns } from '../SongList';
+import './styles/Albums.css';
 
 export default function NewAlbumView(): JSX.Element {
   const allAlbums = useRecoilValue(allAlbumsSel);

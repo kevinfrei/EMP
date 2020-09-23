@@ -2,8 +2,8 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-import { IpcRenderer, ipcRenderer, remote } from 'electron';
 import { Logger } from '@freik/core-utils';
+import { IpcRenderer, ipcRenderer, remote } from 'electron';
 
 const isDev = true; // require('electron-is-dev');
 

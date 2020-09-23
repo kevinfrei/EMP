@@ -1,9 +1,7 @@
-import { app } from 'electron';
 import path from 'path';
+import { app, Rectangle } from 'electron';
 import fs, { promises as fsp } from 'fs';
-import { Logger, FTON, SeqNum, FTONData } from '@freik/core-utils';
-
-import type { Rectangle } from 'electron';
+import { FTON, FTONData, Logger, SeqNum } from '@freik/core-utils';
 
 const log = Logger.bind('persist');
 // Logger.enable('persist');
