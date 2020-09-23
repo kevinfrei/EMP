@@ -1,12 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-use-before-define
 import {
   DetailsList,
+  DetailsRow,
   Dialog,
   DialogType,
+  GroupedList,
+  IColumn,
+  IGroup,
   SelectionMode,
 } from '@fluentui/react';
 import { Artist, Song } from '@freik/media-utils';
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties, ReactNode, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
 import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
@@ -123,5 +127,103 @@ export default function ArtistView(): JSX.Element {
         itemGenerator={VirtualArtistRow}
       />
     </div>
+  );
+}
+
+/*
+https://developer.microsoft.com/en-us/fluentui#/controls/web/groupedlist
+
+import * as React from 'react';
+import {
+  GroupHeader,
+  GroupedList,
+  IGroupHeaderCheckboxProps,
+  IGroupHeaderProps,
+  IGroupRenderProps,
+} from 'office-ui-fabric-react/lib/GroupedList';
+import { IColumn, IObjectWithKey, DetailsRow } from 'office-ui-fabric-react/lib/DetailsList';
+import { FocusZone } from 'office-ui-fabric-react/lib/FocusZone';
+import { Selection, SelectionMode, SelectionZone } from 'office-ui-fabric-react/lib/Selection';
+import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
+import { useConst } from '@uifabric/react-hooks';
+import { createListItems, createGroups, IExampleItem } from '@uifabric/example-data';
+
+const groupCount = 3;
+const groupDepth = 1;
+
+const groupProps: IGroupRenderProps = {
+  onRenderHeader: (props?: IGroupHeaderProps): JSX.Element => (
+    <GroupHeader onRenderGroupHeaderCheckbox={onRenderGroupHeaderCheckbox} {...props} />
+  ),
+};
+
+const onRenderGroupHeaderCheckbox = (props?: IGroupHeaderCheckboxProps) => (
+  <Toggle checked={props ? props.checked : undefined} />
+);
+
+export const GroupedListCustomCheckboxExample: React.FunctionComponent = () => {
+  const items: IObjectWithKey[] = useConst(() => createListItems(Math.pow(groupCount, groupDepth + 1)));
+  const groups = useConst(() => createGroups(groupCount, groupDepth, 0, groupCount));
+  const columns = useConst(() =>
+    Object.keys(items[0])
+      .slice(0, 3)
+      .map(
+        (key: string): IColumn => ({
+          key: key,
+          name: key,
+          fieldName: key,
+          minWidth: 300,
+        }),
+      ),
+  );
+  const selection = useConst(() => new Selection({ items }));
+
+  const onRenderCell = React.useCallback(
+    (nestingDepth?: number, item?: IExampleItem, itemIndex?: number): React.ReactNode => (
+      <DetailsRow
+        columns={columns}
+        groupNestingDepth={nestingDepth}
+        item={item}
+        itemIndex={itemIndex!}
+        selection={selection}
+        selectionMode={SelectionMode.multiple}
+      />
+    ),
+    [columns, selection],
+  );
+
+  return (
+          <GroupedList
+            items={items}
+            onRenderCell={onRenderCell}
+            selection={selection}
+            selectionMode={SelectionMode.multiple}
+            groups={groups}
+            groupProps={groupProps}
+          />
+  );
+};
+*/
+function NewArtistList(): JSX.Element {
+  const allSongsMap = useRecoilValue(allSongsSel);
+  const allArtists = useRecoilValue(allArtistsSel);
+  const allSongs = [...allSongsMap.values()];
+  const artistGroups: IGroup[] = [];
+  const columns: IColumn[] = [];
+  // const nestingDepth = 1;
+  const onRenderCell = React.useCallback(
+    (nestingDepth?: number, item?: Song, index?: number): ReactNode => {
+      if (nestingDepth === null || item === null || index === null)
+        return <></>;
+      return <DetailsRow columns={columns} item={item} itemIndex={index!} />;
+    },
+    [columns],
+  );
+  return (
+    <GroupedList
+      items={allSongs}
+      groups={artistGroups}
+      onRenderCell={onRenderCell}
+    />
   );
 }
