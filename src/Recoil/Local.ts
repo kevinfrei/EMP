@@ -152,3 +152,9 @@ export const hasPrevSongSel = selector<boolean>({
     return curIndex > 0 || get(repeatAtom);
   },
 });
+
+// This is the sort for the current playlist
+export const nowPlayingSortAtom = atom<string>({
+  key: 'nowPlayingSort',
+  default: '',
+});

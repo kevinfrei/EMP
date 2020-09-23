@@ -12,8 +12,21 @@ import {
 } from 'recoil';
 import { GetGeneral, SetGeneral } from '../ipc';
 
+// [state, show (set true), hide (set false)]
+export type BoolState = [boolean, () => void, () => void];
+
 const log = Logger.bind('helpers');
 // Logger.enable('helpers');
+
+/**
+ * A short cut for on/off states to make some things (like dialogs) cleaner
+ *
+ * @returns {BoolState} [state, trueSetter(), falseSetter()]
+ */
+export function useBoolState(initial: boolean): BoolState {
+  const [dialogState, setDialogState] = useState(initial);
+  return [dialogState, () => setDialogState(false), () => setDialogState(true)];
+}
 
 // This is the list of atoms that we're sync'ing back to the main process
 const atomsToSync = new Map<string, RecoilState<unknown>>();

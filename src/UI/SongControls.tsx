@@ -12,6 +12,7 @@ import {
   currentIndexAtom,
   hasNextSongSel,
   hasPrevSongSel,
+  nowPlayingSortAtom,
 } from '../Recoil/Local';
 
 import './styles/SongControls.css';
@@ -30,7 +31,7 @@ export default function SongControls(): JSX.Element {
   const [rep, repSet] = useRecoilState(repeatAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
-
+  const [, setNowPlaylistSort] = useRecoilState(nowPlayingSortAtom);
   const hasNextSong = useRecoilValue(hasNextSongSel);
   const hasPrevSong = useRecoilValue(hasPrevSongSel);
 
@@ -47,7 +48,13 @@ export default function SongControls(): JSX.Element {
   const clickShuffle = () => {
     shufSet(!shuf);
     if (!shuf) {
-      ShuffleNowPlaying(curIndex, setCurIndex, songList, setSongList);
+      ShuffleNowPlaying(
+        curIndex,
+        setCurIndex,
+        songList,
+        setSongList,
+        setNowPlaylistSort,
+      );
     }
   };
   const clickRepeat = () => repSet(!rep);

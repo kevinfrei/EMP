@@ -153,8 +153,10 @@ export function ShuffleNowPlaying(
   setCurrentIndex: (val: number) => void,
   songList: SongKey[],
   setSongList: (val: SongKey[]) => void,
+  setNowPlayingSort: (srt: string) => void,
 ): void {
   let newSongs;
+  setNowPlayingSort('');
   if (currentIndex < 0) {
     newSongs = ShuffleArray(songList);
   } else {

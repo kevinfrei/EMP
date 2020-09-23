@@ -32,6 +32,7 @@ import {
   playlistsAtom,
   shuffleAtom,
   songListAtom,
+  nowPlayingSortAtom,
 } from '../../Recoil/Local';
 import { PlayingPlaylist } from '../../Playlist';
 import ConfirmationDialog from '../ConfirmationDialog';
@@ -51,37 +52,24 @@ import { StopAndClear } from '../../Recoil/api';
 import { useResetRecoilState } from 'recoil';
 import { SortSongs } from '../../Sorters';
 import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { useBoolState } from '../../Recoil/helpers';
+
+// const log = Logger.bind('NowPlaying');
+// Logger.enable('NowPlaying');
 
 const theme = getTheme();
 
-export default function NowPlaying(): JSX.Element {
-  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
-  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
-  const articles = useRecoilValue(sortWithArticlesAtom);
-  const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
+function SavePlaylistAs({
+  hidden,
+  hide,
+}: {
+  hidden: boolean;
+  hide: () => void;
+}): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
-  const [songList, setSongList] = useRecoilState(songListAtom);
-  const curSongs = useRecoilValue(curSongsSel);
-  const [shuffle, setShuffle] = useRecoilState(shuffleAtom);
-
-  const [sortBy, setSortBy] = useState('');
-  const [sortedItems, setSortedItems] = useState(curSongs);
-
-  const [showSaveAs, setShowSaveAs] = useState(false);
-  const confirmationState = useState(false);
-  const [, setShowConfirmation] = confirmationState;
+  const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
+  const songList = useRecoilValue(songListAtom);
   const [inputName, setInputName] = useState(nowPlaying);
-
-  const resetSongList = useResetRecoilState(songListAtom);
-  const resetCurIndex = useResetRecoilState(currentIndexAtom);
-  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
-  const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
-
-  const emptyQueue = songList.length === 0;
-  // Helpers for the SaveAs dialog
-  const justCloseSaveAs = () => setShowSaveAs(false);
-  const showSaveDialog = () => setShowSaveAs(true);
   const saveAndClose = () => {
     if (playlists.get(inputName)) {
       window.alert('Cowardly refusing to overwrite existing playlist.');
@@ -90,21 +78,11 @@ export default function NowPlaying(): JSX.Element {
       setPlaylists(playlists);
       setNowPlaying(inputName);
     }
-    justCloseSaveAs();
+    hide();
   };
-  const stopAndClear = () =>
-    StopAndClear(
-      resetSongList,
-      resetCurIndex,
-      resetActivePlaylist,
-      resetNowPlaying,
-    );
-  const dlgSavePlaylist = (
-    <Dialog
-      title="Save Playlist as..."
-      hidden={!showSaveAs}
-      onDismiss={justCloseSaveAs}
-    >
+
+  return (
+    <Dialog title="Save Playlist as..." hidden={hidden} onDismiss={hide}>
       <Stack>
         <TextField
           value={inputName}
@@ -112,7 +90,7 @@ export default function NowPlaying(): JSX.Element {
         />
         <br />
         <div>
-          <PrimaryButton style={{ float: 'left' }} onClick={justCloseSaveAs}>
+          <PrimaryButton style={{ float: 'left' }} onClick={hide}>
             Cancel
           </PrimaryButton>
           <DefaultButton style={{ float: 'right' }} onClick={saveAndClose}>
@@ -122,16 +100,32 @@ export default function NowPlaying(): JSX.Element {
       </Stack>
     </Dialog>
   );
+}
 
-  const dlgConfirm = ConfirmationDialog(
-    confirmationState,
-    'Please Confirm',
-    'Are you sure you want to clear the play queue?',
-    'Yes',
-    'No',
-    stopAndClear,
-  );
+function TopLine(): JSX.Element {
+  const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
 
+  const nowPlaying = useRecoilValue(nowPlayingAtom);
+  const songList = useRecoilValue(songListAtom);
+
+  const [saveAsState, showSaveAs, hideSaveAs] = useBoolState(true);
+  const [confirmState, showConfirm, hideConfirm] = useBoolState(true);
+
+  const resetSongList = useResetRecoilState(songListAtom);
+  const resetCurIndex = useResetRecoilState(currentIndexAtom);
+  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
+  const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
+
+  const emptyQueue = songList.length === 0;
+
+  const stopAndClear = () => {
+    StopAndClear(
+      resetSongList,
+      resetCurIndex,
+      resetActivePlaylist,
+      resetNowPlaying,
+    );
+  };
   let header;
   let button;
   const save = () => {
@@ -165,7 +159,7 @@ export default function NowPlaying(): JSX.Element {
         if (PlayingPlaylist(nowPlaying)) {
           stopAndClear();
         } else {
-          setShowConfirmation(true);
+          showConfirm();
         }
       }}
       disabled={emptyQueue}
@@ -188,21 +182,47 @@ export default function NowPlaying(): JSX.Element {
   const saveAs = (
     <DefaultButton
       className="save-playlist-as"
-      onClick={showSaveDialog}
+      onClick={showSaveAs}
       disabled={emptyQueue}
     >
       Save As...
     </DefaultButton>
   );
 
-  const topLine = (
-    <div id="now-playing-header">
-      {clearQueue}
-      {nameOrHeader}
-      {saveAs}
-      {button}
+  return (
+    <div id="current-header">
+      <SavePlaylistAs hidden={saveAsState} hide={hideSaveAs} />
+      <ConfirmationDialog
+        hidden={confirmState}
+        hide={hideConfirm}
+        confirmFunc={stopAndClear}
+        title="Please Confirm"
+        text="Are you sure you want to clear the play queue?"
+        confirm="Yes"
+        cancel="No"
+      />
+      <div id="now-playing-header">
+        {clearQueue}
+        {nameOrHeader}
+        {saveAs}
+        {button}
+      </div>
     </div>
   );
+}
+
+export default function NowPlaying(): JSX.Element {
+  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
+  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
+  const curSongs = useRecoilValue(curSongsSel);
+  const articles = useRecoilValue(sortWithArticlesAtom);
+
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const [songList, setSongList] = useRecoilState(songListAtom);
+  const [shuffle, setShuffle] = useRecoilState(shuffleAtom);
+  const [sortBy, setSortBy] = useRecoilState(nowPlayingSortAtom);
+
+  const [sortedItems, setSortedItems] = useState(curSongs);
 
   const drawDeleter = (song: Song) => (
     <IconButton
@@ -218,23 +238,23 @@ export default function NowPlaying(): JSX.Element {
   const columns = makeColumns<Song>(
     () => sortBy,
     (srt: string) => {
-      const sortedSongs = SortSongs(
-        srt,
-        sortedItems,
-        albums,
-        artists,
-        articles,
-      );
-      const curKey: SongKey = songList[curIndex];
-      let newKey = -1;
-      const newSongList = sortedSongs.map((song: Song, index: number) => {
-        if (song.key === curKey) {
-          newKey = index;
-        }
-        return song.key;
-      });
       setSortBy(srt);
       if (srt !== '') {
+        const sortedSongs = SortSongs(
+          srt,
+          sortedItems,
+          albums,
+          artists,
+          articles,
+        );
+        const curKey: SongKey = songList[curIndex];
+        let newKey = -1;
+        const newSongList = sortedSongs.map((song: Song, index: number) => {
+          if (song.key === curKey) {
+            newKey = index;
+          }
+          return song.key;
+        });
         setSortedItems(sortedSongs);
         setSongList(newSongList);
         setCurIndex(newKey);
@@ -244,12 +264,13 @@ export default function NowPlaying(): JSX.Element {
       }
     },
     ['X', '', '', 25, 25, drawDeleter],
-    ['l', 'albumId', 'Album', 50, 450, AlbumFromSong],
-    ['r', 'artistIds', 'Artist(s)', 50, 450, ArtistsFromSong],
-    ['n', 'track', '#', 10, 40],
-    ['t', 'title', 'Title', 50],
+    ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
+    ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
+    ['n', 'track', '#', 10, 20],
+    ['t', 'title', 'Title', 50, 150],
   );
 
+  // This does the light/dark swapping, with the current song in bold
   const renderAltRow: IDetailsListProps['onRenderRow'] = (props) => {
     const customStyles: Partial<IDetailsRowStyles> = {};
     if (props) {
@@ -269,9 +290,7 @@ export default function NowPlaying(): JSX.Element {
 
   return (
     <>
-      {dlgSavePlaylist}
-      {dlgConfirm}
-      <div id="current-header">{topLine}</div>
+      <TopLine />
       <div className="current-view">
         <DetailsList
           compact={true}

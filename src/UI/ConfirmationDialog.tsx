@@ -8,23 +8,33 @@ import {
   Text,
 } from '@fluentui/react';
 
-export default function ConfirmationDialog(
-  [visible, setVisible]: [visible: boolean, setVisible: (v: boolean) => void],
-  title: string,
-  text: string,
-  confirmText: string,
-  cancelText: string,
-  confirmFunc: () => void,
-  minWidth?: number,
-  maxWidth?: number,
-): JSX.Element {
-  const hide = () => setVisible(false);
+export default function ConfirmationDialog({
+  hidden,
+  hide,
+  confirmFunc,
+  title,
+  text,
+  confirm,
+  cancel,
+  minWidth,
+  maxWidth,
+}: {
+  hidden: boolean;
+  hide: () => void;
+  confirmFunc: () => void;
+  title: string;
+  text: string;
+  confirm: string;
+  cancel: string;
+  minWidth?: number;
+  maxWidth?: number;
+}): JSX.Element {
   return (
     <Dialog
       title={title}
       maxWidth={maxWidth}
       minWidth={minWidth}
-      hidden={!visible}
+      hidden={hidden}
       onDismiss={hide}
     >
       <Stack>
@@ -38,10 +48,10 @@ export default function ConfirmationDialog(
               confirmFunc();
             }}
           >
-            {confirmText}
+            {confirm}
           </DefaultButton>
           <PrimaryButton style={{ float: 'right' }} onClick={hide}>
-            {cancelText}
+            {cancel}
           </PrimaryButton>
         </div>
       </Stack>

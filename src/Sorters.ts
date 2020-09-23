@@ -73,6 +73,16 @@ function selectComparator(articles: boolean, sortOrder: string) {
   };
 }
 
+/**
+ * Sort an array of songs according to a sort order string
+ *
+ * @param  {string} sortOrder - the Sort Order string
+ * @param  {Song[]} songs - The list of songs to be sorted
+ * @param  {Map<AlbumKey, Album>} albums - The album map
+ * @param  {Map<ArtistKey} artists - The artist map
+ * @param  {boolean} articles - should articles be considered during the sort
+ * @returns Song
+ */
 export function SortSongs(
   sortOrder: string,
   songs: Song[],
