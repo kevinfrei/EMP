@@ -2,12 +2,8 @@
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
-  Dialog,
   Text,
-  TextField,
-  PrimaryButton,
   DefaultButton,
-  Stack,
   IconButton,
   DetailsList,
   SelectionMode,
@@ -35,7 +31,7 @@ import {
   nowPlayingSortAtom,
 } from '../../Recoil/Local';
 import { PlayingPlaylist } from '../../Playlist';
-import ConfirmationDialog from '../ConfirmationDialog';
+import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
 
 import type {
@@ -59,6 +55,7 @@ import { useBoolState } from '../../Recoil/helpers';
 
 const theme = getTheme();
 
+// The Save Playlist As dialog
 function SavePlaylistAs({
   hidden,
   hide,
@@ -69,8 +66,7 @@ function SavePlaylistAs({
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
   const songList = useRecoilValue(songListAtom);
-  const [inputName, setInputName] = useState(nowPlaying);
-  const saveAndClose = () => {
+  const saveIt = (inputName: string) => {
     if (playlists.get(inputName)) {
       window.alert('Cowardly refusing to overwrite existing playlist.');
     } else {
@@ -78,30 +74,22 @@ function SavePlaylistAs({
       setPlaylists(playlists);
       setNowPlaying(inputName);
     }
-    hide();
   };
-
   return (
-    <Dialog title="Save Playlist as..." hidden={hidden} onDismiss={hide}>
-      <Stack>
-        <TextField
-          value={inputName}
-          onChange={(ev, newValue) => setInputName(newValue ?? inputName)}
-        />
-        <br />
-        <div>
-          <PrimaryButton style={{ float: 'left' }} onClick={hide}>
-            Cancel
-          </PrimaryButton>
-          <DefaultButton style={{ float: 'right' }} onClick={saveAndClose}>
-            Save
-          </DefaultButton>
-        </div>
-      </Stack>
-    </Dialog>
+    <TextInputDialog
+      hidden={hidden}
+      hide={hide}
+      confirmFunc={saveIt}
+      title="Save Playlist as..."
+      text="What would you like the playlist to be named?"
+      initialValue={nowPlaying}
+      yesText="Save"
+      noText="Cancel"
+    />
   );
 }
 
+// The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
 
@@ -198,8 +186,6 @@ function TopLine(): JSX.Element {
         confirmFunc={stopAndClear}
         title="Please Confirm"
         text="Are you sure you want to clear the play queue?"
-        confirm="Yes"
-        cancel="No"
       />
       <div id="now-playing-header">
         {clearQueue}
@@ -211,6 +197,7 @@ function TopLine(): JSX.Element {
   );
 }
 
+// The Now Playing (Current playlist) view
 export default function NowPlaying(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
