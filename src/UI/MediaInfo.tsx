@@ -1,6 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { MediaInfo, SongKey } from '@freik/media-utils';
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { getMediaInfo } from '../Recoil/ReadOnly';
 

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import {
   DetailsList,
   DetailsRow,
@@ -10,7 +9,7 @@ import {
   SelectionMode,
 } from '@fluentui/react';
 import { Artist, Song } from '@freik/media-utils';
-import React, { CSSProperties, ReactNode, useState } from 'react';
+import React, { CSSProperties, ReactNode, useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
 import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
@@ -133,7 +132,6 @@ export default function ArtistView(): JSX.Element {
 /*
 https://developer.microsoft.com/en-us/fluentui#/controls/web/groupedlist
 
-import * as React from 'react';
 import {
   GroupHeader,
   GroupedList,

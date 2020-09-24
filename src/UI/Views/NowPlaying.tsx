@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import {
   DefaultButton,
   DetailsList,
@@ -19,7 +18,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { StopAndClear } from '../../Recoil/api';
 import { useBoolState } from '../../Recoil/helpers';

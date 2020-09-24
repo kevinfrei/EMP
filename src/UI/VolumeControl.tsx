@@ -1,6 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { IconButton, Slider, Stack } from '@fluentui/react';
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useBackedState } from '../Recoil/helpers';
 import { mutedAtom, volumeAtom } from '../Recoil/Local';
 import { GetAudioElem } from './SongPlayback';

@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import {
   DetailsRow,
   getTheme,
@@ -7,7 +6,7 @@ import {
   IDetailsRowStyles,
 } from '@fluentui/react';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
 

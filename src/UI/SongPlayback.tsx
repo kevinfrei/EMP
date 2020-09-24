@@ -1,7 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { Slider } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNextSong } from '../Recoil/api';
 import {
@@ -33,6 +32,7 @@ export function GetAudioElem(): HTMLMediaElement | void {
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeySel);
   const albumKey = useRecoilValue(albumKeyForSongKeySel(songKey));
+
   return (
     <span id="song-cover-art">
       <img

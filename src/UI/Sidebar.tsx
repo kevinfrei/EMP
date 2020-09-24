@@ -1,6 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { SearchBox } from '@fluentui/react';
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import { CurrentView, curViewAtom } from '../Recoil/Local';
 import './styles/Sidebar.css';

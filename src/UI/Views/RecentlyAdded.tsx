@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 
 export default function RecentlyAdded(): JSX.Element {
   return (

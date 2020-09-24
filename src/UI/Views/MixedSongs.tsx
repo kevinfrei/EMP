@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import {
   DetailsList,
   Dialog,
@@ -21,7 +20,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
 import { currentIndexAtom, songListAtom } from '../../Recoil/Local';

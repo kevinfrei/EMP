@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { VerticalScrollVariableVirtualList } from '../Scrollables';
 
 export default function SearchResultsView(): JSX.Element {

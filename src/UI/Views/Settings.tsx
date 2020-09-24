@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import {
   DefaultButton,
   Dropdown,
@@ -11,7 +10,7 @@ import {
   Toggle,
 } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
-import * as React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { RecoilState } from 'recoil';
 import { useBackedState } from '../../Recoil/helpers';
 import {

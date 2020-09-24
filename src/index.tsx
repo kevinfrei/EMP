@@ -1,6 +1,5 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { initializeIcons } from '@uifabric/icons';
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
 import { SetInit } from './Tools';

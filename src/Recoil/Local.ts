@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-use-before-define
 import { Playlist, SongKey } from '@freik/media-utils';
 import { atom, DefaultValue, selector, selectorFamily } from 'recoil';
 
