@@ -2,10 +2,12 @@ import {
   DetailsRow,
   getTheme,
   IColumn,
+  IDetailsGroupRenderProps,
   IDetailsListProps,
   IDetailsRowStyles,
+  IGroup,
 } from '@fluentui/react';
-import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
+import { Album, AlbumKey, ArtistKey, Song, SongKey } from '@freik/media-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
@@ -104,4 +106,63 @@ export function AlbumFromSong(song: Song): JSX.Element {
 
 export function ArtistsFromAlbum(album: Album): JSX.Element {
   return <ArtistName artistIds={[...album.primaryArtists]} />;
+}
+
+/**
+ * Build out the song list, group list, and group header properties for a
+ * grouped hierarchy of songs
+ *
+ * @param allTs - the map from key to grouped container (Album/Artist)
+ * @param allSongs - the map from SongKey to Songs
+ * @param expandedState - A React state pair for a set of keys used to keep
+ *                        track of which containers are currently expanded
+ * @param getSongs - a Lambda to get the song list from the container
+ * @param getTitle - a Labme to get the title of each group
+ */
+export function GetSongGroupData<T>(
+  allTs: Map<string, T>,
+  allSongs: Map<SongKey, Song>,
+  [curExpandedSet, setExpandedSet]: [
+    curExpandedSet: Set<string>,
+    setExpandedSet: (set: Set<string>) => void,
+  ],
+  getSongs: (obj: T) => SongKey[],
+  getTitle: (obj: T) => string,
+): [Song[], IGroup[], IDetailsGroupRenderProps] {
+  const groups: IGroup[] = [];
+  const songs: Song[] = [];
+  let runningTotal = 0;
+  for (const [key, thing] of allTs) {
+    const theSongs = getSongs(thing);
+    const group: IGroup = {
+      count: theSongs.length,
+      key,
+      name: getTitle(thing),
+      startIndex: runningTotal,
+      isCollapsed: !curExpandedSet.has(key),
+    };
+    groups.push(group);
+    runningTotal += group.count;
+    songs.push(
+      ...(theSongs
+        .map((v) => allSongs.get(v))
+        .filter((value) => !!value) as Song[]),
+    );
+  }
+  const renderProps: IDetailsGroupRenderProps = {
+    onToggleCollapseAll: (isAllCollapsed: boolean) => {
+      setExpandedSet(new Set<string>(isAllCollapsed ? [] : allTs.keys()));
+    },
+    headerProps: {
+      onToggleCollapse: (group: IGroup) => {
+        if (curExpandedSet.has(group.key)) {
+          curExpandedSet.delete(group.key);
+        } else {
+          curExpandedSet.add(group.key);
+        }
+        setExpandedSet(curExpandedSet);
+      },
+    },
+  };
+  return [songs, groups, renderProps];
 }
