@@ -13,6 +13,7 @@ import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
 export function makeColumns<T>(
   getSort: () => string,
   performSort: (srt: string) => void,
+  groupField: string,
   ...renderers: [
     key: string,
     fieldName: string,
@@ -49,12 +50,21 @@ export function makeColumns<T>(
           minWidth,
           maxWidth,
           onRender,
+          isGrouped: fieldName === groupField,
           isResizable: true,
           isSorted: getSort().toLowerCase().startsWith(key),
           isSortedDescending: getSort().startsWith(key.toUpperCase()),
           onColumnClick: () => localSort(key),
         }
-      : { key, name, minWidth, maxWidth, onRender, isResizable: true },
+      : {
+          key,
+          name,
+          minWidth,
+          maxWidth,
+          onRender,
+          isGrouped: fieldName === groupField,
+          isResizable: true,
+        },
   );
 }
 

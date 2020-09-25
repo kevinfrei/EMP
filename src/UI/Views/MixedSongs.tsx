@@ -45,8 +45,8 @@ export default function MixedSongsList(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
-  const [songList, setSongList] = useRecoilState(songListAtom);
+  const curIndexState = useRecoilState(currentIndexAtom);
+  const songListState = useRecoilState(songListAtom);
   const [selected, setSelected] = useState('');
   const [sortOrder, setSortOrder] = useState('rl');
   const [sortedItems, setSortedItems] = useState(
@@ -59,6 +59,7 @@ export default function MixedSongsList(): JSX.Element {
       setSortOrder(srt);
       setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles));
     },
+    '',
     ['n', 'track', '#', 30, 30],
     ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
     ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
@@ -105,13 +106,7 @@ export default function MixedSongsList(): JSX.Element {
             setSelected(item.key);
           }}
           onItemInvoked={(item: Song) =>
-            AddSongList(
-              [item.key],
-              curIndex,
-              setCurIndex,
-              songList,
-              setSongList,
-            )
+            AddSongList([item.key], curIndexState, songListState)
           }
         />
       </ScrollablePane>

@@ -22,8 +22,6 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
-    "react-virtualized-auto-sizer": "^1.0.2",
-    "react-window": "^1.8.5",
     "recoil": "^0.0.13",
     "source-map-explorer": "^2.5.0"
   },

@@ -105,10 +105,14 @@ export const startPlaylistAtom = atom<string>({
  */
 export function AddSongList(
   listToAdd: Iterable<SongKey>,
-  curIndex: number,
-  setCurIndex: (val: number) => void,
-  songList: Iterable<SongKey>,
-  setSongList: (val: SongKey[]) => void,
+  [curIndex, setCurIndex]: [
+    curIndex: number,
+    setCurIndex: (val: number) => void,
+  ],
+  [songList, setSongList]: [
+    songList: Iterable<SongKey>,
+    setSongList: (val: SongKey[]) => void,
+  ],
 ): void {
   setSongList([...songList, ...listToAdd]);
   if (curIndex < 0) {

@@ -217,6 +217,7 @@ export default function NowPlaying(): JSX.Element {
         }
       }
     },
+    'n/a',
     ['X', '', '', 25, 25, drawDeleter],
     ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
     ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
