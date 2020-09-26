@@ -11,7 +11,7 @@ many, many years. I like having high quality music playable from the PC I'm
 working on. When that PC was a Windows PC, the incredibly ancient Windows Media
 Player would play Flac, as would "Groove Music" I imagine (and anything else
 probably, because of the pluggable (and highly overarchitected) nature of
-audio/video handling in Windows. But I'm on a Mac on a regular basis these days
+audio/video handling in Windows). But I'm on a Mac on a regular basis these days
 and Vox is **awful** (I'm not paying a monthly fee for the privilege of
 listening to the music I've already purchased, thanks very much) and VLC is a
 bad music player (a great video player, but not great for music, IMO)
@@ -23,36 +23,37 @@ here you go:
 
 ![Playlist view](doc/playlist.jpg)
 
-It's not yet 'packaged' for general consumption, but if you're a nerd, you can
-probably get it to work from the repository easily enough. (Those screen shots
-from the 'bootstrap' version. I've moved on to FluenUI since then...)
+It's not yet 'packaged' for general consumption, but if you're a nerd like me,
+you can probably get it to work from the repository easily enough. (Those screen
+shots from the 'bootstrap' version. I've moved on to FluenUI since then...)
 
 Also, I migrated everything from Flow to TypeScript, because support from all
 the modules I use is much better in TypeScript. Honestly, the only other thing
 that seems better to me about TypeScript over Flow is documentation. TypeScript
 is kind of dumb (it doesn't get value propagation as well as Flow) and holy crap
-is it _slow_. 5-10 seconds to type check my 5000 lines of code :o
+is it **_slow_**. 5-10 seconds to type check my 5000 lines of code :o
 
 ## What's the current state?
 
-I've got playback working. Double-clicking on artists, albums, and songs adds to
-the 'Now Playing' list. Repeat & Shuffle generally work the way you expect.
-`yarn start` will launch it. Albums with jpg's/png's in the same folder will
-display those images in the Album list. Honestly, it's semi-functional.
-Playlists are the next major piece of functionality to add.
+I've got playback working. Double-clicking on songs adds to the 'Now Playing'
+list. Repeat & Shuffle generally work the way you expect. `yarn start` will
+launch it. Albums with jpg's/png's in the same folder will display those images
+in the playback header. Honestly, it's semi-functional. I need to add Album and
+Artist playback queueing, then custom (auto-saving) playlists are the last major
+piece of functionality to add.
 
 ## Stuff to do
 
 ### _In Progress_
 
-Migrate to Recoil. One of the two key authors is on my team, and it was kinda
-"his idea". It supports React suspense, and I've been drooling over it for about
-a year. Now that it's been open-sourced, I'm going to switch from undux to
-recoil. Undux is completely gone, but I'm not quite back up to feature parity.
-During the conversion, I kept hitting weird React issues with some of the
-virtualized lists tech I was using, so I said screw it and also started
-migrating off of Bootstrap and onto FluentUI. Honestly FluentUI isn't the
-prettiest, but it's defaults certainly look better than Bootstrap, plus it's
+Migrate to [Recoil](https://recoiljs.org). One of the two key authors is on my
+team, and it was kinda "his idea" (Hi, Dave!). It supports React suspense in an
+incredibly elegant fashion, and I've been drooling over it for about a year. Now
+that it's been open-sourced, Undux is completely gone, but I'm not quite back up
+to feature parity. During the conversion, I kept hitting weird React issues with
+some of the virtualized list tech I was using, so I said screw it and also
+started migrating off of Bootstrap and onto FluentUI. Honestly FluentUI isn't
+the prettiest, but it's defaults certainly look better than Bootstrap, plus it's
 Microsoft tech, so it's relatively well documented, and super-duper scalable.
 The `DetailsList` component is almost magical. I highly recommend it.
 
@@ -78,8 +79,7 @@ You can try to do similar stuff with Effects, but I whipped up a
 `useRecoilState`, use `useBackedState` with a default, and it will
 asynchronously query the server for the initial value (falling back to the
 atom's default if the server fails) as well as _register it to be recorded_
-using the API mentioned above. Perfect! ering an infinite loop between #2 and
-#3.
+using the API mentioned above. Perfect!
 
 ## This stuff is all out of date
 
@@ -92,13 +92,13 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Core Capabilities
 
+- **render** Support queueing artists and albums, not just songs
+- **render** Save scroll positions when tabs switch around
+- **both** PLAYLISTS!!!
 - **both** Restore active tab between runs
 - **main** Get album covers from media tags as well as the folder...
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
-- **both** MediaInfo/Metadata editing!
-  - Support adding album covers
-  - File name vs. metadata difference cleanup (this would be _awesome_)
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
 - **both** Make 'Search' work.
@@ -106,24 +106,25 @@ I should review it once I'm happy with the state of my recoil-iness.
 - **both** Add 'favorite/love' attribute for songs
 - **both** "Auto" playlists (something involving stuff like "this artist" and
   "not this keyword" kind of stuff.
+- **both** MediaInfo/Metadata editing!
+  - Support adding album covers
+  - File name vs. metadata difference cleanup (this would be _awesome_)
 - **both** Import/Export M3U's?
 
 ### Logic improvements/changes
 
 - Filter song lists down to actual songKeys that exist
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
-  - The "work" for this is already in my `@freik/media-utils` module.
+  - The lion's share of the work for this is already in my `@freik/media-utils`
+    module.
 - Playlist unique-ification
 
 ### UI Improvements
 
-- Sorting lists by clicking headers _everywhere_
-  - Indicate the sorting (and invalidate it in Now Playing when shuffled)
-  - Inverse sorting when clicking again
 - Make an actual "About" screen
 - Get some controls in the menu with appropriate keyboard shortcuts
 - Maybe use the album-art package to get artist pix & missing album pix
-- Improve the views for Albums and Artists.
+- Improve/Expand the views for Albums and Artists.
 
 ### Other
 
