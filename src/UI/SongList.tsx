@@ -12,18 +12,42 @@ import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-befo
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
 
-export function makeColumns<T>(
-  getSort: () => string,
-  performSort: (srt: string) => void,
-  groupField: string,
-  ...renderers: [
+/**
+ * Make a set of IColumns for a DetailsLists
+ *
+ * @param {[key:string,
+ *          fieldName: string,
+ *          name: string,
+ *          minWidth: number,
+ *          maxWidth?: number,
+ *          render?:(s:Song) => JSX.Element][]} renderers - data for the columns
+ * @param {() => string} getSort - a function to get the sorting string
+ * @param {(sort: string) => void} performSort - the function to actually sort
+ *                                               the song list
+ * @param {string?} groupField? - the fieldName that is grouped
+ * @param {isSorted: (sort: string, key: string) => boolean,
+ *         isSortedDescending: (sort: string, key: string) => boolean} sorters -
+ *        the pair of functions to determine whether to display this column as
+ *        sorted ascending or descending
+ *
+ * @returns
+ */
+export function MakeColumns<T>(
+  renderers: [
     key: string,
     fieldName: string,
     name: string,
     minWidth: number,
     maxWidth?: number,
     render?: (song: T) => JSX.Element,
-  ][]
+  ][],
+  getSort: () => string,
+  performSort: (sort: string) => void,
+  groupField?: string,
+  sorters?: {
+    isSorted: (sort: string, key: string) => boolean;
+    isSortedDescending: (sort: string, key: string) => boolean;
+  },
 ): IColumn[] {
   const localSort = (which: string) => {
     const curSort = getSort();
@@ -42,31 +66,37 @@ export function makeColumns<T>(
     // set the sort order
     performSort(newSort);
   };
-
-  return renderers.map(([key, fieldName, name, minWidth, maxWidth, onRender]) =>
-    fieldName !== ''
-      ? {
-          key,
-          name,
-          fieldName,
-          minWidth,
-          maxWidth,
-          onRender,
-          isGrouped: fieldName === groupField,
-          isResizable: true,
-          isSorted: getSort().toLowerCase().startsWith(key),
-          isSortedDescending: getSort().startsWith(key.toUpperCase()),
-          onColumnClick: () => localSort(key),
-        }
-      : {
-          key,
-          name,
-          minWidth,
-          maxWidth,
-          onRender,
-          isGrouped: fieldName === groupField,
-          isResizable: true,
-        },
+  const isSorted = sorters
+    ? sorters.isSorted
+    : (sort: string, key: string) => sort.toLowerCase().startsWith(key);
+  const isSortedDescending = sorters
+    ? sorters.isSortedDescending
+    : (sort: string, key: string) => sort.startsWith(key.toUpperCase());
+  return renderers.map(
+    ([key, fieldName, name, minWidth, maxWidth, onRender], index) =>
+      fieldName !== ''
+        ? {
+            key,
+            name,
+            fieldName,
+            minWidth,
+            maxWidth,
+            onRender,
+            isGrouped: fieldName === groupField,
+            isResizable: true,
+            isSorted: isSorted(getSort(), key),
+            isSortedDescending: isSortedDescending(getSort(), key),
+            onColumnClick: () => localSort(key),
+          }
+        : {
+            key,
+            name,
+            minWidth,
+            maxWidth,
+            onRender,
+            isGrouped: fieldName === groupField,
+            isResizable: true,
+          },
   );
 }
 
@@ -112,12 +142,16 @@ export function ArtistsFromAlbum(album: Album): JSX.Element {
  * Build out the song list, group list, and group header properties for a
  * grouped hierarchy of songs
  *
- * @param allTs - the map from key to grouped container (Album/Artist)
- * @param allSongs - the map from SongKey to Songs
+ * @function GetSongGroupData<T>
+ * @param {Map<string, T>} allTs - the map from key to grouped container (Album/Artist)
+ * @param allSongs {Map<SongKey, Song>} - the map from SongKey to Songs
  * @param expandedState - A React state pair for a set of keys used to keep
  *                        track of which containers are currently expanded
- * @param getSongs - a Lambda to get the song list from the container
- * @param getTitle - a Labme to get the title of each group
+ * @param getSongs - a lambda to get the song list from the container
+ * @param getTitle - a labmda to get the title of each group
+ *
+ * @returns {[Song[], IGroup[], IDetailsGroupRenderProps]} - returns a tuple
+ *    of the list of songs, the list of IGroups, and the GroupRenderProps
  */
 export function GetSongGroupData<T>(
   allTs: Map<string, T>,

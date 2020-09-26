@@ -39,7 +39,7 @@ import {
 import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import { AlbumFromSong, ArtistsFromSong, makeColumns } from '../SongList';
+import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
 import './styles/NowPlaying.css';
 
 // const log = Logger.bind('NowPlaying');
@@ -189,7 +189,14 @@ export default function NowPlaying(): JSX.Element {
     />
   );
 
-  const columns = makeColumns<Song>(
+  const columns = MakeColumns<Song>(
+    [
+      ['X', '', '', 25, 25, drawDeleter],
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
+      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
+      ['n', 'track', '#', 10, 20],
+      ['t', 'title', 'Title', 50, 150],
+    ],
     () => sortBy,
     (srt: string) => {
       setSortBy(srt);
@@ -217,12 +224,6 @@ export default function NowPlaying(): JSX.Element {
         }
       }
     },
-    'n/a',
-    ['X', '', '', 25, 25, drawDeleter],
-    ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
-    ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
-    ['n', 'track', '#', 10, 20],
-    ['t', 'title', 'Title', 50, 150],
   );
 
   // This does the light/dark swapping, with the current song in bold

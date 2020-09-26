@@ -14,7 +14,7 @@ import {
   AlbumFromSong,
   ArtistsFromSong,
   GetSongGroupData,
-  makeColumns,
+  MakeColumns,
 } from '../SongList';
 import './styles/Artists.css';
 
@@ -32,16 +32,19 @@ export default function NewArtistList(): JSX.Element {
     (ar: Artist) => ar.songs,
     (ar: Artist) => ar.name,
   );
-  const columns = makeColumns(
+  const columns = MakeColumns(
+    [
+      ['r', 'artistIds', 'Artist', 50, 175, ArtistsFromSong],
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
+      ['n', 'track', '#', 10, 20],
+      ['t', 'title', 'Title', 50, 150],
+    ],
+    // TODO: Make sorting work
     () => '',
     (str: string) => {
       return;
     },
     'artistIds',
-    ['r', 'artistIds', 'Artist', 50, 175, ArtistsFromSong],
-    ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
-    ['n', 'track', '#', 10, 20],
-    ['t', 'title', 'Title', 50, 150],
   );
 
   return (

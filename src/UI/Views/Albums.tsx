@@ -10,7 +10,7 @@ import {
   AlbumFromSong,
   ArtistsFromSong,
   GetSongGroupData,
-  makeColumns,
+  MakeColumns,
 } from '../SongList';
 import './styles/Albums.css';
 
@@ -29,17 +29,19 @@ export default function NewAlbumView(): JSX.Element {
     (al: Album) => al.title,
   );
 
-  const columns = makeColumns(
+  const columns = MakeColumns(
+    [
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
+      ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsFromSong],
+      ['n', 'track', '#', 10, 20],
+      ['t', 'title', 'Title', 50, 150],
+    ],
     // TODO: Get the sorting in place
     () => '',
     () => {
       ' ';
     },
     'albumId',
-    ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
-    ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsFromSong],
-    ['n', 'track', '#', 10, 20],
-    ['t', 'title', 'Title', 50, 150],
   );
   return (
     <div className="current-view songListForAlbum" data-is-scrollable="true">

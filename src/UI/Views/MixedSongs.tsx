@@ -35,7 +35,7 @@ import MediaInfoTable from '../MediaInfo';
 import {
   AlbumFromSong,
   ArtistsFromSong,
-  makeColumns,
+  MakeColumns,
   renderAltRow,
 } from '../SongList';
 import './styles/MixedSongs.css';
@@ -53,17 +53,18 @@ export default function MixedSongsList(): JSX.Element {
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
   );
 
-  const columns = makeColumns<Song>(
+  const columns = MakeColumns<Song>(
+    [
+      ['n', 'track', '#', 30, 30],
+      ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
+      ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
+      ['t', 'title', 'Title', 150],
+    ],
     () => sortOrder,
     (srt: string) => {
       setSortOrder(srt);
       setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles));
     },
-    '',
-    ['n', 'track', '#', 30, 30],
-    ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
-    ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
-    ['t', 'title', 'Title', 150],
   );
   const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
     props,
