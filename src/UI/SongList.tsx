@@ -2,12 +2,18 @@ import {
   DetailsRow,
   getTheme,
   IColumn,
+  IDetailsColumnRenderTooltipProps,
   IDetailsGroupRenderProps,
+  IDetailsHeaderProps,
   IDetailsListProps,
   IDetailsRowStyles,
   IGroup,
+  IRenderFunction,
+  Sticky,
+  StickyPositionType,
+  TooltipHost,
 } from '@fluentui/react';
-import { Album, AlbumKey, ArtistKey, Song, SongKey } from '@freik/media-utils';
+import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
@@ -32,14 +38,14 @@ import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
  *
  * @returns
  */
-export function MakeColumns<T>(
+export function MakeColumns(
   renderers: [
     key: string,
     fieldName: string,
     name: string,
     minWidth: number,
     maxWidth?: number,
-    render?: (song: T) => JSX.Element,
+    render?: (song: Song) => JSX.Element,
   ][],
   getSort: () => string,
   performSort: (sort: string) => void,
@@ -47,25 +53,16 @@ export function MakeColumns<T>(
   sorters?: {
     isSorted: (sort: string, key: string) => boolean;
     isSortedDescending: (sort: string, key: string) => boolean;
+    setSortOrder: (key: string) => string;
   },
 ): IColumn[] {
-  const localSort = (which: string) => {
-    const curSort = getSort();
-    // This rearranges the sort order string
-    let sort = which;
-    // Handle clicking twice to invert the order
-    const flip = curSort.toLowerCase().startsWith(which.toLowerCase());
-    if (flip && curSort.startsWith(which.toLowerCase())) {
-      sort = sort.toUpperCase();
-    }
-    const newSort =
-      sort +
-      curSort
-        .replaceAll(which.toLowerCase(), '')
-        .replaceAll(which.toUpperCase(), '');
-    // set the sort order
-    performSort(newSort);
-  };
+  const onColumnClick = sorters
+    ? sorters.setSortOrder
+    : (which: string) => {
+        const curSort = getSort();
+        // This rearranges the sort order string
+        return NewSortOrder(which, curSort);
+      };
   const isSorted = sorters
     ? sorters.isSorted
     : (sort: string, key: string) => sort.toLowerCase().startsWith(key);
@@ -86,7 +83,7 @@ export function MakeColumns<T>(
             isResizable: true,
             isSorted: isSorted(getSort(), key),
             isSortedDescending: isSortedDescending(getSort(), key),
-            onColumnClick: () => localSort(key),
+            onColumnClick: () => performSort(onColumnClick(key)),
           }
         : {
             key,
@@ -113,6 +110,23 @@ export const renderAltRow: IDetailsListProps['onRenderRow'] = (props) => {
   }
   return null;
 };
+
+/**
+ * @function NewSortOrder
+ * Updates the sorting string to be arranged & capitalized properly give a
+ * 'click' on the new key
+ *
+ * @param {string} which - the lowercase letter for the header clicked on
+ * @param {string} curSort - the string representing the current sort order
+ * @returns {string} the updated sort order string
+ */
+function NewSortOrder(which: string, curSort: string): string {
+  // Handle clicking twice to invert the order
+  const sort = curSort.startsWith(which) ? which.toUpperCase() : which;
+  return (
+    sort + curSort.replaceAll(which, '').replaceAll(which.toUpperCase(), '')
+  );
+}
 
 export function ArtistName({
   artistIds,
@@ -143,49 +157,74 @@ export function ArtistsFromAlbum(album: Album): JSX.Element {
  * grouped hierarchy of songs
  *
  * @function GetSongGroupData<T>
- * @param {Map<string, T>} allTs - the map from key to grouped container (Album/Artist)
- * @param allSongs {Map<SongKey, Song>} - the map from SongKey to Songs
- * @param expandedState - A React state pair for a set of keys used to keep
- *                        track of which containers are currently expanded
- * @param getSongs - a lambda to get the song list from the container
- * @param getTitle - a labmda to get the title of each group
+ * @param {Song[]} sortedSongs - the sorted list of songs
+ * @param {[Set<string>, (Set<string>)=>void]} expandedState - A React state
+ *                        pair for a set of keys used to keep track of which
+ *                        containers are currently expanded
+ * @param getGroupId - a lambda to get the container key from a song
+ * @param getGroupName - a labmda to get the group title from a song
+ * @param groupKey - the lowercase character for the grouped field's sort order
+ * @param groupFieldName - the name of the grouped field
+ * @param {[key:string,
+ *          fieldName: string,
+ *          name: string,
+ *          minWidth: number,
+ *          maxWidth?: number,
+ *          render?:(s:Song) => JSX.Element][]} renderers - data for the columns
+ * @param {() => string} getSort - a function to get the sorting string
+ * @param {(sort: string) => void} performSort - the function to actually sort
+ *                                               the song list
  *
- * @returns {[Song[], IGroup[], IDetailsGroupRenderProps]} - returns a tuple
- *    of the list of songs, the list of IGroups, and the GroupRenderProps
+ * @returns {[IColumn[], IGroup[], IDetailsGroupRenderProps]} - returns a tuple
+ *    of the list of IColumns, IGroups, and the GroupRenderProps
  */
-export function GetSongGroupData<T>(
-  allTs: Map<string, T>,
-  allSongs: Map<SongKey, Song>,
+export function GetSongGroupData(
+  sortedSongs: Song[],
   [curExpandedSet, setExpandedSet]: [
     curExpandedSet: Set<string>,
     setExpandedSet: (set: Set<string>) => void,
   ],
-  getSongs: (obj: T) => SongKey[],
-  getTitle: (obj: T) => string,
-): [Song[], IGroup[], IDetailsGroupRenderProps] {
+  getGroupId: (obj: Song) => string,
+  getGroupName: (groupId: string) => string,
+  groupKey: string,
+  groupFieldName: string,
+  renderers: [
+    key: string,
+    fieldName: string,
+    name: string,
+    minWidth: number,
+    maxWidth?: number,
+    render?: (song: Song) => JSX.Element,
+  ][],
+  getSort: () => string,
+  performSort: (sort: string) => void,
+): [IColumn[], IGroup[], IDetailsGroupRenderProps] {
   const groups: IGroup[] = [];
-  const songs: Song[] = [];
-  let runningTotal = 0;
-  for (const [key, thing] of allTs) {
-    const theSongs = getSongs(thing);
-    const group: IGroup = {
-      count: theSongs.length,
-      key,
-      name: getTitle(thing),
-      startIndex: runningTotal,
-      isCollapsed: !curExpandedSet.has(key),
-    };
-    groups.push(group);
-    runningTotal += group.count;
-    songs.push(
-      ...(theSongs
-        .map((v) => allSongs.get(v))
-        .filter((value) => !!value) as Song[]),
-    );
+  let startGroup = 0;
+  let lastGroupId: string | null = null;
+  const allGroupIds = new Set<string>();
+  // Walk the sorted list of songs, creating groups when the groupId changes
+  // This has the down-side of making multiple groups with the same key if the
+  // list isn't primarily sorted by the groupId, so you'd better make sure it's
+  // sorted
+  for (let i = 0; i <= sortedSongs.length; i++) {
+    const thisId = i === sortedSongs.length ? null : getGroupId(sortedSongs[i]);
+    if (lastGroupId !== null && thisId !== lastGroupId) {
+      groups.push({
+        startIndex: startGroup,
+        count: i - startGroup,
+        key: lastGroupId,
+        name: getGroupName(lastGroupId),
+        isCollapsed: !curExpandedSet.has(lastGroupId),
+      });
+      startGroup = i;
+      allGroupIds.add(lastGroupId);
+    }
+    lastGroupId = thisId;
   }
   const renderProps: IDetailsGroupRenderProps = {
     onToggleCollapseAll: (isAllCollapsed: boolean) => {
-      setExpandedSet(new Set<string>(isAllCollapsed ? [] : allTs.keys()));
+      setExpandedSet(new Set<string>(isAllCollapsed ? [] : allGroupIds.keys()));
     },
     headerProps: {
       onToggleCollapse: (group: IGroup) => {
@@ -198,5 +237,58 @@ export function GetSongGroupData<T>(
       },
     },
   };
-  return [songs, groups, renderProps];
+  const columns = MakeColumns(renderers, getSort, performSort, groupFieldName, {
+    isSorted: (sort: string, key: string): boolean => {
+      if (key === groupKey) {
+        return sort.toLowerCase().startsWith(groupKey);
+      } else {
+        return sort.length > 1 && sort[1].toLowerCase() === key;
+      }
+    },
+    isSortedDescending: (sort: string, key: string): boolean => {
+      if (key === groupKey) {
+        return sort.startsWith(groupKey.toUpperCase());
+      } else {
+        return sort.length > 1 && sort[1] === key.toUpperCase();
+      }
+    },
+    setSortOrder: (which: string): string => {
+      // If they clicked the grouped header, swap the front
+      const curSort = getSort();
+      const gkUp = groupKey.toUpperCase();
+      if (which === groupKey) {
+        if (curSort.startsWith(groupKey)) {
+          return gkUp + curSort.substr(1);
+        } else {
+          return groupKey + curSort.substr(1);
+        }
+      }
+      return curSort[0] + NewSortOrder(which, curSort.substr(1));
+    },
+  });
+  return [columns, groups, renderProps];
+}
+
+/**
+ * Throw this on a DetailsList that's locationed inside a ScrollablePane and it
+ * will make the header of the DetailsList stay at the top of the pane
+ */
+export function StickyRenderDetailsHeader(
+  props?: IDetailsHeaderProps,
+  defaultRender?: (p?: IDetailsHeaderProps) => JSX.Element | null,
+): JSX.Element | null {
+  if (!props) {
+    return null;
+  }
+  const onRenderColumnHeaderTooltip: IRenderFunction<IDetailsColumnRenderTooltipProps> = (
+    tooltipHostProps,
+  ) => <TooltipHost {...tooltipHostProps} />;
+  return (
+    <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
+      {defaultRender!({
+        ...props,
+        onRenderColumnHeaderTooltip,
+      })}
+    </Sticky>
+  );
 }

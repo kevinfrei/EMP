@@ -2,15 +2,9 @@ import {
   DetailsList,
   Dialog,
   DialogType,
-  IDetailsColumnRenderTooltipProps,
-  IDetailsHeaderProps,
-  IRenderFunction,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
-  Sticky,
-  StickyPositionType,
-  TooltipHost,
 } from '@fluentui/react';
 import {
   Album,
@@ -37,6 +31,7 @@ import {
   ArtistsFromSong,
   MakeColumns,
   renderAltRow,
+  StickyRenderDetailsHeader,
 } from '../SongList';
 import './styles/MixedSongs.css';
 
@@ -53,7 +48,7 @@ export default function MixedSongsList(): JSX.Element {
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
   );
 
-  const columns = MakeColumns<Song>(
+  const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
       ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
@@ -66,25 +61,7 @@ export default function MixedSongsList(): JSX.Element {
       setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles));
     },
   );
-  const onRenderDetailsHeader: IRenderFunction<IDetailsHeaderProps> = (
-    props,
-    defaultRender,
-  ) => {
-    if (!props) {
-      return null;
-    }
-    const onRenderColumnHeaderTooltip: IRenderFunction<IDetailsColumnRenderTooltipProps> = (
-      tooltipHostProps,
-    ) => <TooltipHost {...tooltipHostProps} />;
-    return (
-      <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
-        {defaultRender!({
-          ...props,
-          onRenderColumnHeaderTooltip,
-        })}
-      </Sticky>
-    );
-  };
+
   return (
     <div className="current-view songView" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
@@ -102,7 +79,7 @@ export default function MixedSongsList(): JSX.Element {
           compact={true}
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
-          onRenderDetailsHeader={onRenderDetailsHeader}
+          onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={(item: Song) => {
             setSelected(item.key);
           }}

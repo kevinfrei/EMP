@@ -189,7 +189,7 @@ export default function NowPlaying(): JSX.Element {
     />
   );
 
-  const columns = MakeColumns<Song>(
+  const columns = MakeColumns(
     [
       ['X', '', '', 25, 25, drawDeleter],
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
