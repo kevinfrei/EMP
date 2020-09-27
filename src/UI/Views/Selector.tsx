@@ -9,23 +9,29 @@ import PlaylistsView from './Playlists';
 import RecentlyAddedView from './RecentlyAdded';
 import SettingsView from './Settings';
 
+export type ViewProps = { hidden: boolean };
+
 export default function ViewSelector(): JSX.Element {
   const which = useRecoilValue<CurrentView>(curViewAtom);
   switch (which) {
     case CurrentView.album:
-      return <AlbumView />;
     case CurrentView.artist:
-      return <ArtistView />;
+    case CurrentView.song:
     case CurrentView.playlist:
-      return <PlaylistsView />;
+    case CurrentView.current:
+    case CurrentView.settings:
+      return (
+        <>
+          <AlbumView hidden={which !== CurrentView.album} />
+          <ArtistView hidden={which !== CurrentView.artist} />
+          <MixedSongView hidden={which !== CurrentView.song} />
+          <PlaylistsView hidden={which !== CurrentView.playlist} />
+          <NowPlayingView hidden={which !== CurrentView.current} />
+          <SettingsView hidden={which !== CurrentView.settings} />
+        </>
+      );
     case CurrentView.recent:
       return <RecentlyAddedView />;
-    case CurrentView.current:
-      return <NowPlayingView />;
-    case CurrentView.settings:
-      return <SettingsView />;
-    case CurrentView.song:
-      return <MixedSongView />;
     default:
       return <></>;
   }

@@ -23,12 +23,13 @@ import {
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
+import { ViewProps } from './Selector';
 import './styles/Albums.css';
 
 const log = Logger.bind('Albums');
 // Logger.enable('Albums');
 
-export default function NewAlbumView(): JSX.Element {
+export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const albums = useRecoilValue(allAlbumsSel);
   const allSongsMap = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
@@ -75,7 +76,11 @@ export default function NewAlbumView(): JSX.Element {
     performSort,
   );
   return (
-    <div className="current-view songListForAlbum" data-is-scrollable="true">
+    <div
+      className="current-view songListForAlbum"
+      data-is-scrollable="true"
+      hidden={hidden}
+    >
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
           compact={true}

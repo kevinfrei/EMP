@@ -17,6 +17,7 @@ import {
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { playlistsAtom } from '../../Recoil/Local';
+import { ViewProps } from './Selector';
 import './styles/Playlists.css';
 
 const theme = getTheme();
@@ -32,7 +33,7 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
   return null;
 };
 
-export default function Playlister(): JSX.Element {
+export default function Playlister({ hidden }: ViewProps): JSX.Element {
   const playlists = useRecoilValue(playlistsAtom);
   // const [, deletePlaylist] = useRecoilState(deletePlaylistAtom);
   // const [, startPlaylist] = useRecoilState(startPlaylistAtom);
@@ -74,7 +75,7 @@ export default function Playlister(): JSX.Element {
   ];
 
   return (
-    <div className="current-view">
+    <div className="current-view" hidden={hidden}>
       <Dialog
         hidden={!showDialog}
         onDismiss={() => setShowDialog(false)}

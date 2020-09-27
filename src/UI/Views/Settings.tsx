@@ -21,6 +21,7 @@ import {
   sortWithArticlesAtom,
 } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
+import { ViewProps } from './Selector';
 import './styles/Settings.css';
 
 const log = Logger.bind('View-Settings');
@@ -110,7 +111,7 @@ function ArticleSorting(): JSX.Element {
   );
 }
 
-export default function Settings(): JSX.Element {
+export default function Settings({ hidden }: ViewProps): JSX.Element {
   const album = {
     title: 'Album',
     atom: albumListSortAtom,
@@ -141,7 +142,7 @@ export default function Settings(): JSX.Element {
   };
 
   return (
-    <div className="current-view">
+    <div className="current-view" hidden={hidden}>
       <Stack className="settings-view">
         <Separator alignContent="start">
           <Text variant="mediumPlus">Music Locations</Text>

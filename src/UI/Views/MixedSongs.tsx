@@ -33,9 +33,10 @@ import {
   renderAltRow,
   StickyRenderDetailsHeader,
 } from '../SongList';
+import { ViewProps } from './Selector';
 import './styles/MixedSongs.css';
 
-export default function MixedSongsList(): JSX.Element {
+export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
   const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
@@ -63,7 +64,11 @@ export default function MixedSongsList(): JSX.Element {
   );
 
   return (
-    <div className="current-view songView" data-is-scrollable="true">
+    <div
+      className="current-view songView"
+      data-is-scrollable="true"
+      hidden={hidden}
+    >
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <Dialog
           minWidth={450}
