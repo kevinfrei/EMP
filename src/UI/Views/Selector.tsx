@@ -13,26 +13,15 @@ export type ViewProps = { hidden: boolean };
 
 export default function ViewSelector(): JSX.Element {
   const which = useRecoilValue<CurrentView>(curViewAtom);
-  switch (which) {
-    case CurrentView.album:
-    case CurrentView.artist:
-    case CurrentView.song:
-    case CurrentView.playlist:
-    case CurrentView.current:
-    case CurrentView.settings:
-      return (
-        <>
-          <AlbumView hidden={which !== CurrentView.album} />
-          <ArtistView hidden={which !== CurrentView.artist} />
-          <MixedSongView hidden={which !== CurrentView.song} />
-          <PlaylistsView hidden={which !== CurrentView.playlist} />
-          <NowPlayingView hidden={which !== CurrentView.current} />
-          <SettingsView hidden={which !== CurrentView.settings} />
-        </>
-      );
-    case CurrentView.recent:
-      return <RecentlyAddedView />;
-    default:
-      return <></>;
-  }
+  return (
+    <>
+      <AlbumView hidden={which !== CurrentView.album} />
+      <ArtistView hidden={which !== CurrentView.artist} />
+      <MixedSongView hidden={which !== CurrentView.song} />
+      <PlaylistsView hidden={which !== CurrentView.playlist} />
+      <NowPlayingView hidden={which !== CurrentView.current} />
+      <SettingsView hidden={which !== CurrentView.settings} />
+      <RecentlyAddedView hidden={which !== CurrentView.recent} />
+    </>
+  );
 }
