@@ -5,7 +5,7 @@ import {
   SelectionMode,
 } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
-import { Album, AlbumKey, Song } from '@freik/media-utils';
+import { AlbumKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
@@ -79,7 +79,7 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
     <div
       className="current-view songListForAlbum"
       data-is-scrollable="true"
-      hidden={hidden}
+      style={hidden ? { visibility: 'hidden' } : {}}
     >
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
@@ -89,8 +89,8 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
           groups={groups}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemInvoked={(item: Album) =>
-            AddSongList(item.songs, curIndexState, songListState)
+          onItemInvoked={(item: Song) =>
+            AddSongList([item.key], curIndexState, songListState)
           }
           groupProps={groupProps}
         />

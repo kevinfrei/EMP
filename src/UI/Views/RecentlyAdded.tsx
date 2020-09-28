@@ -3,7 +3,10 @@ import { ViewProps } from './Selector';
 
 export default function RecentlyAdded({ hidden }: ViewProps): JSX.Element {
   return (
-    <div hidden={hidden}>
+    <div
+      className="current-view"
+      style={hidden ? { visibility: 'hidden' } : {}}
+    >
       <div>Not</div>
       <div>Yet</div>
       <div>Implemented</div>

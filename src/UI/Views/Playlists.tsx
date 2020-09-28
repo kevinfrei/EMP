@@ -75,7 +75,10 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
   ];
 
   return (
-    <div className="current-view" hidden={hidden}>
+    <div
+      className="current-view"
+      style={hidden ? { visibility: 'hidden' } : {}}
+    >
       <Dialog
         hidden={!showDialog}
         onDismiss={() => setShowDialog(false)}

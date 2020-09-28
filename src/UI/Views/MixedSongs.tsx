@@ -67,7 +67,7 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
     <div
       className="current-view songView"
       data-is-scrollable="true"
-      hidden={hidden}
+      style={hidden ? { visibility: 'hidden' } : {}}
     >
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <Dialog

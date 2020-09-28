@@ -18,7 +18,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { StopAndClear } from '../../Recoil/api';
 import { useBoolState } from '../../Recoil/helpers';
@@ -169,26 +169,43 @@ function TopLine(): JSX.Element {
 export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
-  const curSongs = useRecoilValue(curSongsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
 
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
   const [shuffle, setShuffle] = useRecoilState(shuffleAtom);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortAtom);
-
-  const [sortedItems, setSortedItems] = useState(curSongs);
+  const curSongs = useRecoilValue(curSongsSel);
 
   const drawDeleter = (song: Song) => (
     <IconButton
       style={{ height: '18px', width: '18px' }}
       iconProps={{ iconName: 'Delete' }}
       onClick={() => {
-        setSortedItems(sortedItems.filter((v) => v.key !== song.key));
-        setSongList(songList.filter((k) => k !== song.key));
+        setSongList(songList.filter((v) => v !== song.key));
       }}
     />
   );
+
+  const performSort = (srt: string) => {
+    setSortBy(srt);
+    if (srt !== '') {
+      const sortedSongs = SortSongs(srt, curSongs, albums, artists, articles);
+      const curKey: SongKey = songList[curIndex];
+      let newKey = -1;
+      const newSongList = sortedSongs.map((song: Song, index: number) => {
+        if (song.key === curKey) {
+          newKey = index;
+        }
+        return song.key;
+      });
+      setSongList(newSongList);
+      setCurIndex(newKey);
+      if (shuffle) {
+        setShuffle(false);
+      }
+    }
+  };
 
   const columns = MakeColumns(
     [
@@ -199,32 +216,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
       ['t', 'title', 'Title', 50, 150],
     ],
     () => sortBy,
-    (srt: string) => {
-      setSortBy(srt);
-      if (srt !== '') {
-        const sortedSongs = SortSongs(
-          srt,
-          sortedItems,
-          albums,
-          artists,
-          articles,
-        );
-        const curKey: SongKey = songList[curIndex];
-        let newKey = -1;
-        const newSongList = sortedSongs.map((song: Song, index: number) => {
-          if (song.key === curKey) {
-            newKey = index;
-          }
-          return song.key;
-        });
-        setSortedItems(sortedSongs);
-        setSongList(newSongList);
-        setCurIndex(newKey);
-        if (shuffle) {
-          setShuffle(false);
-        }
-      }
-    },
+    performSort,
   );
 
   // This does the light/dark swapping, with the current song in bold
@@ -246,12 +238,15 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
   };
 
   return (
-    <div hidden={hidden} className="current-view">
+    <div
+      className="current-view"
+      style={hidden ? { visibility: 'hidden' } : {}}
+    >
       <TopLine />
       <div className="current-view">
         <DetailsList
           compact={true}
-          items={sortedItems}
+          items={curSongs}
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           columns={columns}

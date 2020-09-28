@@ -142,7 +142,10 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
   };
 
   return (
-    <div className="current-view" hidden={hidden}>
+    <div
+      className="current-view"
+      style={hidden ? { visibility: 'hidden' } : {}}
+    >
       <Stack className="settings-view">
         <Separator alignContent="start">
           <Text variant="mediumPlus">Music Locations</Text>

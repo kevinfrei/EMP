@@ -71,7 +71,7 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
     <div
       className="current-view artistView"
       data-is-scrollable="true"
-      hidden={hidden}
+      style={hidden ? { visibility: 'hidden' } : {}}
     >
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
