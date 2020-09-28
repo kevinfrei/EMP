@@ -58,41 +58,6 @@ export function MaybePlayPrevSong(
   }
 }
 
-/*
-
-TODO: Add playlist support
-
-export const deletePlaylistAtom = atom<string>({
-  key: 'DeletePlaylist',
-  default: '',
-});
-
-export const startPlaylistAtom = atom<string>({
-  key: 'StartPlaylist',
-  default: '',
-});
-  // Start playing a particular playlist
-  if (startPlaylist.length > 0) {
-    const pl = playlists.get(startPlaylist);
-    if (pl) {
-      setActivePlaylist(startPlaylist);
-      setSongList([...pl]);
-      // TODO: Check for shuffle play and start by shuffling!
-      setCurrentIndex(0);
-    }
-    resetStartPlaylist();
-  }
-
-  if (deletePlaylist !== '') {
-    playlists.delete(deletePlaylist);
-    setPlaylists(playlists);
-    if (deletePlaylist === activePlaylist) {
-      resetActivePlaylist();
-    }
-    resetDeletePlaylist();
-  }
-*/
-
 /**
  * Adds a list of songs to the end of the current song list
  *

@@ -10,7 +10,7 @@ import {
 } from '@freik/media-utils';
 import { IpcRenderer } from 'electron';
 import { OpenDialogSyncOptions } from 'electron/main';
-import { GetDataForSong } from './DataSchema';
+import { GetDataForSong, SongData } from './DataSchema';
 
 const log = Logger.bind('Tools');
 // Logger.enable('Tools');
@@ -94,19 +94,11 @@ const strCmp = (a: string, b: string): number =>
 const theCmp = (a: string, b: string): number =>
   noArticles(a).localeCompare(noArticles(b));
 
-type Record = {
-  track: number;
-  title: string;
-  album: string;
-  artist: string;
-  song: Song;
-};
-
 function compareRecord(
   comp: Sorter,
   sort: string,
-  a: Record,
-  b: Record,
+  a: SongData,
+  b: SongData,
 ): number {
   let result = 0;
   switch (sort.toLowerCase()) {
@@ -117,7 +109,14 @@ function compareRecord(
       result = a.track - b.track;
       break;
     case 'l':
+      // For an album, it's title, year, key for ties
       result = comp(a.album, b.album);
+      if (result === 0) {
+        result = a.year - b.year;
+        if (result === 0) {
+          result = a.albumKey.localeCompare(b.albumKey);
+        }
+      }
       break;
     case 'r':
       result = comp(a.artist, b.artist);
@@ -128,7 +127,7 @@ function compareRecord(
 
 function selectComparator(articles: boolean, sortOrder: string) {
   const stringCompare = articles ? strCmp : theCmp;
-  return (a: Record, b: Record): number => {
+  return (a: SongData, b: SongData): number => {
     for (const s of sortOrder) {
       const res = compareRecord(stringCompare, s, a, b);
       if (res !== 0) {
@@ -156,10 +155,9 @@ export function SortSongs(
   artists: Map<ArtistKey, Artist>,
   articles: boolean,
 ): Song[] {
-  const records: Record[] = songs.map((song: Song) => ({
-    song,
-    ...GetDataForSong(song, albums, artists),
-  }));
+  const records: SongData[] = songs.map((song: Song) =>
+    GetDataForSong(song, albums, artists),
+  );
   return records.sort(selectComparator(articles, sortOrder)).map((r) => r.song);
 }
 

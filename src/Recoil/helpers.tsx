@@ -4,6 +4,7 @@ import {
   RecoilState,
   RecoilValue,
   selectorFamily,
+  SetterOrUpdater,
   Snapshot,
   useRecoilState,
   useRecoilTransactionObserver_UNSTABLE,
@@ -11,11 +12,12 @@ import {
 } from 'recoil';
 import { GetGeneral, SetGeneral } from '../ipc';
 
+export type StatePair<T> = [T, SetterOrUpdater<T>];
+
 // [state, show (set true), hide (set false)]
 export type BoolState = [boolean, () => void, () => void];
 
 export type DialogData = [boolean, () => void];
-
 // A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
 export type DialogState = [() => void, DialogData];
 
@@ -62,9 +64,7 @@ export const backerSelFamily = selectorFamily({
  * This has some problems if used at the same time, the two setters might
  * conflict. I should try to fix that...
  */
-export function useBackedState<T>(
-  theAtom: RecoilState<T>,
-): [T, (val: T) => void] {
+export function useBackedState<T>(theAtom: RecoilState<T>): StatePair<T> {
   // A little 'local' state
   const [alreadyRead, setAlreadyRead] = useState(false);
   // The 'backed' atom access
