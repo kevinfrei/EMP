@@ -1,22 +1,25 @@
 import {
-  DefaultButton,
   DetailsList,
   DetailsRow,
-  Dialog,
   getTheme,
   IColumn,
   IconButton,
   IDetailsRowProps,
   IDetailsRowStyles,
   IRenderFunction,
-  PrimaryButton,
   SelectionMode,
-  Stack,
-  Text,
 } from '@fluentui/react';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilValue } from 'recoil';
-import { playlistsAtom } from '../../Recoil/Local';
+import { useRecoilState } from 'recoil';
+import { PlaySongList } from '../../Recoil/api';
+import { useBackedState, useDialogState } from '../../Recoil/helpers';
+import {
+  currentIndexAtom,
+  nowPlayingAtom,
+  playlistsAtom,
+  songListAtom,
+} from '../../Recoil/Local';
+import { ConfirmationDialog } from '../Dialogs';
 import { ViewProps } from './Selector';
 import './styles/Playlists.css';
 
@@ -34,14 +37,19 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 };
 
 export default function Playlister({ hidden }: ViewProps): JSX.Element {
-  const playlists = useRecoilValue(playlistsAtom);
-  // const [, deletePlaylist] = useRecoilState(deletePlaylistAtom);
-  // const [, startPlaylist] = useRecoilState(startPlaylistAtom);
-  const deletePlaylist = (plName: string) => 0;
-  const startPlaylist = (plName: string) => 0;
-  // Some local state
-  const [selPlaylist, setSelPlaylist] = useState('');
-  const [showDialog, setShowDialog] = useState(false);
+  const [playlists, setPlaylists] = useBackedState(playlistsAtom);
+  const [, setNowPlaying] = useRecoilState(nowPlayingAtom);
+  const curIndexState = useRecoilState(currentIndexAtom);
+  const songListState = useRecoilState(songListAtom);
+  const [selected, setSelected] = useState('');
+  const [showConfirm, confirmData] = useDialogState();
+
+  const deletePlaylist = () => {
+    if (playlists.delete(selected)) {
+      setPlaylists(playlists);
+    }
+    setSelected('');
+  };
 
   const columns: IColumn[] = [
     {
@@ -54,8 +62,8 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
           style={{ height: '20px' }}
           iconProps={{ iconName: 'Delete' }}
           onClick={() => {
-            setSelPlaylist(item[0]);
-            setShowDialog(false);
+            setSelected(item[0]);
+            showConfirm();
           }}
         />
       ),
@@ -79,35 +87,24 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
       className="current-view"
       style={hidden ? { visibility: 'hidden' } : {}}
     >
-      <Dialog
-        hidden={!showDialog}
-        onDismiss={() => setShowDialog(false)}
+      <ConfirmationDialog
+        data={confirmData}
+        confirmFunc={deletePlaylist}
         title="Are you sure?"
-      >
-        <Stack>
-          <Text>
-            Do you really want to delete the playlist "{selPlaylist}"?
-          </Text>
-          <Stack horizontal>
-            <DefaultButton
-              onClick={() => {
-                setShowDialog(false);
-                deletePlaylist(selPlaylist);
-              }}
-              text="Yes"
-            />
-            &nbsp;
-            <PrimaryButton onClick={() => setShowDialog(false)} text="No" />
-          </Stack>
-        </Stack>
-      </Dialog>
+        text={`Do you really want to delete the playlist ${selected}?`}
+        yesText="Delete"
+        noText="Cancel"
+      />
       <DetailsList
-        items={[...(playlists.entries() as Iterable<string[]>)]}
+        items={[...playlists.entries()]}
         selectionMode={SelectionMode.none}
         columns={columns}
         onRenderRow={renderRow}
         compact={true}
-        onItemInvoked={(item: [string, string[]]) => startPlaylist(item[0])}
+        onItemInvoked={([playlistName, keys]) => {
+          PlaySongList(keys, curIndexState, songListState);
+          setNowPlaying(playlistName);
+        }}
       />
     </div>
   );

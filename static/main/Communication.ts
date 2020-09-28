@@ -8,7 +8,6 @@ import {
   getMediaInfoForSong,
 } from './MusicAccess';
 import * as persist from './persist';
-import { GetPlaylist, GetPlaylistNames, SavePlaylist } from './RemotePlaylist';
 
 const log = Logger.bind('Communication');
 // Logger.enable('Communication');
@@ -33,7 +32,7 @@ type Handler<T> = (arg?: string) => Promise<T | void>;
  * @param {string=} name - the name of the value to read
  * @return {Promise<string>} The raw string contents of the value
  */
-export async function GetGeneral(name?: string): Promise<string> {
+async function getGeneral(name?: string): Promise<string> {
   if (!name) return '';
   try {
     log(`getGeneral(${name})`);
@@ -55,7 +54,7 @@ export async function GetGeneral(name?: string): Promise<string> {
  * @param {string=} keyValuePair - The key:value string to write
  * @returns {void}
  */
-export async function setGeneral(keyValuePair?: string): Promise<void> {
+async function setGeneral(keyValuePair?: string): Promise<void> {
   if (!keyValuePair) return;
   try {
     // First, split off the key name:
@@ -135,10 +134,7 @@ export function Init(): void {
   registerFlattened('get-all-albums', getAllAlbums);
   registerFlattened('get-all-artists', getAllArtists);
   registerFlattened('get-media-info', getMediaInfoForSong);
-  registerFlattened('get-playlist-names', GetPlaylistNames);
-  register('set-playlist', SavePlaylist);
-  register('get-playlist', GetPlaylist);
-  register('get-general', GetGeneral);
+  register('get-general', getGeneral);
   register('set-general', setGeneral);
 }
 

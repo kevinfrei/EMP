@@ -71,7 +71,6 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
-    // TODO: Get the sorting in place
     () => curSort,
     performSort,
   );

@@ -7,10 +7,10 @@ import {
   TextField,
 } from '@fluentui/react';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { DialogData } from '../Recoil/helpers';
 
 export type TextInputDialogProps = {
-  hidden: boolean;
-  hide: () => void;
+  data: DialogData;
   confirmFunc: (value: string) => void;
   title: string;
   text: string;
@@ -22,8 +22,7 @@ export type TextInputDialogProps = {
 };
 
 export function TextInputDialog({
-  hidden,
-  hide,
+  data: [hidden, hide],
   confirmFunc,
   title,
   text,
@@ -69,8 +68,7 @@ export function TextInputDialog({
 }
 
 export type ConfirmationDialogProps = {
-  hidden: boolean;
-  hide: () => void;
+  data: DialogData;
   confirmFunc: () => void;
   title: string;
   text: string;
@@ -81,8 +79,7 @@ export type ConfirmationDialogProps = {
 };
 
 export function ConfirmationDialog({
-  hidden,
-  hide,
+  data: [isHidden, hiderFunc],
   confirmFunc,
   title,
   text,
@@ -98,8 +95,8 @@ export function ConfirmationDialog({
       title={title}
       maxWidth={maxWidth}
       minWidth={minWidth}
-      hidden={hidden}
-      onDismiss={hide}
+      hidden={isHidden}
+      onDismiss={hiderFunc}
     >
       <Stack>
         <Text>{text}</Text>
@@ -108,13 +105,13 @@ export function ConfirmationDialog({
           <DefaultButton
             style={{ float: 'left' }}
             onClick={() => {
-              hide();
+              hiderFunc();
               confirmFunc();
             }}
           >
             {yes}
           </DefaultButton>
-          <PrimaryButton style={{ float: 'right' }} onClick={hide}>
+          <PrimaryButton style={{ float: 'right' }} onClick={hiderFunc}>
             {no}
           </PrimaryButton>
         </div>

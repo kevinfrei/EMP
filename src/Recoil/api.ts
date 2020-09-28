@@ -114,10 +114,37 @@ export function AddSongList(
     setSongList: (val: SongKey[]) => void,
   ],
 ): void {
+  // TODO: Shuffle?
   setSongList([...songList, ...listToAdd]);
   if (curIndex < 0) {
     setCurIndex(0);
   }
+}
+
+/**
+ * Adds a list of songs to the end of the current song list
+ *
+ * @param  {Iterable<SongKey>} listToPlay - The list of songs to start playing
+ * @param  {number} curIndex
+ * @param  {(val:number)=>void} setCurIndex
+ * @param  {SongKey[]} songList
+ * @param  {(val:SongKey[])=>void} setSongList
+ * @returns void
+ */
+export function PlaySongList(
+  listToPlay: Iterable<SongKey>,
+  [curIndex, setCurIndex]: [
+    curIndex: number,
+    setCurIndex: (val: number) => void,
+  ],
+  [songList, setSongList]: [
+    songList: Iterable<SongKey>,
+    setSongList: (val: SongKey[]) => void,
+  ],
+): void {
+  // TODO: Shuffle start
+  setSongList([...listToPlay]);
+  setCurIndex(0);
 }
 
 /**

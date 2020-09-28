@@ -1,5 +1,5 @@
-import { Playlist, SongKey } from '@freik/media-utils';
-import { atom, DefaultValue, selector, selectorFamily } from 'recoil';
+import { SongKey } from '@freik/media-utils';
+import { atom, DefaultValue, selector } from 'recoil';
 
 export type PlaylistName = string;
 
@@ -86,18 +86,10 @@ export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
 export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });
 export const nowPlayingAtom = atom<string>({ key: 'nowPlaying', default: '' });
 
-// This stuff is actually synchronized
-export const playlistsAtom = atom<Map<PlaylistName, Playlist>>({
+// This is synchronized
+export const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
   key: 'Playlists',
   default: new Map<PlaylistName, SongKey[]>(),
-});
-
-export const playlistSel = selectorFamily<Playlist, PlaylistName>({
-  key: 'playlist',
-  get: (pl: PlaylistName) => ({ get }) => {
-    const playlists = get(playlistsAtom);
-    return playlists ? playlists.get(pl) ?? [] : [];
-  },
 });
 
 export const songListAtom = atom<SongKey[]>({

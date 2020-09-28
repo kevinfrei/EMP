@@ -21,7 +21,7 @@ import {
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import { StopAndClear } from '../../Recoil/api';
-import { useBoolState } from '../../Recoil/helpers';
+import { useBackedState, useDialogState } from '../../Recoil/helpers';
 import {
   activePlaylistAtom,
   currentIndexAtom,
@@ -50,13 +50,13 @@ const theme = getTheme();
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const [playlists, setPlaylists] = useRecoilState(playlistsAtom);
+  const [playlists, setPlaylists] = useBackedState(playlistsAtom);
   const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
 
   const songList = useRecoilValue(songListAtom);
 
-  const [saveAsState, showSaveAs, hideSaveAs] = useBoolState(true);
-  const [confirmState, showConfirm, hideConfirm] = useBoolState(true);
+  const [showSaveAs, saveAsData] = useDialogState();
+  const [showConfirm, confirmData] = useDialogState();
 
   const resetSongList = useResetRecoilState(songListAtom);
   const resetCurIndex = useResetRecoilState(currentIndexAtom);
@@ -64,10 +64,10 @@ function TopLine(): JSX.Element {
   const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
 
   const saveListAs = (inputName: string) => {
-    if (playlists.get(inputName)) {
+    if (playlists.has(inputName)) {
       window.alert('Cowardly refusing to overwrite existing playlist.');
     } else {
-      playlists.set(inputName, [...songList]);
+      playlists.set(inputName, songList);
       setPlaylists(playlists);
       setNowPlaying(inputName);
     }
@@ -93,7 +93,7 @@ function TopLine(): JSX.Element {
   let header;
   let button;
   const save = () => {
-    playlists.set(nowPlaying, [...songList]);
+    playlists.set(nowPlaying, songList);
     setPlaylists(playlists);
   };
   if (isPlaylist(nowPlaying)) {
@@ -120,8 +120,7 @@ function TopLine(): JSX.Element {
   return (
     <div id="current-header">
       <TextInputDialog
-        hidden={saveAsState}
-        hide={hideSaveAs}
+        data={saveAsData}
         confirmFunc={saveListAs}
         title="Save Playlist as..."
         text="What would you like the playlist to be named?"
@@ -130,8 +129,7 @@ function TopLine(): JSX.Element {
         noText="Cancel"
       />
       <ConfirmationDialog
-        hidden={confirmState}
-        hide={hideConfirm}
+        data={confirmData}
         confirmFunc={stopAndClear}
         title="Please Confirm"
         text="Are you sure you want to clear the play queue?"

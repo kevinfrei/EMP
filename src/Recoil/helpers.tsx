@@ -14,6 +14,11 @@ import { GetGeneral, SetGeneral } from '../ipc';
 // [state, show (set true), hide (set false)]
 export type BoolState = [boolean, () => void, () => void];
 
+export type DialogData = [boolean, () => void];
+
+// A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
+export type DialogState = [() => void, DialogData];
+
 const log = Logger.bind('helpers');
 // Logger.enable('helpers');
 
@@ -25,6 +30,11 @@ const log = Logger.bind('helpers');
 export function useBoolState(initial: boolean): BoolState {
   const [dialogState, setDialogState] = useState(initial);
   return [dialogState, () => setDialogState(false), () => setDialogState(true)];
+}
+
+export function useDialogState(): DialogState {
+  const [isHidden, setHidden] = useState(true);
+  return [() => setHidden(false), [isHidden, () => setHidden(true)]];
 }
 
 // This is the list of atoms that we're sync'ing back to the main process
@@ -48,6 +58,9 @@ export const backerSelFamily = selectorFamily({
  * This will trigger a server side pull of the initial value, then use local
  * state for all subsequent sets. This must be used in tandem with the
  * PersistenceObserver transaction watcher and the syncAtom maker
+ *
+ * This has some problems if used at the same time, the two setters might
+ * conflict. I should try to fix that...
  */
 export function useBackedState<T>(
   theAtom: RecoilState<T>,

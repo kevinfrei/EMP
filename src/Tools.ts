@@ -1,6 +1,13 @@
 // This is for getting at "global" stuff from the window object
 import { Logger } from '@freik/core-utils';
-import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+  SongKey,
+} from '@freik/media-utils';
 import { IpcRenderer } from 'electron';
 import { OpenDialogSyncOptions } from 'electron/main';
 import { GetDataForSong } from './DataSchema';
@@ -57,6 +64,12 @@ export async function InvokeMain(
   return result;
 }
 
+export async function SavePlaylist(
+  name: string,
+  songs: SongKey[],
+): Promise<void> {
+  await InvokeMain('set-playlist', 'thing');
+}
 /*
  * Sorting
  */
