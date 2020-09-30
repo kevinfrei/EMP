@@ -1,4 +1,4 @@
-import { SearchBox } from '@fluentui/react';
+import { SearchBox, Text } from '@fluentui/react';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import { CurrentView, curViewAtom } from '../Recoil/Local';
@@ -49,7 +49,9 @@ function getEntry(
       onClick={() => setCurView(view.name)}
     >
       <img src={view.pic} className="sidebar-icon" alt={view.title}></img>
-      <span className="sidebar-text">{view.title}</span>
+      <Text variant="mediumPlus" className="sidebar-text">
+        {view.title}
+      </Text>
     </div>
   );
 }
