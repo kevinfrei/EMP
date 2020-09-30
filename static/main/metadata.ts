@@ -1,5 +1,4 @@
-import { MediaInfo } from '@freik/media-utils';
-import mediainfo from 'node-mediainfo';
+import { MD, MediaInfo } from '@freik/media-utils';
 
 function addCommas(val: string): string {
   let res = '';
@@ -73,10 +72,7 @@ function objToMap(o: { [key: string]: string | number }): Map<string, string> {
 }
 
 export async function getMediaInfo(mediaPath: string): Promise<MediaInfo> {
-  const rawMetadata = await mediainfo(mediaPath);
-  const trackInfo = (rawMetadata.media.track as unknown) as {
-    [key: string]: string | number;
-  }[];
+  const trackInfo = await MD.RawMetadata(mediaPath);
   const general = objToMap(trackInfo[0]);
   const audio = objToMap(trackInfo[1]);
   // Remove some stuff I don't care about or don't handle yet

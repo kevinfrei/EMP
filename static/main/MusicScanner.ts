@@ -156,34 +156,34 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   // First, get the primary artist
   // TODO: FullMetaData doesn't allow for multiple primary artists
   // Check Trent Reznor & Atticus Ross for an example where it kinda matters
-  const tmpArtist: string | string[] = md.Artist;
+  const tmpArtist: string | string[] = md.artist;
   const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
   const allArtists = artists.map((a) => getOrNewArtist(db, a));
   const artistIds: ArtistKey[] = allArtists.map((a) => a.key);
   const artistSet: Set<ArtistKey> = new Set(artistIds);
   const album = getOrNewAlbum(
     db,
-    md.Album,
-    md.Year || 0,
+    md.album,
+    md.year || 0,
     artistSet,
-    md.VAType || '',
+    md.vaType || '',
   );
   const secondaryIds: ArtistKey[] = [];
-  if (md.MoreArtists) {
-    for (const sa of md.MoreArtists) {
+  if (md.moreArtists) {
+    for (const sa of md.moreArtists) {
       const moreArt: Artist = getOrNewArtist(db, sa);
       allArtists.push(moreArt);
       secondaryIds.push(moreArt.key);
     }
   }
   const theSong: ServerSong = {
-    path: md.OriginalPath,
+    path: md.originalPath,
     artistIds,
     secondaryIds,
     albumId: album.key,
-    track: md.Track,
-    title: md.Title,
-    key: getSongKey(md.OriginalPath),
+    track: md.track,
+    title: md.title,
+    key: getSongKey(md.originalPath),
   };
   album.songs.push(theSong.key);
   allArtists.forEach((artist) => artist.songs.push(theSong.key));
