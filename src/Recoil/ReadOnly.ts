@@ -83,6 +83,7 @@ export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
   get: async ({ get }): Promise<Map<AlbumKey, Album>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
+    log('allAllbumsSel');
     get(locationsAtom);
     const res = await ipc.GetAllAlbums();
     return res || new Map<AlbumKey, Album>();
@@ -122,6 +123,7 @@ export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
   get: async ({ get }): Promise<Map<ArtistKey, Artist>> => {
     // Get the locations to make sure that if they change,
     // we get the new song list
+    log('allArtistsSel');
     get(locationsAtom);
     const res = await ipc.GetAllArtsists();
     return res || new Map<ArtistKey, Artist>();

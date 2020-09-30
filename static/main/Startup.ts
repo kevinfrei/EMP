@@ -5,7 +5,7 @@ import * as music from './MusicScanner';
 import * as persist from './persist';
 
 const log = Logger.bind('Startup');
-Logger.enable('Startup');
+// Logger.enable('Startup');
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');
@@ -13,7 +13,7 @@ function getLocations(): string[] {
   return (rawLocations && FTON.arrayOfStrings(rawLocations)) || [];
 }
 
-async function createMusicDb() {
+export async function CreateMusicDB(): Promise<void> {
   const musicLocations = getLocations();
   log('Got music locations:');
   log(musicLocations);
@@ -25,8 +25,8 @@ async function createMusicDb() {
   );
 }
 
-function UpdateDb() {
-  createMusicDb().catch((rej) => {
+function UpdateDB() {
+  CreateMusicDB().catch((rej) => {
     log('Caught an exception while trying to update the db');
     log(rej);
   });
@@ -40,7 +40,7 @@ export async function Startup(): Promise<void> {
   // If we already have a musicDB, continue and schedule it to be rescanned
   if (musicDB) {
     log('Got the DB');
-    setTimeout(UpdateDb, 1);
+    setTimeout(UpdateDB, 1);
   } else {
     log('No DB available');
   }
@@ -49,5 +49,5 @@ export async function Startup(): Promise<void> {
 export function Ready(window: BrowserWindow): void {
   // Do anything here that needs to happen once we have the window
   // object available
-  persist.subscribe('locations', UpdateDb);
+  persist.subscribe('locations', UpdateDB);
 }

@@ -5,7 +5,7 @@ import {
   Artist,
   ArtistKey,
   FullMetadata,
-  Metadata as metadata,
+  Metadata,
   SimpleMetadata,
   Song,
   SongKey,
@@ -272,12 +272,12 @@ async function fileNamesToDatabase(
     : new Map();
 
   for (const file of files) {
-    const littlemd: SimpleMetadata | void = metadata.fromPath(file);
+    const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
       continue;
     }
-    const md: FullMetadata | void = metadata.FullFromObj(file, littlemd as any);
+    const md: FullMetadata | void = Metadata.FullFromObj(file, littlemd as any);
     if (!md) {
       log('Unable to get full metadata from file ' + file);
       continue;

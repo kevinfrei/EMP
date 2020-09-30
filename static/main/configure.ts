@@ -3,6 +3,7 @@ import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import path from 'path';
 import { getMusicDB } from './MusicAccess';
 import * as persist from './persist';
+import { CreateMusicDB } from './Startup';
 
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 
@@ -75,7 +76,19 @@ export function configureProtocols(): void {
 // locations change, so music needs to be rescanned
 export function configureListeners(): void {
   persist.subscribe('locations', (newLocationsValue) => {
+    log('Locations updated: About to re-scan music');
     // If locations changed, update the music database
-    // TODO: Update the music database here
+
+    /*
+     * TODO: Even though the selectors in the render process all depend upon
+     * locations, this update doesn't register before the render process has
+     * already grabbed the previous music DB. There needs to be some sort of
+     * Locations-based hash to ensure that a request isn't fulfilled until the
+     * rest of the data has been received
+     */
+
+    CreateMusicDB()
+      .then(() => log('DB Updated!'))
+      .catch((r) => log('DB Update failed'));
   });
 }
