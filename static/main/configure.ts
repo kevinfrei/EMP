@@ -10,34 +10,38 @@ declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 const log = Logger.bind('configure');
 // Logger.enable('configure');
 
+const defaultPicPath = { path: path.join(__dirname, '..', 'img-album.svg') };
+
 function picProtocol(req: ProtocolRequest, callback: HandlerCallback) {
   log('pic URL request:');
   log(req);
   if (!req.url) {
     log('No URL specified in pic request');
-    return callback({ error: -324 });
+    callback({ error: -324 });
   }
-  const defaultValue = () => {
-    const thePath = path.join(__dirname, '..', 'img-album.svg');
-    log(`Non-album cover pic:// Returning ${thePath}`);
-    callback({ path: thePath });
-  };
   if (req.url.startsWith('pic://album/')) {
     // Let's check the db to see if we've got
-    log('Trying to get the DB');
     getMusicDB()
       .then((db) => {
         if (db) {
           const maybePath = db.pictures.get(req.url.substr(12));
           if (maybePath) {
             callback({ path: maybePath });
+          } else {
+            callback(defaultPicPath);
           }
+        } else {
+          callback(defaultPicPath);
         }
-        defaultValue();
       })
-      .catch(defaultValue);
+      .catch((reason) => {
+        log('pic-album-failure:');
+        log(reason);
+        callback(defaultPicPath);
+      });
+  } else {
+    callback(defaultPicPath);
   }
-  defaultValue();
 }
 
 function tuneProtocol(req: ProtocolRequest, callback: HandlerCallback) {
