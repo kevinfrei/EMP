@@ -1,4 +1,5 @@
 import { Logger } from '@freik/core-utils';
+import { AlbumKey, SongKey } from '@freik/media-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import path from 'path';
 import { getMusicDB } from './MusicAccess';
@@ -12,68 +13,81 @@ const log = Logger.bind('configure');
 
 const defaultPicPath = { path: path.join(__dirname, '..', 'img-album.svg') };
 
-function picProtocol(req: ProtocolRequest, callback: HandlerCallback) {
-  log('pic URL request:');
-  log(req);
-  if (!req.url) {
-    log('No URL specified in pic request');
-    callback({ error: -324 });
+async function picProcessor(
+  req: ProtocolRequest,
+  trimmedUrl: string,
+): Promise<ProtocolResponse | string> {
+  // Check to see if there's a song in the album that has a cover image
+  const albumId: AlbumKey = trimmedUrl;
+  const db = await getMusicDB();
+  if (!db) {
+    return defaultPicPath;
   }
-  if (req.url.startsWith('pic://album/')) {
-    // Let's check the db to see if we've got
-    getMusicDB()
-      .then((db) => {
-        if (db) {
-          const maybePath = db.pictures.get(req.url.substr(12));
-          if (maybePath) {
-            callback({ path: maybePath });
-          } else {
-            callback(defaultPicPath);
-          }
-        } else {
-          callback(defaultPicPath);
-        }
-      })
-      .catch((reason) => {
-        log('pic-album-failure:');
-        log(reason);
-        callback(defaultPicPath);
-      });
+  const maybePath = db.pictures.get(albumId);
+  if (maybePath) {
+    return maybePath;
   } else {
-    callback(defaultPicPath);
+    return defaultPicPath;
   }
 }
 
-function tuneProtocol(req: ProtocolRequest, callback: HandlerCallback) {
-  log('tune URL request:');
-  log(req);
-  if (!req.url) {
-    callback({ error: -324 });
-  } else if (req.url.startsWith('tune://song/')) {
-    const key = req.url.substring(12);
-    getMusicDB()
-      .then((db) => {
-        if (!db) {
-          callback({ error: 404 });
-        } else {
-          const song = db.songs.get(key);
-          if (song) {
-            const thePath = song.path;
-            log('Returning path ' + thePath);
-            callback({ path: thePath });
-          }
-        }
-      })
-      .catch((e) => callback({ error: 404 }));
-  } else {
-    callback({ error: 404 });
+const e404 = { error: 404 };
+
+async function tuneProcessor(
+  req: ProtocolRequest,
+  trimmedUrl: string,
+): Promise<ProtocolResponse | string> {
+  const key: SongKey = trimmedUrl;
+  const db = await getMusicDB();
+  if (!db) {
+    return e404;
   }
+  const song = db.songs.get(key);
+  if (song) {
+    const thePath = song.path;
+    log('Returning path ' + thePath);
+    return { path: thePath };
+  } else {
+    return e404;
+  }
+}
+
+// Helper to check URL's & transition to async functions
+function registerProtocol(
+  type: string,
+  processor: (
+    req: ProtocolRequest,
+    trimmedUrl: string,
+  ) => Promise<ProtocolResponse | string>,
+  defaultValue: string | ProtocolResponse = e404,
+) {
+  const protName = type.substr(0, type.indexOf(':'));
+  protocol.registerFileProtocol(
+    protName,
+    (req: ProtocolRequest, callback: HandlerCallback) => {
+      log(`${type} URL request:`);
+      log(req);
+      if (!req.url) {
+        callback({ error: -324 });
+      } else if (req.url.startsWith(type)) {
+        processor(req, req.url.substr(type.length))
+          .then(callback)
+          .catch((reason: any) => {
+            log(`${type}:// failure`);
+            log(reason);
+            callback(defaultValue);
+          });
+      } else {
+        callback(defaultValue);
+      }
+    },
+  );
 }
 
 // This sets up all protocol handlers
 export function configureProtocols(): void {
-  protocol.registerFileProtocol('pic', picProtocol);
-  protocol.registerFileProtocol('tune', tuneProtocol);
+  registerProtocol('pic', picProcessor, defaultPicPath);
+  registerProtocol('tune', tuneProcessor);
 }
 
 // This sets up reactive responses to changes, for example:

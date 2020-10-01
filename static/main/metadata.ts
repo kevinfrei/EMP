@@ -71,39 +71,41 @@ function objToMap(o: { [key: string]: string | number }): Map<string, string> {
   return res;
 }
 
+const toRemove = [
+  'Audio Count',
+  'Cover',
+  'Cover: Type',
+  'Cover: Mime',
+  'Stream Size',
+  'Header Size',
+  'Data Size',
+  'Footer Size',
+  'Overall Bit Rate',
+  'Overall Bit Rate: Mode',
+  'Codec ID: Compatible',
+  'Is Streamable',
+  'Encoded: Application',
+  'Encoded: Library',
+  'Encoded: Library: Name',
+  'Encoded: Library: Date',
+  'Encoded: Library: Version',
+  'Samples Per Frame',
+  'Sampling Count',
+  'Frame Rate',
+  'Frame Count',
+  'Stream Size',
+  'Stream Size: Proportion',
+  'Duration: Last Frame',
+  'Stream Order',
+];
+
 export async function getMediaInfo(mediaPath: string): Promise<MediaInfo> {
   const trackInfo = await MD.RawMetadata(mediaPath);
   const general = objToMap(trackInfo[0]);
   const audio = objToMap(trackInfo[1]);
-  // Remove some stuff I don't care about or don't handle yet
-  for (const i of [
-    'Audio Count',
-    'Cover',
-    'Cover: Type',
-    'Cover: Mime',
-    'Stream Size',
-    'Header Size',
-    'Data Size',
-    'Footer Size',
-    'Overall Bit Rate',
-    'Overall Bit Rate: Mode',
-    'Codec ID: Compatible',
-    'Is Streamable',
-  ]) {
-    general.delete(i);
-  }
-  for (const j of [
-    'Samples Per Frame',
-    'Sampling Count',
-    'Frame Rate',
-    'Frame Count',
-    'Stream Size',
-    'Stream Size: Proportion',
-    'Duration: Last Frame',
-    'Stream Order',
-    ...general.keys(),
-  ]) {
-    audio.delete(j);
-  }
+  // Remove some tags I don't care about or don't handle yet
+  toRemove.forEach((v) => general.delete(v));
+  [...toRemove, ...general.keys()].forEach((v) => audio.delete(v));
+
   return { general, audio };
 }

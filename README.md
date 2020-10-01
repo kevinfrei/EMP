@@ -89,12 +89,11 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 - Handle audio files that don't fit my schema
   - Probably start with iTunes schema :/
+- Make playlists filter for songs that actually exist in the DB
 
 ### Core Capabilities
 
 - **render** Support queueing artists and albums, not just songs
-- **render** Save scroll positions when tabs switch around
-- **both** PLAYLISTS!!!
 - **both** Restore active tab between runs
 - **main** Get album covers from media tags as well as the folder...
 - **main** Update data from file metadata (overriding filename acquisition)
@@ -113,7 +112,6 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Logic improvements/changes
 
-- Filter song lists down to actual songKeys that exist
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
   - The lion's share of the work for this is already in my `@freik/media-utils`
     module.
