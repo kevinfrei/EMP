@@ -1257,10 +1257,10 @@
     "@uifabric/utilities" "^7.32.3"
     tslib "^1.10.0"
 
-"@freik/core-utils@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.5.0.tgz#40a2ac46a07c03dd1fd1af436ecd7c0de383e9b5"
-  integrity sha512-4Jt0T9G0t4aE9CnrN5I79D6ii7DgdYpPKMYrLmlm2sHF332y8ZFgvBqbnzrd+1enpJDxglh+oBUFmZbxgeIiLQ==
+"@freik/core-utils@^0.5.0", "@freik/core-utils@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.5.1.tgz#8d36c713b41aecf6065343b7881bd4cdf983b674"
+  integrity sha512-AEnX9HE5Vu4ZVZaM9NA7JtKIzLh3t6EeXOC6GWzK8yhwQjTAhsLe+s3msFnhzRQoFlCPgKx6yr/k+on8lLcqjA==
 
 "@freik/media-utils@^0.4.0":
   version "0.4.0"
@@ -1509,9 +1509,9 @@
     chalk "^4.0.0"
 
 "@microsoft/load-themed-styles@^1.10.26":
-  version "1.10.102"
-  resolved "https://registry.yarnpkg.com/@microsoft/load-themed-styles/-/load-themed-styles-1.10.102.tgz#34a35f468aca621c3a4e8b88b036e55908954eae"
-  integrity sha512-DbDwiICY0XbSYGBjQM8tndWiNcI/ptnvuQW1gmMppvvCmjO/QsDlDVkB/M8B80HejCFPqOgPTIV/2SKN++w9zQ==
+  version "1.10.104"
+  resolved "https://registry.yarnpkg.com/@microsoft/load-themed-styles/-/load-themed-styles-1.10.104.tgz#59346d6955ca29ab102f602881b5760ec6c1f640"
+  integrity sha512-8BKFznsAawIf40bVbt7w0GykxscXHsUUqb5ovLQnd+Z1EpeP4Z8eAr7NvoZfwSc2Lt7jkif1HpCpumjk48Gvyw==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -1861,10 +1861,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^16.9.49":
-  version "16.9.49"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.49.tgz#09db021cf8089aba0cdb12a49f8021a69cce4872"
-  integrity sha512-DtLFjSj0OYAdVLBbyjhuV9CdGVHCkHn2R+xr3XkBvK2rS1Y1tkc14XSGjYgm5Fjjr90AxH9tiSzc1pCFMGO06g==
+"@types/react@*", "@types/react@^16.9.50":
+  version "16.9.50"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.50.tgz#cb5f2c22d42de33ca1f5efc6a0959feb784a3a2d"
+  integrity sha512-kPx5YsNnKDJejTk1P+lqThwxN2PczrocwsvqXnjvVvKpFescoY62ZiM3TV7dH1T8lFhlHZF+PE5xUyimUwqEGA==
   dependencies:
     "@types/prop-types" "*"
     csstype "^3.0.2"
@@ -4109,9 +4109,9 @@ css-what@2.1:
   integrity sha512-a+EPoD+uZiNfh+5fxw2nO9QwFa6nJe2Or35fGY6Ipw1R3R4AGz1d1TEZrCegvw2YTmZ0jXirGYlzxxpYSHwpEg==
 
 css-what@^3.2.1:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/css-what/-/css-what-3.3.0.tgz#10fec696a9ece2e591ac772d759aacabac38cd39"
-  integrity sha512-pv9JPyatiPaQ6pf4OvD/dbfm0o5LviWmwxNWzblYf/1u9QZd0ihV+PMwy5jdQWQ3349kZmKEx9WXuSka2dM4cg==
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/css-what/-/css-what-3.4.1.tgz#81cb70b609e4b1351b1e54cbc90fd9c54af86e2e"
+  integrity sha512-wHOppVDKl4vTAOWzJt5Ek37Sgd9qq1Bmj/T1OjvicWbU5W7ru7Pqbn0Jdqii3Drx/h+dixHKXNhZYx7blthL7g==
 
 css.escape@^1.5.1:
   version "1.5.1"
@@ -12847,9 +12847,9 @@ yaml@^1.10.0, yaml@^1.7.2:
   integrity sha512-yr2icI4glYaNG+KWONODapy2/jDdMSDnrONSjblABjD9B4Z5LgiircSt8m8sRZFNi08kG9Sm0uSHtEmP3zaEGg==
 
 yargs-parser@20.x:
-  version "20.2.0"
-  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.0.tgz#944791ca2be2e08ddadd3d87e9de4c6484338605"
-  integrity sha512-2agPoRFPoIcFzOIp6656gcvsg2ohtscpw2OINr/q46+Sq41xz2OYLqx5HRHabmFU1OARIPAYH5uteICE7mn/5A==
+  version "20.2.1"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-20.2.1.tgz#28f3773c546cdd8a69ddae68116b48a5da328e77"
+  integrity sha512-yYsjuSkjbLMBp16eaOt7/siKTjNVjMm3SoJnIg3sEh/JsvqVVDyjRKmaJV4cl+lNIgq6QEco2i3gDebJl7/vLA==
 
 yargs-parser@^13.1.2:
   version "13.1.2"

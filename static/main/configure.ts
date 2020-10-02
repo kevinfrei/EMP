@@ -9,7 +9,7 @@ import { CreateMusicDB } from './Startup';
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 
 const log = Logger.bind('configure');
-// Logger.enable('configure');
+Logger.enable('configure');
 
 const defaultPicPath = { path: path.join(__dirname, '..', 'img-album.svg') };
 
@@ -25,13 +25,20 @@ async function picProcessor(
   }
   const maybePath = db.pictures.get(albumId);
   if (maybePath) {
-    return maybePath;
-  } else {
-    return defaultPicPath;
+    return { path: maybePath };
   }
+  return defaultPicPath;
 }
 
 const e404 = { error: 404 };
+
+const audioMimeTypes = new Map<string, string>([
+  ['.mp3', 'audio/mpeg'],
+  ['.m4a', 'audio/m4a'],
+  ['.aac', 'audio/aac'],
+  ['.flac', 'audio/x-flac'],
+  ['.wma', 'audio/x-ms-wma'],
+]);
 
 async function tuneProcessor(
   req: ProtocolRequest,
@@ -45,8 +52,10 @@ async function tuneProcessor(
   const song = db.songs.get(key);
   if (song) {
     const thePath = song.path;
-    log('Returning path ' + thePath);
-    return { path: thePath };
+    log('Returning file read from ' + thePath);
+    const mimeType =
+      audioMimeTypes.get(path.extname(thePath).toLowerCase()) ?? 'audio/mpeg';
+    return { path: thePath, mimeType };
   } else {
     return e404;
   }
@@ -58,10 +67,11 @@ function registerProtocol(
   processor: (
     req: ProtocolRequest,
     trimmedUrl: string,
-  ) => Promise<ProtocolResponse | string>,
+  ) => Promise<string | ProtocolResponse>,
   defaultValue: string | ProtocolResponse = e404,
 ) {
   const protName = type.substr(0, type.indexOf(':'));
+  log(`Protocol ${type} (${protName})`);
   protocol.registerFileProtocol(
     protName,
     (req: ProtocolRequest, callback: HandlerCallback) => {
@@ -86,8 +96,8 @@ function registerProtocol(
 
 // This sets up all protocol handlers
 export function configureProtocols(): void {
-  registerProtocol('pic', picProcessor, defaultPicPath);
-  registerProtocol('tune', tuneProcessor);
+  registerProtocol('pic://album/', picProcessor, defaultPicPath);
+  registerProtocol('tune://song/', tuneProcessor);
 }
 
 // This sets up reactive responses to changes, for example:
