@@ -24,14 +24,12 @@ hr {
 }
 
 .sidebar-icon {
-/*  background-color: rgba(200, 200, 200, 0.5);*/
   border: solid 3px rgba(200, 200, 200, 0);
   border-radius: 3px;
   grid-column: 1;
   height: 16px;
   width: 16px;
   margin: 4px;
-/*   filter:invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);*/
 }
 
 .sidebar-text {
@@ -41,6 +39,7 @@ hr {
 }
 
 .sidebar-selected {
-  background: rgba(200, 200, 200, 0.3);
+  background: rgba(222, 222, 222);
   border-radius: 6px;
+  font-weight: 600;
 }

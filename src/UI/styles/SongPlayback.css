@@ -49,10 +49,10 @@
 #song-name {
   font-weight: bold;
   grid-row: 1;
-  grid-column: 2 / 5;
+  grid-column: 3 / 4;
   -webkit-app-region: drag;
   overflow: hidden;
-  white-space:nowrap;
+  white-space: nowrap;
 }
 
 #artist-album {
@@ -61,7 +61,7 @@
   grid-column: 2 / 5;
   -webkit-app-region: drag;
   overflow: hidden;
-  white-space:nowrap;
+  white-space: nowrap;
 }
 
 .song-slider {

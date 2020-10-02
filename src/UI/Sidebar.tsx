@@ -49,7 +49,7 @@ function getEntry(
       onClick={() => setCurView(view.name)}
     >
       <img src={view.pic} className="sidebar-icon" alt={view.title}></img>
-      <Text variant="mediumPlus" className="sidebar-text">
+      <Text variant="mediumPlus" className={`sidebar-text${extra}`}>
         {view.title}
       </Text>
     </div>

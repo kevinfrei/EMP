@@ -1,4 +1,4 @@
-import { Slider } from '@fluentui/react';
+import { Slider, Text } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -39,19 +39,37 @@ function CoverArt(): JSX.Element {
         id="current-cover-art"
         src={`pic://album/${albumKey}`}
         alt="album cover"
-      />{' '}
+      />
     </span>
   );
 }
 
 function MediaTimePosition(): JSX.Element {
   const mediaTimePosition = useRecoilValue(mediaTimePositionSel);
-  return <span id="now-playing-current-time">{mediaTimePosition}</span>;
+  return (
+    <Text
+      id="now-playing-current-time"
+      variant="tiny"
+      block={true}
+      nowrap={true}
+    >
+      {mediaTimePosition}
+    </Text>
+  );
 }
 
 function MediaTimeRemaining(): JSX.Element {
   const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingSel);
-  return <span id="now-playing-remaining-time">{mediaTimeRemaining}</span>;
+  return (
+    <Text
+      id="now-playing-remaining-time"
+      variant="tiny"
+      block={true}
+      nowrap={true}
+    >
+      {mediaTimeRemaining}
+    </Text>
+  );
 }
 
 function MediaTimeSlider(): JSX.Element {
@@ -87,7 +105,11 @@ function MediaTimeSlider(): JSX.Element {
 function SongName(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeySel);
   const { title }: SongData = useRecoilValue(dataForSongSel(songKey));
-  return <span id="song-name">{title}</span>;
+  return (
+    <Text id="song-name" variant="tiny" block={true} nowrap={true}>
+      {title}
+    </Text>
+  );
 }
 
 function ArtistAlbum(): JSX.Element {
@@ -95,7 +117,14 @@ function ArtistAlbum(): JSX.Element {
   const { artist, album }: SongData = useRecoilValue(dataForSongSel(songKey));
   if (songKey) {
     const split = artist.length && album.length ? ': ' : '';
-    return <span id="artist-album">{`${artist}${split}${album}`}</span>;
+    return (
+      <Text
+        id="artist-album"
+        variant="tiny"
+        block={true}
+        nowrap={true}
+      >{`${artist}${split}${album}`}</Text>
+    );
   } else {
     return <span id="artist-album" />;
   }

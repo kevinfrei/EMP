@@ -9,7 +9,7 @@ import { CreateMusicDB } from './Startup';
 declare type HandlerCallback = (response: string | ProtocolResponse) => void;
 
 const log = Logger.bind('configure');
-Logger.enable('configure');
+// Logger.enable('configure');
 
 const defaultPicPath = { path: path.join(__dirname, '..', 'img-album.svg') };
 
