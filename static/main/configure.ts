@@ -1,36 +1,17 @@
 import { Logger } from '@freik/core-utils';
-import { AlbumKey, SongKey } from '@freik/media-utils';
+import { Cover, SongKey } from '@freik/media-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
+import { promises as fs } from 'fs';
 import path from 'path';
 import { getMusicDB } from './MusicAccess';
 import * as persist from './persist';
 import { CreateMusicDB } from './Startup';
 
-declare type HandlerCallback = (response: string | ProtocolResponse) => void;
+declare type FileResponse = string | ProtocolResponse;
+declare type BufferResponse = Buffer | ProtocolResponse;
 
 const log = Logger.bind('configure');
 // Logger.enable('configure');
-
-const defaultPicPath = { path: path.join(__dirname, '..', 'img-album.svg') };
-
-async function picProcessor(
-  req: ProtocolRequest,
-  trimmedUrl: string,
-): Promise<ProtocolResponse | string> {
-  // Check to see if there's a song in the album that has a cover image
-  const albumId: AlbumKey = trimmedUrl;
-  const db = await getMusicDB();
-  if (!db) {
-    return defaultPicPath;
-  }
-  const maybePath = db.pictures.get(albumId);
-  if (maybePath) {
-    return { path: maybePath };
-  }
-  return defaultPicPath;
-}
-
-const e404 = { error: 404 };
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
@@ -40,10 +21,66 @@ const audioMimeTypes = new Map<string, string>([
   ['.wma', 'audio/x-ms-wma'],
 ]);
 
+const imageMimeTypes = new Map<string, string>([
+  ['.jpg', 'image/jpeg'],
+  ['.png', 'image/png'],
+  ['.svg', 'image/svg+xml'],
+]);
+
+const defaultPicPath = path.join(__dirname, '..', 'img-album.svg');
+let defaultPicBuffer: BufferResponse | null = null;
+async function getDefaultPicBuffer(): Promise<BufferResponse> {
+  if (!defaultPicBuffer) {
+    defaultPicBuffer = {
+      data: await fs.readFile(defaultPicPath),
+      mimeType: imageMimeTypes.get('.svg'),
+    };
+  }
+  return defaultPicBuffer;
+}
+
+async function picBufProcessor(
+  req: ProtocolRequest,
+  albumId: string,
+): Promise<BufferResponse> {
+  // Check to see if there's a song in the album that has a cover image
+  const db = await getMusicDB();
+  if (db) {
+    const maybePath = db.pictures.get(albumId);
+    if (maybePath) {
+      return {
+        data: await fs.readFile(maybePath),
+        mimeType: imageMimeTypes.get(path.extname(maybePath)),
+      };
+    }
+    const album = db.albums.get(albumId);
+    if (album) {
+      // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files
+      for (const songKey of album.songs) {
+        const song = db.songs.get(songKey);
+        if (song) {
+          log(`Looking for cover in ${song.path}`);
+          const buf = await Cover.readFromFile(song.path);
+          if (buf) {
+            log(buf);
+            return {
+              data: Buffer.from(buf.data, 'base64'),
+              mimeType: buf.type,
+            };
+          }
+        }
+      }
+    }
+  }
+  return await getDefaultPicBuffer();
+}
+
+const e404 = { error: 404 };
+
 async function tuneProcessor(
   req: ProtocolRequest,
   trimmedUrl: string,
-): Promise<ProtocolResponse | string> {
+): Promise<FileResponse> {
   const key: SongKey = trimmedUrl;
   const db = await getMusicDB();
   if (!db) {
@@ -61,43 +98,70 @@ async function tuneProcessor(
   }
 }
 
+type Registerer<T> = (
+  scheme: string,
+  handler: (
+    request: ProtocolRequest,
+    callback: (response: T | ProtocolResponse) => void,
+  ) => void,
+) => boolean;
+
 // Helper to check URL's & transition to async functions
-function registerProtocol(
+function registerProtocolHandler<ResponseType>(
   type: string,
+  registerer: Registerer<ResponseType>,
   processor: (
     req: ProtocolRequest,
     trimmedUrl: string,
-  ) => Promise<string | ProtocolResponse>,
-  defaultValue: string | ProtocolResponse = e404,
+  ) => Promise<ProtocolResponse | ResponseType>,
+  defaultValue: ProtocolResponse | ResponseType = e404,
 ) {
   const protName = type.substr(0, type.indexOf(':'));
   log(`Protocol ${type} (${protName})`);
-  protocol.registerFileProtocol(
-    protName,
-    (req: ProtocolRequest, callback: HandlerCallback) => {
-      log(`${type} URL request:`);
-      log(req);
-      if (!req.url) {
-        callback({ error: -324 });
-      } else if (req.url.startsWith(type)) {
-        processor(req, req.url.substr(type.length))
-          .then(callback)
-          .catch((reason: any) => {
-            log(`${type}:// failure`);
-            log(reason);
-            callback(defaultValue);
-          });
-      } else {
-        callback(defaultValue);
-      }
-    },
-  );
+  registerer(protName, (req, callback) => {
+    log(`${type} URL request:`);
+    log(req);
+    if (!req.url) {
+      callback({ error: -324 });
+    } else if (req.url.startsWith(type)) {
+      processor(req, req.url.substr(type.length))
+        .then(callback)
+        .catch((reason: any) => {
+          log(`${type}:// failure`);
+          log(reason);
+          callback(defaultValue);
+        });
+    } else {
+      callback(defaultValue);
+    }
+  });
 }
 
 // This sets up all protocol handlers
 export function configureProtocols(): void {
-  registerProtocol('pic://album/', picProcessor, defaultPicPath);
-  registerProtocol('tune://song/', tuneProcessor);
+  getDefaultPicBuffer()
+    .then((val) =>
+      // TODO: Enable both song & album pictures
+      // folder-level photos are fine, but for song requests, check the song
+      // then fall back to the album
+      registerProtocolHandler(
+        'pic://album/',
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        protocol.registerBufferProtocol,
+        picBufProcessor,
+        val,
+      ),
+    )
+    .catch((reason) => {
+      log('Unable to register pic:// handling');
+      log(reason);
+    });
+  registerProtocolHandler(
+    'tune://song/',
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    protocol.registerFileProtocol,
+    tuneProcessor,
+  );
 }
 
 // This sets up reactive responses to changes, for example:
