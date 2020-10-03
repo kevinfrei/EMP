@@ -3,12 +3,13 @@ import {
   IconButton,
   Label,
   Separator,
+  SpinButton,
   Stack,
   Text,
   Toggle,
 } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useBackedState } from '../../Recoil/helpers';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
@@ -90,18 +91,36 @@ function RecoilLocations(): JSX.Element {
 function ArticleSorting(): JSX.Element {
   const [articles, setArticles] = useBackedState(sortWithArticlesAtom);
   log('Articles: ' + (articles ? 'true' : 'false'));
-  function onChange(ev: React.MouseEvent<HTMLElement>, checked?: boolean) {
-    setArticles(checked ? true : false);
-  }
   return (
     <Toggle
+      inlineLabel
       label="Consider articles when sorting"
       checked={articles}
-      inlineLabel
-      onText="On"
-      offText="Off"
-      onChange={onChange}
+      onChange={(ev, checked?: boolean) => setArticles(!!checked)}
     />
+  );
+}
+
+function ArtistFiltering(): JSX.Element {
+  const [onlyAlbumArtists, setOnlyAlbumArtists] = useState(false);
+  const [songCount, setSongCount] = useState(0);
+  return (
+    <>
+      <Toggle
+        inlineLabel
+        label="Only show artists with full albums"
+        checked={onlyAlbumArtists}
+        onChange={(ev, checked?: boolean) => setOnlyAlbumArtists(!!checked)}
+      />
+      <SpinButton
+        label="Only show artists with at least this many songs"
+        disabled={onlyAlbumArtists}
+        value={songCount.toString()}
+        onIncrement={() => setSongCount(Math.min(100, songCount + 1))}
+        onDecrement={() => setSongCount(Math.max(0, songCount - 1))}
+        style={{ width: '10px' }}
+      />
+    </>
   );
 }
 
@@ -149,9 +168,10 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
         </Separator>
         <RecoilLocations />
         <Separator alignContent="start">
-          <Text variant="mediumPlus">Sorting Preferences</Text>
+          <Text variant="mediumPlus">Sorting &amp; Filtering</Text>
         </Separator>
         <ArticleSorting />
+        <ArtistFiltering />
       </Stack>
     </div>
   );

@@ -1,7 +1,7 @@
 #root {
   display: grid;
   height: 100vh;
-  grid-template-columns: 175px 135px auto 135px;
+  grid-template-columns: 140px 135px auto 135px;
   grid-template-rows: 44px auto 1fr;
   overflow: hidden;
 }
@@ -15,7 +15,10 @@
 .left-column {
   grid-column: 1;
   grid-row: 1 / 4;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.04);
+  border-right-color: rgb(222, 222, 222);
+  border-right-width: 1px;
+  border-right-style: solid;
 }
 
 .top-row {
@@ -60,11 +63,10 @@
   margin-top: -15px;
 }
 
-.ms-ScrollablePane .ms-DetailsList-headerWrapper  {
+.ms-ScrollablePane .ms-DetailsList-headerWrapper {
   margin-top: 0px;
 }
 
 .ms-DetailsList-headerWrapper {
   margin-top: -15px;
 }
-

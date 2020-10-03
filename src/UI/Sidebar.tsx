@@ -24,11 +24,12 @@ const mkEntry = (name: CurrentView, title: string, pic: string) => ({
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', recentPic),
+  mkEntry(CurrentView.current, 'Now Playing', nowPlayingPic),
+  null,
   mkEntry(CurrentView.album, 'Albums', albumPic),
   mkEntry(CurrentView.artist, 'Artists', artistPic),
   mkEntry(CurrentView.song, 'All Songs', songPic),
   mkEntry(CurrentView.playlist, 'Playlists', playlistPic),
-  mkEntry(CurrentView.current, 'Now Playing', nowPlayingPic),
   null,
   mkEntry(CurrentView.settings, 'Settings', settingsPic),
 ];
