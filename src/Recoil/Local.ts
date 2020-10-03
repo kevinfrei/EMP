@@ -1,4 +1,4 @@
-import { SongKey } from '@freik/media-utils';
+import { Song, SongKey } from '@freik/media-utils';
 import { atom, DefaultValue, selector } from 'recoil';
 
 export type PlaylistName = string;
@@ -148,4 +148,9 @@ export const hasPrevSongSel = selector<boolean>({
 export const nowPlayingSortAtom = atom<string>({
   key: 'nowPlayingSort',
   default: '',
+});
+
+export const songDetailAtom = atom<Song | null>({
+  key: 'songDetail',
+  default: null,
 });

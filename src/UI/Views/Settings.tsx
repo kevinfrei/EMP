@@ -1,8 +1,6 @@
 import {
   DefaultButton,
-  Dropdown,
   IconButton,
-  IDropdownOption,
   Label,
   Separator,
   Stack,
@@ -11,15 +9,8 @@ import {
 } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { RecoilState } from 'recoil';
 import { useBackedState } from '../../Recoil/helpers';
-import {
-  albumListSortAtom,
-  artistListSortAtom,
-  locationsAtom,
-  songListSortAtom,
-  sortWithArticlesAtom,
-} from '../../Recoil/ReadWrite';
+import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
 import { ViewProps } from './Selector';
 import './styles/Settings.css';
@@ -27,12 +18,13 @@ import './styles/Settings.css';
 const log = Logger.bind('View-Settings');
 // Logger.enable('View-Settings');
 
+/*
 declare type PopupItem = {
   title: string;
   atom: RecoilState<string>;
   options: IDropdownOption[];
 };
-
+*/
 const removeFromSet = (set: string[], val: string): string[] => {
   const newSet = new Set(set);
   newSet.delete(val);
@@ -43,6 +35,7 @@ function GetDirs(): string[] | void {
   return ShowOpenDialog({ properties: ['openDirectory'] });
 }
 
+/*
 function SortPopup({ data }: { data: PopupItem }): JSX.Element {
   const [value, setter] = useBackedState(data.atom);
   const onChange = (
@@ -61,6 +54,7 @@ function SortPopup({ data }: { data: PopupItem }): JSX.Element {
     />
   );
 }
+*/
 
 function RecoilLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useBackedState<string[]>(locationsAtom);
@@ -111,7 +105,7 @@ function ArticleSorting(): JSX.Element {
   );
 }
 
-export default function Settings({ hidden }: ViewProps): JSX.Element {
+/*
   const album = {
     title: 'Album',
     atom: albumListSortAtom,
@@ -141,6 +135,9 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
     ],
   };
 
+*/
+
+export default function Settings({ hidden }: ViewProps): JSX.Element {
   return (
     <div
       className="current-view"
@@ -154,11 +151,13 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
         <Separator alignContent="start">
           <Text variant="mediumPlus">Sorting Preferences</Text>
         </Separator>
-        <SortPopup data={album} />
-        <SortPopup data={artist} />
-        <SortPopup data={song} />
         <ArticleSorting />
       </Stack>
     </div>
   );
+  /*
+        <SortPopup data={album} />
+        <SortPopup data={artist} />
+        <SortPopup data={song} />
+  */
 }

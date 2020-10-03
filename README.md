@@ -94,6 +94,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 - Make MusicDB updates due to location changes work properly
   - There's effectively a race condition: The MusicDB gets re-sent before the
     new MusicDB gets created
+- mediainfo.js crashes a lot on my Mac Mini. Stop using it?
 
 ### Core Capabilities
 
@@ -103,6 +104,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
 - **both** Make 'Search' work.
+- **render** Add playlist view look like Albums/Artists view
 - **render** Make a miniplayer!
 - **both** Add 'favorite/love' attribute for songs
 - **both** "Auto" playlists (something involving stuff like "this artist" and

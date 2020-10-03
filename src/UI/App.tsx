@@ -2,6 +2,7 @@ import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-befo
 import { RecoilRoot } from 'recoil';
 import Sidebar from './Sidebar';
 import SongControls from './SongControls';
+import SongDetailPanel from './SongDetailPanel';
 import SongPlayback from './SongPlayback';
 import './styles/App.css';
 import Utilities from './Utilities';
@@ -24,6 +25,7 @@ export default function App(): JSX.Element {
       <React.Suspense fallback="Please wait...">
         <ViewSelector />
       </React.Suspense>
+      <SongDetailPanel />
     </RecoilRoot>
   );
 }

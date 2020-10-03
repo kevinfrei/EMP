@@ -14,7 +14,11 @@ import React, { useState } from 'react'; // eslint-disable-line @typescript-esli
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { GetArtistString } from '../../DataSchema';
 import { AddSongList } from '../../Recoil/api';
-import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
+import {
+  currentIndexAtom,
+  songDetailAtom,
+  songListAtom,
+} from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -41,6 +45,7 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
   const articles = useRecoilValue(sortWithArticlesAtom);
   const curIndexState = useRecoilState(currentIndexAtom);
   const songListState = useRecoilState(songListAtom);
+  const [, setDetailSong] = useRecoilState(songDetailAtom);
   const [curSort, setSort] = useState<string>('r');
   const curExpandedState = useState(new Set<ArtistKey>());
   const [sortedSongs, setSortedSongs] = useState(
@@ -112,6 +117,7 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
           groupProps={groupProps}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
+          onItemContextMenu={(item: Song) => setDetailSong(item)}
           onItemInvoked={(item: Song) =>
             AddSongList([item.key], curIndexState, songListState)
           }

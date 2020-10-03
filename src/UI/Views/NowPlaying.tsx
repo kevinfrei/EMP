@@ -29,6 +29,7 @@ import {
   nowPlayingSortAtom,
   playlistsAtom,
   shuffleAtom,
+  songDetailAtom,
   songListAtom,
 } from '../../Recoil/Local';
 import {
@@ -168,6 +169,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
+  const [, setDetailSong] = useRecoilState(songDetailAtom);
 
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
@@ -248,6 +250,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           columns={columns}
+          onItemContextMenu={(item: Song) => setDetailSong(item)}
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
         />
       </div>

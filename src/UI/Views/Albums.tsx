@@ -13,7 +13,11 @@ import { AlbumKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
-import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
+import {
+  currentIndexAtom,
+  songDetailAtom,
+  songListAtom,
+} from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -48,6 +52,7 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const articles = useRecoilValue(sortWithArticlesAtom);
   const curIndexState = useRecoilState(currentIndexAtom);
   const songListState = useRecoilState(songListAtom);
+  const [, setDetailSong] = useRecoilState(songDetailAtom);
   const [curSort, setSort] = useState<string>('l');
   const curExpandedState = useState(new Set<AlbumKey>());
   const [sortedSongs, setSortedSongs] = useState(
@@ -137,6 +142,7 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
           groups={groups}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
+          onItemContextMenu={(item: Song) => setDetailSong(item)}
           onItemInvoked={(item: Song) =>
             AddSongList([item.key], curIndexState, songListState)
           }

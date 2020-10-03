@@ -1,7 +1,5 @@
 import {
   DetailsList,
-  Dialog,
-  DialogType,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -17,7 +15,11 @@ import {
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongList } from '../../Recoil/api';
-import { currentIndexAtom, songListAtom } from '../../Recoil/Local';
+import {
+  currentIndexAtom,
+  songDetailAtom,
+  songListAtom,
+} from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -25,7 +27,6 @@ import {
 } from '../../Recoil/ReadOnly';
 import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { SortSongs } from '../../Tools';
-import MediaInfoTable from '../MediaInfo';
 import {
   AlbumFromSong,
   ArtistsFromSong,
@@ -43,7 +44,7 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
   const articles = useRecoilValue(sortWithArticlesAtom);
   const curIndexState = useRecoilState(currentIndexAtom);
   const songListState = useRecoilState(songListAtom);
-  const [selected, setSelected] = useState('');
+  const [, setDetailSong] = useRecoilState(songDetailAtom);
   const [sortOrder, setSortOrder] = useState('rl');
   const [sortedItems, setSortedItems] = useState(
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
@@ -70,14 +71,6 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
       style={hidden ? { visibility: 'hidden' } : {}}
     >
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
-        <Dialog
-          minWidth={450}
-          hidden={selected === ''}
-          onDismiss={() => setSelected('')}
-          dialogContentProps={{ type: DialogType.close, title: 'Metadata' }}
-        >
-          <MediaInfoTable forSong={selected} />
-        </Dialog>
         <DetailsList
           items={sortedItems}
           columns={columns}
@@ -85,9 +78,7 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={(item: Song) => {
-            setSelected(item.key);
-          }}
+          onItemContextMenu={(item: Song) => setDetailSong(item)}
           onItemInvoked={(item: Song) =>
             AddSongList([item.key], curIndexState, songListState)
           }
