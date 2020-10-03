@@ -34,7 +34,7 @@ import './styles/Albums.css';
 const log = Logger.bind('Albums');
 // Logger.enable('Albums');
 
-export function AlbumHeaderDisplay(props: { albumKey: string }) {
+export function AlbumHeaderDisplay(props: { albumKey: string }): JSX.Element {
   const albumData = useRecoilValue(dataForAlbumSel(props.albumKey));
   return (
     <Text>{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
