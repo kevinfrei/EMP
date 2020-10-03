@@ -87,30 +87,27 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Bugs
 
-- Playing the same song on repeat doesn't work
-  - Autoplay only kicks in when the URL changes, so if you're restarting the
-    same song, it doesn't start playing
 - Make playlists filter for songs that actually exist in the DB
 - Make MusicDB updates due to location changes work properly
-  - There's effectively a race condition: The MusicDB gets re-sent before the
-    new MusicDB gets created
+  - There's a race condition: The MusicDB gets re-sent before the new MusicDB
+    gets created
 - mediainfo.js crashes a lot on my Mac Mini. Stop using it?
 
 ### Core Capabilities
 
-- **main** Update data from file metadata (overriding filename acquisition)
-  - Save this stuff between runs, as it's going to be _s l o w_.
+- **both** Make 'Search' work.
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
-- **both** Make 'Search' work.
 - **render** Add playlist view that looks like Albums/Artists view
 - **render** Make a miniplayer!
-- **both** Add 'favorite/love' attribute for songs
-- **both** "Auto" playlists (something involving stuff like "this artist" and
-  "not this keyword" kind of stuff.
+- **main** Update data from file metadata (overriding filename acquisition)
+  - Save this stuff between runs, as it's going to be _s l o w_.
 - **both** MediaInfo/Metadata editing!
   - Support adding album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
+- **both** Add 'favorite/love' attribute for songs
+- **both** "Auto" playlists (something involving stuff like "this artist" and
+  "not this keyword" kind of stuff.
 - **both** Import/Export M3U's?
 
 ### Logic improvements/changes

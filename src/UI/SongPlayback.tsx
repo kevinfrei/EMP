@@ -141,6 +141,14 @@ export default function SongPlayback(): JSX.Element {
   const shuf = useRecoilValue(shuffleAtom);
   const maybeNextSong = () => {
     log('Heading to the next song!!!');
+    if (rep && songList.length === 1) {
+      // Because we rely on auto-play, if we just try to play the same song
+      // again, it won't start playing
+      const ae = GetAudioElem();
+      if (ae) {
+        ae.play().catch((reason) => log("couldn't restart playing"));
+      }
+    }
     setPlaying(
       MaybePlayNextSong(
         curIndex,
