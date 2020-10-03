@@ -15,9 +15,10 @@ export default function SongDetailPanel(): JSX.Element {
     <Panel
       isOpen={detailSong !== null}
       type={PanelType.medium}
-      isLightDismiss
       onDismiss={() => setDetailSong(null)}
       headerText={header}
+      isBlocking={false}
+      closeButtonAriaLabel="Close"
     >
       <React.Suspense fallback="Loading...">{elem}</React.Suspense>
     </Panel>

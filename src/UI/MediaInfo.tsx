@@ -1,3 +1,4 @@
+import { Text } from '@fluentui/react';
 import { MediaInfo, SongKey } from '@freik/media-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
@@ -8,8 +9,12 @@ function mediaInfoToLine(keyPrefix: string, strs: Map<string, string>) {
   strs.forEach((val, key) =>
     lines.push(
       <tr key={keyPrefix + key}>
-        <td>{key}</td>
-        <td colSpan={3}>{val}</td>
+        <td>
+          <Text style={{ fontWeight: 600 }}>{key}</Text>
+        </td>
+        <td colSpan={3}>
+          <Text>{val}</Text>
+        </td>
       </tr>,
     ),
   );
@@ -28,13 +33,17 @@ export default function MediaInfoTable({
     <table>
       <thead>
         <tr>
-          <td>General</td>
+          <td>
+            <Text variant="large">&nbsp;General</Text>
+          </td>
         </tr>
       </thead>
       <tbody>{genLines}</tbody>
       <thead>
         <tr>
-          <td>Audio</td>
+          <td>
+            <Text variant="large">&nbsp;Audio</Text>
+          </td>
         </tr>
       </thead>
       <tbody>{audLines}</tbody>

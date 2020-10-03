@@ -1238,13 +1238,13 @@
     "@uifabric/set-version" "^7.0.23"
     tslib "^1.10.0"
 
-"@fluentui/react@^7.144.1":
-  version "7.144.1"
-  resolved "https://registry.yarnpkg.com/@fluentui/react/-/react-7.144.1.tgz#6bc0ab93d42d1662a7823bdf88127dd0411582a6"
-  integrity sha512-1IGaN5wR6xcXkhTMUnhc2oXTKe1FWRgo02gfO0W2arOehsXtMUKd2FVx1b4hn35yewCX8Cq58he85Gw7oU3dRA==
+"@fluentui/react@^7.144.2":
+  version "7.144.2"
+  resolved "https://registry.yarnpkg.com/@fluentui/react/-/react-7.144.2.tgz#deb17296c6f20a42b3ff76e1183da408f23fad96"
+  integrity sha512-qWnaOJmOzG8w8NAtDbat44Tz1zdXyS/iHh5OESeowxfIfCRajaMb9h52A5qNpQyDhv3Y0zRX9yq1aJ4hKmXTKw==
   dependencies:
     "@uifabric/set-version" "^7.0.23"
-    office-ui-fabric-react "^7.144.1"
+    office-ui-fabric-react "^7.144.2"
     tslib "^1.10.0"
 
 "@fluentui/theme@^1.2.1":
@@ -1272,11 +1272,11 @@
     mediainfo.js "^0.1.4"
 
 "@freik/node-utils@^0.2.6":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.2.6.tgz#740b8f2633f5a457bf6098c8be3fd4b2c6004797"
-  integrity sha512-WxHPIBzwgzSLls+R8/aIpyun6DLRxmSBlhiHs9qwporRA99Bvls0lzd+4msMucgDbBO5x3QXL7ZQ96ZJ0+pK7g==
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.2.7.tgz#8f89b18d8e20baa60ea40172de67366674bbf0cb"
+  integrity sha512-t37kKNLo8HK7uSJmJqC+LGTn7FCjY1mp7mVuAz6KTZxaPYEj3fgSuPqlvLsBa1mHzbnTPGitpHkBhqQVnfP5jw==
   dependencies:
-    "@freik/core-utils" "^0.5.0"
+    "@freik/core-utils" "^0.5.1"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -1509,9 +1509,9 @@
     chalk "^4.0.0"
 
 "@microsoft/load-themed-styles@^1.10.26":
-  version "1.10.104"
-  resolved "https://registry.yarnpkg.com/@microsoft/load-themed-styles/-/load-themed-styles-1.10.104.tgz#59346d6955ca29ab102f602881b5760ec6c1f640"
-  integrity sha512-8BKFznsAawIf40bVbt7w0GykxscXHsUUqb5ovLQnd+Z1EpeP4Z8eAr7NvoZfwSc2Lt7jkif1HpCpumjk48Gvyw==
+  version "1.10.105"
+  resolved "https://registry.yarnpkg.com/@microsoft/load-themed-styles/-/load-themed-styles-1.10.105.tgz#7fcc7aa05e85558a245b6048652283f59636eceb"
+  integrity sha512-0X0WXDFrdSFMKkGNZ7e9iti1znGOAlCpg5HEWwDmA+ma+KMd2rUkDXWDySdESRYdJQ6W2/r0Zu2UGxtomK90aQ==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -3349,9 +3349,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001035, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001135:
-  version "1.0.30001141"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001141.tgz#214a196d81aa938b268fb0cb6d8fab23fdf14378"
-  integrity sha512-EHfInJHoQTmlMdVZrEc5gmwPc0zyN/hVufmGHPbVNQwlk7tJfCmQ2ysRZMY2MeleBivALUTyyxXnQjK18XrVpA==
+  version "1.0.30001142"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001142.tgz#a8518fdb5fee03ad95ac9f32a9a1e5999469c250"
+  integrity sha512-pDPpn9ankEpBFZXyCv2I4lh1v/ju+bqb78QfKf+w9XgDAFWBwSYPswXqprRdrgQWK0wQnpIbfwRjNHO1HWqvoQ==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -5096,10 +5096,10 @@ eslint-plugin-react@7.19.0:
     string.prototype.matchall "^4.0.2"
     xregexp "^4.3.0"
 
-eslint-plugin-react@^7.21.2:
-  version "7.21.2"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.21.2.tgz#3bd5d2c4c36d5a0428d0d6dda301ac9a84d681b2"
-  integrity sha512-j3XKvrK3rpBzveKFbgAeGsWb9uz6iUOrR0jixRfjwdFeGSRsXvVTFtHDQYCjsd1/6Z/xvb8Vy3LiI5Reo7fDrg==
+eslint-plugin-react@^7.21.3:
+  version "7.21.3"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.21.3.tgz#71655d2af5155b19285ec929dd2cdc67a4470b52"
+  integrity sha512-OI4GwTCqyIb4ipaOEGLWdaOHCXZZydStAsBEPB2e1ZfNM37bojpgO1BoOQbFb0eLVz3QLDx7b+6kYcrxCuJfhw==
   dependencies:
     array-includes "^3.1.1"
     array.prototype.flatmap "^1.2.3"
@@ -8647,10 +8647,10 @@ obuf@^1.0.0, obuf@^1.1.2:
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
-office-ui-fabric-react@^7.144.1:
-  version "7.144.1"
-  resolved "https://registry.yarnpkg.com/office-ui-fabric-react/-/office-ui-fabric-react-7.144.1.tgz#aee93eabe3be8be7e73559b17485471cf95c17a1"
-  integrity sha512-lsJgKXEM4t16nuR4IVoYX5p8I4myV5p4NHMddnBeBlh/vEL8hdqRqAEnm8f7kgwZymXVxurD0FDHmU02VRfR0g==
+office-ui-fabric-react@^7.144.2:
+  version "7.144.2"
+  resolved "https://registry.yarnpkg.com/office-ui-fabric-react/-/office-ui-fabric-react-7.144.2.tgz#ed2497950575a14057505816922b770c0ca88c72"
+  integrity sha512-okn1iubHJJmSETIZW89pV4xMVRiVeD9k7qxH+xlNmMDgofE2NAv6XwxdeaR0rXMYMVkRNGgc/B+2iSM24rEXhg==
   dependencies:
     "@fluentui/date-time-utilities" "^7.9.0"
     "@fluentui/react-focus" "^7.16.9"
@@ -9158,9 +9158,9 @@ postcss-browser-comments@^3.0.0:
     postcss "^7"
 
 postcss-calc@^7.0.1:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-7.0.4.tgz#5e177ddb417341e6d4a193c5d9fd8ada79094f8b"
-  integrity sha512-0I79VRAd1UTkaHzY9w83P39YGO/M3bG7/tNLrHGEunBolfoGM0hSjrGvjoeaj0JE/zIw5GsI2KZ0UwDJqv5hjw==
+  version "7.0.5"
+  resolved "https://registry.yarnpkg.com/postcss-calc/-/postcss-calc-7.0.5.tgz#f8a6e99f12e619c2ebc23cf6c486fdc15860933e"
+  integrity sha512-1tKHutbGtLtEZF6PT4JSihCHfIVldU72mZ8SdZHIYriIZ9fh9k9aWSppaT8rHsyI3dX+KSR+W+Ix9BMY3AODrg==
   dependencies:
     postcss "^7.0.27"
     postcss-selector-parser "^6.0.2"
