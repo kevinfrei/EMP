@@ -1,6 +1,6 @@
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
-import { CurrentView, curViewAtom } from '../../Recoil/Local';
+import { CurrentView, curViewAtom } from '../../Recoil/ReadWrite';
 import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
@@ -12,7 +12,7 @@ import SettingsView from './Settings';
 export type ViewProps = { hidden: boolean };
 
 export default function ViewSelector(): JSX.Element {
-  const which = useRecoilValue<CurrentView>(curViewAtom);
+  const which = useRecoilValue(curViewAtom);
   return (
     <>
       <AlbumView hidden={which !== CurrentView.album} />

@@ -7,7 +7,9 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
     <RecoilRoot>
-      <Sidebar />
+      <React.Suspense fallback="">
+        <Sidebar />
+      </React.Suspense>
     </RecoilRoot>,
     div,
   );

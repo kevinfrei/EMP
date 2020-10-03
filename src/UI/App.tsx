@@ -20,8 +20,8 @@ export default function App(): JSX.Element {
         <SongControls />
         <SongPlayback />
         <VolumeControl />
+        <Sidebar />
       </React.Suspense>
-      <Sidebar />
       <React.Suspense fallback="Please wait...">
         <ViewSelector />
       </React.Suspense>

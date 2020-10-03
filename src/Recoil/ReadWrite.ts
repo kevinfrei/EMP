@@ -1,11 +1,29 @@
 import { atom } from 'recoil';
 
+// vvv That's a bug, pretty clearly :/
+// eslint-disable-next-line no-shadow
+export enum CurrentView {
+  none = 0,
+  recent = 1,
+  album = 2,
+  artist = 3,
+  song = 4,
+  playlist = 5,
+  current = 6,
+  settings = 7,
+}
+
 // This is the 'locations' for searching
 export const locationsAtom = atom<string[]>({ key: 'locations', default: [] });
 
 export const sortWithArticlesAtom = atom<boolean>({
   key: 'rSortWithArticles',
   default: true,
+});
+
+export const curViewAtom = atom<CurrentView>({
+  key: 'CurrentView',
+  default: CurrentView.settings,
 });
 
 // For these things:

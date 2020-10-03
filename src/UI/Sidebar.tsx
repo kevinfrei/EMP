@@ -1,7 +1,8 @@
 import { SearchBox, Text } from '@fluentui/react';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { SetterOrUpdater, useRecoilState } from 'recoil';
-import { CurrentView, curViewAtom } from '../Recoil/Local';
+import { SetterOrUpdater } from 'recoil';
+import { useBackedState } from '../Recoil/helpers';
+import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
 import './styles/Sidebar.css';
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -57,7 +58,7 @@ function getEntry(
 }
 
 export default function Sidebar(): JSX.Element {
-  const [curView, setCurView] = useRecoilState(curViewAtom);
+  const [curView, setCurView] = useBackedState(curViewAtom);
   const [, setSearch] = useState('');
   return (
     <div id="sidebar">

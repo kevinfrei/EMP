@@ -98,13 +98,12 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Core Capabilities
 
-- **both** Restore active tab between runs
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
 - **both** Make 'Search' work.
-- **render** Add playlist view look like Albums/Artists view
+- **render** Add playlist view that looks like Albums/Artists view
 - **render** Make a miniplayer!
 - **both** Add 'favorite/love' attribute for songs
 - **both** "Auto" playlists (something involving stuff like "this artist" and

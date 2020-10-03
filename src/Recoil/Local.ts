@@ -8,24 +8,6 @@ export type MediaTime = {
   position: number;
 };
 
-// vvv That's a bug, pretty clearly :/
-// eslint-disable-next-line no-shadow
-export enum CurrentView {
-  none = 0,
-  recent = 1,
-  album = 2,
-  artist = 3,
-  song = 4,
-  playlist = 5,
-  current = 6,
-  settings = 7,
-}
-
-export const curViewAtom = atom<CurrentView>({
-  key: 'CurrentView',
-  default: CurrentView.settings,
-});
-
 const secondsToTime = (val: number): string => {
   const expr = new Date(val * 1000).toISOString();
   if (val < 600) {
