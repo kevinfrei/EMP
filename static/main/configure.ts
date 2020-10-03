@@ -1,5 +1,5 @@
 import { Logger } from '@freik/core-utils';
-import { Cover, SongKey } from '@freik/media-utils';
+import { SongKey } from '@freik/media-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -44,34 +44,41 @@ async function picBufProcessor(
   albumId: string,
 ): Promise<BufferResponse> {
   // Check to see if there's a song in the album that has a cover image
-  const db = await getMusicDB();
-  if (db) {
-    const maybePath = db.pictures.get(albumId);
-    if (maybePath) {
-      return {
-        data: await fs.readFile(maybePath),
-        mimeType: imageMimeTypes.get(path.extname(maybePath)),
-      };
-    }
-    const album = db.albums.get(albumId);
-    if (album) {
-      // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files
-      for (const songKey of album.songs) {
-        const song = db.songs.get(songKey);
-        if (song) {
-          log(`Looking for cover in ${song.path}`);
-          const buf = await Cover.readFromFile(song.path);
-          if (buf) {
-            log(buf);
-            return {
-              data: Buffer.from(buf.data, 'base64'),
-              mimeType: buf.type,
-            };
+  try {
+    const db = await getMusicDB();
+    if (db) {
+      const maybePath = db.pictures.get(albumId);
+      if (maybePath) {
+        return {
+          data: await fs.readFile(maybePath),
+          mimeType: imageMimeTypes.get(path.extname(maybePath)),
+        };
+      } /*
+      const album = db.albums.get(albumId);
+      if (album) {
+        // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files
+        for (const songKey of album.songs) {
+          const song = db.songs.get(songKey);
+          if (song) {
+            log(`Looking for cover in ${song.path}`);
+            const buf = await Cover.readFromFile(song.path);
+            if (buf) {
+              log(buf);
+              return {
+                data: Buffer.from(buf.data, 'base64'),
+                mimeType: buf.type,
+              };
+            }
           }
         }
       }
+      */
     }
+  } catch (error) {
+    log(`Error while trying to get picture for ${albumId}`);
+    log(error);
   }
+
   return await getDefaultPicBuffer();
 }
 

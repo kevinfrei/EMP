@@ -87,15 +87,17 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Bugs
 
-- Handle audio files that don't fit my schema
-  - Probably start with iTunes schema :/
+- Playing the same song on repeat doesn't work
+  - Autoplay only kicks in when the URL changes, so if you're restarting the
+    same song, it doesn't start playing
 - Make playlists filter for songs that actually exist in the DB
+- Make MusicDB updates due to location changes work properly
+  - There's effectively a race condition: The MusicDB gets re-sent before the
+    new MusicDB gets created
 
 ### Core Capabilities
 
-- **render** Support queueing artists and albums, not just songs
 - **both** Restore active tab between runs
-- **main** Get album covers from media tags as well as the folder...
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
 - **both** Add "Recently Added" capabilities
@@ -112,6 +114,8 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Logic improvements/changes
 
+- Handle audio files that don't fit my schema
+  - Probably start with iTunes schema :/
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
   - The lion's share of the work for this is already in my `@freik/media-utils`
     module.
@@ -126,6 +130,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 ### Other
 
+- Cache/save media-sourced album covers
 - Testing! Testing! Testing!
 
 ### "Other" communication

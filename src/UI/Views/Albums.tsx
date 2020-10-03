@@ -1,8 +1,12 @@
 import {
   DetailsList,
+  IconButton,
+  IDetailsGroupRenderProps,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
+  Stack,
+  Text,
 } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
 import { AlbumKey, Song } from '@freik/media-utils';
@@ -14,6 +18,7 @@ import {
   allAlbumsSel,
   allArtistsSel,
   allSongsSel,
+  dataForAlbumSel,
 } from '../../Recoil/ReadOnly';
 import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { SortSongs } from '../../Tools';
@@ -28,6 +33,13 @@ import './styles/Albums.css';
 
 const log = Logger.bind('Albums');
 // Logger.enable('Albums');
+
+export function AlbumHeaderDisplay(props: { albumKey: string }) {
+  const albumData = useRecoilValue(dataForAlbumSel(props.albumKey));
+  return (
+    <Text>{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
+  );
+}
 
 export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const albums = useRecoilValue(allAlbumsSel);
@@ -51,7 +63,43 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
       setSortedSongs(SortSongs(srt, sortedSongs, albums, artists, articles));
     }
   };
-
+  const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
+    props,
+  ): JSX.Element | null => {
+    if (!props || !props.group) return null;
+    const albumId = props.group.key;
+    return (
+      <Stack horizontal verticalAlign="center">
+        <IconButton
+          iconProps={{
+            iconName: props.group?.isCollapsed ? 'ChevronRight' : 'ChevronDown',
+          }}
+          onClick={() => props.onToggleCollapse!(props.group!)}
+        />
+        <Stack
+          horizontal
+          verticalAlign="center"
+          onDoubleClick={() =>
+            AddSongList(
+              albums.get(albumId)!.songs,
+              curIndexState,
+              songListState,
+            )
+          }
+        >
+          <AlbumHeaderDisplay albumKey={albumId} />
+        </Stack>
+      </Stack>
+    );
+    /* This takes Electron to it's knees:
+              <Image
+            src={`pic://album/${albumId}`}
+            height={25}
+            width={25}
+            imageFit={ImageFit.centerContain}
+          />
+*/
+  };
   const [columns, groups, groupProps] = GetSongGroupData(
     sortedSongs,
     curExpandedState,
@@ -74,6 +122,7 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
     () => curSort,
     performSort,
   );
+  groupProps.onRenderHeader = renderAlbumHeader;
   return (
     <div
       className="current-view songListForAlbum"

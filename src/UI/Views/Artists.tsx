@@ -1,8 +1,12 @@
 import {
   DetailsList,
+  IconButton,
+  IDetailsGroupRenderProps,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
+  Stack,
+  Text,
 } from '@fluentui/react';
 import { Logger } from '@freik/core-utils';
 import { ArtistKey, Song } from '@freik/media-utils';
@@ -28,7 +32,7 @@ import { ViewProps } from './Selector';
 import './styles/Artists.css';
 
 const log = Logger.bind('Artists');
-// Logger.enable('Artists');
+Logger.enable('Artists');
 
 export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
   const allSongsMap = useRecoilValue(allSongsSel);
@@ -50,6 +54,32 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
       setSortedSongs(SortSongs(srt, sortedSongs, albums, artists, articles));
     }
   };
+  const renderArtistHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
+    props,
+  ) => {
+    if (!props) return null;
+    return (
+      <Stack horizontal verticalAlign="center">
+        <IconButton
+          iconProps={{
+            iconName: props.group?.isCollapsed ? 'ChevronRight' : 'ChevronDown',
+          }}
+          onClick={() => props.onToggleCollapse!(props.group!)}
+        />
+        <Text
+          onDoubleClick={() =>
+            AddSongList(
+              artists.get(props.group!.key)!.songs,
+              curIndexState,
+              songListState,
+            )
+          }
+        >
+          {props.group?.name}
+        </Text>
+      </Stack>
+    );
+  };
   const [columns, artistGroups, groupProps] = GetSongGroupData(
     sortedSongs,
     curExpandedState,
@@ -66,7 +96,7 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
     () => curSort,
     performSort,
   );
-
+  groupProps.onRenderHeader = renderArtistHeader;
   return (
     <div
       className="current-view artistView"
@@ -79,12 +109,12 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
           selectionMode={SelectionMode.none}
           items={sortedSongs}
           groups={artistGroups}
+          groupProps={groupProps}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemInvoked={(item: Song) =>
             AddSongList([item.key], curIndexState, songListState)
           }
-          groupProps={groupProps}
         />
       </ScrollablePane>
     </div>
