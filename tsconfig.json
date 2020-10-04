@@ -6,6 +6,8 @@
     "sourceMap": true,
     "downlevelIteration": true,
     "strict": true,
+    "incremental": true /* Enable incremental compilation */,
+    "tsBuildInfoFile": ".tsweb.tsbuildinfo" /* Specify file to store incremental compilation information */,
     // "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
@@ -20,5 +22,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src/**/*.tsx", "src/custom.d.ts"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

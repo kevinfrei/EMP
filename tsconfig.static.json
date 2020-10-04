@@ -11,7 +11,7 @@
       "DOM.Iterable",
       "ESNext"
     ] /* Specify library files to be included in the compilation. */,
-    // "incremental": true,                   /* Enable incremental compilation */
+    "incremental": true /* Enable incremental compilation */,
     "allowJs": true /* Allow javascript files to be compiled. */,
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
@@ -20,7 +20,7 @@
     // "outFile": "./",                       /* Concatenate and emit output to single file. */
     // "rootDir": "./",                       /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
     // "composite": true,                     /* Enable project compilation */
-    // "tsBuildInfoFile": "./",               /* Specify file to store incremental compilation information */
+    "tsBuildInfoFile": ".tsmain.tsbuildinfo" /* Specify file to store incremental compilation information */,
     // "removeComments": true,                /* Do not emit comments to output. */
     // "noEmit": true,                        /* Do not emit outputs. */
     // "importHelpers": true,                 /* Import emit helpers from 'tslib'. */
@@ -66,6 +66,6 @@
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
   },
-  "include": ["static", "static/main.d.ts"],
+  "include": ["static/**/*.ts", "static/main.d.ts"],
   "exclude": ["static/renderer.*"]
 }

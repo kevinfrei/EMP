@@ -36,10 +36,11 @@
     "react-build": "react-scripts build",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "release": "yarn prepare && yarn react-build && electron-builder --publish=always",
-    "build": "yarn prepare && yarn react-build && yarn electron-build",
+    "release": "yarn clean && yarn prepare && yarn react-build && electron-builder --publish=always",
+    "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo",
+    "build": "yarn clean && yarn prepare && yarn react-build && yarn electron-build",
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "prepare": "rimraf public/main public/*.js public/*.js.map && tsc -p tsconfig.static.json && tsc -p tsconfig.render.json",
+    "prepare": "tsc -p tsconfig.static.json && tsc -p tsconfig.render.json",
     "tsc": "tsc",
     "compile": "tsc --noEmit && tsc --noEmit -p tsconfig.static.json && tsc --noEmit -p tsconfig.render.json",
     "test": "jest --config jest.jsdom.config.js && jest --config jest.node.config.js --passWithNoTests",
@@ -65,13 +66,33 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-      "project": "./tsconfig.json",
+      "project": "tsconfig.json",
       "sourceType": "module"
     },
     "plugins": [
       "@typescript-eslint",
       "react",
       "react-hooks"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "static/renderer.ts"
+        ],
+        "parserOptions": {
+          "project": "tsconfig.render.json"
+        }
+      },
+      {
+        "files": [
+          "static/main/**/*.ts",
+          "static/electron.ts",
+          "static/main.d.ts"
+        ],
+        "parserOptions": {
+          "project": "tsconfig.static.json"
+        }
+      }
     ],
     "rules": {
       "@typescript-eslint/adjacent-overload-signatures": "error",
@@ -278,27 +299,7 @@
       ],
       "use-isnan": "error",
       "valid-typeof": "off"
-    },
-    "overrides": [
-      {
-        "files": [
-          "static/renderer.ts"
-        ],
-        "parserOptions": {
-          "project": "tsconfig.render.json"
-        }
-      },
-      {
-        "files": [
-          "static/main/*.ts",
-          "static/electron.ts",
-          "static/main.d.ts"
-        ],
-        "parserOptions": {
-          "project": "tsconfig.static.json"
-        }
-      }
-    ]
+    }
   },
   "browserslist": {
     "production": [
