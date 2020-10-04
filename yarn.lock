@@ -1257,26 +1257,26 @@
     "@uifabric/utilities" "^7.32.3"
     tslib "^1.10.0"
 
-"@freik/core-utils@^0.5.0", "@freik/core-utils@^0.5.1":
-  version "0.5.1"
-  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.5.1.tgz#8d36c713b41aecf6065343b7881bd4cdf983b674"
-  integrity sha512-AEnX9HE5Vu4ZVZaM9NA7JtKIzLh3t6EeXOC6GWzK8yhwQjTAhsLe+s3msFnhzRQoFlCPgKx6yr/k+on8lLcqjA==
+"@freik/core-utils@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.6.0.tgz#7ef9bf8217435de3d0c3cdb3c521e316b0862b39"
+  integrity sha512-Cr8jLScxYlhAkX0JBZY043uyKrxs0N3B0/dAvsoEPEE8jile63ObxceoQHNp8bXWuoG+aZVljGajh1fT/02GiA==
 
-"@freik/media-utils@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.4.0.tgz#1c0fae503958a215e0c69aca3d35cdfa634bd0f0"
-  integrity sha512-H8XUUt+FoR2NqPPIqy+8xL3Mta2+r3a1UbyN1NuExS6jAGgPewgUtYzdhpFQqMFM1JiNUCiKMNEF+xeDUfjCOw==
+"@freik/media-utils@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.4.1.tgz#000f776c228eb29e7884a0a9c3f0fc551a6c824c"
+  integrity sha512-bAoDRagrB5O0By9udMT0PXbFSCGkDl0w9yrSEBrtHdYrUFJy97kjVw3apzcLSqpWxLkErcd28V/Qyp5z9BiULg==
   dependencies:
-    "@freik/core-utils" "^0.5.0"
-    "@freik/node-utils" "^0.2.6"
+    "@freik/core-utils" "^0.6.0"
+    "@freik/node-utils" "^0.2.8"
     mediainfo.js "^0.1.4"
 
-"@freik/node-utils@^0.2.6":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.2.7.tgz#8f89b18d8e20baa60ea40172de67366674bbf0cb"
-  integrity sha512-t37kKNLo8HK7uSJmJqC+LGTn7FCjY1mp7mVuAz6KTZxaPYEj3fgSuPqlvLsBa1mHzbnTPGitpHkBhqQVnfP5jw==
+"@freik/node-utils@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.2.8.tgz#001a1a260b840eeffc2759ac773c20b933b871b0"
+  integrity sha512-uWoy2+fxXx7A2VNSF70eY6+RAxPMiK3kpAgyQ9/KYTRcPSBSl3yEOtQIo49RUJPskrmjzCM88fGBJk7JpH869A==
   dependencies:
-    "@freik/core-utils" "^0.5.1"
+    "@freik/core-utils" "^0.6.0"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -1734,11 +1734,6 @@
   integrity sha512-Pzh9O3sTK8V6I1olsXpCfj2k/ygO2q1X0vhhnDrEQyYLHZesWz+zMZMVcwXLCYf0U36EtmyYaFGPfXlTtDHe3A==
   dependencies:
     "@babel/types" "^7.3.0"
-
-"@types/color-name@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
-  integrity sha512-rr+OQyAjxze7GgWrSaJwydHStIhHq2lvY3BOC2Mj7KnzI7XK0Uw1TOOdI9lDoajEbSWLiYgoo4f1R51erQfhPQ==
 
 "@types/debug@^4.1.5":
   version "4.1.5"
@@ -2401,11 +2396,10 @@ ansi-styles@^3.2.0, ansi-styles@^3.2.1:
     color-convert "^1.9.0"
 
 ansi-styles@^4.0.0, ansi-styles@^4.1.0:
-  version "4.2.1"
-  resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-4.2.1.tgz#90ae75c424d008d2624c5bf29ead3177ebfcf359"
-  integrity sha512-9VGjrMsG1vePxcSweQsN20KY/c4zN0h9fLjqAbwbPfahM3t+NL+M9HC8xeXG2I8pX5NoamTGNuomEUFI7fcUjA==
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-4.3.0.tgz#edd803628ae71c04c85ae7a0906edad34b648937"
+  integrity sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==
   dependencies:
-    "@types/color-name" "^1.1.1"
     color-convert "^2.0.1"
 
 anymatch@^2.0.0:
@@ -3349,9 +3343,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001035, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001135:
-  version "1.0.30001142"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001142.tgz#a8518fdb5fee03ad95ac9f32a9a1e5999469c250"
-  integrity sha512-pDPpn9ankEpBFZXyCv2I4lh1v/ju+bqb78QfKf+w9XgDAFWBwSYPswXqprRdrgQWK0wQnpIbfwRjNHO1HWqvoQ==
+  version "1.0.30001143"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001143.tgz#560f2cfb9f313d1d7e52eb8dac0e4e36c8821c0d"
+  integrity sha512-p/PO5YbwmCpBJPxjOiKBvAlUPgF8dExhfEpnsH+ys4N/791WHrYrGg0cyHiAURl5hSbx5vIcjKmQAP6sHDYH3w==
 
 capture-exit@^2.0.0:
   version "2.0.0"

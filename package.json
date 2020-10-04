@@ -12,8 +12,8 @@
   "homepage": "./",
   "dependencies": {
     "@fluentui/react": "^7.144.2",
-    "@freik/core-utils": "^0.5.1",
-    "@freik/media-utils": "^0.4.0",
+    "@freik/core-utils": "^0.6.0",
+    "@freik/media-utils": "^0.4.1",
     "@uifabric/icons": "^7.5.8",
     "@uifabric/react-hooks": "^7.13.5",
     "electron-is-dev": "^1.2.0",
