@@ -23,6 +23,12 @@ export async function CreateMusicDB(): Promise<void> {
     'DB',
     FTON.stringify((musicDB as unknown) as FTONData),
   );
+  /* TODO: persist the index
+   (more TODO: load the index)
+  await persist.setItemAsync(
+    'index',
+    ...);
+    */
 }
 
 function UpdateDB() {

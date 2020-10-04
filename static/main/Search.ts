@@ -1,12 +1,17 @@
-// Take in a function that returns the string we're indexing from the object
-// Return a trie of search terms
+import { FTONData, Type } from '@freik/core-utils';
+
 export type TrieNode<T> = {
   character: string;
   children: TrieMap<T>;
   values: Set<T>;
 };
 export type TrieMap<T> = Map<string, TrieNode<T>>;
-export type Searchable<T> = (str: string, substrs?: boolean) => Iterable<T>;
+type SearchFunc<T> = (str: string, substrs?: boolean) => Iterable<T>;
+type Flattener<T> = (flattener: (obj: T) => FTONData) => FTONData;
+export interface Searchable<T> {
+  (str: string, substrs?: boolean): Iterable<T>;
+  flatten(flattener: (obj: T) => FTONData): FTONData;
+}
 
 const splitter = /[- .;:]/;
 
@@ -98,6 +103,42 @@ function SearchTrie<T>(str: string, trie: TrieMap<T>): Set<T> {
   return new Set<T>();
 }
 
+function buildSearchable<T>(whole: TrieMap<T>, sub: TrieMap<T>): Searchable<T> {
+  const searchFn = (str: string, substrs?: boolean): Iterable<T> => {
+    // First, look in the whole-string index
+    const wholeRes = SearchTrie(str, whole);
+    if (!substrs) return wholeRes.values();
+    const subRes = SearchTrie(str, sub);
+    if (subRes.size < wholeRes.size) {
+      subRes.forEach((val: T) => wholeRes.add(val));
+      return wholeRes.values();
+    } else {
+      wholeRes.forEach((val: T) => subRes.add(val));
+      return subRes.values();
+    }
+  };
+  const flattenIndex = (
+    idx: TrieMap<T>,
+    flattener: (obj: T) => FTONData,
+  ): FTONData => {
+    return new Map(
+      [...idx.entries()].map(([str, node]) => [
+        str,
+        {
+          c: node.character,
+          v: [...node.values].map(flattener),
+          m: flattenIndex(node.children, flattener),
+        },
+      ]),
+    );
+  };
+  const flattenFn = (flattener: (obj: T) => FTONData): FTONData => {
+    return [flattenIndex(whole, flattener), flattenIndex(sub, flattener)];
+  };
+  searchFn.flatten = flattenFn;
+  return searchFn;
+}
+
 /**
  * This makes a searchable index of the collection of objects passed in,
  * given the string(s) returned by the getter
@@ -111,17 +152,22 @@ export function MakeSearchable<T>(
   getter: (arg: T) => string,
 ): Searchable<T> {
   const [whole, sub] = MakeIndex(objects, getter);
-  return (str: string, substrs?: boolean): Iterable<T> => {
-    // First, look in the whole-string index
-    const wholeRes = SearchTrie(str, whole);
-    if (!substrs) return wholeRes.values();
-    const subRes = SearchTrie(str, sub);
-    if (subRes.size < wholeRes.size) {
-      subRes.forEach((val: T) => wholeRes.add(val));
-      return wholeRes.values();
-    } else {
-      wholeRes.forEach((val: T) => subRes.add(val));
-      return subRes.values();
-    }
+  return buildSearchable(whole, sub);
+}
+
+export function UnflattenSearchable<T>(
+  flattened: FTONData,
+  exploder: (data: FTONData) => T,
+): Searchable<T> | string {
+  const explodeIndex = (data: FTONData): TrieMap<T> | string => {
+    if (!Type.isMap(data)) return "TrieMap<T> isn't actually a map";
+    const newMap = data.entries();
   };
+  if (!Type.isArray(flattened)) return 'Invalid top index element';
+  if (flattened.length !== 2) return 'Invalide top length';
+  const whole = explodeIndex(flattened[0]);
+  const sub = explodeIndex(flattened[1]);
+  if (Type.isString(whole)) return whole;
+  if (Type.isString(sub)) return sub;
+  return buildSearchable(whole, sub);
 }
