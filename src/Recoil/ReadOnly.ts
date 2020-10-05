@@ -8,7 +8,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import { RecoilValue, selector, selectorFamily } from 'recoil';
+import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 import { songListAtom } from './Local';
 import { locationsAtom } from './ReadWrite';
@@ -27,7 +27,7 @@ export type SongData = {
 } & AlbumData;
 
 const log = Logger.bind('RORemote');
-// Logger.enable('RORemote');
+Logger.enable('RORemote');
 
 export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
   key: 'mediaInfoSelector',
@@ -238,5 +238,21 @@ export const dataForAlbumSel = selectorFamily<AlbumData, AlbumKey>({
     }
     res.artist = maybeArtistName;
     return res;
+  },
+});
+
+export const searchTermAtom = atom<string>({ key: 'searchTerm', default: '' });
+
+export const searchSel = selectorFamily<ipc.SearchResults, string>({
+  key: 'search',
+  get: (searchTerm: string) => async ({ get }): Promise<ipc.SearchResults> => {
+    const res = await ipc.SearchWhole(searchTerm);
+    if (res) {
+      log('results:');
+      log(res);
+    } else {
+      log('no results');
+    }
+    return res || { songs: [], albums: [], artists: [] };
   },
 });

@@ -1,4 +1,4 @@
-import { FTON } from '@freik/core-utils';
+import { FTON, Logger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -9,6 +9,15 @@ import {
   SongKey,
 } from '@freik/media-utils';
 import { InvokeMain } from './Tools';
+
+const log = Logger.bind('ipc');
+Logger.enable('ipc');
+
+export type SearchResults = {
+  songs: SongKey[];
+  albums: AlbumKey[];
+  artists: ArtistKey[];
+};
 
 export async function GetAllSongs(): Promise<Map<SongKey, Song> | void> {
   const blob = await InvokeMain('get-all-songs');
@@ -54,4 +63,17 @@ export async function GetGeneral(key: string): Promise<string | void> {
 
 export async function SetGeneral(key: string, data: string): Promise<void> {
   await InvokeMain('set-general', key + ':' + data);
+}
+
+export async function SearchWhole(
+  searchTerm: string,
+): Promise<SearchResults | void> {
+  log('Searching for:' + searchTerm);
+  const blob = await InvokeMain('search', searchTerm);
+  if (blob) {
+    log('Got a blob of size: ' + blob.length.toString());
+    return FTON.parse(blob) as SearchResults;
+  } else {
+    log('Got no blob back');
+  }
 }

@@ -6,6 +6,8 @@ import {
   getAllArtists,
   getAllSongs,
   getMediaInfoForSong,
+  searchSubstring,
+  searchWholeWord,
 } from './MusicAccess';
 import * as persist from './persist';
 
@@ -134,6 +136,8 @@ export function Init(): void {
   registerFlattened('get-all-albums', getAllAlbums);
   registerFlattened('get-all-artists', getAllArtists);
   registerFlattened('get-media-info', getMediaInfoForSong);
+  registerFlattened('search', searchWholeWord);
+  registerFlattened('subsearch', searchSubstring);
   register('get-general', getGeneral);
   register('set-general', setGeneral);
 }

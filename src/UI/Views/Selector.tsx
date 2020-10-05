@@ -7,6 +7,7 @@ import MixedSongView from './MixedSongs';
 import NowPlayingView from './NowPlaying';
 import PlaylistsView from './Playlists';
 import RecentlyAddedView from './RecentlyAdded';
+import SearchResultsView from './SearchResults';
 import SettingsView from './Settings';
 
 export type ViewProps = { hidden: boolean };
@@ -22,6 +23,7 @@ export default function ViewSelector(): JSX.Element {
       <NowPlayingView hidden={which !== CurrentView.current} />
       <SettingsView hidden={which !== CurrentView.settings} />
       <RecentlyAddedView hidden={which !== CurrentView.recent} />
+      <SearchResultsView hidden={which !== CurrentView.search} />
     </>
   );
 }

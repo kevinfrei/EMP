@@ -8,11 +8,13 @@ import {
   SongKey,
 } from '@freik/media-utils';
 import { getMediaInfo } from './metadata';
-import { MusicDB, ServerSong } from './MusicScanner';
+import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';
 
 const log = Logger.bind('MusicAccess');
-// Logger.enable('MusicAccess');
+Logger.enable('MusicAccess');
+
+let theMusicIndex: MusicIndex | null = null;
 
 /**
  * Read the Music Database *from persistence*. This does *not* re-scan locations
@@ -83,4 +85,44 @@ export async function getMediaInfoForSong(
       return data;
     }
   }
+}
+
+export function setMusicIndex(index: MusicIndex): void {
+  theMusicIndex = index;
+}
+
+export function searchWholeWord(term?: string): Promise<SearchResults | void> {
+  return new Promise((resolve) => {
+    if (!theMusicIndex || !term) {
+      log('theMusicIndex:' + (!theMusicIndex ? 'something' : 'empty'));
+      log('term:' + (!term ? 'something' : 'empty'));
+      resolve();
+    } else {
+      const songs = [...theMusicIndex.songs(term)];
+      const albums = [...theMusicIndex.albums(term)];
+      const artists = [...theMusicIndex.artists(term)];
+      log('songs:');
+      log(songs);
+      log('albums:');
+      log(albums);
+      log('artists:');
+      log(artists);
+      resolve({ songs, albums, artists });
+    }
+  });
+}
+
+export function searchSubstring(term?: string): Promise<SearchResults | void> {
+  return new Promise((resolve) => {
+    if (!theMusicIndex || !term) {
+      log('theMusicIndex:' + (!theMusicIndex ? 'something' : 'empty'));
+      log('term:' + (!term ? 'something' : 'empty'));
+      resolve();
+    } else {
+      const songs = [...theMusicIndex.songs(term, true)];
+      const albums = [...theMusicIndex.albums(term, true)];
+      const artists = [...theMusicIndex.artists(term, true)];
+      resolve({ songs, albums, artists });
+    }
+  });
 }

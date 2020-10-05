@@ -11,6 +11,7 @@ export enum CurrentView {
   playlist = 5,
   current = 6,
   settings = 7,
+  search = 8,
 }
 
 // This is the 'locations' for searching

@@ -13,7 +13,7 @@ import { OpenDialogSyncOptions } from 'electron/main';
 import { GetDataForSong, SongData } from './DataSchema';
 
 const log = Logger.bind('Tools');
-// Logger.enable('Tools');
+Logger.enable('Tools');
 
 /*
  * "Window" stuff goes here
@@ -169,15 +169,17 @@ export function isPlaylist(playlist: string): boolean {
   return playlist.length > 0;
 }
 
-function Rand(max: number): number {
-  return Math.floor(Math.random() * max);
+function Rand(values: Uint32Array, max: number): number {
+  return values[max - 1] % max;
 }
 
 export function ShuffleArray<T>(array: T[]): T[] {
+  const values = new Uint32Array(array.length);
+  window.crypto.getRandomValues(values);
   const res: T[] = [];
   const remove: T[] = [...array];
   while (remove.length > 0) {
-    const i = Rand(remove.length);
+    const i = Rand(values, remove.length);
     res.push(remove[i]);
     remove.splice(i, 1);
   }

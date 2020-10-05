@@ -1,9 +1,14 @@
 import { SearchBox, Text } from '@fluentui/react';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { SetterOrUpdater } from 'recoil';
+import { Logger } from '@freik/core-utils';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { SetterOrUpdater, useRecoilState } from 'recoil';
 import { useBackedState } from '../Recoil/helpers';
+import { searchTermAtom } from '../Recoil/ReadOnly';
 import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
 import './styles/Sidebar.css';
+
+const log = Logger.bind('Sidebar');
+Logger.enable('Sidebar');
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import recentPic from './img/recent.svg';
@@ -60,16 +65,22 @@ function getEntry(
 
 export default function Sidebar(): JSX.Element {
   const [curView, setCurView] = useBackedState(curViewAtom);
-  const [, setSearch] = useState('');
+  const [, setSearch] = useRecoilState(searchTermAtom);
   return (
     <div id="sidebar">
       <SearchBox
         placeholder="Search NYI"
-        onSearch={(newValue) => setSearch(newValue)}
+        onSearch={(newValue) => {
+          log('onSearch');
+          setCurView(CurrentView.search);
+          setSearch(newValue);
+        }}
+        onChange={() => log('onChange')}
+        onEscape={() => log('onEscape')}
+        onClear={() => log('onClear')}
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}
-      <div id="data" />
     </div>
   );
 }

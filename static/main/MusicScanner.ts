@@ -13,6 +13,7 @@ import {
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
 import * as persist from './persist';
+import { MakeSearchable, Searchable } from './Search';
 
 export interface ServerSong extends Song {
   path: string;
@@ -31,6 +32,18 @@ export type MusicDB = {
   pictures: Map<AlbumKey, string>;
   albumTitleIndex: Map<string, AlbumKey[]>;
   artistNameIndex: Map<string, ArtistKey>;
+};
+
+export type MusicIndex = {
+  songs: Searchable<SongKey>;
+  albums: Searchable<AlbumKey>;
+  artists: Searchable<ArtistKey>;
+};
+
+export type SearchResults = {
+  songs: SongKey[];
+  albums: AlbumKey[];
+  artists: ArtistKey[];
 };
 
 let existingKeys: Map<string, SongKey> | null = null;
@@ -354,4 +367,21 @@ export async function find(locations: string[]): Promise<MusicDB> {
     }
   }
   return await fileNamesToDatabase(songsList, picList);
+}
+
+export function makeIndex(musicDB: MusicDB): MusicIndex {
+  const songs = MakeSearchable<SongKey>(
+    musicDB.songs.keys(),
+    (key: SongKey) => musicDB.songs.get(key)?.title || '',
+  );
+  const albums = MakeSearchable<AlbumKey>(
+    musicDB.albums.keys(),
+    (key: AlbumKey) => musicDB.albums.get(key)?.title || '',
+  );
+  const artists = MakeSearchable<ArtistKey>(
+    musicDB.artists.keys(),
+    (key: ArtistKey) => musicDB.artists.get(key)?.name || '',
+  );
+
+  return { songs, artists, albums };
 }
