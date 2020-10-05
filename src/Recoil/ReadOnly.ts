@@ -232,9 +232,7 @@ export const dataForAlbumSel = selectorFamily<AlbumData, AlbumKey>({
       res.album = album.title;
       res.year = album.year;
     }
-    const maybeArtistName = get(
-      artistStringSel([...album.primaryArtists.values()]),
-    );
+    const maybeArtistName = get(artistStringSel(album.primaryArtists));
     if (!maybeArtistName) {
       return res;
     }

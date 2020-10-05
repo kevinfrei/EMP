@@ -149,7 +149,7 @@ export function AlbumFromSong(song: Song): JSX.Element {
 }
 
 export function ArtistsFromAlbum(album: Album): JSX.Element {
-  return <ArtistName artistIds={[...album.primaryArtists]} />;
+  return <ArtistName artistIds={album.primaryArtists} />;
 }
 
 /**

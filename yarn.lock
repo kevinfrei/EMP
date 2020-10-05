@@ -1262,10 +1262,15 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.6.0.tgz#7ef9bf8217435de3d0c3cdb3c521e316b0862b39"
   integrity sha512-Cr8jLScxYlhAkX0JBZY043uyKrxs0N3B0/dAvsoEPEE8jile63ObxceoQHNp8bXWuoG+aZVljGajh1fT/02GiA==
 
-"@freik/media-utils@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.4.1.tgz#000f776c228eb29e7884a0a9c3f0fc551a6c824c"
-  integrity sha512-bAoDRagrB5O0By9udMT0PXbFSCGkDl0w9yrSEBrtHdYrUFJy97kjVw3apzcLSqpWxLkErcd28V/Qyp5z9BiULg==
+"@freik/core-utils@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.6.1.tgz#b14a29309f2263da69a667de1bd90242d70cec11"
+  integrity sha512-8BbUZvc2Ojpp8V5jwoymCk5l0v1ERCchAdEOrARDSwSBGXRJ/syQ7AI7xURBv9+kKlWRKDGJLl6pYxly3W8y8Q==
+
+"@freik/media-utils@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.4.2.tgz#ec73f9cd7eec125d52bd99603cffded4f52ae025"
+  integrity sha512-r8CubevvpaY92m2KPuFChUm00aCWMJo7bDX9acWPdpWqZz6IF4QTBdcVZLmyat+xv3+4OMPdq9ZOVfUxgMaVVA==
   dependencies:
     "@freik/core-utils" "^0.6.0"
     "@freik/node-utils" "^0.2.8"

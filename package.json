@@ -12,8 +12,8 @@
   "homepage": "./",
   "dependencies": {
     "@fluentui/react": "^7.144.2",
-    "@freik/core-utils": "^0.6.0",
-    "@freik/media-utils": "^0.4.1",
+    "@freik/core-utils": "^0.6.1",
+    "@freik/media-utils": "^0.4.2",
     "@uifabric/icons": "^7.5.8",
     "@uifabric/react-hooks": "^7.13.5",
     "electron-is-dev": "^1.2.0",
@@ -48,7 +48,7 @@
     "testnode": "jest --config jest.node.config.js --watch",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"*.js\" \"*.json\" \"*.md\"",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
-    "chk": "yarn format && yarn lint && yarn compile && yarn test",
+    "chk": "yarn format && yarn compile && yarn lint && yarn test",
     "linecount": "git ls-files|grep -v \"yarn.lock\"|grep -v \".svg$\"|grep -v \".png$\"|grep -v \".jpg$\"|grep -v \".icns$\"|xargs wc -l"
   },
   "eslintConfig": {

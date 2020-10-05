@@ -53,7 +53,9 @@ async function picBufProcessor(
           data: await fs.readFile(maybePath),
           mimeType: imageMimeTypes.get(path.extname(maybePath)),
         };
-      } /*
+      }
+      /*
+      // This pulls the image from the file metadata
       const album = db.albums.get(albumId);
       if (album) {
         // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files

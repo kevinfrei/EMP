@@ -20,7 +20,7 @@ export interface ServerSong extends Song {
 const log = Logger.bind('music');
 // Logger.enable('music');
 
-const setEqual = Comparisons.SetEqual;
+const setEqual = Comparisons.ArraySetEqual;
 
 export type VAType = '' | 'ost' | 'va';
 
@@ -78,7 +78,7 @@ function getOrNewAlbum(
   db: MusicDB,
   title: string,
   year: number,
-  artists: Set<ArtistKey>,
+  artists: ArtistKey[],
   vatype: VAType,
 ): Album {
   // TODO: This doesn't currently handle vatypes properly :/
@@ -160,12 +160,11 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
   const allArtists = artists.map((a) => getOrNewArtist(db, a));
   const artistIds: ArtistKey[] = allArtists.map((a) => a.key);
-  const artistSet: Set<ArtistKey> = new Set(artistIds);
   const album = getOrNewAlbum(
     db,
     md.album,
     md.year || 0,
-    artistSet,
+    artistIds,
     md.vaType || '',
   );
   const secondaryIds: ArtistKey[] = [];

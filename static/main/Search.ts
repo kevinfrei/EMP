@@ -1,17 +1,17 @@
-import { FTONData, Type } from '@freik/core-utils';
-
 export type TrieNode<T> = {
   character: string;
   children: TrieMap<T>;
   values: Set<T>;
 };
 export type TrieMap<T> = Map<string, TrieNode<T>>;
-type SearchFunc<T> = (str: string, substrs?: boolean) => Iterable<T>;
+export type Searchable<T> = (str: string, substrs?: boolean) => Iterable<T>;
+/*
 type Flattener<T> = (flattener: (obj: T) => FTONData) => FTONData;
 export interface Searchable<T> {
   (str: string, substrs?: boolean): Iterable<T>;
   flatten(flattener: (obj: T) => FTONData): FTONData;
 }
+*/
 
 const splitter = /[- .;:]/;
 
@@ -116,7 +116,7 @@ function buildSearchable<T>(whole: TrieMap<T>, sub: TrieMap<T>): Searchable<T> {
       wholeRes.forEach((val: T) => subRes.add(val));
       return subRes.values();
     }
-  };
+  }; /*
   const flattenIndex = (
     idx: TrieMap<T>,
     flattener: (obj: T) => FTONData,
@@ -136,6 +136,7 @@ function buildSearchable<T>(whole: TrieMap<T>, sub: TrieMap<T>): Searchable<T> {
     return [flattenIndex(whole, flattener), flattenIndex(sub, flattener)];
   };
   searchFn.flatten = flattenFn;
+  */
   return searchFn;
 }
 
@@ -154,14 +155,32 @@ export function MakeSearchable<T>(
   const [whole, sub] = MakeIndex(objects, getter);
   return buildSearchable(whole, sub);
 }
-
+/*
 export function UnflattenSearchable<T>(
   flattened: FTONData,
   exploder: (data: FTONData) => T,
 ): Searchable<T> | string {
   const explodeIndex = (data: FTONData): TrieMap<T> | string => {
     if (!Type.isMap(data)) return "TrieMap<T> isn't actually a map";
-    const newMap = data.entries();
+    let error = '';
+    const newMap = [...data.entries()].map(([key, value]) => {
+      let newKey = key;
+      if (!Type.isString(key)) {
+        newKey = key.toString();
+      }
+      let character = '';
+      if (!ObjUtil.hasStr('c', value)) {
+        error += '\nMissing character';
+      } else {
+        character = value.c;
+      }
+      const children = new Map<string, TrieNode<T>>();
+      const values = new Set<T>();
+      const newValue: TrieNode<T> = { character, children, values };
+      return [newKey, newValue];
+    });
+    if (error.length > 0) return error;
+    return new Map<string, TrieNode<T>>(newMap);
   };
   if (!Type.isArray(flattened)) return 'Invalid top index element';
   if (flattened.length !== 2) return 'Invalide top length';
@@ -171,3 +190,4 @@ export function UnflattenSearchable<T>(
   if (Type.isString(sub)) return sub;
   return buildSearchable(whole, sub);
 }
+*/

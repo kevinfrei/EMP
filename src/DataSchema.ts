@@ -79,7 +79,7 @@ export function GetArtistForAlbum(
     return 'Soundtrack';
   }
   if (album.vatype !== 'va') {
-    const maybeArtistName = GetArtistString([...album.primaryArtists], artists);
+    const maybeArtistName = GetArtistString(album.primaryArtists, artists);
     if (maybeArtistName) {
       return maybeArtistName;
     }
