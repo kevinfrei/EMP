@@ -64,7 +64,7 @@ export const allSongsSel = selector<Map<SongKey, Song>>({
 
 export const songByKeySel = selectorFamily<Song, SongKey>({
   key: 'SongByKey',
-  get: (sk: SongKey) => ({ get }) => {
+  get: (sk: SongKey) => ({ get }): Song => {
     const songs = get(allSongsSel);
     const song = songs.get(sk);
     if (!song) throw new Error(sk);
@@ -96,7 +96,7 @@ export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
 
 export const albumByKeySel = selectorFamily<Album, AlbumKey>({
   key: 'AlbumByKey',
-  get: (ak: AlbumKey) => ({ get }) => {
+  get: (ak: AlbumKey) => ({ get }): Album => {
     const albums = get(allAlbumsSel);
     const album = albums.get(ak);
     if (!album) throw new Error(ak);
@@ -106,7 +106,7 @@ export const albumByKeySel = selectorFamily<Album, AlbumKey>({
 
 export const maybeAlbumByKeySel = selectorFamily<Album | null, AlbumKey>({
   key: 'MaybeAlbumByKey',
-  get: (ak: AlbumKey) => ({ get }) => {
+  get: (ak: AlbumKey) => ({ get }): Album | null => {
     if (ak.length === 0) return null;
     return get(albumByKeySel(ak));
   },
@@ -136,7 +136,7 @@ export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
 
 export const artistByKeySel = selectorFamily<Artist, ArtistKey>({
   key: 'ArtistByKey',
-  get: (ak: ArtistKey) => ({ get }) => {
+  get: (ak: ArtistKey) => ({ get }): Artist => {
     const artists = get(allArtistsSel);
     const artist = artists.get(ak);
     if (!artist) throw new Error(ak);
@@ -146,7 +146,7 @@ export const artistByKeySel = selectorFamily<Artist, ArtistKey>({
 
 export const maybeArtistByKeySel = selectorFamily<Artist | null, ArtistKey>({
   key: 'MaybeArtistByKey',
-  get: (ak: ArtistKey) => ({ get }) => {
+  get: (ak: ArtistKey) => ({ get }): Artist | null => {
     if (ak.length === 0) return null;
     return get(artistByKeySel(ak));
   },
@@ -164,7 +164,7 @@ export const allArtistKeysSel = selector<ArtistKey[]>({
 
 export const albumKeyForSongKeySel = selectorFamily<AlbumKey, SongKey>({
   key: 'AlbumKeyForSongKey',
-  get: (sk: SongKey) => ({ get }) => {
+  get: (sk: SongKey) => ({ get }): AlbumKey => {
     if (sk.length > 0) {
       const song: Song = get(songByKeySel(sk));
       return song.albumId;
@@ -177,7 +177,7 @@ export const albumKeyForSongKeySel = selectorFamily<AlbumKey, SongKey>({
 export const artistStringSel = selectorFamily<string, ArtistKey[]>({
   key: 'ArtistString',
 
-  get: (artistList: ArtistKey[]) => ({ get }) => {
+  get: (artistList: ArtistKey[]) => ({ get }): string => {
     const artists: string[] = artistList
       .map((ak) => {
         const art: Artist = get(artistByKeySel(ak));
@@ -203,7 +203,7 @@ export const curSongsSel = selector<Song[]>({
 
 export const dataForSongSel = selectorFamily<SongData, SongKey>({
   key: 'DataForSong',
-  get: (sk: SongKey) => ({ get }) => {
+  get: (sk: SongKey) => ({ get }): SongData => {
     const res = { title: '', track: 0, artist: '', album: '', year: 0 };
 
     if (sk.length === 0) {
@@ -222,7 +222,7 @@ export const dataForSongSel = selectorFamily<SongData, SongKey>({
 
 export const dataForAlbumSel = selectorFamily<AlbumData, AlbumKey>({
   key: 'DataForAlbum',
-  get: (ak: AlbumKey) => ({ get }) => {
+  get: (ak: AlbumKey) => ({ get }): AlbumData => {
     const res = { artist: '', album: '', year: 0 };
     if (!ak) {
       return res;

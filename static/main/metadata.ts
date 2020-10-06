@@ -7,7 +7,7 @@ function addCommas(val: string): string {
     res = ',' + val.substr(i, 3) + res;
   }
   res = val.substr(0, i + 3) + res;
-  if (res[0] === ',') {
+  if (res.startsWith(',')) {
     res = res.substr(1);
   }
   return res;
@@ -34,7 +34,7 @@ function secondsToHMS(vals: string): string {
 function divGrand(val: string): string {
   let flt = (parseFloat(val) / 1000.0).toFixed(3);
   flt = flt.replace(/0+$/g, '');
-  flt = flt[flt.length - 1] === '.' ? flt.substr(0, flt.length - 1) : flt;
+  flt = flt.endsWith('.') ? flt.substr(0, flt.length - 1) : flt;
   return flt;
 }
 
@@ -60,7 +60,7 @@ const mediaInfoTranslation = new Map([
 function objToMap(o: { [key: string]: string | number }): Map<string, string> {
   const res = new Map<string, string>();
   for (const i in o) {
-    if (typeof i === 'string' && i.length > 0 && i[0] !== '@' && i in o) {
+    if (typeof i === 'string' && i.length > 0 && !i.startsWith('@') && i in o) {
       const type = typeof o[i];
       if (type === 'string' || type === 'number') {
         const translator = mediaInfoTranslation.get(i) || ((j) => j);
