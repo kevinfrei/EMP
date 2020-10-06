@@ -89,7 +89,10 @@ function registerFlattened<T>(key: string, handleIt: Handler<T>) {
     key,
     async (event: IpcMainInvokeEvent, arg?: any): Promise<string | void> => {
       if (typeof arg === 'string' || !arg) {
+        log('arg: ');
+        log(arg);
         const res = await handleIt(arg);
+        log(res);
         if (res) {
           return FTON.stringify((res as unknown) as FTONData);
         }
