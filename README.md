@@ -23,7 +23,7 @@ here you go:
 
 ![Playlist view](doc/playlist.jpg)
 
-It's not yet 'packaged' for general consumption, but if you're a nerd like me,
+It's not yet packaged for general consumption, but if you're a nerd like me,
 you can probably get it to work from the repository easily enough. (Those screen
 shots from the 'bootstrap' version. I've moved on to FluenUI since then...)
 

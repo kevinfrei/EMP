@@ -12,7 +12,7 @@
   "homepage": "./",
   "dependencies": {
     "@fluentui/react": "^7.145.0",
-    "@freik/core-utils": "^0.6.2",
+    "@freik/core-utils": "^0.6.3",
     "@freik/media-utils": "^0.5.1",
     "@uifabric/icons": "^7.5.9",
     "@uifabric/react-hooks": "^7.13.6",
@@ -315,7 +315,7 @@
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.0.4",
     "@types/jest": "^26.0.14",
-    "@types/node": "^14.11.7",
+    "@types/node": "^14.11.8",
     "@types/react": "^16.9.51",
     "@types/react-dom": "^16.9.8",
     "@types/react-virtualized-auto-sizer": "^1.0.0",

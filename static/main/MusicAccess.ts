@@ -103,9 +103,9 @@ export function searchWholeWord(term?: string): Promise<SearchResults | void> {
       log('term:' + (!term ? 'something' : 'empty'));
       resolve();
     } else {
-      const songs = [...theMusicIndex.songs(term)];
-      const albums = [...theMusicIndex.albums(term)];
-      const artists = [...theMusicIndex.artists(term)];
+      const songs: SongKey[] = [...theMusicIndex.songs(term)];
+      const albums: AlbumKey[] = [...theMusicIndex.albums(term)];
+      const artists: ArtistKey[] = [...theMusicIndex.artists(term)];
       log('songs:');
       log(songs);
       log('albums:');
