@@ -1,5 +1,5 @@
 import { Logger } from '@freik/core-utils';
-import { SongKey } from '@freik/media-utils';
+import { Cover, SongKey } from '@freik/media-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -54,7 +54,6 @@ async function picBufProcessor(
           mimeType: imageMimeTypes.get(path.extname(maybePath)),
         };
       }
-      /*
       // This pulls the image from the file metadata
       const album = db.albums.get(albumId);
       if (album) {
@@ -74,7 +73,6 @@ async function picBufProcessor(
           }
         }
       }
-      */
     }
   } catch (error) {
     log(`Error while trying to get picture for ${albumId}`);

@@ -1262,12 +1262,12 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.6.2.tgz#cb55abf00024771ae0c389db856a34efdebf64af"
   integrity sha512-5wsP3SSLkpwHs85EKw+LuZJGiEWgK9yjktFGO0NCANoQMHn4YuWCIoHHliotySoGwrRMx/h6NFsn4+hwEtvYyw==
 
-"@freik/media-utils@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.5.0.tgz#4cbf1f822e2fe33a4099b3fc565e8957ba34dc96"
-  integrity sha512-Qdp5dwuEnMebNjvSNlXLs3IbfgLfiUKGdNBmDCt/2mSue8iLy5/8tTWRUbGV+N6eyy27Z7sIUvF7sgulbmz9xg==
+"@freik/media-utils@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.5.1.tgz#cc97df40bc72b5276368090652bcb19768f665c6"
+  integrity sha512-nZkispuZIojyK09PW0dKqcQ48SwPhoguFF0aQL5Fk6LIJ2mNBG8RoaJmUEb06dPsU0TZ/WwX1z8Pv/yNUvDheQ==
   dependencies:
-    "@freik/core-utils" "^0.6.0"
+    "@freik/core-utils" "^0.6.2"
     "@freik/node-utils" "^0.2.8"
     music-metadata "^7.4.0"
 

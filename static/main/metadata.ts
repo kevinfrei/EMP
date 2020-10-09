@@ -1,6 +1,10 @@
-import { FTONData, ObjUtil, Type } from '@freik/core-utils';
+import { Logger, ObjUtil, Type } from '@freik/core-utils';
 import { MD } from '@freik/media-utils';
 
+const log = Logger.bind('metadata');
+// Logger.enable('metdata');
+
+/*
 function addCommas(val: string): string {
   let res = '';
   let i: number;
@@ -111,6 +115,7 @@ const toChange = new Map([
     },
   ],
 ]);
+*/
 
 declare type NestedValue =
   | NestedObject
@@ -152,13 +157,16 @@ export async function getMediaInfo(
   mediaPath: string,
 ): Promise<Map<string, string>> {
   const trackInfo = await MD.RawMetadata(mediaPath);
-  if (!Type.isObject(trackInfo)) {
-    console.log('bad metadata:');
-    console.log(trackInfo);
+  if (!Type.isObjectNonNull(trackInfo)) {
+    log('Bad metadata');
     return new Map();
   } else {
-    console.log('good metadata:');
-    console.log(trackInfo);
-    return flatten(trackInfo as NestedObject);
+    delete trackInfo.native;
+    delete trackInfo.quality;
+    log('good metadata:');
+    log(trackInfo);
+    const res = flatten(trackInfo as NestedObject);
+    res.set('File path', mediaPath);
+    return res;
   }
 }

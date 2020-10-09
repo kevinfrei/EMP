@@ -13,6 +13,7 @@ import * as persist from './persist';
 const log = Logger.bind('MusicAccess');
 Logger.enable('MusicAccess');
 
+let theMusicDatabase: MusicDB | null = null;
 let theMusicIndex: MusicIndex | null = null;
 
 /**
@@ -23,18 +24,23 @@ let theMusicIndex: MusicIndex | null = null;
  * @returns {Promise<MusicDB|void>} MusicDB or void
  */
 export async function getMusicDB(): Promise<MusicDB | void> {
-  try {
-    log('get-music-db called');
-    const musicDBstr = await persist.getItemAsync('DB');
-    if (musicDBstr) {
-      log(`get-music.db: ${musicDBstr.length} bytes in the JSON blob.`);
-      return (FTON.parse(musicDBstr) as unknown) as MusicDB;
+  if (!theMusicDatabase) {
+    try {
+      log('get-music-db called');
+      const musicDBstr = await persist.getItemAsync('DB');
+      if (musicDBstr) {
+        log(`get-music.db: ${musicDBstr.length} bytes in the JSON blob.`);
+        theMusicDatabase = (FTON.parse(musicDBstr) as unknown) as MusicDB;
+        return theMusicDatabase;
+      }
+      log('get-music-db result is empty');
+    } catch (e) {
+      log('get-music-db exception:');
+      log(e);
+      return;
     }
-    log('get-music-db result is empty');
-  } catch (e) {
-    log('get-music-db exception:');
-    log(e);
-    return;
+  } else {
+    return theMusicDatabase;
   }
 }
 

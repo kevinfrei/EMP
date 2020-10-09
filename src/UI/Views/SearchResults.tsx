@@ -1,12 +1,16 @@
 import { Stack, Text } from '@fluentui/react';
+import { Logger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { searchSel, searchTermAtom } from '../../Recoil/ReadOnly';
 import { ViewProps } from './Selector';
 
+const log = Logger.bind('SearchResults');
+// Logger.enable('SearchResults');
+
 export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
   const searchTerm = useRecoilValue(searchTermAtom);
-  console.log('Searching:' + searchTerm);
+  log('Searching:' + searchTerm);
   const searchResults = useRecoilValue(searchSel(searchTerm));
   const songText = searchResults.songs.join(';');
   const albumText = searchResults.albums.join(':');

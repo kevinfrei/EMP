@@ -1,10 +1,10 @@
 import { FTON, FTONData, Logger } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
 import { BrowserWindow } from 'electron';
-import { getMusicDB } from './MusicAccess';
+import { getMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
 import * as persist from './persist';
-import { MakeSearchable, Searchable } from './Search';
+import { MakeSearchable } from './Search';
 
 const log = Logger.bind('Startup');
 Logger.enable('Startup');
@@ -14,14 +14,6 @@ function getLocations(): string[] {
   const rawLocations = strLocations ? FTON.parse(strLocations) : [];
   return (rawLocations && FTON.arrayOfStrings(rawLocations)) || [];
 }
-
-let index:
-  | {
-      songs: Searchable<SongKey>;
-      albums: Searchable<AlbumKey>;
-      artists: Searchable<ArtistKey>;
-    }
-  | undefined;
 
 export async function CreateMusicDB(): Promise<void> {
   const musicLocations = getLocations();
@@ -47,7 +39,7 @@ export async function CreateMusicDB(): Promise<void> {
     musicDB.artists.keys(),
     (key: ArtistKey) => musicDB.artists.get(key)?.name || '',
   );
-  index = { songs, artists, albums };
+  setMusicIndex({ songs, artists, albums });
   const stop = new Date().getTime();
 
   log(`Total time to build index: ${stop - start} ms`);
