@@ -10,6 +10,7 @@
 .sidebar-container {
   display: grid;
   grid-template-columns: 26px auto;
+  cursor: pointer;
 }
 
 hr {
