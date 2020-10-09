@@ -4,7 +4,6 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
-  MediaInfo,
   Song,
   SongKey,
 } from '@freik/media-utils';
@@ -29,14 +28,10 @@ export type SongData = {
 const log = Logger.bind('RORemote');
 Logger.enable('RORemote');
 
-export const getMediaInfo = selectorFamily<MediaInfo, SongKey>({
+export const getMediaInfo = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
-  get: (sk: SongKey) => async (): Promise<MediaInfo> => {
-    if (!sk)
-      return {
-        general: new Map<string, string>(),
-        audio: new Map<string, string>(),
-      };
+  get: (sk: SongKey) => async (): Promise<Map<string, string>> => {
+    if (!sk) return new Map<string, string>();
     const result = await ipc.GetMediaInfo(sk);
     if (!result) throw new Error(sk);
     log(`Got media info for ${sk}:`);

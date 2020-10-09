@@ -1,4 +1,5 @@
-import { MD, MediaInfo } from '@freik/media-utils';
+import { FTONData, ObjUtil, Type } from '@freik/core-utils';
+import { MD } from '@freik/media-utils';
 
 function addCommas(val: string): string {
   let res = '';
@@ -99,13 +100,65 @@ const toRemove = [
   'Stream Order',
 ];
 
-export async function getMediaInfo(mediaPath: string): Promise<MediaInfo> {
-  const trackInfo = await MD.RawMetadata(mediaPath);
-  const general = objToMap(trackInfo[0]);
-  const audio = objToMap(trackInfo[1]);
-  // Remove some tags I don't care about or don't handle yet
-  toRemove.forEach((v) => general.delete(v));
-  [...toRemove, ...general.keys()].forEach((v) => audio.delete(v));
+const toChange = new Map([
+  [
+    'track',
+    (data: FTONData): string => {
+      if (ObjUtil.has('no', data) && Type.isNumber(data.no)) {
+        return data.no.toString();
+      }
+      return '';
+    },
+  ],
+]);
 
-  return { general, audio };
+declare type NestedValue =
+  | NestedObject
+  | NestedValue[]
+  | number
+  | string
+  | boolean;
+declare type NestedObject = { [key: string]: NestedValue };
+
+function flatten(obj: NestedObject): Map<string, string> {
+  const result = new Map<string, string>();
+  const walkChildren = (prefix: string, data: NestedValue) => {
+    if (Type.isNumber(data)) {
+      result.set(prefix, data.toString());
+    } else if (Type.isBoolean(data)) {
+      result.set(prefix, data ? 'true' : 'false');
+    } else if (Type.isString(data)) {
+      result.set(prefix, data);
+    } else {
+      const pfx = prefix.length > 0 ? prefix + '.' : prefix;
+      if (Type.isArray(data)) {
+        for (let i = 0; i < data.length; i++) {
+          walkChildren(`${pfx}${i}`, data[i]);
+        }
+      } else if (Type.isObject(data)) {
+        for (const i in data) {
+          if (ObjUtil.has(i, data)) {
+            walkChildren(`${pfx}${i}`, data[i]);
+          }
+        }
+      }
+    }
+  };
+  walkChildren('', obj);
+  return result;
+}
+
+export async function getMediaInfo(
+  mediaPath: string,
+): Promise<Map<string, string>> {
+  const trackInfo = await MD.RawMetadata(mediaPath);
+  if (!Type.isObject(trackInfo)) {
+    console.log('bad metadata:');
+    console.log(trackInfo);
+    return new Map();
+  } else {
+    console.log('good metadata:');
+    console.log(trackInfo);
+    return flatten(trackInfo as NestedObject);
+  }
 }

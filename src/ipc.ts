@@ -1,10 +1,9 @@
-import { FTON, Logger } from '@freik/core-utils';
+import { FTON, Logger, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  MediaInfo,
   Song,
   SongKey,
 } from '@freik/media-utils';
@@ -50,10 +49,15 @@ export async function GetAllPlaylists(): Promise<Map<
   }
 }
 
-export async function GetMediaInfo(key: SongKey): Promise<MediaInfo | void> {
+export async function GetMediaInfo(
+  key: SongKey,
+): Promise<Map<string, string> | void> {
   const blob = await InvokeMain('get-media-info', key);
   if (blob) {
-    return FTON.parse(blob) as MediaInfo;
+    const res = FTON.parse(blob);
+    if (Type.isMapOf(res, Type.isString, Type.isString)) {
+      return res;
+    }
   }
 }
 

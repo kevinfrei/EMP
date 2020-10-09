@@ -4,7 +4,6 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
-  MediaInfo,
   SongKey,
 } from '@freik/media-utils';
 import { getMediaInfo } from './metadata';
@@ -71,7 +70,7 @@ export async function getAllAlbums(): Promise<Map<AlbumKey, Album> | void> {
 
 export async function getMediaInfoForSong(
   key?: string,
-): Promise<MediaInfo | void> {
+): Promise<Map<string, string> | void> {
   if (!key || typeof key !== 'string') {
     return;
   }
@@ -79,7 +78,7 @@ export async function getMediaInfoForSong(
   if (musicDB) {
     const song = musicDB.songs.get(key);
     if (song) {
-      const data: MediaInfo = await getMediaInfo(song.path);
+      const data: Map<string, string> = await getMediaInfo(song.path);
       log(`Fetched the media info for ${song.path}:`);
       log(data);
       return data;
