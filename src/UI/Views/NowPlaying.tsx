@@ -44,9 +44,6 @@ import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
 import { ViewProps } from './Selector';
 import './styles/NowPlaying.css';
 
-// const log = Logger.bind('NowPlaying');
-// Logger.enable('NowPlaying');
-
 const theme = getTheme();
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff

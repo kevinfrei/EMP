@@ -1,5 +1,5 @@
 // This is for getting at "global" stuff from the window object
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -12,8 +12,7 @@ import { IpcRenderer } from 'electron';
 import { OpenDialogSyncOptions } from 'electron/main';
 import { GetDataForSong, SongData } from './DataSchema';
 
-const log = Logger.bind('Tools');
-Logger.enable('Tools');
+const log = MakeLogger('Tools', true);
 
 /*
  * "Window" stuff goes here

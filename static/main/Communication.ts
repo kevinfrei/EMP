@@ -1,4 +1,4 @@
-import { FTON, FTONData, Logger } from '@freik/core-utils';
+import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import { BrowserWindow, ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import {
@@ -11,8 +11,7 @@ import {
 } from './MusicAccess';
 import * as persist from './persist';
 
-const log = Logger.bind('Communication');
-// Logger.enable('Communication');
+const log = MakeLogger('Communication');
 
 /*
 function getWebContents() {

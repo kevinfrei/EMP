@@ -8,7 +8,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import { AlbumKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -35,8 +35,7 @@ import {
 import { ViewProps } from './Selector';
 import './styles/Albums.css';
 
-const log = Logger.bind('Albums');
-// Logger.enable('Albums');
+const log = MakeLogger('Albums');
 
 export function AlbumHeaderDisplay(props: { albumKey: string }): JSX.Element {
   const albumData = useRecoilValue(dataForAlbumSel(props.albumKey));

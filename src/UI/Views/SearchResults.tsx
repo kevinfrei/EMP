@@ -1,5 +1,5 @@
 import { Stack, Text } from '@fluentui/react';
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -24,8 +24,7 @@ import { AlbumFromSong, ArtistsFromAlbum, ArtistsFromSong } from '../SongList';
 import { ViewProps } from './Selector';
 import './styles/SearchResults.css';
 
-const log = Logger.bind('SearchResults');
-// Logger.enable('SearchResults');
+const log = MakeLogger('SearchResults', true);
 
 function SongItem({ id }: { id: SongKey }): JSX.Element {
   const song = useRecoilValue(songByKeySel(id));
@@ -138,6 +137,7 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
   const artRes = ArtistEntries(searchResults.artists, artists);
   const albRes = AlbumEntries(searchResults.albums, albums);
   const resultEntries: SearchEntry[] = [...songRes, ...artRes, ...albRes];
+  log(resultEntries);
   // I need to create a group hierarchy like this:
   // Songs => Song Results
   // Artists => Artist List => Albums => Per Album Song Results

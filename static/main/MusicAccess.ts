@@ -1,4 +1,4 @@
-import { FTON, Logger } from '@freik/core-utils';
+import { FTON, MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -10,8 +10,7 @@ import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';
 
-const log = Logger.bind('MusicAccess');
-Logger.enable('MusicAccess');
+const log = MakeLogger('MusicAccess', true);
 
 let theMusicDatabase: MusicDB | null = null;
 let theMusicIndex: MusicIndex | null = null;

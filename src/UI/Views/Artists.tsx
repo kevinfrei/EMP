@@ -8,7 +8,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import { ArtistKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -35,8 +35,7 @@ import {
 import { ViewProps } from './Selector';
 import './styles/Artists.css';
 
-const log = Logger.bind('Artists');
-Logger.enable('Artists');
+const log = MakeLogger('Artists', true);
 
 export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
   const allSongsMap = useRecoilValue(allSongsSel);

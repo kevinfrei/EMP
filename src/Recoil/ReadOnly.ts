@@ -1,4 +1,4 @@
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -25,8 +25,7 @@ export type SongData = {
   track: number;
 } & AlbumData;
 
-const log = Logger.bind('RORemote');
-Logger.enable('RORemote');
+const log = MakeLogger('RORemote', true);
 
 export const getMediaInfo = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',

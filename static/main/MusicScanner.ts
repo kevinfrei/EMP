@@ -1,4 +1,4 @@
-import { Comparisons, FTON, Logger, SeqNum } from '@freik/core-utils';
+import { Comparisons, FTON, MakeLogger, SeqNum } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -18,8 +18,8 @@ import { MakeSearchable, Searchable } from './Search';
 export interface ServerSong extends Song {
   path: string;
 }
-const log = Logger.bind('music');
-// Logger.enable('music');
+
+const log = MakeLogger('music');
 
 const setEqual = Comparisons.ArraySetEqual;
 

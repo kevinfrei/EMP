@@ -8,7 +8,7 @@ import {
   Text,
   Toggle,
 } from '@fluentui/react';
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useBackedState } from '../../Recoil/helpers';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
@@ -16,8 +16,7 @@ import { ShowOpenDialog } from '../../Tools';
 import { ViewProps } from './Selector';
 import './styles/Settings.css';
 
-const log = Logger.bind('View-Settings');
-// Logger.enable('View-Settings');
+const log = MakeLogger('View-Settings');
 
 /*
 declare type PopupItem = {

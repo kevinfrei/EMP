@@ -1,5 +1,5 @@
 import { Slider, Text } from '@fluentui/react';
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNextSong } from '../Recoil/api';
@@ -22,8 +22,7 @@ import {
 } from '../Recoil/ReadOnly';
 import './styles/SongPlayback.css';
 
-const log = Logger.bind('SongPlayback');
-// Logger.enable('SongPlayback');
+const log = MakeLogger('SongPlayback');
 
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;

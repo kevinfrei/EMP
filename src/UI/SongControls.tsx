@@ -1,4 +1,4 @@
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -19,8 +19,7 @@ import {
 import { GetAudioElem } from './SongPlayback';
 import './styles/SongControls.css';
 
-const log = Logger.bind('SongControls');
-// Logger.enable('SongControls');
+const log = MakeLogger('SongControls');
 
 export default function SongControls(): JSX.Element {
   const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);

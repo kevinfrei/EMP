@@ -1,4 +1,4 @@
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import { Cover, SongKey } from '@freik/media-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
@@ -10,8 +10,7 @@ import { CreateMusicDB } from './Startup';
 declare type FileResponse = string | ProtocolResponse;
 declare type BufferResponse = Buffer | ProtocolResponse;
 
-const log = Logger.bind('configure');
-// Logger.enable('configure');
+const log = MakeLogger('configure');
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],

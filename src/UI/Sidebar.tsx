@@ -1,5 +1,5 @@
 import { SearchBox, Text } from '@fluentui/react';
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { SetterOrUpdater, useRecoilState } from 'recoil';
 import { useBackedState } from '../Recoil/helpers';
@@ -7,8 +7,7 @@ import { searchTermAtom } from '../Recoil/ReadOnly';
 import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
 import './styles/Sidebar.css';
 
-const log = Logger.bind('Sidebar');
-Logger.enable('Sidebar');
+const log = MakeLogger('Sidebar', true);
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 // import recentPic from './img/recent.svg';

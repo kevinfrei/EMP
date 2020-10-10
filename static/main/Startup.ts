@@ -1,4 +1,4 @@
-import { FTON, FTONData, Logger } from '@freik/core-utils';
+import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
 import { BrowserWindow } from 'electron';
 import { getMusicDB, setMusicIndex } from './MusicAccess';
@@ -6,8 +6,7 @@ import * as music from './MusicScanner';
 import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
-const log = Logger.bind('Startup');
-Logger.enable('Startup');
+const log = MakeLogger('Startup', true);
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');

@@ -1,8 +1,7 @@
-import { Logger, ObjUtil, Type } from '@freik/core-utils';
+import { MakeLogger, ObjUtil, Type } from '@freik/core-utils';
 import { MD } from '@freik/media-utils';
 
-const log = Logger.bind('metadata');
-// Logger.enable('metdata');
+const log = MakeLogger('metadata');
 
 /*
 function addCommas(val: string): string {

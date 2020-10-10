@@ -1,4 +1,4 @@
-import { FTON, FTONData, Logger } from '@freik/core-utils';
+import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   RecoilState,
@@ -21,8 +21,7 @@ export type DialogData = [boolean, () => void];
 // A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
 export type DialogState = [() => void, DialogData];
 
-const log = Logger.bind('helpers');
-// Logger.enable('helpers');
+const log = MakeLogger('helpers');
 
 /**
  * A short cut for on/off states to make some things (like dialogs) cleaner

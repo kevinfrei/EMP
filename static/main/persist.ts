@@ -1,10 +1,9 @@
-import path from 'path';
+import { FTON, FTONData, MakeLogger, SeqNum } from '@freik/core-utils';
 import { app, Rectangle } from 'electron';
 import fs, { promises as fsp } from 'fs';
-import { FTON, FTONData, Logger, SeqNum } from '@freik/core-utils';
+import path from 'path';
 
-const log = Logger.bind('persist');
-// Logger.enable('persist');
+const log = MakeLogger('persist');
 
 export type MaybeRectangle = {
   width: number;

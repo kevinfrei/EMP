@@ -1,4 +1,4 @@
-import { FTON, Logger, Type } from '@freik/core-utils';
+import { FTON, MakeLogger, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -9,8 +9,7 @@ import {
 } from '@freik/media-utils';
 import { InvokeMain } from './Tools';
 
-const log = Logger.bind('ipc');
-Logger.enable('ipc');
+const log = MakeLogger('ipc', true);
 
 export type SearchResults = {
   songs: SongKey[];

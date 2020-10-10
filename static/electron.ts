@@ -4,14 +4,13 @@
 // initially. It also invokes the Ready function (from main/Ready)
 // once the window has registered.
 
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import { BrowserWindow } from 'electron';
 import { Begin, Init } from './main/Communication';
 import electronSetup from './main/electronSetup';
 import { Ready, Startup } from './main/Startup';
 
-const log = Logger.bind('electron');
-// Logger.enable('electron');
+const log = MakeLogger('electron');
 
 Init();
 

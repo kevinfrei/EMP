@@ -1,4 +1,4 @@
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { configureProtocols } from './configure';
@@ -13,8 +13,7 @@ export type OnWindowCreated = (window: BrowserWindow) => Promise<void>;
 
 const isDev = true; // require('electron-is-dev');
 
-const log = Logger.bind('electronSetup');
-Logger.disable('electronSetup');
+const log = MakeLogger('electronSetup');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
