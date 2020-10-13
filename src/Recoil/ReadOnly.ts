@@ -66,16 +66,6 @@ export const songByKeySel = selectorFamily<Song, SongKey>({
   },
 });
 
-export const allSongKeysSel = selector<SongKey[]>({
-  key: 'AllSongKeys',
-  get: ({ get }) => {
-    // Get the locations to make sure that if they change,
-    // we get the new song list
-    const songs = get(allSongsSel);
-    return [...songs.keys()];
-  },
-});
-
 export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
   key: 'AllAlbums',
   get: async ({ get }): Promise<Map<AlbumKey, Album>> => {
@@ -143,16 +133,6 @@ export const maybeArtistByKeySel = selectorFamily<Artist | null, ArtistKey>({
   get: (ak: ArtistKey) => ({ get }): Artist | null => {
     if (ak.length === 0) return null;
     return get(artistByKeySel(ak));
-  },
-});
-
-export const allArtistKeysSel = selector<ArtistKey[]>({
-  key: 'AllArtistKeys',
-  get: ({ get }) => {
-    // Get the locations to make sure that if they change,
-    // we get the new song list
-    const artists = get(allArtistsSel);
-    return [...artists.keys()];
   },
 });
 

@@ -134,8 +134,9 @@ export default function SongPlayback(): JSX.Element {
   let audio: React.ReactElement<HTMLAudioElement>;
   const songKey = useRecoilValue(currentSongKeySel);
   const [, setPlaying] = useRecoilState(playingAtom);
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
-  const [songList, setSongList] = useRecoilState(songListAtom);
+  const curIndexState = useRecoilState(currentIndexAtom);
+  const songListState = useRecoilState(songListAtom);
+  const [songList] = songListState;
   const rep = useRecoilValue(repeatAtom);
   const shuf = useRecoilValue(shuffleAtom);
   const maybeNextSong = () => {
@@ -148,16 +149,7 @@ export default function SongPlayback(): JSX.Element {
         ae.play().catch((reason) => log("couldn't restart playing"));
       }
     }
-    setPlaying(
-      MaybePlayNextSong(
-        curIndex,
-        setCurIndex,
-        rep,
-        shuf,
-        songList,
-        setSongList,
-      ),
-    );
+    setPlaying(MaybePlayNextSong(curIndexState, rep, shuf, songListState));
   };
   if (songKey !== '') {
     audio = (

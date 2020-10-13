@@ -1,5 +1,6 @@
 import { SongKey } from '@freik/media-utils';
 import { ShuffleArray } from '../Tools';
+import { StatePair } from './helpers';
 
 /**
  * Try to play the next song in the playlist
@@ -13,12 +14,10 @@ import { ShuffleArray } from '../Tools';
  * @param  {(val:SongKey[])=>void} setSongList
  */
 export function MaybePlayNextSong(
-  curIndex: number,
-  setCurIndex: (val: number) => void,
+  [curIndex, setCurIndex]: StatePair<number>,
   repeat: boolean,
   shuffle: boolean,
-  songList: SongKey[],
-  setSongList: (val: SongKey[]) => void,
+  [songList, setSongList]: StatePair<SongKey[]>,
 ): boolean {
   if (curIndex + 1 < songList.length) {
     setCurIndex(curIndex + 1);
@@ -44,8 +43,7 @@ export function MaybePlayNextSong(
  * @returns void
  */
 export function MaybePlayPrevSong(
-  curIndex: number,
-  setCurIndex: (val: number) => void,
+  [curIndex, setCurIndex]: StatePair<number>,
   repeat: boolean,
   songListLength: number,
 ): void {
@@ -70,14 +68,8 @@ export function MaybePlayPrevSong(
  */
 export function AddSongList(
   listToAdd: Iterable<SongKey>,
-  [curIndex, setCurIndex]: [
-    curIndex: number,
-    setCurIndex: (val: number) => void,
-  ],
-  [songList, setSongList]: [
-    songList: Iterable<SongKey>,
-    setSongList: (val: SongKey[]) => void,
-  ],
+  [curIndex, setCurIndex]: StatePair<number>,
+  [songList, setSongList]: StatePair<SongKey[]>,
 ): void {
   // TODO: Shuffle?
   setSongList([...songList, ...listToAdd]);
@@ -98,14 +90,8 @@ export function AddSongList(
  */
 export function PlaySongList(
   listToPlay: Iterable<SongKey>,
-  [curIndex, setCurIndex]: [
-    curIndex: number,
-    setCurIndex: (val: number) => void,
-  ],
-  [songList, setSongList]: [
-    songList: Iterable<SongKey>,
-    setSongList: (val: SongKey[]) => void,
-  ],
+  [curIndex, setCurIndex]: StatePair<number>,
+  [songList, setSongList]: StatePair<SongKey[]>,
 ): void {
   // TODO: Shuffle start
   setSongList([...listToPlay]);
@@ -144,10 +130,8 @@ export function StopAndClear(
  * @param  {(val:SongKey[])=>void} setSongList
  */
 export function ShuffleNowPlaying(
-  currentIndex: number,
-  setCurrentIndex: (val: number) => void,
-  songList: SongKey[],
-  setSongList: (val: SongKey[]) => void,
+  [currentIndex, setCurrentIndex]: StatePair<number>,
+  [songList, setSongList]: StatePair<SongKey[]>,
   setNowPlayingSort: (srt: string) => void,
 ): void {
   let newSongs;

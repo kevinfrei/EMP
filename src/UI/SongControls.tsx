@@ -25,8 +25,9 @@ export default function SongControls(): JSX.Element {
   const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);
   const [shuf, shufSet] = useRecoilState(shuffleAtom);
   const [rep, repSet] = useRecoilState(repeatAtom);
-  const [songList, setSongList] = useRecoilState(songListAtom);
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
+  const songListState = useRecoilState(songListAtom);
+  const [songList] = songListState;
+  const curIndexState = useRecoilState(currentIndexAtom);
   const [, setNowPlaylistSort] = useRecoilState(nowPlayingSortAtom);
   const hasNextSong = useRecoilValue(hasNextSongSel);
   const hasPrevSong = useRecoilValue(hasPrevSongSel);
@@ -44,13 +45,7 @@ export default function SongControls(): JSX.Element {
   const clickShuffle = () => {
     shufSet(!shuf);
     if (!shuf) {
-      ShuffleNowPlaying(
-        curIndex,
-        setCurIndex,
-        songList,
-        setSongList,
-        setNowPlaylistSort,
-      );
+      ShuffleNowPlaying(curIndexState, songListState, setNowPlaylistSort);
     }
   };
   const clickRepeat = () => repSet(!rep);
@@ -73,19 +68,12 @@ export default function SongControls(): JSX.Element {
   };
   const clickPrev = () => {
     if (hasPrevSong) {
-      MaybePlayPrevSong(curIndex, setCurIndex, rep, songList.length);
+      MaybePlayPrevSong(curIndexState, rep, songList.length);
     }
   };
   const clickNext = () => {
     if (hasNextSong) {
-      MaybePlayNextSong(
-        curIndex,
-        setCurIndex,
-        rep,
-        shuf,
-        songList,
-        setSongList,
-      );
+      MaybePlayNextSong(curIndexState, rep, shuf, songListState);
     }
   };
   return (
