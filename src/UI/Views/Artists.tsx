@@ -48,7 +48,8 @@ export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
     </Stack>
   );
 }
-export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
+
+export default function ArtistList({ hidden }: ViewProps): JSX.Element {
   const allSongsMap = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
   const albums = useRecoilValue(allAlbumsSel);

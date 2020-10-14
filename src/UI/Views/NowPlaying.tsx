@@ -19,7 +19,12 @@ import {
   SongKey,
 } from '@freik/media-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+} from 'recoil';
 import { StopAndClear } from '../../Recoil/api';
 import { useBackedState, useDialogState } from '../../Recoil/helpers';
 import {
@@ -166,8 +171,9 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
-  const [, setDetailSong] = useRecoilState(songDetailAtom);
-
+  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
+    set(songDetailAtom, item),
+  );
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
   const [shuffle, setShuffle] = useRecoilState(shuffleAtom);
@@ -247,7 +253,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           columns={columns}
-          onItemContextMenu={(item: Song) => setDetailSong(item)}
+          onItemContextMenu={onSongDetailClick}
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
         />
       </div>

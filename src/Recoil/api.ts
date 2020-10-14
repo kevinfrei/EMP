@@ -1,8 +1,13 @@
 import { SongKey } from '@freik/media-utils';
-import { RecoilState } from 'recoil';
+import { RecoilState, Snapshot } from 'recoil';
 import { ShuffleArray } from '../Tools';
 import { StatePair } from './helpers';
-import { currentIndexAtom, songListAtom } from './Local';
+import {
+  currentIndexAtom,
+  repeatAtom,
+  shuffleAtom,
+  songListAtom,
+} from './Local';
 
 /**
  * Try to play the next song in the playlist
@@ -35,6 +40,30 @@ export function MaybePlayNextSong(
   return true;
 }
 
+export async function MaybePlayNext(
+  snapshot: Snapshot,
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void,
+): Promise<boolean> {
+  const curIndex = await snapshot.getPromise(currentIndexAtom);
+  const songList = await snapshot.getPromise(songListAtom);
+  if (curIndex + 1 < songList.length) {
+    set(currentIndexAtom, curIndex + 1);
+    return true;
+  }
+  const repeat = await snapshot.getPromise(repeatAtom);
+  if (!repeat) {
+    return false;
+  }
+  const shuffle = await snapshot.getPromise(shuffleAtom);
+  if (shuffle) {
+    set(songListAtom, ShuffleArray(songList));
+  }
+  set(currentIndexAtom, 0);
+  return true;
+}
 /**
  * Try to play the 'previous' song, considering repeat possibilities
  *

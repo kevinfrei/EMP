@@ -13,13 +13,9 @@ import {
   SongKey,
 } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { AddSongList } from '../../Recoil/api';
-import {
-  currentIndexAtom,
-  songDetailAtom,
-  songListAtom,
-} from '../../Recoil/Local';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { AddSongs } from '../../Recoil/api';
+import { songDetailAtom } from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -42,9 +38,13 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
-  const curIndexState = useRecoilState(currentIndexAtom);
-  const songListState = useRecoilState(songListAtom);
-  const [, setDetailSong] = useRecoilState(songDetailAtom);
+  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
+    set(songDetailAtom, item),
+  );
+  const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
+    AddSongs([item.key], set),
+  );
+
   const [sortOrder, setSortOrder] = useState('rl');
   const [sortedItems, setSortedItems] = useState(
     SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
@@ -78,10 +78,8 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={renderAltRow}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={(item: Song) => setDetailSong(item)}
-          onItemInvoked={(item: Song) =>
-            AddSongList([item.key], curIndexState, songListState)
-          }
+          onItemContextMenu={onSongDetailClick}
+          onItemInvoked={onAddSongClick}
         />
       </ScrollablePane>
     </div>

@@ -1,18 +1,17 @@
 import { Slider, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { MaybePlayNextSong } from '../Recoil/api';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { MaybePlayNext } from '../Recoil/api';
 import {
-  currentIndexAtom,
   currentSongKeySel,
+  MediaTime,
   mediaTimeAtom,
   mediaTimePercentRWSel,
   mediaTimePositionSel,
   mediaTimeRemainingSel,
   playingAtom,
   repeatAtom,
-  shuffleAtom,
   songListAtom,
 } from '../Recoil/Local';
 import {
@@ -130,54 +129,60 @@ function ArtistAlbum(): JSX.Element {
 }
 
 export default function SongPlayback(): JSX.Element {
-  const [mediaTime, setMediaTime] = useRecoilState(mediaTimeAtom);
-  let audio: React.ReactElement<HTMLAudioElement>;
   const songKey = useRecoilValue(currentSongKeySel);
-  const [, setPlaying] = useRecoilState(playingAtom);
-  const curIndexState = useRecoilState(currentIndexAtom);
-  const songListState = useRecoilState(songListAtom);
-  const [songList] = songListState;
-  const rep = useRecoilValue(repeatAtom);
-  const shuf = useRecoilValue(shuffleAtom);
-  const maybeNextSong = () => {
+  const onPlay = useRecoilCallback(({ set }) => () => set(playingAtom, true));
+  const onPause = useRecoilCallback(({ set }) => () => set(playingAtom, false));
+  const onEnded = useRecoilCallback(({ set, snapshot }) => async () => {
     log('Heading to the next song!!!');
+    const songList = await snapshot.getPromise(songListAtom);
+    const rep = await snapshot.getPromise(repeatAtom);
     if (rep && songList.length === 1) {
       // Because we rely on auto-play, if we just try to play the same song
       // again, it won't start playing
       const ae = GetAudioElem();
       if (ae) {
-        ae.play().catch((reason) => log("couldn't restart playing"));
+        await ae.play();
       }
     }
-    setPlaying(MaybePlayNextSong(curIndexState, rep, shuf, songListState));
-  };
-  if (songKey !== '') {
-    audio = (
+    const isPlaying = await MaybePlayNext(snapshot, set);
+    set(playingAtom, isPlaying);
+  });
+  const onTimeUpdate = useRecoilCallback(
+    ({ set }) => (ev: React.SyntheticEvent<HTMLMediaElement>) => {
+      const ae = ev.target as HTMLMediaElement;
+      // eslint-disable-next-line id-blacklist
+      if (Number.isNaN(ae.duration)) {
+        return;
+      }
+      set(mediaTimeAtom, (prevTime: MediaTime) => {
+        if (
+          Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
+          Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
+        ) {
+          log(
+            `${ae.readyState}: Duration: ${ae.duration} Current time: ${ae.currentTime}`,
+          );
+          return { position: ae.currentTime, duration: ae.duration };
+        } else {
+          return prevTime;
+        }
+      });
+    },
+  );
+  const audio =
+    songKey !== '' ? (
       <audio
         id="audioElement"
         autoPlay={true}
         src={'tune://song/' + songKey}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onEnded={maybeNextSong}
-        onTimeUpdate={(ev: React.SyntheticEvent<HTMLMediaElement>) => {
-          const ae = ev.target as HTMLMediaElement;
-          if (
-            !Number.isNaN(ae.duration) && // eslint-disable-line id-blacklist
-            (Math.trunc(ae.duration) !== Math.trunc(mediaTime.duration) ||
-              Math.trunc(ae.currentTime) !== Math.trunc(mediaTime.position))
-          ) {
-            log(
-              `${ae.readyState}: Duration: ${ae.duration} Current time: ${ae.currentTime}`,
-            );
-            setMediaTime({ position: ae.currentTime, duration: ae.duration });
-          }
-        }}
+        onPlay={onPlay}
+        onPause={onPause}
+        onEnded={onEnded}
+        onTimeUpdate={onTimeUpdate}
       />
-    ) as React.ReactElement<HTMLAudioElement>;
-  } else {
-    audio = <audio id="audioElement" />;
-  }
+    ) : (
+      <audio id="audioElement" />
+    );
   return (
     <span id="song-container">
       <CoverArt />
