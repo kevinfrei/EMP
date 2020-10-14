@@ -1,6 +1,8 @@
 import { SongKey } from '@freik/media-utils';
+import { RecoilState } from 'recoil';
 import { ShuffleArray } from '../Tools';
 import { StatePair } from './helpers';
+import { currentIndexAtom, songListAtom } from './Local';
 
 /**
  * Try to play the next song in the playlist
@@ -76,6 +78,17 @@ export function AddSongList(
   if (curIndex < 0) {
     setCurIndex(0);
   }
+}
+
+export function AddSongs(
+  listToAdd: Iterable<SongKey>,
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void,
+): void {
+  set(songListAtom, (songList) => [...songList, ...listToAdd]);
+  set(currentIndexAtom, (curIndex) => (curIndex < 0 ? 0 : curIndex));
 }
 
 /**
