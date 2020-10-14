@@ -2,6 +2,8 @@ import {
   DetailsList,
   IconButton,
   IDetailsGroupRenderProps,
+  Image,
+  ImageFit,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -39,8 +41,21 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
     AddSongs(props.album.songs, set),
   );
   return (
-    <Stack horizontal verticalAlign="center" onDoubleClick={onAddSongsClick}>
-      <Text>{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
+    <Stack
+      horizontal
+      verticalAlign="center"
+      onDoubleClick={onAddSongsClick}
+      style={{ padding: '2px 0px' }}
+    >
+      <Image
+        src={`pic://album/${props.album.key}`}
+        height={50}
+        width={50}
+        imageFit={ImageFit.centerContain}
+      />
+      <Text
+        style={{ margin: '4px' }}
+      >{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
     </Stack>
   );
 }
@@ -88,14 +103,6 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
         <AlbumHeaderDisplay album={albums.get(albumId)!} />
       </Stack>
     );
-    /* This takes Electron to it's knees:
-              <Image
-            src={`pic://album/${albumId}`}
-            height={25}
-            width={25}
-            imageFit={ImageFit.centerContain}
-          />
-*/
   };
   const [columns, groups, groupProps] = GetSongGroupData(
     sortedSongs,
