@@ -55,15 +55,20 @@ function AggregateSearchResults(
     const album = albums.get(albumKey);
     if (!album) return [];
     return album.songs.map((sk, idx) =>
-      MakeSongSearchEntry(songs.get(sk)!, idx, `album-${album.key}`),
+      MakeSongSearchEntry(songs.get(sk)!, idx, `L-${album.key}`),
     );
   }
   function MakeArtistSongEntries(artistKey: ArtistKey): SearchSongData[] {
     const artist = artists.get(artistKey);
     if (!artist) return [];
-    return artist.songs.map((sk, idx) =>
-      MakeSongSearchEntry(songs.get(sk)!, idx, `aritst-${artist.key}`),
-    );
+    return artist.songs.map((sk, idx) => {
+      const song = songs.get(sk);
+      return MakeSongSearchEntry(
+        song!,
+        idx,
+        `R-${artist.key}-${song!.albumId}`,
+      );
+    });
   }
   const results = searchResults.songs.map((songKey, index) =>
     MakeSongSearchEntry(songs.get(songKey)!, index, 'songs'),

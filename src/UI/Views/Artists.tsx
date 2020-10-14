@@ -9,16 +9,12 @@ import {
   Text,
 } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
-import { ArtistKey, Song } from '@freik/media-utils';
+import { Artist, ArtistKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { GetArtistString } from '../../DataSchema';
-import { AddSongList } from '../../Recoil/api';
-import {
-  currentIndexAtom,
-  songDetailAtom,
-  songListAtom,
-} from '../../Recoil/Local';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { GetArtistString, GetArtistStringFromKeys } from '../../DataSchema';
+import { AddSongs } from '../../Recoil/api';
+import { songDetailAtom } from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -37,14 +33,32 @@ import './styles/Artists.css';
 
 const log = MakeLogger('Artists', true);
 
+export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
+  const onAddSongsClick = useRecoilCallback(({ set }) => () =>
+    props.artists.forEach((art) => AddSongs(art.songs, set)),
+  );
+  const name = GetArtistString(props.artists);
+  const songCount = props.artists.reduce<number>(
+    (prev: number, cur: Artist) => prev + cur.songs.length,
+    0,
+  );
+  return (
+    <Stack horizontal verticalAlign="center" onDoubleClick={onAddSongsClick}>
+      <Text>{`${name} [${songCount} song${songCount > 1 ? 's' : ''}]`}</Text>
+    </Stack>
+  );
+}
 export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
   const allSongsMap = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
   const albums = useRecoilValue(allAlbumsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
-  const curIndexState = useRecoilState(currentIndexAtom);
-  const songListState = useRecoilState(songListAtom);
-  const [, setDetailSong] = useRecoilState(songDetailAtom);
+  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
+    set(songDetailAtom, item),
+  );
+  const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
+    AddSongs([item.key], set),
+  );
   const [curSort, setSort] = useState<string>('r');
   const curExpandedState = useState(new Set<ArtistKey>());
   const [sortedSongs, setSortedSongs] = useState(
@@ -62,6 +76,13 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
     props,
   ) => {
     if (!props) return null;
+    const artistKeys = props.group?.key;
+    if (!artistKeys) return null;
+    const artistList = artistKeys
+      .split(';')
+      .map((ak) => artists.get(ak)!)
+      .filter((ak) => !!ak);
+    if (!artistList) return null;
     return (
       <Stack horizontal verticalAlign="center">
         <IconButton
@@ -70,17 +91,7 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
           }}
           onClick={() => props.onToggleCollapse!(props.group!)}
         />
-        <Text
-          onDoubleClick={() =>
-            AddSongList(
-              artists.get(props.group!.key)!.songs,
-              curIndexState,
-              songListState,
-            )
-          }
-        >
-          {props.group?.name}
-        </Text>
+        <ArtistHeaderDisplay artists={artistList} />
       </Stack>
     );
   };
@@ -88,7 +99,7 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
     sortedSongs,
     curExpandedState,
     (s: Song) => s.artistIds.join(';'),
-    (s: string) => GetArtistString(s.split(';'), artists) || '',
+    (s: string) => GetArtistStringFromKeys(s.split(';'), artists) || '',
     'r',
     'artistIds',
     [
@@ -116,10 +127,8 @@ export default function NewArtistList({ hidden }: ViewProps): JSX.Element {
           groupProps={groupProps}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={(item: Song) => setDetailSong(item)}
-          onItemInvoked={(item: Song) =>
-            AddSongList([item.key], curIndexState, songListState)
-          }
+          onItemContextMenu={onSongDetailClick}
+          onItemInvoked={onAddSongClick}
         />
       </ScrollablePane>
     </div>

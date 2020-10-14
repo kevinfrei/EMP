@@ -9,15 +9,11 @@ import {
   Text,
 } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
-import { AlbumKey, Song } from '@freik/media-utils';
+import { Album, AlbumKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { AddSongList } from '../../Recoil/api';
-import {
-  currentIndexAtom,
-  songDetailAtom,
-  songListAtom,
-} from '../../Recoil/Local';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { AddSongs } from '../../Recoil/api';
+import { songDetailAtom } from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
@@ -37,10 +33,15 @@ import './styles/Albums.css';
 
 const log = MakeLogger('Albums');
 
-export function AlbumHeaderDisplay(props: { albumKey: string }): JSX.Element {
-  const albumData = useRecoilValue(dataForAlbumSel(props.albumKey));
+export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
+  const albumData = useRecoilValue(dataForAlbumSel(props.album.key));
+  const onAddSongsClick = useRecoilCallback(({ set }) => () =>
+    AddSongs(props.album.songs, set),
+  );
   return (
-    <Text>{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
+    <Stack horizontal verticalAlign="center" onDoubleClick={onAddSongsClick}>
+      <Text>{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
+    </Stack>
   );
 }
 
@@ -49,9 +50,13 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const allSongsMap = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
-  const curIndexState = useRecoilState(currentIndexAtom);
-  const songListState = useRecoilState(songListAtom);
-  const [, setDetailSong] = useRecoilState(songDetailAtom);
+  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
+    set(songDetailAtom, item),
+  );
+  const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
+    AddSongs([item.key], set),
+  );
+
   const [curSort, setSort] = useState<string>('l');
   const curExpandedState = useState(new Set<AlbumKey>());
   const [sortedSongs, setSortedSongs] = useState(
@@ -80,19 +85,7 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
           }}
           onClick={() => props.onToggleCollapse!(props.group!)}
         />
-        <Stack
-          horizontal
-          verticalAlign="center"
-          onDoubleClick={() =>
-            AddSongList(
-              albums.get(albumId)!.songs,
-              curIndexState,
-              songListState,
-            )
-          }
-        >
-          <AlbumHeaderDisplay albumKey={albumId} />
-        </Stack>
+        <AlbumHeaderDisplay album={albums.get(albumId)!} />
       </Stack>
     );
     /* This takes Electron to it's knees:
@@ -141,10 +134,8 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
           groups={groups}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={(item: Song) => setDetailSong(item)}
-          onItemInvoked={(item: Song) =>
-            AddSongList([item.key], curIndexState, songListState)
-          }
+          onItemContextMenu={onSongDetailClick}
+          onItemInvoked={onAddSongClick}
           groupProps={groupProps}
         />
       </ScrollablePane>

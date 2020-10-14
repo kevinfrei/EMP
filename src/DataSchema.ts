@@ -12,7 +12,14 @@ export type SongData = {
 
 export type AlbumData = { title: string; year: number; artist: string };
 
-export function GetArtistString(
+export function GetArtistString(artistList: Artist[]): string {
+  if (artistList.length === 1) return artistList[0].name;
+  const artists = artistList;
+  const lastPart = ' & ' + (artists.pop()?.name || 'OOPS!');
+  return artists.map((a) => a.name).join(', ') + lastPart;
+}
+
+export function GetArtistStringFromKeys(
   artistList: ArtistKey[],
   allArtists: Map<ArtistKey, Artist>,
 ): string | void {
@@ -63,7 +70,7 @@ export function GetDataForSong(
     res.album = album.title;
     res.year = album.year;
   }
-  const maybeArtistName = GetArtistString(song.artistIds, allArtists);
+  const maybeArtistName = GetArtistStringFromKeys(song.artistIds, allArtists);
   if (!maybeArtistName) {
     return res;
   }
@@ -79,7 +86,10 @@ export function GetArtistForAlbum(
     return 'Soundtrack';
   }
   if (album.vatype !== 'va') {
-    const maybeArtistName = GetArtistString(album.primaryArtists, artists);
+    const maybeArtistName = GetArtistStringFromKeys(
+      album.primaryArtists,
+      artists,
+    );
     if (maybeArtistName) {
       return maybeArtistName;
     }
