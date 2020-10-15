@@ -1,6 +1,7 @@
 import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
+  atomFamily,
   RecoilState,
   RecoilValue,
   selectorFamily,
@@ -48,11 +49,16 @@ const atomsToSync = new Map<string, RecoilState<unknown>>();
  * changes!!!
  */
 export const backerSelFamily = selectorFamily({
-  key: 'sync',
+  key: 'backer-sync',
   get: (param: string) => async (): Promise<string> => {
     const serverVal = await GetGeneral(param);
     return serverVal || '';
   },
+});
+
+export const alreadyReadFamily = atomFamily({
+  key: 'already-read',
+  default: false,
 });
 
 /**
@@ -65,7 +71,9 @@ export const backerSelFamily = selectorFamily({
  */
 export function useBackedState<T>(theAtom: RecoilState<T>): StatePair<T> {
   // A little 'local' state
-  const [alreadyRead, setAlreadyRead] = useState(false);
+  const [alreadyRead, setAlreadyRead] = useRecoilState(
+    alreadyReadFamily(theAtom.key),
+  );
   // The 'backed' atom access
   const [atomValue, setAtomValue] = useRecoilState<T>(theAtom);
   // Pull the initial value from the server

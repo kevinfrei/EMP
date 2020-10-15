@@ -28,7 +28,6 @@ import {
 import { StopAndClear } from '../../Recoil/api';
 import { useBackedState, useDialogState } from '../../Recoil/helpers';
 import {
-  activePlaylistAtom,
   currentIndexAtom,
   nowPlayingAtom,
   nowPlayingSortAtom,
@@ -54,47 +53,37 @@ const theme = getTheme();
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
   const [playlists, setPlaylists] = useBackedState(playlistsAtom);
-  const [nowPlaying, setNowPlaying] = useRecoilState(nowPlayingAtom);
+  const nowPlaying = useRecoilValue(nowPlayingAtom);
 
   const songList = useRecoilValue(songListAtom);
 
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const resetSongList = useResetRecoilState(songListAtom);
-  const resetCurIndex = useResetRecoilState(currentIndexAtom);
-  const resetActivePlaylist = useResetRecoilState(activePlaylistAtom);
-  const resetNowPlaying = useResetRecoilState(nowPlayingAtom);
-
-  const saveListAs = (inputName: string) => {
+  const saveListAs = useRecoilCallback(({ set }) => (inputName: string) => {
     if (playlists.has(inputName)) {
       window.alert('Cowardly refusing to overwrite existing playlist.');
     } else {
       playlists.set(inputName, songList);
       setPlaylists(playlists);
-      setNowPlaying(inputName);
+      set(nowPlayingAtom, inputName);
     }
-  };
+  });
 
   const emptyQueue = songList.length === 0;
 
-  const stopAndClear = () => {
-    StopAndClear(
-      resetSongList,
-      resetCurIndex,
-      resetActivePlaylist,
-      resetNowPlaying,
-    );
-  };
-  const clickClearQueue = () => {
+  const stopAndClear = useRecoilCallback(({ reset }) => () => {
+    StopAndClear(reset);
+  });
+  const clickClearQueue = useRecoilCallback(({ reset }) => () => {
     if (isPlaylist(nowPlaying)) {
-      stopAndClear();
+      StopAndClear(reset);
     } else {
       showConfirm();
     }
-  };
+  });
   let header;
-  let button;
+  let saveDisabled: boolean;
   const save = () => {
     playlists.set(nowPlaying, songList);
     setPlaylists(playlists);
@@ -104,20 +93,10 @@ function TopLine(): JSX.Element {
     // Only enable this button if the playlist has been *modified*
     // (not just sorted)
     const curPlList = playlists.get(nowPlaying);
-    const disabled =
-      !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
-    button = (
-      <DefaultButton
-        onClick={save}
-        className="save-playlist"
-        disabled={disabled}
-      >
-        Save
-      </DefaultButton>
-    );
+    saveDisabled = !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
   } else {
     header = 'Now Playing';
-    button = <></>;
+    saveDisabled = true;
   }
 
   return (
@@ -160,7 +139,13 @@ function TopLine(): JSX.Element {
         >
           Save As...
         </DefaultButton>
-        {button}
+        <DefaultButton
+          onClick={save}
+          className="save-playlist"
+          disabled={saveDisabled}
+        >
+          Save
+        </DefaultButton>
       </div>
     </div>
   );
