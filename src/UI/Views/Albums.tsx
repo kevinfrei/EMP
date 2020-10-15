@@ -62,9 +62,11 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
 
 export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const albums = useRecoilValue(allAlbumsSel);
-  const allSongsMap = useRecoilValue(allSongsSel);
+  const songs = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
+
   const articles = useRecoilValue(sortWithArticlesAtom);
+
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
@@ -75,7 +77,7 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const [curSort, setSort] = useState<string>('l');
   const curExpandedState = useState(new Set<AlbumKey>());
   const [sortedSongs, setSortedSongs] = useState(
-    SortSongs('l', [...allSongsMap.values()], albums, artists, articles),
+    SortSongs(curSort, [...songs.values()], albums, artists, articles),
   );
 
   // This takes a sort string, shuffles it to always have the groupId first

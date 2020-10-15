@@ -50,20 +50,23 @@ export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
 }
 
 export default function ArtistList({ hidden }: ViewProps): JSX.Element {
-  const allSongsMap = useRecoilValue(allSongsSel);
+  const songs = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
   const albums = useRecoilValue(allAlbumsSel);
+
   const articles = useRecoilValue(sortWithArticlesAtom);
+
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
   const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
     AddSongs([item.key], set),
   );
+
   const [curSort, setSort] = useState<string>('r');
   const curExpandedState = useState(new Set<ArtistKey>());
   const [sortedSongs, setSortedSongs] = useState(
-    SortSongs('r', [...allSongsMap.values()], albums, artists, articles),
+    SortSongs(curSort, [...songs.values()], albums, artists, articles),
   );
 
   const performSort = (srt: string) => {

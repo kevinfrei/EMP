@@ -1,7 +1,7 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { SetterOrUpdater, useRecoilState } from 'recoil';
+import { SetterOrUpdater, useRecoilCallback } from 'recoil';
 import { useBackedState } from '../Recoil/helpers';
 import { searchTermAtom } from '../Recoil/ReadOnly';
 import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
@@ -64,16 +64,16 @@ function getEntry(
 
 export default function Sidebar(): JSX.Element {
   const [curView, setCurView] = useBackedState(curViewAtom);
-  const [, setSearch] = useRecoilState(searchTermAtom);
+  const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
+    log('onSearch');
+    set(curViewAtom, CurrentView.search);
+    set(searchTermAtom, newValue);
+  });
   return (
     <div id="sidebar">
       <SearchBox
         placeholder="Search NYI"
-        onSearch={(newValue) => {
-          log('onSearch');
-          setCurView(CurrentView.search);
-          setSearch(newValue);
-        }}
+        onSearch={onSearch}
         onChange={() => log('onChange')}
         onEscape={() => log('onEscape')}
         onClear={() => log('onClear')}

@@ -1,20 +1,14 @@
 import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
-  MaybePlayNextSong,
-  MaybePlayPrevSong,
-  ShuffleNowPlaying,
-} from '../Recoil/api';
-import {
-  currentIndexAtom,
+  hasAnySongsSel,
   hasNextSongSel,
   hasPrevSongSel,
-  nowPlayingSortAtom,
   playingAtom,
   repeatAtom,
   shuffleAtom,
-  songListAtom,
 } from '../Recoil/Local';
 import { GetAudioElem } from './SongPlayback';
 import './styles/SongControls.css';
@@ -23,12 +17,10 @@ const log = MakeLogger('SongControls');
 
 export default function SongControls(): JSX.Element {
   const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);
-  const [shuf, shufSet] = useRecoilState(shuffleAtom);
+
+  const hasAnySong = useRecoilValue(hasAnySongsSel);
+  const shuf = useRecoilValue(shuffleAtom);
   const [rep, repSet] = useRecoilState(repeatAtom);
-  const songListState = useRecoilState(songListAtom);
-  const [songList] = songListState;
-  const curIndexState = useRecoilState(currentIndexAtom);
-  const [, setNowPlaylistSort] = useRecoilState(nowPlayingSortAtom);
   const hasNextSong = useRecoilValue(hasNextSongSel);
   const hasPrevSong = useRecoilValue(hasPrevSongSel);
 
@@ -36,18 +28,18 @@ export default function SongControls(): JSX.Element {
   const repClass = rep ? 'enabled' : 'disabled';
   const playPauseClass = isPlaying
     ? 'playing'
-    : songList.length > 0
+    : hasAnySong
     ? 'paused'
     : 'paused disabled';
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = () => {
-    shufSet(!shuf);
-    if (!shuf) {
-      ShuffleNowPlaying(curIndexState, songListState, setNowPlaylistSort);
+  const clickShuffle = useRecoilCallback(({ set, snapshot }) => async () => {
+    if (!(await snapshot.getPromise(shuffleAtom))) {
+      await ShufflePlaying(set, snapshot);
     }
-  };
+    set(shuffleAtom, (prevShuf) => !prevShuf);
+  });
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = () => {
     const ae = GetAudioElem();
@@ -66,16 +58,16 @@ export default function SongControls(): JSX.Element {
       log(`We're not playing, but also not state 4: ${ae.readyState}`);
     }
   };
-  const clickPrev = () => {
+  const clickPrev = useRecoilCallback(({ set, snapshot }) => async () => {
     if (hasPrevSong) {
-      MaybePlayPrevSong(curIndexState, rep, songList.length);
+      await MaybePlayPrev(snapshot, set);
     }
-  };
-  const clickNext = () => {
+  });
+  const clickNext = useRecoilCallback(({ set, snapshot }) => async () => {
     if (hasNextSong) {
-      MaybePlayNextSong(curIndexState, rep, shuf, songListState);
+      await MaybePlayNext(snapshot, set);
     }
-  };
+  });
   return (
     <span className="control-container">
       <span id="shuffle" className={shufClass} onClick={clickShuffle}>

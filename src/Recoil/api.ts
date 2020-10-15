@@ -3,7 +3,10 @@ import { RecoilState, Snapshot } from 'recoil';
 import { ShuffleArray } from '../Tools';
 import { StatePair } from './helpers';
 import {
+  activePlaylistAtom,
   currentIndexAtom,
+  nowPlayingAtom,
+  nowPlayingSortAtom,
   repeatAtom,
   shuffleAtom,
   songListAtom,
@@ -87,6 +90,24 @@ export function MaybePlayPrevSong(
   }
 }
 
+export async function MaybePlayPrev(
+  snapshot: Snapshot,
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void,
+): Promise<void> {
+  const songList = await snapshot.getPromise(songListAtom);
+  if (songList.length > 0) {
+    const curIndex = await snapshot.getPromise(currentIndexAtom);
+    if (curIndex > 0) {
+      set(currentIndexAtom, curIndex - 1);
+    } else if (await snapshot.getPromise(repeatAtom)) {
+      set(currentIndexAtom, songList.length - 1);
+    }
+  }
+}
+
 /**
  * Adds a list of songs to the end of the current song list
  *
@@ -142,24 +163,19 @@ export function PlaySongList(
 
 /**
  * Stop playback and clears the active playlist
- * It's pretty dumb in that it just calls all the resetter's :/
+ * It's pretty dumb in that it just calls a bunch of resetter's :/
  *
- * @param  {()=>void} resetSongList
- * @param  {()=>void} resetCurrentIndex
- * @param  {()=>void} resetActivePlaylist
- * @param  {()=>void} resetNowPlaying
+ * @param  {(recoilVal: RecoilState<any>) => void} reset the Recoil resetter
+ *
  * @returns void
  */
 export function StopAndClear(
-  resetSongList: () => void,
-  resetCurrentIndex: () => void,
-  resetActivePlaylist: () => void,
-  resetNowPlaying: () => void,
+  reset: (recoilVal: RecoilState<any>) => void,
 ): void {
-  resetSongList();
-  resetCurrentIndex();
-  resetActivePlaylist();
-  resetNowPlaying();
+  reset(songListAtom);
+  reset(currentIndexAtom);
+  reset(activePlaylistAtom);
+  reset(nowPlayingAtom);
 }
 
 /**
@@ -190,4 +206,26 @@ export function ShuffleNowPlaying(
     setCurrentIndex(0);
   }
   setSongList(newSongs);
+}
+
+export async function ShufflePlaying(
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void,
+  snapshot: Snapshot,
+): Promise<void> {
+  const curIndex = await snapshot.getPromise(currentIndexAtom);
+  set(nowPlayingSortAtom, '');
+  if (curIndex < 0) {
+    set(songListAtom, (prevSongList) => ShuffleArray(prevSongList));
+  } else {
+    const curSongList = await snapshot.getPromise(songListAtom);
+    const curKey = curSongList[curIndex];
+    let newSongs = [...curSongList];
+    newSongs.splice(curIndex, 1);
+    newSongs = [curKey, ...ShuffleArray(newSongs)];
+    set(songListAtom, newSongs);
+    set(currentIndexAtom, 0);
+  }
 }

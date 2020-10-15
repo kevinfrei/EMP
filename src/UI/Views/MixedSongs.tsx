@@ -37,7 +37,9 @@ export default function MixedSongsList({ hidden }: ViewProps): JSX.Element {
   const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
+
   const articles = useRecoilValue(sortWithArticlesAtom);
+
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );

@@ -74,6 +74,8 @@ export const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
   default: new Map<PlaylistName, SongKey[]>(),
 });
 
+//export const
+
 export const songListAtom = atom<SongKey[]>({
   key: 'currentSongList',
   default: [],
@@ -124,6 +126,12 @@ export const hasPrevSongSel = selector<boolean>({
     const curIndex = get(currentIndexAtom);
     return curIndex > 0 || get(repeatAtom);
   },
+});
+
+// Do we have any songs at all?
+export const hasAnySongsSel = selector<boolean>({
+  key: 'hasAnySongs',
+  get: ({ get }) => get(songListAtom).length > 0,
 });
 
 // This is the sort for the current playlist

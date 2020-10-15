@@ -176,7 +176,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
   );
   const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
   const [songList, setSongList] = useRecoilState(songListAtom);
-  const [shuffle, setShuffle] = useRecoilState(shuffleAtom);
+  const resetShuffle = useResetRecoilState(shuffleAtom);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortAtom);
   const curSongs = useRecoilValue(curSongsSel);
 
@@ -204,9 +204,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
       });
       setSongList(newSongList);
       setCurIndex(newKey);
-      if (shuffle) {
-        setShuffle(false);
-      }
+      resetShuffle();
     }
   };
 
