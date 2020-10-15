@@ -1,7 +1,6 @@
 import { SongKey } from '@freik/media-utils';
 import { RecoilState, Snapshot } from 'recoil';
 import { ShuffleArray } from '../Tools';
-import { StatePair } from './helpers';
 import {
   activePlaylistAtom,
   currentIndexAtom,
@@ -16,33 +15,12 @@ import {
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)
  *
- * @param  {number} curIndex
- * @param  {(val:number)=>void} setCurIndex
- * @param  {boolean} repeat
- * @param  {boolean} shuffle
- * @param  {SongKey[]} songList
- * @param  {(val:SongKey[])=>void} setSongList
+ * @param {Snapshot} snapshot - a Recoil snapshot
+ * @param set - The Recoil setter function
+ *
+ * @returns {Promise<boolean>} true if the next song started playing,
+ *  false otherwise
  */
-export function MaybePlayNextSong(
-  [curIndex, setCurIndex]: StatePair<number>,
-  repeat: boolean,
-  shuffle: boolean,
-  [songList, setSongList]: StatePair<SongKey[]>,
-): boolean {
-  if (curIndex + 1 < songList.length) {
-    setCurIndex(curIndex + 1);
-  } else if (repeat) {
-    setCurIndex(0);
-    if (shuffle) {
-      songList = ShuffleArray(songList);
-      setSongList(songList);
-    }
-  } else {
-    return false;
-  }
-  return true;
-}
-
 export async function MaybePlayNext(
   snapshot: Snapshot,
   set: <T>(
@@ -67,29 +45,15 @@ export async function MaybePlayNext(
   set(currentIndexAtom, 0);
   return true;
 }
+
 /**
  * Try to play the 'previous' song, considering repeat possibilities
  *
- * @param  {number} curIndex
- * @param  {(val:number)=>void} setCurIndex
- * @param  {boolean} repeat
- * @param  {number} songListLength
+ * @param {Snapshot} snapshot - a Recoil snapshot
+ * @param set - The Recoil setter function
+ *
  * @returns void
  */
-export function MaybePlayPrevSong(
-  [curIndex, setCurIndex]: StatePair<number>,
-  repeat: boolean,
-  songListLength: number,
-): void {
-  if (songListLength > 0) {
-    if (curIndex > 0) {
-      setCurIndex(curIndex - 1);
-    } else if (repeat) {
-      setCurIndex(songListLength - 1);
-    }
-  }
-}
-
 export async function MaybePlayPrev(
   snapshot: Snapshot,
   set: <T>(
@@ -111,25 +75,11 @@ export async function MaybePlayPrev(
 /**
  * Adds a list of songs to the end of the current song list
  *
- * @param  {Iterable<SongKey>} listToAdd - The list of songs to add
- * @param  {number} curIndex
- * @param  {(val:number)=>void} setCurIndex
- * @param  {SongKey[]} songList
- * @param  {(val:SongKey[])=>void} setSongList
+ * @param {Iterable<SongKey>} listToAdd - The list of songs to add
+ * @param set - The Recoil setter function
+ *
  * @returns void
  */
-export function AddSongList(
-  listToAdd: Iterable<SongKey>,
-  [curIndex, setCurIndex]: StatePair<number>,
-  [songList, setSongList]: StatePair<SongKey[]>,
-): void {
-  // TODO: Shuffle?
-  setSongList([...songList, ...listToAdd]);
-  if (curIndex < 0) {
-    setCurIndex(0);
-  }
-}
-
 export function AddSongs(
   listToAdd: Iterable<SongKey>,
   set: <T>(
@@ -145,22 +95,10 @@ export function AddSongs(
  * Adds a list of songs to the end of the current song list
  *
  * @param  {Iterable<SongKey>} listToPlay - The list of songs to start playing
- * @param  {number} curIndex
- * @param  {(val:number)=>void} setCurIndex
- * @param  {SongKey[]} songList
- * @param  {(val:SongKey[])=>void} setSongList
+ * @param set - The Recoil setter function
+ *
  * @returns void
  */
-export function PlaySongList(
-  listToPlay: Iterable<SongKey>,
-  [curIndex, setCurIndex]: StatePair<number>,
-  [songList, setSongList]: StatePair<SongKey[]>,
-): void {
-  // TODO: Shuffle start
-  setSongList([...listToPlay]);
-  setCurIndex(0);
-}
-
 export function PlaySongs(
   listToPlay: Iterable<SongKey>,
   set: <T>(
@@ -183,6 +121,7 @@ export function PlaySongs(
 export function StopAndClear(
   reset: (recoilVal: RecoilState<any>) => void,
 ): void {
+  // TODO: Go stop the audio element while we're at it?
   reset(songListAtom);
   reset(currentIndexAtom);
   reset(activePlaylistAtom);
@@ -193,38 +132,15 @@ export function StopAndClear(
  * This shuffles now playing without changing what's currently playing
  * If something is playing, it's the first song in the shuffled playlist
  *
- * @param  {number} currentIndex
- * @param  {(val:number)=>void} setCurrentIndex
- * @param  {SongKey[]} songList
- * @param  {(val:SongKey[])=>void} setSongList
+ * @param {Snapshot} snapshot - a Recoil snapshot
+ * @param set - The Recoil setter function
  */
-export function ShuffleNowPlaying(
-  [currentIndex, setCurrentIndex]: StatePair<number>,
-  [songList, setSongList]: StatePair<SongKey[]>,
-  setNowPlayingSort: (srt: string) => void,
-): void {
-  let newSongs;
-  setNowPlayingSort('');
-  if (currentIndex < 0) {
-    newSongs = ShuffleArray(songList);
-  } else {
-    // if we're currently playing something, remove it from the array
-    const curKey = songList[currentIndex];
-    newSongs = [...songList];
-    newSongs.splice(currentIndex, 1);
-    // Now put it at the top of the list
-    newSongs = [curKey, ...ShuffleArray(newSongs)];
-    setCurrentIndex(0);
-  }
-  setSongList(newSongs);
-}
-
 export async function ShufflePlaying(
+  snapshot: Snapshot,
   set: <T>(
     recoilVal: RecoilState<T>,
     valOrUpdater: ((currVal: T) => T) | T,
   ) => void,
-  snapshot: Snapshot,
 ): Promise<void> {
   const curIndex = await snapshot.getPromise(currentIndexAtom);
   set(nowPlayingSortAtom, '');

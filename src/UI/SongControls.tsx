@@ -36,7 +36,7 @@ export default function SongControls(): JSX.Element {
 
   const clickShuffle = useRecoilCallback(({ set, snapshot }) => async () => {
     if (!(await snapshot.getPromise(shuffleAtom))) {
-      await ShufflePlaying(set, snapshot);
+      await ShufflePlaying(snapshot, set);
     }
     set(shuffleAtom, (prevShuf) => !prevShuf);
   });

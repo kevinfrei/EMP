@@ -39,7 +39,7 @@ function AggregateSearchResults(
   artists: Map<ArtistKey, Artist>,
   albums: Map<AlbumKey, Album>,
   searchResults: SearchResults,
-) {
+): SearchSongData[] {
   function MakeSongSearchEntry(
     song: Song,
     index: number,
