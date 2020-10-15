@@ -57,7 +57,7 @@ function SortPopup({ data }: { data: PopupItem }): JSX.Element {
 */
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useBackedState<string[]>(locationsAtom);
+  const [newLoc, setNewLoc] = useBackedState(locationsAtom);
   log(`Locations (${locationsAtom.key}) value at render:`);
   log(newLoc);
   return (
@@ -107,12 +107,12 @@ function ArtistFiltering(): JSX.Element {
     <>
       <Toggle
         inlineLabel
-        label="Only show artists with full albums"
+        label="Only show artists with full albums (NYI)"
         checked={onlyAlbumArtists}
         onChange={(ev, checked?: boolean) => setOnlyAlbumArtists(!!checked)}
       />
       <SpinButton
-        label="Only show artists with at least this many songs"
+        label="Only show artists with at least this many songs (NYI)"
         disabled={onlyAlbumArtists}
         value={songCount.toString()}
         onIncrement={() => setSongCount(Math.min(100, songCount + 1))}

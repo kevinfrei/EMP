@@ -9,16 +9,12 @@ import {
   IRenderFunction,
   SelectionMode,
 } from '@fluentui/react';
+import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilState } from 'recoil';
-import { PlaySongList } from '../../Recoil/api';
+import { useRecoilCallback } from 'recoil';
+import { PlaySongs } from '../../Recoil/api';
 import { useBackedState, useDialogState } from '../../Recoil/helpers';
-import {
-  currentIndexAtom,
-  nowPlayingAtom,
-  playlistsAtom,
-  songListAtom,
-} from '../../Recoil/Local';
+import { nowPlayingAtom, playlistsAtom } from '../../Recoil/Local';
 import { ConfirmationDialog } from '../Dialogs';
 import { ViewProps } from './Selector';
 import './styles/Playlists.css';
@@ -38,12 +34,15 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 
 export default function Playlister({ hidden }: ViewProps): JSX.Element {
   const [playlists, setPlaylists] = useBackedState(playlistsAtom);
-  const [, setNowPlaying] = useRecoilState(nowPlayingAtom);
-  const curIndexState = useRecoilState(currentIndexAtom);
-  const songListState = useRecoilState(songListAtom);
   const [selected, setSelected] = useState('');
   const [showConfirm, confirmData] = useDialogState();
 
+  const onPlaylistInvoked = useRecoilCallback(
+    ({ set }) => ([playlistName, keys]: [string, SongKey[]]) => {
+      PlaySongs(keys, set);
+      set(nowPlayingAtom, playlistName);
+    },
+  );
   const deletePlaylist = () => {
     if (playlists.delete(selected)) {
       setPlaylists(playlists);
@@ -101,10 +100,7 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
         columns={columns}
         onRenderRow={renderRow}
         compact={true}
-        onItemInvoked={([playlistName, keys]) => {
-          PlaySongList(keys, curIndexState, songListState);
-          setNowPlaying(playlistName);
-        }}
+        onItemInvoked={onPlaylistInvoked}
       />
     </div>
   );

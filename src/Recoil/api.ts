@@ -161,6 +161,17 @@ export function PlaySongList(
   setCurIndex(0);
 }
 
+export function PlaySongs(
+  listToPlay: Iterable<SongKey>,
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void,
+): void {
+  set(songListAtom, [...listToPlay]);
+  set(currentIndexAtom, 0);
+}
+
 /**
  * Stop playback and clears the active playlist
  * It's pretty dumb in that it just calls a bunch of resetter's :/
