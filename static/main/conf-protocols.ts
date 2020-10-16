@@ -1,29 +1,17 @@
 import { MakeLogger } from '@freik/core-utils';
-import { Album, Cover, SongKey } from '@freik/media-utils';
-import albumArt from 'album-art';
+import { SongKey } from '@freik/media-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
-import https from 'https';
 import path from 'path';
-import { getMusicDB, saveMusicDB } from './MusicAccess';
-import { MusicDB } from './MusicScanner';
+import { picBufProcessor } from './cover-art';
+import { getMusicDB } from './MusicAccess';
 import * as persist from './persist';
 import { CreateMusicDB } from './Startup';
 
-declare type FileResponse = string | ProtocolResponse;
-declare type BufferResponse = Buffer | ProtocolResponse;
+export type FileResponse = string | ProtocolResponse;
+export type BufferResponse = Buffer | ProtocolResponse;
 
-const log = MakeLogger('configure', true);
-
-function httpsDownloader(url: string): Promise<Buffer> {
-  const buf: Uint8Array[] = [];
-  return new Promise((resolve, reject) => {
-    https.get(new URL(url), (res) => {
-      res.on('data', (d: Uint8Array) => buf.push(d));
-      res.on('end', () => resolve(Buffer.concat(buf)));
-    });
-  });
-}
+const log = MakeLogger('configure');
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
@@ -33,108 +21,17 @@ const audioMimeTypes = new Map<string, string>([
   ['.wma', 'audio/x-ms-wma'],
 ]);
 
-const imageMimeTypes = new Map<string, string>([
-  ['.jpg', 'image/jpeg'],
-  ['.png', 'image/png'],
-  ['.svg', 'image/svg+xml'],
-]);
-
 const defaultPicPath = path.join(__dirname, '..', 'img-album.svg');
 let defaultPicBuffer: BufferResponse | null = null;
-async function getDefaultPicBuffer(): Promise<BufferResponse> {
+
+export async function getDefaultPicBuffer(): Promise<BufferResponse> {
   if (!defaultPicBuffer) {
     defaultPicBuffer = {
       data: await fs.readFile(defaultPicPath),
-      mimeType: imageMimeTypes.get('.svg'),
+      mimeType: 'image/svg+xml',
     };
   }
   return defaultPicBuffer;
-}
-
-let timeout: NodeJS.Timeout | null = null;
-
-function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
-  const songKey = album.songs[0];
-  const song = db.songs.get(songKey);
-  if (song) {
-    log('Got a song:');
-    log(song);
-    const albumPath = path.join(path.dirname(song.path), '.AlbumCover.jpg');
-    log('Saving to path: ' + albumPath);
-    fs.writeFile(albumPath, data)
-      .then(() => {
-        log('And, saved it to disk!');
-        db.pictures.set(album.key, albumPath);
-        if (timeout !== null) {
-          clearTimeout(timeout);
-        }
-        timeout = setTimeout(() => {
-          log('saving the DB to disk');
-          saveMusicDB(db).catch((rej) => log('Error saving'));
-        }, 1000);
-        // TODO: Re-save the music DB to disk!
-      })
-      .catch((err) => {
-        log('Saving picture failed :(');
-        log(err);
-      });
-  }
-}
-
-async function picBufProcessor(
-  req: ProtocolRequest,
-  albumId: string,
-): Promise<BufferResponse> {
-  // Check to see if there's a song in the album that has a cover image
-  try {
-    const db = await getMusicDB();
-    if (db) {
-      const maybePath = db.pictures.get(albumId);
-      if (maybePath) {
-        return {
-          data: await fs.readFile(maybePath),
-          // mimeType: imageMimeTypes.get(path.extname(maybePath)),
-        };
-      }
-      // This pulls the image from the file metadata
-      const album = db.albums.get(albumId);
-      if (album) {
-        // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files
-        for (const songKey of album.songs) {
-          const song = db.songs.get(songKey);
-          if (song) {
-            log(`Looking for cover in ${song.path}`);
-            const buf = await Cover.readFromFile(song.path);
-            if (buf) {
-              log(`Got a buffer ${buf.data.length} bytes long`);
-              const data = Buffer.from(buf.data, 'base64');
-              SavePicForAlbum(db, album, data);
-              return { data };
-            }
-          }
-        }
-        // We didn't find something.
-        // Let's use the albumArt package
-        const artist = db.artists.get(album.primaryArtists[0]);
-        if (artist) {
-          const res = await albumArt(artist.name, {
-            album: album.title,
-            size: 'large',
-          });
-          log(`${artist.name}: ${album.title}`);
-          log(res);
-          const data = await httpsDownloader(res);
-          log('Got data from teh interwebs');
-          SavePicForAlbum(db, album, data);
-          return { data };
-        }
-      }
-    }
-  } catch (error) {
-    log(`Error while trying to get picture for ${albumId}`);
-    // log(error);
-  }
-  return await getDefaultPicBuffer();
 }
 
 const e404 = { error: 404 };

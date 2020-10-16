@@ -1,7 +1,7 @@
 import { MakeLogger } from '@freik/core-utils';
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { configureProtocols } from './configure';
+import { configureListeners, configureProtocols } from './conf-protocols';
 import {
   getBrowserWindowPos,
   getWindowPos,
@@ -24,6 +24,7 @@ export default function setup(windowCreated: OnWindowCreated): void {
 
   const createWindow = () => {
     configureProtocols();
+    configureListeners();
     // Create the window, but don't show it just yet
     mainWindow = new BrowserWindow({
       ...getBrowserWindowPos(windowPos),
