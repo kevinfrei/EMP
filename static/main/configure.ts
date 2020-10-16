@@ -1,16 +1,29 @@
 import { MakeLogger } from '@freik/core-utils';
-import { Cover, SongKey } from '@freik/media-utils';
+import { Album, Cover, SongKey } from '@freik/media-utils';
+import albumArt from 'album-art';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
+import https from 'https';
 import path from 'path';
 import { getMusicDB } from './MusicAccess';
+import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
 import { CreateMusicDB } from './Startup';
 
 declare type FileResponse = string | ProtocolResponse;
 declare type BufferResponse = Buffer | ProtocolResponse;
 
-const log = MakeLogger('configure');
+const log = MakeLogger('configure', true);
+
+function httpsDownloader(url: string): Promise<Buffer> {
+  const buf: Uint8Array[] = [];
+  return new Promise((resolve, reject) => {
+    https.get(new URL(url), (res) => {
+      res.on('data', (d: Uint8Array) => buf.push(d));
+      res.on('end', () => resolve(Buffer.concat(buf)));
+    });
+  });
+}
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
@@ -38,6 +51,26 @@ async function getDefaultPicBuffer(): Promise<BufferResponse> {
   return defaultPicBuffer;
 }
 
+function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
+  const songKey = album.songs[0];
+  const song = db.songs.get(songKey);
+  if (song) {
+    log('Got a song:');
+    log(song);
+    const albumPath = path.join(path.dirname(song.path), 'folder.jpg');
+    log('Saving to path: ' + albumPath);
+    fs.writeFile(albumPath, data)
+      .then(() => {
+        log('And, saved it to disk!');
+        db.pictures.set(album.key, albumPath);
+      })
+      .catch((err) => {
+        log('Saving picture failed :(');
+        log(err);
+      });
+  }
+}
+
 async function picBufProcessor(
   req: ProtocolRequest,
   albumId: string,
@@ -50,7 +83,7 @@ async function picBufProcessor(
       if (maybePath) {
         return {
           data: await fs.readFile(maybePath),
-          mimeType: imageMimeTypes.get(path.extname(maybePath)),
+          // mimeType: imageMimeTypes.get(path.extname(maybePath)),
         };
       }
       // This pulls the image from the file metadata
@@ -63,21 +96,34 @@ async function picBufProcessor(
             log(`Looking for cover in ${song.path}`);
             const buf = await Cover.readFromFile(song.path);
             if (buf) {
-              log(buf);
-              return {
-                data: Buffer.from(buf.data, 'base64'),
-                mimeType: buf.type,
-              };
+              log(`Got a buffer ${buf.data.length} bytes long`);
+              const data = Buffer.from(buf.data, 'base64');
+              SavePicForAlbum(db, album, data);
+              return { data };
             }
           }
+        }
+        // We didn't find something.
+        // Let's use the albumArt package
+        const artist = db.artists.get(album.primaryArtists[0]);
+        if (artist) {
+          const res = await albumArt(artist.name, {
+            album: album.title,
+            size: 'large',
+          });
+          log(`${artist.name}: ${album.title}`);
+          log(res);
+          const data = await httpsDownloader(res);
+          log('Got data from teh interwebs');
+          SavePicForAlbum(db, album, data);
+          return { data };
         }
       }
     }
   } catch (error) {
     log(`Error while trying to get picture for ${albumId}`);
-    log(error);
+    // log(error);
   }
-
   return await getDefaultPicBuffer();
 }
 
