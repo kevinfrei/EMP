@@ -72,7 +72,7 @@ export default function Sidebar(): JSX.Element {
   return (
     <div id="sidebar">
       <SearchBox
-        placeholder="Search NYI"
+        placeholder="Search"
         onSearch={onSearch}
         onChange={() => log('onChange')}
         onEscape={() => log('onEscape')}

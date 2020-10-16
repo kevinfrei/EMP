@@ -89,9 +89,8 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 - Make playlists filter for songs that actually exist in the DB
 - Make MusicDB updates due to location changes work properly
-  - There's a race condition: The MusicDB gets re-sent before the new MusicDB
-    gets created
-- mediainfo.js crashes a lot on my Mac Mini. Stop using it?
+  - There's a race condition: The updated MusicDB request gets replied to before
+    the MusicDB update occurs
 
 ### Core Capabilities
 
@@ -123,7 +122,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 
 - Make an actual "About" screen
 - Get some controls in the menu with appropriate keyboard shortcuts
-- Maybe use the album-art package to get artist pix & missing album pix
+- Maybe use the album-art package to get artist pix
 - Improve/Expand the views for Albums and Artists.
 
 ### Other

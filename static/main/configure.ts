@@ -59,7 +59,7 @@ function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   if (song) {
     log('Got a song:');
     log(song);
-    const albumPath = path.join(path.dirname(song.path), 'folder.jpg');
+    const albumPath = path.join(path.dirname(song.path), '.AlbumCover.jpg');
     log('Saving to path: ' + albumPath);
     fs.writeFile(albumPath, data)
       .then(() => {

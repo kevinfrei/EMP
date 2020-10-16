@@ -1,5 +1,6 @@
 import {
   DetailsList,
+  IGroup,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -39,7 +40,7 @@ function AggregateSearchResults(
   artists: Map<ArtistKey, Artist>,
   albums: Map<AlbumKey, Album>,
   searchResults: SearchResults,
-): SearchSongData[] {
+): [SearchSongData[], IGroup[]] {
   function MakeSongSearchEntry(
     song: Song,
     index: number,
@@ -70,16 +71,77 @@ function AggregateSearchResults(
       );
     });
   }
+  const groups: IGroup[] = [];
   const results = searchResults.songs.map((songKey, index) =>
     MakeSongSearchEntry(songs.get(songKey)!, index, 'songs'),
   );
+  if (results.length > 0) {
+    groups.push({
+      startIndex: 0,
+      count: results.length,
+      key: 'Songs',
+      name: 'Songs',
+      isCollapsed: false,
+      level: 0,
+    });
+  }
+  const albumStart = results.length;
+  const albumGroups: IGroup[] = [];
+  let lastStart = albumStart;
   searchResults.albums.forEach((l) => {
     results.push(...MakeAlbumSongEntries(l));
+    if (lastStart !== results.length) {
+      albumGroups.push({
+        startIndex: lastStart,
+        count: results.length - lastStart,
+        key: results[lastStart].group,
+        name: results[lastStart].album,
+        isCollapsed: true,
+        level: 1,
+      });
+      lastStart = results.length;
+    }
   });
+  if (albumGroups.length > 0) {
+    groups.push({
+      startIndex: albumStart,
+      count: results.length - albumStart,
+      key: 'Albums',
+      name: 'Albums',
+      isCollapsed: false,
+      children: albumGroups,
+      level: 0,
+    });
+  }
+  const artistStart = results.length;
+  const artistGroups: IGroup[] = [];
+  lastStart = artistStart;
   searchResults.artists.forEach((r) => {
     results.push(...MakeArtistSongEntries(r));
+    if (lastStart !== results.length) {
+      artistGroups.push({
+        startIndex: lastStart,
+        count: results.length - lastStart,
+        key: results[lastStart].group,
+        name: results[lastStart].artist,
+        isCollapsed: true,
+        level: 1,
+      });
+      lastStart = results.length;
+    }
   });
-  return results;
+  if (artistGroups.length > 0) {
+    groups.push({
+      startIndex: artistStart,
+      count: results.length - artistStart,
+      key: 'Artists',
+      name: 'Artists',
+      isCollapsed: false,
+      children: artistGroups,
+      level: 0,
+    });
+  }
+  return [results, groups];
 }
 
 export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
@@ -108,7 +170,7 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
       </div>
     );
   }
-  const resultEntries: SearchSongData[] = AggregateSearchResults(
+  const [resultEntries, groups] = AggregateSearchResults(
     songs,
     artists,
     albums,
@@ -138,8 +200,6 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
   */
   const columns = MakeColumns(
     [
-      ['', 'key', 'key', 50, 50],
-      ['', 'group', 'gid', 50, 50],
       ['r', 'artist', 'Artist', 150, 450],
       ['l', 'album', 'Album', 150, 450],
       ['n', 'track', '#', 30, 30],
@@ -161,6 +221,7 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
           selectionMode={SelectionMode.none}
           items={resultEntries}
           columns={columns}
+          groups={groups}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={onAddSongClick}
