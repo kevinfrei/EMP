@@ -5,7 +5,7 @@ import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
-import { getMusicDB } from './MusicAccess';
+import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
 import { CreateMusicDB } from './Startup';
@@ -51,6 +51,8 @@ async function getDefaultPicBuffer(): Promise<BufferResponse> {
   return defaultPicBuffer;
 }
 
+let timeout: NodeJS.Timeout | null = null;
+
 function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   const songKey = album.songs[0];
   const song = db.songs.get(songKey);
@@ -63,6 +65,14 @@ function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
       .then(() => {
         log('And, saved it to disk!');
         db.pictures.set(album.key, albumPath);
+        if (timeout !== null) {
+          clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+          log('saving the DB to disk');
+          saveMusicDB(db).catch((rej) => log('Error saving'));
+        }, 1000);
+        // TODO: Re-save the music DB to disk!
       })
       .catch((err) => {
         log('Saving picture failed :(');

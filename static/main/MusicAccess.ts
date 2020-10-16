@@ -43,6 +43,15 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   }
 }
 
+export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
+  const asFT = FTON.asFTON(musicDB);
+  if (asFT) {
+    await persist.setItemAsync('DB', FTON.stringify(asFT));
+  } else {
+    log("MusicDB isn't FTON data!");
+  }
+}
+
 export async function getAllSongs(): Promise<Map<SongKey, ServerSong> | void> {
   log('get-all-songs called');
   const musicDB = await getMusicDB();
