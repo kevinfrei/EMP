@@ -18,13 +18,6 @@ import './styles/Settings.css';
 
 const log = MakeLogger('View-Settings');
 
-/*
-declare type PopupItem = {
-  title: string;
-  atom: RecoilState<string>;
-  options: IDropdownOption[];
-};
-*/
 const removeFromSet = (set: string[], val: string): string[] => {
   const newSet = new Set(set);
   newSet.delete(val);
@@ -34,27 +27,6 @@ const removeFromSet = (set: string[], val: string): string[] => {
 function GetDirs(): string[] | void {
   return ShowOpenDialog({ properties: ['openDirectory'] });
 }
-
-/*
-function SortPopup({ data }: { data: PopupItem }): JSX.Element {
-  const [value, setter] = useBackedState(data.atom);
-  const onChange = (
-    event: React.FormEvent<HTMLDivElement>,
-    item?: IDropdownOption,
-  ): void => {
-    if (item) setter(item.key.toString());
-  };
-  return (
-    <Dropdown
-      label={`View ${data.title} by`}
-      options={data.options}
-      // eslint-disable-next-line id-blacklist
-      selectedKey={value ? value : undefined}
-      onChange={onChange}
-    />
-  );
-}
-*/
 
 function RecoilLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useBackedState(locationsAtom);
@@ -123,38 +95,6 @@ function ArtistFiltering(): JSX.Element {
   );
 }
 
-/*
-  const album = {
-    title: 'Album',
-    atom: albumListSortAtom,
-    options: [
-      { key: 'lt', text: 'Title' },
-      { key: 'ly', text: 'Year' },
-      { key: 'rl', text: 'Artist, then Title' },
-      { key: 'ry', text: 'Artist, then Year' },
-    ],
-  };
-  const artist = {
-    title: 'Artist',
-    atom: artistListSortAtom,
-    options: [
-      { key: 'q', text: '# of Albums' },
-      { key: 'r', text: 'Name' },
-      { key: 's', text: '# of Songs' },
-    ],
-  };
-  const song = {
-    title: 'Song',
-    atom: songListSortAtom,
-    options: [
-      { key: 't', text: 'Title' },
-      { key: 'rl', text: 'Artist, then Album' },
-      { key: 'lt', text: 'Album' },
-    ],
-  };
-
-*/
-
 export default function Settings({ hidden }: ViewProps): JSX.Element {
   return (
     <div
@@ -171,21 +111,29 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
         </Separator>
         <ArticleSorting />
         <ArtistFiltering />
-        <Separator alignContent="start">
+        <Separator alignContent="start" />
+        <div>
           <Text variant="mediumPlus">Album &amp; Artist Artwork</Text>
+        </div>
+        <div>
           <Text>Download Album Art?</Text>
+        </div>
+        <div>
           <Text>Download Artist Art?</Text>
+        </div>
+        <div>
           <Text>Try to save with album, first?</Text>
+        </div>
+        <div>
           <Text>-&gt;Filename</Text>
+        </div>
+        <div>
           <Text>Cache artist pix</Text>
+        </div>
+        <div>
           <Text>Cache album pix</Text>
-        </Separator>
+        </div>
       </Stack>
     </div>
   );
-  /*
-        <SortPopup data={album} />
-        <SortPopup data={artist} />
-        <SortPopup data={song} />
-  */
 }

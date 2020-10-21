@@ -69,14 +69,16 @@ export default function Sidebar(): JSX.Element {
     set(curViewAtom, CurrentView.search);
     set(searchTermAtom, newValue);
   });
+  const onFocus = useRecoilCallback(({ set }) => () => {
+    set(curViewAtom, CurrentView.search);
+  });
   return (
     <div id="sidebar">
       <SearchBox
         placeholder="Search"
         onSearch={onSearch}
-        onChange={() => log('onChange')}
-        onEscape={() => log('onEscape')}
-        onClear={() => log('onClear')}
+        onFocus={onFocus}
+        onChange={(e, nv) => nv && onSearch(nv)}
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}
