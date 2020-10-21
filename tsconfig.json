@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "jsx": "preserve",
+    "jsx": "react",
     "sourceMap": true,
     "downlevelIteration": true,
     "strict": true,

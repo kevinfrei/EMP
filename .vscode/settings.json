@@ -22,5 +22,5 @@
     "source.organizeImports": true
   },
   "editor.formatOnSave": true,
-  "prettier.configPath": "${workspaceRoot}/.prettierrc"
+  "prettier.configPath": ".prettierrc"
 }

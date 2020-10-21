@@ -5,7 +5,7 @@ import SongControls from './SongControls';
 import SongDetailPanel from './SongDetailPanel';
 import SongPlayback from './SongPlayback';
 import './styles/App.css';
-import Utilities from './Utilities';
+import Utilities, { Spin } from './Utilities';
 import ViewSelector from './Views/Selector';
 import VolumeControl from './VolumeControl';
 
@@ -16,15 +16,15 @@ export default function App(): JSX.Element {
       <span className="grabber"></span>
       <span className="left-column"></span>
       <span className="top-row"></span>
-      <React.Suspense fallback="Initializing...">
+      <Spin label="Intializing...">
         <SongControls />
         <SongPlayback />
         <VolumeControl />
         <Sidebar />
-      </React.Suspense>
-      <React.Suspense fallback="Please wait...">
+      </Spin>
+      <Spin label="Please wait...">
         <ViewSelector />
-      </React.Suspense>
+      </Spin>
       <SongDetailPanel />
     </RecoilRoot>
   );

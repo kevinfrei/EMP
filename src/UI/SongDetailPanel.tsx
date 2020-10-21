@@ -3,6 +3,7 @@ import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-befo
 import { useRecoilState } from 'recoil';
 import { songDetailAtom } from '../Recoil/Local';
 import MediaInfoTable from './MediaInfo';
+import { Spin } from './Utilities';
 
 export default function SongDetailPanel(): JSX.Element {
   const [detailSong, setDetailSong] = useRecoilState(songDetailAtom);
@@ -20,7 +21,7 @@ export default function SongDetailPanel(): JSX.Element {
       isBlocking={false}
       closeButtonAriaLabel="Close"
     >
-      <React.Suspense fallback="Loading...">{elem}</React.Suspense>
+      <Spin label="Loading...">{elem}</Spin>
     </Panel>
   );
 }
