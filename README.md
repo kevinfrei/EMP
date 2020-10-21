@@ -88,11 +88,14 @@ using the API mentioned above. Perfect!
     the MusicDB update occurs
 - Playlist saving seems pretty buggy. Not sure why.
 - Make playlists filter for songs that actually exist in the DB
+- Clearing the queue should either stop playback or leave the current song's
+  metadata visible in the playback controls (I'm leaning toward the latter)
 
 ### Core Capabilities
 
 - **render** Make search group headers a little more informative
-- **render** Make search headers sort the list
+- **render** Make search headers clickable (i.e. sort the list of stuff)
+- **render** Make the search results visible when the search field is entered
 - **render** Get the cursor set properly for clickable stuff
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...

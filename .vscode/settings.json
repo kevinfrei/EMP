@@ -12,11 +12,15 @@
     "node_modules": true,
     "build": true,
     "dist": true,
-    "yarn*.l*": true
+    "yarn*.l*": true,
+    "LICENSE.md": true,
+    "*.tsbuildinfo": true,
+    ".gitmodules": true
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.codeActionsOnSave": {
     "source.organizeImports": true
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "prettier.configPath": "${workspaceRoot}/.prettierrc"
 }
