@@ -171,6 +171,15 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
         </Separator>
         <ArticleSorting />
         <ArtistFiltering />
+        <Separator alignContent="start">
+          <Text variant="mediumPlus">Album &amp; Artist Artwork</Text>
+          <Text>Download Album Art?</Text>
+          <Text>Download Artist Art?</Text>
+          <Text>Try to save with album, first?</Text>
+          <Text>-&gt;Filename</Text>
+          <Text>Cache artist pix</Text>
+          <Text>Cache album pix</Text>
+        </Separator>
       </Stack>
     </div>
   );
