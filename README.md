@@ -81,23 +81,23 @@ asynchronously query the server for the initial value (falling back to the
 atom's default if the server fails) as well as _register it to be recorded_
 using the API mentioned above. Perfect!
 
-## This stuff is all out of date
-
-I should review it once I'm happy with the state of my recoil-iness.
-
 ### Bugs
 
-- Make playlists filter for songs that actually exist in the DB
 - Make MusicDB updates due to location changes work properly
   - There's a race condition: The updated MusicDB request gets replied to before
     the MusicDB update occurs
+- Playlist saving seems pretty buggy. Not sure why.
+- Make playlists filter for songs that actually exist in the DB
 
 ### Core Capabilities
 
-- **both** Make 'Search' work.
+- **render** Make search group headers a little more informative
+- **render** Make search headers sort the list
+- **render** Get the cursor set properly for clickable stuff
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
 - **render** Add playlist view that looks like Albums/Artists view
+- **render** Improve the Search view a bit
 - **render** Make a miniplayer!
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
@@ -124,6 +124,7 @@ I should review it once I'm happy with the state of my recoil-iness.
 - Get some controls in the menu with appropriate keyboard shortcuts
 - Maybe use the album-art package to get artist pix
 - Improve/Expand the views for Albums and Artists.
+- Make the image cache stuff more configurable
 
 ### Other
 

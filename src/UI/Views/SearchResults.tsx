@@ -1,9 +1,12 @@
 import {
   DetailsList,
+  IconButton,
+  IDetailsGroupRenderProps,
   IGroup,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
+  Stack,
   Text,
 } from '@fluentui/react';
 import {
@@ -14,7 +17,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
@@ -34,6 +37,33 @@ import './styles/SearchResults.css';
 // const log = MakeLogger('SearchResults', true);
 
 type SearchSongData = SongData & { key: string; group: string };
+
+function MakeAlbumGroupKey(albumKey: AlbumKey): string {
+  return `L*${albumKey}`;
+}
+
+function GetAlbumGroup(groupKey: string): string | void {
+  if (groupKey.startsWith('L*')) {
+    return groupKey.substr(2);
+  }
+}
+
+function MakeArtistGroupKey(rk: ArtistKey, lk: AlbumKey): string {
+  return `R*${rk}*${lk}`;
+}
+
+function GetArtistAlbum(groupKey: string): [ArtistKey, AlbumKey] | void {
+  if (groupKey.startsWith('R*')) {
+    const index = groupKey.lastIndexOf('*');
+    if (index > 2) {
+      return [groupKey.substring(2, index), groupKey.substring(index + 1)];
+    }
+  }
+}
+
+function IsTopGroup(groupKey: string): boolean {
+  return groupKey.startsWith('*');
+}
 
 function AggregateSearchResults(
   songs: Map<SongKey, Song>,
@@ -56,7 +86,7 @@ function AggregateSearchResults(
     const album = albums.get(albumKey);
     if (!album) return [];
     return album.songs.map((sk, idx) =>
-      MakeSongSearchEntry(songs.get(sk)!, idx, `L-${album.key}`),
+      MakeSongSearchEntry(songs.get(sk)!, idx, MakeAlbumGroupKey(album.key)),
     );
   }
   function MakeArtistSongEntries(artistKey: ArtistKey): SearchSongData[] {
@@ -67,19 +97,19 @@ function AggregateSearchResults(
       return MakeSongSearchEntry(
         song!,
         idx,
-        `R-${artist.key}-${song!.albumId}`,
+        MakeArtistGroupKey(artist.key, song!.albumId),
       );
     });
   }
   const groups: IGroup[] = [];
   const results = searchResults.songs.map((songKey, index) =>
-    MakeSongSearchEntry(songs.get(songKey)!, index, 'songs'),
+    MakeSongSearchEntry(songs.get(songKey)!, index, '*songs'),
   );
   if (results.length > 0) {
     groups.push({
       startIndex: 0,
       count: results.length,
-      key: 'Songs',
+      key: '*songs',
       name: 'Songs',
       isCollapsed: false,
       level: 0,
@@ -106,7 +136,7 @@ function AggregateSearchResults(
     groups.push({
       startIndex: albumStart,
       count: results.length - albumStart,
-      key: 'Albums',
+      key: '*albums',
       name: 'Albums',
       isCollapsed: false,
       children: albumGroups,
@@ -134,7 +164,7 @@ function AggregateSearchResults(
     groups.push({
       startIndex: artistStart,
       count: results.length - artistStart,
-      key: 'Artists',
+      key: '*artists',
       name: 'Artists',
       isCollapsed: false,
       children: artistGroups,
@@ -150,12 +180,19 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
   const songs = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
   const albums = useRecoilValue(allAlbumsSel);
+  const [curExpandedSet, setExpandedSet] = useState(new Set<string>());
   const onSongDetailClick = useRecoilCallback(
     ({ set }) => (item: SearchSongData) => set(songDetailAtom, item.song),
   );
   const onAddSongClick = useRecoilCallback(
     ({ set }) => (item: SearchSongData) => AddSongs([item.song.key], set),
   );
+  const onAddSongListClick = useRecoilCallback(
+    ({ set }) => (songList: SongKey[]) => {
+      AddSongs(songList, set);
+    },
+  );
+
   if (
     !searchResults.albums.length &&
     !searchResults.songs.length &&
@@ -176,6 +213,54 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
     albums,
     searchResults,
   );
+  const renderProps: IDetailsGroupRenderProps = {
+    onToggleCollapseAll: (isAllCollapsed: boolean) => {
+      setExpandedSet(
+        new Set<string>(isAllCollapsed ? [] : groups.map((g) => g.key)),
+      );
+    },
+    headerProps: {
+      onToggleCollapse: (curGroup: IGroup) => {
+        if (curExpandedSet.has(curGroup.key)) {
+          curExpandedSet.delete(curGroup.key);
+        } else {
+          curExpandedSet.add(curGroup.key);
+        }
+        setExpandedSet(curExpandedSet);
+      },
+    },
+    onRenderHeader: (props): JSX.Element | null => {
+      if (!props || !props.group) return null;
+      const groupProps = props.group;
+      const groupKey = groupProps.key;
+      const theStyle = IsTopGroup(groupKey) ? {} : { margin: '0 0 0 20px' };
+      return (
+        <Stack horizontal verticalAlign="center" style={theStyle}>
+          <IconButton
+            iconProps={{
+              iconName: groupProps.isCollapsed ? 'ChevronRight' : 'ChevronDown',
+            }}
+            onClick={() => props.onToggleCollapse!(groupProps)}
+          />
+          <Text
+            onDoubleClick={() =>
+              onAddSongListClick(
+                resultEntries
+                  .slice(
+                    groupProps.startIndex,
+                    groupProps.startIndex + groupProps.count,
+                  )
+                  .map((entry) => entry.song.key),
+              )
+            }
+          >
+            {groupProps.name} [{groupProps.count} songs]
+          </Text>
+        </Stack>
+      );
+      // <AlbumHeaderDisplay album={albums.get(albumId)!} />
+    },
+  };
   //  log(resultEntries);
   // I need to create a group hierarchy like this:
   // Songs => Song Results
@@ -225,6 +310,7 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={onAddSongClick}
+          groupProps={renderProps}
         />
       </ScrollablePane>
     </div>
