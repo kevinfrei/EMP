@@ -62,31 +62,35 @@ function TopLine(): JSX.Element {
 
   const saveListAs = useRecoilCallback(({ set }) => (inputName: string) => {
     if (playlists.has(inputName)) {
-      window.alert('Cowardly refusing to overwrite existing playlist.');
+      window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
-      playlists.set(inputName, songList);
-      setPlaylists(playlists);
+      const newPlaylist = playlists.set(inputName, songList);
+      setPlaylists(new Map(newPlaylist));
       set(nowPlayingAtom, inputName);
     }
   });
 
   const emptyQueue = songList.length === 0;
 
-  const stopAndClear = useRecoilCallback(({ reset }) => () => {
-    StopAndClear(reset);
-  });
-  const clickClearQueue = useRecoilCallback(({ reset }) => () => {
-    if (isPlaylist(nowPlaying)) {
-      StopAndClear(reset);
-    } else {
-      showConfirm();
-    }
-  });
+  const stopAndClear = useRecoilCallback(
+    ({ reset, set, snapshot }) => async () => {
+      await StopAndClear({ reset, set, snapshot });
+    },
+  );
+  const clickClearQueue = useRecoilCallback(
+    ({ reset, set, snapshot }) => async () => {
+      if (isPlaylist(nowPlaying)) {
+        await StopAndClear({ reset, set, snapshot });
+      } else {
+        showConfirm();
+      }
+    },
+  );
   let header;
   let saveDisabled: boolean;
   const save = () => {
     playlists.set(nowPlaying, songList);
-    setPlaylists(playlists);
+    setPlaylists(new Map(playlists));
   };
   if (isPlaylist(nowPlaying)) {
     header = nowPlaying;

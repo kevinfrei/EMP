@@ -86,13 +86,13 @@ using the API mentioned above. Perfect!
 - Make MusicDB updates due to location changes work properly
   - There's a race condition: The updated MusicDB request gets replied to before
     the MusicDB update occurs
-- Playlist saving seems pretty buggy. Not sure why.
 - Make playlists filter for songs that actually exist in the DB
-- Clearing the queue should either stop playback or leave the current song's
-  metadata visible in the playback controls (I'm leaning toward the latter)
+- Clearing the queue restarts playback on the current song
+- Search seems less than correct/consistent
 
 ### Core Capabilities
 
+- **render** Renaming a playlist is pretty clunky (save as, delete)
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)
 - **render** Make the search results visible when the search field is entered
@@ -131,7 +131,7 @@ using the API mentioned above. Perfect!
 
 ### Other
 
-- Cache/save media-sourced album covers
+- Cache/save media-sourced album covers for read-only data sources
 - Testing! Testing! Testing!
 
 ### "Other" communication

@@ -67,6 +67,10 @@ export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
 export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
 export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });
 export const nowPlayingAtom = atom<string>({ key: 'nowPlaying', default: '' });
+export const stillPlayingAtom = atom<SongKey>({
+  key: 'StillPlaying',
+  default: '',
+});
 
 // This is synchronized
 export const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
@@ -90,11 +94,15 @@ export const currentSongKeySel = selector<SongKey>({
   key: 'currentSongKey',
   get: ({ get }) => {
     const curIndex = get(currentIndexAtom);
-    const songList = get(songListAtom);
-    if (curIndex >= 0 && curIndex < songList.length) {
-      return songList[curIndex];
+    if (curIndex >= 0) {
+      const songList = get(songListAtom);
+      if (curIndex >= 0 && curIndex < songList.length) {
+        return songList[curIndex];
+      } else {
+        return '';
+      }
     } else {
-      return '';
+      return get(stillPlayingAtom);
     }
   },
 });

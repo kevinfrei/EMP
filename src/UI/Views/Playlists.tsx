@@ -45,7 +45,7 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
   );
   const deletePlaylist = () => {
     if (playlists.delete(selected)) {
-      setPlaylists(playlists);
+      setPlaylists(new Map(playlists));
     }
     setSelected('');
   };

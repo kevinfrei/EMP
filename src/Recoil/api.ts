@@ -4,11 +4,13 @@ import { ShuffleArray } from '../Tools';
 import {
   activePlaylistAtom,
   currentIndexAtom,
+  currentSongKeySel,
   nowPlayingAtom,
   nowPlayingSortAtom,
   repeatAtom,
   shuffleAtom,
   songListAtom,
+  stillPlayingAtom,
 } from './Local';
 
 /**
@@ -118,9 +120,20 @@ export function PlaySongs(
  *
  * @returns void
  */
-export function StopAndClear(
-  reset: (recoilVal: RecoilState<any>) => void,
-): void {
+export async function StopAndClear({
+  set,
+  reset,
+  snapshot,
+}: {
+  snapshot: Snapshot;
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void;
+  reset: (recoilVal: RecoilState<any>) => void;
+}): Promise<void> {
+  const curSong = await snapshot.getPromise(currentSongKeySel);
+  set(stillPlayingAtom, curSong);
   // TODO: Go stop the audio element while we're at it?
   reset(songListAtom);
   reset(currentIndexAtom);
