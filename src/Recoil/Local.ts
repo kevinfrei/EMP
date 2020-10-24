@@ -72,13 +72,28 @@ export const stillPlayingAtom = atom<SongKey>({
   default: '',
 });
 
-// This is synchronized
-export const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
+const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
   key: 'Playlists',
   default: new Map<PlaylistName, SongKey[]>(),
 });
 
-// export const
+// This filters the playlists to only the ones that are actually there
+export const playlistsSel = selector<Map<PlaylistName, SongKey[]>>({
+  key: 'ActualPlaylists',
+  get: ({ get }) => {
+    const theMap = get(playlistsAtom);
+    const songs = new Set(get(songListAtom));
+    const newMap = new Map<PlaylistName, SongKey[]>();
+    for (const [name, keys] of theMap) {
+      newMap.set(
+        name,
+        keys.filter((val) => songs.has(val)),
+      );
+    }
+    return newMap;
+  },
+  set: ({ set }, newVal) => set(playlistsAtom, newVal),
+});
 
 export const songListAtom = atom<SongKey[]>({
   key: 'currentSongList',

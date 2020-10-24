@@ -14,7 +14,7 @@ import React, { useState } from 'react'; // eslint-disable-line @typescript-esli
 import { useRecoilCallback } from 'recoil';
 import { PlaySongs } from '../../Recoil/api';
 import { useBackedState, useDialogState } from '../../Recoil/helpers';
-import { nowPlayingAtom, playlistsAtom } from '../../Recoil/Local';
+import { nowPlayingAtom, playlistsSel } from '../../Recoil/Local';
 import { ConfirmationDialog } from '../Dialogs';
 import { ViewProps } from './Selector';
 import './styles/Playlists.css';
@@ -33,7 +33,7 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 };
 
 export default function Playlister({ hidden }: ViewProps): JSX.Element {
-  const [playlists, setPlaylists] = useBackedState(playlistsAtom);
+  const [playlists, setPlaylists] = useBackedState(playlistsSel);
   const [selected, setSelected] = useState('');
   const [showConfirm, confirmData] = useDialogState();
 

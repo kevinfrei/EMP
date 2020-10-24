@@ -31,7 +31,7 @@ import {
   currentIndexAtom,
   nowPlayingAtom,
   nowPlayingSortAtom,
-  playlistsAtom,
+  playlistsSel,
   shuffleAtom,
   songDetailAtom,
   songListAtom,
@@ -52,7 +52,7 @@ const theme = getTheme();
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const [playlists, setPlaylists] = useBackedState(playlistsAtom);
+  const [playlists, setPlaylists] = useBackedState(playlistsSel);
   const nowPlaying = useRecoilValue(nowPlayingAtom);
 
   const songList = useRecoilValue(songListAtom);
