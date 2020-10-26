@@ -9,7 +9,7 @@ import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
 import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
 
-const log = MakeLogger('covert-art', true);
+const log = MakeLogger('cover-art');
 
 function httpsDownloader(url: string): Promise<Buffer> {
   const buf: Uint8Array[] = [];

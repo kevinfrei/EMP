@@ -12,6 +12,7 @@ import {
 } from '@freik/media-utils';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
+import { GetMetadataCache } from './metadata';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
@@ -19,7 +20,7 @@ export interface ServerSong extends Song {
   path: string;
 }
 
-const log = MakeLogger('music');
+const log = MakeLogger('music', true);
 
 const setEqual = Comparisons.ArraySetEqual;
 
@@ -255,7 +256,7 @@ async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
       db.pictures.set(album.key, largest.name);
     }
   }
-  // TODO: Look inside song metadata
+  // Metadata-hosted album covers are only acquired "on demand"?
 }
 
 async function fileNamesToDatabase(
@@ -278,25 +279,63 @@ async function fileNamesToDatabase(
   };
 
   // Get the list of existing paths to song-keys
-  const shiStr = await persist.getItemAsync('songHashIndex');
-  existingKeys = shiStr
-    ? (FTON.parse(shiStr) as Map<string, SongKey>)
+  const songHash = await persist.getItemAsync('songHashIndex');
+  existingKeys = songHash
+    ? (FTON.parse(songHash) as Map<string, SongKey>)
     : new Map();
-
+  const now = Date.now();
+  const metadataCache = await GetMetadataCache();
+  const tryHarder: string[] = [];
   for (const file of files) {
-    const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
-    if (!littlemd) {
-      log('Unable to get metadata from file ' + file);
+    // If we've previously failed doing anything with this file, don't keep
+    // banging our head against a wall
+    if (!metadataCache.shouldTry(file)) {
       continue;
     }
-    const md: FullMetadata | void = Metadata.FullFromObj(file, littlemd as any);
+    // Cached data overrides file path acquired metadata
+    let md = metadataCache.get(file);
     if (!md) {
-      log('Unable to get full metadata from file ' + file);
-      continue;
+      const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
+      if (!littlemd) {
+        log('Unable to get metadata from file ' + file);
+        tryHarder.push(file);
+        continue;
+      }
+      const fullMd = Metadata.FullFromObj(file, littlemd as any);
+      if (!fullMd) {
+        log('Unable to get full metadata from file ' + file);
+        tryHarder.push(file);
+        continue;
+      }
+      md = fullMd;
+      // We *could* save this data to disk, but honestly,
+      // I don't think it's going to be measurably faster,
+      // and I'd rather not waste the space
     }
     AddSongToDatabase(md, db);
   }
+  const fileNameParseTime = Date.now();
   await HandleAlbumCovers(db, pics);
+  for (const file of tryHarder) {
+    const maybeMetadata = await Metadata.fromFileAsync(file);
+    if (!maybeMetadata) {
+      log(`Complete metadata failure for ${file}`);
+      metadataCache.fail(file);
+      continue;
+    }
+    const fullMd = Metadata.FullFromObj(file, maybeMetadata as any);
+    if (!fullMd) {
+      log(`Partial metadata failure for ${file}`);
+      metadataCache.fail(file);
+      continue;
+    }
+    metadataCache.set(file, fullMd);
+    AddSongToDatabase(fullMd, db);
+  }
+  const fileMetadataParseTime = Date.now();
+  log(`File names: ${fileNameParseTime - now}`);
+  log(`Metadata  : ${fileMetadataParseTime - fileNameParseTime}`);
+  await metadataCache.save();
   await persist.setItemAsync(
     'songHashIndex',
     FTON.stringify(
