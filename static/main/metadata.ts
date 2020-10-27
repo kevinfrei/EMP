@@ -1,5 +1,5 @@
 import { FTON, FTONData, MakeLogger, ObjUtil, Type } from '@freik/core-utils';
-import { FullMetadata, MD } from '@freik/media-utils';
+import { Attributes, FullMetadata, MD } from '@freik/media-utils';
 import * as persist from './persist';
 
 const log = MakeLogger('metadata', true);
@@ -44,18 +44,29 @@ export async function getMediaInfo(
   mediaPath: string,
 ): Promise<Map<string, string>> {
   const trackInfo = await MD.RawMetadata(mediaPath);
-  if (!Type.isObjectNonNull(trackInfo)) {
-    log('Bad metadata');
-    return new Map();
-  } else {
+  const maybeSimple = await MD.fromFileAsync(mediaPath);
+  const simple: NestedObject = ((maybeSimple as any) as NestedObject) || {};
+  const maybeFull = maybeSimple
+    ? MD.FullFromObj(mediaPath, (maybeSimple as any) as Attributes)
+    : null;
+  const full: NestedObject = ((maybeFull as any) as NestedObject) || {};
+  let res: Map<string, string>;
+  if (Type.isObjectNonNull(trackInfo)) {
     delete trackInfo.native;
     delete trackInfo.quality;
     log('good metadata:');
     log(trackInfo);
-    const res = flatten(trackInfo as NestedObject);
-    res.set('File path', mediaPath);
-    return res;
+    trackInfo.simple = simple;
+    trackInfo.full = full;
+    delete trackInfo.full.originalPath;
+    res = flatten(trackInfo as NestedObject);
+  } else {
+    log('Bad metadata');
+    delete full.originalPath;
+    res = flatten({ simple, full });
   }
+  res.set('File Path', mediaPath);
+  return res;
 }
 
 export type MetadataCache = {
