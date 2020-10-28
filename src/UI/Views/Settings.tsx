@@ -133,6 +133,18 @@ export default function Settings({ hidden }: ViewProps): JSX.Element {
         <div>
           <Text>Cache album pix</Text>
         </div>
+        <div>
+          <Text>Flush Images</Text>
+        </div>
+        <div>
+          <Text>Flush database</Text>
+        </div>
+        <div>
+          <Text>Flush Metadata cache</Text>
+        </div>
+        <div>
+          <Text>Clear local overrides</Text>
+        </div>
       </Stack>
     </div>
   );
