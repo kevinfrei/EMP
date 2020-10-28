@@ -66,31 +66,19 @@ export default function MediaInfoTable({
         <br />
         <TextField label="File Path" underlined readOnly value={thePath} />
         <Stack horizontal>
-          <TextField label="Duration" underlined readOnly value={duration} />
+          <TextField
+            label="Duration"
+            underlined
+            readOnly
+            value={duration}
+            style={{ width: '70px' }}
+          />
           <TextField
             label="Format:"
             underlined
             readOnly
-            value={bitrate}
-            style={{ width: '95px' }}
-          />
-          <TextField
-            underlined
-            readOnly
-            value={fileType}
-            style={{ width: '40px' }}
-          />
-          <TextField
-            underlined
-            readOnly
-            value={sampleRate}
-            style={{ width: '70px' }}
-          />
-          <TextField
-            underlined
-            readOnly
-            value={channels}
-            style={{ width: '80px' }}
+            value={`${bitrate} ${fileType} ${sampleRate} ${channels}`}
+            style={{ width: '310px' }}
           />
         </Stack>
       </Stack>
