@@ -121,6 +121,30 @@ export const translateToMainEffect = function <T>(
     });
   };
 };
+
+export function bidirectionalSyncWithMainEffect({
+  node,
+  trigger,
+  setSelf,
+  onSet,
+}: AtomEffectParams<string>): void {
+  if (trigger === 'get') {
+    GetGeneral(node.key)
+      .then((value) => {
+        if (value) {
+          setSelf(value);
+        }
+      })
+      .catch((rej) => log(`${node.key} Get failed`));
+  }
+  // Subscribe!!!
+  onSet((newVal, oldVal) => {
+    if (newVal !== oldVal && !(newVal instanceof DefaultValue))
+      SetGeneral(node.key, newVal).catch((reason) => {
+        log(`${node.key} save to main failed`);
+      });
+  });
+}
 // This is the list of atoms that we're sync'ing back to the main process
 const atomsToSync = new Map<string, RecoilState<unknown>>();
 

@@ -1,5 +1,5 @@
 // This is for getting at "global" stuff from the window object
-import { MakeLogger } from '@freik/core-utils';
+import { FTON, FTONData, MakeLogger, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -9,7 +9,7 @@ import {
   SongKey,
 } from '@freik/media-utils';
 import { IpcRenderer } from 'electron';
-import { OpenDialogSyncOptions } from 'electron/main';
+import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { GetDataForSong, SongData } from './DataSchema';
 
 const log = MakeLogger('Tools', true);
@@ -38,10 +38,34 @@ export function SetInit(func: () => void): void {
   window.initApp = func;
 }
 
+function handleMessage(message: FTONData) {
+  log('Got message:');
+  log(message);
+  if (Type.has(message, 'updateDatabase')) {
+    // Special case this thing?
+    // Everything else can just be subscribed to normally.
+    // Maybe this one can to. Not sure...
+  }
+}
+
 export function InitialWireUp(): void {
   if (!window.ipcSet) {
     window.ipcSet = true;
-    // Nothing to do here, actually
+
+    // Set up listeners for any messages that we might want to asynchronously
+    // send from the main process
+    window.ipc?.on('async-data', (event: IpcRendererEvent, data: unknown) => {
+      if (
+        FTON.isFTON(data) &&
+        Type.has(data, 'message') &&
+        FTON.isFTON(data.message)
+      ) {
+        handleMessage(data.message);
+      } else {
+        log('Async message malformed:');
+        log(data);
+      }
+    });
   }
 }
 

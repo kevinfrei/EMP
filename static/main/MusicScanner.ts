@@ -16,11 +16,10 @@ import { GetMetadataCache } from './metadata';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
-export interface ServerSong extends Song {
-  path: string;
-}
+export type ServerSong = Song & { path: string };
 
-const log = MakeLogger('music', true);
+const log = MakeLogger('music');
+const err = MakeLogger('music-err', true);
 
 const setEqual = Comparisons.ArraySetEqual;
 
@@ -78,7 +77,7 @@ function getOrNewArtist(db: MusicDB, name: string): Artist {
     if (art) {
       return art;
     }
-    log("DB inconsistency - artist key by name doesn't exist in key index");
+    err("DB inconsistency - artist key by name doesn't exist in key index");
     // Fall-through and just overwrite the artistNameIndex with a new key...
   }
   const key: ArtistKey = newArtistKey();
@@ -111,7 +110,7 @@ function getOrNewAlbum(
   for (const albumKey of sharedNames) {
     const alb: Album | undefined = db.albums.get(albumKey);
     if (!alb) {
-      log(
+      err(
         `DB inconsistency - album (key: ${albumKey}) by title doesn't exist in index`,
       );
       // We don't have an easy recovery from this particular inconsistency
@@ -119,7 +118,7 @@ function getOrNewAlbum(
     }
     const check: Album = alb;
     if (check.title.toLowerCase() !== title.toLowerCase()) {
-      log(`DB inconsistency - album title index inconsistency`);
+      err(`DB inconsistency - album title index inconsistency`);
       continue;
     }
     if (check.year !== year || check.vatype !== vatype) {
@@ -369,7 +368,7 @@ export async function find(locations: string[]): Promise<MusicDB> {
         continue;
       }
     } catch (e) {
-      log(`Unable to read ${i || '<unknown>'}`);
+      err(`Unable to read ${i || '<unknown>'}`);
       continue;
     }
     if (!dirents) {
@@ -399,13 +398,16 @@ export async function find(locations: string[]): Promise<MusicDB> {
           }
         }
       } catch (e) {
-        log('Unable to process dirent:');
-        log(dirent);
+        err('Unable to process dirent:');
+        err(dirent);
         continue;
       }
     }
   }
-  return await fileNamesToDatabase(songsList, picList);
+  err(`${songsList.length} songs found during folder scan`);
+  const theDb = await fileNamesToDatabase(songsList, picList);
+  err(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
+  return theDb;
 }
 
 export function makeIndex(musicDB: MusicDB): MusicIndex {

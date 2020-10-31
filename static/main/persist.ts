@@ -4,6 +4,7 @@ import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
 const log = MakeLogger('persist');
+const err = MakeLogger('persist-err', true);
 
 export type MaybeRectangle = {
   width: number;
@@ -54,8 +55,8 @@ function readFile(id: string): string | void {
     memoryCache.set(id, data);
     return data;
   } catch (e) {
-    log('Error occurred during readFile');
-    log(e);
+    err('Error occurred during readFile');
+    err(e);
   }
 }
 
@@ -70,8 +71,8 @@ async function readFileAsync(id: string): Promise<string | void> {
     memoryCache.set(id, contents);
     return contents;
   } catch (e) {
-    log('Error occurred during readFileAsync');
-    log(e);
+    err('Error occurred during readFileAsync');
+    err(e);
   }
 }
 
@@ -90,8 +91,8 @@ function deleteFile(id: string) {
     fs.unlinkSync(storageLocation(id));
     memoryCache.delete(id);
   } catch (e) {
-    log('Error occurred during deleteFile');
-    log(e);
+    err('Error occurred during deleteFile');
+    err(e);
   }
 }
 
@@ -100,8 +101,8 @@ async function deleteFileAsync(id: string) {
     await fsp.unlink(storageLocation(id));
     memoryCache.delete(id);
   } catch (e) {
-    log('Error occurred during deleteFileAsync');
-    log(e);
+    err('Error occurred during deleteFileAsync');
+    err(e);
   }
 }
 
@@ -110,6 +111,7 @@ function notify(key: string, val: string) {
   const ls = listeners.get(key);
   if (!ls) return;
   for (const [, fn] of ls) {
+    log(`Updating ${key} to ${val}`);
     fn(val);
   }
 }
@@ -235,8 +237,8 @@ export function getWindowPos(): WindowPosition {
       }
     }
   } catch (e) {
-    log('Error occurred during getWindowPos');
-    log(e);
+    err('Error occurred during getWindowPos');
+    err(e);
   }
 
   return defaultWindowPosition;

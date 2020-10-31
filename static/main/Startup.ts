@@ -1,29 +1,30 @@
-import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
+import { FTON, MakeLogger } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
 import { BrowserWindow } from 'electron';
-import { getMusicDB, setMusicIndex } from './MusicAccess';
+import { asyncSend } from './Communication';
+import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
 import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
-const log = MakeLogger('Startup', true);
+const log = MakeLogger('Startup');
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');
   const rawLocations = strLocations ? FTON.parse(strLocations) : [];
+  log('getLocations:');
+  log(rawLocations);
   return (rawLocations && FTON.arrayOfStrings(rawLocations)) || [];
 }
 
-export async function CreateMusicDB(): Promise<void> {
+async function CreateMusicDB(): Promise<void> {
   const musicLocations = getLocations();
   log('Got music locations:');
   log(musicLocations);
   const musicDB = await music.find(musicLocations);
-  log('Got Music DB!');
-  await persist.setItemAsync(
-    'DB',
-    FTON.stringify((musicDB as unknown) as FTONData),
-  );
+  log('Got Music DB with songs count:');
+  log(musicDB.songs.size);
+  await saveMusicDB(musicDB);
 
   const start = new Date().getTime();
   const songs = MakeSearchable<SongKey>(
@@ -44,11 +45,30 @@ export async function CreateMusicDB(): Promise<void> {
   log(`Total time to build index: ${stop - start} ms`);
 }
 
-function UpdateDB() {
-  CreateMusicDB().catch((rej) => {
-    log('Caught an exception while trying to update the db');
-    log(rej);
-  });
+async function RescanDB(): Promise<void> {
+  const prevDB = await getMusicDB();
+  if (prevDB) {
+    log('Songs before:' + prevDB.songs.size.toString());
+  }
+  await CreateMusicDB();
+  const db = await getMusicDB();
+  if (db) {
+    log('About to send the update');
+    asyncSend({ updateDatabase: [db.songs, db.albums, db.artists] });
+    if (prevDB) {
+      log('Songs before:' + prevDB.songs.size.toString());
+      log('Songs after: ' + db.songs.size.toString());
+    }
+  }
+}
+
+export function UpdateDB(): void {
+  RescanDB()
+    .then(() => log('Finished updating the database'))
+    .catch((rej) => {
+      log('Caught an exception while trying to update the db');
+      log(rej);
+    });
 }
 
 // This is awaited upon initial window creation
@@ -68,5 +88,4 @@ export async function Startup(): Promise<void> {
 export function Ready(window: BrowserWindow): void {
   // Do anything here that needs to happen once we have the window
   // object available
-  persist.subscribe('locations', UpdateDB);
 }

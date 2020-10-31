@@ -1,5 +1,5 @@
 import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow, ipcMain, WebContents } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import {
   getAllAlbums,
@@ -144,6 +144,7 @@ export function Init(): void {
   register('set-general', setGeneral);
 }
 
+let wc: WebContents;
 /**
  * Invoked after the window has been created.
  *
@@ -151,5 +152,9 @@ export function Init(): void {
  * @returns void
  */
 export function Begin(window: BrowserWindow): void {
-  // win = window;
+  wc = window.webContents;
+}
+
+export function asyncSend(message: FTONData): void {
+  wc.send('async-data', { message });
 }

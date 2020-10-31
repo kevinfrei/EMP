@@ -10,7 +10,8 @@ import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';
 
-const log = MakeLogger('MusicAccess', true);
+const log = MakeLogger('MusicAccess');
+const err = MakeLogger('MusicAccess-err', true);
 
 let theMusicDatabase: MusicDB | null = null;
 let theMusicIndex: MusicIndex | null = null;
@@ -35,8 +36,17 @@ export async function getMusicDB(): Promise<MusicDB | void> {
       }
       log('get-music-db result is empty');
     } catch (e) {
-      log('get-music-db exception:');
-      log(e);
+      err('get-music-db exception:');
+      err(e);
+      const emptyDB: MusicDB = {
+        songs: new Map<SongKey, ServerSong>(),
+        albums: new Map<AlbumKey, Album>(),
+        artists: new Map<ArtistKey, Artist>(),
+        pictures: new Map<AlbumKey, string>(),
+        albumTitleIndex: new Map<string, AlbumKey[]>(),
+        artistNameIndex: new Map<string, ArtistKey>(),
+      };
+      await persist.setItemAsync('DB', FTON.stringify(emptyDB));
       return;
     }
   } else {
@@ -45,11 +55,13 @@ export async function getMusicDB(): Promise<MusicDB | void> {
 }
 
 export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
+  theMusicDatabase = musicDB;
   const asFT = FTON.asFTON(musicDB);
   if (asFT) {
+    log(`Saving DB with ${musicDB.songs.size} songs`);
     await persist.setItemAsync('DB', FTON.stringify(asFT));
   } else {
-    log("MusicDB isn't FTON data!");
+    err("MusicDB isn't FTON data!");
   }
 }
 
@@ -60,7 +72,7 @@ export async function getAllSongs(): Promise<Map<SongKey, ServerSong>> {
     log(`get-all-songs: ${musicDB.songs.size} total songs`);
     return musicDB.songs || new Map();
   }
-  log('get-all-songs result is empty');
+  err('get-all-songs result is empty');
   return new Map();
 }
 
@@ -71,7 +83,7 @@ export async function getAllArtists(): Promise<Map<ArtistKey, Artist>> {
     log(`get-all-artists: ${musicDB.artists.size} total artists`);
     return musicDB.artists;
   }
-  log('get-all-artists result is empty');
+  err('get-all-artists result is empty');
   return new Map();
 }
 
@@ -82,7 +94,7 @@ export async function getAllAlbums(): Promise<Map<AlbumKey, Album>> {
     log(`get-all-albums: ${musicDB.albums.size} total albums`);
     return musicDB.albums;
   }
-  log('get-all-albums result is empty');
+  err('get-all-albums result is empty');
   return new Map();
 }
 

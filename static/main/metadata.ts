@@ -2,7 +2,7 @@ import { FTON, FTONData, MakeLogger, ObjUtil, Type } from '@freik/core-utils';
 import { Attributes, FullMetadata, MD } from '@freik/media-utils';
 import * as persist from './persist';
 
-const log = MakeLogger('metadata', true);
+const log = MakeLogger('metadata');
 
 declare type NestedValue =
   | NestedObject
