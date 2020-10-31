@@ -7,6 +7,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
+import { DefaultValue } from 'recoil';
 import { InvokeMain } from './Tools';
 
 const log = MakeLogger('ipc', true);
@@ -62,6 +63,12 @@ export async function GetMediaInfo(
 
 export async function GetGeneral(key: string): Promise<string | void> {
   return await InvokeMain('get-general', key);
+}
+export async function GetDefaultValue(
+  key: string,
+): Promise<string | DefaultValue> {
+  const res = await InvokeMain('get-general', key);
+  return res ? res : new DefaultValue();
 }
 
 export async function SetGeneral(key: string, data: string): Promise<void> {

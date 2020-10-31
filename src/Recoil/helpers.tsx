@@ -2,6 +2,7 @@ import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   atomFamily,
+  DefaultValue,
   RecoilState,
   RecoilValue,
   selectorFamily,
@@ -39,6 +40,87 @@ export function useDialogState(): DialogState {
   return [() => setHidden(false), [isHidden, () => setHidden(true)]];
 }
 
+export type AtomEffectParams<T> = {
+  node: RecoilState<T>;
+  trigger: 'get' | 'set';
+  // Callbacks to set or reset the value of the atom.
+  // This can be called from the atom effect function directly to initialize the
+  // initial value of the atom, or asynchronously called later to change it.
+  setSelf: (
+    newVal:
+      | T
+      | DefaultValue
+      | Promise<T | DefaultValue> // Only allowed for initialization at this time
+      | ((curVal: T | DefaultValue) => T | DefaultValue),
+  ) => void;
+  resetSelf: () => void;
+
+  // Subscribe to changes in the atom value.
+  // The callback is not called due to changes from this effect's own setSelf().
+  onSet: (
+    func: (newValue: T | DefaultValue, oldValue: T | DefaultValue) => void,
+  ) => void;
+};
+
+/**
+ * An Atom effect to acquire the value from main, and save it back when
+ * modified.
+ *
+ * If you're looking for something that will also allow asynchronous changes
+ * from main to be reflected, @see bidirectionalSyncWithMainEffect instead
+ */
+export function reflectInMainEffect({
+  node,
+  trigger,
+  setSelf,
+  onSet,
+}: AtomEffectParams<string>): void {
+  if (trigger === 'get') {
+    GetGeneral(node.key)
+      .then((value) => {
+        if (value) {
+          setSelf(value);
+        }
+      })
+      .catch((rej) => log(`${node.key} Get failed`));
+  }
+  onSet((newVal, oldVal) => {
+    if (newVal !== oldVal && !(newVal instanceof DefaultValue))
+      SetGeneral(node.key, newVal).catch((reason) => {
+        log(`${node.key} save to main failed`);
+      });
+  });
+}
+
+export const translateToMainEffect = function <T>(
+  toString: (input: T) => string,
+  fromString: (input: string) => T | void,
+) {
+  return ({ node, trigger, setSelf, onSet }: AtomEffectParams<T>): void => {
+    if (trigger === 'get') {
+      GetGeneral(node.key)
+        .then((value) => {
+          if (value) {
+            const data = fromString(value);
+            if (data) {
+              setSelf(data);
+            }
+          }
+        })
+        .catch((rej) => log(`${node.key} Get failed`));
+    }
+    onSet((newVal, oldVal) => {
+      if (newVal instanceof DefaultValue) {
+        return;
+      }
+      const newStr = toString(newVal);
+      if (oldVal instanceof DefaultValue || newStr !== toString(oldVal))
+        SetGeneral(node.key, newStr).catch((reason) => {
+          log(`${node.key} save to main failed`);
+        });
+    });
+  };
+};
 // This is the list of atoms that we're sync'ing back to the main process
 const atomsToSync = new Map<string, RecoilState<unknown>>();
 

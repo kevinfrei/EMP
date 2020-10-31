@@ -30,6 +30,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
       if (musicDBstr) {
         log(`get-music.db: ${musicDBstr.length} bytes in the JSON blob.`);
         theMusicDatabase = (FTON.parse(musicDBstr) as unknown) as MusicDB;
+        log(theMusicDatabase);
         return theMusicDatabase;
       }
       log('get-music-db result is empty');
@@ -52,17 +53,18 @@ export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
   }
 }
 
-export async function getAllSongs(): Promise<Map<SongKey, ServerSong> | void> {
+export async function getAllSongs(): Promise<Map<SongKey, ServerSong>> {
   log('get-all-songs called');
   const musicDB = await getMusicDB();
   if (musicDB) {
     log(`get-all-songs: ${musicDB.songs.size} total songs`);
-    return musicDB.songs;
+    return musicDB.songs || new Map();
   }
   log('get-all-songs result is empty');
+  return new Map();
 }
 
-export async function getAllArtists(): Promise<Map<ArtistKey, Artist> | void> {
+export async function getAllArtists(): Promise<Map<ArtistKey, Artist>> {
   log('get-all-artists called');
   const musicDB = await getMusicDB();
   if (musicDB) {
@@ -70,9 +72,10 @@ export async function getAllArtists(): Promise<Map<ArtistKey, Artist> | void> {
     return musicDB.artists;
   }
   log('get-all-artists result is empty');
+  return new Map();
 }
 
-export async function getAllAlbums(): Promise<Map<AlbumKey, Album> | void> {
+export async function getAllAlbums(): Promise<Map<AlbumKey, Album>> {
   log('get-all-albums called');
   const musicDB = await getMusicDB();
   if (musicDB) {
@@ -80,6 +83,7 @@ export async function getAllAlbums(): Promise<Map<AlbumKey, Album> | void> {
     return musicDB.albums;
   }
   log('get-all-albums result is empty');
+  return new Map();
 }
 
 export async function getMediaInfoForSong(
