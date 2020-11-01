@@ -1,5 +1,5 @@
 import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
-import { BrowserWindow, ipcMain, WebContents } from 'electron';
+import { ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import {
   getAllAlbums,
@@ -11,6 +11,7 @@ import {
 } from './MusicAccess';
 import * as persist from './persist';
 import { UpdateDB } from './Startup';
+import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
 const err = MakeLogger('Communication-err', true);
@@ -115,18 +116,6 @@ export function register(key: string, handleIt: Handler<string>): void {
   );
 }
 
-let wc: WebContents;
-
-/**
- * Invoked after the window has been created.
- *
- * @param  {BrowserWindow} window - the window handle
- * @returns void
- */
-export function CommsWindowBegin(window: BrowserWindow): void {
-  wc = window.webContents;
-}
-
 /**
  * Send a message to the rendering process
  *
@@ -134,13 +123,14 @@ export function CommsWindowBegin(window: BrowserWindow): void {
  * The (flattenable) message to send.
  */
 export function asyncSend(message: FTONData): void {
-  wc.send('async-data', { message });
+  SendToMain('async-data', { message });
 }
 
 /**
  * Setup any async listeners, plus register all the "invoke" handlers
  */
 export function CommsSetup(): void {
+  // When 'locations' is changed, update the Music DB in response
   persist.subscribe('locations', UpdateDB);
 
   registerFlattened('get-all-songs', getAllSongs);
@@ -149,6 +139,10 @@ export function CommsSetup(): void {
   registerFlattened('get-media-info', getMediaInfoForSong);
   registerFlattened('search', searchWholeWord);
   registerFlattened('subsearch', searchSubstring);
+
+  // These are the general "just asking for something to read/written to disk"
+  // functions. Media Info, Search, and MusicDB stuff needs a different handler
+  // because they don't just read/write to disk.
   register('get-general', getGeneral);
   register('set-general', setGeneral);
 }

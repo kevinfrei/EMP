@@ -121,6 +121,7 @@ export function Unsubscribe(listenKey: ListenKey): void {
 }
 
 // Called when an async message comes in from the main process
+// Ideally, these should just be subscribed to as part of an AtomEffect
 export function HandleMessage(message: FTONData): void {
   // Walk the list of ID's to see if we've got anything with a format of:
   // { "id" : data }

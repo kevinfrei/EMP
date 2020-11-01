@@ -7,7 +7,7 @@ import { IpcRenderer, ipcRenderer, remote } from 'electron';
 
 const isDev = true; // require('electron-is-dev');
 
-const err = MakeLogger('renderer', true);
+const err = MakeLogger('renderer-err', true);
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;

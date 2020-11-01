@@ -7,7 +7,7 @@ import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
 const log = MakeLogger('Startup');
-const err = MakeLogger('Startup', true);
+const err = MakeLogger('Startup-err', true);
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');
