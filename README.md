@@ -42,20 +42,18 @@ in the playback header. Honestly, it's semi-functional. I need to add Album and
 Artist playback queueing, then custom (auto-saving) playlists are the last major
 piece of functionality to add.
 
-## Stuff to do
+I've migrated to [Recoil](https://recoiljs.org). One of the two key authors is
+on my team, and it was kinda "his idea" (Hi, Dave!). It supports React Suspense
+in an incredibly elegant fashion, and I've been drooling over it for about a
+year. Now that it's been open-sourced, Undux is completely gone, but I'm not
+quite back up to feature parity.
 
-### _In Progress_
-
-Migrate to [Recoil](https://recoiljs.org). One of the two key authors is on my
-team, and it was kinda "his idea" (Hi, Dave!). It supports React suspense in an
-incredibly elegant fashion, and I've been drooling over it for about a year. Now
-that it's been open-sourced, Undux is completely gone, but I'm not quite back up
-to feature parity. During the conversion, I kept hitting weird React issues with
-some of the virtualized list tech I was using, so I said screw it and also
-started migrating off of Bootstrap and onto FluentUI. Honestly FluentUI isn't
-the prettiest, but it's defaults certainly look better than Bootstrap, plus it's
-Microsoft tech, so it's relatively well documented, and super-duper scalable.
-The `DetailsList` component is almost magical. I highly recommend it.
+During the conversion, I kept hitting weird React issues with some of the
+virtualized list tech I was using, so I said screw it and also started migrating
+off of Bootstrap and onto FluentUI. Honestly FluentUI isn't the prettiest, but
+it's defaults certainly look better than Bootstrap, plus it's Microsoft tech, so
+it's relatively well documented, and super-duper scalable. The `DetailsList`
+component is almost magical. I highly recommend it.
 
 ### Recoil Notes
 
@@ -74,19 +72,27 @@ dependency of the data accurately in just _atoms_ and _selectors_. There's a new
 for watching changes so that you can do things like encode the data in a URL, or
 save it back to the server.
 
-You can try to do similar stuff with Effects, but I whipped up a
-`useBackedState` hook, and it seems to work quite nicely. Instead of
-`useRecoilState`, use `useBackedState` with a default, and it will
-asynchronously query the server for the initial value (falling back to the
-atom's default if the server fails) as well as _register it to be recorded_
-using the API mentioned above. Perfect!
+Prior to Recoil v0.1.2, I had a little `useBackedState` hook that rolled a
+number of things into a single chunk of state, but it didn't work with more than
+1 call of `useBackedState`. With Recoil 0.1.2, AtomEffects are the new hotness,
+and it appears to work really well. I'm going to try to get rid of all my weird
+1-off communication and shift to AtomEffects. I'm not quite there, but I think
+it will address the MusicDB update race that I've been ignoring.
+
+## Stuff to do
+
+### _In Progress_
+
+Migration to AtomEffects is underway. I need to move the entire MusicDB to a
+single atom, then songs, albums, and artists are just selectors on that atom.
 
 ### Bugs
 
+- Starting "clean" doesn't seem to be a very happy place. It requires a couple
+  restarts to get it going. Fix that.
 - Make MusicDB updates due to location changes work properly
   - There's a race condition: The updated MusicDB request gets replied to before
     the MusicDB update occurs
-- Make playlists filter for songs that actually exist in the DB
 - Clearing the queue restarts playback on the current song
 - Search seems less than correct/consistent
 
@@ -114,8 +120,7 @@ using the API mentioned above. Perfect!
 
 ### Logic improvements/changes
 
-- Handle audio files that don't fit my schema
-  - Probably start with iTunes schema :/
+- The startup process on both side is kind of a disaster. Clean it up.
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
   - The lion's share of the work for this is already in my `@freik/media-utils`
     module.

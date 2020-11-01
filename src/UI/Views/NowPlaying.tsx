@@ -26,12 +26,11 @@ import {
   useResetRecoilState,
 } from 'recoil';
 import { StopAndClear } from '../../Recoil/api';
-import { useBackedState, useDialogState } from '../../Recoil/helpers';
+import { useDialogState } from '../../Recoil/helpers';
 import {
   currentIndexAtom,
   nowPlayingAtom,
   nowPlayingSortAtom,
-  playlistsSel,
   shuffleAtom,
   songDetailAtom,
   songListAtom,
@@ -41,7 +40,7 @@ import {
   allArtistsSel,
   curSongsSel,
 } from '../../Recoil/ReadOnly';
-import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { playlistsSel, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
@@ -52,7 +51,7 @@ const theme = getTheme();
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const [playlists, setPlaylists] = useBackedState(playlistsSel);
+  const [playlists, setPlaylists] = useRecoilState(playlistsSel);
   const nowPlaying = useRecoilValue(nowPlayingAtom);
 
   const songList = useRecoilValue(songListAtom);

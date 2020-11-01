@@ -11,10 +11,11 @@ import {
 } from '@fluentui/react';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 import { PlaySongs } from '../../Recoil/api';
-import { useBackedState, useDialogState } from '../../Recoil/helpers';
-import { nowPlayingAtom, playlistsSel } from '../../Recoil/Local';
+import { useDialogState } from '../../Recoil/helpers';
+import { nowPlayingAtom } from '../../Recoil/Local';
+import { playlistsSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog } from '../Dialogs';
 import { ViewProps } from './Selector';
 import './styles/Playlists.css';
@@ -33,7 +34,7 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 };
 
 export default function Playlister({ hidden }: ViewProps): JSX.Element {
-  const [playlists, setPlaylists] = useBackedState(playlistsSel);
+  const [playlists, setPlaylists] = useRecoilState(playlistsSel);
   const [selected, setSelected] = useState('');
   const [showConfirm, confirmData] = useDialogState();
 

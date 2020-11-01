@@ -1,18 +1,13 @@
 import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { AtomEffect, DefaultValue, RecoilState, SetterOrUpdater } from 'recoil';
 import {
-  atomFamily,
-  DefaultValue,
-  RecoilState,
-  RecoilValue,
-  selectorFamily,
-  SetterOrUpdater,
-  Snapshot,
-  useRecoilState,
-  useRecoilTransactionObserver_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
-import { GetGeneral, SetGeneral } from '../ipc';
+  GetGeneral,
+  ListenKey,
+  SetGeneral,
+  Subscribe,
+  Unsubscribe,
+} from '../ipc';
 
 export type StatePair<T> = [T, SetterOrUpdater<T>];
 
@@ -23,7 +18,8 @@ export type DialogData = [boolean, () => void];
 // A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
 export type DialogState = [() => void, DialogData];
 
-const log = MakeLogger('helpers');
+const log = MakeLogger('helpers', true);
+const err = MakeLogger('helpers-err', true);
 
 /**
  * A short cut for on/off states to make some things (like dialogs) cleaner
@@ -62,37 +58,7 @@ export type AtomEffectParams<T> = {
   ) => void;
 };
 
-/**
- * An Atom effect to acquire the value from main, and save it back when
- * modified.
- *
- * If you're looking for something that will also allow asynchronous changes
- * from main to be reflected, @see bidirectionalSyncWithMainEffect instead
- */
-export function reflectInMainEffect({
-  node,
-  trigger,
-  setSelf,
-  onSet,
-}: AtomEffectParams<string>): void {
-  if (trigger === 'get') {
-    GetGeneral(node.key)
-      .then((value) => {
-        if (value) {
-          setSelf(value);
-        }
-      })
-      .catch((rej) => log(`${node.key} Get failed`));
-  }
-  onSet((newVal, oldVal) => {
-    if (newVal !== oldVal && !(newVal instanceof DefaultValue))
-      SetGeneral(node.key, newVal).catch((reason) => {
-        log(`${node.key} save to main failed`);
-      });
-  });
-}
-
-export const translateToMainEffect = function <T>(
+export function translateToMainEffect<T>(
   toString: (input: T) => string,
   fromString: (input: string) => T | void,
 ) {
@@ -120,119 +86,95 @@ export const translateToMainEffect = function <T>(
         });
     });
   };
-};
-
-export function bidirectionalSyncWithMainEffect({
-  node,
-  trigger,
-  setSelf,
-  onSet,
-}: AtomEffectParams<string>): void {
-  if (trigger === 'get') {
-    GetGeneral(node.key)
-      .then((value) => {
-        if (value) {
-          setSelf(value);
-        }
-      })
-      .catch((rej) => log(`${node.key} Get failed`));
-  }
-  // Subscribe!!!
-  onSet((newVal, oldVal) => {
-    if (newVal !== oldVal && !(newVal instanceof DefaultValue))
-      SetGeneral(node.key, newVal).catch((reason) => {
-        log(`${node.key} save to main failed`);
-      });
-  });
 }
-// This is the list of atoms that we're sync'ing back to the main process
-const atomsToSync = new Map<string, RecoilState<unknown>>();
 
 /**
- * This is a selector to acquire a particular value from the server.
- * Any values wind up being "read once" and the actual atom winds up containing
- * the current server value. This *does not work* for server-originating
- * changes!!!
- */
-export const backerSelFamily = selectorFamily({
-  key: 'backer-sync',
-  get: (param: string) => async (): Promise<string> => {
-    const serverVal = await GetGeneral(param);
-    return serverVal || '';
-  },
-});
-
-export const alreadyReadFamily = atomFamily({
-  key: 'already-read',
-  default: false,
-});
-
-/**
- * This will trigger a server side pull of the initial value, then use local
- * state for all subsequent sets. This must be used in tandem with the
- * PersistenceObserver transaction watcher and the syncAtom maker
+ * An Atom effect to acquire the value from main, and save it back when
+ * modified, after processing it from the original type to FTON (JSON).
  *
- * This has some problems if used at the same time, the two setters might
- * conflict. I should try to fix that...
+ * @param {(val: T) => FTONData} toFton
+ * The function to convert T to FTON data
+ * @param {(val: FTONData) => T | void} fromFton
+ * The funciton to convert FTON data to T or void if it's malformed
+ * @param {boolean} asyncUpdates
+ * Optionally true if you also need to actively respond to server changes
+ *
+ * @returns an AtomEffect<T>
  */
-export function useBackedState<T>(theAtom: RecoilState<T>): StatePair<T> {
-  // A little 'local' state
-  const [alreadyRead, setAlreadyRead] = useRecoilState(
-    alreadyReadFamily(theAtom.key),
-  );
-  // The 'backed' atom access
-  const [atomValue, setAtomValue] = useRecoilState<T>(theAtom);
-  // Pull the initial value from the server
-  const selector = useRecoilValue<string>(backerSelFamily(theAtom.key));
-  // If we haven't already read the thing, ask it from the selector
-  if (!alreadyRead) {
-    // First time through, add this to the list of stuff to sync to main
-    try {
-      // This side-effect should probably go in an effect
-      // but I'm not concerned about letting the server-watching
-      // hash table "bloat" right now...
-      atomsToSync.set(theAtom.key, theAtom as RecoilState<unknown>);
-
-      // Parse the data from the server (maybe this throws...)
-      const value = (FTON.parse(selector) as unknown) as T;
-      // set the backer atom to the value pulled from the server
-      setAtomValue(value);
-      // Flag as already-read, so we won't try to reset the value
-      setAlreadyRead(true);
-      return [value, setAtomValue];
-    } catch (e) {
-      log(`Error pulling value from server for ${theAtom.key}:`);
-      log(e);
+export function bidirectionalSyncWithTranslateEffect<T>(
+  toFton: (val: T) => FTONData,
+  fromFton: (val: FTONData) => T | void,
+  asyncUpdates?: boolean,
+): AtomEffect<T> {
+  return ({
+    node,
+    trigger,
+    setSelf,
+    onSet,
+  }: AtomEffectParams<T>): (() => void) | void => {
+    if (trigger === 'get') {
+      log(`Get trigger for ${node.key}`);
+      GetGeneral(node.key)
+        .then((value) => {
+          log(`Got a value from the server for ${node.key}`);
+          if (value) {
+            log(value);
+            log('***');
+            const data = fromFton(FTON.parse(value));
+            log(data);
+            if (data) {
+              log(`Setting Self for ${node.key}`);
+              setSelf(data);
+            }
+          }
+        })
+        .catch((rej) => err(`${node.key} Get failed`));
     }
-  }
-  return [atomValue, setAtomValue]; // [atomValue, setAtomValue];
-}
-
-/**
- * save any changed atoms that we've registers as "backed" to the server
- */
-function saveToServer({ snapshot }: { snapshot: Snapshot }) {
-  for (const modAtom of snapshot.getNodes_UNSTABLE({ isModified: true })) {
-    if (atomsToSync.has(modAtom.key)) {
-      const theAtom = snapshot.getLoadable<FTONData>(
-        modAtom as RecoilValue<FTONData>,
-      );
-      if (theAtom.state === 'hasValue') {
-        // TODO: Debounce this. It's way to chatty
-        log(`Saving state to main process for key ${modAtom.key}`);
-        SetGeneral(modAtom.key, FTON.stringify(theAtom.contents)).catch((e) => {
-          log(`Error trying to save ${modAtom.key} value to server:`);
-          log(e);
-        });
+    let lKey: ListenKey | null = null;
+    if (asyncUpdates) {
+      lKey = Subscribe(node.key, (val: FTONData) => {
+        const theRightType = fromFton(val);
+        if (theRightType) {
+          log(`Async data for ${node.key}:`);
+          log(theRightType);
+          setSelf(theRightType);
+        } else {
+          err(`Async invalid data received for ${node.key}:`);
+          err(val);
+        }
+      });
+    }
+    onSet((newVal, oldVal) => {
+      if (newVal instanceof DefaultValue) {
+        return;
       }
+      const newFton = toFton(newVal);
+      if (
+        oldVal instanceof DefaultValue ||
+        !FTON.valEqual(toFton(oldVal), newFton)
+      ) {
+        log(`Saving ${node.key} back to server...`);
+        SetGeneral(node.key, FTON.stringify(newFton))
+          .then(() => log(`${node.key} saved properly`))
+          .catch((reason) => err(`${node.key} save to main failed`));
+      }
+    });
+
+    if (asyncUpdates) {
+      return () => {
+        if (lKey) {
+          log(`Unsubscribing listener for ${node.key}`);
+          Unsubscribe(lKey);
+        }
+      };
     }
-  }
+  };
 }
 
-/**
- * The utility component to watch for persistence
- */
-export function PersistenceObserver(): JSX.Element {
-  useRecoilTransactionObserver_UNSTABLE(saveToServer);
-  return <></>;
+export function syncWithMainEffect<T>(asyncUpdates?: boolean): AtomEffect<T> {
+  return bidirectionalSyncWithTranslateEffect<T>(
+    (a) => (a as unknown) as FTONData,
+    (b) => (b as unknown) as T,
+    asyncUpdates,
+  );
 }

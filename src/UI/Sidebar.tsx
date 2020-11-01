@@ -1,8 +1,7 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { SetterOrUpdater, useRecoilCallback } from 'recoil';
-import { useBackedState } from '../Recoil/helpers';
+import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { searchTermAtom } from '../Recoil/ReadOnly';
 import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
 import albumPic from './img/album.svg';
@@ -60,7 +59,7 @@ function getEntry(
 }
 
 export default function Sidebar(): JSX.Element {
-  const [curView, setCurView] = useBackedState(curViewAtom);
+  const [curView, setCurView] = useRecoilState(curViewAtom);
   const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
     log('onSearch');
     set(curViewAtom, CurrentView.search);

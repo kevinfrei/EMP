@@ -404,9 +404,9 @@ export async function find(locations: string[]): Promise<MusicDB> {
       }
     }
   }
-  err(`${songsList.length} songs found during folder scan`);
+  log(`${songsList.length} songs found during folder scan`);
   const theDb = await fileNamesToDatabase(songsList, picList);
-  err(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
+  log(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
   return theDb;
 }
 

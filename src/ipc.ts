@@ -1,4 +1,4 @@
-import { FTON, MakeLogger, Type } from '@freik/core-utils';
+import { FTON, FTONData, MakeLogger, SeqNum, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -85,5 +85,62 @@ export async function SearchWhole(
     return FTON.parse(blob) as SearchResults;
   } else {
     log('Got no blob back');
+  }
+}
+
+export type ListenKey = { key: string; id: string };
+export type MessageHandler = (val: FTONData) => void;
+
+const sn = SeqNum('Listen');
+
+// map of message names to map of id's to funtions
+const listeners = new Map<string, Map<string, MessageHandler>>();
+
+// Subscribe to the message
+export function Subscribe(
+  key: string,
+  handler: (val: FTONData) => void,
+): ListenKey {
+  const theKey = { key, id: sn() };
+  let handlerMap: Map<string, MessageHandler> | void = listeners.get(key);
+  if (!handlerMap) {
+    handlerMap = new Map<string, MessageHandler>();
+    listeners.set(key, handlerMap);
+  }
+  handlerMap.set(theKey.id, handler);
+  return theKey;
+}
+
+// Remove listener from the message
+export function Unsubscribe(listenKey: ListenKey): void {
+  const listener = listeners.get(listenKey.key);
+  if (listener) {
+    listener.delete(listenKey.id);
+  }
+}
+
+// Called when an async message comes in from the main process
+export function HandleMessage(message: FTONData): void {
+  // Walk the list of ID's to see if we've got anything with a format of:
+  // { "id" : data }
+  // This has an interesting side effect of letting the server process
+  // send multiple "messages" in a single message:
+  // { artists: ..., albums: ..., songs: ... } will invoke listeners for
+  // all three of those 'messages'
+  let handled = false;
+  for (const [id, map] of listeners) {
+    if (Type.has(message, id)) {
+      for (const handler of map.values()) {
+        handled = true;
+        log(`Handling message: ${id}`);
+        handler(message[id]);
+      }
+    }
+  }
+  if (!handled) {
+    log('**********');
+    log(`Unhandled message:`);
+    log(message);
+    log('**********');
   }
 }

@@ -12,7 +12,7 @@
   "homepage": "./",
   "dependencies": {
     "@fluentui/react": "^7.149.2",
-    "@freik/core-utils": "^0.6.6",
+    "@freik/core-utils": "^0.6.7",
     "@freik/media-utils": "^0.5.1",
     "@uifabric/icons": "^7.5.15",
     "@uifabric/react-hooks": "^7.13.9",
@@ -21,7 +21,7 @@
     "electron-react-devtools": "^0.5.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-hook-form": "^6.9.6",
+    "react-hook-form": "^6.10.0",
     "react-scripts": "4.0.0",
     "recoil": "^0.1.2",
     "source-map-explorer": "^2.5.0"

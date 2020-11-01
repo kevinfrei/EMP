@@ -64,35 +64,10 @@ export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
 export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
 export const playingAtom = atom<boolean>({ key: 'playing', default: false });
 export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
-export const mutedAtom = atom<boolean>({ key: 'mute', default: false });
-export const volumeAtom = atom<number>({ key: 'volume', default: 0.5 });
 export const nowPlayingAtom = atom<string>({ key: 'nowPlaying', default: '' });
 export const stillPlayingAtom = atom<SongKey>({
   key: 'StillPlaying',
   default: '',
-});
-
-const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
-  key: 'Playlists',
-  default: new Map<PlaylistName, SongKey[]>(),
-});
-
-// This filters the playlists to only the ones that are actually there
-export const playlistsSel = selector<Map<PlaylistName, SongKey[]>>({
-  key: 'ActualPlaylists',
-  get: ({ get }) => {
-    const theMap = get(playlistsAtom);
-    const songs = new Set(get(songListAtom));
-    const newMap = new Map<PlaylistName, SongKey[]>();
-    for (const [name, keys] of theMap) {
-      newMap.set(
-        name,
-        keys.filter((val) => songs.has(val)),
-      );
-    }
-    return newMap;
-  },
-  set: ({ set }, newVal) => set(playlistsAtom, newVal),
 });
 
 export const songListAtom = atom<SongKey[]>({

@@ -25,7 +25,8 @@ export type SongData = {
   track: number;
 } & AlbumData;
 
-const log = MakeLogger('RORemote', true);
+const log = MakeLogger('RORemote');
+const err = MakeLogger('RORemote-err', true);
 
 export const getMediaInfo = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
@@ -52,6 +53,7 @@ export const allSongsSel = selector<Map<SongKey, Song>>({
       log(res);
       return res;
     }
+    err('Failed to retrieve songs');
     return new Map<SongKey, Song>();
   },
 });

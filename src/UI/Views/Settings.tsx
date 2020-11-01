@@ -10,7 +10,7 @@ import {
 } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useBackedState } from '../../Recoil/helpers';
+import { useRecoilState } from 'recoil';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
 import { ViewProps } from './Selector';
@@ -29,7 +29,7 @@ function GetDirs(): string[] | void {
 }
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useBackedState(locationsAtom);
+  const [newLoc, setNewLoc] = useRecoilState(locationsAtom);
   log(`Locations (${locationsAtom.key}) value at render:`);
   log(newLoc);
   return (
@@ -60,7 +60,7 @@ function RecoilLocations(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const [articles, setArticles] = useBackedState(sortWithArticlesAtom);
+  const [articles, setArticles] = useRecoilState(sortWithArticlesAtom);
   log('Articles: ' + (articles ? 'true' : 'false'));
   return (
     <Toggle
