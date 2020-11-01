@@ -10,19 +10,10 @@ import {
   searchWholeWord,
 } from './MusicAccess';
 import * as persist from './persist';
+import { UpdateDB } from './Startup';
 
 const log = MakeLogger('Communication');
-
-/*
-function getWebContents() {
-  const allWnd: BrowserWindow[] = BrowserWindow.getAllWindows();
-  if (allWnd.length < 1) {
-    log('No browser windows found in get operation.');
-    return;
-  }
-  return allWnd[0].webContents;
-}
-*/
+const err = MakeLogger('Communication-err', true);
 
 type Handler<T> = (arg?: string) => Promise<T | void>;
 
@@ -33,7 +24,7 @@ type Handler<T> = (arg?: string) => Promise<T | void>;
  * @param {string=} name - the name of the value to read
  * @return {Promise<string>} The raw string contents of the value
  */
-async function getGeneral(name?: string): Promise<string> {
+export async function getGeneral(name?: string): Promise<string> {
   if (!name) return '';
   try {
     log(`getGeneral(${name})`);
@@ -42,8 +33,8 @@ async function getGeneral(name?: string): Promise<string> {
     log(value);
     return value || '';
   } catch (e) {
-    log(`error from getGeneral(${name})`);
-    log(e);
+    err(`error from getGeneral(${name})`);
+    err(e);
   }
   return '';
 }
@@ -52,10 +43,9 @@ async function getGeneral(name?: string): Promise<string> {
  * Write a value to persistence by name.
  *
  * @async @function
- * @param {string=} keyValuePair - The key:value string to write
- * @returns {void}
+ * @param {string?} keyValuePair - The key:value string to write
  */
-async function setGeneral(keyValuePair?: string): Promise<void> {
+export async function setGeneral(keyValuePair?: string): Promise<void> {
   if (!keyValuePair) return;
   try {
     // First, split off the key name:
@@ -67,8 +57,8 @@ async function setGeneral(keyValuePair?: string): Promise<void> {
     await persist.setItemAsync(name, value);
     log(`setGeneral(${name}...) completed`);
   } catch (e) {
-    log(`error from getGeneral(${keyValuePair})`);
-    log(e);
+    err(`error from getGeneral(${keyValuePair})`);
+    err(e);
   }
 }
 
@@ -83,7 +73,7 @@ async function setGeneral(keyValuePair?: string): Promise<void> {
  *  the corresponding object value for the channel
  * @returns {void}
  */
-function registerFlattened<T>(key: string, handleIt: Handler<T>) {
+export function registerFlattened<T>(key: string, handleIt: Handler<T>): void {
   ipcMain.handle(
     key,
     async (event: IpcMainInvokeEvent, arg?: any): Promise<string | void> => {
@@ -96,7 +86,7 @@ function registerFlattened<T>(key: string, handleIt: Handler<T>) {
           return FTON.stringify((res as unknown) as FTONData);
         }
       } else {
-        log(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
+        err(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
       }
     },
   );
@@ -112,28 +102,47 @@ function registerFlattened<T>(key: string, handleIt: Handler<T>) {
  *   returns a string
  * @returns void
  */
-function register(key: string, handleIt: Handler<string>): void {
+export function register(key: string, handleIt: Handler<string>): void {
   ipcMain.handle(
     key,
     async (event: IpcMainInvokeEvent, arg: any): Promise<string | void> => {
       if (typeof arg === 'string') {
         return await handleIt(arg);
       } else {
-        log(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
+        err(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
       }
     },
   );
 }
 
+let wc: WebContents;
+
 /**
- * Called to set stuff up before anything else has been done.
- * Currently, it register stuff with with `ipcMain.handle`
+ * Invoked after the window has been created.
  *
- * @function
+ * @param  {BrowserWindow} window - the window handle
  * @returns void
  */
-export function Init(): void {
-  // I like this API much better, particularly in the render process
+export function CommsWindowBegin(window: BrowserWindow): void {
+  wc = window.webContents;
+}
+
+/**
+ * Send a message to the rendering process
+ *
+ * @param  {FTONData} message
+ * The (flattenable) message to send.
+ */
+export function asyncSend(message: FTONData): void {
+  wc.send('async-data', { message });
+}
+
+/**
+ * Setup any async listeners, plus register all the "invoke" handlers
+ */
+export function CommsSetup(): void {
+  persist.subscribe('locations', UpdateDB);
+
   registerFlattened('get-all-songs', getAllSongs);
   registerFlattened('get-all-albums', getAllAlbums);
   registerFlattened('get-all-artists', getAllArtists);
@@ -142,19 +151,4 @@ export function Init(): void {
   registerFlattened('subsearch', searchSubstring);
   register('get-general', getGeneral);
   register('set-general', setGeneral);
-}
-
-let wc: WebContents;
-/**
- * Invoked after the window has been created.
- *
- * @param  {BrowserWindow} window - the window handle
- * @returns void
- */
-export function Begin(window: BrowserWindow): void {
-  wc = window.webContents;
-}
-
-export function asyncSend(message: FTONData): void {
-  wc.send('async-data', { message });
 }

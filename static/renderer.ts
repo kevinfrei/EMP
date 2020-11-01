@@ -2,13 +2,12 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-import { Logger } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import { IpcRenderer, ipcRenderer, remote } from 'electron';
 
 const isDev = true; // require('electron-is-dev');
 
-const log = Logger.bind('renderer');
-// Logger.enable('renderer');
+const err = MakeLogger('renderer', true);
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;
@@ -30,19 +29,17 @@ window.addEventListener('DOMContentLoaded', () => {
   if (false) debugger;
 
   window.ipc = ipcRenderer;
-  log('About to attach the remote');
   if (remote) {
     window.remote = remote;
   } else {
-    log('remote is falsy :(');
+    err('remote is falsy :(');
   }
   if (isDev) {
     window.isDev = isDev;
   }
-  log('ready');
   if (window.initApp) {
     window.initApp();
   } else {
-    log('FAILURE: No window.initApp() attached.');
+    err('FAILURE: No window.initApp() attached.');
   }
 });

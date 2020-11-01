@@ -29,7 +29,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
       log('get-music-db called');
       const musicDBstr = await persist.getItemAsync('DB');
       if (musicDBstr) {
-        log(`get-music.db: ${musicDBstr.length} bytes in the JSON blob.`);
+        log(`get-music-db: ${musicDBstr.length} bytes in the JSON blob.`);
         theMusicDatabase = (FTON.parse(musicDBstr) as unknown) as MusicDB;
         log(theMusicDatabase);
         return theMusicDatabase;

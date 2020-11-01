@@ -6,24 +6,20 @@
 
 import { MakeLogger } from '@freik/core-utils';
 import { BrowserWindow } from 'electron';
-import { Begin, Init } from './main/Communication';
+import { CommsWindowBegin } from './main/Communication';
 import electronSetup from './main/electronSetup';
-import { Ready, Startup } from './main/Startup';
+import { InitBeforeAnythingElse, WindowStartup } from './main/Startup';
 
-const log = MakeLogger('electron');
+const err = MakeLogger('electron-err', true);
 
-Init();
+InitBeforeAnythingElse();
 
 async function onWindowCreated(window: BrowserWindow): Promise<void> {
   try {
-    log('Window Created');
-    await Startup();
-    log('Invoking main/Startup/Ready');
-    Ready(window);
-    log('Invoking main/Communication/Begin');
-    Begin(window);
+    await WindowStartup();
+    CommsWindowBegin(window);
   } catch (e) {
-    log(e);
+    err(e);
     window.webContents.send('data', '{"error":"loading"}');
   }
 }

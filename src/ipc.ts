@@ -64,6 +64,7 @@ export async function GetMediaInfo(
 export async function GetGeneral(key: string): Promise<string | void> {
   return await InvokeMain('get-general', key);
 }
+
 export async function GetDefaultValue(
   key: string,
 ): Promise<string | DefaultValue> {

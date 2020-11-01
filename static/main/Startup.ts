@@ -1,13 +1,13 @@
 import { FTON, MakeLogger } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
-import { BrowserWindow } from 'electron';
-import { asyncSend } from './Communication';
+import { asyncSend, CommsSetup } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
 import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
 const log = MakeLogger('Startup');
+const err = MakeLogger('Startup', true);
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');
@@ -54,7 +54,7 @@ async function RescanDB(): Promise<void> {
   const db = await getMusicDB();
   if (db) {
     log('About to send the update');
-    asyncSend({ updateDatabase: [db.songs, db.albums, db.artists] });
+    asyncSend({ musicDatabase: [db.songs, db.albums, db.artists] });
     if (prevDB) {
       log('Songs before:' + prevDB.songs.size.toString());
       log('Songs after: ' + db.songs.size.toString());
@@ -66,13 +66,20 @@ export function UpdateDB(): void {
   RescanDB()
     .then(() => log('Finished updating the database'))
     .catch((rej) => {
-      log('Caught an exception while trying to update the db');
-      log(rej);
+      err('Caught an exception while trying to update the db');
+      err(rej);
     });
 }
 
+/**
+ * Called to set stuff up before *anything* else has been done.
+ */
+export function InitBeforeAnythingElse(): void {
+  CommsSetup();
+}
+
 // This is awaited upon initial window creation
-export async function Startup(): Promise<void> {
+export async function WindowStartup(): Promise<void> {
   // Scan for all music
   log('Trying to get DB');
   const musicDB = await getMusicDB();
@@ -83,9 +90,4 @@ export async function Startup(): Promise<void> {
   } else {
     log('No DB available');
   }
-}
-
-export function Ready(window: BrowserWindow): void {
-  // Do anything here that needs to happen once we have the window
-  // object available
 }
