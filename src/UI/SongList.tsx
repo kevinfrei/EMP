@@ -278,9 +278,8 @@ export function StickyRenderDetailsHeader(
   if (!theProps) {
     return null;
   }
-
   // This makes the header not have a bunch of extra whitespace above the header
-  theProps.styles = { root: { paddingTop: '0px' } };
+  theProps.styles = { root: { padding: '0px' } };
   return (
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
       {defaultRender!({

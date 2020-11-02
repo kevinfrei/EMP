@@ -7,6 +7,8 @@ import {
   IDetailsRowProps,
   IDetailsRowStyles,
   IRenderFunction,
+  ScrollablePane,
+  ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
 import { SongKey } from '@freik/media-utils';
@@ -17,6 +19,7 @@ import { useDialogState } from '../../Recoil/helpers';
 import { nowPlayingAtom } from '../../Recoil/Local';
 import { playlistsSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog } from '../Dialogs';
+import { StickyRenderDetailsHeader } from '../SongList';
 import './styles/Playlists.css';
 
 const theme = getTheme();
@@ -82,23 +85,26 @@ export default function PlaylistView(): JSX.Element {
   ];
 
   return (
-    <>
-      <ConfirmationDialog
-        data={confirmData}
-        confirmFunc={deletePlaylist}
-        title="Are you sure?"
-        text={`Do you really want to delete the playlist ${selected}?`}
-        yesText="Delete"
-        noText="Cancel"
-      />
-      <DetailsList
-        items={[...playlists.entries()]}
-        selectionMode={SelectionMode.none}
-        columns={columns}
-        onRenderRow={renderRow}
-        compact={true}
-        onItemInvoked={onPlaylistInvoked}
-      />
-    </>
+    <div data-is-scrollable="true">
+      <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
+        <ConfirmationDialog
+          data={confirmData}
+          confirmFunc={deletePlaylist}
+          title="Are you sure?"
+          text={`Do you really want to delete the playlist ${selected}?`}
+          yesText="Delete"
+          noText="Cancel"
+        />
+        <DetailsList
+          items={[...playlists.entries()]}
+          selectionMode={SelectionMode.none}
+          columns={columns}
+          onRenderRow={renderRow}
+          compact={true}
+          onItemInvoked={onPlaylistInvoked}
+          onRenderDetailsHeader={StickyRenderDetailsHeader}
+        />
+      </ScrollablePane>
+    </div>
   );
 }
