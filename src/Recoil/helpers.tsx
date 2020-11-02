@@ -1,12 +1,18 @@
 import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { AtomEffect, DefaultValue, RecoilState, SetterOrUpdater } from 'recoil';
 import {
-  GetGeneral,
+  AtomEffect,
+  DefaultValue,
+  RecoilState,
+  SetterOrUpdater,
+  useRecoilState,
+} from 'recoil';
+import {
   ListenKey,
-  SetGeneral,
+  ReadFromStorage,
   Subscribe,
   Unsubscribe,
+  WriteToStorage,
 } from '../ipc';
 
 export type StatePair<T> = [T, SetterOrUpdater<T>];
@@ -27,8 +33,13 @@ const err = MakeLogger('helpers-err', true);
  * @returns {BoolState} [state, trueSetter(), falseSetter()]
  */
 export function useBoolState(initial: boolean): BoolState {
-  const [dialogState, setDialogState] = useState(initial);
-  return [dialogState, () => setDialogState(false), () => setDialogState(true)];
+  const [state, setState] = useState(initial);
+  return [state, () => setState(false), () => setState(true)];
+}
+
+export function useBoolRecoilState(atom: RecoilState<boolean>): BoolState {
+  const [state, setState] = useRecoilState(atom);
+  return [state, () => setState(false), () => setState(true)];
 }
 
 export function useDialogState(): DialogState {
@@ -64,7 +75,7 @@ export function translateToMainEffect<T>(
 ) {
   return ({ node, trigger, setSelf, onSet }: AtomEffectParams<T>): void => {
     if (trigger === 'get') {
-      GetGeneral(node.key)
+      ReadFromStorage(node.key)
         .then((value) => {
           if (value) {
             const data = fromString(value);
@@ -81,7 +92,7 @@ export function translateToMainEffect<T>(
       }
       const newStr = toString(newVal);
       if (oldVal instanceof DefaultValue || newStr !== toString(oldVal))
-        SetGeneral(node.key, newStr).catch((reason) => {
+        WriteToStorage(node.key, newStr).catch((reason) => {
           log(`${node.key} save to main failed`);
         });
     });
@@ -114,7 +125,7 @@ export function bidirectionalSyncWithTranslateEffect<T>(
   }: AtomEffectParams<T>): (() => void) | void => {
     if (trigger === 'get') {
       log(`Get trigger for ${node.key}`);
-      GetGeneral(node.key)
+      ReadFromStorage(node.key)
         .then((value) => {
           log(`Got a value from the server for ${node.key}`);
           if (value) {
@@ -154,7 +165,7 @@ export function bidirectionalSyncWithTranslateEffect<T>(
         !FTON.valEqual(toFton(oldVal), newFton)
       ) {
         log(`Saving ${node.key} back to server...`);
-        SetGeneral(node.key, FTON.stringify(newFton))
+        WriteToStorage(node.key, FTON.stringify(newFton))
           .then(() => log(`${node.key} saved properly`))
           .catch((reason) => err(`${node.key} save to main failed`));
       }

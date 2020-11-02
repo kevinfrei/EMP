@@ -25,16 +25,16 @@ type Handler<T> = (arg?: string) => Promise<T | void>;
  * @param {string=} name - the name of the value to read
  * @return {Promise<string>} The raw string contents of the value
  */
-export async function getGeneral(name?: string): Promise<string> {
+export async function readFromStorage(name?: string): Promise<string> {
   if (!name) return '';
   try {
-    log(`getGeneral(${name})`);
+    log(`readFromStorage(${name})`);
     const value = await persist.getItemAsync(name);
     log(`Sending ${name} response:`);
     log(value);
     return value || '';
   } catch (e) {
-    err(`error from getGeneral(${name})`);
+    err(`error from readFromStorage(${name})`);
     err(e);
   }
   return '';
@@ -46,19 +46,19 @@ export async function getGeneral(name?: string): Promise<string> {
  * @async @function
  * @param {string?} keyValuePair - The key:value string to write
  */
-export async function setGeneral(keyValuePair?: string): Promise<void> {
+export async function writeToStorage(keyValuePair?: string): Promise<void> {
   if (!keyValuePair) return;
   try {
     // First, split off the key name:
     const pos = keyValuePair.indexOf(':');
     const name = keyValuePair.substring(0, pos);
     const value = keyValuePair.substring(pos + 1);
-    log(`setGeneral(${name} : ${value})`);
+    log(`writeToStorage(${name} : ${value})`);
     // Push the data into the persistence system
     await persist.setItemAsync(name, value);
-    log(`setGeneral(${name}...) completed`);
+    log(`writeToStorage(${name}...) completed`);
   } catch (e) {
-    err(`error from getGeneral(${keyValuePair})`);
+    err(`error from writeToStorage(${keyValuePair})`);
     err(e);
   }
 }
@@ -143,6 +143,6 @@ export function CommsSetup(): void {
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler
   // because they don't just read/write to disk.
-  register('get-general', getGeneral);
-  register('set-general', setGeneral);
+  register('read-from-storage', readFromStorage);
+  register('write-to-storage', writeToStorage);
 }

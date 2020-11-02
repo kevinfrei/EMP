@@ -2,17 +2,17 @@ import {
   DefaultButton,
   IconButton,
   Label,
-  Separator,
   SpinButton,
   Stack,
-  Text,
-  Toggle,
+  TextField,
 } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
+import { useBoolRecoilState, useBoolState } from '../../Recoil/helpers';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
+import { ExpandableSeparator, StateToggle } from '../Utilities';
 import { ViewProps } from './Selector';
 import './styles/Settings.css';
 
@@ -60,32 +60,24 @@ function RecoilLocations(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const [articles, setArticles] = useRecoilState(sortWithArticlesAtom);
-  log('Articles: ' + (articles ? 'true' : 'false'));
+  const articles = useBoolRecoilState(sortWithArticlesAtom);
   return (
-    <Toggle
-      inlineLabel
-      label="Consider articles when sorting"
-      checked={articles}
-      onChange={(ev, checked?: boolean) => setArticles(!!checked)}
-    />
+    <StateToggle label="Consider articles when sorting" state={articles} />
   );
 }
 
 function ArtistFiltering(): JSX.Element {
-  const [onlyAlbumArtists, setOnlyAlbumArtists] = useState(false);
+  const onlyAlbumArtists = useBoolState(false);
   const [songCount, setSongCount] = useState(0);
   return (
     <>
-      <Toggle
-        inlineLabel
-        label="Only show artists with full albums (NYI)"
-        checked={onlyAlbumArtists}
-        onChange={(ev, checked?: boolean) => setOnlyAlbumArtists(!!checked)}
+      <StateToggle
+        label="NYI: Only show artists with full albums"
+        state={onlyAlbumArtists}
       />
       <SpinButton
-        label="Only show artists with at least this many songs (NYI)"
-        disabled={onlyAlbumArtists}
+        label="NYI: Only show artists with at least this many songs"
+        disabled={onlyAlbumArtists[0]}
         value={songCount.toString()}
         onIncrement={() => setSongCount(Math.min(100, songCount + 1))}
         onDecrement={() => setSongCount(Math.max(0, songCount - 1))}
@@ -95,56 +87,92 @@ function ArtistFiltering(): JSX.Element {
   );
 }
 
+function ArtworkSettings(): JSX.Element {
+  const dlAlbumArtwork = useBoolState(false);
+  const saveAlbumArtwork = useBoolState(false);
+  const dlArtistArtwork = useBoolState(false);
+  return (
+    <>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'auto auto',
+          gridTemplateRows: 'auto',
+        }}
+      >
+        <StateToggle
+          label="Download Album Artwork"
+          state={dlAlbumArtwork}
+          style={{
+            gridColumn: '1',
+            gridRow: '1',
+          }}
+        />
+        <StateToggle
+          label="Download Artist Artwork"
+          state={dlArtistArtwork}
+          style={{
+            gridColumn: '2',
+            gridRow: '1',
+          }}
+        />
+      </div>
+      <Stack horizontal>
+        <StateToggle
+          disabled={!dlAlbumArtwork[0]}
+          label="Try to save Album Artwork with audio files"
+          state={saveAlbumArtwork}
+        />
+        &nbsp;
+        <TextField
+          disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
+          placeholder="NYI: albumArt"
+        />
+      </Stack>
+      <DefaultButton
+        text="Flush Image Cache"
+        style={{ width: '185px', gridRow: 4 }}
+      />
+    </>
+  );
+}
+
+function MetadataDatabase(): JSX.Element {
+  return (
+    <Stack horizontal>
+      <DefaultButton text="Flush Database" style={{ width: '185px' }} />
+      &nbsp;
+      <DefaultButton text="Flush Metadata Cache" style={{ width: '185px' }} />
+      &nbsp;
+      <DefaultButton text="Clear Local Overrides" style={{ width: '185px' }} />
+    </Stack>
+  );
+}
+
 export default function Settings({ hidden }: ViewProps): JSX.Element {
+  const locVisibile = useBoolState(true);
+  const sortVisible = useBoolState(false);
+  const artVisible = useBoolState(false);
+  const mdVisible = useBoolState(false);
   return (
     <div
       className="current-view"
       style={hidden ? { visibility: 'hidden' } : {}}
     >
       <Stack className="settings-view">
-        <Separator alignContent="start">
-          <Text variant="mediumPlus">Music Locations</Text>
-        </Separator>
-        <RecoilLocations />
-        <Separator alignContent="start">
-          <Text variant="mediumPlus">Sorting &amp; Filtering</Text>
-        </Separator>
-        <ArticleSorting />
-        <ArtistFiltering />
-        <Separator alignContent="start" />
-        <div>
-          <Text variant="mediumPlus">Album &amp; Artist Artwork</Text>
-        </div>
-        <div>
-          <Text>Download Album Art?</Text>
-        </div>
-        <div>
-          <Text>Download Artist Art?</Text>
-        </div>
-        <div>
-          <Text>Try to save with album, first?</Text>
-        </div>
-        <div>
-          <Text>-&gt;Filename</Text>
-        </div>
-        <div>
-          <Text>Cache artist pix</Text>
-        </div>
-        <div>
-          <Text>Cache album pix</Text>
-        </div>
-        <div>
-          <Text>Flush Images</Text>
-        </div>
-        <div>
-          <Text>Flush database</Text>
-        </div>
-        <div>
-          <Text>Flush Metadata cache</Text>
-        </div>
-        <div>
-          <Text>Clear local overrides</Text>
-        </div>
+        <ExpandableSeparator label="Music Locations" state={locVisibile}>
+          <RecoilLocations />
+        </ExpandableSeparator>
+        <ExpandableSeparator label="Sorting & Filtering" state={sortVisible}>
+          <ArticleSorting />
+          <ArtistFiltering />
+        </ExpandableSeparator>
+        <ExpandableSeparator label="NYI: Artwork" state={artVisible}>
+          <ArtworkSettings />
+        </ExpandableSeparator>
+        <ExpandableSeparator label="NYI: Metadata" state={mdVisible}>
+          <MetadataDatabase />
+        </ExpandableSeparator>
       </Stack>
     </div>
   );

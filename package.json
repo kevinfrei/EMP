@@ -51,7 +51,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"*.js\" \"*.json\" \"*.md\"",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
     "chk": "yarn format && yarn compile && yarn lint && yarn test",
-    "linecount": "git ls-files|grep -v \"yarn.lock\"|grep -v \".svg$\"|grep -v \".png$\"|grep -v \".jpg$\"|grep -v \".icns$\"|xargs wc -l"
+    "linecount": "git ls-files|grep \".tsx\\?$\"|grep -v \"__tests__\"|xargs wc -l"
   },
   "eslintConfig": {
     "root": true,
