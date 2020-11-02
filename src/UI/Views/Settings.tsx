@@ -6,17 +6,13 @@ import {
   Stack,
   TextField,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
 import { useBoolRecoilState, useBoolState } from '../../Recoil/helpers';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { ShowOpenDialog } from '../../Tools';
 import { ExpandableSeparator, StateToggle } from '../Utilities';
-import { ViewProps } from './Selector';
 import './styles/Settings.css';
-
-const log = MakeLogger('View-Settings');
 
 const removeFromSet = (set: string[], val: string): string[] => {
   const newSet = new Set(set);
@@ -30,8 +26,6 @@ function GetDirs(): string[] | void {
 
 function RecoilLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsAtom);
-  log(`Locations (${locationsAtom.key}) value at render:`);
-  log(newLoc);
   return (
     <>
       {(newLoc || []).map((elem) => (
@@ -149,31 +143,26 @@ function MetadataDatabase(): JSX.Element {
   );
 }
 
-export default function Settings({ hidden }: ViewProps): JSX.Element {
+export default function Settings(): JSX.Element {
   const locVisibile = useBoolState(true);
   const sortVisible = useBoolState(false);
   const artVisible = useBoolState(false);
   const mdVisible = useBoolState(false);
   return (
-    <div
-      className="current-view"
-      style={hidden ? { visibility: 'hidden' } : {}}
-    >
-      <Stack className="settings-view">
-        <ExpandableSeparator label="Music Locations" state={locVisibile}>
-          <RecoilLocations />
-        </ExpandableSeparator>
-        <ExpandableSeparator label="Sorting & Filtering" state={sortVisible}>
-          <ArticleSorting />
-          <ArtistFiltering />
-        </ExpandableSeparator>
-        <ExpandableSeparator label="NYI: Artwork" state={artVisible}>
-          <ArtworkSettings />
-        </ExpandableSeparator>
-        <ExpandableSeparator label="NYI: Metadata" state={mdVisible}>
-          <MetadataDatabase />
-        </ExpandableSeparator>
-      </Stack>
-    </div>
+    <Stack className="settings-view">
+      <ExpandableSeparator label="Music Locations" state={locVisibile}>
+        <RecoilLocations />
+      </ExpandableSeparator>
+      <ExpandableSeparator label="Sorting & Filtering" state={sortVisible}>
+        <ArticleSorting />
+        <ArtistFiltering />
+      </ExpandableSeparator>
+      <ExpandableSeparator label="NYI: Artwork" state={artVisible}>
+        <ArtworkSettings />
+      </ExpandableSeparator>
+      <ExpandableSeparator label="NYI: Metadata" state={mdVisible}>
+        <MetadataDatabase />
+      </ExpandableSeparator>
+    </Stack>
   );
 }

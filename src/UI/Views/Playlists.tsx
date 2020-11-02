@@ -17,7 +17,6 @@ import { useDialogState } from '../../Recoil/helpers';
 import { nowPlayingAtom } from '../../Recoil/Local';
 import { playlistsSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog } from '../Dialogs';
-import { ViewProps } from './Selector';
 import './styles/Playlists.css';
 
 const theme = getTheme();
@@ -33,7 +32,7 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
   return null;
 };
 
-export default function Playlister({ hidden }: ViewProps): JSX.Element {
+export default function PlaylistView(): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsSel);
   const [selected, setSelected] = useState('');
   const [showConfirm, confirmData] = useDialogState();
@@ -83,10 +82,7 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
   ];
 
   return (
-    <div
-      className="current-view"
-      style={hidden ? { visibility: 'hidden' } : {}}
-    >
+    <>
       <ConfirmationDialog
         data={confirmData}
         confirmFunc={deletePlaylist}
@@ -103,6 +99,6 @@ export default function Playlister({ hidden }: ViewProps): JSX.Element {
         compact={true}
         onItemInvoked={onPlaylistInvoked}
       />
-    </div>
+    </>
   );
 }

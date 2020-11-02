@@ -44,7 +44,6 @@ import { playlistsSel, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
-import { ViewProps } from './Selector';
 import './styles/NowPlaying.css';
 
 const theme = getTheme();
@@ -155,7 +154,7 @@ function TopLine(): JSX.Element {
 }
 
 // The Now Playing (Current playlist) view
-export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
+export default function NowPlaying(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
   const articles = useRecoilValue(sortWithArticlesAtom);
@@ -227,10 +226,7 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
   };
 
   return (
-    <div
-      className="current-view"
-      style={hidden ? { visibility: 'hidden' } : {}}
-    >
+    <>
       <TopLine />
       <div className="current-view">
         <DetailsList
@@ -243,6 +239,6 @@ export default function NowPlaying({ hidden }: ViewProps): JSX.Element {
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
         />
       </div>
-    </div>
+    </>
   );
 }

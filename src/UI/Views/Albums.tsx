@@ -10,7 +10,6 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
 import { Album, AlbumKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilValue } from 'recoil';
@@ -30,10 +29,7 @@ import {
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
-import { ViewProps } from './Selector';
 import './styles/Albums.css';
-
-const log = MakeLogger('Albums');
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(dataForAlbumSel(props.album.key));
@@ -60,7 +56,7 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   );
 }
 
-export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
+export default function AlbumView(): JSX.Element {
   const albums = useRecoilValue(allAlbumsSel);
   const songs = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
@@ -85,7 +81,6 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   const performSort = (srt: string) => {
     if (srt !== curSort) {
       setSort(srt);
-      log(`Sorting Albums: ${srt}`);
       setSortedSongs(SortSongs(srt, sortedSongs, albums, artists, articles));
     }
   };
@@ -130,14 +125,9 @@ export default function NewAlbumView({ hidden }: ViewProps): JSX.Element {
   );
   groupProps.onRenderHeader = renderAlbumHeader;
   return (
-    <div
-      className="current-view songListForAlbum"
-      data-is-scrollable="true"
-      style={hidden ? { visibility: 'hidden' } : {}}
-    >
+    <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
-          compact={true}
           items={sortedSongs}
           selectionMode={SelectionMode.none}
           groups={groups}

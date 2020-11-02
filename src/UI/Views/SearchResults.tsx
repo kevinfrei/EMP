@@ -31,7 +31,6 @@ import {
   searchTermAtom,
 } from '../../Recoil/ReadOnly';
 import { MakeColumns, StickyRenderDetailsHeader } from '../SongList';
-import { ViewProps } from './Selector';
 import './styles/SearchResults.css';
 
 // const log = MakeLogger('SearchResults', true);
@@ -41,17 +40,17 @@ type SearchSongData = SongData & { key: string; group: string };
 function MakeAlbumGroupKey(albumKey: AlbumKey): string {
   return `L*${albumKey}`;
 }
-
+/*
 function GetAlbumGroup(groupKey: string): string | void {
   if (groupKey.startsWith('L*')) {
     return groupKey.substr(2);
   }
 }
-
+*/
 function MakeArtistGroupKey(rk: ArtistKey, lk: AlbumKey): string {
   return `R*${rk}*${lk}`;
 }
-
+/*
 function GetArtistAlbum(groupKey: string): [ArtistKey, AlbumKey] | void {
   if (groupKey.startsWith('R*')) {
     const index = groupKey.lastIndexOf('*');
@@ -60,7 +59,7 @@ function GetArtistAlbum(groupKey: string): [ArtistKey, AlbumKey] | void {
     }
   }
 }
-
+*/
 function IsTopGroup(groupKey: string): boolean {
   return groupKey.startsWith('*');
 }
@@ -174,7 +173,7 @@ function AggregateSearchResults(
   return [results, groups];
 }
 
-export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
+export default function SearchResultsView(): JSX.Element {
   const searchTerm = useRecoilValue(searchTermAtom);
   const searchResults = useRecoilValue(searchSel(searchTerm));
   const songs = useRecoilValue(allSongsSel);
@@ -199,10 +198,7 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
     !searchResults.artists.length
   ) {
     return (
-      <div
-        style={hidden ? { visibility: 'hidden' } : {}}
-        className="current-view empty-results"
-      >
+      <div className="empty-results">
         <Text>No results found</Text>
       </div>
     );
@@ -295,11 +291,7 @@ export default function SearchResultsView({ hidden }: ViewProps): JSX.Element {
   );
 
   return (
-    <div
-      style={hidden ? { visibility: 'hidden' } : {}}
-      className="current-view"
-      data-is-scrollable="true"
-    >
+    <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
           compact={true}
