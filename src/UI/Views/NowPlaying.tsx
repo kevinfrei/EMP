@@ -43,7 +43,12 @@ import {
 import { playlistsSel, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
+import {
+  AlbumFromSong,
+  ArtistsFromSong,
+  MakeColumns,
+  StickyRenderDetailsHeader,
+} from '../SongList';
 import './styles/NowPlaying.css';
 
 const theme = getTheme();
@@ -224,21 +229,33 @@ export default function NowPlaying(): JSX.Element {
     }
     return null;
   };
-
+  /*
+  <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
+  </ScrollablePane>
+  */
+  /*
+  .View {
+    overflow: hidden;
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    grid-row: 2 / 4;
+    grid-column: 2 / 5;
+  }*/
   return (
-    <>
+    <div data-is-scrollable="true">
       <TopLine />
-      <div className="current-view">
-        <DetailsList
-          compact={true}
-          items={curSongs}
-          selectionMode={SelectionMode.none}
-          onRenderRow={renderAltRow}
-          columns={columns}
-          onItemContextMenu={onSongDetailClick}
-          onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
-        />
-      </div>
-    </>
+      <DetailsList
+        compact={true}
+        items={curSongs}
+        selectionMode={SelectionMode.none}
+        onRenderRow={renderAltRow}
+        columns={columns}
+        onItemContextMenu={onSongDetailClick}
+        onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
+        onRenderDetailsHeader={StickyRenderDetailsHeader}
+      />
+    </div>
   );
 }
