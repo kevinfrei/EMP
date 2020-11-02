@@ -2,13 +2,11 @@ import {
   DetailsRow,
   getTheme,
   IColumn,
-  IDetailsColumnRenderTooltipProps,
   IDetailsGroupRenderProps,
   IDetailsHeaderProps,
   IDetailsListProps,
   IDetailsRowStyles,
   IGroup,
-  IRenderFunction,
   Sticky,
   StickyPositionType,
   TooltipHost,
@@ -274,20 +272,20 @@ export function GetSongGroupData(
  * will make the header of the DetailsList stay at the top of the pane
  */
 export function StickyRenderDetailsHeader(
-  props?: IDetailsHeaderProps,
+  theProps?: IDetailsHeaderProps,
   defaultRender?: (p?: IDetailsHeaderProps) => JSX.Element | null,
 ): JSX.Element | null {
-  if (!props) {
+  if (!theProps) {
     return null;
   }
-  const onRenderColumnHeaderTooltip: IRenderFunction<IDetailsColumnRenderTooltipProps> = (
-    tooltipHostProps,
-  ) => <TooltipHost {...tooltipHostProps} />;
+
+  // This makes the header not have a bunch of extra whitespace above the header
+  theProps.styles = { root: { paddingTop: '0px' } };
   return (
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
       {defaultRender!({
-        ...props,
-        onRenderColumnHeaderTooltip,
+        ...theProps,
+        onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
       })}
     </Sticky>
   );

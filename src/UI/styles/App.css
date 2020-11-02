@@ -55,18 +55,3 @@
   padding: 4px;
   cursor: pointer;
 }
-
-/* This gets rid of the extra spacing above the headers */
-/* This is really stupid, and kind of a crappy hack that doesn't look great
-  particularly on first render */
-.ms-ScrollablePane {
-  margin-top: -15px;
-}
-
-.ms-ScrollablePane .ms-DetailsList-headerWrapper {
-  margin-top: 0px;
-}
-
-.ms-DetailsList-headerWrapper {
-  margin-top: -15px;
-}
