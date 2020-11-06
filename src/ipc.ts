@@ -3,6 +3,7 @@ import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
 import { InvokeMain } from './Tools';
 
 const log = MakeLogger('ipc', true);
+const err = MakeLogger('ipc-err', true);
 
 export type SearchResults = {
   songs: SongKey[];
@@ -117,19 +118,24 @@ export function HandleMessage(message: FTONData): void {
   // { artists: ..., albums: ..., songs: ... } will invoke listeners for
   // all three of those 'messages'
   let handled = false;
-  for (const [id, map] of listeners) {
-    if (Type.has(message, id)) {
-      for (const handler of map.values()) {
-        handled = true;
-        log(`Handling message: ${id}`);
-        handler(message[id]);
+  if (Type.isObjectNonNull(message)) {
+    for (const id in message) {
+      if (Type.isString(id) && Type.has(message, id)) {
+        const listener = listeners.get(id);
+        if (listener) {
+          for (const handler of listener.values()) {
+            handled = true;
+            log(`Handling message: ${id}`);
+            handler(message[id]);
+          }
+        }
       }
     }
   }
   if (!handled) {
-    log('**********');
-    log(`Unhandled message:`);
-    log(message);
-    log('**********');
+    err('**********');
+    err(`Unhandled message:`);
+    err(message);
+    err('**********');
   }
 }
