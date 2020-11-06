@@ -13,7 +13,7 @@ import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { GetDataForSong, SongData } from './DataSchema';
 import { HandleMessage } from './ipc';
 
-const log = MakeLogger('Tools');
+const log = MakeLogger('Tools', true);
 const err = MakeLogger('Tools-err', true);
 
 /*
@@ -49,12 +49,16 @@ export function InitialWireUp(): void {
     window.ipc?.on('async-data', (event: IpcRendererEvent, data: unknown) => {
       if (
         FTON.isFTON(data) &&
-        Type.has(data, 'message') &&
-        FTON.isFTON(data.message)
+        Type.isArray(data) &&
+        Type.isObject(data[0]) &&
+        Type.has(data[0], 'message') &&
+        FTON.isFTON(data[0].message)
       ) {
-        HandleMessage(data.message);
+        log('*** Async message formed properly:');
+        log(data[0]);
+        HandleMessage(data[0].message);
       } else {
-        err('Async message malformed:');
+        err('*** Async message malformed:');
         err(data);
       }
     });
@@ -170,6 +174,8 @@ export function SortSongs(
   artists: Map<ArtistKey, Artist>,
   articles: boolean,
 ): Song[] {
+  log(`sortOrder: ${sortOrder}`);
+  log(`songs: ${songs.length} elements`);
   const records: SongData[] = songs.map((song: Song) =>
     GetDataForSong(song, albums, artists),
   );

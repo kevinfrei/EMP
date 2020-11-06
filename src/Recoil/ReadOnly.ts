@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { MakeLogger } from '@freik/core-utils';
 import {
   Album,
@@ -9,8 +10,8 @@ import {
 } from '@freik/media-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
+import { syncWithMainEffect } from './helpers';
 import { songListAtom } from './Local';
-import { locationsAtom } from './ReadWrite';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -25,8 +26,8 @@ export type SongData = {
   track: number;
 } & AlbumData;
 
-const log = MakeLogger('RORemote');
-const err = MakeLogger('RORemote-err', true);
+const log = MakeLogger('ReadOnly');
+const err = MakeLogger('ReadOnly-err', true);
 
 export const getMediaInfo = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
@@ -40,21 +41,27 @@ export const getMediaInfo = selectorFamily<Map<string, string>, SongKey>({
   },
 });
 
-export const allSongsSel = selector<Map<SongKey, Song>>({
+type SongMap = Map<SongKey, Song>;
+type AlbumMap = Map<AlbumKey, Album>;
+type ArtistMap = Map<ArtistKey, Artist>;
+type MusicLibrary = { songs: SongMap; albums: AlbumMap; artists: ArtistMap };
+
+const musicLibraryAtom = atom<MusicLibrary>({
+  key: 'musicDatabase',
+  default: {
+    songs: new Map<SongKey, Song>(),
+    albums: new Map<AlbumKey, Album>(),
+    artists: new Map<ArtistKey, Artist>(),
+  },
+  effects_UNSTABLE: [syncWithMainEffect(true)],
+});
+
+export const allSongsSel = selector<SongMap>({
   key: 'AllSongs',
-  get: async ({ get }): Promise<Map<SongKey, Song>> => {
-    // Get the locations to make sure that if they change,
-    // we get the new song list
-    log('AllSongs');
-    get(locationsAtom);
-    const res = await ipc.GetAllSongs();
-    if (res) {
-      log(`Got ${res.size} entries:`);
-      log(res);
-      return res;
-    }
-    err('Failed to retrieve songs');
-    return new Map<SongKey, Song>();
+  get: ({ get }): SongMap => {
+    const ml = get(musicLibraryAtom);
+    log(`AllSongs: #${ml.songs.size}`);
+    return ml.songs;
   },
 });
 
@@ -68,16 +75,9 @@ export const songByKeySel = selectorFamily<Song, SongKey>({
   },
 });
 
-export const allAlbumsSel = selector<Map<AlbumKey, Album>>({
+export const allAlbumsSel = selector<AlbumMap>({
   key: 'AllAlbums',
-  get: async ({ get }): Promise<Map<AlbumKey, Album>> => {
-    // Get the locations to make sure that if they change,
-    // we get the new song list
-    log('allAllbumsSel');
-    get(locationsAtom);
-    const res = await ipc.GetAllAlbums();
-    return res || new Map<AlbumKey, Album>();
-  },
+  get: ({ get }): AlbumMap => get(musicLibraryAtom).albums,
 });
 
 export const albumByKeySel = selectorFamily<Album, AlbumKey>({
@@ -108,16 +108,9 @@ export const allAlbumKeysSel = selector<AlbumKey[]>({
   },
 });
 
-export const allArtistsSel = selector<Map<ArtistKey, Artist>>({
+export const allArtistsSel = selector<ArtistMap>({
   key: 'AllArtists',
-  get: async ({ get }): Promise<Map<ArtistKey, Artist>> => {
-    // Get the locations to make sure that if they change,
-    // we get the new song list
-    log('allArtistsSel');
-    get(locationsAtom);
-    const res = await ipc.GetAllArtsists();
-    return res || new Map<ArtistKey, Artist>();
-  },
+  get: ({ get }): ArtistMap => get(musicLibraryAtom).artists,
 });
 
 export const artistByKeySel = selectorFamily<Artist, ArtistKey>({
@@ -227,7 +220,7 @@ export const searchSel = selectorFamily<ipc.SearchResults, string>({
       log('results:');
       log(res);
     } else {
-      log('no results');
+      err('no results');
     }
     return res || { songs: [], albums: [], artists: [] };
   },

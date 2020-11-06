@@ -27,7 +27,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   if (!theMusicDatabase) {
     try {
       log('get-music-db called');
-      const musicDBstr = await persist.getItemAsync('DB');
+      const musicDBstr = await persist.getItemAsync('musicDatabase');
       if (musicDBstr) {
         log(`get-music-db: ${musicDBstr.length} bytes in the JSON blob.`);
         theMusicDatabase = (FTON.parse(musicDBstr) as unknown) as MusicDB;
@@ -46,7 +46,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
         albumTitleIndex: new Map<string, AlbumKey[]>(),
         artistNameIndex: new Map<string, ArtistKey>(),
       };
-      await persist.setItemAsync('DB', FTON.stringify(emptyDB));
+      await persist.setItemAsync('musicDatabase', FTON.stringify(emptyDB));
       return;
     }
   } else {
@@ -59,7 +59,7 @@ export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
   const asFT = FTON.asFTON(musicDB);
   if (asFT) {
     log(`Saving DB with ${musicDB.songs.size} songs`);
-    await persist.setItemAsync('DB', FTON.stringify(asFT));
+    await persist.setItemAsync('musicDatabase', FTON.stringify(asFT));
   } else {
     err("MusicDB isn't FTON data!");
   }

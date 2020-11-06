@@ -2,9 +2,6 @@ import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import { ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import {
-  getAllAlbums,
-  getAllArtists,
-  getAllSongs,
   getMediaInfoForSong,
   searchSubstring,
   searchWholeWord,
@@ -133,9 +130,11 @@ export function CommsSetup(): void {
   // When 'locations' is changed, update the Music DB in response
   persist.subscribe('locations', UpdateDB);
 
+  /*
   registerFlattened('get-all-songs', getAllSongs);
   registerFlattened('get-all-albums', getAllAlbums);
   registerFlattened('get-all-artists', getAllArtists);
+  */
   registerFlattened('get-media-info', getMediaInfoForSong);
   registerFlattened('search', searchWholeWord);
   registerFlattened('subsearch', searchSubstring);

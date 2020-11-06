@@ -12,7 +12,13 @@ import {
 } from '@fluentui/react';
 import { Album, AlbumKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import {
+  atom,
+  selector,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
 import { AddSongs } from '../../Recoil/api';
 import { songDetailAtom } from '../../Recoil/Local';
 import {
@@ -56,13 +62,22 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   );
 }
 
-export default function AlbumView(): JSX.Element {
+const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'r' });
+const sortedSongsSel = selector({
+  key: 'albumsSorted',
+  get: ({ get }) => {
+    return SortSongs(
+      get(sortOrderAtom),
+      [...get(allSongsSel).values()],
+      get(allAlbumsSel),
+      get(allArtistsSel),
+      get(sortWithArticlesAtom),
+    );
+  },
+});
+
+export default function AlbumList(): JSX.Element {
   const albums = useRecoilValue(allAlbumsSel);
-  const songs = useRecoilValue(allSongsSel);
-  const artists = useRecoilValue(allArtistsSel);
-
-  const articles = useRecoilValue(sortWithArticlesAtom);
-
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
@@ -70,18 +85,16 @@ export default function AlbumView(): JSX.Element {
     AddSongs([item.key], set),
   );
 
-  const [curSort, setSort] = useState<string>('l');
+  const [curSort, setSort] = useRecoilState(sortOrderAtom);
+
   const curExpandedState = useState(new Set<AlbumKey>());
-  const [sortedSongs, setSortedSongs] = useState(
-    SortSongs(curSort, [...songs.values()], albums, artists, articles),
-  );
+  const sortedSongs = useRecoilValue(sortedSongsSel);
 
   // This takes a sort string, shuffles it to always have the groupId first
   // then sorts according to the order specified
   const performSort = (srt: string) => {
     if (srt !== curSort) {
       setSort(srt);
-      setSortedSongs(SortSongs(srt, sortedSongs, albums, artists, articles));
     }
   };
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (

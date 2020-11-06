@@ -8,10 +8,15 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
 import { Artist, ArtistKey, Song } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import {
+  atom,
+  selector,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
 import { GetArtistString, GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
 import { songDetailAtom } from '../../Recoil/Local';
@@ -30,8 +35,6 @@ import {
 } from '../SongList';
 import './styles/Artists.css';
 
-const log = MakeLogger('Artists', true);
-
 export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
   const onAddSongsClick = useRecoilCallback(({ set }) => () =>
     props.artists.forEach((art) => AddSongs(art.songs, set)),
@@ -48,13 +51,22 @@ export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
   );
 }
 
+const sortOrderAtom = atom({ key: 'artistsSortOrder', default: 'r' });
+const sortedSongsSel = selector({
+  key: 'artistsSorted',
+  get: ({ get }) => {
+    return SortSongs(
+      get(sortOrderAtom),
+      [...get(allSongsSel).values()],
+      get(allAlbumsSel),
+      get(allArtistsSel),
+      get(sortWithArticlesAtom),
+    );
+  },
+});
+
 export default function ArtistList(): JSX.Element {
-  const songs = useRecoilValue(allSongsSel);
   const artists = useRecoilValue(allArtistsSel);
-  const albums = useRecoilValue(allAlbumsSel);
-
-  const articles = useRecoilValue(sortWithArticlesAtom);
-
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
@@ -62,19 +74,15 @@ export default function ArtistList(): JSX.Element {
     AddSongs([item.key], set),
   );
 
-  const [curSort, setSort] = useState<string>('r');
+  const [curSort, setSort] = useRecoilState(sortOrderAtom);
   const curExpandedState = useState(new Set<ArtistKey>());
-  const [sortedSongs, setSortedSongs] = useState(
-    SortSongs(curSort, [...songs.values()], albums, artists, articles),
-  );
-
+  const sortedSongs = useRecoilValue(sortedSongsSel);
   const performSort = (srt: string) => {
     if (srt !== curSort) {
       setSort(srt);
-      log(`Sorting Artists: ${srt}`);
-      setSortedSongs(SortSongs(srt, sortedSongs, albums, artists, articles));
     }
   };
+
   const renderArtistHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
   ) => {

@@ -54,7 +54,7 @@ async function RescanDB(): Promise<void> {
   const db = await getMusicDB();
   if (db) {
     log('About to send the update');
-    asyncSend({ musicDatabase: [db.songs, db.albums, db.artists] });
+    asyncSend({ musicDatabase: db });
     if (prevDB) {
       log('Songs before:' + prevDB.songs.size.toString());
       log('Songs after: ' + db.songs.size.toString());

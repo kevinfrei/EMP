@@ -1,12 +1,5 @@
 import { FTON, FTONData, MakeLogger, SeqNum, Type } from '@freik/core-utils';
-import {
-  Album,
-  AlbumKey,
-  Artist,
-  ArtistKey,
-  Song,
-  SongKey,
-} from '@freik/media-utils';
+import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
 import { InvokeMain } from './Tools';
 
 const log = MakeLogger('ipc', true);
@@ -17,6 +10,7 @@ export type SearchResults = {
   artists: ArtistKey[];
 };
 
+/*
 export async function GetAllSongs(): Promise<Map<SongKey, Song> | void> {
   const blob = await InvokeMain('get-all-songs');
   if (blob) {
@@ -37,6 +31,7 @@ export async function GetAllArtsists(): Promise<Map<ArtistKey, Artist> | void> {
     return FTON.parse(blob) as Map<ArtistKey, Artist>;
   }
 }
+*/
 
 export async function GetAllPlaylists(): Promise<Map<
   string,

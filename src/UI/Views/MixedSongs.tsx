@@ -4,16 +4,15 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
+import { Song } from '@freik/media-utils';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
-  Album,
-  AlbumKey,
-  Artist,
-  ArtistKey,
-  Song,
-  SongKey,
-} from '@freik/media-utils';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+  atom,
+  selector,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
 import { AddSongs } from '../../Recoil/api';
 import { songDetailAtom } from '../../Recoil/Local';
 import {
@@ -32,25 +31,29 @@ import {
 } from '../SongList';
 import './styles/MixedSongs.css';
 
+const sortOrderAtom = atom({ key: 'mixedSongSortOrder', default: 'rl' });
+const sortedSongsSel = selector({
+  key: 'msSorted',
+  get: ({ get }) => {
+    return SortSongs(
+      get(sortOrderAtom),
+      [...get(allSongsSel).values()],
+      get(allAlbumsSel),
+      get(allArtistsSel),
+      get(sortWithArticlesAtom),
+    );
+  },
+});
+
 export default function MixedSongsList(): JSX.Element {
-  const songs: Map<SongKey, Song> = useRecoilValue(allSongsSel);
-  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
-  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
-
-  const articles = useRecoilValue(sortWithArticlesAtom);
-
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
   const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
     AddSongs([item.key], set),
   );
-
-  const [sortOrder, setSortOrder] = useState('rl');
-  const [sortedItems, setSortedItems] = useState(
-    SortSongs(sortOrder, [...songs.values()], albums, artists, articles),
-  );
-
+  const [sortOrder, setSortOrder] = useRecoilState(sortOrderAtom);
+  const sortedItems = useRecoilValue(sortedSongsSel);
   const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
@@ -59,10 +62,7 @@ export default function MixedSongsList(): JSX.Element {
       ['t', 'title', 'Title', 150],
     ],
     () => sortOrder,
-    (srt: string) => {
-      setSortOrder(srt);
-      setSortedItems(SortSongs(srt, sortedItems, albums, artists, articles));
-    },
+    setSortOrder,
   );
 
   return (

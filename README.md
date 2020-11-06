@@ -90,11 +90,10 @@ single atom, then songs, albums, and artists are just selectors on that atom.
 
 - Starting "clean" doesn't seem to be a very happy place. It requires a couple
   restarts to get it going. Fix that.
-- Make MusicDB updates due to location changes work properly
-  - There's a race condition: The updated MusicDB request gets replied to before
-    the MusicDB update occurs
 - Clearing the queue restarts playback on the current song
-- Search seems less than correct/consistent
+- Search seems less than correct/consistent\
+- If you have multiple locations, you'll get duplicate songs of the same ID
+- Album expansion doesn't work
 
 ### Core Capabilities
 
