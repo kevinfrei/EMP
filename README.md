@@ -7,13 +7,13 @@
 - Why? Because Apple is lame.
 
 I'm old. I have a whole lot of music that I purchased on CD's over the past
-many, many years. I like having high quality music playable from the PC I'm
-working on. When that PC was a Windows PC, the incredibly ancient Windows Media
-Player would play Flac, as would "Groove Music" I imagine (and anything else
-probably, because of the pluggable (and highly overarchitected) nature of
-audio/video handling in Windows). But I'm on a Mac on a regular basis these days
-and Vox is **awful** (I'm not paying a monthly fee for the privilege of
-listening to the music I've already purchased, thanks very much) and VLC is a
+many, many years. I like having high quality music playable from the computer
+I'm working on. When that computer was a Windows PC, the incredibly ancient
+Windows Media Player would play Flac, as would "Groove Music" I imagine (and
+anything else probably, because of the pluggable (and highly overarchitected)
+nature of audio/video handling in Windows). But I'm on a Mac on a regular basis
+these days and Vox is **awful** (I'm not paying a monthly fee for the privilege
+of listening to the music I've already purchased, thanks very much) and VLC is a
 bad music player (a great video player, but not great for music, IMO)
 
 What's it look like? Kind of like iTunes' ugly stepsister (#notadesigner!), but
@@ -24,79 +24,92 @@ here you go:
 ![Playlist view](doc/playlist.jpg)
 
 It's not yet packaged for general consumption, but if you're a nerd like me, you
-can probably get it to work from the repository easily enough. (Those screen
-shots from the 'bootstrap' version. I've moved on to FluenUI since then...)
+can probably get it to work from the repository easily enough.
 
-Also, I migrated everything from Flow to TypeScript, because support from all
-the modules I use is much better in TypeScript. Honestly, the only other thing
-that seems better to me about TypeScript over Flow is documentation. TypeScript
-is kind of dumb (it doesn't get value propagation as well as Flow) and holy crap
-is it **_slow_**. 5-10 seconds to type check my 5000 lines of code :o
+I've migrated everything from Flow to TypeScript, because support from all the
+modules I use is much better in TypeScript. Honestly, the only other thing that
+seems better to me about TypeScript over Flow is documentation. TypeScript is
+kind of dumb (it doesn't get value propagation as well as Flow) and holy crap is
+it **_slow_**: 5-10 seconds to type check my 5000 lines of code :o but I'm not
+particularly blocked by the speed on compilation. My brain is far slower than
+that, and the tooling is much better. So it's all TypeScript, because types are
+good for your health.
 
 ## What's the current state?
 
-I've got playback working. Double-clicking on songs adds to the 'Now Playing'
-list. Repeat & Shuffle generally work the way you expect. `yarn start` will
-launch it. Albums with jpg's/png's in the same folder will display those images
-in the playback header. Honestly, it's semi-functional. I need to add Album and
-Artist playback queueing, then custom (auto-saving) playlists are the last major
-piece of functionality to add.
+It pretty much works. Search is kinda messed up, and there are a few "first
+launch" problems that mean you might have to start it a couple times before it's
+actually running, but overall? It's completely functional.
 
-I've migrated to [Recoil](https://recoiljs.org). One of the two key authors is
-on my team, and it was kinda "his idea" (Hi, Dave!). It supports React Suspense
-in an incredibly elegant fashion, and I've been drooling over it for about a
-year. Now that it's been open-sourced, Undux is completely gone, but I'm not
-quite back up to feature parity.
+I started out using Undux (with Flow), as Undux seemed to handle Flow types very
+nicely. But a month or so after my migration to TypeScript was complete,
+[Recoil](https://recoiljs.org) was released. One of the key authors is on my
+team, and it was kinda "his idea" (Hi, Dave!). It supports React Suspense in an
+incredibly elegant fashion, and I've been drooling over it for since early 2019.
+Now that it's been open-sourced, Undux is completely gone and I'm well past
+feature parity, adding nifty "capabilities" like updating the music library
+without requiring a restart or two. "Features" like that :D
 
-During the conversion, I kept hitting weird React issues with some of the
-virtualized list tech I was using, so I said screw it and also started migrating
-off of Bootstrap and onto FluentUI. Honestly FluentUI isn't the prettiest, but
-it's defaults certainly look better than Bootstrap, plus it's Microsoft tech, so
-it's relatively well documented, and super-duper scalable. The `DetailsList`
-component is almost magical. I highly recommend it.
+During the Undux to Recoil conversion, I kept hitting weird React issues with
+some of the virtualized list tech I was using, so I said screw it and also
+started migrating off of Bootstrap and onto FluentUI. Honestly FluentUI isn't
+the prettiest or the easiest to 'style' (the mechanism is pretty weird, involved
+calling functions and having pairs of styles in a single object...), but its
+defaults certainly look better than Bootstrap, plus it's Microsoft tech, so it's
+generally well documented, and scalable. The `DetailsList` component is almost
+magical. I highly recommend it. I still see a few weird bugs, but it's not clear
+whether they're due to my code, or if the component has issues. Hurray for web
+tech, I guess.
 
 ### Recoil Notes
 
 For data that "lives" on the server/in the main process, there are a couple
 different models. If it's "read only" that can be trivially modeled using
-_selectors_. Just make the getter download data from the server. Even if it
-might change (i.e. the user changes the paths to search for music from, thus
-changing the music DB) you can make the dependency clear by invoking the getter
-on the thing the read-only value depends on (even if you don't use it on the
-client side).
+_selectors_. Just make the getter download data from the server. If it might
+change, however, (i.e. the user changes the paths to search for music from, thus
+changing the music DB) you'd need to make the dependency clear by invoking the
+getter on the thing the read-only value depends on (even if you don't use it on
+the client side).
 
-For data that is changing, but is also stored on the server/in the main process,
-there's a big more complex data flow necessary. You can't really model the
-dependency of the data accurately in just _atoms_ and _selectors_. There's a new
+For data that is changing in the render process, but is also stored on the
+server/in the main process, there's a big more complex data flow necessary. You
+can't really model the dependency of the data accurately in just _atoms_ and
+_selectors_. There's a new (as of v0.0.12)
 [API](https://recoiljs.org/docs/api-reference/core/useRecoilTransactionObserver)
 for watching changes so that you can do things like encode the data in a URL, or
 save it back to the server.
 
 Prior to Recoil v0.1.2, I had a little `useBackedState` hook that rolled a
-number of things into a single chunk of state, but it didn't work with more than
-1 call of `useBackedState`. With Recoil 0.1.2, AtomEffects are the new hotness,
-and it appears to work really well. I'm going to try to get rid of all my weird
-1-off communication and shift to AtomEffects. I'm not quite there, but I think
-it will address the MusicDB update race that I've been ignoring.
+number of things into a single chunk of state, and registered stuff with the
+`useRecoilTransactionObserver` API, but it didn't work with more than a single
+callsite to `useBackedState` per atom. With Recoil 0.1.2, `AtomEffects` are the
+new hotness, and it appears to work really well. I'm going to try to get rid of
+all my weird 1-off communication and shift to AtomEffects. I'm not quite there,
+but I should also be able to address the MusicDB update race that I've been
+ignoring. I might switch back to something less integrated into the Atom, but it
+has definitely forced me to be more clear about how back end communication
+occurs.
 
 ## Stuff to do
 
 ### _In Progress_
 
 Migration to AtomEffects is underway. I need to move the entire MusicDB to a
-single atom, then songs, albums, and artists are just selectors on that atom.
+single bidirectionally synchronized atom. From that single data blob songs,
+albums, and artists are strict selectors from that atom.
 
 ### Bugs
 
 - Starting "clean" doesn't seem to be a very happy place. It requires a couple
   restarts to get it going. Fix that.
 - Clearing the queue restarts playback on the current song
-- Search seems less than correct/consistent\
+- Search seems less than correct/consistent
 - If you have multiple locations, you'll get duplicate songs of the same ID
-- Album expansion doesn't work
 
 ### Core Capabilities
 
+- **main** Update data from file metadata (overriding filename acquisition)
+  - Save this stuff between runs, as it's going to be _s l o w_.
 - **render** Renaming a playlist is pretty clunky (save as, delete)
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)
@@ -107,8 +120,6 @@ single atom, then songs, albums, and artists are just selectors on that atom.
 - **render** Add playlist view that looks like Albums/Artists view
 - **render** Improve the Search view a bit
 - **render** Make a miniplayer!
-- **main** Update data from file metadata (overriding filename acquisition)
-  - Save this stuff between runs, as it's going to be _s l o w_.
 - **both** MediaInfo/Metadata editing!
   - Support adding album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
