@@ -8,9 +8,9 @@ import {
 } from '@fluentui/react';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
+import { ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState, useBoolState } from '../../Recoil/helpers';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
-import { ShowOpenDialog } from '../../Tools';
 import { ExpandableSeparator, StateToggle } from '../Utilities';
 import './styles/Settings.css';
 

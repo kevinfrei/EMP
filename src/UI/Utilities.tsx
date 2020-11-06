@@ -11,8 +11,8 @@ import {
   Toggle,
 } from '@fluentui/react';
 import React, { Suspense } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
-import { InitialWireUp } from '../Tools';
 
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {

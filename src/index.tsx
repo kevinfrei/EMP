@@ -1,8 +1,8 @@
 import { initializeIcons } from '@uifabric/icons';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import ReactDOM from 'react-dom';
+import { SetInit } from './MyWindow';
 import * as serviceWorker from './serviceWorker';
-import { SetInit } from './Tools';
 import App from './UI/App';
 import './UI/styles/index.css';
 

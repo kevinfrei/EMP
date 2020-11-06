@@ -1,5 +1,5 @@
 // This is for getting at "global" stuff from the window object
-import { FTON, MakeLogger, Type } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -8,80 +8,10 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import { IpcRenderer } from 'electron';
-import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { GetDataForSong, SongData } from './DataSchema';
-import { HandleMessage } from './ipc';
+import { InvokeMain } from './MyWindow';
 
 const log = MakeLogger('Tools', true);
-const err = MakeLogger('Tools-err', true);
-
-/*
- * "Window" stuff goes here
- */
-
-interface MyWindow extends Window {
-  ipc: IpcRenderer | undefined;
-  remote: Electron.Remote | undefined;
-  isDev: boolean | undefined;
-  initApp: undefined | (() => void);
-  ipcSet: boolean | undefined;
-}
-
-declare let window: MyWindow;
-
-export function ShowOpenDialog(
-  options: OpenDialogSyncOptions,
-): string[] | undefined {
-  return window.remote!.dialog.showOpenDialogSync(options);
-}
-
-export function SetInit(func: () => void): void {
-  window.initApp = func;
-}
-
-export function InitialWireUp(): void {
-  if (!window.ipcSet) {
-    window.ipcSet = true;
-
-    // Set up listeners for any messages that we might want to asynchronously
-    // send from the main process
-    window.ipc?.on('async-data', (event: IpcRendererEvent, data: unknown) => {
-      if (
-        FTON.isFTON(data) &&
-        Type.isArray(data) &&
-        Type.isObject(data[0]) &&
-        Type.has(data[0], 'message') &&
-        FTON.isFTON(data[0].message)
-      ) {
-        log('*** Async message formed properly:');
-        log(data[0]);
-        HandleMessage(data[0].message);
-      } else {
-        err('*** Async message malformed:');
-        err(data);
-      }
-    });
-  }
-}
-
-export async function InvokeMain(
-  channel: string,
-  key?: string,
-): Promise<string | void> {
-  let result;
-  if (key) {
-    log(`Invoking main("${channel}", "${key}")`);
-    result = (await window.ipc!.invoke(channel, key)) as string;
-    log(`Invoke main ("${channel}" "${key}") returned:`);
-  } else {
-    log(`Invoking main("${channel}")`);
-    result = (await window.ipc!.invoke(channel)) as string;
-    log(`Invoke main ("${channel}") returned:`);
-  }
-  log(result);
-  return result;
-}
 
 export async function SavePlaylist(
   name: string,
@@ -89,6 +19,7 @@ export async function SavePlaylist(
 ): Promise<void> {
   await InvokeMain('set-playlist', 'thing');
 }
+
 /*
  * Sorting
  */
@@ -190,17 +121,14 @@ export function isPlaylist(playlist: string): boolean {
   return playlist.length > 0;
 }
 
-function Rand(values: Uint32Array, max: number): number {
-  return values[max - 1] % max;
-}
-
 export function ShuffleArray<T>(array: T[]): T[] {
   const values = new Uint32Array(array.length);
   window.crypto.getRandomValues(values);
+  const rand = (max: number) => values[max - 1] % max;
   const res: T[] = [];
   const remove: T[] = [...array];
   while (remove.length > 0) {
-    const i = Rand(values, remove.length);
+    const i = rand(remove.length);
     res.push(remove[i]);
     remove.splice(i, 1);
   }
