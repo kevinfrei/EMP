@@ -189,3 +189,17 @@ export function syncWithMainEffect<T>(asyncUpdates?: boolean): AtomEffect<T> {
     asyncUpdates,
   );
 }
+
+/*
+To get off of the AtomEffects API, I need three things:
+1. a 'get' mechanism to initialize backing atoms
+2. a 'set' mechanism to send data back to the server when it's changed (for RW atoms)
+3. an async update mechanism to update backing atoms
+
+#1 can be accomplished by using a helper component with an effect to pull the value
+from the server, and store it back to the backing atom
+
+#2 should just work with selectors, no magic involved, really
+
+#3 can be in the same helper component for #1
+*/
