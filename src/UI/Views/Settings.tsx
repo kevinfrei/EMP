@@ -48,6 +48,8 @@ function RecoilLocations(): JSX.Element {
           }}
           iconProps={{ iconName: 'Add' }}
         />
+        &nbsp;
+        <DefaultButton text="NYI: Rescan Locations" />
       </Stack>
     </>
   );

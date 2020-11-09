@@ -105,6 +105,8 @@ albums, and artists are strict selectors from that atom.
 - Clearing the queue restarts playback on the current song
 - Search seems less than correct/consistent
 - If you have multiple locations, you'll get duplicate songs of the same ID
+- There are a few issues with sorting of grouped views (Albums, Artists)
+- Saw something weird with shuffle while it's playing in the Now Playing view
 
 ### Core Capabilities
 
