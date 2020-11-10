@@ -133,12 +133,12 @@ export async function StopAndClear({
   reset: (recoilVal: RecoilState<any>) => void;
 }): Promise<void> {
   const curSong = await snapshot.getPromise(currentSongKeySel);
-  set(stillPlayingAtom, curSong);
-  // TODO: Go stop the audio element while we're at it?
   reset(songListAtom);
   reset(currentIndexAtom);
   reset(activePlaylistAtom);
   reset(nowPlayingAtom);
+  set(stillPlayingAtom, curSong);
+  // TODO: Go stop the audio element while we're at it?
 }
 
 /**

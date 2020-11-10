@@ -177,6 +177,12 @@ export default function NowPlaying(): JSX.Element {
       style={{ height: '18px', width: '18px' }}
       iconProps={{ iconName: 'Delete' }}
       onClick={() => {
+        // If we're going to be removing a song before the current index
+        // we need to move the curIndex pointer as well
+        const listLocation = songList.indexOf(song.key);
+        if (listLocation < curIndex) {
+          setCurIndex(curIndex - 1);
+        }
         setSongList(songList.filter((v) => v !== song.key));
       }}
     />

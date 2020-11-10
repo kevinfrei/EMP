@@ -203,3 +203,16 @@ from the server, and store it back to the backing atom
 
 #3 can be in the same helper component for #1
 */
+
+// Initial value 'getter' effect:
+// for each atom that's registered, queue up a query to load the initial value
+// Set up handlers so that those values update the backing atoms
+
+const registeredAtoms: RecoilState<unknown>[] = [];
+
+export function getAtomValuesEffect(): void {
+  for (const theAtom of registeredAtoms) {
+    log('Registered Atom:');
+    log(theAtom);
+  }
+}
