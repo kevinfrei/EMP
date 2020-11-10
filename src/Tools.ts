@@ -11,7 +11,7 @@ import {
 import { GetDataForSong, SongData } from './DataSchema';
 import { InvokeMain } from './MyWindow';
 
-const log = MakeLogger('Tools', true);
+const log = MakeLogger('Tools');
 
 export async function SavePlaylist(
   name: string,

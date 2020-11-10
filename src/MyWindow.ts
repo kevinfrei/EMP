@@ -3,7 +3,8 @@ import { FTON, MakeLogger, Type } from '@freik/core-utils';
 import { IpcRenderer } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { HandleMessage } from './ipc';
-const log = MakeLogger('MyWindow', true);
+
+const log = MakeLogger('MyWindow');
 const err = MakeLogger('MyWindow-err', true);
 
 /*

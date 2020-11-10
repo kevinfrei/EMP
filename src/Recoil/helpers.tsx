@@ -24,7 +24,7 @@ export type DialogData = [boolean, () => void];
 // A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
 export type DialogState = [() => void, DialogData];
 
-const log = MakeLogger('helpers', true);
+const log = MakeLogger('helpers');
 const err = MakeLogger('helpers-err', true);
 
 /**
@@ -84,7 +84,7 @@ export function translateToMainEffect<T>(
             }
           }
         })
-        .catch((rej) => log(`${node.key} Get failed`));
+        .catch((rej) => err(`${node.key} Get failed`));
     }
     onSet((newVal, oldVal) => {
       if (newVal instanceof DefaultValue) {
@@ -93,7 +93,7 @@ export function translateToMainEffect<T>(
       const newStr = toString(newVal);
       if (oldVal instanceof DefaultValue || newStr !== toString(oldVal))
         WriteToStorage(node.key, newStr).catch((reason) => {
-          log(`${node.key} save to main failed`);
+          err(`${node.key} save to main failed`);
         });
     });
   };
