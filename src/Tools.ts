@@ -153,19 +153,9 @@ export function secondsToHMS(vals: string): string {
   }
 }
 
-function divGrand(val: string): string {
-  let flt = (parseFloat(val) / 1000.0).toFixed(3);
+export function divGrand(val: string): string {
+  let flt = (parseFloat(val) / 1000.0).toPrecision(4);
   flt = flt.replace(/0+$/g, '');
-  flt = flt.endsWith('.') ? flt.substr(0, flt.length - 1) : flt;
+  flt = flt.replace(/\.$/, '');
   return flt;
-}
-
-export function toKhz(val: string): string {
-  return divGrand(val) + ' KHz';
-}
-
-export function toKbps(val: string): string {
-  const str = divGrand(val);
-  if (str.includes('.')) return str.substr(0, str.length - 2) + ' Kbps';
-  return str + ' Kbps';
 }

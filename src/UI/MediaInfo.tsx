@@ -4,7 +4,7 @@ import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { getMediaInfo } from '../Recoil/ReadOnly';
-import { secondsToHMS, toKbps, toKhz } from '../Tools';
+import { divGrand, secondsToHMS } from '../Tools';
 
 const fileTypeMap = new Map([
   ['FLAC', 'flac'],
@@ -21,18 +21,18 @@ function getType(codec: string | void): string {
 }
 
 function channelDescr(noc: string | void): string {
-  if (noc === '1') return 'Mono';
-  if (noc === '2') return 'Stereo';
-  if (noc === '4') return 'Quadrophonic';
+  if (noc === '1') return 'mono';
+  if (noc === '2') return 'stereo';
+  if (noc === '4') return 'quadrophonic';
   return `${noc ? noc : '?'} channels`;
 }
 
 function getBitRate(br: string | void): string {
-  return br ? toKbps(br) : '?? kbps';
+  return `${br ? divGrand(br) : '??'}Kbps`;
 }
 
 function getSampleRate(sr: string | void): string {
-  return sr ? toKhz(sr) : '?? kHz';
+  return `${sr ? divGrand(sr) : '??'}KHz`;
 }
 
 export default function MediaInfoTable({
@@ -70,7 +70,7 @@ export default function MediaInfoTable({
     <div>
       <Stack>
         <TextField label="File Path" underlined readOnly value={thePath} />
-        <Stack horizontal>
+        <Stack horizontal horizontalAlign="space-between">
           <TextField
             label="Duration"
             underlined
@@ -82,7 +82,7 @@ export default function MediaInfoTable({
             label="Format:"
             underlined
             readOnly
-            value={`${bitrate} ${fileType} ${sampleRate} ${channels} ${bps}bps`}
+            value={`${bitrate} ${fileType} ${sampleRate} ${channels} ${bps} bit depth`}
             style={{ width: '310px' }}
           />
         </Stack>
@@ -96,23 +96,23 @@ export default function MediaInfoTable({
           value={album}
           onChange={(e, nv) => nv && setAlbum(nv)}
         />
-        <Stack horizontal>
-          <TextField
-            label="Track #"
-            value={track}
-            onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
-          />
-          <span style={{ width: '30px' }} />
+        <Stack horizontal horizontalAlign="space-between">
           <TextField
             label="Year"
             value={year}
             onChange={(e, nv) => nv && isNumber(nv) && setYear(nv)}
+            style={{ width: 100 }}
           />
-          <span style={{ width: '30px' }} />
-          <Stack verticalAlign="center">
-            <span style={{ height: '16px' }} />
+          <TextField
+            label="Track #"
+            value={track}
+            onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
+            style={{ width: 100 }}
+          />
+          <TextField label="Disk #" value="0" style={{ width: 100 }} />
+          <Stack verticalAlign="space-between" style={{ marginRight: 20 }}>
+            <div style={{ height: 10 }} />
             <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
-            <span style={{ height: '5px' }} />
             <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
           </Stack>
         </Stack>
@@ -122,7 +122,7 @@ export default function MediaInfoTable({
           onChange={(e, nv) => nv && setTitle(nv)}
         />
       </Stack>
-      <Stack horizontal verticalAlign="center">
+      <Stack horizontal verticalAlign="center" style={{ marginTop: 10 }}>
         <IconButton
           iconProps={{
             iconName: rawHidden ? 'ChevronRight' : 'ChevronDown',
