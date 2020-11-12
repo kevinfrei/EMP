@@ -93,11 +93,10 @@ function getOrNewAlbum(
   year: number,
   artists: ArtistKey[],
   vatype: VAType,
+  dirName: string,
 ): Album {
   // TODO: This doesn't currently handle vatypes properly :/
-  const maybeSharedNames: AlbumKey[] | undefined = db.albumTitleIndex.get(
-    title.toLowerCase(),
-  );
+  const maybeSharedNames = db.albumTitleIndex.get(title.toLowerCase());
   let sharedNames: AlbumKey[];
   if (!maybeSharedNames) {
     sharedNames = [];
@@ -106,7 +105,7 @@ function getOrNewAlbum(
     sharedNames = maybeSharedNames;
   }
   // sharedNames is the list of existing albums with this title
-  // It might be empty (coming from 5 lines up there ^^^ )
+  // It might be empty (coming from a few lines up there ^^^ )
   for (const albumKey of sharedNames) {
     const alb: Album | undefined = db.albums.get(albumKey);
     if (!alb) {
@@ -121,16 +120,34 @@ function getOrNewAlbum(
       err(`DB inconsistency - album title index inconsistency`);
       continue;
     }
-    if (check.year !== year || check.vatype !== vatype) {
+    if (check.year !== year) {
       continue;
     }
     // For VA type albums, we can ignore the artist list
-    if (vatype.length > 0) {
+    if (check.vatype === vatype && vatype.length > 0) {
       return check;
     }
     // Set equality...
     if (!setEqual(check.primaryArtists, artists)) {
-      continue;
+      // If the primaryArtists is different, but the files are in the same
+      // location, override the VA type update the primaryArtists list and
+      // return this one.
+      const anotherSong = db.songs.get(check.songs[0]);
+      if (!anotherSong) {
+        continue;
+      }
+      if (path.dirname(anotherSong.path) !== dirName) {
+        continue;
+      }
+      err('Think I found a mismarked VA song:');
+      err(check);
+      err('For this directory:');
+      err(dirName);
+      err('Artists:');
+      err(artists);
+      check.vatype = 'va';
+      check.primaryArtists = [];
+      return check;
     }
     // If we're here, we've found the album we're looking for
     // Before returning, ensure that the artists have this album in their set
@@ -153,7 +170,7 @@ function getOrNewAlbum(
   const key: AlbumKey = newAlbumKey();
   const album: Album = {
     year,
-    primaryArtists: artists,
+    primaryArtists: vatype === '' ? artists : [],
     title,
     vatype,
     songs: [],
@@ -179,6 +196,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
     md.year || 0,
     artistIds,
     md.vaType || '',
+    path.dirname(md.originalPath),
   );
   const secondaryIds: ArtistKey[] = [];
   if (md.moreArtists) {

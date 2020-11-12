@@ -16,7 +16,7 @@ import {
 
 const isDev = true; // require('electron-is-dev');
 
-const log = MakeLogger('window');
+const err = MakeLogger('window-err', true);
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -49,10 +49,10 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
       webSecurity: !isDev,
     },
     titleBarStyle: 'hiddenInset', // TODO: Only Mac
-    frame: false, // TODO: !Mac, add close/min/max buttons
+    frame: true, // TODO: !Mac, add close/min/max buttons
     show: false,
-    minWidth: 660,
-    minHeight: 260,
+    minWidth: 250,
+    minHeight: 250,
   });
   // Load the base URL
   mainWindow
@@ -62,7 +62,7 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
         : // If this file moves, you have to fix this to make it work for release
           `file://${path.join(__dirname, '../../build/index.html')}`,
     )
-    .catch(log);
+    .catch(err);
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -86,7 +86,7 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
         mainWindow.maximize();
       }
       // Call the user specified "ready to go" function
-      windowCreated().catch((e) => log(e));
+      windowCreated().catch(err);
     }
   });
 
