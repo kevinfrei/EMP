@@ -1,4 +1,5 @@
-import { IconButton, Stack, Text, TextField } from '@fluentui/react';
+import { Checkbox, IconButton, Stack, Text, TextField } from '@fluentui/react';
+import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
@@ -42,28 +43,32 @@ export default function MediaInfoTable({
   const [rawHidden, setRawHidden] = useState(true);
   const mediaInfo = useRecoilValue(getMediaInfo(forSong));
   const thePath = mediaInfo.get('File Path') || '';
-  const artist = mediaInfo.get('full.artist') || '';
-  const album = mediaInfo.get('full.album') || '';
-  const track = mediaInfo.get('full.track') || '';
-  const title = mediaInfo.get('full.title') || '';
-  const year = mediaInfo.get('full.year') || '';
+  const [artist, setArtist] = useState(mediaInfo.get('full.artist') || '');
+  const [album, setAlbum] = useState(mediaInfo.get('full.album') || '');
+  const [track, setTrack] = useState(mediaInfo.get('full.track') || '');
+  const [title, setTitle] = useState(mediaInfo.get('full.title') || '');
+  const [year, setYear] = useState(mediaInfo.get('full.year') || '');
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = secondsToHMS(mediaInfo.get('format.duration') || '0');
   const sampleRate = getSampleRate(mediaInfo.get('format.sampleRate'));
+  const bps = mediaInfo.get('format.bitsPerSample') || '';
   const channels = channelDescr(mediaInfo.get('format.numberOfChannels'));
   const bitrate = getBitRate(mediaInfo.get('format.bitrate'));
+  const [vaType, setVaType] = useState(mediaInfo.get('full.vaType') || '');
+  const isVa = vaType === 'va';
+  const isOST = vaType === 'ost';
+  const setVa = () => setVaType(isVa ? '' : 'va');
+  const setOST = () => setVaType(isOST ? '' : 'ost');
+  const isNumber = (val: string | undefined) => {
+    if (Type.isString(val)) {
+      const num = Number.parseInt(val, 10);
+      return num.toString() === val.trim() && val.trim() !== 'NaN';
+    }
+    return false;
+  };
   return (
     <div>
       <Stack>
-        <TextField label="Artist" value={artist} />
-        <TextField label="Album" value={album} />
-        <Stack horizontal>
-          <TextField label="Track #" value={track} />
-          <span style={{ width: '30px' }} />
-          <TextField label="Year" value={year} />
-        </Stack>
-        <TextField label="Title" value={title} />
-        <br />
         <TextField label="File Path" underlined readOnly value={thePath} />
         <Stack horizontal>
           <TextField
@@ -77,10 +82,45 @@ export default function MediaInfoTable({
             label="Format:"
             underlined
             readOnly
-            value={`${bitrate} ${fileType} ${sampleRate} ${channels}`}
+            value={`${bitrate} ${fileType} ${sampleRate} ${channels} ${bps}bps`}
             style={{ width: '310px' }}
           />
         </Stack>
+        <TextField
+          label="Artist"
+          value={artist}
+          onChange={(e, nv) => nv && setArtist(nv)}
+        />
+        <TextField
+          label="Album"
+          value={album}
+          onChange={(e, nv) => nv && setAlbum(nv)}
+        />
+        <Stack horizontal>
+          <TextField
+            label="Track #"
+            value={track}
+            onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
+          />
+          <span style={{ width: '30px' }} />
+          <TextField
+            label="Year"
+            value={year}
+            onChange={(e, nv) => nv && isNumber(nv) && setYear(nv)}
+          />
+          <span style={{ width: '30px' }} />
+          <Stack verticalAlign="center">
+            <span style={{ height: '16px' }} />
+            <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
+            <span style={{ height: '5px' }} />
+            <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
+          </Stack>
+        </Stack>
+        <TextField
+          label="Title"
+          value={title}
+          onChange={(e, nv) => nv && setTitle(nv)}
+        />
       </Stack>
       <Stack horizontal verticalAlign="center">
         <IconButton

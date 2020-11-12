@@ -303,7 +303,15 @@ async function fileNamesToDatabase(
   const now = Date.now();
   const metadataCache = await GetMetadataCache();
   const tryHarder: string[] = [];
+  const fileNamesSeen: Set<string> = new Set<string>();
   for (const file of files) {
+    // This handles the situation of adding /foo and the /foo/bar
+    // as file locations
+    if (fileNamesSeen.has(file)) {
+      continue;
+    }
+    fileNamesSeen.add(file);
+
     // If we've previously failed doing anything with this file, don't keep
     // banging our head against a wall
     if (!metadataCache.shouldTry(file)) {

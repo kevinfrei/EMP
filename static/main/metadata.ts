@@ -1,8 +1,10 @@
 import { FTON, FTONData, MakeLogger, ObjUtil, Type } from '@freik/core-utils';
 import { Attributes, FullMetadata, MD } from '@freik/media-utils';
 import * as persist from './persist';
+import { UpdateDB } from './Startup';
 
 const log = MakeLogger('metadata');
+const err = MakeLogger('metadata-err', true);
 
 declare type NestedValue =
   | NestedObject
@@ -90,6 +92,7 @@ function MakeMetadataCache() {
   let dirty = false;
   // The set of stuff we've already attempted and failed to get MD for
   const stopTrying = new Set<string>();
+  let loaded = false;
 
   function get(path: string) {
     return cache.get(path);
@@ -130,6 +133,9 @@ function MakeMetadataCache() {
     await persist.setItemAsync('metadataCache', FTON.stringify(valueToSave));
   }
   async function load() {
+    if (loaded) {
+      return true;
+    }
     const fromFile = await persist.getItemAsync('metadataCache');
     if (!fromFile) {
       log('MDC File Not Found');
@@ -164,13 +170,43 @@ function MakeMetadataCache() {
     valuesToRestore.fails.forEach((val) => stopTrying.add(val));
     dirty = !okay;
     log(`MDC Load ${okay ? 'Success' : 'Failure'}`);
+    loaded = okay;
     return okay;
   }
   return { get, set, fail, shouldTry, save, load };
 }
 
+let mdc: MetadataCache | null = null;
+
 export async function GetMetadataCache(): Promise<MetadataCache> {
-  const res = MakeMetadataCache();
-  if (!(await res.load())) log('Loading Metadata Cache failed');
-  return res;
+  mdc = mdc === null ? MakeMetadataCache() : mdc;
+  if (!(await mdc.load())) log('Loading Metadata Cache failed');
+  return mdc;
+}
+
+export async function setMediaInfoForSong(
+  flattenedData?: string,
+): Promise<void> {
+  // TODO: Update the metadata 'override' for the song specified
+  if (!flattenedData) {
+    return;
+  }
+  const metadataToUpdate = FTON.parse(flattenedData);
+  if (!Type.isObjectNonNull(metadataToUpdate)) {
+    err('Invalid data to setMediaInfoForSong');
+    return;
+  }
+  if (!Type.hasStr(metadataToUpdate, 'fullPath')) {
+    err('Missing "fullPath" attribute');
+    err(metadataToUpdate);
+    return;
+  }
+  const fullPath: string = metadataToUpdate.fullPath;
+  const mdCache = await GetMetadataCache();
+  if (isFullMetadata(metadataToUpdate)) {
+    mdCache.set(fullPath, metadataToUpdate);
+  }
+  // For now, Update the database
+  // TODO: Make this faster. A full rescan seems awfully wasteful.
+  UpdateDB();
 }

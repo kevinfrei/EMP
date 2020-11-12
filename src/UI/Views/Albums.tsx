@@ -62,7 +62,7 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   );
 }
 
-const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'r' });
+const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'l' });
 const sortedSongsSel = selector({
   key: 'albumsSorted',
   get: ({ get }) => {

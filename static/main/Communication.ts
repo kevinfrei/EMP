@@ -1,13 +1,13 @@
 import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
 import { ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
+import { setMediaInfoForSong } from './metadata';
 import {
   getMediaInfoForSong,
   searchSubstring,
   searchWholeWord,
 } from './MusicAccess';
 import * as persist from './persist';
-import { UpdateDB } from './Startup';
 import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
@@ -127,17 +127,10 @@ export function asyncSend(message: FTONData): void {
  * Setup any async listeners, plus register all the "invoke" handlers
  */
 export function CommsSetup(): void {
-  // When 'locations' is changed, update the Music DB in response
-  persist.subscribe('locations', UpdateDB);
-
-  /*
-  registerFlattened('get-all-songs', getAllSongs);
-  registerFlattened('get-all-albums', getAllAlbums);
-  registerFlattened('get-all-artists', getAllArtists);
-  */
   registerFlattened('get-media-info', getMediaInfoForSong);
   registerFlattened('search', searchWholeWord);
   registerFlattened('subsearch', searchSubstring);
+  register('update-metadata', setMediaInfoForSong);
 
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler

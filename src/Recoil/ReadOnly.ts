@@ -18,7 +18,7 @@ export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 export type AlbumData = {
   artist: string;
   album: string;
-  year: number;
+  year: string;
 };
 
 export type SongData = {
@@ -173,7 +173,7 @@ export const curSongsSel = selector<Song[]>({
 export const dataForSongSel = selectorFamily<SongData, SongKey>({
   key: 'DataForSong',
   get: (sk: SongKey) => ({ get }): SongData => {
-    const res = { title: '', track: 0, artist: '', album: '', year: 0 };
+    const res = { title: '', track: 0, artist: '', album: '', year: '' };
 
     if (sk.length === 0) {
       return res;
@@ -192,20 +192,27 @@ export const dataForSongSel = selectorFamily<SongData, SongKey>({
 export const dataForAlbumSel = selectorFamily<AlbumData, AlbumKey>({
   key: 'DataForAlbum',
   get: (ak: AlbumKey) => ({ get }): AlbumData => {
-    const res = { artist: '', album: '', year: 0 };
+    const res = { artist: '', album: '', year: '' };
     if (!ak) {
       return res;
     }
     const album: Album = get(albumByKeySel(ak));
     if (album) {
       res.album = album.title;
-      res.year = album.year;
+      res.year = album.year ? album.year.toString() : '';
     }
-    const maybeArtistName = get(artistStringSel(album.primaryArtists));
-    if (!maybeArtistName) {
-      return res;
+    if (album.primaryArtists.length) {
+      const maybeArtistName = get(artistStringSel(album.primaryArtists));
+      if (maybeArtistName) {
+        res.artist = maybeArtistName;
+      }
+    } else if (album.vatype === 'ost') {
+      res.artist = 'Soundtrack';
+    } else if (album.vatype === 'va') {
+      res.artist = 'Compilation';
+    } else {
+      res.artist = '???';
     }
-    res.artist = maybeArtistName;
     return res;
   },
 });

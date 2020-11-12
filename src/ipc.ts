@@ -1,5 +1,5 @@
 import { FTON, FTONData, MakeLogger, SeqNum, Type } from '@freik/core-utils';
-import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
+import { AlbumKey, ArtistKey, FullMetadata, SongKey } from '@freik/media-utils';
 import { InvokeMain } from './MyWindow';
 
 const log = MakeLogger('ipc');
@@ -31,6 +31,10 @@ export async function GetMediaInfo(
       return res;
     }
   }
+}
+
+export async function SetMediaInfo(md: FullMetadata): Promise<void> {
+  await InvokeMain('set-media-info', FTON.stringify(md as FTONData));
 }
 
 export async function ReadFromStorage(key: string): Promise<string | void> {
