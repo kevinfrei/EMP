@@ -1,24 +1,9 @@
 // This is for getting at "global" stuff from the window object
 import { MakeLogger } from '@freik/core-utils';
-import {
-  Album,
-  AlbumKey,
-  Artist,
-  ArtistKey,
-  Song,
-  SongKey,
-} from '@freik/media-utils';
+import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
 import { GetDataForSong, SongData } from './DataSchema';
-import { InvokeMain } from './MyWindow';
 
 const log = MakeLogger('Tools');
-
-export async function SavePlaylist(
-  name: string,
-  songs: SongKey[],
-): Promise<void> {
-  await InvokeMain('set-playlist', 'thing');
-}
 
 /*
  * Sorting

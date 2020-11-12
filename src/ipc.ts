@@ -11,16 +11,6 @@ export type SearchResults = {
   artists: ArtistKey[];
 };
 
-export async function GetAllPlaylists(): Promise<Map<
-  string,
-  SongKey[]
-> | void> {
-  const blob = await InvokeMain('get-playlists');
-  if (blob) {
-    return FTON.parse(blob) as Map<string, SongKey[]>;
-  }
-}
-
 export async function GetMediaInfo(
   key: SongKey,
 ): Promise<Map<string, string> | void> {

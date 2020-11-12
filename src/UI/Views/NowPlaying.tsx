@@ -4,10 +4,18 @@ import {
   DetailsRow,
   getTheme,
   IconButton,
+  IDetailsHeaderProps,
   IDetailsListProps,
   IDetailsRowStyles,
+  IStackItemStyles,
+  ScrollablePane,
+  ScrollbarVisibility,
   SelectionMode,
+  Stack,
+  Sticky,
+  StickyPositionType,
   Text,
+  TooltipHost,
 } from '@fluentui/react';
 import { Comparisons } from '@freik/core-utils';
 import {
@@ -43,12 +51,7 @@ import {
 import { playlistsSel, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import {
-  AlbumFromSong,
-  ArtistsFromSong,
-  MakeColumns,
-  StickyRenderDetailsHeader,
-} from '../SongList';
+import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
 import './styles/NowPlaying.css';
 
 const theme = getTheme();
@@ -128,6 +131,7 @@ function TopLine(): JSX.Element {
           className="np-clear-queue"
           onClick={clickClearQueue}
           disabled={emptyQueue}
+          style={{ width: 120 }}
         >
           Clear Queue
         </DefaultButton>
@@ -143,6 +147,7 @@ function TopLine(): JSX.Element {
           className="save-playlist-as"
           onClick={showSaveAs}
           disabled={emptyQueue}
+          style={{ width: 120 }}
         >
           Save As...
         </DefaultButton>
@@ -150,11 +155,35 @@ function TopLine(): JSX.Element {
           onClick={save}
           className="save-playlist"
           disabled={saveDisabled}
+          style={{ width: 120 }}
         >
           Save
         </DefaultButton>
       </div>
     </div>
+  );
+}
+
+function StickyDetailsHeader(
+  theProps?: IDetailsHeaderProps,
+  defaultRender?: (p?: IDetailsHeaderProps) => JSX.Element | null,
+): JSX.Element | null {
+  if (!theProps) {
+    return null;
+  }
+  // This makes the header not have a bunch of extra whitespace above the header
+  theProps.styles = { root: { padding: '0px' } };
+  const stackStyles: IStackItemStyles = { root: { background: '#ffffff' } };
+  return (
+    <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
+      <Stack styles={stackStyles}>
+        <TopLine />
+        {defaultRender!({
+          ...theProps,
+          onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
+        })}
+      </Stack>
+    </Sticky>
   );
 }
 
@@ -249,19 +278,21 @@ export default function NowPlaying(): JSX.Element {
     grid-row: 2 / 4;
     grid-column: 2 / 5;
   }*/
+
   return (
     <div data-is-scrollable="true">
-      <TopLine />
-      <DetailsList
-        compact={true}
-        items={curSongs}
-        selectionMode={SelectionMode.none}
-        onRenderRow={renderAltRow}
-        columns={columns}
-        onItemContextMenu={onSongDetailClick}
-        onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
-        onRenderDetailsHeader={StickyRenderDetailsHeader}
-      />
+      <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
+        <DetailsList
+          compact={true}
+          items={curSongs}
+          selectionMode={SelectionMode.none}
+          onRenderRow={renderAltRow}
+          columns={columns}
+          onItemContextMenu={onSongDetailClick}
+          onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
+          onRenderDetailsHeader={StickyDetailsHeader}
+        />
+      </ScrollablePane>
     </div>
   );
 }
