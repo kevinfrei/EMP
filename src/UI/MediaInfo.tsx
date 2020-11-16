@@ -3,6 +3,7 @@ import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
+import { InvokeMain } from '../MyWindow';
 import { getMediaInfo } from '../Recoil/ReadOnly';
 import { divGrand, secondsToHMS } from '../Tools';
 
@@ -51,7 +52,7 @@ export default function MediaInfoTable({
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = secondsToHMS(mediaInfo.get('format.duration') || '0');
   const sampleRate = getSampleRate(mediaInfo.get('format.sampleRate'));
-  const bps = mediaInfo.get('format.bitsPerSample') || '';
+  const bps = mediaInfo.get('format.bitsPerSample') || '16';
   const channels = channelDescr(mediaInfo.get('format.numberOfChannels'));
   const bitrate = getBitRate(mediaInfo.get('format.bitrate'));
   const [vaType, setVaType] = useState(mediaInfo.get('full.vaType') || '');
@@ -69,7 +70,13 @@ export default function MediaInfoTable({
   return (
     <div>
       <Stack>
-        <TextField label="File Path" underlined readOnly value={thePath} />
+        <TextField
+          label="File"
+          underlined
+          readOnly
+          value={thePath}
+          onDoubleClick={() => InvokeMain('show-file', thePath)}
+        />
         <Stack horizontal horizontalAlign="space-between">
           <TextField
             label="Duration"

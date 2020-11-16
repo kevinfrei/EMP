@@ -1,5 +1,5 @@
 import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
-import { ipcMain } from 'electron';
+import { ipcMain, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { setMediaInfoForSong } from './metadata';
 import {
@@ -114,6 +114,19 @@ export function register(key: string, handleIt: Handler<string>): void {
 }
 
 /**
+ * Show a file in the shell
+ * @param filePath - The path to the file to show
+ */
+function showFile(filePath?: string): Promise<void> {
+  return new Promise((resolve) => {
+    if (filePath) {
+      shell.showItemInFolder(filePath);
+    }
+    resolve();
+  });
+}
+
+/**
  * Send a message to the rendering process
  *
  * @param  {FTONData} message
@@ -130,6 +143,7 @@ export function CommsSetup(): void {
   registerFlattened('get-media-info', getMediaInfoForSong);
   registerFlattened('search', searchWholeWord);
   registerFlattened('subsearch', searchSubstring);
+  registerFlattened('show-file', showFile);
   register('update-metadata', setMediaInfoForSong);
 
   // These are the general "just asking for something to read/written to disk"
