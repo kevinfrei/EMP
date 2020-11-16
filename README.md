@@ -100,16 +100,15 @@ albums, and artists are strict selectors from that atom.
 
 ### Bugs
 
-- Various Artists/Soundtracks just don't work right at all.
 - Starting "clean" doesn't seem to be a very happy place. It requires a couple
   restarts to get it going. Fix that.
 - Clearing the queue restarts playback on the current song
 - Search seems less than correct/consistent
-- If you have multiple locations, you'll get duplicate songs of the same ID with
-  lots of subsequent weird issues
 - There are a few issues with sorting of grouped views (Albums, Artists)
 - Saw something odd with shuffle while it's playing in the Now Playing view.
   Investigate!
+- Various Artists/Soundtracks just don't work right at all.
+  - This is somewhat improved now, but still probably wants some work...
 
 ### Core Capabilities
 
