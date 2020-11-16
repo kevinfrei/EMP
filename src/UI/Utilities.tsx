@@ -10,14 +10,31 @@ import {
   Text,
   Toggle,
 } from '@fluentui/react';
-import React, { Suspense } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { FTONData, MakeLogger, Type } from '@freik/core-utils';
+import React, { Suspense, useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { Subscribe, Unsubscribe } from '../ipc';
 import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
 
+const err = MakeLogger('Utilities-err', true);
+
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {
+  const [mainStatus, setMainStatus] = useState('---');
   React.useEffect(InitialWireUp);
-  return <></>;
+  React.useEffect(() => {
+    const key = Subscribe('main-process-status', (val: FTONData) => {
+      if (Type.isString(val)) {
+        setMainStatus(val);
+      } else {
+        setMainStatus('Unknown val. Check logs.');
+        err('Invalid value in main-process-status:');
+        err(val);
+      }
+    });
+    return () => Unsubscribe(key);
+  });
+  return <div className="mainStatus">{mainStatus}</div>;
 }
 
 export type SpinnerProps = {

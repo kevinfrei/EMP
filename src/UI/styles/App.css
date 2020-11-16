@@ -24,6 +24,13 @@
     -webkit-app-region: drag;
 }
 
+.mainStatus {
+    position: absolute;
+    top: 25px;
+    left: 10px;
+    z-index: 100000;
+}
+
 .left-column {
     grid-column: 1;
     grid-row: 1 / 4;
