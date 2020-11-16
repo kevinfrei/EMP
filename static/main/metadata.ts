@@ -1,10 +1,17 @@
-import { FTON, FTONData, MakeLogger, ObjUtil, Type } from '@freik/core-utils';
+import {
+  FTON,
+  FTONData,
+  MakeError,
+  MakeLogger,
+  ObjUtil,
+  Type,
+} from '@freik/core-utils';
 import { Attributes, FullMetadata, MD } from '@freik/media-utils';
 import * as persist from './persist';
 import { UpdateDB } from './Startup';
 
 const log = MakeLogger('metadata');
-const err = MakeLogger('metadata-err', true);
+const err = MakeError('metadata-err');
 
 declare type NestedValue =
   | NestedObject

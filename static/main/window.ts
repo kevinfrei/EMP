@@ -1,4 +1,4 @@
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError } from '@freik/core-utils';
 import { BrowserWindow } from 'electron';
 import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
@@ -16,7 +16,7 @@ import {
 
 const isDev = true; // require('electron-is-dev');
 
-const err = MakeLogger('window-err', true);
+const err = MakeError('window-err');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

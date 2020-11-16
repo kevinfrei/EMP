@@ -2,12 +2,12 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError } from '@freik/core-utils';
 import { IpcRenderer, ipcRenderer, remote } from 'electron';
 
 const isDev = true; // require('electron-is-dev');
 
-const err = MakeLogger('renderer-err', true);
+const err = MakeError('renderer-err');
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;

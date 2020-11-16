@@ -10,13 +10,13 @@ import {
   Text,
   Toggle,
 } from '@fluentui/react';
-import { FTONData, MakeLogger, Type } from '@freik/core-utils';
+import { FTONData, MakeError, Type } from '@freik/core-utils';
 import React, { Suspense, useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { Subscribe, Unsubscribe } from '../ipc';
 import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
 
-const err = MakeLogger('Utilities-err', true);
+const err = MakeError('Utilities-err');
 
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {

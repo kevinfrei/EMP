@@ -1,4 +1,4 @@
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError, MakeLogger } from '@freik/core-utils';
 import { app } from 'electron';
 import { CreateWindow, HasWindow } from './window';
 
@@ -7,7 +7,7 @@ export type OnWindowCreated = () => Promise<void>;
 const isDev = true; // require('electron-is-dev');
 
 const log = MakeLogger('electronSetup');
-const err = MakeLogger('electronSetup-err', true);
+const err = MakeError('electronSetup-err');
 
 async function WhenReady(windowCreated: OnWindowCreated) {
   await app.whenReady();

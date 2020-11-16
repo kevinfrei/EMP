@@ -1,10 +1,16 @@
-import { FTON, FTONData, MakeLogger, SeqNum } from '@freik/core-utils';
+import {
+  FTON,
+  FTONData,
+  MakeError,
+  MakeLogger,
+  SeqNum,
+} from '@freik/core-utils';
 import { app, Rectangle } from 'electron';
 import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
 const log = MakeLogger('persist');
-const err = MakeLogger('persist-err', true);
+const err = MakeError('persist-err');
 
 export type MaybeRectangle = {
   width: number;

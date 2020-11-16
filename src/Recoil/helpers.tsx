@@ -1,4 +1,4 @@
-import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
+import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
 import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   AtomEffect,
@@ -25,7 +25,7 @@ export type DialogData = [boolean, () => void];
 export type DialogState = [() => void, DialogData];
 
 const log = MakeLogger('helpers');
-const err = MakeLogger('helpers-err', true);
+const err = MakeError('helpers-err');
 
 /**
  * A short cut for on/off states to make some things (like dialogs) cleaner

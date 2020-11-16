@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError, MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -27,7 +27,7 @@ export type SongData = {
 } & AlbumData;
 
 const log = MakeLogger('ReadOnly');
-const err = MakeLogger('ReadOnly-err', true);
+const err = MakeError('ReadOnly-err');
 
 export const getMediaInfo = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',

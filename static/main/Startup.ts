@@ -1,4 +1,4 @@
-import { FTON, MakeLogger } from '@freik/core-utils';
+import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
 import { asyncSend, CommsSetup } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
@@ -7,7 +7,7 @@ import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
 const log = MakeLogger('Startup');
-const err = MakeLogger('Startup-err', true);
+const err = MakeError('Startup-err');
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');

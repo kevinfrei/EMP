@@ -1,4 +1,4 @@
-import { FTON, MakeLogger } from '@freik/core-utils';
+import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -11,7 +11,7 @@ import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';
 
 const log = MakeLogger('MusicAccess');
-const err = MakeLogger('MusicAccess-err', true);
+const err = MakeError('MusicAccess-err');
 
 let theMusicDatabase: MusicDB | null = null;
 let theMusicIndex: MusicIndex | null = null;

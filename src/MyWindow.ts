@@ -1,11 +1,11 @@
 // This is for getting at "global" stuff from the window object
-import { FTON, MakeLogger, Type } from '@freik/core-utils';
+import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { IpcRenderer } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { HandleMessage } from './ipc';
 
 const log = MakeLogger('MyWindow');
-const err = MakeLogger('MyWindow-err', true);
+const err = MakeError('MyWindow-err');
 
 /*
  * "Window" stuff goes here

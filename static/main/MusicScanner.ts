@@ -1,4 +1,10 @@
-import { Comparisons, FTON, MakeLogger, SeqNum } from '@freik/core-utils';
+import {
+  Comparisons,
+  FTON,
+  MakeError,
+  MakeLogger,
+  SeqNum,
+} from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -19,7 +25,7 @@ import { MakeSearchable, Searchable } from './Search';
 export type ServerSong = Song & { path: string };
 
 const log = MakeLogger('music');
-const err = MakeLogger('music-err', true);
+const err = MakeError('music-err');
 
 const setEqual = Comparisons.ArraySetEqual;
 

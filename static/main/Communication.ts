@@ -1,4 +1,4 @@
-import { FTON, FTONData, MakeLogger } from '@freik/core-utils';
+import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
 import { ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { setMediaInfoForSong } from './metadata';
@@ -11,7 +11,7 @@ import * as persist from './persist';
 import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
-const err = MakeLogger('Communication-err', true);
+const err = MakeError('Communication-err');
 
 type Handler<T> = (arg?: string) => Promise<T | void>;
 
