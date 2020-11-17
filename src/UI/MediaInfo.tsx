@@ -1,5 +1,12 @@
-import { Checkbox, IconButton, Stack, Text, TextField } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
+import {
+  Checkbox,
+  IconButton,
+  PrimaryButton,
+  Stack,
+  Text,
+  TextField,
+} from '@fluentui/react';
+import { MakeLogger, Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
@@ -7,6 +14,85 @@ import { InvokeMain } from '../MyWindow';
 import { getMediaInfo } from '../Recoil/ReadOnly';
 import { divGrand, secondsToHMS } from '../Tools';
 
+const log = MakeLogger('MediaInfo', true);
+
+function MetadataEditor(props: {
+  artist?: string;
+  album?: string;
+  track?: string;
+  title?: string;
+  year?: string;
+  va?: 'va' | 'ost';
+}): JSX.Element {
+  const [vaType, setVaType] = useState<false | string>(false);
+  const isVa = vaType === 'va';
+  const isOST = vaType === 'ost';
+  const [artist, setArtist] = useState<false | string>(false);
+  const [album, setAlbum] = useState<false | string>(false);
+  const [track, setTrack] = useState<false | string>(false);
+  const [title, setTitle] = useState<false | string>(false);
+  const [year, setYear] = useState<false | string>(false);
+  const setVa = () => setVaType(isVa ? '' : 'va');
+  const setOST = () => setVaType(isOST ? '' : 'ost');
+  const isNumber = (val: string | undefined) => {
+    if (Type.isString(val)) {
+      const num = Number.parseInt(val, 10);
+      return num.toString() === val.trim() && val.trim() !== 'NaN';
+    }
+    return false;
+  };
+
+  const onSubmit = () => {
+    log('onSubmit!');
+    log(artist);
+    log(album);
+    log(track);
+    log(title);
+    log(vaType);
+    log(year);
+  };
+  return (
+    <>
+      <TextField
+        label="Artist"
+        defaultValue={props.artist || ''}
+        value={artist !== false ? artist : props.artist || ''}
+        onChange={(e, nv) => nv && setArtist(nv)}
+      />
+      <TextField
+        label="Album"
+        value={album !== false ? album : props.album || ''}
+        onChange={(e, nv) => nv && setAlbum(nv)}
+      />
+      <Stack horizontal horizontalAlign="space-between">
+        <TextField
+          label="Year"
+          value={year !== false ? year : props.year || ''}
+          onChange={(e, nv) => nv && isNumber(nv) && setYear(nv)}
+          style={{ width: 100 }}
+        />
+        <TextField
+          label="Track #"
+          value={track !== false ? track : props.track || ''}
+          onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
+          style={{ width: 100 }}
+        />
+        <TextField label="Disk #" value="0" style={{ width: 100 }} />
+        <Stack verticalAlign="space-between" style={{ marginRight: 20 }}>
+          <div style={{ height: 10 }} />
+          <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
+          <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
+        </Stack>
+      </Stack>
+      <TextField
+        label="Title"
+        value={title !== false ? title : props.title || ''}
+        onChange={(e, nv) => nv && setTitle(nv)}
+      />
+      <PrimaryButton onClick={onSubmit}>Save</PrimaryButton>
+    </>
+  );
+}
 const fileTypeMap = new Map([
   ['FLAC', 'flac'],
   ['MPEG 1 Layer 3', 'mp3'],
@@ -44,29 +130,12 @@ export default function MediaInfoTable({
   const [rawHidden, setRawHidden] = useState(true);
   const mediaInfo = useRecoilValue(getMediaInfo(forSong));
   const thePath = mediaInfo.get('File Path') || '';
-  const [artist, setArtist] = useState(mediaInfo.get('full.artist') || '');
-  const [album, setAlbum] = useState(mediaInfo.get('full.album') || '');
-  const [track, setTrack] = useState(mediaInfo.get('full.track') || '');
-  const [title, setTitle] = useState(mediaInfo.get('full.title') || '');
-  const [year, setYear] = useState(mediaInfo.get('full.year') || '');
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = secondsToHMS(mediaInfo.get('format.duration') || '0');
   const sampleRate = getSampleRate(mediaInfo.get('format.sampleRate'));
   const bps = mediaInfo.get('format.bitsPerSample') || '16';
   const channels = channelDescr(mediaInfo.get('format.numberOfChannels'));
   const bitrate = getBitRate(mediaInfo.get('format.bitrate'));
-  const [vaType, setVaType] = useState(mediaInfo.get('full.vaType') || '');
-  const isVa = vaType === 'va';
-  const isOST = vaType === 'ost';
-  const setVa = () => setVaType(isVa ? '' : 'va');
-  const setOST = () => setVaType(isOST ? '' : 'ost');
-  const isNumber = (val: string | undefined) => {
-    if (Type.isString(val)) {
-      const num = Number.parseInt(val, 10);
-      return num.toString() === val.trim() && val.trim() !== 'NaN';
-    }
-    return false;
-  };
   return (
     <div>
       <Stack>
@@ -93,40 +162,12 @@ export default function MediaInfoTable({
             style={{ width: '310px' }}
           />
         </Stack>
-        <TextField
-          label="Artist"
-          value={artist}
-          onChange={(e, nv) => nv && setArtist(nv)}
-        />
-        <TextField
-          label="Album"
-          value={album}
-          onChange={(e, nv) => nv && setAlbum(nv)}
-        />
-        <Stack horizontal horizontalAlign="space-between">
-          <TextField
-            label="Year"
-            value={year}
-            onChange={(e, nv) => nv && isNumber(nv) && setYear(nv)}
-            style={{ width: 100 }}
-          />
-          <TextField
-            label="Track #"
-            value={track}
-            onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
-            style={{ width: 100 }}
-          />
-          <TextField label="Disk #" value="0" style={{ width: 100 }} />
-          <Stack verticalAlign="space-between" style={{ marginRight: 20 }}>
-            <div style={{ height: 10 }} />
-            <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
-            <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
-          </Stack>
-        </Stack>
-        <TextField
-          label="Title"
-          value={title}
-          onChange={(e, nv) => nv && setTitle(nv)}
+        <MetadataEditor
+          artist={mediaInfo.get('full.artist')}
+          album={mediaInfo.get('full.album')}
+          track={mediaInfo.get('full.track')}
+          title={mediaInfo.get('full.title')}
+          year={mediaInfo.get('full.year')}
         />
       </Stack>
       <Stack horizontal verticalAlign="center" style={{ marginTop: 10 }}>
