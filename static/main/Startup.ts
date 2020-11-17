@@ -90,10 +90,11 @@ export async function WindowStartup(): Promise<void> {
   } else {
     log('No DB available');
   }
+  /*
   setInterval(() => {
     const now = new Date();
     const str = now.toTimeString();
     const trimmed = str.substr(0, str.indexOf(' '));
     asyncSend({ 'main-process-status': trimmed });
-  }, 1000);
+  }, 1000);*/
 }

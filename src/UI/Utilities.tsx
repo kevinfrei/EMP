@@ -20,7 +20,7 @@ const err = MakeError('Utilities-err');
 
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {
-  const [mainStatus, setMainStatus] = useState('---');
+  const [mainStatus, setMainStatus] = useState('');
   React.useEffect(InitialWireUp);
   React.useEffect(() => {
     const key = Subscribe('main-process-status', (val: FTONData) => {
