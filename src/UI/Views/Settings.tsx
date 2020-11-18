@@ -11,7 +11,7 @@ import { useRecoilState } from 'recoil';
 import { ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState, useBoolState } from '../../Recoil/helpers';
 import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
-import { ExpandableSeparator, StateToggle } from '../Utilities';
+import { Expandable, StateToggle } from '../Utilities';
 import './styles/Settings.css';
 
 const removeFromSet = (set: string[], val: string): string[] => {
@@ -146,25 +146,21 @@ function MetadataDatabase(): JSX.Element {
 }
 
 export default function Settings(): JSX.Element {
-  const locVisibile = useBoolState(true);
-  const sortVisible = useBoolState(false);
-  const artVisible = useBoolState(false);
-  const mdVisible = useBoolState(false);
   return (
     <Stack className="settings-view">
-      <ExpandableSeparator label="Music Locations" state={locVisibile}>
+      <Expandable separator label="Music Locations" defaultShow={true}>
         <RecoilLocations />
-      </ExpandableSeparator>
-      <ExpandableSeparator label="Sorting & Filtering" state={sortVisible}>
+      </Expandable>
+      <Expandable separator label="Sorting & Filtering">
         <ArticleSorting />
         <ArtistFiltering />
-      </ExpandableSeparator>
-      <ExpandableSeparator label="NYI: Artwork" state={artVisible}>
+      </Expandable>
+      <Expandable separator label="NYI: Artwork">
         <ArtworkSettings />
-      </ExpandableSeparator>
-      <ExpandableSeparator label="NYI: Metadata" state={mdVisible}>
+      </Expandable>
+      <Expandable separator label="NYI: Metadata">
         <MetadataDatabase />
-      </ExpandableSeparator>
+      </Expandable>
     </Stack>
   );
 }

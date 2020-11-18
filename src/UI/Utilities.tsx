@@ -1,5 +1,6 @@
 import {
   IconButton,
+  IFontStyles,
   ISeparatorStyles,
   IStyle,
   IToggleStyles,
@@ -7,6 +8,7 @@ import {
   Spinner,
   SpinnerLabelPosition,
   SpinnerSize,
+  Stack,
   Text,
   Toggle,
 } from '@fluentui/react';
@@ -57,6 +59,11 @@ export function Spin({
   return <Suspense fallback={theSpinner}>{children}</Suspense>;
 }
 
+export type ExpandableHeader = (
+  hidden: boolean,
+  setHidden: (v: boolean) => void,
+) => JSX.Element;
+
 // A helper for a toggle that uses a BoolState variable
 export function StateToggle({
   label,
@@ -87,29 +94,53 @@ export function StateToggle({
 
 // A little control that expands or collapses the children
 // with the header provided
-export function ExpandableSeparator({
-  state,
-  label,
+export function Expandable({
   children,
+  label,
+  defaultShow,
+  separator,
+  variant,
 }: {
-  state: BoolState;
-  label: string;
   children: JSX.Element | JSX.Element[];
+  label: string;
+  defaultShow?: boolean;
+  separator?: boolean;
+  variant?: keyof IFontStyles;
 }): JSX.Element {
-  const customStyle: Partial<ISeparatorStyles> = {};
-  customStyle.root = { marginLeft: '-10px' };
+  const [hidden, setHidden] = useState(!defaultShow);
+  const button = (
+    <IconButton
+      iconProps={{
+        iconName: hidden ? 'ChevronRight' : 'ChevronDown',
+      }}
+      onClick={() => setHidden(!hidden)}
+    />
+  );
+  let theHeader: JSX.Element;
+  if (separator) {
+    const customStyle: Partial<ISeparatorStyles> = {
+      root: { marginLeft: '-10px' },
+    };
+    const v = variant || 'large';
+    theHeader = (
+      <Separator alignContent="start" styles={customStyle}>
+        {button}
+        <Text variant={v}>&nbsp;{label}</Text>
+      </Separator>
+    );
+  } else {
+    const v = variant || 'medium';
+    theHeader = (
+      <Stack horizontal verticalAlign="center" style={{ marginTop: 10 }}>
+        {button}
+        <Text variant={v}>{label}</Text>
+      </Stack>
+    );
+  }
   return (
     <>
-      <Separator alignContent="start" styles={customStyle}>
-        <IconButton
-          iconProps={{
-            iconName: state[0] ? 'ChevronDown' : 'ChevronRight',
-          }}
-          onClick={state[state[0] ? 1 : 2]}
-        />
-        <Text variant="large">&nbsp;{label}</Text>
-      </Separator>
-      {state[0] ? children : <></>}
+      {theHeader}
+      <div style={hidden ? { display: 'none' } : {}}>{children}</div>
     </>
   );
 }

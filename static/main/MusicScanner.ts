@@ -52,6 +52,15 @@ export type SearchResults = {
   artists: ArtistKey[];
 };
 
+function setIntersection<T>(a: T[], b: T[]): Set<T> {
+  // set.has = O(log n)
+  // so O(a log b)
+  // so you want a to be smaller than b
+  if (a.length > b.length) return setIntersection(b, a);
+  const set = new Set<T>(b);
+  return new Set(a.filter((x) => set.has(x)));
+}
+
 let existingKeys: Map<string, SongKey> | null = null;
 const newSongKey = (() => {
   const highestSongKey = persist.getItem('highestSongKey');
@@ -144,6 +153,19 @@ function getOrNewAlbum(
       }
       if (path.dirname(anotherSong.path) !== dirName) {
         continue;
+      }
+      // Check to see if there's a common subset of artists
+      const commonArtists = setIntersection(check.primaryArtists, artists);
+      if (commonArtists.size > 0) {
+        // TODO: deal with "Nope, not actually VA, just some extra artists"
+        if (commonArtists.size !== check.primaryArtists.length) {
+          // We found a song with too many common artists: shuffle the song
+          // Reduce the common artists for the album to this subset
+        } else {
+          // We found a song that reduces the common artists on the album
+          // reduce the primary artists for song and add it to the album
+        }
+        return check;
       }
       err('Think I found a mismarked VA song:');
       err(check);

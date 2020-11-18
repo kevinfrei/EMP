@@ -51,6 +51,7 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
     titleBarStyle: 'hiddenInset', // TODO: Only Mac
     frame: true, // TODO: !Mac, add close/min/max buttons
     show: false,
+    autoHideMenuBar: true,
     minWidth: 250,
     minHeight: 250,
   });

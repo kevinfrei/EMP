@@ -1,12 +1,9 @@
 import { Panel, PanelType } from '@fluentui/react';
-import { MakeError } from '@freik/core-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
 import { songDetailAtom } from '../Recoil/Local';
 import MediaInfoTable from './MediaInfo';
 import { Spin } from './Utilities';
-
-const err = MakeError('SongDetailPanel-err');
 
 export default function SongDetailPanel(): JSX.Element {
   const [detailSong, setDetailSong] = useRecoilState(songDetailAtom);
