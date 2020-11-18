@@ -107,6 +107,7 @@ function getOrNewAlbum(
   title: string,
   year: number,
   artists: ArtistKey[],
+  secondaryArtists: ArtistKey[],
   vatype: VAType,
   dirName: string,
 ): Album {
@@ -156,18 +157,45 @@ function getOrNewAlbum(
       }
       // Check to see if there's a common subset of artists
       const commonArtists = setIntersection(check.primaryArtists, artists);
+      const demoteArtists = (
+        primaryArtists: ArtistKey[],
+        secondArtists: ArtistKey[],
+      ) => {
+        for (let i = primaryArtists.length; i >= 0; i--) {
+          if (commonArtists.has(primaryArtists[i])) {
+            continue;
+          }
+          // THIS MUTATES THE TWO ARRAYS! THIS IS BY DESIGN :O
+          secondArtists.push(artists[i]);
+          primaryArtists.splice(i, 1);
+        }
+      };
       if (commonArtists.size > 0) {
-        // TODO: deal with "Nope, not actually VA, just some extra artists"
-        if (commonArtists.size !== check.primaryArtists.length) {
-          // We found a song with too many common artists: shuffle the song
-          // Reduce the common artists for the album to this subset
-        } else {
-          // We found a song that reduces the common artists on the album
-          // reduce the primary artists for song and add it to the album
+        // This means we still have a common set of artists, but we need to
+        // "demote" some artists from primary to secondary
+        // First, let's demote the song's artists
+        demoteArtists(artists, secondaryArtists);
+        // Okay, done with the song. For the album, we need to demoate primary
+        // artists not just for the album, but for any songs already on the
+        // album already...
+        for (let j = check.primaryArtists.length; j >= 0; j--) {
+          if (commonArtists.has(check.primaryArtists[j])) {
+            continue;
+          }
+          // This artist needs to be removed. First, bump it to secondary for
+          // each song
+          for (const s of check.songs) {
+            const sng = db.songs.get(s);
+            if (!sng) {
+              err('Unable to find a referenced song');
+              continue;
+            }
+            demoteArtists(sng.artistIds, sng.secondaryIds);
+          }
         }
         return check;
       }
-      err('Think I found a mismarked VA song:');
+      err('Found a likely mismarked VA song:');
       err(check);
       err('For this directory:');
       err(dirName);
@@ -218,22 +246,21 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
   const allArtists = artists.map((a) => getOrNewArtist(db, a));
   const artistIds: ArtistKey[] = allArtists.map((a) => a.key);
+  const secondaryIds: ArtistKey[] = [];
+  for (const sa of md.moreArtists || []) {
+    const moreArt: Artist = getOrNewArtist(db, sa);
+    allArtists.push(moreArt);
+    secondaryIds.push(moreArt.key);
+  }
   const album = getOrNewAlbum(
     db,
     md.album,
     md.year || 0,
     artistIds,
+    secondaryIds,
     md.vaType || '',
     path.dirname(md.originalPath),
   );
-  const secondaryIds: ArtistKey[] = [];
-  if (md.moreArtists) {
-    for (const sa of md.moreArtists) {
-      const moreArt: Artist = getOrNewArtist(db, sa);
-      allArtists.push(moreArt);
-      secondaryIds.push(moreArt.key);
-    }
-  }
   const theSong: ServerSong = {
     path: md.originalPath,
     artistIds,
