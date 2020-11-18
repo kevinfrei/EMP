@@ -12,7 +12,7 @@ export function MetadataEditor(props: {
   track?: string;
   title?: string;
   year?: string;
-  va?: 'va' | 'ost';
+  va?: string;
 }): JSX.Element {
   const [artist, setArtist] = useState<false | string>(false);
   const [album, setAlbum] = useState<false | string>(false);
@@ -42,8 +42,9 @@ export function MetadataEditor(props: {
     setYear(false);
     setVaType(false);
   }, [props.forSong]);
-  const isVa = vaType === 'va';
-  const isOST = vaType === 'ost';
+  const val = (v: false | string, pv?: string) => (v !== false ? v : pv || '');
+  const isVa = val(vaType, props.va) === 'va';
+  const isOST = val(vaType, props.va) === 'ost';
   const setVa = () => setVaType(isVa ? '' : 'va');
   const setOST = () => setVaType(isOST ? '' : 'ost');
   const isNumber = (vl?: string) => {
@@ -70,7 +71,6 @@ export function MetadataEditor(props: {
     log(year);
   };
 
-  const val = (v: false | string, pv?: string) => (v !== false ? v : pv || '');
   return (
     <>
       <TextField

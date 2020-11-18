@@ -1,4 +1,10 @@
-import { Stack, Text, TextField } from '@fluentui/react';
+import {
+  DetailsList,
+  IColumn,
+  SelectionMode,
+  Stack,
+  TextField,
+} from '@fluentui/react';
 import { SongKey } from '@freik/media-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
@@ -50,6 +56,16 @@ export default function MediaInfoTable({
   const bps = mediaInfo.get('format.bitsPerSample') || '16';
   const channels = channelDescr(mediaInfo.get('format.numberOfChannels'));
   const bitrate = getBitRate(mediaInfo.get('format.bitrate'));
+  const columns: IColumn[] = [
+    {
+      key: '0',
+      name: 'Field',
+      fieldName: '0',
+      minWidth: 75,
+      className: 'md-field',
+    },
+    { key: '1', name: 'Value', fieldName: '1', minWidth: 100 },
+  ];
   return (
     <Stack>
       <MetadataEditor
@@ -59,8 +75,9 @@ export default function MediaInfoTable({
         track={mediaInfo.get('full.track')}
         title={mediaInfo.get('full.title')}
         year={mediaInfo.get('full.year')}
+        va={mediaInfo.get('simple.compilation')}
       />
-      <Expandable label="File Details">
+      <Expandable label="File Details" separator>
         <TextField
           label="File"
           underlined
@@ -85,21 +102,13 @@ export default function MediaInfoTable({
           />
         </Stack>
       </Expandable>
-      <Expandable label="Raw Metadata">
-        <table>
-          <tbody>
-            {[...mediaInfo.entries()].map(([key, value]) => (
-              <tr key={key}>
-                <td>
-                  <Text style={{ fontWeight: 600 }}>{key}</Text>
-                </td>
-                <td colSpan={3}>
-                  <Text>{value}</Text>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Expandable label="Raw Metadata" separator>
+        <DetailsList
+          items={[...mediaInfo.entries()]}
+          selectionMode={SelectionMode.none}
+          columns={columns}
+          compact
+        />
       </Expandable>
     </Stack>
   );
