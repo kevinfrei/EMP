@@ -9,7 +9,12 @@ import { SongKey } from '@freik/media-utils';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../MyWindow';
-import { getMediaInfo } from '../Recoil/ReadOnly';
+import {
+  albumByKeySel,
+  artistStringSel,
+  getMediaInfo,
+  songByKeySel,
+} from '../Recoil/ReadOnly';
 import { divGrand, secondsToHMS } from '../Tools';
 import { MetadataEditor } from './MetadataEditor';
 import { Expandable } from './Utilities';
@@ -49,6 +54,9 @@ export default function MediaInfoTable({
   forSong: SongKey;
 }): JSX.Element {
   const mediaInfo = useRecoilValue(getMediaInfo(forSong));
+  const theSong = useRecoilValue(songByKeySel(forSong));
+  const theArtist = useRecoilValue(artistStringSel(theSong.artistIds));
+  const theAlbum = useRecoilValue(albumByKeySel(theSong.albumId));
   const thePath = mediaInfo.get('File Path') || '';
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = secondsToHMS(mediaInfo.get('format.duration') || '0');
@@ -70,12 +78,12 @@ export default function MediaInfoTable({
     <Stack>
       <MetadataEditor
         forSong={forSong}
-        artist={mediaInfo.get('full.artist')}
-        album={mediaInfo.get('full.album')}
-        track={mediaInfo.get('full.track')}
-        title={mediaInfo.get('full.title')}
-        year={mediaInfo.get('full.year')}
-        va={mediaInfo.get('simple.compilation')}
+        artist={theArtist}
+        album={theAlbum.title}
+        track={theSong.track.toString()}
+        title={theSong.title}
+        year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
+        va={theAlbum.vatype}
       />
       <Expandable label="File Details" separator>
         <TextField

@@ -21,15 +21,6 @@ export function MetadataEditor(props: {
   const [title, setTitle] = useState<false | string>(false);
   const [year, setYear] = useState<false | string>(false);
   const [vaType, setVaType] = useState<false | string>(false);
-  const trimmedTrack = props.track ? props.track.trim() : '';
-  const diskNum =
-    trimmedTrack.length > 2
-      ? trimmedTrack.substr(0, trimmedTrack.length - 2)
-      : '';
-  const trackNum =
-    trimmedTrack.length > 2
-      ? trimmedTrack.substr(diskNum.length)
-      : trimmedTrack;
   // I don't fully understand why I have to do this, but it seems to work...
   // Without it, if you right-click different songs, whichever fields were
   // edited don't return to their new values :/
@@ -42,7 +33,19 @@ export function MetadataEditor(props: {
     setYear(false);
     setVaType(false);
   }, [props.forSong]);
+  // This is a helper to read the overridden value (from state) if it's set
+  // otherwise, fall back to the pv (props.val) data (and then empty string)
   const val = (v: false | string, pv?: string) => (v !== false ? v : pv || '');
+  // The diskNum and trackNum are extracted from the single
+  const trimmedTrack = (props.track || '').trim();
+  const diskNum =
+    trimmedTrack.length > 2
+      ? trimmedTrack.substr(0, trimmedTrack.length - 2)
+      : '';
+  const trackNum =
+    trimmedTrack.length > 2
+      ? Number.parseInt(trimmedTrack.substr(diskNum.length), 10).toString()
+      : trimmedTrack;
   const isVa = val(vaType, props.va) === 'va';
   const isOST = val(vaType, props.va) === 'ost';
   const setVa = () => setVaType(isVa ? '' : 'va');
@@ -61,14 +64,26 @@ export function MetadataEditor(props: {
 
     // Worst case: trigger a rescan of the music on the back end, I guess...
 
+    const e = (v: string | false) => (v === false ? '' : v);
     log(`onSubmit for song: ${props.forSong || ''}`);
-    log(artist);
-    log(album);
-    log(track);
-    log(disk);
-    log(title);
-    log(vaType);
-    log(year);
+    log('Originally:');
+    log(props);
+    log('updated to:');
+    log(`Artist: ${e(artist)}`);
+    log(`Album:  ${e(album)}`);
+    if (disk) {
+      const tn = '0' + val(track, trackNum);
+      log(`Track:  ${disk}${tn.substr(tn.length - 2, 2)}`);
+    } else if (track) {
+      const dn = val(disk, diskNum);
+      const tn = '0' + val(track, trackNum);
+      log(`Track: ${dn}${tn.substr(tn.length - 2, 2)}`);
+    } else {
+      log('Track:');
+    }
+    log(`Title:  ${e(title)}`);
+    log(`VAType: ${e(vaType)}`);
+    log(`Year:   ${e(year)}`);
   };
 
   return (
@@ -94,7 +109,7 @@ export function MetadataEditor(props: {
         <TextField
           label="Year"
           value={val(year, props.year)}
-          onChange={(e, nv) => nv && isNumber(nv) && setYear(nv)}
+          onChange={(e, nv) => (nv === '' || isNumber(nv)) && setYear(nv!)}
           style={{ width: 100 }}
         />
       </Stack>
@@ -108,7 +123,7 @@ export function MetadataEditor(props: {
         <TextField
           label="Disk #"
           value={val(disk, diskNum)}
-          onChange={(e, nv) => nv && isNumber(nv) && setDisk(nv)}
+          onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
           style={{ width: 100 }}
         />
         <Stack verticalAlign="space-between" style={{ marginRight: 20 }}>
