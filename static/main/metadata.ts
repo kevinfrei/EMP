@@ -7,8 +7,8 @@ import {
   Type,
 } from '@freik/core-utils';
 import { Attributes, FullMetadata, MD } from '@freik/media-utils';
+import { UpdateDB } from './musicDB';
 import * as persist from './persist';
-import { UpdateDB } from './Startup';
 
 const log = MakeLogger('metadata');
 const err = MakeError('metadata-err');

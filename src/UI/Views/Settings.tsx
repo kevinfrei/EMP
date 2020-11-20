@@ -5,15 +5,20 @@ import {
   SpinButton,
   Stack,
   TextField,
+  TooltipHost,
 } from '@fluentui/react';
 import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
-import { useBoolRecoilState, useBoolState } from '../../Recoil/helpers';
+import { useBoolRecoilState } from '../../Recoil/helpers';
 import {
+  albumCoverNameAtom,
+  downloadAlbumArtworkAtom,
+  downloadArtistArtworkAtom,
   ignoreArticlesAtom,
   locationsAtom,
   minSongCountForArtistListAtom,
+  saveAlbumArtworkWithMusicAtom,
   showArtistsWithFullAlbumsAtom,
 } from '../../Recoil/ReadWrite';
 import { Expandable, StateToggle } from '../Utilities';
@@ -54,10 +59,15 @@ function RecoilLocations(): JSX.Element {
           iconProps={{ iconName: 'Add' }}
         />
         &nbsp;
-        <DefaultButton
-          text="Rescan Locations"
-          onClick={() => InvokeMain('manual-rescan')}
-        />
+        <TooltipHost
+          id="RescanLocationsHelp"
+          content="Necessary if you moved files around since launching the app"
+        >
+          <DefaultButton
+            text="Rescan Locations"
+            onClick={() => InvokeMain('manual-rescan')}
+          />
+        </TooltipHost>
       </Stack>
     </>
   );
@@ -92,51 +102,40 @@ function ArtistFiltering(): JSX.Element {
 }
 
 function ArtworkSettings(): JSX.Element {
-  const dlAlbumArtwork = useBoolState(false);
-  const saveAlbumArtwork = useBoolState(false);
-  const dlArtistArtwork = useBoolState(false);
+  const dlAlbumArtwork = useBoolRecoilState(downloadAlbumArtworkAtom);
+  const dlArtistArtwork = useBoolRecoilState(downloadArtistArtworkAtom);
+  const saveAlbumArtwork = useBoolRecoilState(saveAlbumArtworkWithMusicAtom);
+  const [coverArtName, setCoverArtName] = useRecoilState(albumCoverNameAtom);
   return (
     <>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'auto auto',
-          gridTemplateRows: 'auto',
-        }}
-      >
-        <StateToggle
-          label="Download Album Artwork"
-          state={dlAlbumArtwork}
-          style={{
-            gridColumn: '1',
-            gridRow: '1',
-          }}
-        />
-        <StateToggle
-          label="NYI: Download Artist Artwork"
-          state={dlArtistArtwork}
-          style={{
-            gridColumn: '2',
-            gridRow: '1',
-          }}
-          disabled
-        />
-      </div>
+      <StateToggle label="Download Album Artwork" state={dlAlbumArtwork} />
       <Stack horizontal>
         <StateToggle
           disabled={!dlAlbumArtwork[0]}
-          label="Try to save Album Artwork with audio files"
+          label="Try to save Album Artwork with audio files:"
           state={saveAlbumArtwork}
         />
         &nbsp;
-        <TextField
-          disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
-          placeholder="NYI: albumArt"
-        />
+        <TooltipHost
+          id="saveAlbumArtworkid"
+          content="The filename of the artwork saved"
+        >
+          <TextField
+            disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
+            value={coverArtName}
+            onChange={(ev, nv) => nv && setCoverArtName(nv)}
+          />
+        </TooltipHost>
       </Stack>
+      <StateToggle
+        label="NYI: Download Artist Artwork"
+        state={dlArtistArtwork}
+        disabled
+      />
       <DefaultButton
         text="Flush Image Cache"
         style={{ width: '185px', gridRow: 4 }}
+        onClick={() => InvokeMain('flush-image-cache')}
       />
     </>
   );
@@ -145,8 +144,6 @@ function ArtworkSettings(): JSX.Element {
 function MetadataDatabase(): JSX.Element {
   return (
     <Stack horizontal>
-      <DefaultButton text="Flush Database" style={{ width: '185px' }} />
-      &nbsp;
       <DefaultButton text="Flush Metadata Cache" style={{ width: '185px' }} />
       &nbsp;
       <DefaultButton text="Clear Local Overrides" style={{ width: '185px' }} />

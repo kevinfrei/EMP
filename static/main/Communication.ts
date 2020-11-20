@@ -1,14 +1,15 @@
 import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
 import { ipcMain, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
+import { FlushImageCache } from './cover-art';
 import { setMediaInfoForSong } from './metadata';
 import {
   getMediaInfoForSong,
   searchSubstring,
   searchWholeWord,
 } from './MusicAccess';
+import { RescanDB } from './musicDB';
 import * as persist from './persist';
-import { RescanDB } from './Startup';
 import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
@@ -147,6 +148,7 @@ export function CommsSetup(): void {
   registerFlattened('show-file', showFile);
   register('update-metadata', setMediaInfoForSong);
   register('manual-rescan', RescanDB);
+  register('flush-image-cache', FlushImageCache);
 
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler

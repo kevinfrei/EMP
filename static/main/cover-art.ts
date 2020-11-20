@@ -8,8 +8,27 @@ import path from 'path';
 import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
 import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
+import * as persist from './persist';
 
 const log = MakeLogger('cover-art');
+
+async function shouldDownloadAlbumArtwork(): Promise<boolean> {
+  return (await persist.getItemAsync('downloadAlbumArtwork')) === 'true';
+}
+
+// TODO: This isn't used anywhere... yet...
+async function shouldDownloadArtistArtwork(): Promise<boolean> {
+  return (await persist.getItemAsync('downloadArtistArtwork')) === 'true';
+}
+
+async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
+  return (await persist.getItemAsync('saveAlbumArtworkWithMusic')) === 'true';
+}
+
+async function albumCoverName(): Promise<string> {
+  const val = await persist.getItemAsync('albumCoverName');
+  return val || '.CoverArt';
+}
 
 function httpsDownloader(url: string): Promise<Buffer> {
   const buf: Uint8Array[] = [];
@@ -33,7 +52,7 @@ async function LookForAlbum(
 ): Promise<string | void> {
   log(`Finding art for ${artist}: ${album}`);
   let albTrim = album.trim();
-  let lastAlbum;
+  let lastAlbum: string;
   do {
     try {
       const attempt = await getArt(artist, albTrim);
@@ -71,6 +90,7 @@ export async function picBufProcessor(
       // This pulls the image from the file metadata
       const album = db.albums.get(albumId);
       if (album) {
+        // TODO: Wire this up to FlushImageCache();
         // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files
         for (const songKey of album.songs) {
           const song = db.songs.get(songKey);
@@ -80,23 +100,25 @@ export async function picBufProcessor(
             if (buf) {
               log(`Got a buffer ${buf.data.length} bytes long`);
               const data = Buffer.from(buf.data, 'base64');
-              SavePicForAlbum(db, album, data);
+              await SavePicForAlbum(db, album, data);
               return { data };
             }
           }
         }
-        // We didn't find something.
-        // Let's use the albumArt package
-        const artist = db.artists.get(album.primaryArtists[0]);
-        if (artist) {
-          const res = await LookForAlbum(artist.name, album.title);
-          log(`${artist.name}: ${album.title}`);
-          if (res) {
-            log(res);
-            const data = await httpsDownloader(res);
-            log('Got data from teh interwebs');
-            SavePicForAlbum(db, album, data);
-            return { data };
+        if (await shouldDownloadAlbumArtwork()) {
+          // We didn't find something.
+          // Let's use the albumArt package
+          const artist = db.artists.get(album.primaryArtists[0]);
+          if (artist) {
+            const res = await LookForAlbum(artist.name, album.title);
+            log(`${artist.name}: ${album.title}`);
+            if (res) {
+              log(res);
+              const data = await httpsDownloader(res);
+              log('Got data from teh interwebs');
+              await SavePicForAlbum(db, album, data);
+              return { data };
+            }
           }
         }
       }
@@ -110,18 +132,21 @@ export async function picBufProcessor(
 
 let timeout: NodeJS.Timeout | null = null;
 
-function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
+async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   const songKey = album.songs[0];
   const song = db.songs.get(songKey);
   if (song) {
-    log('Got a song:');
-    log(song);
-    const albumPath = path.join(path.dirname(song.path), '.AlbumCover.jpg');
-    log('Saving to path: ' + albumPath);
-    fs.writeFile(albumPath, data)
-      .then(() => {
+    if (await shouldSaveAlbumArtworkWithMusicFiles()) {
+      const coverName = await albumCoverName();
+      // TODO: This file type may not be correct. Check the data buffer!
+      const albumPath = path.join(path.dirname(song.path), `${coverName}.jpg`);
+      try {
+        log('Saving to path: ' + albumPath);
+        await fs.writeFile(albumPath, data);
         log('And, saved it to disk!');
         db.pictures.set(album.key, albumPath);
+        // Delay saving the Music DB, so that we're not doing it a gazillion
+        // times during DB scanning
         if (timeout !== null) {
           clearTimeout(timeout);
         }
@@ -129,14 +154,21 @@ function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
           log('saving the DB to disk');
           saveMusicDB(db).catch((rej) => log('Error saving'));
         }, 1000);
-        // TODO: Re-save the music DB to disk!
-      })
-      .catch((err) => {
+        return;
+      } catch (err) {
         log('Saving picture failed :(');
         log(err);
         // TODO: Make a cache for read-only music shares!
         // This would be useful for being able to annotate/"edit" music
         // metadata in the same situation...
-      });
+      }
+    } else {
+      // TODO: Save these files locally somewhere we look during the normal
+      // file scanning process
+    }
   }
+}
+
+export async function FlushImageCache(): Promise<void> {
+  // TODO: Make this do something
 }

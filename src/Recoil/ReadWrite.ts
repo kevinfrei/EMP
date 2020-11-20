@@ -50,6 +50,30 @@ export const showArtistsWithFullAlbumsAtom = atom<boolean>({
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
 
+export const downloadAlbumArtworkAtom = atom({
+  key: 'downloadAlbumArtwork',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+export const downloadArtistArtworkAtom = atom({
+  key: 'downloadArtistArtwork',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+export const saveAlbumArtworkWithMusicAtom = atom({
+  key: 'saveAlbumArtworkWithMusic',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+export const albumCoverNameAtom = atom({
+  key: 'albumCoverName',
+  default: '.CoverArt',
+  effects_UNSTABLE: [syncWithMainEffect<string>()],
+});
+
 // The minimum # of songs an artist needs to show up in the artist list
 export const minSongCountForArtistListAtom = atom<number>({
   key: 'MinSongCount',
