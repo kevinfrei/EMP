@@ -161,12 +161,12 @@ function getOrNewAlbum(
         primaryArtists: ArtistKey[],
         secondArtists: ArtistKey[],
       ) => {
-        for (let i = primaryArtists.length; i >= 0; i--) {
+        for (let i = primaryArtists.length - 1; i >= 0; i--) {
           if (commonArtists.has(primaryArtists[i])) {
             continue;
           }
           // THIS MUTATES THE TWO ARRAYS! THIS IS BY DESIGN :O
-          secondArtists.push(artists[i]);
+          secondArtists.push(primaryArtists[i]);
           primaryArtists.splice(i, 1);
         }
       };
@@ -175,10 +175,10 @@ function getOrNewAlbum(
         // "demote" some artists from primary to secondary
         // First, let's demote the song's artists
         demoteArtists(artists, secondaryArtists);
-        // Okay, done with the song. For the album, we need to demoate primary
+        // Okay, done with the song. For the album, we need to demote primary
         // artists not just for the album, but for any songs already on the
         // album already...
-        for (let j = check.primaryArtists.length; j >= 0; j--) {
+        for (let j = check.primaryArtists.length - 1; j >= 0; j--) {
           if (commonArtists.has(check.primaryArtists[j])) {
             continue;
           }
