@@ -140,6 +140,9 @@ export function secondsToHMS(vals: string): string {
 
 export function divGrand(val: string): string {
   let flt = (parseFloat(val) / 1000.0).toPrecision(4);
+  if (flt.indexOf('.') < 0) {
+    return flt;
+  }
   flt = flt.replace(/0+$/g, '');
   flt = flt.replace(/\.$/, '');
   return flt;
