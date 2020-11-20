@@ -11,11 +11,7 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
       },
       "program": "${workspaceFolder}/public/electron.js",
-      "runtimeArgs": [
-        ".",
-        "--enable-logging",
-        "--remote-debugging-port=9223",
-      ],
+      "runtimeArgs": [".", "--enable-logging", "--remote-debugging-port=9223"],
       "outputCapture": "std",
       "preLaunchTask": "npm: prepare"
     },
@@ -27,15 +23,21 @@
       "webRoot": "${workspaceFolder}/public/",
       "timeout": 30000,
       "preLaunchTask": "npm: react-start"
+    },
+    {
+      "name": "NPM stuff",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "${workspaceRoot}/node_modules/react-scripts/bin/react-scripts.js",
+        "start"
+      ]
     }
   ],
   "compounds": [
     {
       "name": "Electron: All",
-      "configurations": [
-        "Electron: Main",
-        "Electron: Render"
-      ]
+      "configurations": ["Electron: Main", "Electron: Render"]
     }
   ]
 }

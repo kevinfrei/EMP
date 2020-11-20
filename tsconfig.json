@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "noFallthroughCasesInSwitch": false,
+    "jsx": "react-jsx",
     "target": "es5",
     "module": "esnext",
-    "jsx": "react",
     "sourceMap": true,
     "downlevelIteration": true,
     "strict": true,
@@ -11,7 +12,6 @@
     // "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
-    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
