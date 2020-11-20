@@ -6,11 +6,16 @@ import {
   Stack,
   TextField,
 } from '@fluentui/react';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
-import { ShowOpenDialog } from '../../MyWindow';
+import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState, useBoolState } from '../../Recoil/helpers';
-import { locationsAtom, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import {
+  ignoreArticlesAtom,
+  locationsAtom,
+  minSongCountForArtistListAtom,
+  showArtistsWithFullAlbumsAtom,
+} from '../../Recoil/ReadWrite';
 import { Expandable, StateToggle } from '../Utilities';
 import './styles/Settings.css';
 
@@ -49,34 +54,37 @@ function RecoilLocations(): JSX.Element {
           iconProps={{ iconName: 'Add' }}
         />
         &nbsp;
-        <DefaultButton text="NYI: Rescan Locations" />
+        <DefaultButton
+          text="Rescan Locations"
+          onClick={() => InvokeMain('manual-rescan')}
+        />
       </Stack>
     </>
   );
 }
 
 function ArticleSorting(): JSX.Element {
-  const articles = useBoolRecoilState(sortWithArticlesAtom);
-  return (
-    <StateToggle label="Consider articles when sorting" state={articles} />
-  );
+  const articles = useBoolRecoilState(ignoreArticlesAtom);
+  return <StateToggle label="Ignore articles when sorting" state={articles} />;
 }
 
 function ArtistFiltering(): JSX.Element {
-  const onlyAlbumArtists = useBoolState(false);
-  const [songCount, setSongCount] = useState(0);
+  const onlyAlbumArtists = useBoolRecoilState(showArtistsWithFullAlbumsAtom);
+  const [songCount, setSongCount] = useRecoilState(
+    minSongCountForArtistListAtom,
+  );
   return (
     <>
       <StateToggle
-        label="NYI: Only show artists with full albums"
+        label="Only show artists with full albums"
         state={onlyAlbumArtists}
       />
       <SpinButton
-        label="NYI: Only show artists with at least this many songs"
+        label="Only show artists with at least this many songs"
         disabled={onlyAlbumArtists[0]}
         value={songCount.toString()}
         onIncrement={() => setSongCount(Math.min(100, songCount + 1))}
-        onDecrement={() => setSongCount(Math.max(0, songCount - 1))}
+        onDecrement={() => setSongCount(Math.max(1, songCount - 1))}
         style={{ width: '10px' }}
       />
     </>
@@ -105,12 +113,13 @@ function ArtworkSettings(): JSX.Element {
           }}
         />
         <StateToggle
-          label="Download Artist Artwork"
+          label="NYI: Download Artist Artwork"
           state={dlArtistArtwork}
           style={{
             gridColumn: '2',
             gridRow: '1',
           }}
+          disabled
         />
       </div>
       <Stack horizontal>

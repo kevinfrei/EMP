@@ -20,7 +20,7 @@ import {
   allArtistsSel,
   allSongsSel,
 } from '../../Recoil/ReadOnly';
-import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
 import { SortSongs } from '../../Tools';
 import {
   AlbumFromSong,
@@ -40,7 +40,7 @@ const sortedSongsSel = selector({
       [...get(allSongsSel).values()],
       get(allAlbumsSel),
       get(allArtistsSel),
-      get(sortWithArticlesAtom),
+      get(ignoreArticlesAtom),
     );
   },
 });

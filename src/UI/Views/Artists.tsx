@@ -25,7 +25,11 @@ import {
   allArtistsSel,
   allSongsSel,
 } from '../../Recoil/ReadOnly';
-import { sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import {
+  ignoreArticlesAtom,
+  minSongCountForArtistListAtom,
+  showArtistsWithFullAlbumsAtom,
+} from '../../Recoil/ReadWrite';
 import { SortSongs } from '../../Tools';
 import {
   AlbumFromSong,
@@ -51,16 +55,75 @@ export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
   );
 }
 
+const filteredArtistsSel = selector<Artist[]>({
+  key: 'filteredArtists',
+  get: ({ get }) => {
+    const fullAlbums = get(showArtistsWithFullAlbumsAtom);
+    const minSongCount = get(minSongCountForArtistListAtom);
+    const artists = get(allArtistsSel);
+    const result: Artist[] = [];
+    if (fullAlbums) {
+      // Filter down to artists that have at least one album where
+      // they are the primary artist
+      const albums = get(allAlbumsSel);
+      artists.forEach((artist) => {
+        for (const lKey of artist.albums) {
+          const album = albums.get(lKey);
+          if (!album) continue;
+          if (album.primaryArtists.indexOf(artist.key) >= 0) {
+            result.push(artist);
+          }
+        }
+      });
+    } else {
+      if (minSongCount < 2) {
+        return [...artists.values()];
+      }
+      // Filter down to artists than have a minimum number of songs
+      artists.forEach((artist) => {
+        if (artist.songs.length >= minSongCount) {
+          result.push(artist);
+        }
+      });
+    }
+    return result;
+  },
+});
+
+const filteredSongsSel = selector<Song[]>({
+  key: 'filteredSongs',
+  get: ({ get }) => {
+    const fullAlbums = get(showArtistsWithFullAlbumsAtom);
+    const minSongCount = get(minSongCountForArtistListAtom);
+    const songs = get(allSongsSel);
+    if (!fullAlbums && minSongCount < 2) {
+      return [...songs.values()];
+    }
+    // Get the list of artists we're including
+    const artists = get(filteredArtistsSel);
+    const songSet = new Set<Song>();
+    artists.forEach((artist) => {
+      artist.songs.forEach((sng) => {
+        const song = songs.get(sng);
+        if (song) {
+          songSet.add(song);
+        }
+      });
+    });
+    return [...songSet];
+  },
+});
+
 const sortOrderAtom = atom({ key: 'artistsSortOrder', default: 'r' });
 const sortedSongsSel = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
     return SortSongs(
       get(sortOrderAtom),
-      [...get(allSongsSel).values()],
+      get(filteredSongsSel),
       get(allAlbumsSel),
       get(allArtistsSel),
-      get(sortWithArticlesAtom),
+      get(ignoreArticlesAtom),
     );
   },
 });

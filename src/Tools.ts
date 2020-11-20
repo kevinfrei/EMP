@@ -60,8 +60,8 @@ function compareRecord(
   return sort === sort.toUpperCase() ? -result : result;
 }
 
-function selectComparator(articles: boolean, sortOrder: string) {
-  const stringCompare = articles ? strCmp : theCmp;
+function selectComparator(ignoreArticles: boolean, sortOrder: string) {
+  const stringCompare = ignoreArticles ? theCmp : strCmp;
   return (a: SongData, b: SongData): number => {
     for (const s of sortOrder) {
       const res = compareRecord(stringCompare, s, a, b);

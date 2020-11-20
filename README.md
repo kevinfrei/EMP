@@ -112,8 +112,12 @@ albums, and artists are strict selectors from that atom.
 
 ### Core Capabilities
 
+- **render** The Artist filtering doesn't quite work right for songs with
+  multiple artists
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
+- **main** Version the persistence data. I have troubles if I change the disk
+  format :/
 - **render** Renaming a playlist is pretty clunky (save as, delete)
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)

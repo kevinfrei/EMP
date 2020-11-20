@@ -6,7 +6,7 @@ import * as music from './MusicScanner';
 import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
-const log = MakeLogger('Startup');
+const log = MakeLogger('Startup', true);
 const err = MakeError('Startup-err');
 
 function getLocations(): string[] {
@@ -45,7 +45,7 @@ async function CreateMusicDB(): Promise<void> {
   log(`Total time to build index: ${stop - start} ms`);
 }
 
-async function RescanDB(): Promise<void> {
+export async function RescanDB(): Promise<void> {
   const prevDB = await getMusicDB();
   if (prevDB) {
     log('Songs before:' + prevDB.songs.size.toString());

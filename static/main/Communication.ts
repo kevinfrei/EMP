@@ -8,6 +8,7 @@ import {
   searchWholeWord,
 } from './MusicAccess';
 import * as persist from './persist';
+import { RescanDB } from './Startup';
 import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
@@ -145,6 +146,7 @@ export function CommsSetup(): void {
   registerFlattened('subsearch', searchSubstring);
   registerFlattened('show-file', showFile);
   register('update-metadata', setMediaInfoForSong);
+  register('manual-rescan', RescanDB);
 
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler

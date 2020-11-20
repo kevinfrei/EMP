@@ -48,7 +48,7 @@ import {
   allArtistsSel,
   curSongsSel,
 } from '../../Recoil/ReadOnly';
-import { playlistsSel, sortWithArticlesAtom } from '../../Recoil/ReadWrite';
+import { ignoreArticlesAtom, playlistsSel } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
@@ -191,7 +191,7 @@ function StickyDetailsHeader(
 export default function NowPlaying(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
-  const articles = useRecoilValue(sortWithArticlesAtom);
+  const articles = useRecoilValue(ignoreArticlesAtom);
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );

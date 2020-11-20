@@ -36,10 +36,25 @@ export const locationsAtom = atom<string[]>({
   effects_UNSTABLE: [syncWithMainEffect<string[]>()],
 });
 
-export const sortWithArticlesAtom = atom<boolean>({
+// Sort with/without articles setting
+export const ignoreArticlesAtom = atom<boolean>({
   key: 'rSortWithArticles',
   default: true,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+// Only show artists in the list who appear on full albums
+export const showArtistsWithFullAlbumsAtom = atom<boolean>({
+  key: 'FullAlbumsOnly',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+// The minimum # of songs an artist needs to show up in the artist list
+export const minSongCountForArtistListAtom = atom<number>({
+  key: 'MinSongCount',
+  default: 1,
+  effects_UNSTABLE: [syncWithMainEffect<number>()],
 });
 
 export const curViewAtom = atom<CurrentView>({
