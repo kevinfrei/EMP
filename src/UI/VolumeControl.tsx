@@ -13,7 +13,7 @@ export default function VolumeControl(): JSX.Element {
 
   if (ae) {
     ae.muted = muted;
-    ae.volume = volume;
+    ae.volume = volume * volume; // Better resolution at the lower volume
   }
   return (
     <Stack id="volume-container" horizontal>
