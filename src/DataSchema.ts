@@ -22,7 +22,7 @@ export function GetArtistString(artistList: Artist[]): string {
 export function GetArtistStringFromKeys(
   artistList: ArtistKey[],
   allArtists: Map<ArtistKey, Artist>,
-): string | void {
+): string {
   const artists: string[] = artistList
     .map((ak) => {
       const art: Artist | undefined = allArtists.get(ak);
@@ -36,6 +36,13 @@ export function GetArtistStringFromKeys(
     return artists.join(', ') + lastPart;
   }
 }
+
+export type DataForSongGetter = (
+  song: Song,
+  allAlbums: Map<AlbumKey, Album>,
+  allArtist: Map<ArtistKey, Artist>,
+) => SongData;
+
 /**
  * Fill in the 'display' information for a song. Useful for both presenting to
  * the user, and sorting stuff
@@ -50,7 +57,9 @@ export function GetDataForSong(
   song: Song,
   allAlbums: Map<AlbumKey, Album>,
   allArtists: Map<ArtistKey, Artist>,
+  artistFilter?: (ids: ArtistKey[], lookup: Map<ArtistKey, Artist>) => string,
 ): SongData {
+  const getArtistString = artistFilter || GetArtistStringFromKeys;
   const res = {
     song,
     title: '-',
@@ -70,11 +79,7 @@ export function GetDataForSong(
     res.album = album.title;
     res.year = album.year;
   }
-  const maybeArtistName = GetArtistStringFromKeys(song.artistIds, allArtists);
-  if (!maybeArtistName) {
-    return res;
-  }
-  res.artist = maybeArtistName;
+  res.artist = getArtistString(song.artistIds, allArtists);
   return res;
 }
 

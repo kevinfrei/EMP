@@ -8,7 +8,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { Artist, ArtistKey, Song } from '@freik/media-utils';
+import { Artist, ArtistKey, Song, SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   atom,
@@ -17,7 +17,13 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { GetArtistString, GetArtistStringFromKeys } from '../../DataSchema';
+import {
+  DataForSongGetter,
+  GetArtistString,
+  GetArtistStringFromKeys,
+  GetDataForSong,
+  SongData,
+} from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
 import { songDetailAtom } from '../../Recoil/Local';
 import {
@@ -33,7 +39,7 @@ import {
 import { SortSongs } from '../../Tools';
 import {
   AlbumFromSong,
-  ArtistsFromSong,
+  ArtistName,
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
@@ -44,14 +50,27 @@ export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
     props.artists.forEach((art) => AddSongs(art.songs, set)),
   );
   const name = GetArtistString(props.artists);
-  const songCount = props.artists.reduce<number>(
-    (prev: number, cur: Artist) => prev + cur.songs.length,
-    0,
-  );
+  let songCount = 0;
+  if (props.artists.length === 1) {
+    songCount = props.artists[0].songs.length;
+  } else {
+    // To count the songs, find the intersection of each artist
+    let songSet = new Set<SongKey>(props.artists[0].songs);
+    for (let i = 2; songSet.size > 0 && i < props.artists.length; i++) {
+      const newSongSet = new Set<SongKey>();
+      for (const songKey of props.artists[i].songs) {
+        if (songSet.has(songKey)) {
+          newSongSet.add(songKey);
+        }
+      }
+      songSet = newSongSet;
+    }
+    songCount = songSet.size;
+  }
   return (
-    <Stack horizontal verticalAlign="center" onDoubleClick={onAddSongsClick}>
-      <Text>{`${name} [${songCount} song${songCount > 1 ? 's' : ''}]`}</Text>
-    </Stack>
+    <Text onDoubleClick={onAddSongsClick}>
+      {`${name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
+    </Text>
   );
 }
 
@@ -118,18 +137,39 @@ const sortOrderAtom = atom({ key: 'artistsSortOrder', default: 'r' });
 const sortedSongsSel = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
+    // Create the set of artists to filter down to
+    const filteredArtistSet = new Set(
+      get(filteredArtistsSel).map((r) => r.key),
+    );
+    // This makes an artist string with only the filtered artists
+    const getArtistString = (
+      ids: ArtistKey[],
+      lookup: Map<ArtistKey, Artist>,
+    ): string =>
+      GetArtistStringFromKeys(
+        ids.filter((id) => filteredArtistSet.has(id)),
+        lookup,
+      );
+    // Get song data using the our filtered string functions
+    const getFilteredSongData: DataForSongGetter = (
+      song,
+      allAlbums,
+      allArtists,
+    ): SongData => GetDataForSong(song, allAlbums, allArtists, getArtistString);
     return SortSongs(
       get(sortOrderAtom),
       get(filteredSongsSel),
       get(allAlbumsSel),
       get(allArtistsSel),
       get(ignoreArticlesAtom),
+      getFilteredSongData,
     );
   },
 });
 
 export default function ArtistList(): JSX.Element {
-  const artists = useRecoilValue(allArtistsSel);
+  const filteredArtistList = useRecoilValue(filteredArtistsSel);
+  const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
@@ -146,6 +186,9 @@ export default function ArtistList(): JSX.Element {
     }
   };
 
+  const filteredArtistsFromSong = (theSong: Song): JSX.Element => (
+    <ArtistName artistIds={theSong.artistIds.filter((v) => artists.has(v))} />
+  );
   const renderArtistHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
   ) => {
@@ -172,12 +215,12 @@ export default function ArtistList(): JSX.Element {
   const [columns, artistGroups, groupProps] = GetSongGroupData(
     sortedSongs,
     curExpandedState,
-    (s: Song) => s.artistIds.join(';'),
+    (s: Song) => s.artistIds.filter((v) => artists.has(v)).join(';'),
     (s: string) => GetArtistStringFromKeys(s.split(';'), artists) || '',
     'r',
     'artistIds',
     [
-      ['r', 'artistIds', 'Artist', 50, 175, ArtistsFromSong],
+      ['r', 'artistIds', 'Artist', 50, 175, filteredArtistsFromSong],
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],

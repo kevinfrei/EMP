@@ -1,7 +1,7 @@
 // This is for getting at "global" stuff from the window object
 import { MakeLogger } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
-import { GetDataForSong, SongData } from './DataSchema';
+import { DataForSongGetter, GetDataForSong, SongData } from './DataSchema';
 
 const log = MakeLogger('Tools');
 
@@ -89,11 +89,13 @@ export function SortSongs(
   albums: Map<AlbumKey, Album>,
   artists: Map<ArtistKey, Artist>,
   articles: boolean,
+  getSongData?: DataForSongGetter,
 ): Song[] {
+  const songGetter: DataForSongGetter = getSongData || GetDataForSong;
   log(`sortOrder: ${sortOrder}`);
   log(`songs: ${songs.length} elements`);
   const records: SongData[] = songs.map((song: Song) =>
-    GetDataForSong(song, albums, artists),
+    songGetter(song, albums, artists),
   );
   return records.sort(selectComparator(articles, sortOrder)).map((r) => r.song);
 }
