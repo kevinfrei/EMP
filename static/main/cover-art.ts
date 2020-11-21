@@ -1,4 +1,4 @@
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError, MakeLogger } from '@freik/core-utils';
 import { Album, Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
@@ -11,6 +11,7 @@ import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
 
 const log = MakeLogger('cover-art');
+const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
   return (await persist.getItemAsync('downloadAlbumArtwork')) === 'true';
@@ -171,4 +172,5 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
 
 export async function FlushImageCache(): Promise<void> {
   // TODO: Make this do something
+  err('FlushImageCache NYI');
 }

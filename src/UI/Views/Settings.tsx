@@ -116,16 +116,12 @@ function ArtworkSettings(): JSX.Element {
           state={saveAlbumArtwork}
         />
         &nbsp;
-        <TooltipHost
-          id="saveAlbumArtworkid"
-          content="The filename of the artwork saved"
-        >
-          <TextField
-            disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
-            value={coverArtName}
-            onChange={(ev, nv) => nv && setCoverArtName(nv)}
-          />
-        </TooltipHost>
+        <TextField
+          disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
+          description="Filename to save the artwork as"
+          value={coverArtName}
+          onChange={(ev, nv) => nv && setCoverArtName(nv)}
+        />
       </Stack>
       <StateToggle
         label="NYI: Download Artist Artwork"
