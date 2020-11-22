@@ -156,9 +156,9 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
           saveMusicDB(db).catch((rej) => log('Error saving'));
         }, 1000);
         return;
-      } catch (err) {
-        log('Saving picture failed :(');
-        log(err);
+      } catch (e) {
+        err('Saving picture failed :(');
+        err(e);
         // TODO: Make a cache for read-only music shares!
         // This would be useful for being able to annotate/"edit" music
         // metadata in the same situation...
@@ -170,7 +170,10 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   }
 }
 
-export async function FlushImageCache(): Promise<void> {
-  // TODO: Make this do something
+export function FlushImageCache(): Promise<void> {
   err('FlushImageCache NYI');
+  // TODO: Make this do something
+  return new Promise((res) => {
+    err('FlushImageCache NYI (really!)');
+  });
 }

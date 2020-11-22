@@ -1,4 +1,5 @@
 import {
+  ContextualMenu,
   DetailsList,
   DetailsRow,
   getTheme,
@@ -11,16 +12,19 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
+import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { PlaySongs } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
-import { nowPlayingAtom } from '../../Recoil/Local';
+import { nowPlayingAtom, PlaylistName } from '../../Recoil/Local';
 import { playlistsSel } from '../../Recoil/ReadWrite';
-import { ConfirmationDialog } from '../Dialogs';
+import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { StickyRenderDetailsHeader } from '../SongList';
 import './styles/Playlists.css';
+
+type ItemType = [PlaylistName, SongKey[]];
 
 const theme = getTheme();
 
@@ -39,9 +43,15 @@ export default function PlaylistView(): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsSel);
   const [selected, setSelected] = useState('');
   const [showConfirm, confirmData] = useDialogState();
+  const [showRename, renameData] = useDialogState();
+
+  const [contextPlaylist, setContextPlaylist] = useState<string>('');
+  const [contextTarget, setContextTarget] = useState<
+    EventTarget | Event | null
+  >(null);
 
   const onPlaylistInvoked = useRecoilCallback(
-    ({ set }) => ([playlistName, keys]: [string, SongKey[]]) => {
+    ({ set }) => ([playlistName, keys]: ItemType) => {
       PlaySongs(keys, set);
       set(nowPlayingAtom, playlistName);
     },
@@ -52,6 +62,18 @@ export default function PlaylistView(): JSX.Element {
     }
     setSelected('');
   };
+  const renamePlaylist = (newname: string) => {
+    if (playlists.has(newname)) {
+      // Don't allow renaming to overwrite the old value
+      window.alert("Sorry: You can't rename to an existing playlist.");
+    } else {
+      const curVal = playlists.get(contextPlaylist);
+      if (!curVal) return;
+      playlists.delete(contextPlaylist);
+      playlists.set(newname, curVal);
+      setPlaylists(new Map(playlists));
+    }
+  };
 
   const columns: IColumn[] = [
     {
@@ -59,7 +81,7 @@ export default function PlaylistView(): JSX.Element {
       name: ' ',
       minWidth: 25,
       maxWidth: 25,
-      onRender: (item: [string, string[]]) => (
+      onRender: (item: ItemType) => (
         <IconButton
           style={{ height: '20px' }}
           iconProps={{ iconName: 'Delete' }}
@@ -74,16 +96,16 @@ export default function PlaylistView(): JSX.Element {
       key: 'title',
       name: 'Playlist Title',
       minWidth: 100,
-      onRender: (item: [string, string[]]) => item[0],
+      onRender: (item: ItemType) => item[0],
     },
     {
       key: 'count',
       name: '# of songs',
       minWidth: 75,
-      onRender: (item: [string, string[]]) => item[1].length,
+      onRender: (item: ItemType) => item[1].length,
     },
   ];
-
+  const items = [...playlists.entries()];
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
@@ -95,14 +117,64 @@ export default function PlaylistView(): JSX.Element {
           yesText="Delete"
           noText="Cancel"
         />
+        <TextInputDialog
+          data={renameData}
+          confirmFunc={renamePlaylist}
+          title={`Rename ${contextPlaylist}...`}
+          text="What would you like the playlist to be renamed to?"
+          initialValue={contextPlaylist}
+          yesText="Rename"
+          noText="Cancel"
+        />
         <DetailsList
-          items={[...playlists.entries()]}
+          items={items}
           selectionMode={SelectionMode.none}
           columns={columns}
           onRenderRow={renderRow}
           compact={true}
           onItemInvoked={onPlaylistInvoked}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
+          onItemContextMenu={(
+            item?: [string, string[]],
+            index?: number,
+            ev?: Event,
+          ) => {
+            if (ev && Type.isArray(item)) {
+              setContextPlaylist(item[0]);
+              setContextTarget(ev);
+            }
+            return false;
+          }}
+        />
+        <ContextualMenu
+          hidden={contextTarget === null}
+          onDismiss={() => setContextTarget(null)}
+          items={[
+            {
+              key: 'queue',
+              text: 'NYI: Add to Now Playing',
+              onClick: () => {
+                return true;
+              },
+            },
+            {
+              key: 'rename',
+              text: 'Rename',
+              onClick: () => {
+                showRename();
+                return true;
+              },
+            },
+            {
+              key: 'delete',
+              text: 'Delete',
+              onClick: () => {
+                setSelected(contextPlaylist);
+                showConfirm();
+              },
+            },
+          ]}
+          target={contextTarget as MouseEvent}
         />
       </ScrollablePane>
     </div>
