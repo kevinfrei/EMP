@@ -1,4 +1,4 @@
-#now-playing-header {
+.now-playing-header {
   margin: 3pt;
   display: flex;
   flex-flow: row nowrap;

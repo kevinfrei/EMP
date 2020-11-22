@@ -7,10 +7,12 @@ import {
   IDetailsHeaderProps,
   IDetailsListProps,
   IDetailsRowStyles,
+  ISeparatorStyles,
   IStackItemStyles,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
+  Separator,
   Stack,
   Sticky,
   StickyPositionType,
@@ -109,24 +111,27 @@ function TopLine(): JSX.Element {
     saveDisabled = true;
   }
 
+  const sepStyle: Partial<ISeparatorStyles> = {
+    root: { padding: 0, height: 2 },
+  };
   return (
     <div id="current-header">
-      <TextInputDialog
-        data={saveAsData}
-        confirmFunc={saveListAs}
-        title="Save Playlist as..."
-        text="What would you like the playlist to be named?"
-        initialValue={nowPlaying}
-        yesText="Save"
-        noText="Cancel"
-      />
-      <ConfirmationDialog
-        data={confirmData}
-        confirmFunc={stopAndClear}
-        title="Please Confirm"
-        text="Are you sure you want to clear the play queue?"
-      />
-      <div id="now-playing-header">
+      <div className="now-playing-header">
+        <TextInputDialog
+          data={saveAsData}
+          confirmFunc={saveListAs}
+          title="Save Playlist as..."
+          text="What would you like the playlist to be named?"
+          initialValue={nowPlaying}
+          yesText="Save"
+          noText="Cancel"
+        />
+        <ConfirmationDialog
+          data={confirmData}
+          confirmFunc={stopAndClear}
+          title="Please Confirm"
+          text="Are you sure you want to clear the play queue?"
+        />
         <DefaultButton
           className="np-clear-queue"
           onClick={clickClearQueue}
@@ -160,6 +165,7 @@ function TopLine(): JSX.Element {
           Save
         </DefaultButton>
       </div>
+      <Separator styles={sepStyle} />
     </div>
   );
 }
@@ -264,20 +270,6 @@ export default function NowPlaying(): JSX.Element {
     }
     return null;
   };
-  /*
-  <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
-  </ScrollablePane>
-  */
-  /*
-  .View {
-    overflow: hidden;
-    padding: 0px;
-    margin: 0px;
-    width: 100%;
-    height: 100%;
-    grid-row: 2 / 4;
-    grid-column: 2 / 5;
-  }*/
 
   return (
     <div data-is-scrollable="true">

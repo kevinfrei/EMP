@@ -100,6 +100,8 @@ albums, and artists are strict selectors from that atom.
 
 ### Bugs
 
+- Playlists do _not_ work right. Modifying on seems to modify more than just the
+  one you modify
 - Starting "clean" doesn't seem to be a very happy place. It requires a couple
   restarts to get it going. Fix that.
 - Clearing the queue restarts playback on the current song

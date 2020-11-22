@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { Type } from '@freik/core-utils';
 import { PlaylistName, SongKey } from '@freik/media-utils';
 import { atom, selector } from 'recoil';
 import { syncWithMainEffect } from './helpers';
@@ -129,5 +130,14 @@ export const playlistsSel = selector<Map<PlaylistName, SongKey[]>>({
     }
     return newMap;
   },
-  set: ({ set }, newVal) => set(playlistsAtom, newVal),
+  set: ({ set }, newVal) => {
+    if (Type.isMap(newVal)) {
+      set(
+        playlistsAtom,
+        new Map([...newVal.entries()].map(([key, arr]) => [key, [...arr]])),
+      );
+    } else {
+      set(playlistsAtom, newVal);
+    }
+  },
 });

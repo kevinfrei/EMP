@@ -12,17 +12,19 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
+import { MakeLogger, Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilState } from 'recoil';
-import { PlaySongs } from '../../Recoil/api';
+import { AddSongs, PlaySongs } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { nowPlayingAtom, PlaylistName } from '../../Recoil/Local';
 import { playlistsSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { StickyRenderDetailsHeader } from '../SongList';
 import './styles/Playlists.css';
+
+const log = MakeLogger('Playlists', true);
 
 type ItemType = [PlaylistName, SongKey[]];
 
@@ -42,7 +44,7 @@ const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
 export default function PlaylistView(): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsSel);
   const [selected, setSelected] = useState('');
-  const [showConfirm, confirmData] = useDialogState();
+  const [showDelete, deleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
 
   const [contextPlaylist, setContextPlaylist] = useState<string>('');
@@ -50,10 +52,20 @@ export default function PlaylistView(): JSX.Element {
     EventTarget | Event | null
   >(null);
 
+  const onQueuePlaylist = useRecoilCallback(({ set }) => () => {
+    const songs = playlists.get(contextPlaylist);
+    if (songs) {
+      log('songs:' + songs.length.toString());
+      AddSongs(songs, set);
+    } else {
+      log('No songs :( ');
+    }
+  });
+
   const onPlaylistInvoked = useRecoilCallback(
     ({ set }) => ([playlistName, keys]: ItemType) => {
-      PlaySongs(keys, set);
       set(nowPlayingAtom, playlistName);
+      PlaySongs(keys, set);
     },
   );
   const deletePlaylist = () => {
@@ -87,7 +99,7 @@ export default function PlaylistView(): JSX.Element {
           iconProps={{ iconName: 'Delete' }}
           onClick={() => {
             setSelected(item[0]);
-            showConfirm();
+            showDelete();
           }}
         />
       ),
@@ -110,7 +122,7 @@ export default function PlaylistView(): JSX.Element {
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <ConfirmationDialog
-          data={confirmData}
+          data={deleteData}
           confirmFunc={deletePlaylist}
           title="Are you sure?"
           text={`Do you really want to delete the playlist ${selected}?`}
@@ -153,9 +165,7 @@ export default function PlaylistView(): JSX.Element {
             {
               key: 'queue',
               text: 'NYI: Add to Now Playing',
-              onClick: () => {
-                return true;
-              },
+              onClick: onQueuePlaylist,
             },
             {
               key: 'rename',
@@ -170,7 +180,7 @@ export default function PlaylistView(): JSX.Element {
               text: 'Delete',
               onClick: () => {
                 setSelected(contextPlaylist);
-                showConfirm();
+                showDelete();
               },
             },
           ]}
