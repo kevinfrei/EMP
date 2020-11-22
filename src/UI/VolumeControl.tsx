@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import { mutedAtom, volumeAtom } from '../Recoil/ReadWrite';
 import { GetAudioElem } from './SongPlayback';
 import './styles/VolumeControl.css';
+import { mySliderStyles } from './Utilities';
 
 export default function VolumeControl(): JSX.Element {
   const [muted, setMuted] = useRecoilState(mutedAtom);
@@ -15,6 +16,7 @@ export default function VolumeControl(): JSX.Element {
     ae.muted = muted;
     ae.volume = volume * volume; // Better resolution at the lower volume
   }
+
   return (
     <Stack id="volume-container" horizontal>
       <IconButton
@@ -25,6 +27,7 @@ export default function VolumeControl(): JSX.Element {
       />
       <Slider
         className="volume-slider"
+        styles={mySliderStyles}
         min={0}
         max={1}
         value={volume}

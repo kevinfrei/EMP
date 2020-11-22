@@ -2,6 +2,7 @@ import {
   IconButton,
   IFontStyles,
   ISeparatorStyles,
+  ISliderStyles,
   IStyle,
   IToggleStyles,
   Separator,
@@ -144,3 +145,12 @@ export function Expandable({
     </>
   );
 }
+
+export const mySliderStyles: Partial<ISliderStyles> = {
+  thumb: {
+    borderWidth: 1,
+    width: 8,
+    height: 12,
+    top: -4,
+  },
+};

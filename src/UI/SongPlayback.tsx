@@ -20,6 +20,7 @@ import {
   SongData,
 } from '../Recoil/ReadOnly';
 import './styles/SongPlayback.css';
+import { mySliderStyles } from './Utilities';
 
 const log = MakeLogger('SongPlayback');
 
@@ -83,6 +84,7 @@ function MediaTimeSlider(): JSX.Element {
       max={1}
       disabled={songKey.length === 0}
       step={1e-5}
+      styles={mySliderStyles}
       onChange={(value: number) => {
         const ae = GetAudioElem();
         if (!ae) {
