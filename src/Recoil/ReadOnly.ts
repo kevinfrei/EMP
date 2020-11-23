@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { MakeError, MakeLogger } from '@freik/core-utils';
+import { Comparisons, MakeError, MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -10,8 +10,10 @@ import {
 } from '@freik/media-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
+import { isPlaylist } from '../Tools';
 import { syncWithMainEffect } from './helpers';
-import { songListAtom } from './Local';
+import { activePlaylistAtom, songListAtom } from './Local';
+import { playlistsSel } from './ReadWrite';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -230,5 +232,26 @@ export const searchSel = selectorFamily<ipc.SearchResults, string>({
       err('no results');
     }
     return res || { songs: [], albums: [], artists: [] };
+  },
+});
+
+// This decides if the current playlist is something that can be 'saved'
+// (Is it a playlist, and has it been modified)
+export const saveableSel = selector<boolean>({
+  key: 'shouldSaveBeDisabled',
+  get: ({ get }): boolean => {
+    const curPlaylist = get(activePlaylistAtom);
+    if (isPlaylist(curPlaylist)) {
+      const playlists = get(playlistsSel);
+      const pl = playlists.get(curPlaylist);
+      if (!pl) {
+        return false;
+      }
+      const songList = get(songListAtom);
+      return !Comparisons.ArraySetEqual(pl, songList);
+    } else {
+      // If it's not a playlist, you can't save it
+      return false;
+    }
   },
 });

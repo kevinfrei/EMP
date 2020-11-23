@@ -15,7 +15,7 @@ import {
   getMediaInfo,
   songByKeySel,
 } from '../Recoil/ReadOnly';
-import { divGrand, secondsToHMS } from '../Tools';
+import { divGrand, fractionalSecondsStrToHMS } from '../Tools';
 import { MetadataEditor } from './MetadataEditor';
 import { Expandable } from './Utilities';
 
@@ -59,7 +59,9 @@ export default function MediaInfoTable({
   const theAlbum = useRecoilValue(albumByKeySel(theSong.albumId));
   const thePath = mediaInfo.get('File Path') || '';
   const fileType = getType(mediaInfo.get('format.codec'));
-  const duration = secondsToHMS(mediaInfo.get('format.duration') || '0');
+  const duration = fractionalSecondsStrToHMS(
+    mediaInfo.get('format.duration') || '0',
+  );
   const sampleRate = getSampleRate(mediaInfo.get('format.sampleRate'));
   const bps = mediaInfo.get('format.bitsPerSample') || '16';
   const channels = channelDescr(mediaInfo.get('format.numberOfChannels'));

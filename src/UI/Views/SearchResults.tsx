@@ -184,11 +184,12 @@ export default function SearchResultsView(): JSX.Element {
     ({ set }) => (item: SearchSongData) => set(songDetailAtom, item.song),
   );
   const onAddSongClick = useRecoilCallback(
-    ({ set }) => (item: SearchSongData) => AddSongs([item.song.key], set),
+    (cbInterface) => (item: SearchSongData) =>
+      AddSongs([item.song.key], cbInterface),
   );
   const onAddSongListClick = useRecoilCallback(
-    ({ set }) => (songList: SongKey[]) => {
-      AddSongs(songList, set);
+    (cbInterface) => (songList: SongKey[]) => {
+      AddSongs(songList, cbInterface);
     },
   );
 

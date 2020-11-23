@@ -122,22 +122,26 @@ export function ShuffleArray<T>(array: T[]): T[] {
   return res;
 }
 
-export function secondsToHMS(vals: string): string {
+export function secondsToTime(val: number): string {
+  const expr = new Date(val * 1000).toISOString();
+  if (val < 600) {
+    return expr.substr(15, 4);
+  } else if (val < 3600) {
+    return expr.substr(14, 5);
+  } else if (val < 36000) {
+    return expr.substr(12, 7);
+  } else {
+    return expr.substr(11, 8);
+  }
+}
+
+export function fractionalSecondsStrToHMS(vals: string): string {
   const decimal = vals.indexOf('.');
   let suffix: string = decimal > 0 ? vals.substr(decimal) : '';
   suffix = suffix.replace(/0+$/g, '');
   suffix = suffix.length === 1 ? '' : suffix.substr(0, 3);
   const val = parseInt(vals, 10);
-  const expr = new Date(val * 1000).toISOString();
-  if (val < 600) {
-    return expr.substr(15, 4) + suffix;
-  } else if (val < 3600) {
-    return expr.substr(14, 5) + suffix;
-  } else if (val < 36000) {
-    return expr.substr(12, 7) + suffix;
-  } else {
-    return expr.substr(11, 8) + suffix;
-  }
+  return secondsToTime(val);
 }
 
 export function divGrand(val: string): string {

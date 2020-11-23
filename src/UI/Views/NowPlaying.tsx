@@ -19,7 +19,6 @@ import {
   Text,
   TooltipHost,
 } from '@fluentui/react';
-import { Comparisons } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -38,8 +37,8 @@ import {
 import { StopAndClear } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import {
+  activePlaylistAtom,
   currentIndexAtom,
-  nowPlayingAtom,
   nowPlayingSortAtom,
   shuffleAtom,
   songDetailAtom,
@@ -49,6 +48,7 @@ import {
   allAlbumsSel,
   allArtistsSel,
   curSongsSel,
+  saveableSel,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesAtom, playlistsSel } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
@@ -60,10 +60,10 @@ const theme = getTheme();
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const [playlists, setPlaylists] = useRecoilState(playlistsSel);
-  const nowPlaying = useRecoilValue(nowPlayingAtom);
-
+  const playlists = useRecoilValue(playlistsSel);
+  const nowPlaying = useRecoilValue(activePlaylistAtom);
   const songList = useRecoilValue(songListAtom);
+  const saveEnabled = useRecoilValue(saveableSel);
 
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
@@ -72,44 +72,29 @@ function TopLine(): JSX.Element {
     if (playlists.has(inputName)) {
       window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
-      const newPlaylist = playlists.set(inputName, songList);
-      setPlaylists(new Map(newPlaylist));
-      set(nowPlayingAtom, inputName);
+      const newPlaylist = playlists.set(inputName, [...songList]);
+      set(playlistsSel, new Map(newPlaylist));
+      set(activePlaylistAtom, inputName);
     }
+  });
+  const stopAndClear = useRecoilCallback((cbInterface) => async () => {
+    await StopAndClear(cbInterface);
+  });
+  const clickClearQueue = useRecoilCallback((cbInterface) => async () => {
+    if (isPlaylist(nowPlaying)) {
+      await StopAndClear(cbInterface);
+    } else {
+      showConfirm();
+    }
+  });
+  const save = useRecoilCallback(({ set }) => () => {
+    playlists.set(nowPlaying, [...songList]);
+    set(playlistsSel, new Map(playlists));
   });
 
   const emptyQueue = songList.length === 0;
-
-  const stopAndClear = useRecoilCallback(
-    ({ reset, set, snapshot }) => async () => {
-      await StopAndClear({ reset, set, snapshot });
-    },
-  );
-  const clickClearQueue = useRecoilCallback(
-    ({ reset, set, snapshot }) => async () => {
-      if (isPlaylist(nowPlaying)) {
-        await StopAndClear({ reset, set, snapshot });
-      } else {
-        showConfirm();
-      }
-    },
-  );
-  let header;
-  let saveDisabled: boolean;
-  const save = () => {
-    playlists.set(nowPlaying, songList);
-    setPlaylists(new Map(playlists));
-  };
-  if (isPlaylist(nowPlaying)) {
-    header = nowPlaying;
-    // Only enable this button if the playlist has been *modified*
-    // (not just sorted)
-    const curPlList = playlists.get(nowPlaying);
-    saveDisabled = !curPlList || Comparisons.ArraySetEqual(songList, curPlList);
-  } else {
-    header = 'Now Playing';
-    saveDisabled = true;
-  }
+  const isPL = isPlaylist(nowPlaying);
+  const header = isPL ? nowPlaying : 'Now Playing';
 
   const sepStyle: Partial<ISeparatorStyles> = {
     root: { padding: 0, height: 2 },
@@ -119,7 +104,7 @@ function TopLine(): JSX.Element {
       <div className="now-playing-header">
         <TextInputDialog
           data={saveAsData}
-          confirmFunc={saveListAs}
+          onConfirm={saveListAs}
           title="Save Playlist as..."
           text="What would you like the playlist to be named?"
           initialValue={nowPlaying}
@@ -159,7 +144,7 @@ function TopLine(): JSX.Element {
         <DefaultButton
           onClick={save}
           className="save-playlist"
-          disabled={saveDisabled}
+          disabled={!saveEnabled}
           style={{ width: 120 }}
         >
           Save

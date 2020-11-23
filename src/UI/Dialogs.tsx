@@ -11,7 +11,7 @@ import { DialogData } from '../Recoil/helpers';
 
 export type TextInputDialogProps = {
   data: DialogData;
-  confirmFunc: (value: string) => void;
+  onConfirm: (value: string) => void;
   title: string;
   text: string;
   initialValue: string;
@@ -23,7 +23,7 @@ export type TextInputDialogProps = {
 
 export function TextInputDialog({
   data: [hidden, hide],
-  confirmFunc,
+  onConfirm,
   title,
   text,
   initialValue,
@@ -35,7 +35,7 @@ export function TextInputDialog({
   const [input, setInput] = useState(initialValue);
   const confirmAndClose = () => {
     hide();
-    confirmFunc(input);
+    onConfirm(input);
   };
   const yes = yesText ?? 'Yes';
   const no = noText ?? 'No';

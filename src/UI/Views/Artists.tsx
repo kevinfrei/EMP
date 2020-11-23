@@ -46,8 +46,8 @@ import {
 import './styles/Artists.css';
 
 export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
-  const onAddSongsClick = useRecoilCallback(({ set }) => () =>
-    props.artists.forEach((art) => AddSongs(art.songs, set)),
+  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
+    props.artists.forEach((art) => AddSongs(art.songs, cbInterface)),
   );
   const name = GetArtistString(props.artists);
   let songCount = 0;
@@ -173,8 +173,8 @@ export default function ArtistList(): JSX.Element {
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
-  const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
-    AddSongs([item.key], set),
+  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
+    AddSongs([item.key], cbInterface),
   );
 
   const [curSort, setSort] = useRecoilState(sortOrderAtom);

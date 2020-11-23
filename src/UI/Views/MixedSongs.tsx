@@ -49,8 +49,8 @@ export default function MixedSongsList(): JSX.Element {
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
-  const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
-    AddSongs([item.key], set),
+  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
+    AddSongs([item.key], cbInterface),
   );
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderAtom);
   const sortedItems = useRecoilValue(sortedSongsSel);

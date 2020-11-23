@@ -1,5 +1,4 @@
 import { MakeLogger } from '@freik/core-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
@@ -34,11 +33,11 @@ export default function SongControls(): JSX.Element {
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useRecoilCallback(({ set, snapshot }) => async () => {
-    if (!(await snapshot.getPromise(shuffleAtom))) {
-      await ShufflePlaying(snapshot, set);
+  const clickShuffle = useRecoilCallback((cbInterface) => async () => {
+    if (!(await cbInterface.snapshot.getPromise(shuffleAtom))) {
+      await ShufflePlaying(cbInterface);
     }
-    set(shuffleAtom, (prevShuf) => !prevShuf);
+    cbInterface.set(shuffleAtom, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = () => {
@@ -58,14 +57,14 @@ export default function SongControls(): JSX.Element {
       log(`We're not playing, but also not state 4: ${ae.readyState}`);
     }
   };
-  const clickPrev = useRecoilCallback(({ set, snapshot }) => async () => {
+  const clickPrev = useRecoilCallback((cbInterface) => async () => {
     if (hasPrevSong) {
-      await MaybePlayPrev(snapshot, set);
+      await MaybePlayPrev(cbInterface);
     }
   });
-  const clickNext = useRecoilCallback(({ set, snapshot }) => async () => {
+  const clickNext = useRecoilCallback((cbInterface) => async () => {
     if (hasNextSong) {
-      await MaybePlayNext(snapshot, set);
+      await MaybePlayNext(cbInterface);
     }
   });
   return (

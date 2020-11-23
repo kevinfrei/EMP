@@ -18,7 +18,7 @@ import React, { useState } from 'react'; // eslint-disable-line @typescript-esli
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { AddSongs, PlaySongs } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
-import { nowPlayingAtom, PlaylistName } from '../../Recoil/Local';
+import { activePlaylistAtom, PlaylistName } from '../../Recoil/Local';
 import { playlistsSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { StickyRenderDetailsHeader } from '../SongList';
@@ -52,20 +52,20 @@ export default function PlaylistView(): JSX.Element {
     EventTarget | Event | null
   >(null);
 
-  const onQueuePlaylist = useRecoilCallback(({ set }) => () => {
+  const onQueuePlaylist = useRecoilCallback((cbInterface) => () => {
     const songs = playlists.get(contextPlaylist);
     if (songs) {
       log('songs:' + songs.length.toString());
-      AddSongs(songs, set);
+      AddSongs(songs, cbInterface);
     } else {
       log('No songs :( ');
     }
   });
 
   const onPlaylistInvoked = useRecoilCallback(
-    ({ set }) => ([playlistName, keys]: ItemType) => {
-      set(nowPlayingAtom, playlistName);
-      PlaySongs(keys, set);
+    (cbInterface) => ([playlistName, keys]: ItemType) => {
+      cbInterface.set(activePlaylistAtom, playlistName);
+      PlaySongs(keys, cbInterface);
     },
   );
   const deletePlaylist = () => {
@@ -131,7 +131,7 @@ export default function PlaylistView(): JSX.Element {
         />
         <TextInputDialog
           data={renameData}
-          confirmFunc={renamePlaylist}
+          onConfirm={renamePlaylist}
           title={`Rename ${contextPlaylist}...`}
           text="What would you like the playlist to be renamed to?"
           initialValue={contextPlaylist}

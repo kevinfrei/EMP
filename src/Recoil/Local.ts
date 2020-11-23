@@ -1,24 +1,12 @@
 import { Song, SongKey } from '@freik/media-utils';
 import { atom, DefaultValue, selector } from 'recoil';
+import { secondsToTime } from '../Tools';
 
 export type PlaylistName = string;
 
 export type MediaTime = {
   duration: number;
   position: number;
-};
-
-const secondsToTime = (val: number): string => {
-  const expr = new Date(val * 1000).toISOString();
-  if (val < 600) {
-    return expr.substr(15, 4);
-  } else if (val < 3600) {
-    return expr.substr(14, 5);
-  } else if (val < 36000) {
-    return expr.substr(12, 7);
-  } else {
-    return expr.substr(11, 8);
-  }
 };
 
 export const mediaTimeAtom = atom<MediaTime>({
@@ -63,8 +51,10 @@ export const mediaTimePercentRWSel = selector<number>({
 export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
 export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
 export const playingAtom = atom<boolean>({ key: 'playing', default: false });
-export const activePlaylistAtom = atom<string>({ key: 'active', default: '' });
-export const nowPlayingAtom = atom<string>({ key: 'nowPlaying', default: '' });
+export const activePlaylistAtom = atom<string>({
+  key: 'nowPlaying',
+  default: '',
+});
 export const stillPlayingAtom = atom<SongKey>({
   key: 'StillPlaying',
   default: '',

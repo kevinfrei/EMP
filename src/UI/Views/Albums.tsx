@@ -39,8 +39,8 @@ import './styles/Albums.css';
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(dataForAlbumSel(props.album.key));
-  const onAddSongsClick = useRecoilCallback(({ set }) => () =>
-    AddSongs(props.album.songs, set),
+  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
+    AddSongs(props.album.songs, cbInterface),
   );
   return (
     <Stack
@@ -81,8 +81,8 @@ export default function AlbumList(): JSX.Element {
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
   );
-  const onAddSongClick = useRecoilCallback(({ set }) => (item: Song) =>
-    AddSongs([item.key], set),
+  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
+    AddSongs([item.key], cbInterface),
   );
 
   const [curSort, setSort] = useRecoilState(sortOrderAtom);

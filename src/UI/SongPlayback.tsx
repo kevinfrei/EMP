@@ -134,7 +134,8 @@ export default function SongPlayback(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeySel);
   const onPlay = useRecoilCallback(({ set }) => () => set(playingAtom, true));
   const onPause = useRecoilCallback(({ set }) => () => set(playingAtom, false));
-  const onEnded = useRecoilCallback(({ set, snapshot }) => async () => {
+  const onEnded = useRecoilCallback((cbInterface) => async () => {
+    const { snapshot, set } = cbInterface;
     log('Heading to the next song!!!');
     const songList = await snapshot.getPromise(songListAtom);
     const rep = await snapshot.getPromise(repeatAtom);
@@ -146,29 +147,25 @@ export default function SongPlayback(): JSX.Element {
         await ae.play();
       }
     }
-    const isPlaying = await MaybePlayNext(snapshot, set);
+    const isPlaying = await MaybePlayNext(cbInterface);
     set(playingAtom, isPlaying);
   });
   const onTimeUpdate = useRecoilCallback(
     ({ set }) => (ev: React.SyntheticEvent<HTMLMediaElement>) => {
-      const ae = ev.target as HTMLMediaElement;
+      const ae = ev.currentTarget;
       // eslint-disable-next-line id-blacklist
-      if (Number.isNaN(ae.duration)) {
-        return;
+      if (!Number.isNaN(ae.duration)) {
+        set(mediaTimeAtom, (prevTime: MediaTime) => {
+          if (
+            Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
+            Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
+          ) {
+            return { position: ae.currentTime, duration: ae.duration };
+          } else {
+            return prevTime;
+          }
+        });
       }
-      set(mediaTimeAtom, (prevTime: MediaTime) => {
-        if (
-          Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
-          Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
-        ) {
-          log(
-            `${ae.readyState}: Duration: ${ae.duration} Current time: ${ae.currentTime}`,
-          );
-          return { position: ae.currentTime, duration: ae.duration };
-        } else {
-          return prevTime;
-        }
-      });
     },
   );
   const audio =
