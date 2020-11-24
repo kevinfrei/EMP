@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { FTON, Type } from '@freik/core-utils';
+import { FTON, MakeLogger, Type } from '@freik/core-utils';
 import { PlaylistName, SongKey } from '@freik/media-utils';
 import { atom, selector, selectorFamily } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import { syncWithMainEffect } from './helpers';
-import { songListAtom } from './Local';
+
+const log = MakeLogger('ReadWrite', true);
+// const err = MakeError('ReadWrite-err');
 
 // vvv That's a bug, pretty clearly :/
 // eslint-disable-next-line no-shadow
@@ -110,41 +112,6 @@ export const songListSortAtom = atom<string>({
   default: 'rl',
 });
 
-const playlistsAtom = atom<Map<PlaylistName, SongKey[]>>({
-  key: 'Playlists',
-  default: new Map<PlaylistName, SongKey[]>(),
-  effects_UNSTABLE: [syncWithMainEffect()],
-});
-
-// This filters the playlists to only the ones that are actually there
-export const playlistsSel = selector<Map<PlaylistName, SongKey[]>>({
-  key: 'ActualPlaylists',
-  get: ({ get }) => {
-    const theMap = get(playlistsAtom);
-    const songs = new Set(get(songListAtom));
-    const newMap = new Map<PlaylistName, SongKey[]>();
-    for (const [name, keys] of theMap) {
-      newMap.set(
-        name,
-        keys.filter((val) => songs.has(val)),
-      );
-    }
-    return newMap;
-  },
-  set: ({ set }, newVal) => {
-    /*
-    if (Type.isMap(newVal)) {
-      set(
-        playlistsAtom,
-        new Map([...newVal.entries()].map(([key, arr]) => [key, [...arr]])),
-      );
-    } else {
-    */
-    set(playlistsAtom, newVal);
-    // }
-  },
-});
-
 export const playlistNamesSel = selector<Set<PlaylistName>>({
   key: 'PlaylistNames',
   get: async ({ get }) => {
@@ -169,11 +136,17 @@ export const playlistNamesSel = selector<Set<PlaylistName>>({
 export const playlistSel = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
   get: (arg: PlaylistName) => async ({ get }) => {
+    log('PlaylistContents');
     const listStr = await InvokeMain('load-playlist', arg);
+    log('PlaylistContents returned');
+    log(listStr);
     if (!listStr) {
       return [];
     }
+    log('Parsing');
     const parse = FTON.parse(listStr);
+    log('Parsed:');
+    log(parse);
     return Type.isArrayOf(parse, Type.isString) ? parse : [];
   },
   set: (name: PlaylistName) => async ({ set, get }, newValue) => {

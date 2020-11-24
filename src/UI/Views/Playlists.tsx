@@ -8,7 +8,6 @@ import {
   SelectionMode,
 } from '@fluentui/react';
 import { MakeLogger, Type } from '@freik/core-utils';
-import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
@@ -22,11 +21,17 @@ import { PlaylistName } from '../../Recoil/Local';
 import { playlistNamesSel, playlistSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
+import { Spin } from '../Utilities';
 import './styles/Playlists.css';
 
 const log = MakeLogger('Playlists', true);
 
-type ItemType = [PlaylistName, SongKey[]];
+type ItemType = PlaylistName;
+
+export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
+  const playlist = useRecoilValue(playlistSel(id));
+  return <>{playlist.length}</>;
+}
 
 export default function PlaylistView(): JSX.Element {
   const playlistNames = useRecoilValue(playlistNamesSel);
@@ -50,10 +55,10 @@ export default function PlaylistView(): JSX.Element {
   const onPlaylistInvoked = useRecoilCallback(
     (cbInterface) => async (playlistName: PlaylistName) => {
       const songs = await cbInterface.snapshot.getPromise(
-        playlistSel(contextPlaylist),
+        playlistSel(playlistName),
       );
       log('songs:' + songs.length.toString());
-      PlaySongs(songs, cbInterface);
+      PlaySongs(cbInterface, songs, playlistName);
     },
   );
 
@@ -78,7 +83,7 @@ export default function PlaylistView(): JSX.Element {
           style={{ height: '20px' }}
           iconProps={{ iconName: 'Delete' }}
           onClick={() => {
-            setSelected(item[0]);
+            setSelected(item);
             showDelete();
           }}
         />
@@ -88,13 +93,17 @@ export default function PlaylistView(): JSX.Element {
       key: 'title',
       name: 'Playlist Title',
       minWidth: 100,
-      onRender: (item: ItemType) => item[0],
+      onRender: (item: ItemType) => item,
     },
     {
       key: 'count',
       name: '# of songs',
       minWidth: 75,
-      onRender: (item: ItemType) => item[1].length,
+      onRender: (item: ItemType) => (
+        <Spin>
+          <PlaylistSongCount id={item} />
+        </Spin>
+      ),
     },
   ];
   const items = [...playlistNames];

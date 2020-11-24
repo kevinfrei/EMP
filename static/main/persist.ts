@@ -10,7 +10,7 @@ import fs, { promises as fsp } from 'fs';
 import path from 'path';
 
 const log = MakeLogger('persist');
-const err = MakeError('persist-err');
+const err = MakeError('persist-err', false);
 
 export type MaybeRectangle = {
   width: number;

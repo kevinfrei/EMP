@@ -195,12 +195,14 @@ function getOrNewAlbum(
         }
         return check;
       }
-      err('Found a likely mismarked VA song:');
-      err(check);
-      err('For this directory:');
-      err(dirName);
-      err('Artists:');
-      err(artists);
+      if (false) {
+        err('Found a likely mismarked VA song:');
+        err(check);
+        err('For this directory:');
+        err(dirName);
+        err('Artists:');
+        err(artists);
+      }
       check.vatype = 'va';
       check.primaryArtists = [];
       return check;

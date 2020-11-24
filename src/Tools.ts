@@ -1,5 +1,5 @@
 // This is for getting at "global" stuff from the window object
-import { MakeLogger } from '@freik/core-utils';
+import { MakeLogger, Type } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
 import { DataForSongGetter, GetDataForSong, SongData } from './DataSchema';
 
@@ -104,8 +104,8 @@ export function SortSongs(
  * Miscellaney
  */
 
-export function isPlaylist(playlist: string): boolean {
-  return playlist.length > 0;
+export function isPlaylist(playlist?: string): boolean {
+  return Type.isString(playlist) && playlist.length > 0;
 }
 
 export function ShuffleArray<T>(array: T[]): T[] {

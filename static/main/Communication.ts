@@ -11,6 +11,7 @@ import {
 import { RescanDB } from './musicDB';
 import * as persist from './persist';
 import {
+  checkPlaylists,
   deletePlaylist,
   getPlaylists,
   loadPlaylist,
@@ -159,6 +160,7 @@ export function CommsSetup(): void {
   registerFlattened('get-playlists', getPlaylists);
   registerFlattened('save-playlist', savePlaylist);
   registerFlattened('load-playlist', loadPlaylist);
+  registerFlattened('set-playlists', checkPlaylists);
 
   // Some "do something, please" API's
   register('update-metadata', setMediaInfoForSong);

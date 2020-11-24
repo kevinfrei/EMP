@@ -13,7 +13,7 @@ import * as ipc from '../ipc';
 import { isPlaylist } from '../Tools';
 import { syncWithMainEffect } from './helpers';
 import { activePlaylistAtom, songListAtom } from './Local';
-import { playlistsSel } from './ReadWrite';
+import { playlistSel } from './ReadWrite';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -241,13 +241,9 @@ export const saveableSel = selector<boolean>({
   get: ({ get }): boolean => {
     const curPlaylist = get(activePlaylistAtom);
     if (isPlaylist(curPlaylist)) {
-      const playlists = get(playlistsSel);
-      const pl = playlists.get(curPlaylist);
-      if (!pl) {
-        return false;
-      }
+      const theSongList = get(playlistSel(curPlaylist));
       const songList = get(songListAtom);
-      return !Comparisons.ArraySetEqual(pl, songList);
+      return !Comparisons.ArraySetEqual(theSongList, songList);
     } else {
       // If it's not a playlist, you can't save it
       return false;

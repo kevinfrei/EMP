@@ -68,7 +68,7 @@ it('Playing songs works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
     AddSongs(['a', 'b'], makeCallbackIfc(set, initialSnapshot));
-    PlaySongs(['d', 'e'], makeCallbackIfc(set, initialSnapshot));
+    PlaySongs(makeCallbackIfc(set, initialSnapshot), ['d', 'e']);
   });
   expect(nextSnapshot.getLoadable(songListAtom).valueOrThrow()).toStrictEqual([
     'd',

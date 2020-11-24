@@ -30,7 +30,7 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { StopAndClear } from '../../Recoil/api';
+import { savePlaylist, StopAndClear } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import {
   activePlaylistAtom,
@@ -46,7 +46,7 @@ import {
   curSongsSel,
   saveableSel,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesAtom, playlistsSel } from '../../Recoil/ReadWrite';
+import { ignoreArticlesAtom, playlistNamesSel } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
@@ -59,7 +59,7 @@ import './styles/NowPlaying.css';
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useRecoilValue(playlistsSel);
+  const playlists = useRecoilValue(playlistNamesSel);
   const nowPlaying = useRecoilValue(activePlaylistAtom);
   const songList = useRecoilValue(songListAtom);
   const saveEnabled = useRecoilValue(saveableSel);
@@ -67,15 +67,15 @@ function TopLine(): JSX.Element {
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useRecoilCallback(({ set }) => (inputName: string) => {
-    if (playlists.has(inputName)) {
-      window.alert("Sorry: You can't overwrite an existing playlist.");
-    } else {
-      const newPlaylist = playlists.set(inputName, [...songList]);
-      set(playlistsSel, new Map(newPlaylist));
-      set(activePlaylistAtom, inputName);
-    }
-  });
+  const saveListAs = useRecoilCallback(
+    (cbInterface) => async (inputName: string) => {
+      if (playlists.has(inputName)) {
+        window.alert("Sorry: You can't overwrite an existing playlist.");
+      } else {
+        await savePlaylist(inputName, [...songList], cbInterface);
+      }
+    },
+  );
   const stopAndClear = useRecoilCallback((cbInterface) => async () => {
     await StopAndClear(cbInterface);
   });
@@ -86,9 +86,8 @@ function TopLine(): JSX.Element {
       showConfirm();
     }
   });
-  const save = useRecoilCallback(({ set }) => () => {
-    playlists.set(nowPlaying, [...songList]);
-    set(playlistsSel, new Map(playlists));
+  const save = useRecoilCallback((cbInterface) => async () => {
+    await savePlaylist(nowPlaying, songList, cbInterface);
   });
 
   const emptyQueue = songList.length === 0;

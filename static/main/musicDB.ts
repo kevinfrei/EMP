@@ -6,7 +6,7 @@ import * as music from './MusicScanner';
 import * as persist from './persist';
 import { MakeSearchable } from './Search';
 
-const log = MakeLogger('musicDB', true);
+const log = MakeLogger('musicDB');
 const err = MakeError('musicDB-err');
 
 function getLocations(): string[] {

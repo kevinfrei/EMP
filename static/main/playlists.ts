@@ -1,21 +1,48 @@
-import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import {
+  Comparisons,
+  FTON,
+  MakeError,
+  MakeLogger,
+  Type,
+} from '@freik/core-utils';
 import { exception } from 'console';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
 
-const log = MakeLogger('playlists', true);
+const log = MakeLogger('playlists');
 const err = MakeError('playlists-err');
 
 function playlistDir(): string {
   return path.join(app.getPath('userData'), 'playlists');
 }
 
+// This spits out a string of hex numbers for each char with a '-' separator
+// That makes it safe for all OS'es and all characters
+function toFileSafe(file: string): string {
+  return [...file]
+    .map((chr: string) => chr.charCodeAt(0).toString(16))
+    .join('-');
+}
+
+// Undo toFileSafe...
+function fromFileSafe(safe: string): string {
+  return safe
+    .split('-')
+    .map((val: string) => String.fromCharCode(Number.parseInt(val, 16)))
+    .join('');
+}
+
+function playlistName(file: string): string {
+  return fromFileSafe(file);
+}
+
 function playlistPath(name: string): string {
-  return path.join(playlistDir(), name);
+  return path.join(playlistDir(), toFileSafe(name));
 }
 
 export async function renamePlaylist(data?: string): Promise<void> {
+  log('renamePlaylist');
   try {
     const obj = FTON.parse(data || '');
     if (
@@ -38,6 +65,7 @@ export async function renamePlaylist(data?: string): Promise<void> {
 }
 
 export async function deletePlaylist(data?: string): Promise<void> {
+  log('deletePlaylist');
   try {
     if (!data) throw exception('no data');
     await fsp.unlink(playlistPath(data));
@@ -51,9 +79,12 @@ export async function deletePlaylist(data?: string): Promise<void> {
 }
 
 export async function getPlaylists(data?: string): Promise<string[]> {
+  log('getPlaylists');
   try {
     const res = await fsp.readdir(playlistDir());
-    return res;
+    log('Playlists:');
+    log(res);
+    return res.map(playlistName);
   } catch (e) {
     err('Error while reading playlists:');
     err(e);
@@ -62,6 +93,7 @@ export async function getPlaylists(data?: string): Promise<string[]> {
 }
 
 export async function savePlaylist(data?: string): Promise<void> {
+  log('savePlaylist');
   try {
     if (!data) throw exception('No data!');
     const info = FTON.parse(data);
@@ -90,6 +122,7 @@ export async function savePlaylist(data?: string): Promise<void> {
 }
 
 export async function loadPlaylist(data?: string): Promise<string[]> {
+  log('loadPlaylist');
   try {
     if (!data) throw exception('No data!');
     if (!Type.isString(data)) {
@@ -106,4 +139,21 @@ export async function loadPlaylist(data?: string): Promise<string[]> {
     err(e);
   }
   return [];
+}
+
+export async function checkPlaylists(data?: string): Promise<void> {
+  log('checkPlaylists');
+  if (data) {
+    const names = FTON.parse(data);
+    if (Type.isArrayOf(names, Type.isString)) {
+      if (Comparisons.ArraySetEqual<string>(names, await getPlaylists())) {
+        log("They're equal");
+      } else {
+        err('NOT equal :/');
+      }
+      return;
+    }
+  }
+  err('checkPlaylists error:');
+  err(data);
 }

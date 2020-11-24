@@ -93,8 +93,9 @@ export function AddSongs(
  * @returns void
  */
 export function PlaySongs(
-  listToPlay: Iterable<SongKey>,
   { set }: CallbackInterface,
+  listToPlay: Iterable<SongKey>,
+  playlistName?: PlaylistName,
 ): void {
   let index = -1;
   for (const sk of listToPlay) {
@@ -102,6 +103,9 @@ export function PlaySongs(
       index = 0;
       break;
     }
+  }
+  if (playlistName) {
+    set(activePlaylistAtom, playlistName);
   }
   set(songListAtom, [...listToPlay]);
   set(currentIndexAtom, index);
@@ -196,4 +200,5 @@ export async function savePlaylist(
   curNames.add(name);
   await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
   set(playlistNamesSel, new Set<PlaylistName>(curNames));
+  set(playlistSel(name), songs);
 }
