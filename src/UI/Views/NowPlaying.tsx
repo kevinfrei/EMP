@@ -1,7 +1,6 @@
 import {
   DefaultButton,
   DetailsList,
-  getTheme,
   IconButton,
   IDetailsHeaderProps,
   ISeparatorStyles,
@@ -57,8 +56,6 @@ import {
   MakeColumns,
 } from '../SongList';
 import './styles/NowPlaying.css';
-
-const theme = getTheme();
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {

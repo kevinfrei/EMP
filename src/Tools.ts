@@ -141,7 +141,7 @@ export function fractionalSecondsStrToHMS(vals: string): string {
   suffix = suffix.replace(/0+$/g, '');
   suffix = suffix.length === 1 ? '' : suffix.substr(0, 3);
   const val = parseInt(vals, 10);
-  return secondsToTime(val);
+  return secondsToTime(val) + suffix;
 }
 
 export function divGrand(val: string): string {
