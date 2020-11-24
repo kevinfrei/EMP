@@ -4,9 +4,10 @@ import {
   IColumn,
   IDetailsGroupRenderProps,
   IDetailsHeaderProps,
-  IDetailsListProps,
+  IDetailsRowProps,
   IDetailsRowStyles,
   IGroup,
+  IRenderFunction,
   Sticky,
   StickyPositionType,
   TooltipHost,
@@ -97,17 +98,22 @@ export function MakeColumns(
 
 const theme = getTheme();
 
-export const renderAltRow: IDetailsListProps['onRenderRow'] = (props) => {
-  const customStyles: Partial<IDetailsRowStyles> = {};
-  if (props) {
-    if (props.itemIndex % 2 === 0) {
-      // Every other row renders with a different background color
-      customStyles.root = { backgroundColor: theme.palette.themeLighterAlt };
-    }
+// This does the light/dark swapping, with the current song in bold
+export function altRowRenderer(
+  isBold?: (props: IDetailsRowProps) => boolean,
+): IRenderFunction<IDetailsRowProps> {
+  return (props) => {
+    if (!props) return null;
+    const customStyles: Partial<IDetailsRowStyles> = {
+      root: {
+        backgroundColor:
+          props.itemIndex % 2 === 0 ? theme.palette.themeLighterAlt : '',
+        fontWeight: isBold && isBold(props) ? 'bold' : 'normal',
+      },
+    };
     return <DetailsRow {...props} styles={customStyles} />;
-  }
-  return null;
-};
+  };
+}
 
 /**
  * @function NewSortOrder

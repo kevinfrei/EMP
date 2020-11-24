@@ -95,7 +95,6 @@ export function MetadataEditor(props: {
       />
       <TextField
         label="Artist"
-        defaultValue={props.artist || ''}
         value={val(artist, props.artist)}
         onChange={(e, nv) => nv && setArtist(nv)}
       />

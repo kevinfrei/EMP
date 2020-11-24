@@ -1,13 +1,8 @@
 import {
   ContextualMenu,
   DetailsList,
-  DetailsRow,
-  getTheme,
   IColumn,
   IconButton,
-  IDetailsRowProps,
-  IDetailsRowStyles,
-  IRenderFunction,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -21,25 +16,12 @@ import { useDialogState } from '../../Recoil/helpers';
 import { activePlaylistAtom, PlaylistName } from '../../Recoil/Local';
 import { playlistsSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import { StickyRenderDetailsHeader } from '../SongList';
+import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
 import './styles/Playlists.css';
 
 const log = MakeLogger('Playlists', true);
 
 type ItemType = [PlaylistName, SongKey[]];
-
-const theme = getTheme();
-
-const renderRow: IRenderFunction<IDetailsRowProps> = (props) => {
-  const customStyle: Partial<IDetailsRowStyles> = {};
-  if (props) {
-    if (props.itemIndex % 2 === 0) {
-      customStyle.root = { backgroundColor: theme.palette.themeLighterAlt };
-    }
-    return <DetailsRow {...props} styles={customStyle} />;
-  }
-  return null;
-};
 
 export default function PlaylistView(): JSX.Element {
   const [playlists, setPlaylists] = useRecoilState(playlistsSel);
@@ -142,7 +124,7 @@ export default function PlaylistView(): JSX.Element {
           items={items}
           selectionMode={SelectionMode.none}
           columns={columns}
-          onRenderRow={renderRow}
+          onRenderRow={altRowRenderer()}
           compact={true}
           onItemInvoked={onPlaylistInvoked}
           onRenderDetailsHeader={StickyRenderDetailsHeader}

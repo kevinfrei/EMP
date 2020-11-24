@@ -30,7 +30,11 @@ import {
   searchSel,
   searchTermAtom,
 } from '../../Recoil/ReadOnly';
-import { MakeColumns, StickyRenderDetailsHeader } from '../SongList';
+import {
+  altRowRenderer,
+  MakeColumns,
+  StickyRenderDetailsHeader,
+} from '../SongList';
 import './styles/SearchResults.css';
 
 // const log = MakeLogger('SearchResults', true);
@@ -295,7 +299,8 @@ export default function SearchResultsView(): JSX.Element {
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
-          compact={true}
+          compact
+          onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={resultEntries}
           columns={columns}

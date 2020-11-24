@@ -24,9 +24,9 @@ import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
 import { SortSongs } from '../../Tools';
 import {
   AlbumFromSong,
+  altRowRenderer,
   ArtistsFromSong,
   MakeColumns,
-  renderAltRow,
   StickyRenderDetailsHeader,
 } from '../SongList';
 import './styles/MixedSongs.css';
@@ -73,7 +73,7 @@ export default function MixedSongsList(): JSX.Element {
           columns={columns}
           compact={true}
           selectionMode={SelectionMode.none}
-          onRenderRow={renderAltRow}
+          onRenderRow={altRowRenderer()}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={onAddSongClick}

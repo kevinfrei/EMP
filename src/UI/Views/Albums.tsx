@@ -31,6 +31,7 @@ import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
 import { SortSongs } from '../../Tools';
 import {
   AlbumFromSong,
+  altRowRenderer,
   ArtistsFromSong,
   GetSongGroupData,
   StickyRenderDetailsHeader,
@@ -145,6 +146,8 @@ export default function AlbumList(): JSX.Element {
           selectionMode={SelectionMode.none}
           groups={groups}
           columns={columns}
+          compact
+          onRenderRow={altRowRenderer()}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={onAddSongClick}

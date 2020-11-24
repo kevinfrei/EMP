@@ -1,12 +1,9 @@
 import {
   DefaultButton,
   DetailsList,
-  DetailsRow,
   getTheme,
   IconButton,
   IDetailsHeaderProps,
-  IDetailsListProps,
-  IDetailsRowStyles,
   ISeparatorStyles,
   IStackItemStyles,
   ScrollablePane,
@@ -53,7 +50,12 @@ import {
 import { ignoreArticlesAtom, playlistsSel } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import { AlbumFromSong, ArtistsFromSong, MakeColumns } from '../SongList';
+import {
+  AlbumFromSong,
+  altRowRenderer,
+  ArtistsFromSong,
+  MakeColumns,
+} from '../SongList';
 import './styles/NowPlaying.css';
 
 const theme = getTheme();
@@ -238,24 +240,6 @@ export default function NowPlaying(): JSX.Element {
     performSort,
   );
 
-  // This does the light/dark swapping, with the current song in bold
-  const renderAltRow: IDetailsListProps['onRenderRow'] = (props) => {
-    const customStyles: Partial<IDetailsRowStyles> = {};
-    if (props) {
-      let backgroundColor = '';
-      let fontWeight = 'normal';
-      if (props.itemIndex === curIndex) {
-        fontWeight = 'bold';
-      }
-      if (props.itemIndex % 2 === 0) {
-        backgroundColor = theme.palette.themeLighterAlt;
-      }
-      customStyles.root = { backgroundColor, fontWeight };
-      return <DetailsRow {...props} styles={customStyles} />;
-    }
-    return null;
-  };
-
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
@@ -263,7 +247,7 @@ export default function NowPlaying(): JSX.Element {
           compact={true}
           items={curSongs}
           selectionMode={SelectionMode.none}
-          onRenderRow={renderAltRow}
+          onRenderRow={altRowRenderer((props) => props.itemIndex === curIndex)}
           columns={columns}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}

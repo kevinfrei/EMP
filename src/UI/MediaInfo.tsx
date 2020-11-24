@@ -17,6 +17,7 @@ import {
 } from '../Recoil/ReadOnly';
 import { divGrand, fractionalSecondsStrToHMS } from '../Tools';
 import { MetadataEditor } from './MetadataEditor';
+import { altRowRenderer } from './SongList';
 import { Expandable } from './Utilities';
 
 const fileTypeMap = new Map([
@@ -118,6 +119,7 @@ export default function MediaInfoTable({
           selectionMode={SelectionMode.none}
           columns={columns}
           compact
+          onRenderRow={altRowRenderer()}
         />
       </Expandable>
     </Stack>

@@ -39,6 +39,7 @@ import {
 import { SortSongs } from '../../Tools';
 import {
   AlbumFromSong,
+  altRowRenderer,
   ArtistName,
   GetSongGroupData,
   StickyRenderDetailsHeader,
@@ -233,7 +234,8 @@ export default function ArtistList(): JSX.Element {
     <div className="artistView" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
-          compact={true}
+          compact
+          onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={sortedSongs}
           groups={artistGroups}

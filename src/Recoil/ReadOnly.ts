@@ -229,7 +229,7 @@ export const searchSel = selectorFamily<ipc.SearchResults, string>({
       log('results:');
       log(res);
     } else {
-      err('no results');
+      log('no results');
     }
     return res || { songs: [], albums: [], artists: [] };
   },
