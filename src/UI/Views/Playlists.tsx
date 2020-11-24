@@ -10,11 +10,16 @@ import {
 import { MakeLogger, Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
-import { useRecoilCallback, useRecoilState } from 'recoil';
-import { AddSongs, PlaySongs } from '../../Recoil/api';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import {
+  AddSongs,
+  deletePlaylist,
+  PlaySongs,
+  renamePlaylist,
+} from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
-import { activePlaylistAtom, PlaylistName } from '../../Recoil/Local';
-import { playlistsSel } from '../../Recoil/ReadWrite';
+import { PlaylistName } from '../../Recoil/Local';
+import { playlistNamesSel, playlistSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
 import './styles/Playlists.css';
@@ -24,7 +29,7 @@ const log = MakeLogger('Playlists', true);
 type ItemType = [PlaylistName, SongKey[]];
 
 export default function PlaylistView(): JSX.Element {
-  const [playlists, setPlaylists] = useRecoilState(playlistsSel);
+  const playlistNames = useRecoilValue(playlistNamesSel);
   const [selected, setSelected] = useState('');
   const [showDelete, deleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
@@ -34,40 +39,33 @@ export default function PlaylistView(): JSX.Element {
     EventTarget | Event | null
   >(null);
 
-  const onQueuePlaylist = useRecoilCallback((cbInterface) => () => {
-    const songs = playlists.get(contextPlaylist);
-    if (songs) {
-      log('songs:' + songs.length.toString());
-      AddSongs(songs, cbInterface);
-    } else {
-      log('No songs :( ');
-    }
+  const onQueuePlaylist = useRecoilCallback((cbInterface) => async () => {
+    const songs = await cbInterface.snapshot.getPromise(
+      playlistSel(contextPlaylist),
+    );
+    log('songs:' + songs.length.toString());
+    AddSongs(songs, cbInterface);
   });
 
   const onPlaylistInvoked = useRecoilCallback(
-    (cbInterface) => ([playlistName, keys]: ItemType) => {
-      cbInterface.set(activePlaylistAtom, playlistName);
-      PlaySongs(keys, cbInterface);
+    (cbInterface) => async (playlistName: PlaylistName) => {
+      const songs = await cbInterface.snapshot.getPromise(
+        playlistSel(contextPlaylist),
+      );
+      log('songs:' + songs.length.toString());
+      PlaySongs(songs, cbInterface);
     },
   );
-  const deletePlaylist = () => {
-    if (playlists.delete(selected)) {
-      setPlaylists(new Map(playlists));
-    }
-    setSelected('');
-  };
-  const renamePlaylist = (newname: string) => {
-    if (playlists.has(newname)) {
-      // Don't allow renaming to overwrite the old value
-      window.alert("Sorry: You can't rename to an existing playlist.");
-    } else {
-      const curVal = playlists.get(contextPlaylist);
-      if (!curVal) return;
-      playlists.delete(contextPlaylist);
-      playlists.set(newname, curVal);
-      setPlaylists(new Map(playlists));
-    }
-  };
+
+  const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
+    await deletePlaylist(selected, cbInterface);
+  });
+
+  const renameConfirmed = useRecoilCallback(
+    (cbInterface) => async (newName: string) => {
+      await renamePlaylist(contextPlaylist, newName, cbInterface);
+    },
+  );
 
   const columns: IColumn[] = [
     {
@@ -99,13 +97,13 @@ export default function PlaylistView(): JSX.Element {
       onRender: (item: ItemType) => item[1].length,
     },
   ];
-  const items = [...playlists.entries()];
+  const items = [...playlistNames];
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <ConfirmationDialog
           data={deleteData}
-          confirmFunc={deletePlaylist}
+          confirmFunc={deleteConfirmed}
           title="Are you sure?"
           text={`Do you really want to delete the playlist ${selected}?`}
           yesText="Delete"
@@ -113,7 +111,7 @@ export default function PlaylistView(): JSX.Element {
         />
         <TextInputDialog
           data={renameData}
-          onConfirm={renamePlaylist}
+          onConfirm={renameConfirmed}
           title={`Rename ${contextPlaylist}...`}
           text="What would you like the playlist to be renamed to?"
           initialValue={contextPlaylist}

@@ -1,5 +1,7 @@
-import { SongKey } from '@freik/media-utils';
+import { FTON } from '@freik/core-utils';
+import { PlaylistName, SongKey } from '@freik/media-utils';
 import { CallbackInterface } from 'recoil';
+import { InvokeMain } from '../MyWindow';
 import { ShuffleArray } from '../Tools';
 import {
   activePlaylistAtom,
@@ -11,6 +13,7 @@ import {
   songListAtom,
   stillPlayingAtom,
 } from './Local';
+import { playlistNamesSel, playlistSel } from './ReadWrite';
 
 /**
  * Try to play the next song in the playlist
@@ -148,4 +151,49 @@ export async function ShufflePlaying({
     set(songListAtom, newSongs);
     set(currentIndexAtom, 0);
   }
+}
+
+/**
+ * Rename a playlist (make sure you've got the name right)
+ **/
+export async function renamePlaylist(
+  curName: PlaylistName,
+  newName: PlaylistName,
+  { reset, set, snapshot }: CallbackInterface,
+): Promise<void> {
+  const curNames = await snapshot.getPromise(playlistNamesSel);
+  const curSongs = await snapshot.getPromise(playlistSel(curName));
+  curNames.delete(curName);
+  curNames.add(newName);
+  await InvokeMain('rename-playlist', FTON.stringify({ curName, newName }));
+  set(playlistNamesSel, new Set(curNames));
+  reset(playlistSel(curName));
+  set(playlistSel(newName), curSongs);
+}
+
+/**
+ * Delete a playlist (make sure you've got the name right)
+ **/
+export async function deletePlaylist(
+  toDelete: PlaylistName,
+  { set, snapshot }: CallbackInterface,
+): Promise<void> {
+  const curNames = await snapshot.getPromise(playlistNamesSel);
+  curNames.delete(toDelete);
+  await InvokeMain('delete-playlist', toDelete);
+  set(playlistNamesSel, new Set(curNames));
+}
+
+/**
+ * Save a playlist (make sure you've got the name right)
+ **/
+export async function savePlaylist(
+  name: PlaylistName,
+  songs: SongKey[],
+  { set, snapshot }: CallbackInterface,
+): Promise<void> {
+  const curNames = await snapshot.getPromise(playlistNamesSel);
+  curNames.add(name);
+  await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
+  set(playlistNamesSel, new Set<PlaylistName>(curNames));
 }

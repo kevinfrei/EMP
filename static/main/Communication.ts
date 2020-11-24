@@ -10,6 +10,13 @@ import {
 } from './MusicAccess';
 import { RescanDB } from './musicDB';
 import * as persist from './persist';
+import {
+  deletePlaylist,
+  getPlaylists,
+  loadPlaylist,
+  renamePlaylist,
+  savePlaylist,
+} from './playlists';
 import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
@@ -142,10 +149,18 @@ export function asyncSend(message: FTONData): void {
  * Setup any async listeners, plus register all the "invoke" handlers
  */
 export function CommsSetup(): void {
+  // "complex" API's (not just save/restore data to the persist cache)
   registerFlattened('get-media-info', getMediaInfoForSong);
   registerFlattened('search', searchWholeWord);
   registerFlattened('subsearch', searchSubstring);
   registerFlattened('show-file', showFile);
+  registerFlattened('rename-playlist', renamePlaylist);
+  registerFlattened('delete-playlist', deletePlaylist);
+  registerFlattened('get-playlists', getPlaylists);
+  registerFlattened('save-playlist', savePlaylist);
+  registerFlattened('load-playlist', loadPlaylist);
+
+  // Some "do something, please" API's
   register('update-metadata', setMediaInfoForSong);
   register('manual-rescan', RescanDB);
   register('flush-image-cache', FlushImageCache);

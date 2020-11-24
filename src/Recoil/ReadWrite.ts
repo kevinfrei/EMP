@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { FTON, Type } from '@freik/core-utils';
 import { PlaylistName, SongKey } from '@freik/media-utils';
-import { atom, selector } from 'recoil';
+import { atom, selector, selectorFamily } from 'recoil';
+import { InvokeMain } from '../MyWindow';
 import { syncWithMainEffect } from './helpers';
 import { songListAtom } from './Local';
 
@@ -140,5 +142,45 @@ export const playlistsSel = selector<Map<PlaylistName, SongKey[]>>({
     */
     set(playlistsAtom, newVal);
     // }
+  },
+});
+
+export const playlistNamesSel = selector<Set<PlaylistName>>({
+  key: 'PlaylistNames',
+  get: async ({ get }) => {
+    const playlistsString = await InvokeMain('get-playlists');
+    if (!playlistsString) {
+      return new Set();
+    }
+    const parsed = FTON.parse(playlistsString);
+    const strs = FTON.arrayOfStrings(parsed);
+    return new Set(strs || []);
+  },
+  set: async ({ set }, newValue) => {
+    await InvokeMain(
+      'set-playlists',
+      FTON.stringify(
+        Type.isSetOf(newValue, Type.isString) ? [...newValue.values()] : [],
+      ),
+    );
+  },
+});
+
+export const playlistSel = selectorFamily<SongKey[], PlaylistName>({
+  key: 'PlaylistContents',
+  get: (arg: PlaylistName) => async ({ get }) => {
+    const listStr = await InvokeMain('load-playlist', arg);
+    if (!listStr) {
+      return [];
+    }
+    const parse = FTON.parse(listStr);
+    return Type.isArrayOf(parse, Type.isString) ? parse : [];
+  },
+  set: (name: PlaylistName) => async ({ set, get }, newValue) => {
+    const arg = { name, songs: Type.isArray(newValue) ? newValue : [] };
+    await InvokeMain('save-playlist', FTON.stringify(arg));
+    const names = get(playlistNamesSel);
+    names.add(name);
+    set(playlistNamesSel, new Set(names));
   },
 });
