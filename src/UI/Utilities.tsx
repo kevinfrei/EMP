@@ -14,7 +14,7 @@ import {
   Toggle,
 } from '@fluentui/react';
 import { FTONData, MakeError, Type } from '@freik/core-utils';
-import React, { Suspense, useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { Suspense, useEffect, useState } from 'react';
 import { Subscribe, Unsubscribe } from '../ipc';
 import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
@@ -24,8 +24,8 @@ const err = MakeError('Utilities-err');
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {
   const [mainStatus, setMainStatus] = useState('');
-  React.useEffect(InitialWireUp);
-  React.useEffect(() => {
+  useEffect(InitialWireUp);
+  useEffect(() => {
     const key = Subscribe('main-process-status', (val: FTONData) => {
       if (Type.isString(val)) {
         setMainStatus(val);

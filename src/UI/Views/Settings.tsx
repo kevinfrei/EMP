@@ -7,7 +7,6 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';

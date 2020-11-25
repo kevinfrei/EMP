@@ -12,8 +12,8 @@ I'm working on. When that computer was a Windows PC, the incredibly ancient
 Windows Media Player would play Flac, as would "Groove Music" I imagine (and
 anything else probably, because of the pluggable (and highly overarchitected)
 nature of audio/video handling in Windows). But I'm on a Mac on a regular basis
-these days and Vox is **awful** (I'm not paying a monthly fee for the privilege
-of listening to the music I've already purchased, thanks very much) and VLC is a
+these days. Vox is **awful** (I'm not paying a monthly fee for the privilege of
+listening to the music I've already purchased, thanks very much) and VLC is a
 bad music player (a great video player, but not great for music, IMO)
 
 What's it look like? Kind of like iTunes' ugly stepsister (#notadesigner!), but

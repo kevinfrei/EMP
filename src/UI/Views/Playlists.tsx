@@ -8,7 +8,7 @@ import {
   SelectionMode,
 } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
   AddSongs,

@@ -11,7 +11,7 @@ import {
   Text,
 } from '@fluentui/react';
 import { Album, AlbumKey, Song } from '@freik/media-utils';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useState } from 'react';
 import {
   atom,
   selector,

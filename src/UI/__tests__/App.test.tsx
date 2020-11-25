@@ -1,5 +1,5 @@
 import { initializeIcons } from '@uifabric/icons';
-import React from 'react';
+import { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { RecoilRoot } from 'recoil';
@@ -11,9 +11,9 @@ it('Render Settings without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
     <RecoilRoot>
-      <React.Suspense fallback="">
+      <Suspense fallback="">
         <Settings />
-      </React.Suspense>
+      </Suspense>
     </RecoilRoot>,
     div,
   );
@@ -26,9 +26,9 @@ it('Render SearchResults without crashing', () => {
   act(() => {
     ReactDOM.render(
       <RecoilRoot>
-        <React.Suspense fallback="">
+        <Suspense fallback="">
           <SearchResultsView />
-        </React.Suspense>
+        </Suspense>
       </RecoilRoot>,
       div,
     );

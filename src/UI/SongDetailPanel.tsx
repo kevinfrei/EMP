@@ -1,5 +1,4 @@
 import { Panel, PanelType } from '@fluentui/react';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilState } from 'recoil';
 import { songDetailAtom } from '../Recoil/Local';
 import MediaInfoTable from './MediaInfo';

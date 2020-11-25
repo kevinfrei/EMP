@@ -1,6 +1,6 @@
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useEffect } from 'react';
 import { RecoilRoot } from 'recoil';
-import Sidebar from './Sidebar';
+import Sidebar, { isSearchBox } from './Sidebar';
 import SongControls from './SongControls';
 import SongDetailPanel from './SongDetailPanel';
 import SongPlayback from './SongPlayback';
@@ -9,7 +9,23 @@ import Utilities, { Spin } from './Utilities';
 import ViewSelector from './Views/Selector';
 import VolumeControl from './VolumeControl';
 
+function listener(ev: KeyboardEvent) {
+  // eslint-disable no-console
+  if (!isSearchBox(ev.target)) {
+    // TODO: Filter the current view by this string!
+    // console.log(ev.code);
+    // escape should clear the filter string
+    // With some timeout, we string them together into a search string
+  }
+}
+
 export default function App(): JSX.Element {
+  useEffect(() => {
+    window.addEventListener('keypress', listener);
+    return () => {
+      window.removeEventListener('keypress', listener);
+    };
+  });
   return (
     <RecoilRoot>
       <Utilities />

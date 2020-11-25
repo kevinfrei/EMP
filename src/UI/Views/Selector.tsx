@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { CSSProperties } from 'react';
 import { useRecoilValue } from 'recoil';
 import { CurrentView, curViewAtom } from '../../Recoil/ReadWrite';
 import AlbumView from './Albums';

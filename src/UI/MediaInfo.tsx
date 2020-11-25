@@ -6,7 +6,6 @@ import {
   TextField,
 } from '@fluentui/react';
 import { SongKey } from '@freik/media-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import {

@@ -1,7 +1,7 @@
 import { Checkbox, PrimaryButton, Stack, TextField } from '@fluentui/react';
 import { MakeLogger, Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-utils';
-import React, { useEffect, useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useEffect, useState } from 'react';
 
 const log = MakeLogger('MetadataEditor', true);
 

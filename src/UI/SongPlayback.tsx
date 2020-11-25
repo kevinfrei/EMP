@@ -1,6 +1,6 @@
 import { Slider, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
@@ -151,7 +151,7 @@ export default function SongPlayback(): JSX.Element {
     set(playingAtom, isPlaying);
   });
   const onTimeUpdate = useRecoilCallback(
-    ({ set }) => (ev: React.SyntheticEvent<HTMLMediaElement>) => {
+    ({ set }) => (ev: SyntheticEvent<HTMLMediaElement>) => {
       const ae = ev.currentTarget;
       // eslint-disable-next-line id-blacklist
       if (!Number.isNaN(ae.duration)) {

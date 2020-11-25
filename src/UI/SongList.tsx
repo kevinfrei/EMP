@@ -13,7 +13,6 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
 

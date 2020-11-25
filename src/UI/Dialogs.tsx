@@ -6,7 +6,7 @@ import {
   Text,
   TextField,
 } from '@fluentui/react';
-import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useState } from 'react';
 import { DialogData } from '../Recoil/helpers';
 
 export type TextInputDialogProps = {

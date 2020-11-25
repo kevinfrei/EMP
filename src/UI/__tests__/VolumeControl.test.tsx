@@ -1,5 +1,5 @@
 import { initializeIcons } from '@uifabric/icons';
-import React from 'react';
+import { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import VolumeControl from '../VolumeControl';
@@ -9,9 +9,9 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
     <RecoilRoot>
-      <React.Suspense fallback="">
+      <Suspense fallback="">
         <VolumeControl />
-      </React.Suspense>
+      </Suspense>
     </RecoilRoot>,
     div,
   );

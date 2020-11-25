@@ -1,5 +1,5 @@
 import { SearchBox, Text } from '@fluentui/react';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { searchTermAtom } from '../Recoil/ReadOnly';
 import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
@@ -39,7 +39,7 @@ function getEntry(
       className={`sidebar-container${extra}`}
       onClick={() => setCurView(view.name)}
     >
-      <span className="sidebar-icon" id={view.title.replaceAll(' ', '-')}>
+      <span className="sidebar-icon" id={(view.title || '').replace(/ /g, '-')}>
         &nbsp;
       </span>
       <Text variant="mediumPlus" className={`sidebar-text${extra}`}>
@@ -47,6 +47,24 @@ function getEntry(
       </Text>
     </div>
   );
+}
+
+// This is used to prevent responding to global keypresses when the input box
+// is active
+export function isSearchBox(target: EventTarget | null): boolean {
+  if (
+    target !== null &&
+    Type.hasStr(target, 'type') &&
+    Type.hasStr(target, 'tagName') &&
+    Type.hasStr(target, 'placeholder')
+  ) {
+    return (
+      target.type === 'text' &&
+      target.tagName === 'INPUT' &&
+      target.placeholder === 'Search'
+    );
+  }
+  return false;
 }
 
 export default function Sidebar(): JSX.Element {

@@ -23,7 +23,6 @@ import {
   Song,
   SongKey,
 } from '@freik/media-utils';
-import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   useRecoilCallback,
   useRecoilState,
