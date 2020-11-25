@@ -15,7 +15,8 @@
     "yarn*.l*": true,
     "LICENSE.md": true,
     "*.tsbuildinfo": true,
-    ".gitmodules": true
+    ".gitmodules": true,
+    ".eslintcache": true
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "editor.codeActionsOnSave": {

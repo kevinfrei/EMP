@@ -25,12 +25,41 @@ hr {
 }
 
 .sidebar-icon {
-  border: solid 3px rgba(200, 200, 200, 0);
-  border-radius: 3px;
   grid-column: 1;
-  height: 16px;
-  width: 16px;
-  margin: 4px;
+  height: 18px;
+  width: 18px;
+  margin-top: 6px;
+  margin-left: 4px;
+}
+
+#Settings {
+  background: url('../img/settings.svg');
+  background-size: cover;
+}
+
+#Now-Playing {
+  background: url('../img/playing.svg');
+  background-size: cover;
+}
+
+#Albums {
+  background: url('../img/album.svg');
+  background-size: cover;
+}
+
+#Artists {
+  background: url('../img/artist.svg');
+  background-size: cover;
+}
+
+#All-Songs {
+  background: url('../img/song.svg');
+  background-size: cover;
+}
+
+#Playlists {
+  background: url('../img/playlist.svg');
+  background-size: cover;
 }
 
 .sidebar-text {

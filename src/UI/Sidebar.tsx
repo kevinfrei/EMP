@@ -3,32 +3,24 @@ import React from 'react'; // eslint-disable-line @typescript-eslint/no-use-befo
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { searchTermAtom } from '../Recoil/ReadOnly';
 import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
-import albumPic from './img/album.svg';
-import artistPic from './img/artist.svg';
-import nowPlayingPic from './img/playing.svg';
-import playlistPic from './img/playlist.svg';
-import settingsPic from './img/settings.svg';
-import songPic from './img/song.svg';
-// import recentPic from './img/recent.svg';
 import './styles/Sidebar.css';
 
-type ViewEntry = { name: CurrentView; pic: string; title: string };
-const mkEntry = (name: CurrentView, title: string, pic: string) => ({
+type ViewEntry = { name: CurrentView; title: string };
+const mkEntry = (name: CurrentView, title: string) => ({
   name,
-  pic,
   title,
 });
 
 const views: (ViewEntry | null)[] = [
-  // mkEntry('recent', 'Recently Added', recentPic),
-  mkEntry(CurrentView.current, 'Now Playing', nowPlayingPic),
+  // mkEntry('recent', 'Recently Added', ),
+  mkEntry(CurrentView.current, 'Now Playing'),
   null,
-  mkEntry(CurrentView.album, 'Albums', albumPic),
-  mkEntry(CurrentView.artist, 'Artists', artistPic),
-  mkEntry(CurrentView.song, 'All Songs', songPic),
-  mkEntry(CurrentView.playlist, 'Playlists', playlistPic),
+  mkEntry(CurrentView.album, 'Albums'),
+  mkEntry(CurrentView.artist, 'Artists'),
+  mkEntry(CurrentView.song, 'All Songs'),
+  mkEntry(CurrentView.playlist, 'Playlists'),
   null,
-  mkEntry(CurrentView.settings, 'Settings', settingsPic),
+  mkEntry(CurrentView.settings, 'Settings'),
 ];
 
 function getEntry(
@@ -47,7 +39,9 @@ function getEntry(
       className={`sidebar-container${extra}`}
       onClick={() => setCurView(view.name)}
     >
-      <img src={view.pic} className="sidebar-icon" alt={view.title}></img>
+      <span className="sidebar-icon" id={view.title.replaceAll(' ', '-')}>
+        &nbsp;
+      </span>
       <Text variant="mediumPlus" className={`sidebar-text${extra}`}>
         {view.title}
       </Text>
