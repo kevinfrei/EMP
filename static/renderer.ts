@@ -4,8 +4,7 @@
 
 import { MakeError } from '@freik/core-utils';
 import { IpcRenderer, ipcRenderer, remote } from 'electron';
-
-const isDev = true; // require('electron-is-dev');
+import isDev from 'electron-is-dev';
 
 const err = MakeError('renderer-err');
 

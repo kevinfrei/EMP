@@ -1,5 +1,6 @@
 import { MakeError } from '@freik/core-utils';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell } from 'electron';
+import isDev from 'electron-is-dev';
 import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
 import { OnWindowCreated } from './electronSetup';
@@ -13,8 +14,6 @@ import {
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)
 // which is the entire reason for this module's existence.
-
-const isDev = true; // require('electron-is-dev');
 
 const err = MakeError('window-err');
 
@@ -55,13 +54,15 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
     minWidth: 250,
     minHeight: 250,
   });
+
+  shell.showItemInFolder(__dirname);
   // Load the base URL
   mainWindow
     .loadURL(
       isDev
         ? 'http://localhost:3000'
         : // If this file moves, you have to fix this to make it work for release
-          `file://${path.join(__dirname, '../../build/index.html')}`,
+          `file://${path.join(__dirname, '../index.html')}`,
     )
     .catch(err);
 
