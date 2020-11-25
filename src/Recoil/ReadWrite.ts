@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { FTON, MakeLogger, Type } from '@freik/core-utils';
+import { FTON, Type } from '@freik/core-utils';
 import { PlaylistName, SongKey } from '@freik/media-utils';
-import { atom, selector, selectorFamily } from 'recoil';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import { syncWithMainEffect } from './helpers';
 
-const log = MakeLogger('ReadWrite', true);
+// const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
 
 // vvv That's a bug, pretty clearly :/
@@ -112,48 +112,64 @@ export const songListSortAtom = atom<string>({
   default: 'rl',
 });
 
+// Stuff for playlists
+
+const playlistNamesBacker = atom<string[] | false>({
+  key: 'playlistNames-backer',
+  default: false,
+});
+
 export const playlistNamesSel = selector<Set<PlaylistName>>({
   key: 'PlaylistNames',
   get: async ({ get }) => {
-    const playlistsString = await InvokeMain('get-playlists');
-    if (!playlistsString) {
-      return new Set();
+    const backed = get(playlistNamesBacker);
+    if (backed === false) {
+      const playlistsString = await InvokeMain('get-playlists');
+      if (!playlistsString) {
+        return new Set();
+      }
+      const parsed = FTON.parse(playlistsString);
+      const strs = FTON.arrayOfStrings(parsed);
+      return new Set(strs || []);
+    } else {
+      return new Set(backed);
     }
-    const parsed = FTON.parse(playlistsString);
-    const strs = FTON.arrayOfStrings(parsed);
-    return new Set(strs || []);
   },
   set: async ({ set }, newValue) => {
-    await InvokeMain(
-      'set-playlists',
-      FTON.stringify(
-        Type.isSetOf(newValue, Type.isString) ? [...newValue.values()] : [],
-      ),
-    );
+    const data = Type.isSetOf(newValue, Type.isString) ? [...newValue] : [];
+    set(playlistNamesBacker, data);
+    await InvokeMain('set-playlists', FTON.stringify(data));
   },
+});
+
+const playlistBackerFamily = atomFamily<SongKey[] | false, PlaylistName>({
+  key: 'playlistFamilyBacker',
+  default: false,
 });
 
 export const playlistSel = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
   get: (arg: PlaylistName) => async ({ get }) => {
-    log('PlaylistContents');
-    const listStr = await InvokeMain('load-playlist', arg);
-    log('PlaylistContents returned');
-    log(listStr);
-    if (!listStr) {
-      return [];
+    const backed = get(playlistBackerFamily(arg));
+    if (backed === false) {
+      const listStr = await InvokeMain('load-playlist', arg);
+      if (!listStr) {
+        return [];
+      }
+      const parse = FTON.parse(listStr);
+      return Type.isArrayOf(parse, Type.isString) ? parse : [];
+    } else {
+      return backed;
     }
-    log('Parsing');
-    const parse = FTON.parse(listStr);
-    log('Parsed:');
-    log(parse);
-    return Type.isArrayOf(parse, Type.isString) ? parse : [];
   },
   set: (name: PlaylistName) => async ({ set, get }, newValue) => {
-    const arg = { name, songs: Type.isArray(newValue) ? newValue : [] };
-    await InvokeMain('save-playlist', FTON.stringify(arg));
     const names = get(playlistNamesSel);
-    names.add(name);
-    set(playlistNamesSel, new Set(names));
+    if (!names.has(name)) {
+      names.add(name);
+      set(playlistNamesSel, new Set(names));
+    }
+    const songs = Type.isArray(newValue) ? newValue : [];
+    set(playlistBackerFamily(name), songs);
+    await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
   },
 });

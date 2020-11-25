@@ -100,8 +100,6 @@ albums, and artists are strict selectors from that atom.
 
 ### Bugs
 
-- Playlists do _not_ work right. Modifying on seems to modify more than just the
-  one you modify
 - Starting "clean" doesn't seem to be a very happy place. It requires a couple
   restarts to get it going. Fix that.
 - Clearing the queue restarts playback on the current song
@@ -136,7 +134,7 @@ albums, and artists are strict selectors from that atom.
 - **both** Add 'favorite/love' attribute for songs
 - **both** "Auto" playlists (something involving stuff like "this artist" and
   "not this keyword" kind of stuff.
-- **both** Import/Export M3U's?
+- **both** Import/Export M3U's (and other playlist formats one might care about)
 
 ### Logic improvements/changes
 

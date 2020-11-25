@@ -7,7 +7,7 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { MakeLogger, Type } from '@freik/core-utils';
+import { MakeLogger } from '@freik/core-utils';
 import React, { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
@@ -68,7 +68,7 @@ export default function PlaylistView(): JSX.Element {
 
   const renameConfirmed = useRecoilCallback(
     (cbInterface) => async (newName: string) => {
-      await renamePlaylist(contextPlaylist, newName, cbInterface);
+      await renamePlaylist(cbInterface, contextPlaylist, newName);
     },
   );
 
@@ -135,13 +135,9 @@ export default function PlaylistView(): JSX.Element {
           compact={true}
           onItemInvoked={onPlaylistInvoked}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={(
-            item?: [string, string[]],
-            index?: number,
-            ev?: Event,
-          ) => {
-            if (ev && Type.isArray(item)) {
-              setContextPlaylist(item[0]);
+          onItemContextMenu={(item?: ItemType, index?: number, ev?: Event) => {
+            if (ev && item) {
+              setContextPlaylist(item);
               setContextTarget(ev);
             }
             return false;
@@ -153,7 +149,7 @@ export default function PlaylistView(): JSX.Element {
           items={[
             {
               key: 'queue',
-              text: 'NYI: Add to Now Playing',
+              text: 'Add to Now Playing',
               onClick: onQueuePlaylist,
             },
             {

@@ -1,8 +1,8 @@
-import { FTON } from '@freik/core-utils';
+import { FTON, Type } from '@freik/core-utils';
 import { PlaylistName, SongKey } from '@freik/media-utils';
 import { CallbackInterface } from 'recoil';
 import { InvokeMain } from '../MyWindow';
-import { ShuffleArray } from '../Tools';
+import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   activePlaylistAtom,
   currentIndexAtom,
@@ -104,7 +104,7 @@ export function PlaySongs(
       break;
     }
   }
-  if (playlistName) {
+  if (isPlaylist(playlistName) && Type.isString(playlistName)) {
     set(activePlaylistAtom, playlistName);
   }
   set(songListAtom, [...listToPlay]);
@@ -161,18 +161,17 @@ export async function ShufflePlaying({
  * Rename a playlist (make sure you've got the name right)
  **/
 export async function renamePlaylist(
+  { reset, set, snapshot }: CallbackInterface,
   curName: PlaylistName,
   newName: PlaylistName,
-  { reset, set, snapshot }: CallbackInterface,
 ): Promise<void> {
   const curNames = await snapshot.getPromise(playlistNamesSel);
   const curSongs = await snapshot.getPromise(playlistSel(curName));
   curNames.delete(curName);
   curNames.add(newName);
   await InvokeMain('rename-playlist', FTON.stringify({ curName, newName }));
-  set(playlistNamesSel, new Set(curNames));
-  reset(playlistSel(curName));
   set(playlistSel(newName), curSongs);
+  set(playlistNamesSel, new Set(curNames));
 }
 
 /**
@@ -183,22 +182,11 @@ export async function deletePlaylist(
   { set, snapshot }: CallbackInterface,
 ): Promise<void> {
   const curNames = await snapshot.getPromise(playlistNamesSel);
+  const activePlaylist = await snapshot.getPromise(activePlaylistAtom);
   curNames.delete(toDelete);
   await InvokeMain('delete-playlist', toDelete);
   set(playlistNamesSel, new Set(curNames));
-}
-
-/**
- * Save a playlist (make sure you've got the name right)
- **/
-export async function savePlaylist(
-  name: PlaylistName,
-  songs: SongKey[],
-  { set, snapshot }: CallbackInterface,
-): Promise<void> {
-  const curNames = await snapshot.getPromise(playlistNamesSel);
-  curNames.add(name);
-  await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
-  set(playlistNamesSel, new Set<PlaylistName>(curNames));
-  set(playlistSel(name), songs);
+  if (activePlaylist === toDelete) {
+    set(activePlaylistAtom, '');
+  }
 }

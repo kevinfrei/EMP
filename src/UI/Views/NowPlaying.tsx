@@ -30,7 +30,7 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { savePlaylist, StopAndClear } from '../../Recoil/api';
+import { StopAndClear } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import {
   activePlaylistAtom,
@@ -46,7 +46,11 @@ import {
   curSongsSel,
   saveableSel,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesAtom, playlistNamesSel } from '../../Recoil/ReadWrite';
+import {
+  ignoreArticlesAtom,
+  playlistNamesSel,
+  playlistSel,
+} from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongs } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
@@ -67,15 +71,14 @@ function TopLine(): JSX.Element {
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useRecoilCallback(
-    (cbInterface) => async (inputName: string) => {
-      if (playlists.has(inputName)) {
-        window.alert("Sorry: You can't overwrite an existing playlist.");
-      } else {
-        await savePlaylist(inputName, [...songList], cbInterface);
-      }
-    },
-  );
+  const saveListAs = useRecoilCallback(({ set }) => (inputName: string) => {
+    if (playlists.has(inputName)) {
+      window.alert("Sorry: You can't overwrite an existing playlist.");
+    } else {
+      set(playlistSel(inputName), [...songList]);
+      set(activePlaylistAtom, inputName);
+    }
+  });
   const stopAndClear = useRecoilCallback((cbInterface) => async () => {
     await StopAndClear(cbInterface);
   });
@@ -86,8 +89,8 @@ function TopLine(): JSX.Element {
       showConfirm();
     }
   });
-  const save = useRecoilCallback((cbInterface) => async () => {
-    await savePlaylist(nowPlaying, songList, cbInterface);
+  const save = useRecoilCallback(({ set }) => () => {
+    set(playlistSel(nowPlaying), songList);
   });
 
   const emptyQueue = songList.length === 0;
