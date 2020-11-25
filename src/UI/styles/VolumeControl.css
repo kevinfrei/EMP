@@ -18,11 +18,13 @@
   margin-left: 2px;
 }
 
+.volIcon {
+  grid-column: 1;
+  grid-row: 1;
+}
+
 .mute {
   grid-column: 1;
   grid-row: 1;
-
-/*  height: 14px;
-  background: url('../img/mute.svg');
-  background-size: cover;*/
+  margin-left: -4px;
 }

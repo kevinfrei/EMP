@@ -16,12 +16,13 @@ export default function VolumeControl(): JSX.Element {
     ae.muted = muted;
     ae.volume = volume * volume; // Better resolution at the lower volume
   }
-
+  // Make the icon reflect approximate volume
+  const iconNum = Math.min(3, Math.floor(4 * (volume + 0.1))).toString();
   return (
     <Stack id="volume-container" horizontal>
       <IconButton
-        className="mute"
-        iconProps={{ iconName: muted ? 'Volume0' : 'Volume3' }}
+        className={muted ? 'mute' : 'volIcon'}
+        iconProps={{ iconName: muted ? 'VolumeDisabled' : `Volume${iconNum}` }}
         onClick={() => setMuted(!muted)}
         allowDisabledFocus={false}
       />
