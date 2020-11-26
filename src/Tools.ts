@@ -1,15 +1,13 @@
 // This is for getting at "global" stuff from the window object
 import { MakeLogger, Type } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
-import { DataForSongGetter, GetDataForSong, SongData } from './DataSchema';
+import { GetArtistStringFromKeys } from './DataSchema';
 
 const log = MakeLogger('Tools');
 
 /*
  * Sorting
  */
-
-export type Sorter = (a: string, b: string) => number;
 
 export function noArticles(phrase: string): string {
   const res = phrase.toLocaleUpperCase();
@@ -23,51 +21,105 @@ export function noArticles(phrase: string): string {
   return res;
 }
 
-const strCmp = (a: string, b: string): number =>
+const articlesCmp = (a: string, b: string): number =>
   a.toLocaleUpperCase().localeCompare(b.toLocaleUpperCase());
 
-const theCmp = (a: string, b: string): number =>
+const noArticlesCmp = (a: string, b: string): number =>
   noArticles(a).localeCompare(noArticles(b));
 
-function compareRecord(
-  comp: Sorter,
-  sort: string,
-  a: SongData,
-  b: SongData,
-): number {
-  let result = 0;
-  switch (sort.toLowerCase()) {
-    case 't':
-      result = comp(a.title, b.title);
-      break;
-    case 'n':
-      result = a.track - b.track;
-      break;
-    case 'l':
-      // For an album, it's title, year, key for ties
-      result = comp(a.album, b.album);
-      if (result === 0) {
-        result = a.year - b.year;
-        if (result === 0) {
-          result = a.albumKey.localeCompare(b.albumKey);
-        }
-      }
-      break;
-    case 'r':
-      result = comp(a.artist, b.artist);
-      break;
-  }
-  return sort === sort.toUpperCase() ? -result : result;
+export function SortItems<TItem>(
+  items: TItem[],
+  comparator: (a: TItem, b: TItem) => number,
+): TItem[] {
+  return [...items].sort(comparator);
 }
 
-function selectComparator(ignoreArticles: boolean, sortOrder: string) {
-  const stringCompare = ignoreArticles ? theCmp : strCmp;
-  return (a: SongData, b: SongData): number => {
-    for (const s of sortOrder) {
-      const res = compareRecord(stringCompare, s, a, b);
-      if (res !== 0) {
-        return res;
+export function MakeSongComparator(
+  albums: Map<AlbumKey, Album>,
+  artists: Map<ArtistKey, Artist>,
+  ignoreArticles: boolean,
+  sortOrder: string,
+  artistStringMaker?: (ar: ArtistKey[]) => string,
+): (a: Song, b: Song) => number {
+  const strComp = ignoreArticles ? noArticlesCmp : articlesCmp;
+  const getArtistString =
+    artistStringMaker ??
+    ((aks: ArtistKey[]) => GetArtistStringFromKeys(aks, artists));
+  return (a: Song, b: Song): number => {
+    for (const c of sortOrder) {
+      const inverse = c === c.toLocaleUpperCase();
+      let failReason = '';
+      switch (c.toLocaleUpperCase()) {
+        case 'L':
+          // Album title
+          const l1 = albums.get(a.albumId);
+          const l2 = albums.get(b.albumId);
+          if (!l1) {
+            failReason = 'Invalid album ID ' + a.albumId;
+          } else if (!l2) {
+            failReason = 'Invalid album ID ' + b.albumId;
+          } else {
+            const ld = strComp(l1.title, l2.title);
+            if (ld === 0) {
+              continue;
+            } else {
+              return inverse ? -ld : ld;
+            }
+          }
+          break;
+        case 'R':
+          const r1 = getArtistString(a.artistIds);
+          const r2 = getArtistString(b.artistIds);
+          if (r1.length === 0) {
+            failReason = `Invalid artist IDs [${a.artistIds.join(', ')}]`;
+          } else if (r2.length === 0) {
+            failReason = `Invalid artist IDs [${b.artistIds.join(', ')}]`;
+          } else {
+            const rd = strComp(r1, r2);
+            if (rd === 0) {
+              continue;
+            } else {
+              return inverse ? -rd : rd;
+            }
+          }
+          break;
+        case 'T':
+          // Track title
+          const td = strComp(a.title, b.title);
+          if (td === 0) {
+            continue;
+          } else {
+            return inverse ? -td : td;
+          }
+        case 'N':
+          // Track number
+          const nd = a.track - b.track;
+          if (nd === 0) {
+            continue;
+          } else {
+            return inverse ? -nd : nd;
+          }
+        case 'Y':
+          // Album year
+          const y1 = albums.get(a.albumId);
+          const y2 = albums.get(b.albumId);
+          if (!y1) {
+            failReason = 'Invalid album ID ' + a.albumId;
+          } else if (!y2) {
+            failReason = 'Invalid album ID ' + b.albumId;
+          } else {
+            const yd = y1.year - y2.year;
+            if (yd === 0) {
+              continue;
+            } else {
+              return inverse ? -yd : yd;
+            }
+          }
+          break;
+        default:
+          failReason = 'Invalid sort order: ' + c;
       }
+      throw new Error(failReason);
     }
     return 0;
   };
@@ -76,28 +128,58 @@ function selectComparator(ignoreArticles: boolean, sortOrder: string) {
 /**
  * Sort an array of songs according to a sort order string
  *
- * @param  {string} sortOrder - the Sort Order string
  * @param  {Song[]} songs - The list of songs to be sorted
  * @param  {Map<AlbumKey, Album>} albums - The album map
  * @param  {Map<ArtistKey} artists - The artist map
  * @param  {boolean} articles - should articles be considered during the sort
- * @returns Song
+ * @param  {string} sortOrder - the Sort Order string
+ * @returns Song[]
  */
-export function SortSongs(
-  sortOrder: string,
+export function SortSongList(
   songs: Song[],
   albums: Map<AlbumKey, Album>,
   artists: Map<ArtistKey, Artist>,
   articles: boolean,
-  getSongData?: DataForSongGetter,
+  sortOrder: string,
 ): Song[] {
-  const songGetter: DataForSongGetter = getSongData || GetDataForSong;
-  log(`sortOrder: ${sortOrder}`);
-  log(`songs: ${songs.length} elements`);
-  const records: SongData[] = songs.map((song: Song) =>
-    songGetter(song, albums, artists),
+  return SortItems(
+    songs,
+    MakeSongComparator(albums, artists, articles, sortOrder),
   );
-  return records.sort(selectComparator(articles, sortOrder)).map((r) => r.song);
+}
+
+/*
+ * Searching
+ */
+
+export function GetIndexOf<T>(
+  sortedValues: T[],
+  searchString: string,
+  selector: (s: T) => string,
+): number {
+  // Binary search, assuming the songs are sorted in either ascending or
+  // descending value of the selector
+  const ascending =
+    selector(sortedValues[0]).localeCompare(
+      selector(sortedValues[sortedValues.length - 1]),
+    ) > 0;
+  const before = (a: number): boolean => {
+    const as = selector(sortedValues[a]);
+    const sort = as.localeCompare(searchString) < 0;
+    return ascending ? sort : !sort;
+  };
+  let lo = 0;
+  let hi = sortedValues.length - 1;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (before(mid)) {
+      hi = mid - 1;
+    } else {
+      lo = mid + 1;
+    }
+  }
+  log(lo);
+  return lo;
 }
 
 /*

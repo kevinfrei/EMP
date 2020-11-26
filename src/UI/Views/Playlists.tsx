@@ -21,7 +21,7 @@ import { PlaylistName } from '../../Recoil/Local';
 import { playlistNamesSel, playlistSel } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
-import { Spin } from '../Utilities';
+import { Spinner } from '../Utilities';
 import './styles/Playlists.css';
 
 const log = MakeLogger('Playlists', true);
@@ -100,9 +100,9 @@ export default function PlaylistView(): JSX.Element {
       name: '# of songs',
       minWidth: 75,
       onRender: (item: ItemType) => (
-        <Spin>
+        <Spinner>
           <PlaylistSongCount id={item} />
-        </Spin>
+        </Spinner>
       ),
     },
   ];

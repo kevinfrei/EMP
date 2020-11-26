@@ -17,13 +17,7 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import {
-  DataForSongGetter,
-  GetArtistString,
-  GetArtistStringFromKeys,
-  GetDataForSong,
-  SongData,
-} from '../../DataSchema';
+import { GetArtistString, GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
 import { songDetailAtom } from '../../Recoil/Local';
 import {
@@ -36,7 +30,7 @@ import {
   minSongCountForArtistListAtom,
   showArtistsWithFullAlbumsAtom,
 } from '../../Recoil/ReadWrite';
-import { SortSongs } from '../../Tools';
+import { MakeSongComparator, SortItems } from '../../Tools';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -142,28 +136,22 @@ const sortedSongsSel = selector({
     const filteredArtistSet = new Set(
       get(filteredArtistsSel).map((r) => r.key),
     );
+    const lookup = get(allArtistsSel);
     // This makes an artist string with only the filtered artists
-    const getArtistString = (
-      ids: ArtistKey[],
-      lookup: Map<ArtistKey, Artist>,
-    ): string =>
+    const getArtistString = (ids: ArtistKey[]): string =>
       GetArtistStringFromKeys(
         ids.filter((id) => filteredArtistSet.has(id)),
         lookup,
       );
-    // Get song data using the our filtered string functions
-    const getFilteredSongData: DataForSongGetter = (
-      song,
-      allAlbums,
-      allArtists,
-    ): SongData => GetDataForSong(song, allAlbums, allArtists, getArtistString);
-    return SortSongs(
-      get(sortOrderAtom),
+    return SortItems(
       get(filteredSongsSel),
-      get(allAlbumsSel),
-      get(allArtistsSel),
-      get(ignoreArticlesAtom),
-      getFilteredSongData,
+      MakeSongComparator(
+        get(allAlbumsSel),
+        get(allArtistsSel),
+        get(ignoreArticlesAtom),
+        get(sortOrderAtom),
+        getArtistString,
+      ),
     );
   },
 });

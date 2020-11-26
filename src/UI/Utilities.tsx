@@ -6,7 +6,7 @@ import {
   IStyle,
   IToggleStyles,
   Separator,
-  Spinner,
+  Spinner as FluentSpinner,
   SpinnerLabelPosition,
   SpinnerSize,
   Stack,
@@ -84,7 +84,7 @@ export type SpinnerProps = {
   size?: SpinnerSize;
 };
 
-export function Spin({
+export function Spinner({
   children,
   label,
   position,
@@ -93,7 +93,9 @@ export function Spin({
   const theLabel = label ? label : 'Please wait...';
   const pos = position ? position : 'bottom';
   const sz = size ? size : SpinnerSize.medium;
-  const theSpinner = <Spinner label={theLabel} labelPosition={pos} size={sz} />;
+  const theSpinner = (
+    <FluentSpinner label={theLabel} labelPosition={pos} size={sz} />
+  );
   return <Suspense fallback={theSpinner}>{children}</Suspense>;
 }
 

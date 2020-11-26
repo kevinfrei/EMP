@@ -2,7 +2,7 @@ import { Panel, PanelType } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
 import { songDetailAtom } from '../Recoil/Local';
 import MediaInfoTable from './MediaInfo';
-import { Spin } from './Utilities';
+import { Spinner } from './Utilities';
 
 export default function SongDetailPanel(): JSX.Element {
   const [detailSong, setDetailSong] = useRecoilState(songDetailAtom);
@@ -26,7 +26,7 @@ export default function SongDetailPanel(): JSX.Element {
         },
       }}
     >
-      <Spin label="Loading...">{elem}</Spin>
+      <Spinner label="Loading...">{elem}</Spinner>
     </Panel>
   );
 }

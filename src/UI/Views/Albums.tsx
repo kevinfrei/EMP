@@ -35,18 +35,17 @@ import {
   curViewAtom,
   ignoreArticlesAtom,
 } from '../../Recoil/ReadWrite';
-import { noArticles, SortSongs } from '../../Tools';
+import { GetIndexOf, noArticles, SortSongList } from '../../Tools';
 import {
   AlbumFromSong,
   altRowRenderer,
   ArtistsFromSong,
-  getIndexOf,
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
 import './styles/Albums.css';
 
-const log = MakeLogger('Albums', true);
+const log = MakeLogger('Albums');
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(dataForAlbumSel(props.album.key));
@@ -77,12 +76,12 @@ const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'l' });
 const sortedSongsSel = selector({
   key: 'albumsSorted',
   get: ({ get }) => {
-    return SortSongs(
-      get(sortOrderAtom),
+    return SortSongList(
       [...get(allSongsSel).values()],
       get(allAlbumsSel),
       get(allArtistsSel),
       get(ignoreArticlesAtom),
+      get(sortOrderAtom),
     );
   },
 });
@@ -154,17 +153,15 @@ export default function AlbumList(): JSX.Element {
   );
   groupProps.onRenderHeader = renderAlbumHeader;
 
-  // This doesn't quite work. I should check it out on Songs to see if it's
-  // related to groups...
+  // This doesn't quite work.
+  // It looks like DetailsList doesn't do the math quite right, unfortunately.
+  // I should check it out on Songs to see if it's related to groups...
   if (curView === CurrentView.album && detailRef && keyFilter.length > 0) {
-    const index = getIndexOf<IGroup>(groups, keyFilter, (s: IGroup) =>
+    const index = GetIndexOf<IGroup>(groups, keyFilter, (s: IGroup) =>
       ignoreArticles ? noArticles(s.name) : s.name,
     );
     detailRef.focusIndex(index);
-    /*
     log(`Filter: '${keyFilter}' index: ${index} name: ${groups[index].name}`);
-    log(`Start Item: ${detailRef.getStartItemIndexInView()}`);
-    */
   }
   return (
     <div className="songListForAlbum" data-is-scrollable="true">

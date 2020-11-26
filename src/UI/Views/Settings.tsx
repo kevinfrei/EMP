@@ -156,7 +156,7 @@ export default function Settings(): JSX.Element {
         <ArticleSorting />
         <ArtistFiltering />
       </Expandable>
-      <Expandable separator label="NYI: Artwork">
+      <Expandable separator label="Artwork">
         <ArtworkSettings />
       </Expandable>
       <Expandable separator label="NYI: Metadata">

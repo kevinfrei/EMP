@@ -50,7 +50,7 @@ import {
   playlistNamesSel,
   playlistSel,
 } from '../../Recoil/ReadWrite';
-import { isPlaylist, SortSongs } from '../../Tools';
+import { isPlaylist, SortSongList } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
   AlbumFromSong,
@@ -211,7 +211,13 @@ export default function NowPlaying(): JSX.Element {
   const performSort = (srt: string) => {
     setSortBy(srt);
     if (srt !== '') {
-      const sortedSongs = SortSongs(srt, curSongs, albums, artists, articles);
+      const sortedSongs = SortSongList(
+        curSongs,
+        albums,
+        artists,
+        articles,
+        srt,
+      );
       const curKey: SongKey = songList[curIndex];
       let newKey = -1;
       const newSongList = sortedSongs.map((song: Song, index: number) => {
