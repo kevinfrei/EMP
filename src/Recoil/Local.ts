@@ -132,3 +132,5 @@ export const songDetailAtom = atom<Song | null>({
   key: 'songDetail',
   default: null,
 });
+
+export const keyFilterAtom = atom<string>({ key: 'keyFilter', default: '' });

@@ -109,19 +109,16 @@ albums, and artists are strict selectors from that atom.
   Investigate!
 - Various Artists/Soundtracks just don't work right at all.
   - This is somewhat improved now, but still probably wants some work...
+- Artist filtering doesn't quite work right for songs with multiple artists
 
 ### Core Capabilities
 
-- **render** The Artist filtering doesn't quite work right for songs with
-  multiple artists
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
 - **main** Version the persistence data. I have troubles if I change the disk
   format :/
-- **render** Renaming a playlist is pretty clunky (save as, delete)
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)
-- **render** Make the search results visible when the search field is entered
 - **render** Get the cursor set properly for clickable stuff
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
@@ -138,7 +135,6 @@ albums, and artists are strict selectors from that atom.
 
 ### Logic improvements/changes
 
-- The startup process on both side is kind of a disaster. Clean it up.
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
   - The lion's share of the work for this is already in my `@freik/media-utils`
     module.
