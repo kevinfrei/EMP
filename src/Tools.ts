@@ -11,7 +11,7 @@ const log = MakeLogger('Tools');
 
 export type Sorter = (a: string, b: string) => number;
 
-function noArticles(phrase: string): string {
+export function noArticles(phrase: string): string {
   const res = phrase.toLocaleUpperCase();
   if (res.startsWith('THE ')) {
     return res.substr(4);

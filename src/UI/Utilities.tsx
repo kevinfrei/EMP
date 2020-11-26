@@ -15,7 +15,7 @@ import {
 } from '@fluentui/react';
 import { FTONData, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { Subscribe, Unsubscribe } from '../ipc';
 import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
@@ -24,41 +24,36 @@ import { isSearchBox } from './Sidebar';
 
 const err = MakeError('Utilities-err');
 
+let lastHeard = performance.now();
+
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {
   const [mainStatus, setMainStatus] = useState('');
-  let lastHeard: number = Date.now();
-  const [, setKeyFilter] = useRecoilState(keyFilterAtom);
-  const listener = (ev: KeyboardEvent) => {
-    // eslint-disable no-console
-    if (!isSearchBox(ev.target)) {
-      // TODO: Filter the current view by this string!
-      // console.log(ev.code);
-      // escape should clear the filter string
-      // With some timeout, we string them together into a search string
-      const time = Date.now();
-      let done: boolean = time - lastHeard > 500;
-      lastHeard = time;
-      if (ev.altKey || ev.ctrlKey || ev.shiftKey || ev.metaKey) {
-        done = true;
+  /* This is for a global search typing thingamajig */
+  const keyFilter = useRecoilValue(keyFilterAtom);
+  const listener = useRecoilCallback(
+    ({ set }: CallbackInterface) => (ev: KeyboardEvent) => {
+      if (!isSearchBox(ev.target)) {
+        // TODO: use the keyFilter to navigate the current view
+        const time = performance.now();
+        if (ev.key === 'Escape' || ev.key === 'Meta' || ev.key === 'Control') {
+          set(keyFilterAtom, '');
+          return;
+        }
+        if (ev.key.length > 1) {
+          return;
+        }
+        const clear: boolean = time - lastHeard > 750;
+        lastHeard = time;
+        set(keyFilterAtom, (curVal) => (clear ? ev.key : curVal + ev.key));
       }
-      if (done) {
-        setKeyFilter('');
-      }
-      setMainStatus(ev.key);
-    }
-  };
-  const listenForEscape = (ev: KeyboardEvent) => {
-    if (!isSearchBox(ev.target) && ev.key === 'Escape') {
-      setMainStatus('**ESC**');
-    }
-  };
+    },
+  );
+
   useEffect(() => {
-    window.addEventListener('keypress', listener);
-    window.addEventListener('keyup', listenForEscape);
+    window.addEventListener('keydown', listener);
     return () => {
-      window.removeEventListener('keypress', listener);
-      window.addEventListener('keyup', listenForEscape);
+      window.removeEventListener('keydown', listener);
     };
   });
 
@@ -75,7 +70,11 @@ export default function Utilities(): JSX.Element {
     });
     return () => Unsubscribe(key);
   });
-  return <div className="mainStatus">{mainStatus}</div>;
+  return (
+    <div className="mainStatus">
+      {mainStatus};{keyFilter}
+    </div>
+  );
 }
 
 export type SpinnerProps = {

@@ -12,9 +12,12 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
+import { MakeLogger } from '@freik/core-utils';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
+
+const log = MakeLogger('SongList', true);
 
 /**
  * Make a set of IColumns for a DetailsLists
@@ -293,4 +296,34 @@ export function StickyRenderDetailsHeader(
       })}
     </Sticky>
   );
+}
+
+export function getIndexOf<T>(
+  sortedValues: T[],
+  searchString: string,
+  selector: (s: T) => string,
+): number {
+  // Binary search, assuming the songs are sorted in either ascending or
+  // descending value of the selector
+  const ascending =
+    selector(sortedValues[0]).localeCompare(
+      selector(sortedValues[sortedValues.length - 1]),
+    ) > 0;
+  const before = (a: number): boolean => {
+    const as = selector(sortedValues[a]);
+    const sort = as.localeCompare(searchString) < 0;
+    return ascending ? sort : !sort;
+  };
+  let lo = 0;
+  let hi = sortedValues.length - 1;
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (before(mid)) {
+      hi = mid;
+    } else {
+      lo = mid + 1;
+    }
+  }
+  log(lo);
+  return lo;
 }
