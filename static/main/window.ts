@@ -1,5 +1,5 @@
 import { MakeError } from '@freik/core-utils';
-import { BrowserWindow, shell } from 'electron';
+import { BrowserWindow } from 'electron';
 import isDev from 'electron-is-dev';
 import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
@@ -55,7 +55,6 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
     minHeight: 250,
   });
 
-  shell.showItemInFolder(__dirname);
   // Load the base URL
   mainWindow
     .loadURL(

@@ -12,12 +12,11 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
 
-const log = MakeLogger('SongList', true);
+// const log = MakeLogger('SongList', true);
 
 /**
  * Make a set of IColumns for a DetailsLists
@@ -283,14 +282,14 @@ export function StickyRenderDetailsHeader(
   theProps?: IDetailsHeaderProps,
   defaultRender?: (p?: IDetailsHeaderProps) => JSX.Element | null,
 ): JSX.Element | null {
-  if (!theProps) {
+  if (!theProps || !defaultRender) {
     return null;
   }
   // This makes the header not have a bunch of extra whitespace above the header
   theProps.styles = { root: { padding: '0px' } };
   return (
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
-      {defaultRender!({
+      {defaultRender({
         ...theProps,
         onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
       })}

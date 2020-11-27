@@ -83,9 +83,28 @@ function getSongKey(songPath: string) {
   }
 }
 
+const cleaners: [RegExp, string][] = [
+  [/[`’]/g, "'"],
+  [/‐/g, '-'],
+  [/^THE /, ''],
+  [/^A /, ''],
+  [/^AN /, ''],
+];
+
+export function normalizeName(phrase: string): string {
+  let res = phrase.toLocaleUpperCase();
+  for (const [rg, str] of cleaners) {
+    res = res.replace(rg, str);
+  }
+  return res;
+}
+
+const noArticlesCmp = (a: string, b: string): number =>
+  normalizeName(a).localeCompare(normalizeName(b));
+
 function getOrNewArtist(db: MusicDB, name: string): Artist {
   const maybeKey: ArtistKey | undefined = db.artistNameIndex.get(
-    name.toLowerCase(),
+    normalizeName(name),
   );
   if (maybeKey) {
     const art = db.artists.get(maybeKey);
@@ -96,7 +115,7 @@ function getOrNewArtist(db: MusicDB, name: string): Artist {
     // Fall-through and just overwrite the artistNameIndex with a new key...
   }
   const key: ArtistKey = newArtistKey();
-  db.artistNameIndex.set(name.toLowerCase(), key);
+  db.artistNameIndex.set(normalizeName(name), key);
   const artist: Artist = { name, songs: [], albums: [], key };
   db.artists.set(key, artist);
   return artist;
@@ -112,11 +131,11 @@ function getOrNewAlbum(
   dirName: string,
 ): Album {
   // TODO: This doesn't currently handle vatypes properly :/
-  const maybeSharedNames = db.albumTitleIndex.get(title.toLowerCase());
+  const maybeSharedNames = db.albumTitleIndex.get(normalizeName(title));
   let sharedNames: AlbumKey[];
   if (!maybeSharedNames) {
     sharedNames = [];
-    db.albumTitleIndex.set(title.toLowerCase(), sharedNames);
+    db.albumTitleIndex.set(normalizeName(title), sharedNames);
   } else {
     sharedNames = maybeSharedNames;
   }
@@ -132,7 +151,7 @@ function getOrNewAlbum(
       continue;
     }
     const check: Album = alb;
-    if (check.title.toLowerCase() !== title.toLowerCase()) {
+    if (noArticlesCmp(check.title, title) !== 0) {
       err(`DB inconsistency - album title index inconsistency`);
       continue;
     }

@@ -164,8 +164,8 @@ export function CommsSetup(): void {
 
   // Some "do something, please" API's
   register('update-metadata', setMediaInfoForSong);
-  register('manual-rescan', RescanDB);
-  register('flush-image-cache', FlushImageCache);
+  registerFlattened('manual-rescan', RescanDB);
+  registerFlattened('flush-image-cache', FlushImageCache);
 
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler

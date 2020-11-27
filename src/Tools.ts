@@ -164,8 +164,7 @@ export function GetIndexOf<T>(
       selector(sortedValues[sortedValues.length - 1]),
     ) > 0;
   const before = (a: number): boolean => {
-    const as = selector(sortedValues[a]);
-    const sort = as.localeCompare(searchString) < 0;
+    const sort = selector(sortedValues[a]).localeCompare(searchString) < 0;
     return ascending ? sort : !sort;
   };
   let lo = 0;
