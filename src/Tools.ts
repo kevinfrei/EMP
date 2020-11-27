@@ -1,7 +1,7 @@
 // This is for getting at "global" stuff from the window object
 import { MakeLogger, Type } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
-import { GetArtistStringFromKeys } from './DataSchema';
+import { GetArtistStringFromSong } from './DataSchema';
 
 const log = MakeLogger('Tools');
 
@@ -39,12 +39,11 @@ export function MakeSongComparator(
   artists: Map<ArtistKey, Artist>,
   ignoreArticles: boolean,
   sortOrder: string,
-  artistStringMaker?: (ar: ArtistKey[]) => string,
+  artistStringMaker?: (s: Song) => string,
 ): (a: Song, b: Song) => number {
   const strComp = ignoreArticles ? noArticlesCmp : articlesCmp;
   const getArtistString =
-    artistStringMaker ??
-    ((aks: ArtistKey[]) => GetArtistStringFromKeys(aks, artists));
+    artistStringMaker ?? ((s: Song) => GetArtistStringFromSong(s, artists));
   return (a: Song, b: Song): number => {
     for (const c of sortOrder) {
       const inverse = c === c.toLocaleUpperCase();
@@ -68,8 +67,8 @@ export function MakeSongComparator(
           }
           break;
         case 'R':
-          const r1 = getArtistString(a.artistIds);
-          const r2 = getArtistString(b.artistIds);
+          const r1 = getArtistString(a);
+          const r2 = getArtistString(b);
           if (r1.length === 0) {
             failReason = `Invalid artist IDs [${a.artistIds.join(', ')}]`;
           } else if (r2.length === 0) {

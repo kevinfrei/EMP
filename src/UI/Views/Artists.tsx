@@ -8,7 +8,8 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { Artist, ArtistKey, Song, SongKey } from '@freik/media-utils';
+import { Type } from '@freik/core-utils';
+import { Artist, ArtistKey, Song } from '@freik/media-utils';
 import { useState } from 'react';
 import {
   atom,
@@ -17,7 +18,7 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { GetArtistString, GetArtistStringFromKeys } from '../../DataSchema';
+import { GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
 import { songDetailAtom } from '../../Recoil/Local';
 import {
@@ -40,31 +41,20 @@ import {
 } from '../SongList';
 import './styles/Artists.css';
 
-export function ArtistHeaderDisplay(props: { artists: Artist[] }): JSX.Element {
+type ArtistSong = Song & { sortedArtistId: ArtistKey };
+
+export function ArtistHeaderDisplay({
+  artist,
+}: {
+  artist: Artist;
+}): JSX.Element {
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    props.artists.forEach((art) => AddSongs(art.songs, cbInterface)),
+    AddSongs(artist.songs, cbInterface),
   );
-  const name = GetArtistString(props.artists);
-  let songCount = 0;
-  if (props.artists.length === 1) {
-    songCount = props.artists[0].songs.length;
-  } else {
-    // To count the songs, find the intersection of each artist
-    let songSet = new Set<SongKey>(props.artists[0].songs);
-    for (let i = 2; songSet.size > 0 && i < props.artists.length; i++) {
-      const newSongSet = new Set<SongKey>();
-      for (const songKey of props.artists[i].songs) {
-        if (songSet.has(songKey)) {
-          newSongSet.add(songKey);
-        }
-      }
-      songSet = newSongSet;
-    }
-    songCount = songSet.size;
-  }
+  const songCount = artist.songs.length;
   return (
     <Text onDoubleClick={onAddSongsClick}>
-      {`${name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
+      {`${artist.name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
     </Text>
   );
 }
@@ -104,23 +94,18 @@ const filteredArtistsSel = selector<Artist[]>({
   },
 });
 
-const filteredSongsSel = selector<Song[]>({
+const filteredSongsSel = selector<ArtistSong[]>({
   key: 'filteredSongs',
   get: ({ get }) => {
-    const fullAlbums = get(showArtistsWithFullAlbumsAtom);
-    const minSongCount = get(minSongCountForArtistListAtom);
     const songs = get(allSongsSel);
-    if (!fullAlbums && minSongCount < 2) {
-      return [...songs.values()];
-    }
     // Get the list of artists we're including
     const artists = get(filteredArtistsSel);
-    const songSet = new Set<Song>();
+    const songSet = new Set<ArtistSong>();
     artists.forEach((artist) => {
       artist.songs.forEach((sng) => {
         const song = songs.get(sng);
         if (song) {
-          songSet.add(song);
+          songSet.add({ sortedArtistId: artist.key, ...song });
         }
       });
     });
@@ -129,28 +114,28 @@ const filteredSongsSel = selector<Song[]>({
 });
 
 const sortOrderAtom = atom({ key: 'artistsSortOrder', default: 'r' });
+
 const sortedSongsSel = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
-    // Create the set of artists to filter down to
-    const filteredArtistSet = new Set(
-      get(filteredArtistsSel).map((r) => r.key),
-    );
-    const lookup = get(allArtistsSel);
-    // This makes an artist string with only the filtered artists
-    const getArtistString = (ids: ArtistKey[]): string =>
-      GetArtistStringFromKeys(
-        ids.filter((id) => filteredArtistSet.has(id)),
-        lookup,
-      );
+    // TODO: Fix this for the filtered songs
+    const artists = get(allArtistsSel);
     return SortItems(
       get(filteredSongsSel),
       MakeSongComparator(
         get(allAlbumsSel),
-        get(allArtistsSel),
+        artists,
         get(ignoreArticlesAtom),
         get(sortOrderAtom),
-        getArtistString,
+        (s: Song) => {
+          if (Type.hasStr(s, 'sortedArtistId')) {
+            const a = artists.get(s.sortedArtistId);
+            if (a) {
+              return a.name;
+            }
+          }
+          return '???';
+        },
       ),
     );
   },
@@ -175,20 +160,17 @@ export default function ArtistList(): JSX.Element {
     }
   };
 
-  const filteredArtistsFromSong = (theSong: Song): JSX.Element => (
-    <ArtistName artistIds={theSong.artistIds.filter((v) => artists.has(v))} />
+  const filteredArtistsFromSong = (theSong: ArtistSong): JSX.Element => (
+    <ArtistName artistIds={[theSong.sortedArtistId]} />
   );
   const renderArtistHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
   ) => {
     if (!props) return null;
-    const artistKeys = props.group?.key;
-    if (!artistKeys) return null;
-    const artistList = artistKeys
-      .split(';')
-      .map((ak) => artists.get(ak)!)
-      .filter((ak) => !!ak);
-    if (!artistList) return null;
+    const artistKey = props.group?.key;
+    if (!artistKey) return null;
+    const artist = artists.get(artistKey);
+    if (!artist) return null;
     return (
       <Stack horizontal verticalAlign="center">
         <IconButton
@@ -197,19 +179,19 @@ export default function ArtistList(): JSX.Element {
           }}
           onClick={() => props.onToggleCollapse!(props.group!)}
         />
-        <ArtistHeaderDisplay artists={artistList} />
+        <ArtistHeaderDisplay artist={artist} />
       </Stack>
     );
   };
   const [columns, artistGroups, groupProps] = GetSongGroupData(
     sortedSongs,
     curExpandedState,
-    (s: Song) => s.artistIds.filter((v) => artists.has(v)).join(';'),
-    (s: string) => GetArtistStringFromKeys(s.split(';'), artists) || '',
+    (s: ArtistSong) => s.sortedArtistId,
+    (s: string) => GetArtistStringFromKeys([s], artists),
     'r',
-    'artistIds',
+    'sortedArtistId',
     [
-      ['r', 'artistIds', 'Artist', 50, 175, filteredArtistsFromSong],
+      ['r', 'sortedArtistId', 'Artist', 50, 175, filteredArtistsFromSong],
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],

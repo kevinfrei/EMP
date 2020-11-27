@@ -38,14 +38,14 @@ import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
  *
  * @returns
  */
-export function MakeColumns(
+export function MakeColumns<T>(
   renderers: [
     key: string,
     fieldName: string,
     name: string,
     minWidth: number,
     maxWidth?: number,
-    render?: (song: Song) => JSX.Element,
+    render?: (song: T) => JSX.Element,
   ][],
   getSort: () => string,
   performSort: (sort: string) => void,
@@ -183,13 +183,13 @@ export function ArtistsFromAlbum(album: Album): JSX.Element {
  * @returns {[IColumn[], IGroup[], IDetailsGroupRenderProps]} - returns a tuple
  *    of the list of IColumns, IGroups, and the GroupRenderProps
  */
-export function GetSongGroupData(
-  sortedSongs: Song[],
+export function GetSongGroupData<T>(
+  sortedSongs: T[],
   [curExpandedSet, setExpandedSet]: [
     curExpandedSet: Set<string>,
     setExpandedSet: (set: Set<string>) => void,
   ],
-  getGroupId: (obj: Song) => string,
+  getGroupId: (obj: T) => string,
   getGroupName: (groupId: string) => string,
   groupKey: string,
   groupFieldName: string,
@@ -199,7 +199,7 @@ export function GetSongGroupData(
     name: string,
     minWidth: number,
     maxWidth?: number,
-    render?: (song: Song) => JSX.Element,
+    render?: (song: T) => JSX.Element,
   ][],
   getSort: () => string,
   performSort: (sort: string) => void,

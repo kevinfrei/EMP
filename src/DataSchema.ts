@@ -19,6 +19,13 @@ export function GetArtistString(artistList: Artist[]): string {
   return artists.map((a) => a.name).join(', ') + lastPart;
 }
 
+export function GetArtistStringFromSong(
+  sng: Song,
+  allArtists: Map<ArtistKey, Artist>,
+): string {
+  return GetArtistStringFromKeys(sng.artistIds, allArtists);
+}
+
 export function GetArtistStringFromKeys(
   artistList: ArtistKey[],
   allArtists: Map<ArtistKey, Artist>,
