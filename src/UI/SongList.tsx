@@ -12,11 +12,12 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
+import { MakeError } from '@freik/core-utils';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 import { useRecoilValue } from 'recoil';
 import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
 
-// const log = MakeLogger('SongList', true);
+const err = MakeError('SongList-err');
 
 /**
  * Make a set of IColumns for a DetailsLists
@@ -223,7 +224,11 @@ export function GetSongGroupData<T>(
         isCollapsed: !curExpandedSet.has(lastGroupId),
       });
       startGroup = i;
+      const gidCount = allGroupIds.size;
       allGroupIds.add(lastGroupId);
+      if (gidCount === allGroupIds.size) {
+        err(`Found a duplicate groupId: ${lastGroupId}`);
+      }
     }
     lastGroupId = thisId;
   }

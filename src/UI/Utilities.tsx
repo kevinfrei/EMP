@@ -15,12 +15,13 @@ import {
 } from '@fluentui/react';
 import { FTONData, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
-import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
+import { CallbackInterface, useRecoilCallback } from 'recoil';
 import { Subscribe, Unsubscribe } from '../ipc';
 import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
 import { keyFilterAtom } from '../Recoil/Local';
 import { isSearchBox } from './Sidebar';
+import './styles/App.css';
 
 const err = MakeError('Utilities-err');
 
@@ -30,7 +31,6 @@ let lastHeard = performance.now();
 export default function Utilities(): JSX.Element {
   const [mainStatus, setMainStatus] = useState('');
   /* This is for a global search typing thingamajig */
-  const keyFilter = useRecoilValue(keyFilterAtom);
   const listener = useRecoilCallback(
     ({ set }: CallbackInterface) => (ev: KeyboardEvent) => {
       if (!isSearchBox(ev.target)) {
@@ -70,11 +70,7 @@ export default function Utilities(): JSX.Element {
     });
     return () => Unsubscribe(key);
   });
-  return (
-    <div className="mainStatus">
-      {mainStatus};{keyFilter}
-    </div>
-  );
+  return <div className="mainStatus">{mainStatus}</div>;
 }
 
 export type SpinnerProps = {
@@ -94,7 +90,9 @@ export function Spinner({
   const pos = position ? position : 'bottom';
   const sz = size ? size : SpinnerSize.medium;
   const theSpinner = (
-    <FluentSpinner label={theLabel} labelPosition={pos} size={sz} />
+    <div className="mySpinner">
+      <FluentSpinner label={theLabel} labelPosition={pos} size={sz} />
+    </div>
   );
   return <Suspense fallback={theSpinner}>{children}</Suspense>;
 }

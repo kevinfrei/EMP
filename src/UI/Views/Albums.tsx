@@ -72,7 +72,8 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   );
 }
 
-const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'l' });
+// For grouping to work properly, the sort order needs to be fully specified
+const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'lyrnt' });
 const sortedSongsSel = selector({
   key: 'albumsSorted',
   get: ({ get }) => {
