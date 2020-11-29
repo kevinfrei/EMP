@@ -18,7 +18,7 @@ import {
 } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
-import { playlistNamesSel, playlistSel } from '../../Recoil/ReadWrite';
+import { getPlaylistState, playlistNamesState } from '../../Recoil/ReadWrite';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
 import { Spinner } from '../Utilities';
@@ -29,12 +29,12 @@ const log = MakeLogger('Playlists', true);
 type ItemType = PlaylistName;
 
 export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
-  const playlist = useRecoilValue(playlistSel(id));
+  const playlist = useRecoilValue(getPlaylistState(id));
   return <>{playlist.length}</>;
 }
 
 export default function PlaylistView(): JSX.Element {
-  const playlistNames = useRecoilValue(playlistNamesSel);
+  const playlistNames = useRecoilValue(playlistNamesState);
   const [selected, setSelected] = useState('');
   const [showDelete, deleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
@@ -46,7 +46,7 @@ export default function PlaylistView(): JSX.Element {
 
   const onQueuePlaylist = useRecoilCallback((cbInterface) => async () => {
     const songs = await cbInterface.snapshot.getPromise(
-      playlistSel(contextPlaylist),
+      getPlaylistState(contextPlaylist),
     );
     log('songs:' + songs.length.toString());
     AddSongs(songs, cbInterface);
@@ -55,7 +55,7 @@ export default function PlaylistView(): JSX.Element {
   const onPlaylistInvoked = useRecoilCallback(
     (cbInterface) => async (playlistName: PlaylistName) => {
       const songs = await cbInterface.snapshot.getPromise(
-        playlistSel(playlistName),
+        getPlaylistState(playlistName),
       );
       log('songs:' + songs.length.toString());
       PlaySongs(cbInterface, songs, playlistName);

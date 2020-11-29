@@ -5,7 +5,7 @@ import {
   snapshot_UNSTABLE,
 } from 'recoil';
 import { AddSongs, PlaySongs } from '../api';
-import { currentIndexAtom, songListAtom } from '../Local';
+import { currentIndexState, songListState } from '../Local';
 
 function makeCallbackIfc(
   set: <T>(rv: RecoilState<T>, valOrUpdate: ((curVal: T) => T) | T) => void,
@@ -26,16 +26,16 @@ function makeCallbackIfc(
 it('Adding empty songs does nothing', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   expect(
-    initialSnapshot.getLoadable(songListAtom).valueOrThrow(),
+    initialSnapshot.getLoadable(songListState).valueOrThrow(),
   ).toStrictEqual([]);
   expect(
-    initialSnapshot.getLoadable(currentIndexAtom).valueOrThrow(),
+    initialSnapshot.getLoadable(currentIndexState).valueOrThrow(),
   ).toStrictEqual(-1);
 
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
     AddSongs([], makeCallbackIfc(set, initialSnapshot)),
   );
-  expect(nextSnapshot.getLoadable(songListAtom).valueOrThrow()).toStrictEqual(
+  expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual(
     [],
   );
 });
@@ -45,23 +45,20 @@ it('Adding a songs works properly', () => {
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
     AddSongs(['a'], makeCallbackIfc(set, initialSnapshot)),
   );
-  expect(nextSnapshot.getLoadable(songListAtom).valueOrThrow()).toStrictEqual([
+  expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual([
     'a',
   ]);
   expect(
-    nextSnapshot.getLoadable(currentIndexAtom).valueOrThrow(),
+    nextSnapshot.getLoadable(currentIndexState).valueOrThrow(),
   ).toStrictEqual(0);
 
   const finalSnapshot = snapshot_UNSTABLE(({ set }) => {
     AddSongs(['a', 'b'], makeCallbackIfc(set, nextSnapshot));
     AddSongs(['a', 'c'], makeCallbackIfc(set, nextSnapshot));
   });
-  expect(finalSnapshot.getLoadable(songListAtom).valueOrThrow()).toStrictEqual([
-    'a',
-    'b',
-    'a',
-    'c',
-  ]);
+  expect(
+    finalSnapshot.getLoadable(songListState).valueOrThrow(),
+  ).toStrictEqual(['a', 'b', 'a', 'c']);
 });
 
 it('Playing songs works properly', () => {
@@ -70,7 +67,7 @@ it('Playing songs works properly', () => {
     AddSongs(['a', 'b'], makeCallbackIfc(set, initialSnapshot));
     PlaySongs(makeCallbackIfc(set, initialSnapshot), ['d', 'e']);
   });
-  expect(nextSnapshot.getLoadable(songListAtom).valueOrThrow()).toStrictEqual([
+  expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual([
     'd',
     'e',
   ]);

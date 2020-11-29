@@ -222,9 +222,6 @@ export function getAtomValuesEffect(): void {
 interface KeyEventType {
   key: string;
 }
-interface FocusableElement {
-  focus: () => void;
-}
 
 type KeyboardHookType<T extends KeyEventType> = (
   cbIntfc: CallbackInterface,
@@ -247,13 +244,13 @@ export function keyboardHook<T extends KeyEventType>(
     set(filterState, (curVal) => (clear ? ev.key : curVal + ev.key));
   };
 }
-export function kbHook<T extends KeyEventType, O extends FocusableElement>(
+export function kbHook<T extends KeyEventType>(
   filterState: RecoilState<string>,
   listRef: IDetailsList | null,
   shouldFocus: () => boolean,
   getIndex: (srch: string) => number,
 ) {
-  return ({ set, snapshot }: CallbackInterface) => (ev: T): void => {
+  return ({ set }: CallbackInterface) => (ev: T): void => {
     if (ev.key.length > 1 || ev.key === ' ') {
       set(filterState, '');
       return;

@@ -22,13 +22,13 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailAtom } from '../../Recoil/Local';
+import { songDetailState } from '../../Recoil/Local';
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  allSongsSel,
-  searchSel,
-  searchTermAtom,
+  allAlbumsState,
+  allArtistsState,
+  allSongsState,
+  getSearchState,
+  searchTermState,
 } from '../../Recoil/ReadOnly';
 import {
   altRowRenderer,
@@ -178,14 +178,14 @@ function AggregateSearchResults(
 }
 
 export default function SearchResultsView(): JSX.Element {
-  const searchTerm = useRecoilValue(searchTermAtom);
-  const searchResults = useRecoilValue(searchSel(searchTerm));
-  const songs = useRecoilValue(allSongsSel);
-  const artists = useRecoilValue(allArtistsSel);
-  const albums = useRecoilValue(allAlbumsSel);
+  const searchTerm = useRecoilValue(searchTermState);
+  const searchResults = useRecoilValue(getSearchState(searchTerm));
+  const songs = useRecoilValue(allSongsState);
+  const artists = useRecoilValue(allArtistsState);
+  const albums = useRecoilValue(allAlbumsState);
   const [curExpandedSet, setExpandedSet] = useState(new Set<string>());
   const onSongDetailClick = useRecoilCallback(
-    ({ set }) => (item: SearchSongData) => set(songDetailAtom, item.song),
+    ({ set }) => (item: SearchSongData) => set(songDetailState, item.song),
   );
   const onAddSongClick = useRecoilCallback(
     (cbInterface) => (item: SearchSongData) =>

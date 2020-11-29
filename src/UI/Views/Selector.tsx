@@ -1,6 +1,6 @@
 import { CSSProperties } from 'react';
 import { useRecoilValue } from 'recoil';
-import { CurrentView, curViewAtom } from '../../Recoil/ReadWrite';
+import { CurrentView, curViewState } from '../../Recoil/ReadWrite';
 import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
@@ -11,7 +11,7 @@ import SearchResultsView from './SearchResults';
 import SettingsView from './Settings';
 
 export default function ViewSelector(): JSX.Element {
-  const which = useRecoilValue(curViewAtom);
+  const which = useRecoilValue(curViewState);
   const sl = (v: CurrentView): CSSProperties =>
     which === v ? {} : { visibility: 'hidden' };
   return (

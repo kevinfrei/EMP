@@ -1,8 +1,8 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
-import { searchTermAtom } from '../Recoil/ReadOnly';
-import { CurrentView, curViewAtom } from '../Recoil/ReadWrite';
+import { searchTermState } from '../Recoil/ReadOnly';
+import { CurrentView, curViewState } from '../Recoil/ReadWrite';
 import './styles/Sidebar.css';
 
 type ViewEntry = { name: CurrentView; title: string };
@@ -68,13 +68,13 @@ export function isSearchBox(target: EventTarget | null): boolean {
 }
 
 export default function Sidebar(): JSX.Element {
-  const [curView, setCurView] = useRecoilState(curViewAtom);
+  const [curView, setCurView] = useRecoilState(curViewState);
   const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
-    set(curViewAtom, CurrentView.search);
-    set(searchTermAtom, newValue);
+    set(curViewState, CurrentView.search);
+    set(searchTermState, newValue);
   });
   const onFocus = useRecoilCallback(({ set }) => () => {
-    set(curViewAtom, CurrentView.search);
+    set(curViewState, CurrentView.search);
   });
   return (
     <div id="sidebar">

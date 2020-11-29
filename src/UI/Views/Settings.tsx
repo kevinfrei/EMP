@@ -11,14 +11,14 @@ import { useRecoilState } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';
 import {
-  albumCoverNameAtom,
-  downloadAlbumArtworkAtom,
-  downloadArtistArtworkAtom,
-  ignoreArticlesAtom,
-  locationsAtom,
-  minSongCountForArtistListAtom,
-  saveAlbumArtworkWithMusicAtom,
-  showArtistsWithFullAlbumsAtom,
+  albumCoverNameState,
+  downloadAlbumArtworkState,
+  downloadArtistArtworkState,
+  ignoreArticlesState,
+  locationsState,
+  minSongCountForArtistListState,
+  saveAlbumArtworkWithMusicState,
+  showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { Expandable, StateToggle } from '../Utilities';
 import './styles/Settings.css';
@@ -34,7 +34,7 @@ function GetDirs(): string[] | void {
 }
 
 function RecoilLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useRecoilState(locationsAtom);
+  const [newLoc, setNewLoc] = useRecoilState(locationsState);
   return (
     <>
       {(newLoc || []).map((elem) => (
@@ -73,14 +73,14 @@ function RecoilLocations(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const articles = useBoolRecoilState(ignoreArticlesAtom);
+  const articles = useBoolRecoilState(ignoreArticlesState);
   return <StateToggle label="Ignore articles when sorting" state={articles} />;
 }
 
 function ArtistFiltering(): JSX.Element {
-  const onlyAlbumArtists = useBoolRecoilState(showArtistsWithFullAlbumsAtom);
+  const onlyAlbumArtists = useBoolRecoilState(showArtistsWithFullAlbumsState);
   const [songCount, setSongCount] = useRecoilState(
-    minSongCountForArtistListAtom,
+    minSongCountForArtistListState,
   );
   return (
     <>
@@ -101,10 +101,10 @@ function ArtistFiltering(): JSX.Element {
 }
 
 function ArtworkSettings(): JSX.Element {
-  const dlAlbumArtwork = useBoolRecoilState(downloadAlbumArtworkAtom);
-  const dlArtistArtwork = useBoolRecoilState(downloadArtistArtworkAtom);
-  const saveAlbumArtwork = useBoolRecoilState(saveAlbumArtworkWithMusicAtom);
-  const [coverArtName, setCoverArtName] = useRecoilState(albumCoverNameAtom);
+  const dlAlbumArtwork = useBoolRecoilState(downloadAlbumArtworkState);
+  const dlArtistArtwork = useBoolRecoilState(downloadArtistArtworkState);
+  const saveAlbumArtwork = useBoolRecoilState(saveAlbumArtworkWithMusicState);
+  const [coverArtName, setCoverArtName] = useRecoilState(albumCoverNameState);
   return (
     <>
       <StateToggle label="Download Album Artwork" state={dlAlbumArtwork} />

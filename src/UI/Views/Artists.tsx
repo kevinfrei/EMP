@@ -20,16 +20,16 @@ import {
 } from 'recoil';
 import { GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailAtom } from '../../Recoil/Local';
+import { songDetailState } from '../../Recoil/Local';
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  allSongsSel,
+  allAlbumsState,
+  allArtistsState,
+  allSongsState,
 } from '../../Recoil/ReadOnly';
 import {
-  ignoreArticlesAtom,
-  minSongCountForArtistListAtom,
-  showArtistsWithFullAlbumsAtom,
+  ignoreArticlesState,
+  minSongCountForArtistListState,
+  showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { MakeSongComparator, SortItems } from '../../Tools';
 import {
@@ -62,14 +62,14 @@ export function ArtistHeaderDisplay({
 const filteredArtistsSel = selector<Artist[]>({
   key: 'filteredArtists',
   get: ({ get }) => {
-    const fullAlbums = get(showArtistsWithFullAlbumsAtom);
-    const minSongCount = get(minSongCountForArtistListAtom);
-    const artists = get(allArtistsSel);
+    const fullAlbums = get(showArtistsWithFullAlbumsState);
+    const minSongCount = get(minSongCountForArtistListState);
+    const artists = get(allArtistsState);
     const result: Artist[] = [];
     if (fullAlbums) {
       // Filter down to artists that have at least one album where
       // they are the primary artist
-      const albums = get(allAlbumsSel);
+      const albums = get(allAlbumsState);
       artists.forEach((artist) => {
         for (const lKey of artist.albums) {
           const album = albums.get(lKey);
@@ -97,7 +97,7 @@ const filteredArtistsSel = selector<Artist[]>({
 const filteredSongsSel = selector<ArtistSong[]>({
   key: 'filteredSongs',
   get: ({ get }) => {
-    const songs = get(allSongsSel);
+    const songs = get(allSongsState);
     // Get the list of artists we're including
     const artists = get(filteredArtistsSel);
     const songSet = new Set<ArtistSong>();
@@ -114,20 +114,19 @@ const filteredSongsSel = selector<ArtistSong[]>({
 });
 
 // For grouping to work properly, the sort order needs to be fully specified
-const sortOrderAtom = atom({ key: 'artistsSortOrder', default: 'rylnt' });
-
-const sortedSongsSel = selector({
+const sortOrderState = atom({ key: 'artistsSortOrder', default: 'rylnt' });
+const sortedSongsState = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
     // TODO: Fix this for the filtered songs
-    const artists = get(allArtistsSel);
+    const artists = get(allArtistsState);
     return SortItems(
       get(filteredSongsSel),
       MakeSongComparator(
-        get(allAlbumsSel),
+        get(allAlbumsState),
         artists,
-        get(ignoreArticlesAtom),
-        get(sortOrderAtom),
+        get(ignoreArticlesState),
+        get(sortOrderState),
         (s: Song) => {
           if (Type.hasStr(s, 'sortedArtistId')) {
             const a = artists.get(s.sortedArtistId);
@@ -146,21 +145,16 @@ export default function ArtistList(): JSX.Element {
   const filteredArtistList = useRecoilValue(filteredArtistsSel);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailAtom, item),
+    set(songDetailState, item),
   );
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs([item.key], cbInterface),
   );
 
-  const [curSort, setSort] = useRecoilState(sortOrderAtom);
+  const [curSort, setSort] = useRecoilState(sortOrderState);
   const curExpandedState = useState(new Set<ArtistKey>());
 
-  const sortedSongs = useRecoilValue(sortedSongsSel);
-  const performSort = (srt: string) => {
-    if (srt !== curSort) {
-      setSort(srt);
-    }
-  };
+  const sortedSongs = useRecoilValue(sortedSongsState);
 
   const filteredArtistsFromSong = (theSong: ArtistSong): JSX.Element => (
     <ArtistName artistIds={[theSong.sortedArtistId]} />
@@ -199,7 +193,7 @@ export default function ArtistList(): JSX.Element {
       ['t', 'title', 'Title', 50, 150],
     ],
     () => curSort,
-    performSort,
+    setSort,
   );
   groupProps.onRenderHeader = renderArtistHeader;
   return (

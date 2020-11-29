@@ -4,19 +4,19 @@ import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
-  currentSongKeySel,
+  currentSongKeyState,
   MediaTime,
-  mediaTimeAtom,
-  mediaTimePercentRWSel,
-  mediaTimePositionSel,
-  mediaTimeRemainingSel,
-  playingAtom,
-  repeatAtom,
-  songListAtom,
+  mediaTimePercentState,
+  mediaTimePositionState,
+  mediaTimeRemainingState,
+  mediaTimeState,
+  playingState,
+  repeatState,
+  songListState,
 } from '../Recoil/Local';
 import {
-  albumKeyForSongKeySel,
-  dataForSongSel,
+  getAlbumKeyForSongKeyState,
+  getDataForSongState,
   SongData,
 } from '../Recoil/ReadOnly';
 import './styles/SongPlayback.css';
@@ -29,8 +29,8 @@ export function GetAudioElem(): HTMLMediaElement | void {
 }
 
 function CoverArt(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeySel);
-  const albumKey = useRecoilValue(albumKeyForSongKeySel(songKey));
+  const songKey = useRecoilValue(currentSongKeyState);
+  const albumKey = useRecoilValue(getAlbumKeyForSongKeyState(songKey));
 
   return (
     <span id="song-cover-art">
@@ -44,7 +44,7 @@ function CoverArt(): JSX.Element {
 }
 
 function MediaTimePosition(): JSX.Element {
-  const mediaTimePosition = useRecoilValue(mediaTimePositionSel);
+  const mediaTimePosition = useRecoilValue(mediaTimePositionState);
   return (
     <Text
       id="now-playing-current-time"
@@ -58,7 +58,7 @@ function MediaTimePosition(): JSX.Element {
 }
 
 function MediaTimeRemaining(): JSX.Element {
-  const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingSel);
+  const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingState);
   return (
     <Text
       id="now-playing-remaining-time"
@@ -72,9 +72,9 @@ function MediaTimeRemaining(): JSX.Element {
 }
 
 function MediaTimeSlider(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeySel);
+  const songKey = useRecoilValue(currentSongKeyState);
   const [mediaTimePercent, setMediaTimePercent] = useRecoilState(
-    mediaTimePercentRWSel,
+    mediaTimePercentState,
   );
   return (
     <Slider
@@ -103,8 +103,8 @@ function MediaTimeSlider(): JSX.Element {
 }
 
 function SongName(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeySel);
-  const { title }: SongData = useRecoilValue(dataForSongSel(songKey));
+  const songKey = useRecoilValue(currentSongKeyState);
+  const { title }: SongData = useRecoilValue(getDataForSongState(songKey));
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
       {title}
@@ -113,8 +113,10 @@ function SongName(): JSX.Element {
 }
 
 function ArtistAlbum(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeySel);
-  const { artist, album }: SongData = useRecoilValue(dataForSongSel(songKey));
+  const songKey = useRecoilValue(currentSongKeyState);
+  const { artist, album }: SongData = useRecoilValue(
+    getDataForSongState(songKey),
+  );
   if (songKey) {
     const split = artist.length && album.length ? ': ' : '';
     return (
@@ -131,14 +133,16 @@ function ArtistAlbum(): JSX.Element {
 }
 
 export default function SongPlayback(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeySel);
-  const onPlay = useRecoilCallback(({ set }) => () => set(playingAtom, true));
-  const onPause = useRecoilCallback(({ set }) => () => set(playingAtom, false));
+  const songKey = useRecoilValue(currentSongKeyState);
+  const onPlay = useRecoilCallback(({ set }) => () => set(playingState, true));
+  const onPause = useRecoilCallback(({ set }) => () =>
+    set(playingState, false),
+  );
   const onEnded = useRecoilCallback((cbInterface) => async () => {
     const { snapshot, set } = cbInterface;
     log('Heading to the next song!!!');
-    const songList = await snapshot.getPromise(songListAtom);
-    const rep = await snapshot.getPromise(repeatAtom);
+    const songList = await snapshot.getPromise(songListState);
+    const rep = await snapshot.getPromise(repeatState);
     if (rep && songList.length === 1) {
       // Because we rely on auto-play, if we just try to play the same song
       // again, it won't start playing
@@ -148,14 +152,14 @@ export default function SongPlayback(): JSX.Element {
       }
     }
     const isPlaying = await MaybePlayNext(cbInterface);
-    set(playingAtom, isPlaying);
+    set(playingState, isPlaying);
   });
   const onTimeUpdate = useRecoilCallback(
     ({ set }) => (ev: SyntheticEvent<HTMLMediaElement>) => {
       const ae = ev.currentTarget;
       // eslint-disable-next-line id-blacklist
       if (!Number.isNaN(ae.duration)) {
-        set(mediaTimeAtom, (prevTime: MediaTime) => {
+        set(mediaTimeState, (prevTime: MediaTime) => {
           if (
             Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
             Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)

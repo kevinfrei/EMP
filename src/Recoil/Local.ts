@@ -9,7 +9,7 @@ export type MediaTime = {
   position: number;
 };
 
-export const mediaTimeAtom = atom<MediaTime>({
+export const mediaTimeState = atom<MediaTime>({
   key: 'mediaTime',
   default: {
     duration: 0,
@@ -17,120 +17,120 @@ export const mediaTimeAtom = atom<MediaTime>({
   },
 });
 
-export const mediaTimePositionSel = selector<string>({
+export const mediaTimePositionState = selector<string>({
   key: 'mediaTimePosition',
   get: ({ get }): string => {
-    const { position } = get(mediaTimeAtom);
+    const { position } = get(mediaTimeState);
     return position > 0 ? secondsToTime(position) : '';
   },
 });
 
-export const mediaTimeRemainingSel = selector<string>({
+export const mediaTimeRemainingState = selector<string>({
   key: 'mediaTimeRemaining',
   get: ({ get }): string => {
-    const { position, duration } = get(mediaTimeAtom);
+    const { position, duration } = get(mediaTimeState);
     return duration > 0 ? '-' + secondsToTime(duration - position) : '';
   },
 });
 
-export const mediaTimePercentRWSel = selector<number>({
+export const mediaTimePercentState = selector<number>({
   key: 'mediaTimePercent',
   get: ({ get }): number => {
-    const { position, duration } = get(mediaTimeAtom);
+    const { position, duration } = get(mediaTimeState);
     return duration > 0 ? position / duration : 0;
   },
   set: ({ get, set }, newValue) => {
-    const { duration } = get(mediaTimeAtom);
+    const { duration } = get(mediaTimeState);
     const newVal: number = newValue instanceof DefaultValue ? 0 : newValue;
     if (duration > 0) {
-      set(mediaTimeAtom, { position: duration * newVal, duration });
+      set(mediaTimeState, { position: duration * newVal, duration });
     }
   },
 });
 
-export const shuffleAtom = atom<boolean>({ key: 'shuffle', default: false });
-export const repeatAtom = atom<boolean>({ key: 'repeat', default: false });
-export const playingAtom = atom<boolean>({ key: 'playing', default: false });
-export const activePlaylistAtom = atom<string>({
+export const shuffleState = atom<boolean>({ key: 'shuffle', default: false });
+export const repeatState = atom<boolean>({ key: 'repeat', default: false });
+export const playingState = atom<boolean>({ key: 'playing', default: false });
+export const activePlaylistState = atom<string>({
   key: 'nowPlaying',
   default: '',
 });
-export const stillPlayingAtom = atom<SongKey>({
+export const stillPlayingState = atom<SongKey>({
   key: 'StillPlaying',
   default: '',
 });
 
-export const songListAtom = atom<SongKey[]>({
+export const songListState = atom<SongKey[]>({
   key: 'currentSongList',
   default: [],
 });
 
-export const currentIndexAtom = atom<number>({
+export const currentIndexState = atom<number>({
   key: 'currentIndex',
   default: -1,
 });
 
-export const currentSongKeySel = selector<SongKey>({
+export const currentSongKeyState = selector<SongKey>({
   key: 'currentSongKey',
   get: ({ get }) => {
-    const curIndex = get(currentIndexAtom);
+    const curIndex = get(currentIndexState);
     if (curIndex >= 0) {
-      const songList = get(songListAtom);
+      const songList = get(songListState);
       if (curIndex >= 0 && curIndex < songList.length) {
         return songList[curIndex];
       } else {
         return '';
       }
     } else {
-      return get(stillPlayingAtom);
+      return get(stillPlayingState);
     }
   },
 });
 
 // Is there a 'next song' to play?
-export const hasNextSongSel = selector<boolean>({
+export const hasNextSongState = selector<boolean>({
   key: 'hasNextSong',
   get: ({ get }) => {
-    const songList = get(songListAtom);
+    const songList = get(songListState);
     if (songList.length === 0) {
       return false;
     }
-    const curIndex = get(currentIndexAtom);
+    const curIndex = get(currentIndexState);
     if (curIndex >= 0 && curIndex < songList.length - 1) {
       return true;
     }
-    return get(repeatAtom);
+    return get(repeatState);
   },
 });
 
 // Is there a 'previous song' to play?
-export const hasPrevSongSel = selector<boolean>({
+export const hasPrevSongState = selector<boolean>({
   key: 'hasPrevSong',
   get: ({ get }) => {
-    const songList = get(songListAtom);
+    const songList = get(songListState);
     if (songList.length === 0) {
       return false;
     }
-    const curIndex = get(currentIndexAtom);
-    return curIndex > 0 || get(repeatAtom);
+    const curIndex = get(currentIndexState);
+    return curIndex > 0 || get(repeatState);
   },
 });
 
 // Do we have any songs at all?
-export const hasAnySongsSel = selector<boolean>({
+export const hasAnySongsState = selector<boolean>({
   key: 'hasAnySongs',
-  get: ({ get }) => get(songListAtom).length > 0,
+  get: ({ get }) => get(songListState).length > 0,
 });
 
 // This is the sort for the current playlist
-export const nowPlayingSortAtom = atom<string>({
+export const nowPlayingSortState = atom<string>({
   key: 'nowPlayingSort',
   default: '',
 });
 
-export const songDetailAtom = atom<Song | null>({
+export const songDetailState = atom<Song | null>({
   key: 'songDetail',
   default: null,
 });
 
-export const keyFilterAtom = atom<string>({ key: 'keyFilter', default: '' });
+export const keyFilterState = atom<string>({ key: 'keyFilter', default: '' });

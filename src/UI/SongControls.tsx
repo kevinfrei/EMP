@@ -2,12 +2,12 @@ import { MakeLogger } from '@freik/core-utils';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
-  hasAnySongsSel,
-  hasNextSongSel,
-  hasPrevSongSel,
-  playingAtom,
-  repeatAtom,
-  shuffleAtom,
+  hasAnySongsState,
+  hasNextSongState,
+  hasPrevSongState,
+  playingState,
+  repeatState,
+  shuffleState,
 } from '../Recoil/Local';
 import { GetAudioElem } from './SongPlayback';
 import './styles/SongControls.css';
@@ -15,13 +15,13 @@ import './styles/SongControls.css';
 const log = MakeLogger('SongControls');
 
 export default function SongControls(): JSX.Element {
-  const [isPlaying, setIsPlaying] = useRecoilState(playingAtom);
+  const [isPlaying, setIsPlaying] = useRecoilState(playingState);
 
-  const hasAnySong = useRecoilValue(hasAnySongsSel);
-  const shuf = useRecoilValue(shuffleAtom);
-  const [rep, repSet] = useRecoilState(repeatAtom);
-  const hasNextSong = useRecoilValue(hasNextSongSel);
-  const hasPrevSong = useRecoilValue(hasPrevSongSel);
+  const hasAnySong = useRecoilValue(hasAnySongsState);
+  const shuf = useRecoilValue(shuffleState);
+  const [rep, repSet] = useRecoilState(repeatState);
+  const hasNextSong = useRecoilValue(hasNextSongState);
+  const hasPrevSong = useRecoilValue(hasPrevSongState);
 
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';
@@ -34,10 +34,10 @@ export default function SongControls(): JSX.Element {
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
   const clickShuffle = useRecoilCallback((cbInterface) => async () => {
-    if (!(await cbInterface.snapshot.getPromise(shuffleAtom))) {
+    if (!(await cbInterface.snapshot.getPromise(shuffleState))) {
       await ShufflePlaying(cbInterface);
     }
-    cbInterface.set(shuffleAtom, (prevShuf) => !prevShuf);
+    cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = () => {

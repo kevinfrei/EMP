@@ -21,14 +21,14 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailAtom } from '../../Recoil/Local';
+import { songDetailState } from '../../Recoil/Local';
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  allSongsSel,
-  dataForAlbumSel,
+  allAlbumsState,
+  allArtistsState,
+  allSongsState,
+  getDataForAlbumState,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import {
   AlbumFromSong,
@@ -42,7 +42,7 @@ import './styles/Albums.css';
 const err = MakeError('Albums-err'); // eslint-disable-line
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
-  const albumData = useRecoilValue(dataForAlbumSel(props.album.key));
+  const albumData = useRecoilValue(getDataForAlbumState(props.album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(props.album.songs, cbInterface),
   );
@@ -67,28 +67,28 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
 }
 
 // For grouping to work properly, the sort order needs to be fully specified
-const sortOrderAtom = atom({ key: 'albumsSortOrder', default: 'lyrnt' });
-const sortedSongsSel = selector({
+const sortOrderState = atom({ key: 'albumsSortOrder', default: 'lyrnt' });
+const sortedSongsState = selector({
   key: 'albumsSorted',
   get: ({ get }) => {
     return SortSongList(
-      [...get(allSongsSel).values()],
-      get(allAlbumsSel),
-      get(allArtistsSel),
-      get(ignoreArticlesAtom),
-      get(sortOrderAtom),
+      [...get(allSongsState).values()],
+      get(allAlbumsState),
+      get(allArtistsState),
+      get(ignoreArticlesState),
+      get(sortOrderState),
     );
   },
 });
 
 export default function AlbumList(): JSX.Element {
-  const albums = useRecoilValue(allAlbumsSel);
-  const sortedSongs = useRecoilValue(sortedSongsSel);
+  const albums = useRecoilValue(allAlbumsState);
+  const sortedSongs = useRecoilValue(sortedSongsState);
 
-  const [curSort, setSort] = useRecoilState(sortOrderAtom);
+  const [curSort, setSort] = useRecoilState(sortOrderState);
 
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailAtom, item),
+    set(songDetailState, item),
   );
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs([item.key], cbInterface),
@@ -96,13 +96,6 @@ export default function AlbumList(): JSX.Element {
 
   const curExpandedState = useState(new Set<AlbumKey>());
 
-  // This takes a sort string, shuffles it to always have the groupId first
-  // then sorts according to the order specified
-  const performSort = (srt: string) => {
-    if (srt !== curSort) {
-      setSort(srt);
-    }
-  };
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
   ): JSX.Element | null => {
@@ -140,7 +133,7 @@ export default function AlbumList(): JSX.Element {
       ['t', 'title', 'Title', 50, 150],
     ],
     () => curSort,
-    performSort,
+    setSort,
   );
   groupProps.onRenderHeader = renderAlbumHeader;
 

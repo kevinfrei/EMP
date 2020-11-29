@@ -14,13 +14,13 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailAtom } from '../../Recoil/Local';
+import { songDetailState } from '../../Recoil/Local';
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  allSongsSel,
+  allAlbumsState,
+  allArtistsState,
+  allSongsState,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import {
   AlbumFromSong,
@@ -33,27 +33,27 @@ import './styles/MixedSongs.css';
 
 const err = MakeError('MixedSongs-err'); // eslint-disable-line
 
-const sortOrderAtom = atom({ key: 'mixedSongSortOrder', default: 'rl' });
-const sortedSongsSel = selector({
+const sortOrderState = atom({ key: 'mixedSongSortOrder', default: 'rl' });
+const sortedSongsState = selector({
   key: 'msSorted',
   get: ({ get }) => {
     return SortSongList(
-      [...get(allSongsSel).values()],
-      get(allAlbumsSel),
-      get(allArtistsSel),
-      get(ignoreArticlesAtom),
-      get(sortOrderAtom),
+      [...get(allSongsState).values()],
+      get(allAlbumsState),
+      get(allArtistsState),
+      get(ignoreArticlesState),
+      get(sortOrderState),
     );
   },
 });
 
 export default function MixedSongsList(): JSX.Element {
-  const sortedItems = useRecoilValue(sortedSongsSel);
+  const sortedItems = useRecoilValue(sortedSongsState);
 
-  const [sortOrder, setSortOrder] = useRecoilState(sortOrderAtom);
+  const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
 
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailAtom, item),
+    set(songDetailState, item),
   );
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs([item.key], cbInterface),

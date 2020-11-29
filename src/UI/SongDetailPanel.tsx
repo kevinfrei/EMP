@@ -1,11 +1,11 @@
 import { Panel, PanelType } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
-import { songDetailAtom } from '../Recoil/Local';
+import { songDetailState } from '../Recoil/Local';
 import MediaInfoTable from './MediaInfo';
 import { Spinner } from './Utilities';
 
 export default function SongDetailPanel(): JSX.Element {
-  const [detailSong, setDetailSong] = useRecoilState(songDetailAtom);
+  const [detailSong, setDetailSong] = useRecoilState(songDetailState);
 
   const elem =
     detailSong === null ? <div /> : <MediaInfoTable forSong={detailSong.key} />;

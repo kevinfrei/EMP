@@ -15,7 +15,7 @@ import {
 import { MakeError } from '@freik/core-utils';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-utils';
 import { useRecoilValue } from 'recoil';
-import { albumByKeySel, artistStringSel } from '../Recoil/ReadOnly';
+import { getAlbumByKeyState, getArtistStringState } from '../Recoil/ReadOnly';
 
 const err = MakeError('SongList-err');
 
@@ -139,11 +139,11 @@ export function ArtistName({
 }: {
   artistIds: ArtistKey[];
 }): JSX.Element {
-  return <>{useRecoilValue(artistStringSel(artistIds))}</>;
+  return <>{useRecoilValue(getArtistStringState(artistIds))}</>;
 }
 
 export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
-  return <>{useRecoilValue(albumByKeySel(albumId)).title}</>;
+  return <>{useRecoilValue(getAlbumByKeyState(albumId)).title}</>;
 }
 
 export function ArtistsFromSong(theSong: Song): JSX.Element {

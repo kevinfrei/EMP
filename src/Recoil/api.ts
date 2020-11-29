@@ -4,16 +4,16 @@ import { CallbackInterface } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
-  activePlaylistAtom,
-  currentIndexAtom,
-  currentSongKeySel,
-  nowPlayingSortAtom,
-  repeatAtom,
-  shuffleAtom,
-  songListAtom,
-  stillPlayingAtom,
+  activePlaylistState,
+  currentIndexState,
+  currentSongKeyState,
+  nowPlayingSortState,
+  repeatState,
+  shuffleState,
+  songListState,
+  stillPlayingState,
 } from './Local';
-import { playlistNamesSel, playlistSel } from './ReadWrite';
+import { getPlaylistState, playlistNamesState } from './ReadWrite';
 
 /**
  * Try to play the next song in the playlist
@@ -28,21 +28,21 @@ export async function MaybePlayNext({
   snapshot,
   set,
 }: CallbackInterface): Promise<boolean> {
-  const curIndex = await snapshot.getPromise(currentIndexAtom);
-  const songList = await snapshot.getPromise(songListAtom);
+  const curIndex = await snapshot.getPromise(currentIndexState);
+  const songList = await snapshot.getPromise(songListState);
   if (curIndex + 1 < songList.length) {
-    set(currentIndexAtom, curIndex + 1);
+    set(currentIndexState, curIndex + 1);
     return true;
   }
-  const repeat = await snapshot.getPromise(repeatAtom);
+  const repeat = await snapshot.getPromise(repeatState);
   if (!repeat) {
     return false;
   }
-  const shuffle = await snapshot.getPromise(shuffleAtom);
+  const shuffle = await snapshot.getPromise(shuffleState);
   if (shuffle) {
-    set(songListAtom, ShuffleArray(songList));
+    set(songListState, ShuffleArray(songList));
   }
-  set(currentIndexAtom, 0);
+  set(currentIndexState, 0);
   return true;
 }
 
@@ -57,13 +57,13 @@ export async function MaybePlayPrev({
   snapshot,
   set,
 }: CallbackInterface): Promise<void> {
-  const songList = await snapshot.getPromise(songListAtom);
+  const songList = await snapshot.getPromise(songListState);
   if (songList.length > 0) {
-    const curIndex = await snapshot.getPromise(currentIndexAtom);
+    const curIndex = await snapshot.getPromise(currentIndexState);
     if (curIndex > 0) {
-      set(currentIndexAtom, curIndex - 1);
-    } else if (await snapshot.getPromise(repeatAtom)) {
-      set(currentIndexAtom, songList.length - 1);
+      set(currentIndexState, curIndex - 1);
+    } else if (await snapshot.getPromise(repeatState)) {
+      set(currentIndexState, songList.length - 1);
     }
   }
 }
@@ -80,8 +80,8 @@ export function AddSongs(
   listToAdd: Iterable<SongKey>,
   { set }: CallbackInterface,
 ): void {
-  set(songListAtom, (songList) => [...songList, ...listToAdd]);
-  set(currentIndexAtom, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+  set(songListState, (songList) => [...songList, ...listToAdd]);
+  set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
 }
 
 /**
@@ -105,10 +105,10 @@ export function PlaySongs(
     }
   }
   if (isPlaylist(playlistName) && Type.isString(playlistName)) {
-    set(activePlaylistAtom, playlistName);
+    set(activePlaylistState, playlistName);
   }
-  set(songListAtom, [...listToPlay]);
-  set(currentIndexAtom, index);
+  set(songListState, [...listToPlay]);
+  set(currentIndexState, index);
 }
 
 /**
@@ -124,11 +124,11 @@ export async function StopAndClear({
   reset,
   snapshot,
 }: CallbackInterface): Promise<void> {
-  const curSong = await snapshot.getPromise(currentSongKeySel);
-  reset(songListAtom);
-  reset(currentIndexAtom);
-  reset(activePlaylistAtom);
-  set(stillPlayingAtom, curSong);
+  const curSong = await snapshot.getPromise(currentSongKeyState);
+  set(stillPlayingState, curSong);
+  reset(songListState);
+  reset(currentIndexState);
+  reset(activePlaylistState);
   // TODO: Go stop the audio element while we're at it?
 }
 
@@ -142,18 +142,18 @@ export async function ShufflePlaying({
   snapshot,
   set,
 }: CallbackInterface): Promise<void> {
-  const curIndex = await snapshot.getPromise(currentIndexAtom);
-  set(nowPlayingSortAtom, '');
+  const curIndex = await snapshot.getPromise(currentIndexState);
+  set(nowPlayingSortState, '');
   if (curIndex < 0) {
-    set(songListAtom, (prevSongList) => ShuffleArray(prevSongList));
+    set(songListState, (prevSongList) => ShuffleArray(prevSongList));
   } else {
-    const curSongList = await snapshot.getPromise(songListAtom);
+    const curSongList = await snapshot.getPromise(songListState);
     const curKey = curSongList[curIndex];
     let newSongs = [...curSongList];
     newSongs.splice(curIndex, 1);
     newSongs = [curKey, ...ShuffleArray(newSongs)];
-    set(songListAtom, newSongs);
-    set(currentIndexAtom, 0);
+    set(songListState, newSongs);
+    set(currentIndexState, 0);
   }
 }
 
@@ -165,13 +165,13 @@ export async function renamePlaylist(
   curName: PlaylistName,
   newName: PlaylistName,
 ): Promise<void> {
-  const curNames = await snapshot.getPromise(playlistNamesSel);
-  const curSongs = await snapshot.getPromise(playlistSel(curName));
+  const curNames = await snapshot.getPromise(playlistNamesState);
+  const curSongs = await snapshot.getPromise(getPlaylistState(curName));
   curNames.delete(curName);
   curNames.add(newName);
   await InvokeMain('rename-playlist', FTON.stringify({ curName, newName }));
-  set(playlistSel(newName), curSongs);
-  set(playlistNamesSel, new Set(curNames));
+  set(getPlaylistState(newName), curSongs);
+  set(playlistNamesState, new Set(curNames));
 }
 
 /**
@@ -181,12 +181,12 @@ export async function deletePlaylist(
   toDelete: PlaylistName,
   { set, snapshot }: CallbackInterface,
 ): Promise<void> {
-  const curNames = await snapshot.getPromise(playlistNamesSel);
-  const activePlaylist = await snapshot.getPromise(activePlaylistAtom);
+  const curNames = await snapshot.getPromise(playlistNamesState);
+  const activePlaylist = await snapshot.getPromise(activePlaylistState);
   curNames.delete(toDelete);
   await InvokeMain('delete-playlist', toDelete);
-  set(playlistNamesSel, new Set(curNames));
+  set(playlistNamesState, new Set(curNames));
   if (activePlaylist === toDelete) {
-    set(activePlaylistAtom, '');
+    set(activePlaylistState, '');
   }
 }

@@ -9,10 +9,10 @@ import { SongKey } from '@freik/media-utils';
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import {
-  albumByKeySel,
-  artistStringSel,
-  getMediaInfo,
-  songByKeySel,
+  getAlbumByKeyState,
+  getArtistStringState,
+  getMediaInfoState,
+  getSongByKeyState,
 } from '../Recoil/ReadOnly';
 import { divGrand, fractionalSecondsStrToHMS } from '../Tools';
 import { MetadataEditor } from './MetadataEditor';
@@ -53,10 +53,10 @@ export default function MediaInfoTable({
 }: {
   forSong: SongKey;
 }): JSX.Element {
-  const mediaInfo = useRecoilValue(getMediaInfo(forSong));
-  const theSong = useRecoilValue(songByKeySel(forSong));
-  const theArtist = useRecoilValue(artistStringSel(theSong.artistIds));
-  const theAlbum = useRecoilValue(albumByKeySel(theSong.albumId));
+  const mediaInfo = useRecoilValue(getMediaInfoState(forSong));
+  const theSong = useRecoilValue(getSongByKeyState(forSong));
+  const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
+  const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
   const thePath = mediaInfo.get('File Path') || '';
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = fractionalSecondsStrToHMS(

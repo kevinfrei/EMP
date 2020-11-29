@@ -22,70 +22,71 @@ export enum CurrentView {
   search = 8,
 }
 
-export const mutedAtom = atom<boolean>({
+export const mutedState = atom<boolean>({
   key: 'mute',
   default: false,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
-export const volumeAtom = atom<number>({
+
+export const volumeState = atom<number>({
   key: 'volume',
   default: 0.5,
   effects_UNSTABLE: [syncWithMainEffect<number>()],
 });
 
 // This is the 'locations' for searching
-export const locationsAtom = atom<string[]>({
+export const locationsState = atom<string[]>({
   key: 'locations',
   default: [],
   effects_UNSTABLE: [syncWithMainEffect<string[]>()],
 });
 
 // Sort with/without articles setting
-export const ignoreArticlesAtom = atom<boolean>({
+export const ignoreArticlesState = atom<boolean>({
   key: 'rSortWithArticles',
   default: true,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
 
 // Only show artists in the list who appear on full albums
-export const showArtistsWithFullAlbumsAtom = atom<boolean>({
+export const showArtistsWithFullAlbumsState = atom<boolean>({
   key: 'FullAlbumsOnly',
   default: false,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
 
-export const downloadAlbumArtworkAtom = atom({
+export const downloadAlbumArtworkState = atom({
   key: 'downloadAlbumArtwork',
   default: false,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
 
-export const downloadArtistArtworkAtom = atom({
+export const downloadArtistArtworkState = atom({
   key: 'downloadArtistArtwork',
   default: false,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
 
-export const saveAlbumArtworkWithMusicAtom = atom({
+export const saveAlbumArtworkWithMusicState = atom({
   key: 'saveAlbumArtworkWithMusic',
   default: false,
   effects_UNSTABLE: [syncWithMainEffect<boolean>()],
 });
 
-export const albumCoverNameAtom = atom({
+export const albumCoverNameState = atom({
   key: 'albumCoverName',
   default: '.CoverArt',
   effects_UNSTABLE: [syncWithMainEffect<string>()],
 });
 
 // The minimum # of songs an artist needs to show up in the artist list
-export const minSongCountForArtistListAtom = atom<number>({
+export const minSongCountForArtistListState = atom<number>({
   key: 'MinSongCount',
   default: 1,
   effects_UNSTABLE: [syncWithMainEffect<number>()],
 });
 
-export const curViewAtom = atom<CurrentView>({
+export const curViewState = atom<CurrentView>({
   key: 'CurrentView',
   default: CurrentView.settings,
   effects_UNSTABLE: [syncWithMainEffect<CurrentView>()],
@@ -97,32 +98,32 @@ export const curViewAtom = atom<CurrentView>({
 // For album & artist sorting, q= total # (Quantity!) of tracks
 // For artist sorting, s= # of Songs
 
-export const albumListSortAtom = atom<string>({
+export const albumListSortState = atom<string>({
   key: 'rAlbumListSort',
   default: 'ry',
 });
 
-export const artistListSortAtom = atom<string>({
+export const artistListSortState = atom<string>({
   key: 'rArtistListSort',
   default: 'rl',
 });
 
-export const songListSortAtom = atom<string>({
+export const songListSortState = atom<string>({
   key: 'rSongListSort',
   default: 'rl',
 });
 
 // Stuff for playlists
 
-const playlistNamesBacker = atom<string[] | false>({
+const playlistNamesBackerState = atom<string[] | false>({
   key: 'playlistNames-backer',
   default: false,
 });
 
-export const playlistNamesSel = selector<Set<PlaylistName>>({
+export const playlistNamesState = selector<Set<PlaylistName>>({
   key: 'PlaylistNames',
   get: async ({ get }) => {
-    const backed = get(playlistNamesBacker);
+    const backed = get(playlistNamesBackerState);
     if (backed === false) {
       const playlistsString = await InvokeMain('get-playlists');
       if (!playlistsString) {
@@ -137,20 +138,20 @@ export const playlistNamesSel = selector<Set<PlaylistName>>({
   },
   set: async ({ set }, newValue) => {
     const data = Type.isSetOf(newValue, Type.isString) ? [...newValue] : [];
-    set(playlistNamesBacker, data);
+    set(playlistNamesBackerState, data);
     await InvokeMain('set-playlists', FTON.stringify(data));
   },
 });
 
-const playlistBackerFamily = atomFamily<SongKey[] | false, PlaylistName>({
+const getPlaylistBackerState = atomFamily<SongKey[] | false, PlaylistName>({
   key: 'playlistFamilyBacker',
   default: false,
 });
 
-export const playlistSel = selectorFamily<SongKey[], PlaylistName>({
+export const getPlaylistState = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
   get: (arg: PlaylistName) => async ({ get }) => {
-    const backed = get(playlistBackerFamily(arg));
+    const backed = get(getPlaylistBackerState(arg));
     if (backed === false) {
       const listStr = await InvokeMain('load-playlist', arg);
       if (!listStr) {
@@ -163,13 +164,13 @@ export const playlistSel = selectorFamily<SongKey[], PlaylistName>({
     }
   },
   set: (name: PlaylistName) => async ({ set, get }, newValue) => {
-    const names = get(playlistNamesSel);
+    const names = get(playlistNamesState);
     if (!names.has(name)) {
       names.add(name);
-      set(playlistNamesSel, new Set(names));
+      set(playlistNamesState, new Set(names));
     }
     const songs = Type.isArray(newValue) ? newValue : [];
-    set(playlistBackerFamily(name), songs);
+    set(getPlaylistBackerState(name), songs);
     await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
   },
 });

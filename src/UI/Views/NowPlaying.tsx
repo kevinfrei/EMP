@@ -32,23 +32,23 @@ import {
 import { StopAndClear } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import {
-  activePlaylistAtom,
-  currentIndexAtom,
-  nowPlayingSortAtom,
-  shuffleAtom,
-  songDetailAtom,
-  songListAtom,
+  activePlaylistState,
+  currentIndexState,
+  nowPlayingSortState,
+  shuffleState,
+  songDetailState,
+  songListState,
 } from '../../Recoil/Local';
 import {
-  allAlbumsSel,
-  allArtistsSel,
-  curSongsSel,
-  saveableSel,
+  allAlbumsState,
+  allArtistsState,
+  curSongsState,
+  saveableState,
 } from '../../Recoil/ReadOnly';
 import {
-  ignoreArticlesAtom,
-  playlistNamesSel,
-  playlistSel,
+  getPlaylistState,
+  ignoreArticlesState,
+  playlistNamesState,
 } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongList } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
@@ -62,10 +62,10 @@ import './styles/NowPlaying.css';
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useRecoilValue(playlistNamesSel);
-  const nowPlaying = useRecoilValue(activePlaylistAtom);
-  const songList = useRecoilValue(songListAtom);
-  const saveEnabled = useRecoilValue(saveableSel);
+  const playlists = useRecoilValue(playlistNamesState);
+  const nowPlaying = useRecoilValue(activePlaylistState);
+  const songList = useRecoilValue(songListState);
+  const saveEnabled = useRecoilValue(saveableState);
 
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
@@ -74,8 +74,8 @@ function TopLine(): JSX.Element {
     if (playlists.has(inputName)) {
       window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
-      set(playlistSel(inputName), [...songList]);
-      set(activePlaylistAtom, inputName);
+      set(getPlaylistState(inputName), [...songList]);
+      set(activePlaylistState, inputName);
     }
   });
   const stopAndClear = useRecoilCallback((cbInterface) => async () => {
@@ -89,7 +89,7 @@ function TopLine(): JSX.Element {
     }
   });
   const save = useRecoilCallback(({ set }) => () => {
-    set(playlistSel(nowPlaying), songList);
+    set(getPlaylistState(nowPlaying), songList);
   });
 
   const emptyQueue = songList.length === 0;
@@ -180,17 +180,17 @@ function StickyDetailsHeader(
 
 // The Now Playing (Current playlist) view
 export default function NowPlaying(): JSX.Element {
-  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsSel);
-  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsSel);
-  const articles = useRecoilValue(ignoreArticlesAtom);
+  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsState);
+  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsState);
+  const articles = useRecoilValue(ignoreArticlesState);
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailAtom, item),
+    set(songDetailState, item),
   );
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexAtom);
-  const [songList, setSongList] = useRecoilState(songListAtom);
-  const resetShuffle = useResetRecoilState(shuffleAtom);
-  const [sortBy, setSortBy] = useRecoilState(nowPlayingSortAtom);
-  const curSongs = useRecoilValue(curSongsSel);
+  const [curIndex, setCurIndex] = useRecoilState(currentIndexState);
+  const [songList, setSongList] = useRecoilState(songListState);
+  const resetShuffle = useResetRecoilState(shuffleState);
+  const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
+  const curSongs = useRecoilValue(curSongsState);
 
   const drawDeleter = (song: Song) => (
     <IconButton
