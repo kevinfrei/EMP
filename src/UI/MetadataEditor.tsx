@@ -89,23 +89,27 @@ export function MetadataEditor(props: {
   return (
     <>
       <TextField
+        readOnly
         label="Title"
         value={val(title, props.title)}
         onChange={(e, nv) => nv && setTitle(nv)}
       />
       <TextField
+        readOnly
         label="Artist"
         value={val(artist, props.artist)}
         onChange={(e, nv) => nv && setArtist(nv)}
       />
       <Stack horizontal horizontalAlign="space-between">
         <TextField
+          readOnly
           label="Album"
           value={val(album, props.album)}
           onChange={(e, nv) => nv && setAlbum(nv)}
           style={{ width: 450 }}
         />
         <TextField
+          readOnly
           label="Year"
           value={val(year, props.year)}
           onChange={(e, nv) => (nv === '' || isNumber(nv)) && setYear(nv!)}
@@ -114,12 +118,14 @@ export function MetadataEditor(props: {
       </Stack>
       <Stack horizontal horizontalAlign="space-between">
         <TextField
+          readOnly
           label="Track #"
           value={val(track, trackNum)}
           onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
           style={{ width: 100 }}
         />
         <TextField
+          readOnly
           label="Disk #"
           value={val(disk, diskNum)}
           onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
@@ -127,14 +133,24 @@ export function MetadataEditor(props: {
         />
         <Stack verticalAlign="space-between" style={{ marginRight: 20 }}>
           <div style={{ height: 10 }} />
-          <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
-          <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
+          <Checkbox
+            disabled
+            label="Compilation"
+            checked={isVa}
+            onChange={setVa}
+          />
+          <Checkbox
+            disabled
+            label="Soundtrack"
+            checked={isOST}
+            onChange={setOST}
+          />
         </Stack>
       </Stack>
       <div style={{ height: 10 }} />
       <Stack horizontal horizontalAlign="end">
-        <PrimaryButton onClick={onSubmit} style={{ width: 100 }}>
-          Save
+        <PrimaryButton disabled onClick={onSubmit} style={{ width: 100 }}>
+          Save (NYI)
         </PrimaryButton>
       </Stack>
     </>
