@@ -8,7 +8,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { Artist, ArtistKey, Song } from '@freik/media-utils';
 import { useState } from 'react';
 import {
@@ -41,7 +41,9 @@ import {
 } from '../SongList';
 import './styles/Artists.css';
 
-type ArtistSong = Song & { sortedArtistId: ArtistKey };
+const err = MakeError('Artists-err'); // eslint-disable-line
+
+type ArtistSong = Song & { sortedArtistId: ArtistKey; comboKey: string };
 
 export function ArtistHeaderDisplay({
   artist,
@@ -59,7 +61,7 @@ export function ArtistHeaderDisplay({
   );
 }
 
-const filteredArtistsSel = selector<Artist[]>({
+const filteredArtistsState = selector<Artist[]>({
   key: 'filteredArtists',
   get: ({ get }) => {
     const fullAlbums = get(showArtistsWithFullAlbumsState);
@@ -94,22 +96,28 @@ const filteredArtistsSel = selector<Artist[]>({
   },
 });
 
-const filteredSongsSel = selector<ArtistSong[]>({
+const filteredSongsState = selector<ArtistSong[]>({
   key: 'filteredSongs',
   get: ({ get }) => {
     const songs = get(allSongsState);
     // Get the list of artists we're including
-    const artists = get(filteredArtistsSel);
-    const songSet = new Set<ArtistSong>();
+    const artists = get(filteredArtistsState);
+    // This needs to be a map, because sets are reference equality only...
+    const songSet = new Map<string, ArtistSong>();
     artists.forEach((artist) => {
       artist.songs.forEach((sng) => {
         const song = songs.get(sng);
         if (song) {
-          songSet.add({ sortedArtistId: artist.key, ...song });
+          const comboKey = `${song.key};${artist.key}`;
+          songSet.set(comboKey, {
+            sortedArtistId: artist.key,
+            comboKey,
+            ...song,
+          });
         }
       });
     });
-    return [...songSet];
+    return [...songSet.values()];
   },
 });
 
@@ -121,7 +129,7 @@ const sortedSongsState = selector({
     // TODO: Fix this for the filtered songs
     const artists = get(allArtistsState);
     return SortItems(
-      get(filteredSongsSel),
+      get(filteredSongsState),
       MakeSongComparator(
         get(allAlbumsState),
         artists,
@@ -142,7 +150,7 @@ const sortedSongsState = selector({
 });
 
 export default function ArtistList(): JSX.Element {
-  const filteredArtistList = useRecoilValue(filteredArtistsSel);
+  const filteredArtistList = useRecoilValue(filteredArtistsState);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailState, item),
@@ -204,6 +212,7 @@ export default function ArtistList(): JSX.Element {
           onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={sortedSongs}
+          getKey={(item: any, index?: number) => (item as ArtistSong).comboKey}
           groups={artistGroups}
           groupProps={groupProps}
           columns={columns}
