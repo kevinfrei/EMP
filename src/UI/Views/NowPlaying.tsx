@@ -250,6 +250,11 @@ export default function NowPlaying(): JSX.Element {
         <DetailsList
           compact={true}
           items={curSongs}
+          getKey={(item: any, index?: number) => {
+            const sng = item as Song;
+            const idx = index !== undefined ? index : -1;
+            return `${sng.key}:${idx}`;
+          }}
           selectionMode={SelectionMode.none}
           onRenderRow={altRowRenderer((props) => props.itemIndex === curIndex)}
           columns={columns}
