@@ -1,13 +1,11 @@
 import {
   DetailsList,
-  IDetailsList,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError } from '@freik/core-utils';
 import { Song } from '@freik/media-utils';
-import { useState } from 'react';
 import {
   atom,
   selector,
@@ -16,18 +14,14 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { keyFilterAtom, songDetailAtom } from '../../Recoil/Local';
+import { songDetailAtom } from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
   allSongsSel,
 } from '../../Recoil/ReadOnly';
-import {
-  CurrentView,
-  curViewAtom,
-  ignoreArticlesAtom,
-} from '../../Recoil/ReadWrite';
-import { GetIndexOf, noArticles, SortSongList } from '../../Tools';
+import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
+import { SortSongList } from '../../Tools';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -37,7 +31,7 @@ import {
 } from '../SongList';
 import './styles/MixedSongs.css';
 
-const log = MakeLogger('MixedSongs');
+const err = MakeError('MixedSongs-err'); // eslint-disable-line
 
 const sortOrderAtom = atom({ key: 'mixedSongSortOrder', default: 'rl' });
 const sortedSongsSel = selector({
@@ -54,9 +48,6 @@ const sortedSongsSel = selector({
 });
 
 export default function MixedSongsList(): JSX.Element {
-  const keyFilter = useRecoilValue(keyFilterAtom);
-  const ignoreArticles = useRecoilValue(ignoreArticlesAtom);
-  const curView = useRecoilValue(curViewAtom);
   const sortedItems = useRecoilValue(sortedSongsSel);
 
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderAtom);
@@ -68,8 +59,6 @@ export default function MixedSongsList(): JSX.Element {
     AddSongs([item.key], cbInterface),
   );
 
-  const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
-
   const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
@@ -80,18 +69,10 @@ export default function MixedSongsList(): JSX.Element {
     () => sortOrder,
     setSortOrder,
   );
-  if (curView === CurrentView.song && detailRef && keyFilter.length > 0) {
-    const index = GetIndexOf<Song>(sortedItems, keyFilter, (s: Song) =>
-      ignoreArticles ? noArticles(s.title) : s.title,
-    );
-    detailRef.focusIndex(index);
-    log(`Filter:'${keyFilter}' #${index} name:${sortedItems[index].title}`);
-  }
   return (
     <div className="songView" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <DetailsList
-          componentRef={(ref) => setDetailRef(ref)}
           items={sortedItems}
           columns={columns}
           compact={true}

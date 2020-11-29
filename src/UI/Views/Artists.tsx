@@ -2,8 +2,6 @@ import {
   DetailsList,
   IconButton,
   IDetailsGroupRenderProps,
-  IDetailsList,
-  IGroup,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -22,25 +20,18 @@ import {
 } from 'recoil';
 import { GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
-import { keyFilterAtom, songDetailAtom } from '../../Recoil/Local';
+import { songDetailAtom } from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
   allSongsSel,
 } from '../../Recoil/ReadOnly';
 import {
-  CurrentView,
-  curViewAtom,
   ignoreArticlesAtom,
   minSongCountForArtistListAtom,
   showArtistsWithFullAlbumsAtom,
 } from '../../Recoil/ReadWrite';
-import {
-  GetIndexOf,
-  MakeSongComparator,
-  noArticles,
-  SortItems,
-} from '../../Tools';
+import { MakeSongComparator, SortItems } from '../../Tools';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -153,9 +144,6 @@ const sortedSongsSel = selector({
 
 export default function ArtistList(): JSX.Element {
   const filteredArtistList = useRecoilValue(filteredArtistsSel);
-  const keyFilter = useRecoilValue(keyFilterAtom);
-  const curView = useRecoilValue(curViewAtom);
-  const ignoreArticles = useRecoilValue(ignoreArticlesAtom);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailAtom, item),
@@ -166,7 +154,6 @@ export default function ArtistList(): JSX.Element {
 
   const [curSort, setSort] = useRecoilState(sortOrderAtom);
   const curExpandedState = useState(new Set<ArtistKey>());
-  const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const sortedSongs = useRecoilValue(sortedSongsSel);
   const performSort = (srt: string) => {
@@ -215,18 +202,11 @@ export default function ArtistList(): JSX.Element {
     performSort,
   );
   groupProps.onRenderHeader = renderArtistHeader;
-  if (curView === CurrentView.artist && detailRef && keyFilter.length > 0) {
-    const index = GetIndexOf<IGroup>(artistGroups, keyFilter, (s: IGroup) =>
-      ignoreArticles ? noArticles(s.name) : s.name,
-    );
-    detailRef.focusIndex(index);
-  }
   return (
     <div className="artistView" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
           compact
-          componentRef={(ref) => setDetailRef(ref)}
           onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={sortedSongs}

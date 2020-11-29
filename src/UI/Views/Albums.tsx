@@ -2,8 +2,6 @@ import {
   DetailsList,
   IconButton,
   IDetailsGroupRenderProps,
-  IDetailsList,
-  IGroup,
   Image,
   ImageFit,
   ScrollablePane,
@@ -12,7 +10,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
+import { MakeError } from '@freik/core-utils';
 import { Album, AlbumKey, Song } from '@freik/media-utils';
 import { useState } from 'react';
 import {
@@ -23,19 +21,15 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { keyFilterAtom, songDetailAtom } from '../../Recoil/Local';
+import { songDetailAtom } from '../../Recoil/Local';
 import {
   allAlbumsSel,
   allArtistsSel,
   allSongsSel,
   dataForAlbumSel,
 } from '../../Recoil/ReadOnly';
-import {
-  CurrentView,
-  curViewAtom,
-  ignoreArticlesAtom,
-} from '../../Recoil/ReadWrite';
-import { GetIndexOf, noArticles, SortSongList } from '../../Tools';
+import { ignoreArticlesAtom } from '../../Recoil/ReadWrite';
+import { SortSongList } from '../../Tools';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -45,7 +39,7 @@ import {
 } from '../SongList';
 import './styles/Albums.css';
 
-const log = MakeLogger('Albums');
+const err = MakeError('Albums-err'); // eslint-disable-line
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(dataForAlbumSel(props.album.key));
@@ -89,10 +83,7 @@ const sortedSongsSel = selector({
 
 export default function AlbumList(): JSX.Element {
   const albums = useRecoilValue(allAlbumsSel);
-  const keyFilter = useRecoilValue(keyFilterAtom);
   const sortedSongs = useRecoilValue(sortedSongsSel);
-  const ignoreArticles = useRecoilValue(ignoreArticlesAtom);
-  const curView = useRecoilValue(curViewAtom);
 
   const [curSort, setSort] = useRecoilState(sortOrderAtom);
 
@@ -103,7 +94,6 @@ export default function AlbumList(): JSX.Element {
     AddSongs([item.key], cbInterface),
   );
 
-  const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
   const curExpandedState = useState(new Set<AlbumKey>());
 
   // This takes a sort string, shuffles it to always have the groupId first
@@ -154,21 +144,10 @@ export default function AlbumList(): JSX.Element {
   );
   groupProps.onRenderHeader = renderAlbumHeader;
 
-  // This doesn't quite work.
-  // It looks like DetailsList doesn't do the math quite right, unfortunately.
-  // I should check it out on Songs to see if it's related to groups...
-  if (curView === CurrentView.album && detailRef && keyFilter.length > 0) {
-    const index = GetIndexOf<IGroup>(groups, keyFilter, (s: IGroup) =>
-      ignoreArticles ? noArticles(s.name) : s.name,
-    );
-    detailRef.focusIndex(index);
-    log(`Filter: '${keyFilter}' index: ${index} name: ${groups[index].name}`);
-  }
   return (
     <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
-          componentRef={(ref) => setDetailRef(ref)}
           items={sortedSongs}
           selectionMode={SelectionMode.none}
           groups={groups}

@@ -112,6 +112,7 @@ albums, and artists are strict selectors from that atom.
   - Save this stuff between runs, as it's going to be _s l o w_.
 - **main** Version the persistence data. I have troubles if I change the disk
   format :/
+- **render** Add typing to scroll to the appropriate spot in the song list
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)
 - **render** Get the cursor set properly for clickable stuff
