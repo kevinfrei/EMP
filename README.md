@@ -26,6 +26,79 @@ here you go:
 It's not yet packaged for general consumption, but if you're a nerd like me, you
 can probably get it to work from the repository easily enough.
 
+## What's the current state?
+
+It pretty much works. Search is kinda messed up, and there are a few "first
+launch" problems that mean you might have to start it a couple times before it's
+actually running, but overall? It's completely functional.
+
+## Stuff to do
+
+### Bugs
+
+- Clearing the queue restarts playback on the current song
+- Search seems less than correct/consistent
+- Saw something odd with shuffle while it's playing in the Now Playing view.
+  Investigate!
+- Various Artists/Soundtracks still probably want some work...
+
+### Core Capabilities
+
+- **main** Update data from file metadata (overriding filename acquisition)
+  - Save this stuff between runs, as it's going to be _s l o w_.
+- **main** Version the persistence data. I have troubles if I change the disk
+  format :/
+- **render** Add typing to scroll to the appropriate spot in the song list
+- **render** Make search group headers a little more informative
+- **render** Make search headers clickable (i.e. sort the list of stuff)
+- **render** Get the cursor set properly for clickable stuff
+- **both** Add "Recently Added" capabilities
+  - Something involving no Key Reuse probably...
+- **render** Add playlist view that looks like Albums/Artists view
+- **render** Improve the Search view a bit
+- **render** Make a miniplayer!
+- **both** MediaInfo/Metadata editing!
+  - Support adding album covers
+  - File name vs. metadata difference cleanup (this would be _awesome_)
+- **both** File placement for clean-up, perhaps?
+- **both** Add 'favorite/love' attribute for songs
+- **both** "Auto" playlists (something involving stuff like "this artist" and
+  "not this keyword" kind of stuff.
+- **both** Import/Export M3U's (and other playlist formats one might care about)
+
+### Logic improvements/changes
+
+- Transcode for phone (dump stuff out ready to import into iTunes, for example)
+  - The lion's share of the work for this is already in my `@freik/media-utils`
+    module.
+- Playlist unique-ification
+
+### UI Improvements
+
+- Make an actual "About" screen
+- Get some controls in the menu with appropriate keyboard shortcuts
+- Maybe use the album-art package to get artist pix
+- Improve/Expand the views for Albums and Artists.
+
+### Other
+
+- Cache/save media-sourced album covers for read-only data sources
+- Testing! Testing! Testing!
+
+### "Other" communication
+
+To generally communicate, you'll need to have a message name registered on both
+sides. In the **main** process, you'll need to register it in the `CommsSetup`
+function in
+[Communication.ts](https://github.com/kevinfrei/EMP/blob/main/static/main/Communication.ts).
+In the **render** process, you should add a function that handles any data
+validation in [ipc.ts](https://github.com/kevinfrei/EMP/blob/main/src/ipc.ts).
+The 'get-media-info' message is a reasonable example to check out. Nothing is
+persisted between runs, it's just a simple little "please give me the data for
+this song" RPC.
+
+## Old stuff
+
 I've migrated everything from Flow to TypeScript, because support from all the
 modules I use is much better in TypeScript. Honestly, the only other thing that
 seems better to me about TypeScript over Flow is documentation. TypeScript is
@@ -34,12 +107,6 @@ it **_slow_**: 5-10 seconds to type check my 5000 lines of code :o but I'm not
 particularly blocked by the speed on compilation. My brain is far slower than
 that, and the tooling is much better. So it's all TypeScript, because types are
 good for your health.
-
-## What's the current state?
-
-It pretty much works. Search is kinda messed up, and there are a few "first
-launch" problems that mean you might have to start it a couple times before it's
-actually running, but overall? It's completely functional.
 
 I started out using Undux (with Flow), as Undux seemed to handle Flow types very
 nicely. But a month or so after my migration to TypeScript was complete,
@@ -60,6 +127,27 @@ generally well documented, and scalable. The `DetailsList` component is almost
 magical. I highly recommend it. I still see a few weird bugs, but it's not clear
 whether they're due to my code, or if the component has issues. Hurray for web
 tech, I guess.
+
+This started as a `create-react-app` and `electron-quick-start` shoved together
+with a very anemic
+[AmplitudeJS](https://521dimensions.com/open-source/amplitudejs/)-based play
+back thingamajig. I ripped out Amplitude (it was overkill, and didn't mesh well
+with React) and I've got a core set of capabilities working.
+
+Music player stuff. First: I have a _lot_ of media. Last time I checked it was
+over 20,000 songs spread across about 2000 albums and the same general number of
+artists. Navigating a collection that large results in a number of issues. The
+first is general purpose "using too much memory". Turns out, though, that just
+keeping the simple metadata DB in memory isn't a challenge, but the UI
+definitely needs a some virtualization, as 20,000 song `div`s is likely going to
+make Electron fall to it's knees. The second issue is general navigation:
+Artists/Albums/Songs lists are probably too messy. I think I might take a page
+out of the old Windows Phone UI and have a "first letter" initial entry into
+Artists and Albums lists. Not sure about Songs. That might just make more sense
+to only allow it to be searched, but never scrolled. Finally, playlists. M3U's
+are fine, but there are definitely better ways to produce playlists than just
+blindly adding entire albums/artists, or one by one. That's an interesting
+interaction problem to think about in the future...
 
 ### Recoil Notes
 
@@ -90,107 +178,13 @@ ignoring. I might switch back to something less integrated into the Atom, but it
 has definitely forced me to be more clear about how back end communication
 occurs.
 
-## Stuff to do
-
-### _In Progress_
-
-Migration to AtomEffects is underway. I need to move the entire MusicDB to a
-single bidirectionally synchronized atom. From that single data blob songs,
-albums, and artists are strict selectors from that atom.
-
-### Bugs
-
-- Clearing the queue restarts playback on the current song
-- Search seems less than correct/consistent
-- Saw something odd with shuffle while it's playing in the Now Playing view.
-  Investigate!
-- Various Artists/Soundtracks still probably want some work...
-
-### Core Capabilities
-
-- **main** Update data from file metadata (overriding filename acquisition)
-  - Save this stuff between runs, as it's going to be _s l o w_.
-- **main** Version the persistence data. I have troubles if I change the disk
-  format :/
-- **render** Add typing to scroll to the appropriate spot in the song list
-- **render** Make search group headers a little more informative
-- **render** Make search headers clickable (i.e. sort the list of stuff)
-- **render** Get the cursor set properly for clickable stuff
-- **both** Add "Recently Added" capabilities
-  - Something involving no Key Reuse probably...
-- **render** Add playlist view that looks like Albums/Artists view
-- **render** Improve the Search view a bit
-- **render** Make a miniplayer!
-- **both** MediaInfo/Metadata editing!
-  - Support adding album covers
-  - File name vs. metadata difference cleanup (this would be _awesome_)
-- **both** Add 'favorite/love' attribute for songs
-- **both** "Auto" playlists (something involving stuff like "this artist" and
-  "not this keyword" kind of stuff.
-- **both** Import/Export M3U's (and other playlist formats one might care about)
-
-### Logic improvements/changes
-
-- Transcode for phone (dump stuff out ready to import into iTunes, for example)
-  - The lion's share of the work for this is already in my `@freik/media-utils`
-    module.
-- Playlist unique-ification
-
-### UI Improvements
-
-- Make an actual "About" screen
-- Get some controls in the menu with appropriate keyboard shortcuts
-- Maybe use the album-art package to get artist pix
-- Improve/Expand the views for Albums and Artists.
-- Make the image cache stuff more configurable
-
-### Other
-
-- Cache/save media-sourced album covers for read-only data sources
-- Testing! Testing! Testing!
-
-### "Other" communication
-
-To generally communicate, you'll need to have a message name registered on both
-sides. In the **main** process, you'll need to register it in the `Init`
-function in
-[Communication.ts](https://github.com/kevinfrei/EMP/blob/main/static/main/Communication.ts).
-In the **render** process, you should add a function that handles any data
-validation in [ipc.ts](https://github.com/kevinfrei/EMP/blob/main/src/ipc.ts).
-The 'mediainfo' message is a reasonable example to check out. Nothing is
-persisted between runs, it's just a simple little "please give me the data for
-this song" RPC.
-
-## Old stuff
-
-This started as a `create-react-app` and `electron-quick-start` shoved together
-with a very anemic
-[AmplitudeJS](https://521dimensions.com/open-source/amplitudejs/)-based play
-back thingamajig. I ripped out Amplitude (it was overkill, and didn't mesh well
-with React) and I've got a core set of capabilities working.
-
-Music player stuff. First: I have a _lot_ of media. Last time I checked it was
-over 20,000 songs spread across about 2000 albums and the same general number of
-artists. Navigating a collection that large results in a number of issues. The
-first is general purpose "using too much memory". Turns out, though, that just
-keeping the simple metadata DB in memory isn't a challenge, but the UI
-definitely needs a some virtualization, as 20,000 song `div`s is likely going to
-make Electron fall to it's knees. The second issue is general navigation:
-Artists/Albums/Songs lists are probably too messy. I think I might take a page
-out of the old Windows Phone UI and have a "first letter" initial entry into
-Artists and Albums lists. Not sure about Songs. That might just make more sense
-to only allow it to be searched, but never scrolled. Finally, playlists. M3U's
-are fine, but there are definitely better ways to produce playlists than just
-blindly adding entire albums/artists, or one by one. That's an interesting
-interaction problem to think about in the future...
-
-# Electron quick start stuff:
+### Electron quick start stuff:
 
 This is a minimal Electron application based on the
 [Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the
 Electron documentation.
 
-# Create React App stuff:
+### Create React App stuff:
 
 This project was bootstrapped with
 [Create React App](https://github.com/facebook/create-react-app).

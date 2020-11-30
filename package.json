@@ -15,7 +15,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "@fluentui/react": "^7.153.1",
+    "@fluentui/react": "^7.153.2",
     "@freik/core-utils": "^0.7.1",
     "@freik/media-utils": "^0.5.2",
     "@uifabric/icons": "^7.5.17",
@@ -27,7 +27,7 @@
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "recoil": "^0.1.2",
-    "source-map-explorer": "^2.5.0"
+    "source-map-explorer": "^2.5.1"
   },
   "husky": {
     "hooks": {
@@ -41,7 +41,7 @@
     "react-build": "react-scripts build",
     "react-eject": "react-scripts eject",
     "electron-build": "electron-builder",
-    "release": "yarn clean && yarn prepare && yarn react-build && electron-builder --publish=always",
+    "release": "yarn build && electron-builder --publish=always",
     "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo",
     "build": "yarn clean && yarn prepare && yarn react-build",
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
@@ -345,7 +345,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^4.3.0",
     "jest-transform-css": "^2.1.0",
-    "prettier": "^2.2.0",
+    "prettier": "^2.2.1",
     "react-test-renderer": "^17.0.1",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",
