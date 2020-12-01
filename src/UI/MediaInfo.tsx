@@ -79,6 +79,7 @@ export default function MediaInfoTable({
   return (
     <Stack>
       <MetadataEditor
+        fullPath={thePath}
         forSong={forSong}
         artist={theArtist}
         album={theAlbum.title}
@@ -87,7 +88,22 @@ export default function MediaInfoTable({
         year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
         va={theAlbum.vatype}
       />
-      <Expandable label="File Details" separator>
+      <br />
+      <Stack horizontal horizontalAlign="space-between">
+        <TextField
+          prefix="Duration:"
+          readOnly
+          value={duration}
+          style={{ width: '80px' }}
+        />
+        <TextField
+          prefix={fileType.toLocaleUpperCase() + ':'}
+          readOnly
+          value={`${bitrate} (${bps} bit ${sampleRate} ${channels})`}
+          style={{ width: '308px' }}
+        />
+      </Stack>
+      <Expandable label="Raw Metadata" separator>
         <TextField
           label="File"
           underlined
@@ -95,24 +111,6 @@ export default function MediaInfoTable({
           value={thePath}
           onDoubleClick={() => InvokeMain('show-file', thePath)}
         />
-        <Stack horizontal horizontalAlign="space-between">
-          <TextField
-            label="Duration"
-            underlined
-            readOnly
-            value={duration}
-            style={{ width: '70px' }}
-          />
-          <TextField
-            label="Format:"
-            underlined
-            readOnly
-            value={`${bitrate} ${fileType} ${sampleRate} ${channels} ${bps} bit depth`}
-            style={{ width: '310px' }}
-          />
-        </Stack>
-      </Expandable>
-      <Expandable label="Raw Metadata" separator>
         <DetailsList
           items={[...mediaInfo.entries()]}
           selectionMode={SelectionMode.none}
