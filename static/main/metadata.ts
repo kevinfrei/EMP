@@ -10,7 +10,7 @@ import { Attributes, FullMetadata, MD } from '@freik/media-utils';
 import { UpdateDB } from './musicDB';
 import * as persist from './persist';
 
-const log = MakeLogger('metadata');
+const log = MakeLogger('metadata', true);
 const err = MakeError('metadata-err');
 
 declare type NestedValue =
