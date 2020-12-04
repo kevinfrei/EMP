@@ -22,6 +22,8 @@ export function MetadataEditor(props: {
   year?: string;
   va?: string;
   fullPath?: string;
+  variations?: string;
+  moreArtists?: string;
 }): JSX.Element {
   const [artist, setArtist] = useState<false | string>(false);
   const [album, setAlbum] = useState<false | string>(false);
@@ -30,6 +32,8 @@ export function MetadataEditor(props: {
   const [title, setTitle] = useState<false | string>(false);
   const [year, setYear] = useState<false | string>(false);
   const [vaType, setVaType] = useState<false | 'ost' | 'va' | ''>(false);
+  const [vars, setVars] = useState<false | string>(false);
+  const [moreArtists, setMoreArtists] = useState<false | string>(false);
   const priArtistsId = useId('md-priArtists');
   const secArtistsId = useId('md-secArtists');
   const variationsId = useId('md-variations');
@@ -45,6 +49,8 @@ export function MetadataEditor(props: {
     setTitle(false);
     setYear(false);
     setVaType(false);
+    setVars(false);
+    setMoreArtists(false);
   }, [props.forSong]);
   if (!Type.isString(props.forSong) || !Type.isString(props.fullPath)) {
     return <></>;
@@ -88,7 +94,7 @@ export function MetadataEditor(props: {
     log('Originally:');
     log(props);
     log('updated to:');
-    log(`Artist: ${e(artist)}`);
+    log(`Artist(s): ${e(artist)}`);
     log(`Album:  ${e(album)}`);
     if (disk) {
       const tn = '0' + val(track, trackNum);
@@ -103,15 +109,20 @@ export function MetadataEditor(props: {
     log(`Title:  ${e(title)}`);
     log(`VAType: ${e(vaType)}`);
     log(`Year:   ${e(year)}`);
+    log(`Variations: ${e(vars)}`);
     const md: Partial<FullMetadata> = {
       originalPath: props.fullPath || '',
-      artist: ed(artist),
+      artist: artist ? splitArtistString(artist) : undefined,
       album: ed(album),
       year: nd(year),
       track: nd(trackNum),
       title: ed(title),
       vaType: vaType === false || vaType === '' ? undefined : vaType,
       disk: nd(diskNum),
+      variations: ed(vars)
+        ?.split(';')
+        .map((s) => s.trim()),
+      moreArtists: moreArtists ? splitArtistString(moreArtists) : undefined,
       /*
         moreArtists?: string[],
         mix?: string[],

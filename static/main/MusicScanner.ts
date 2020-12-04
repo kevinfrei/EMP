@@ -290,6 +290,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
     track: md.track,
     title: md.title,
     key: getSongKey(md.originalPath),
+    variations: md.variations,
   };
   album.songs.push(theSong.key);
   allArtists.forEach((artist) => artist.songs.push(theSong.key));

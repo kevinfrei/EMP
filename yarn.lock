@@ -1272,13 +1272,13 @@
     "@uifabric/set-version" "^7.0.23"
     tslib "^1.10.0"
 
-"@fluentui/react@^7.153.3":
-  version "7.153.3"
-  resolved "https://registry.yarnpkg.com/@fluentui/react/-/react-7.153.3.tgz#1605369cf9241a65d60e75d8a8ff6a2201ffe26e"
-  integrity sha512-XHD+cOr3vSLRezG5HK5iLNaH7kQiMHGYCA8Zj5M11i/XS1g/UR1Hj6zSL4fnxfJSs+UqgikyxpCOqNI8a5606A==
+"@fluentui/react@^7.153.4":
+  version "7.153.4"
+  resolved "https://registry.yarnpkg.com/@fluentui/react/-/react-7.153.4.tgz#4aabeb9755ee08232d26bd05f3d0db29ea021a96"
+  integrity sha512-ksglyptT/nkjChmIZ2OiushPJMMBfYgJHclMYqfp8Z4TGeXWPaYT6l5HfKeEZJTsMz3WtJpy+6MB48Yh4PYOLA==
   dependencies:
     "@uifabric/set-version" "^7.0.23"
-    office-ui-fabric-react "^7.153.3"
+    office-ui-fabric-react "^7.153.4"
     tslib "^1.10.0"
 
 "@fluentui/theme@^1.7.0":
@@ -1296,10 +1296,10 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.7.1.tgz#54d8bd9c24eefbb06a9651c970fdc8f4961abc9c"
   integrity sha512-qhfHHbiCClRsbUljTyBCvHcLPVnXocWNKauMdUbLSa0vE6rxKKiEWm7+idVx/JKKQgclojp6AD2B4YD13rgW3g==
 
-"@freik/media-utils@^0.6.0":
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.6.0.tgz#2a8f4225a1e4bcc7d058bc530afa87efdc7f07af"
-  integrity sha512-TbvWmRMvnNo0jIyfKEGzUZF9Xko1/wJSQeSr/VEa8QtDEqOUaaL+U16qyLTOtID/s0bRRXHcHolieXvt9gaiPA==
+"@freik/media-utils@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.6.2.tgz#5bbaef8c050a522fb8b02b3a1c765491217e8a45"
+  integrity sha512-UMnkDOrlbWoCcqOJ75O6Q/Ca7nSdE6XWk19ZMfE+5JVpTkfzKVCX6ROf0dxMt722E8uNAp2QL5QeqiDcsNGllQ==
   dependencies:
     "@freik/core-utils" "^0.7.0"
     "@freik/node-utils" "^0.3.2"
@@ -4964,9 +4964,9 @@ electron-react-devtools@^0.5.3:
   integrity sha1-x07bEkXcHP4TgLkwFs1OtYjtALc=
 
 electron-to-chromium@^1.3.564, electron-to-chromium@^1.3.612:
-  version "1.3.614"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.614.tgz#ff359e8d2249e2ce859a4c2bc34c22bd2e2eb0a2"
-  integrity sha512-JMDl46mg4G+n6q/hAJkwy9eMTj5FJjsE+8f/irAGRMLM4yeRVbMuRrdZrbbGGOrGVcZc4vJPjUpEUWNb/fA6hg==
+  version "1.3.615"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.615.tgz#50f523be4a04449410e9f3a694490814e602cd54"
+  integrity sha512-fNYTQXoUhNc6RmHDlGN4dgcLURSBIqQCN7ls6MuQ741+NJyLNRz8DxAC+pZpOKfRs6cfY0lv2kWdy8Oxf9j4+A==
 
 electron@^11.0.3:
   version "11.0.3"
@@ -5289,10 +5289,10 @@ eslint-plugin-jsx-a11y@^6.3.1, eslint-plugin-jsx-a11y@^6.4.1:
     jsx-ast-utils "^3.1.0"
     language-tags "^1.0.5"
 
-eslint-plugin-prettier@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.4.tgz#168ab43154e2ea57db992a2cd097c828171f75c2"
-  integrity sha512-jZDa8z76klRqo+TdGDTFJSavwbnWK2ZpqGKNZ+VvweMW516pDUMmQ2koXvxEE4JhzNvTv+radye/bWGBmA6jmg==
+eslint-plugin-prettier@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.2.0.tgz#af391b2226fa0e15c96f36c733f6e9035dbd952c"
+  integrity sha512-kOUSJnFjAUFKwVxuzy6sA5yyMx6+o9ino4gCdShzBNx4eyFRudWRYKCFolKjoM40PEiuU6Cn7wBLfq3WsGg7qg==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
@@ -8852,10 +8852,10 @@ obuf@^1.0.0, obuf@^1.1.2:
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
-office-ui-fabric-react@^7.153.3:
-  version "7.153.3"
-  resolved "https://registry.yarnpkg.com/office-ui-fabric-react/-/office-ui-fabric-react-7.153.3.tgz#29c1393f93c15e70f1d5468913c7ef1249ab747b"
-  integrity sha512-kP64jm4x1Rm5M1Agv/OdZiruPCN+AhXZL7NoDYgdn4GOdrlWJOj7VlDue0I6Doxu6pIsTNryFEM689rBmVuoqg==
+office-ui-fabric-react@^7.153.4:
+  version "7.153.4"
+  resolved "https://registry.yarnpkg.com/office-ui-fabric-react/-/office-ui-fabric-react-7.153.4.tgz#7ba7833754c7390d13d1b81b5b346c6b85e2ff62"
+  integrity sha512-BF4eDxilcW2I6vboXECPqcz2nPYjFZtnHR7lSSY67xRWX0B1+g5xccxqUiDNO/vFmRzvTpD4j53JN70TIzJm1Q==
   dependencies:
     "@fluentui/date-time-utilities" "^7.9.0"
     "@fluentui/react-focus" "^7.16.19"
@@ -10066,14 +10066,13 @@ postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.17, po
     supports-color "^6.1.0"
 
 postcss@^8.1.0:
-  version "8.1.13"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.1.13.tgz#5d2aa2f96b3eaab5edc2ef488b4bd636c680f712"
-  integrity sha512-D++wck3XhQkICYfysZRx90JCDgaTTdq8YxLswB9cjBzfxwcVcQjn3LsjXon0PQ6TIOof2IGWLRHhSgXZuJct4w==
+  version "8.1.14"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.1.14.tgz#77d6a5db2fdc0afa918e24af5323a53fb8727f2e"
+  integrity sha512-KatkyVPBKfENS+c3dpXJoDXnDD5UZs5exAnDksLqaRJPKwYphEPZt4N0m0i049v2/BtWVQibAhxW4ilXXcolpA==
   dependencies:
     colorette "^1.2.1"
     nanoid "^3.1.20"
     source-map "^0.6.1"
-    vfile-location "^3.2.0"
 
 prelude-ls@^1.2.1:
   version "1.2.1"
@@ -12717,11 +12716,6 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
-
-vfile-location@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/vfile-location/-/vfile-location-3.2.0.tgz#d8e41fbcbd406063669ebf6c33d56ae8721d0f3c"
-  integrity sha512-aLEIZKv/oxuCDZ8lkJGhuhztf/BW4M+iHdCwglA/eWc+vtuRFJj8EtgceYFX4LRjOhCAAiNHsKGssC6onJ+jbA==
 
 vm-browserify@^1.0.1:
   version "1.1.2"

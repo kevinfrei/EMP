@@ -87,6 +87,7 @@ export default function MediaInfoTable({
         title={theSong.title}
         year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
         va={theAlbum.vatype}
+        variations={theSong.variations ? theSong.variations.join('; ') : ''}
       />
       <br />
       <Stack horizontal horizontalAlign="space-between">
