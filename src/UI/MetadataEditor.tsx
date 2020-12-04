@@ -1,9 +1,15 @@
-import { Checkbox, PrimaryButton, Stack, TextField } from '@fluentui/react';
+import {
+  Checkbox,
+  DirectionalHint,
+  PrimaryButton,
+  Stack,
+  TextField,
+  TooltipHost,
+} from '@fluentui/react';
 import { MakeLogger, Type } from '@freik/core-utils';
 import { FullMetadata, SongKey } from '@freik/media-utils';
+import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { allSongsState } from '../Recoil/ReadOnly';
 
 const log = MakeLogger('MetadataEditor', true);
 
@@ -17,7 +23,6 @@ export function MetadataEditor(props: {
   va?: string;
   fullPath?: string;
 }): JSX.Element {
-  const allSongs = useRecoilValue(allSongsState);
   const [artist, setArtist] = useState<false | string>(false);
   const [album, setAlbum] = useState<false | string>(false);
   const [track, setTrack] = useState<false | string>(false);
@@ -25,6 +30,10 @@ export function MetadataEditor(props: {
   const [title, setTitle] = useState<false | string>(false);
   const [year, setYear] = useState<false | string>(false);
   const [vaType, setVaType] = useState<false | 'ost' | 'va' | ''>(false);
+  const priArtistsId = useId('md-priArtists');
+  const secArtistsId = useId('md-secArtists');
+  const variationsId = useId('md-variations');
+
   // I don't fully understand why I have to do this, but it seems to work...
   // Without it, if you right-click different songs, whichever fields were
   // edited don't return to their new values :/
@@ -117,11 +126,22 @@ export function MetadataEditor(props: {
         value={val(title, props.title)}
         onChange={(e, nv) => nv && setTitle(nv)}
       />
-      <TextField
-        label="Artist"
-        value={val(artist, props.artist)}
-        onChange={(e, nv) => nv && setArtist(nv)}
-      />
+      <TooltipHost
+        content="Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'"
+        // This id is used on the tooltip itself, not the host
+        // (so an element with this id only exists when the tooltip is shown)
+        id={priArtistsId}
+        calloutProps={{ gapSpace: 0 }}
+        styles={{ root: { display: 'inline-block' } }}
+        directionalHint={DirectionalHint.bottomAutoEdge}
+      >
+        <TextField
+          label="Artist(s)"
+          value={val(artist, props.artist)}
+          onChange={(e, nv) => nv && setArtist(nv)}
+          aria-describedby={priArtistsId}
+        />
+      </TooltipHost>
       <Stack horizontal horizontalAlign="space-between">
         <TextField
           label="Album"
@@ -155,6 +175,36 @@ export function MetadataEditor(props: {
           <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
         </Stack>
       </Stack>
+      <TooltipHost
+        content="Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'"
+        // This id is used on the tooltip itself, not the host
+        // (so an element with this id only exists when the tooltip is shown)
+        id={secArtistsId}
+        calloutProps={{ gapSpace: 0 }}
+        styles={{ root: { display: 'inline-block' } }}
+        directionalHint={DirectionalHint.bottomAutoEdge}
+      >
+        <TextField
+          label="Additional Artist(s)"
+          aria-describedby={secArtistsId}
+          value=""
+        />
+      </TooltipHost>
+      <TooltipHost
+        content="Separate vartiations with a semicolon"
+        // This id is used on the tooltip itself, not the host
+        // (so an element with this id only exists when the tooltip is shown)
+        id={variationsId}
+        calloutProps={{ gapSpace: 0 }}
+        styles={{ root: { display: 'inline-block' } }}
+        directionalHint={DirectionalHint.bottomAutoEdge}
+      >
+        <TextField
+          label="Variation(s)"
+          aria-describedby={variationsId}
+          value=""
+        />
+      </TooltipHost>
       <div style={{ height: 10 }} />
       <Stack horizontal horizontalAlign="end">
         <PrimaryButton onClick={onSubmit} style={{ width: 100 }}>
