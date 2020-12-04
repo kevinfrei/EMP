@@ -1291,10 +1291,10 @@
     "@uifabric/utilities" "^7.33.2"
     tslib "^1.10.0"
 
-"@freik/core-utils@^0.7.0", "@freik/core-utils@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.7.1.tgz#54d8bd9c24eefbb06a9651c970fdc8f4961abc9c"
-  integrity sha512-qhfHHbiCClRsbUljTyBCvHcLPVnXocWNKauMdUbLSa0vE6rxKKiEWm7+idVx/JKKQgclojp6AD2B4YD13rgW3g==
+"@freik/core-utils@^0.7.0", "@freik/core-utils@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.7.2.tgz#577a4580b9f22aed473168319cc3f6fd46c58d48"
+  integrity sha512-zdRLd0pc0HkmCVrlso4JfFIQjL64KIjypWYlEdAMYK+pQx5Gn/mRtWhPAWoG3uy1XVLaRKQn0Cs9qcUzpz3TXQ==
 
 "@freik/media-utils@^0.6.2":
   version "0.6.2"
