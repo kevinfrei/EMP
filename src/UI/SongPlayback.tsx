@@ -12,9 +12,11 @@ import {
   mediaTimeState,
   playingState,
   repeatState,
+  songDetailState,
   songListState,
 } from '../Recoil/Local';
 import {
+  allSongsState,
   getAlbumKeyForSongKeyState,
   getDataForSongState,
   SongData,
@@ -186,8 +188,17 @@ export default function SongPlayback(): JSX.Element {
     ) : (
       <audio id="audioElement" />
     );
+  const showDetail = useRecoilCallback(({ set, snapshot }) => async () => {
+    if (songKey !== '') {
+      const songs = await snapshot.getPromise(allSongsState);
+      const song = songs.get(songKey);
+      if (song) {
+        set(songDetailState, song);
+      }
+    }
+  });
   return (
-    <span id="song-container">
+    <span id="song-container" onAuxClick={showDetail}>
       <CoverArt />
       <SongName />
       <ArtistAlbum />
