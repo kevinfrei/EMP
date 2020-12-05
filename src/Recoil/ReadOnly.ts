@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Comparisons, MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
+  Comparisons,
+  MakeLogger,
   Song,
   SongKey,
-} from '@freik/media-utils';
+} from '@freik/core-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 import { isPlaylist } from '../Tools';

@@ -5,7 +5,7 @@ import {
   Stack,
   TextField,
 } from '@fluentui/react';
-import { SongKey } from '@freik/media-utils';
+import { SongKey } from '@freik/core-utils';
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import {

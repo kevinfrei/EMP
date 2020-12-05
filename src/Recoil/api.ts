@@ -1,5 +1,4 @@
-import { FTON, Type } from '@freik/core-utils';
-import { PlaylistName, SongKey } from '@freik/media-utils';
+import { FTON, PlaylistName, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';

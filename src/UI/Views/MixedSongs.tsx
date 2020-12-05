@@ -4,8 +4,7 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { MakeError } from '@freik/core-utils';
-import { Song } from '@freik/media-utils';
+import { MakeError, Song } from '@freik/core-utils';
 import {
   atom,
   selector,

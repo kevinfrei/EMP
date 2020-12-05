@@ -8,8 +8,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
-import { Artist, ArtistKey, Song } from '@freik/media-utils';
+import { Artist, ArtistKey, MakeError, Song, Type } from '@freik/core-utils';
 import { useState } from 'react';
 import {
   atom,

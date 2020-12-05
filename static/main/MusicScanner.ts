@@ -1,21 +1,19 @@
 import {
-  Comparisons,
-  FTON,
-  MakeError,
-  MakeLogger,
-  SeqNum,
-} from '@freik/core-utils';
-import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
+  Comparisons,
+  FTON,
   FullMetadata,
-  Metadata,
+  MakeError,
+  MakeLogger,
+  SeqNum,
   SimpleMetadata,
   Song,
   SongKey,
-} from '@freik/media-utils';
+} from '@freik/core-utils';
+import { Metadata } from '@freik/media-utils';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
 import { GetMetadataCache } from './metadata';

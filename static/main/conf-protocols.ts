@@ -1,5 +1,4 @@
-import { MakeLogger } from '@freik/core-utils';
-import { SongKey } from '@freik/media-utils';
+import { MakeLogger, SongKey } from '@freik/core-utils';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';

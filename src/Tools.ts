@@ -1,6 +1,13 @@
 // This is for getting at "global" stuff from the window object
-import { MakeLogger, Type } from '@freik/core-utils';
-import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-utils';
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  MakeLogger,
+  Song,
+  Type,
+} from '@freik/core-utils';
 import { GetArtistStringFromSong } from './DataSchema';
 
 const log = MakeLogger('Tools');

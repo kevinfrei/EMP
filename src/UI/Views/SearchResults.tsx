@@ -16,7 +16,7 @@ import {
   ArtistKey,
   Song,
   SongKey,
-} from '@freik/media-utils';
+} from '@freik/core-utils';
 import { useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';

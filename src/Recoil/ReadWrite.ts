@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { FTON, Type } from '@freik/core-utils';
-import { PlaylistName, SongKey } from '@freik/media-utils';
+import { FTON, PlaylistName, SongKey, Type } from '@freik/core-utils';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import { syncWithMainEffect } from './helpers';

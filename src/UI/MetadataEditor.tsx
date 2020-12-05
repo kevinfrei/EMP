@@ -6,8 +6,13 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeLogger, Type } from '@freik/core-utils';
-import { FullMetadata, Metadata, SongKey } from '@freik/media-utils';
+import {
+  FullMetadata,
+  MakeLogger,
+  Media,
+  SongKey,
+  Type,
+} from '@freik/core-utils';
 import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
 
@@ -112,7 +117,7 @@ export function MetadataEditor(props: {
     log(`Variations: ${e(vars)}`);
     const md: Partial<FullMetadata> = {
       originalPath: props.fullPath || '',
-      artist: artist ? Metadata.splitArtistString(artist) : undefined,
+      artist: artist ? Media.splitArtistString(artist) : undefined,
       album: ed(album),
       year: nd(year),
       track: nd(trackNum),
@@ -123,7 +128,7 @@ export function MetadataEditor(props: {
         ?.split(';')
         .map((s) => s.trim()),
       moreArtists: moreArtists
-        ? Metadata.splitArtistString(moreArtists)
+        ? Media.splitArtistString(moreArtists)
         : undefined,
       /*
         moreArtists?: string[],

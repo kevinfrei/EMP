@@ -1,5 +1,5 @@
-import { MakeError, MakeLogger } from '@freik/core-utils';
-import { Album, Cover } from '@freik/media-utils';
+import { Album, MakeError, MakeLogger } from '@freik/core-utils';
+import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import { promises as fs } from 'fs';

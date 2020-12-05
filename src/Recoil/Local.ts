@@ -1,4 +1,4 @@
-import { Song, SongKey } from '@freik/media-utils';
+import { Song, SongKey } from '@freik/core-utils';
 import { atom, DefaultValue, selector } from 'recoil';
 import { secondsToTime } from '../Tools';
 

@@ -22,7 +22,7 @@ import {
   ArtistKey,
   Song,
   SongKey,
-} from '@freik/media-utils';
+} from '@freik/core-utils';
 import {
   useRecoilCallback,
   useRecoilState,

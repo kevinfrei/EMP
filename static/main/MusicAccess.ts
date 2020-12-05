@@ -1,11 +1,13 @@
-import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
+  FTON,
+  MakeError,
+  MakeLogger,
   SongKey,
-} from '@freik/media-utils';
+} from '@freik/core-utils';
 import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';

@@ -1,5 +1,11 @@
-import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
-import { AlbumKey, ArtistKey, SongKey } from '@freik/media-utils';
+import {
+  AlbumKey,
+  ArtistKey,
+  FTON,
+  MakeError,
+  MakeLogger,
+  SongKey,
+} from '@freik/core-utils';
 import { asyncSend } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';

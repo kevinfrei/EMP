@@ -1,12 +1,14 @@
 import {
+  Attributes,
   FTON,
   FTONData,
+  FullMetadata,
   MakeError,
   MakeLogger,
   ObjUtil,
   Type,
 } from '@freik/core-utils';
-import { Attributes, FullMetadata, MD } from '@freik/media-utils';
+import { MD } from '@freik/media-utils';
 import { UpdateDB } from './musicDB';
 import * as persist from './persist';
 
