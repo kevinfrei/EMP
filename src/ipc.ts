@@ -33,8 +33,8 @@ export async function GetMediaInfo(
   }
 }
 
-export async function SetMediaInfo(md: FullMetadata): Promise<void> {
-  await InvokeMain('set-media-info', FTON.stringify(md as FTONData));
+export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {
+  await InvokeMain('set-media-info', FTON.stringify(md));
 }
 
 export async function ReadFromStorage(key: string): Promise<string | void> {

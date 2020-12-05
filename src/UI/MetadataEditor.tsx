@@ -8,6 +8,7 @@ import {
 } from '@fluentui/react';
 import {
   FullMetadata,
+  MakeError,
   MakeLogger,
   Media,
   SongKey,
@@ -15,8 +16,10 @@ import {
 } from '@freik/core-utils';
 import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
+import { SetMediaInfo } from '../ipc';
 
 const log = MakeLogger('MetadataEditor', true);
+const err = MakeError('MetadataEditor-err');
 
 export function MetadataEditor(props: {
   forSong?: SongKey;
@@ -114,6 +117,7 @@ export function MetadataEditor(props: {
     log(`Title:  ${e(title)}`);
     log(`VAType: ${e(vaType)}`);
     log(`Year:   ${e(year)}`);
+    log(`More Artists:${e(moreArtists)}`);
     log(`Variations: ${e(vars)}`);
     const md: Partial<FullMetadata> = {
       originalPath: props.fullPath || '',
@@ -130,11 +134,13 @@ export function MetadataEditor(props: {
       moreArtists: moreArtists
         ? Media.splitArtistString(moreArtists)
         : undefined,
-      /*
-        moreArtists?: string[],
-        mix?: string[],
-        */
     };
+    SetMediaInfo(md)
+      .then()
+      .catch((rej) => {
+        err('Saving Metadata failed.');
+        err(rej);
+      });
   };
 
   return (
@@ -165,7 +171,7 @@ export function MetadataEditor(props: {
           label="Album"
           value={val(album, props.album)}
           onChange={(e, nv) => nv && setAlbum(nv)}
-          style={{ width: 450 }}
+          style={{ width: 400 }}
         />
         <TextField
           label="Year"
@@ -205,7 +211,8 @@ export function MetadataEditor(props: {
         <TextField
           label="Additional Artist(s)"
           aria-describedby={secArtistsId}
-          value=""
+          value={val(moreArtists, props.moreArtists)}
+          onChange={(e, nv) => nv && setMoreArtists(nv)}
         />
       </TooltipHost>
       <TooltipHost
@@ -220,7 +227,8 @@ export function MetadataEditor(props: {
         <TextField
           label="Variation(s)"
           aria-describedby={variationsId}
-          value=""
+          value={val(vars, props.variations)}
+          onChange={(e, nv) => nv && setVars(nv)}
         />
       </TooltipHost>
       <div style={{ height: 10 }} />
