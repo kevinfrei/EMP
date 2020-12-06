@@ -89,8 +89,74 @@ export type MetadataCache = {
   load: () => Promise<boolean>;
 };
 
-export function isOnlyMetadata(obj: unknown): obj is Partial<FullMetadata> {
-  // TODO: Make this thing actually check :)
+const fullMetadataKeys: Map<string, (obj: unknown) => boolean> = new Map<
+  string,
+  (obj: unknown) => boolean
+>([
+  ['originalPath', Type.isString],
+  ['artist', (obj: unknown) => Type.isString(obj) || Type.isArrayOfString(obj)],
+  ['album', Type.isString],
+  ['year', Type.isNumber],
+  ['track', Type.isNumber],
+  ['title', Type.isString],
+  ['vaType', (obj: unknown) => obj === 'va' || obj === 'ost'],
+  ['moreArtists', Type.isArrayOfString],
+  ['variations', Type.isArrayOfString],
+  ['disk', Type.isNumber],
+]);
+
+const mandatoryMetadataKeys: string[] = [
+  'originalPath',
+  'artist',
+  'album',
+  'track',
+  'title',
+];
+
+export function isOnlyMetadata(
+  obj: unknown,
+): obj is Partial<FullMetadata> & { originalPath: string } {
+  if (!Type.isObjectNonNull(obj)) {
+    err("object isn't non-null");
+    err(obj);
+    return false;
+  }
+  for (const fieldName in obj) {
+    if (obj.hasOwnProperty(fieldName)) {
+      if (obj[fieldName] === undefined || obj[fieldName] === null) {
+        delete obj[fieldName];
+        continue;
+      }
+      const fieldTypeChecker = fullMetadataKeys.get(fieldName);
+      if (!fieldTypeChecker) {
+        err(`Object has unknown field ${fieldName}`);
+        err(obj);
+        return false;
+      }
+      if (!fieldTypeChecker(obj[fieldName])) {
+        err(`object failure for ${fieldName}:`);
+        err(obj);
+        err(
+          `Type check result: ${
+            fieldTypeChecker(obj[fieldName]) ? 'true' : 'false'
+          }`,
+        );
+        return false;
+      }
+    }
+  }
+  return Type.hasStr(obj, 'originalPath');
+}
+
+export function isFullMetadata(obj: unknown): obj is FullMetadata {
+  if (!isOnlyMetadata(obj)) {
+    return false;
+  }
+  for (const fieldName of mandatoryMetadataKeys) {
+    if (!Type.has(obj, fieldName)) {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -204,12 +270,12 @@ export async function setMediaInfoForSong(
     err('Invalid data to setMediaInfoForSong');
     return;
   }
-  if (!Type.hasStr(metadataToUpdate, 'fullPath')) {
-    err('Missing "fullPath" attribute');
+  if (!Type.hasStr(metadataToUpdate, 'originalPath')) {
+    err('Missing "originalPath" attribute');
     err(metadataToUpdate);
     return;
   }
-  const fullPath: string = metadataToUpdate.fullPath;
+  const fullPath: string = metadataToUpdate.originalPath;
   const mdCache = await GetMetadataCache();
   if (isOnlyMetadata(metadataToUpdate)) {
     const prevMd = mdCache.get(fullPath);

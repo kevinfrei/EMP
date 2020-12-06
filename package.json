@@ -16,7 +16,7 @@
   "homepage": "./",
   "dependencies": {
     "@fluentui/react": "^7.153.4",
-    "@freik/core-utils": "^0.8.1",
+    "@freik/core-utils": "^0.8.2",
     "@freik/media-utils": "^0.7.1",
     "@uifabric/icons": "^7.5.17",
     "@uifabric/react-hooks": "^7.13.9",
@@ -335,7 +335,7 @@
     "electron": "^11.0.3",
     "electron-builder": "^22.9.1",
     "electron-devtools-installer": "^3.1.1",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-prettier": "^7.0.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.1",

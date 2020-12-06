@@ -163,7 +163,7 @@ export function CommsSetup(): void {
   registerFlattened('set-playlists', checkPlaylists);
 
   // Some "do something, please" API's
-  register('update-metadata', setMediaInfoForSong);
+  register('set-media-info', setMediaInfoForSong);
   registerFlattened('manual-rescan', RescanDB);
   registerFlattened('flush-image-cache', FlushImageCache);
 

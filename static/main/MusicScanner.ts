@@ -16,7 +16,7 @@ import {
 import { Metadata } from '@freik/media-utils';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
-import { GetMetadataCache } from './metadata';
+import { GetMetadataCache, isFullMetadata } from './metadata';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
@@ -374,7 +374,7 @@ async function fileNamesToDatabase(
   const songHash = await persist.getItemAsync('songHashIndex');
   existingKeys = songHash
     ? (FTON.parse(songHash) as Map<string, SongKey>)
-    : new Map();
+    : new Map<string, SongKey>();
   const now = Date.now();
   const metadataCache = await GetMetadataCache();
   const tryHarder: string[] = [];
@@ -393,25 +393,25 @@ async function fileNamesToDatabase(
       continue;
     }
     // Cached data overrides file path acquired metadata
-    let md = metadataCache.get(file);
-    if (!md) {
-      const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
-      if (!littlemd) {
-        log('Unable to get metadata from file ' + file);
-        tryHarder.push(file);
-        continue;
-      }
-      const fullMd = Metadata.FullFromObj(file, littlemd as any);
-      if (!fullMd) {
-        log('Unable to get full metadata from file ' + file);
-        tryHarder.push(file);
-        continue;
-      }
-      md = fullMd;
-      // We *could* save this data to disk, but honestly,
-      // I don't think it's going to be measurably faster,
-      // and I'd rather not waste the space
+    const cachedOverride = metadataCache.get(file);
+    const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
+    if (!littlemd) {
+      log('Unable to get metadata from file ' + file);
+      tryHarder.push(file);
+      continue;
     }
+    const fullMd = Metadata.FullFromObj(file, littlemd as any);
+    const md = { ...fullMd, ...cachedOverride };
+
+    if (!isFullMetadata(md)) {
+      log('Unable to get full metadata from file ' + file);
+      tryHarder.push(file);
+      continue;
+    }
+
+    // We *could* save this data to disk, but honestly,
+    // I don't think it's going to be measurably faster,
+    // and I'd rather not waste the space
     AddSongToDatabase(md, db);
   }
   const fileNameParseTime = Date.now();
@@ -429,7 +429,9 @@ async function fileNamesToDatabase(
       metadataCache.fail(file);
       continue;
     }
-    metadataCache.set(file, fullMd);
+    const cachedOverride = metadataCache.get(file);
+    const md = { ...fullMd, ...cachedOverride };
+    metadataCache.set(file, md);
     AddSongToDatabase(fullMd, db);
   }
   const fileMetadataParseTime = Date.now();
