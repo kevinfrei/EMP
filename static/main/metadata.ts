@@ -89,7 +89,7 @@ export type MetadataCache = {
   load: () => Promise<boolean>;
 };
 
-export function isFullMetadata(obj: unknown): obj is FullMetadata {
+export function isOnlyMetadata(obj: unknown): obj is FullMetadata {
   // TODO: Make this thing actually check :)
   return true;
 }
@@ -168,7 +168,7 @@ function MakeMetadataCache() {
     cache.clear();
     let okay = true;
     valuesToRestore.cache.forEach((val: unknown) => {
-      if (isFullMetadata(val)) {
+      if (isOnlyMetadata(val)) {
         cache.set(val.originalPath, val);
       } else {
         log(`MDC: failure for ${FTON.stringify(val as FTONData)}`);
@@ -212,8 +212,9 @@ export async function setMediaInfoForSong(
   }
   const fullPath: string = metadataToUpdate.fullPath;
   const mdCache = await GetMetadataCache();
-  if (isFullMetadata(metadataToUpdate)) {
-    mdCache.set(fullPath, metadataToUpdate);
+  if (isOnlyMetadata(metadataToUpdate)) {
+    const prevMd = mdCache.get(fullPath);
+    mdCache.set(fullPath, { ...prevMd, ...metadataToUpdate });
   }
   // For now, Update the database
   // TODO: Make this faster. A full rescan seems awfully wasteful.
