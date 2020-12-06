@@ -81,22 +81,22 @@ export async function getMediaInfo(
 }
 
 export type MetadataCache = {
-  get: (path: string) => FullMetadata | void;
-  set: (path: string, md: FullMetadata) => void;
+  get: (path: string) => Partial<FullMetadata> | void;
+  set: (path: string, md: Partial<FullMetadata>) => void;
   fail: (path: string) => void;
   shouldTry: (path: string) => boolean;
   save: () => Promise<void>;
   load: () => Promise<boolean>;
 };
 
-export function isOnlyMetadata(obj: unknown): obj is FullMetadata {
+export function isOnlyMetadata(obj: unknown): obj is Partial<FullMetadata> {
   // TODO: Make this thing actually check :)
   return true;
 }
 
 function MakeMetadataCache() {
   // The lookup for metadata
-  const cache = new Map<string, FullMetadata>();
+  const cache = new Map<string, Partial<FullMetadata>>();
   // A flag to keep track of if we've changed anything
   let dirty = false;
   // The set of stuff we've already attempted and failed to get MD for
@@ -106,7 +106,7 @@ function MakeMetadataCache() {
   function get(path: string) {
     return cache.get(path);
   }
-  function set(path: string, md: FullMetadata) {
+  function set(path: string, md: Partial<FullMetadata>) {
     const curMd = get(path);
     if (
       curMd &&
@@ -196,7 +196,6 @@ export async function GetMetadataCache(): Promise<MetadataCache> {
 export async function setMediaInfoForSong(
   flattenedData?: string,
 ): Promise<void> {
-  // TODO: Update the metadata 'override' for the song specified
   if (!flattenedData) {
     return;
   }
