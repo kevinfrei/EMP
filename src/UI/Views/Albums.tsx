@@ -66,7 +66,9 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
 }
 
 // For grouping to work properly, the sort order needs to be fully specified
-const sortOrderState = atom({ key: 'albumsSortOrder', default: 'lyrnt' });
+// Also, the album year & VA type have to "stick" with the album name as a
+// single group, or you get duplicate group IDs
+const sortOrderState = atom({ key: 'albumSortOrder', default: 'lyvntr' });
 const sortedSongsState = selector({
   key: 'albumsSorted',
   get: ({ get }) => {
@@ -133,6 +135,7 @@ export default function AlbumList(): JSX.Element {
     ],
     () => curSort,
     setSort,
+    3, // The length of the group key sort order (LYV)
   );
   groupProps.onRenderHeader = renderAlbumHeader;
 

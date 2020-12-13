@@ -179,6 +179,7 @@ export function ArtistsFromAlbum(album: Album): JSX.Element {
  * @param {() => string} getSort - a function to get the sorting string
  * @param {(sort: string) => void} performSort - the function to actually sort
  *                                               the song list
+ * @param {?number} keyLength - The number of characters in the group sort order
  *
  * @returns {[IColumn[], IGroup[], IDetailsGroupRenderProps]} - returns a tuple
  *    of the list of IColumns, IGroups, and the GroupRenderProps
@@ -203,11 +204,14 @@ export function GetSongGroupData<T>(
   ][],
   getSort: () => string,
   performSort: (sort: string) => void,
+  keyLength?: number,
 ): [IColumn[], IGroup[], IDetailsGroupRenderProps] {
   const groups: IGroup[] = [];
   let startGroup = 0;
   let lastGroupId: string | null = null;
   const allGroupIds = new Set<string>();
+  const keyLen = keyLength ? keyLength : 1;
+
   // Walk the sorted list of songs, creating groups when the groupId changes
   // This has the down-side of making multiple groups with the same key if the
   // list isn't primarily sorted by the groupId, so you'd better make sure it's
@@ -251,28 +255,33 @@ export function GetSongGroupData<T>(
       if (key === groupKey) {
         return sort.toLowerCase().startsWith(groupKey);
       } else {
-        return sort.length > 1 && sort[1].toLowerCase() === key;
+        return sort.length > 1 && sort.substr(keyLen, 1).toLowerCase() === key;
       }
     },
     isSortedDescending: (sort: string, key: string): boolean => {
       if (key === groupKey) {
         return sort.startsWith(groupKey.toUpperCase());
       } else {
-        return sort.length > 1 && sort[1] === key.toUpperCase();
+        return sort.length > 1 && sort.substr(keyLen, 1) === key.toUpperCase();
       }
     },
     setSortOrder: (which: string): string => {
       // If they clicked the grouped header, swap the front
       const curSort = getSort();
-      const gkUp = groupKey.toUpperCase();
       if (which === groupKey) {
         if (curSort.startsWith(groupKey)) {
-          return gkUp + curSort.substr(1);
+          return (
+            curSort.substr(0, keyLen).toUpperCase() + curSort.substr(keyLen)
+          );
         } else {
-          return groupKey + curSort.substr(1);
+          return (
+            curSort.substr(0, keyLen).toLowerCase() + curSort.substr(keyLen)
+          );
         }
       }
-      return curSort[0] + NewSortOrder(which, curSort.substr(1));
+      return (
+        curSort.substr(0, keyLen) + NewSortOrder(which, curSort.substr(keyLen))
+      );
     },
   });
   return [columns, groups, renderProps];
