@@ -174,20 +174,17 @@ export default function SongPlayback(): JSX.Element {
       }
     },
   );
-  const audio =
-    songKey !== '' ? (
-      <audio
-        id="audioElement"
-        autoPlay={true}
-        src={'tune://song/' + songKey}
-        onPlay={onPlay}
-        onPause={onPause}
-        onEnded={onEnded}
-        onTimeUpdate={onTimeUpdate}
-      />
-    ) : (
-      <audio id="audioElement" />
-    );
+  const audio = (
+    <audio
+      id="audioElement"
+      autoPlay={true}
+      src={songKey !== '' ? 'tune://song/' + songKey : ''}
+      onPlay={onPlay}
+      onPause={onPause}
+      onEnded={onEnded}
+      onTimeUpdate={onTimeUpdate}
+    />
+  );
   const showDetail = useRecoilCallback(({ set, snapshot }) => async () => {
     if (songKey !== '') {
       const songs = await snapshot.getPromise(allSongsState);

@@ -55,10 +55,6 @@ export const activePlaylistState = atom<string>({
   key: 'nowPlaying',
   default: '',
 });
-export const stillPlayingState = atom<SongKey>({
-  key: 'StillPlaying',
-  default: '',
-});
 
 export const songListState = atom<SongKey[]>({
   key: 'currentSongList',
@@ -78,12 +74,9 @@ export const currentSongKeyState = selector<SongKey>({
       const songList = get(songListState);
       if (curIndex >= 0 && curIndex < songList.length) {
         return songList[curIndex];
-      } else {
-        return '';
       }
-    } else {
-      return get(stillPlayingState);
     }
+    return '';
   },
 });
 

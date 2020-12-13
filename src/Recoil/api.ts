@@ -5,12 +5,11 @@ import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   activePlaylistState,
   currentIndexState,
-  currentSongKeyState,
+  mediaTimeState,
   nowPlayingSortState,
   repeatState,
   shuffleState,
   songListState,
-  stillPlayingState,
 } from './Local';
 import { getPlaylistState, playlistNamesState } from './ReadWrite';
 
@@ -118,16 +117,15 @@ export function PlaySongs(
  *
  * @returns void
  */
-export async function StopAndClear({
+export function StopAndClear({
   set,
   reset,
   snapshot,
-}: CallbackInterface): Promise<void> {
-  const curSong = await snapshot.getPromise(currentSongKeyState);
-  set(stillPlayingState, curSong);
+}: CallbackInterface): void {
   reset(songListState);
   reset(currentIndexState);
   reset(activePlaylistState);
+  reset(mediaTimeState);
   // TODO: Go stop the audio element while we're at it?
 }
 

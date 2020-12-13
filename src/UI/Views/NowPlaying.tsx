@@ -78,12 +78,12 @@ function TopLine(): JSX.Element {
       set(activePlaylistState, inputName);
     }
   });
-  const stopAndClear = useRecoilCallback((cbInterface) => async () => {
-    await StopAndClear(cbInterface);
+  const stopAndClear = useRecoilCallback((cbInterface) => () => {
+    StopAndClear(cbInterface);
   });
-  const clickClearQueue = useRecoilCallback((cbInterface) => async () => {
+  const clickClearQueue = useRecoilCallback((cbInterface) => () => {
     if (isPlaylist(nowPlaying)) {
-      await StopAndClear(cbInterface);
+      StopAndClear(cbInterface);
     } else {
       showConfirm();
     }
