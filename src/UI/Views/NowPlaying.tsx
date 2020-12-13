@@ -35,7 +35,6 @@ import {
   activePlaylistState,
   currentIndexState,
   nowPlayingSortState,
-  shuffleState,
   songDetailState,
   songListState,
 } from '../../Recoil/Local';
@@ -49,6 +48,7 @@ import {
   getPlaylistState,
   ignoreArticlesState,
   playlistNamesState,
+  shuffleState,
 } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongList } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';

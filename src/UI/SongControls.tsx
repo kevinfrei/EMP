@@ -5,10 +5,9 @@ import {
   hasAnySongsState,
   hasNextSongState,
   hasPrevSongState,
-  playingState,
-  repeatState,
-  shuffleState,
 } from '../Recoil/Local';
+import { playingState } from '../Recoil/MediaPlaying';
+import { repeatState, shuffleState } from '../Recoil/ReadWrite';
 import { GetAudioElem } from './SongPlayback';
 import './styles/SongControls.css';
 

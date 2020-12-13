@@ -1,71 +1,29 @@
 import { Song, SongKey } from '@freik/core-utils';
-import { atom, DefaultValue, selector } from 'recoil';
-import { secondsToTime } from '../Tools';
+import { atom, selector } from 'recoil';
+import { repeatState } from './ReadWrite';
 
 export type PlaylistName = string;
 
-export type MediaTime = {
-  duration: number;
-  position: number;
-};
-
-export const mediaTimeState = atom<MediaTime>({
-  key: 'mediaTime',
-  default: {
-    duration: 0,
-    position: 0,
-  },
-});
-
-export const mediaTimePositionState = selector<string>({
-  key: 'mediaTimePosition',
-  get: ({ get }): string => {
-    const { position } = get(mediaTimeState);
-    return position > 0 ? secondsToTime(position) : '';
-  },
-});
-
-export const mediaTimeRemainingState = selector<string>({
-  key: 'mediaTimeRemaining',
-  get: ({ get }): string => {
-    const { position, duration } = get(mediaTimeState);
-    return duration > 0 ? '-' + secondsToTime(duration - position) : '';
-  },
-});
-
-export const mediaTimePercentState = selector<number>({
-  key: 'mediaTimePercent',
-  get: ({ get }): number => {
-    const { position, duration } = get(mediaTimeState);
-    return duration > 0 ? position / duration : 0;
-  },
-  set: ({ get, set }, newValue) => {
-    const { duration } = get(mediaTimeState);
-    const newVal: number = newValue instanceof DefaultValue ? 0 : newValue;
-    if (duration > 0) {
-      set(mediaTimeState, { position: duration * newVal, duration });
-    }
-  },
-});
-
-export const shuffleState = atom<boolean>({ key: 'shuffle', default: false });
-export const repeatState = atom<boolean>({ key: 'repeat', default: false });
-export const playingState = atom<boolean>({ key: 'playing', default: false });
+// The name of the active playlist
+// the emptry string means the playlist isn't saved as, or based on, anything
 export const activePlaylistState = atom<string>({
   key: 'nowPlaying',
   default: '',
 });
 
+// The currently active playlist
 export const songListState = atom<SongKey[]>({
   key: 'currentSongList',
   default: [],
 });
 
+// The position in the active playlist of the current song
 export const currentIndexState = atom<number>({
   key: 'currentIndex',
   default: -1,
 });
 
+// Selector to get the current song key based on the rest of this nonsense
 export const currentSongKeyState = selector<SongKey>({
   key: 'currentSongKey',
   get: ({ get }) => {
@@ -121,9 +79,8 @@ export const nowPlayingSortState = atom<string>({
   default: '',
 });
 
+// The currently selected song to display details for
 export const songDetailState = atom<Song | null>({
   key: 'songDetail',
   default: null,
 });
-
-export const keyFilterState = atom<string>({ key: 'keyFilter', default: '' });

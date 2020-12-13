@@ -5,13 +5,16 @@ import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   activePlaylistState,
   currentIndexState,
-  mediaTimeState,
   nowPlayingSortState,
-  repeatState,
-  shuffleState,
   songListState,
 } from './Local';
-import { getPlaylistState, playlistNamesState } from './ReadWrite';
+import { mediaTimeState } from './MediaPlaying';
+import {
+  getPlaylistState,
+  playlistNamesState,
+  repeatState,
+  shuffleState,
+} from './ReadWrite';
 
 /**
  * Try to play the next song in the playlist

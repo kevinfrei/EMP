@@ -5,22 +5,24 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
   currentSongKeyState,
+  songDetailState,
+  songListState,
+} from '../Recoil/Local';
+import {
   MediaTime,
   mediaTimePercentState,
   mediaTimePositionState,
   mediaTimeRemainingState,
   mediaTimeState,
   playingState,
-  repeatState,
-  songDetailState,
-  songListState,
-} from '../Recoil/Local';
+} from '../Recoil/MediaPlaying';
 import {
   allSongsState,
   getAlbumKeyForSongKeyState,
   getDataForSongState,
   SongData,
 } from '../Recoil/ReadOnly';
+import { repeatState } from '../Recoil/ReadWrite';
 import './styles/SongPlayback.css';
 import { mySliderStyles } from './Utilities';
 

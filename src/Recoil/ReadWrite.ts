@@ -33,6 +33,18 @@ export const volumeState = atom<number>({
   effects_UNSTABLE: [syncWithMainEffect<number>()],
 });
 
+export const shuffleState = atom<boolean>({
+  key: 'shuffle',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+export const repeatState = atom<boolean>({
+  key: 'repeat',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
 // This is the 'locations' for searching
 export const locationsState = atom<string[]>({
   key: 'locations',
