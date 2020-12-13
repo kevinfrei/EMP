@@ -120,16 +120,11 @@ export function PlaySongs(
  *
  * @returns void
  */
-export function StopAndClear({
-  set,
-  reset,
-  snapshot,
-}: CallbackInterface): void {
+export function StopAndClear({ reset }: CallbackInterface): void {
   reset(songListState);
   reset(currentIndexState);
   reset(activePlaylistState);
   reset(mediaTimeState);
-  // TODO: Go stop the audio element while we're at it?
 }
 
 /**
@@ -140,6 +135,7 @@ export function StopAndClear({
  */
 export async function ShufflePlaying({
   snapshot,
+  reset,
   set,
 }: CallbackInterface): Promise<void> {
   const curIndex = await snapshot.getPromise(currentIndexState);
@@ -150,10 +146,14 @@ export async function ShufflePlaying({
     const curSongList = await snapshot.getPromise(songListState);
     const curKey = curSongList[curIndex];
     let newSongs = [...curSongList];
+    // Remove curKey from the array
     newSongs.splice(curIndex, 1);
-    newSongs = [curKey, ...ShuffleArray(newSongs)];
+    // Shuffle the array (without curKey)
+    newSongs = ShuffleArray(newSongs);
+    // Re-insert curKey back where it was
+    newSongs.splice(curIndex, 0, curKey);
+    reset(nowPlayingSortState);
     set(songListState, newSongs);
-    set(currentIndexState, 0);
   }
 }
 
@@ -161,7 +161,7 @@ export async function ShufflePlaying({
  * Rename a playlist (make sure you've got the name right)
  **/
 export async function renamePlaylist(
-  { reset, set, snapshot }: CallbackInterface,
+  { set, snapshot }: CallbackInterface,
   curName: PlaylistName,
   newName: PlaylistName,
 ): Promise<void> {

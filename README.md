@@ -36,11 +36,9 @@ actually running, but overall? It's completely functional.
 
 ### Bugs
 
-- Clearing the queue restarts playback on the current song
-- Saw something odd with shuffle while it's playing in the Now Playing view.
-  Investigate!
-- Various Artists/Soundtracks still probably want some work...
-- Some of the artwork & metadata settings aren' implemented
+- Various Artists/Soundtracks still probably want some work (it's an eternal
+  battle)
+- Some of the artwork & metadata settings aren't implemented
 
 ### Core Capabilities
 
