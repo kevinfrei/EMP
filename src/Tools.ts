@@ -53,7 +53,7 @@ export function MakeSongComparator(
     artistStringMaker ?? ((s: Song) => GetArtistStringFromSong(s, artists));
   return (a: Song, b: Song): number => {
     for (const c of sortOrder) {
-      const inverse = c === c.toLocaleUpperCase();
+      const inverse = c === c.toLocaleUpperCase() ? -1 : 1;
       let failReason = '';
       switch (c.toLocaleUpperCase()) {
         case 'L':
@@ -69,7 +69,7 @@ export function MakeSongComparator(
             if (ld === 0) {
               continue;
             } else {
-              return inverse ? -ld : ld;
+              return inverse * ld;
             }
           }
           break;
@@ -85,7 +85,7 @@ export function MakeSongComparator(
             if (rd === 0) {
               continue;
             } else {
-              return inverse ? -rd : rd;
+              return inverse * rd;
             }
           }
           break;
@@ -95,7 +95,7 @@ export function MakeSongComparator(
           if (td === 0) {
             continue;
           } else {
-            return inverse ? -td : td;
+            return inverse * td;
           }
         case 'N':
           // Track number
@@ -103,7 +103,7 @@ export function MakeSongComparator(
           if (nd === 0) {
             continue;
           } else {
-            return inverse ? -nd : nd;
+            return inverse * nd;
           }
         case 'Y':
           // Album year
@@ -118,10 +118,26 @@ export function MakeSongComparator(
             if (yd === 0) {
               continue;
             } else {
-              return inverse ? -yd : yd;
+              return inverse * yd;
             }
           }
           break;
+        case 'V':
+          // VA type
+          const v1 = albums.get(a.albumId);
+          const v2 = albums.get(b.albumId);
+          if (!v1) {
+            failReason = 'Invalid album ID ' + a.albumId;
+          } else if (!v2) {
+            failReason = 'Invalid album ID ' + b.albumId;
+          } else {
+            const vd = v1.vatype.localeCompare(v2.vatype);
+            if (vd === 0) {
+              continue;
+            } else {
+              return inverse * vd;
+            }
+          }
         default:
           failReason = 'Invalid sort order: ' + c;
       }
