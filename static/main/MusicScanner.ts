@@ -169,9 +169,12 @@ function getOrNewAlbum(
       if (!anotherSong) {
         continue;
       }
+      /*
+      This makes things mess up a bit, so let's not do it...
       if (path.dirname(anotherSong.path) !== dirName) {
         continue;
       }
+      */
       // Check to see if there's a common subset of artists
       const commonArtists = setIntersection(check.primaryArtists, artists);
       const demoteArtists = (
@@ -376,7 +379,8 @@ async function fileNamesToDatabase(
     ? (FTON.parse(songHash) as Map<string, SongKey>)
     : new Map<string, SongKey>();
   const now = Date.now();
-  const metadataCache = await GetMetadataCache();
+  const metadataCache = await GetMetadataCache('metadataCache');
+  const metadataOverride = await GetMetadataCache('metadataOverride');
   const tryHarder: string[] = [];
   const fileNamesSeen: Set<string> = new Set<string>();
   for (const file of files) {
@@ -393,7 +397,7 @@ async function fileNamesToDatabase(
       continue;
     }
     // Cached data overrides file path acquired metadata
-    const cachedOverride = metadataCache.get(file);
+    const cachedOverride = metadataOverride.get(file);
     const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
@@ -417,7 +421,13 @@ async function fileNamesToDatabase(
   const fileNameParseTime = Date.now();
   await HandleAlbumCovers(db, pics);
   for (const file of tryHarder) {
-    const maybeMetadata = await Metadata.fromFileAsync(file);
+    let maybeMetadata = null;
+    try {
+      maybeMetadata = await Metadata.fromFileAsync(file);
+    } catch (e) {
+      err(`Failed acquiring metadata from ${file}:`);
+      err(e);
+    }
     if (!maybeMetadata) {
       log(`Complete metadata failure for ${file}`);
       metadataCache.fail(file);
@@ -429,7 +439,7 @@ async function fileNamesToDatabase(
       metadataCache.fail(file);
       continue;
     }
-    const cachedOverride = metadataCache.get(file);
+    const cachedOverride = metadataOverride.get(file);
     const md = { ...fullMd, ...cachedOverride };
     metadataCache.set(file, md);
     AddSongToDatabase(fullMd, db);

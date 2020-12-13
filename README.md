@@ -37,15 +37,16 @@ actually running, but overall? It's completely functional.
 ### Bugs
 
 - Clearing the queue restarts playback on the current song
-- Search seems less than correct/consistent
 - Saw something odd with shuffle while it's playing in the Now Playing view.
   Investigate!
 - Various Artists/Soundtracks still probably want some work...
+- Some of the artwork & metadata settings aren' implemented
 
 ### Core Capabilities
 
 - **main** Update data from file metadata (overriding filename acquisition)
   - Save this stuff between runs, as it's going to be _s l o w_.
+  - These capabilities already exist. Need to expose it!
 - **main** Version the persistence data. I have troubles if I change the disk
   format :/
 - **render** Add typing to scroll to the appropriate spot in the song list

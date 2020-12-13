@@ -160,7 +160,7 @@ export function isFullMetadata(obj: unknown): obj is FullMetadata {
   return true;
 }
 
-function MakeMetadataCache() {
+function MakeMetadataCache(name: string) {
   // The lookup for metadata
   const cache = new Map<string, Partial<FullMetadata>>();
   // A flag to keep track of if we've changed anything
@@ -205,13 +205,13 @@ function MakeMetadataCache() {
       fails: [...stopTrying],
     };
     dirty = false;
-    await persist.setItemAsync('metadataCache', FTON.stringify(valueToSave));
+    await persist.setItemAsync(name, FTON.stringify(valueToSave));
   }
   async function load() {
     if (loaded) {
       return true;
     }
-    const fromFile = await persist.getItemAsync('metadataCache');
+    const fromFile = await persist.getItemAsync(name);
     if (!fromFile) {
       log('MDC File Not Found');
       return false;
@@ -251,11 +251,15 @@ function MakeMetadataCache() {
   return { get, set, fail, shouldTry, save, load };
 }
 
-let mdc: MetadataCache | null = null;
+const mdcm: Map<string, MetadataCache> = new Map<string, MetadataCache>();
 
-export async function GetMetadataCache(): Promise<MetadataCache> {
-  mdc = mdc === null ? MakeMetadataCache() : mdc;
-  if (!(await mdc.load())) log('Loading Metadata Cache failed');
+export async function GetMetadataCache(name: string): Promise<MetadataCache> {
+  let mdc = mdcm.get(name);
+  if (!mdc) {
+    mdc = MakeMetadataCache(name);
+    mdcm.set(name, mdc);
+  }
+  if (!(await mdc.load())) log(`Loading Metadata Cache "${name}" failed`);
   return mdc;
 }
 
@@ -276,7 +280,7 @@ export async function setMediaInfoForSong(
     return;
   }
   const fullPath: string = metadataToUpdate.originalPath;
-  const mdCache = await GetMetadataCache();
+  const mdCache = await GetMetadataCache('metadataOverride');
   if (isOnlyMetadata(metadataToUpdate)) {
     const prevMd = mdCache.get(fullPath);
     mdCache.set(fullPath, { ...prevMd, ...metadataToUpdate });
