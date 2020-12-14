@@ -16,7 +16,7 @@ import {
 import { Metadata } from '@freik/media-utils';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
-import { GetMetadataCache, isFullMetadata } from './metadata';
+import { GetMetadataStore, isFullMetadata } from './metadata';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
@@ -379,8 +379,8 @@ async function fileNamesToDatabase(
     ? (FTON.parse(songHash) as Map<string, SongKey>)
     : new Map<string, SongKey>();
   const now = Date.now();
-  const metadataCache = await GetMetadataCache('metadataCache');
-  const metadataOverride = await GetMetadataCache('metadataOverride');
+  const metadataCache = await GetMetadataStore('metadataCache');
+  const metadataOverride = await GetMetadataStore('metadataOverride');
   const tryHarder: string[] = [];
   const fileNamesSeen: Set<string> = new Set<string>();
   for (const file of files) {
@@ -397,7 +397,7 @@ async function fileNamesToDatabase(
       continue;
     }
     // Cached data overrides file path acquired metadata
-    const cachedOverride = metadataOverride.get(file);
+    const mdOverride = metadataOverride.get(file);
     const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
@@ -405,7 +405,7 @@ async function fileNamesToDatabase(
       continue;
     }
     const fullMd = Metadata.FullFromObj(file, littlemd as any);
-    const md = { ...fullMd, ...cachedOverride };
+    const md = { ...fullMd, ...mdOverride };
 
     if (!isFullMetadata(md)) {
       log('Unable to get full metadata from file ' + file);
@@ -439,8 +439,8 @@ async function fileNamesToDatabase(
       metadataCache.fail(file);
       continue;
     }
-    const cachedOverride = metadataOverride.get(file);
-    const md = { ...fullMd, ...cachedOverride };
+    const mdOverride = metadataOverride.get(file);
+    const md = { ...fullMd, ...mdOverride };
     metadataCache.set(file, md);
     AddSongToDatabase(fullMd, db);
   }

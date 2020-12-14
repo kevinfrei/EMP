@@ -42,7 +42,8 @@ actually running, but overall? It's completely functional.
 
 ### Core Capabilities
 
-- **main** Update data from file metadata (overriding filename acquisition)
+- **main** Update data from file metadata (optionally overriding filename
+  acquisition?)
   - Save this stuff between runs, as it's going to be _s l o w_.
   - These capabilities already exist. Need to expose it!
 - **main** Version the persistence data. I have troubles if I change the disk

@@ -80,7 +80,7 @@ export async function getMediaInfo(
   return res;
 }
 
-export type MetadataCache = {
+export type MetadataStore = {
   get: (path: string) => Partial<FullMetadata> | void;
   set: (path: string, md: Partial<FullMetadata>) => void;
   fail: (path: string) => void;
@@ -113,6 +113,7 @@ const mandatoryMetadataKeys: string[] = [
   'title',
 ];
 
+// Checks to make sure obj is a Partial<FullMetadata>
 export function isOnlyMetadata(
   obj: unknown,
 ): obj is Partial<FullMetadata> & { originalPath: string } {
@@ -160,9 +161,9 @@ export function isFullMetadata(obj: unknown): obj is FullMetadata {
   return true;
 }
 
-function MakeMetadataCache(name: string) {
+function MakeMetadataStore(name: string) {
   // The lookup for metadata
-  const cache = new Map<string, Partial<FullMetadata>>();
+  const store = new Map<string, Partial<FullMetadata>>();
   // A flag to keep track of if we've changed anything
   let dirty = false;
   // The set of stuff we've already attempted and failed to get MD for
@@ -170,7 +171,7 @@ function MakeMetadataCache(name: string) {
   let loaded = false;
 
   function get(path: string) {
-    return cache.get(path);
+    return store.get(path);
   }
   function set(path: string, md: Partial<FullMetadata>) {
     const curMd = get(path);
@@ -181,7 +182,7 @@ function MakeMetadataCache(name: string) {
       return;
     }
     dirty = true;
-    cache.set(path, md);
+    store.set(path, md);
     stopTrying.delete(path);
   }
   function fail(path: string) {
@@ -196,12 +197,12 @@ function MakeMetadataCache(name: string) {
   }
   async function save() {
     if (!dirty) {
-      log('Not saving: Cache is not dirty');
+      log('Not saving: Store is not dirty');
       return;
     }
-    log('Saving cache back to disk');
+    log('Saving store back to disk');
     const valueToSave = {
-      cache: [...cache.values()] as FTONData,
+      store: [...store.values()] as FTONData,
       fails: [...stopTrying],
     };
     dirty = false;
@@ -213,53 +214,58 @@ function MakeMetadataCache(name: string) {
     }
     const fromFile = await persist.getItemAsync(name);
     if (!fromFile) {
-      log('MDC File Not Found');
-      return false;
+      log('MDS File Not Found: Empty store!');
+      // Don't keep trying to load an empty file :)
+      loaded = true;
+      // But let's go ahead & save an 'empty' store instead of
+      // the continuos "nothing on disk" state
+      dirty = true;
+      return true;
     }
     const valuesToRestore = FTON.parse(fromFile);
     if (
-      !Type.has(valuesToRestore, 'cache') ||
+      !Type.has(valuesToRestore, 'store') ||
       !Type.has(valuesToRestore, 'fails')
     ) {
-      log('MDC: Format failure');
+      log('MDS: Format failure');
       return false;
     }
     if (
-      !Type.isArray(valuesToRestore.cache) ||
-      !Type.isArrayOf(valuesToRestore.fails, Type.isString)
+      !Type.isArray(valuesToRestore.store) ||
+      !Type.isArrayOfString(valuesToRestore.fails)
     ) {
-      log('MDC: Deep format failure');
+      log('MDS: Deep format failure');
       return false;
     }
-    cache.clear();
+    store.clear();
     let okay = true;
-    valuesToRestore.cache.forEach((val: unknown) => {
+    valuesToRestore.store.forEach((val: unknown) => {
       if (isOnlyMetadata(val)) {
-        cache.set(val.originalPath, val);
+        store.set(val.originalPath, val);
       } else {
-        log(`MDC: failure for ${FTON.stringify(val as FTONData)}`);
+        log(`MDS: failure for ${FTON.stringify(val as FTONData)}`);
         okay = false;
       }
     });
     stopTrying.clear();
     valuesToRestore.fails.forEach((val) => stopTrying.add(val));
     dirty = !okay;
-    log(`MDC Load ${okay ? 'Success' : 'Failure'}`);
+    log(`MDS Load ${okay ? 'Success' : 'Failure'}`);
     loaded = okay;
     return okay;
   }
   return { get, set, fail, shouldTry, save, load };
 }
 
-const mdcm: Map<string, MetadataCache> = new Map<string, MetadataCache>();
+const mdcm: Map<string, MetadataStore> = new Map<string, MetadataStore>();
 
-export async function GetMetadataCache(name: string): Promise<MetadataCache> {
+export async function GetMetadataStore(name: string): Promise<MetadataStore> {
   let mdc = mdcm.get(name);
   if (!mdc) {
-    mdc = MakeMetadataCache(name);
+    mdc = MakeMetadataStore(name);
     mdcm.set(name, mdc);
   }
-  if (!(await mdc.load())) log(`Loading Metadata Cache "${name}" failed`);
+  if (!(await mdc.load())) log(`Loading Metadata Store "${name}" failed`);
   return mdc;
 }
 
@@ -280,11 +286,12 @@ export async function setMediaInfoForSong(
     return;
   }
   const fullPath: string = metadataToUpdate.originalPath;
-  const mdCache = await GetMetadataCache('metadataOverride');
+  const mdStore = await GetMetadataStore('metadataOverride');
   if (isOnlyMetadata(metadataToUpdate)) {
-    const prevMd = mdCache.get(fullPath);
-    mdCache.set(fullPath, { ...prevMd, ...metadataToUpdate });
+    const prevMd = mdStore.get(fullPath);
+    mdStore.set(fullPath, { ...prevMd, ...metadataToUpdate });
   }
+  await mdStore.save();
   // For now, Update the database
   // TODO: Make this faster. A full rescan seems awfully wasteful.
   UpdateDB();
