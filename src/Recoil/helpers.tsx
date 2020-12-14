@@ -86,7 +86,10 @@ export function translateToMainEffect<T>(
             }
           }
         })
-        .catch((rej) => err(`${node.key} Get failed`));
+        .catch((rej) => {
+          err(`${node.key} Get failed in translateToMainEffect`);
+          err(rej);
+        });
     }
     onSet((newVal, oldVal) => {
       if (newVal instanceof DefaultValue) {
@@ -141,7 +144,10 @@ export function bidirectionalSyncWithTranslateEffect<T>(
             }
           }
         })
-        .catch((rej) => err(`${node.key} Get failed`));
+        .catch((rej) => {
+          err(`${node.key} Get failed in bidirectional sync`);
+          err(rej);
+        });
     }
     let lKey: ListenKey | null = null;
     if (asyncUpdates) {

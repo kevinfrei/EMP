@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import Sidebar from '../Sidebar';
 
+jest.mock('../../MyWindow');
+
 it('renders without crashing', () => {
   initializeIcons();
   const div = document.createElement('div');
