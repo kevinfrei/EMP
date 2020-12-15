@@ -64,6 +64,8 @@
   padding: 0px;
 }
 
+/* TODO: @media for handling compact view: This is the 'contents' section */
+
 .current-view {
   grid-row: 3;
   grid-column: 2 / 5;

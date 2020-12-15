@@ -1,3 +1,5 @@
+/* TODO: Add @media for handling compact view */
+
 #volume-container {
   grid-column: 4;
   grid-row: 1;

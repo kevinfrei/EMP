@@ -42,10 +42,14 @@ actually running, but overall? It's completely functional.
 
 ### Core Capabilities
 
-- **main** Update data from file metadata (optionally overriding filename
-  acquisition?)
+- **render** User feedback somehow for queueing songs
+- **render** Make a miniplayer!
+- **both** MediaInfo/Metadata editing!
+  - Support adding album covers
+  - File name vs. metadata difference cleanup (this would be _awesome_)
+  - Update data from file metadata (optionally overriding filename acquisition?)
   - Save this stuff between runs, as it's going to be _s l o w_.
-  - These capabilities already exist. Need to expose it!
+  - Most of these capabilities already exist. Need to expose it!
 - **main** Version the persistence data. I have troubles if I change the disk
   format :/
 - **render** Add typing to scroll to the appropriate spot in the song list
@@ -54,12 +58,8 @@ actually running, but overall? It's completely functional.
 - **render** Get the cursor set properly for clickable stuff
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
-- **render** Add playlist view that looks like Albums/Artists view
+- **render** Add expandable (& editable) playlist view
 - **render** Improve the Search view a bit
-- **render** Make a miniplayer!
-- **both** MediaInfo/Metadata editing!
-  - Support adding album covers
-  - File name vs. metadata difference cleanup (this would be _awesome_)
 - **both** File placement for clean-up, perhaps?
 - **both** Add 'favorite/love' attribute for songs
 - **both** "Auto" playlists (something involving stuff like "this artist" and

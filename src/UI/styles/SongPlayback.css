@@ -1,3 +1,5 @@
+/* TODO: Add @media for handling compact view */
+
 #song-container {
   grid-row: 1;
   grid-column: 3;

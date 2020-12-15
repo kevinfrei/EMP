@@ -67,7 +67,7 @@ export default function SongControls(): JSX.Element {
     }
   });
   return (
-    <span className="control-container">
+    <span id="control-container">
       <span id="shuffle" className={shufClass} onClick={clickShuffle}>
         &nbsp;
       </span>
