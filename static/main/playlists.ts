@@ -131,7 +131,7 @@ export async function loadPlaylist(data?: string): Promise<string[]> {
       return [];
     } else {
       const vals = await fsp.readFile(playlistPath(data), 'utf-8');
-      return vals.split('\n');
+      return vals.split('\n').filter((s) => s.length > 0);
     }
   } catch (e) {
     err('Error while loading playlist:');

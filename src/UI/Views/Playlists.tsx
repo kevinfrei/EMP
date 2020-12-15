@@ -7,7 +7,6 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
 import { useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
@@ -23,8 +22,6 @@ import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
 import { Spinner } from '../Utilities';
 import './styles/Playlists.css';
-
-const log = MakeLogger('Playlists', true);
 
 type ItemType = PlaylistName;
 
@@ -48,7 +45,6 @@ export default function PlaylistView(): JSX.Element {
     const songs = await cbInterface.snapshot.getPromise(
       getPlaylistState(contextPlaylist),
     );
-    log('songs:' + songs.length.toString());
     AddSongs(songs, cbInterface);
   });
 
@@ -57,7 +53,6 @@ export default function PlaylistView(): JSX.Element {
       const songs = await cbInterface.snapshot.getPromise(
         getPlaylistState(playlistName),
       );
-      log('songs:' + songs.length.toString());
       PlaySongs(cbInterface, songs, playlistName);
     },
   );

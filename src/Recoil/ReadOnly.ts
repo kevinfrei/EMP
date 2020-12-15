@@ -30,6 +30,7 @@ export type SongData = {
 } & AlbumData;
 
 const log = MakeLogger('ReadOnly');
+const err = MakeLogger('ReadOnly-err');
 
 export const getMediaInfoState = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
@@ -72,7 +73,10 @@ export const getSongByKeyState = selectorFamily<Song, SongKey>({
   get: (sk: SongKey) => ({ get }): Song => {
     const songs = get(allSongsState);
     const song = songs.get(sk);
-    if (!song) throw new Error(sk);
+    if (!song) {
+      err(`Unfound song key: ${sk}`);
+      throw new Error(sk);
+    }
     return song;
   },
 });
@@ -171,7 +175,17 @@ export const curSongsState = selector<Song[]>({
   key: 'curSongs',
   get: ({ get }) => {
     const curList = get(songListState);
-    return curList.map((sk: SongKey) => get(getSongByKeyState(sk)));
+    const songList: Song[] = [];
+    for (const sk of curList) {
+      try {
+        const s = get(getSongByKeyState(sk));
+        songList.push(s);
+      } catch (e) {
+        err(`Error for SongKey '${sk}'`);
+        err(e);
+      }
+    }
+    return songList; // curList.map((sk: SongKey) => get(getSongByKeyState(sk)));
   },
 });
 

@@ -19,7 +19,6 @@
   color: black;
 }
 
-
 .artistName {
   font-size: large;
   font-weight: bold;
@@ -33,12 +32,12 @@
   vertical-align: middle;
 }
 
-.songForArtist  .songAlbum {
+.songForArtist .songAlbum {
   grid-column: 1;
   grid-row: 1;
 }
 
-.songForArtist  .songTrack {
+.songForArtist .songTrack {
   grid-column: 2;
   grid-row: 1;
 }

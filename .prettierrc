@@ -2,5 +2,7 @@
   "printWidth": 80,
   "trailingComma": "all",
   "singleQuote": true,
-  "proseWrap": "always"
+  "proseWrap": "always",
+  "tabWidth": 2,
+  "useTabs": false
 }

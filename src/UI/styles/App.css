@@ -1,4 +1,4 @@
-@media (min-width: 401px) {
+@media (min-width: 500px) {
   #root {
     display: grid;
     height: 100vh;
@@ -8,7 +8,9 @@
   }
 }
 
-@media (max-width: 400px) {
+/* Turn off the sidebar if we're narrower than 500px */
+
+@media (max-width: 499px) {
   #root {
     display: grid;
     height: 100vh;

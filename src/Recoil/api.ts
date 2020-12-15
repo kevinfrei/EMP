@@ -98,18 +98,12 @@ export function PlaySongs(
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
-  let index = -1;
-  for (const sk of listToPlay) {
-    if (sk.length) {
-      index = 0;
-      break;
-    }
-  }
+  const playList = [...listToPlay];
   if (isPlaylist(playlistName) && Type.isString(playlistName)) {
     set(activePlaylistState, playlistName);
   }
-  set(songListState, [...listToPlay]);
-  set(currentIndexState, index);
+  set(songListState, playList);
+  set(currentIndexState, playList.length >= 0 ? 0 : -1);
 }
 
 /**

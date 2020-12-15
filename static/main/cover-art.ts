@@ -1,4 +1,4 @@
-import { Album, MakeError, MakeLogger, SeqNum } from '@freik/core-utils';
+import { Album, MakeError, MakeLogger } from '@freik/core-utils';
 import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
 import { app, ProtocolRequest } from 'electron';
@@ -168,14 +168,17 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
 }
 
 function MakeImageStore() {
-  const artSN = SeqNum('ART');
-  const imageStoreDir = () => path.join(app.getPath('userData'), 'imageStore');
-
+  //  const artSN = SeqNum('ART');
+  const imageStoreDir = path.join(app.getPath('userData'), 'imageStore');
   return {
-    get: async (album: Album): Promise<Buffer | void> => {},
-    put: async (data: Buffer, album: Album): Promise<void> => {},
+    get: async (album: Album): Promise<Buffer | void> => {
+      /* TODO */
+    },
+    put: async (data: Buffer, album: Album): Promise<void> => {
+      /* TODO */
+    },
     clear: async (): Promise<void> => {
-      err('Flush ImageStore NYI');
+      /* TODO */
     },
   };
 }
