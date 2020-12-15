@@ -1,9 +1,8 @@
 // This is for getting at "global" stuff from the window object
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { OpenDialogSyncOptions } from 'electron/main';
 
-const log = MakeLogger('MyWindow');
-const err = MakeError('MyWindow-err', false);
+const err = MakeError('MyWindow-mock-err', false);
 
 export function ShowOpenDialog(
   options: OpenDialogSyncOptions,

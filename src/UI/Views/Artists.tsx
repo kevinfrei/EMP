@@ -49,8 +49,8 @@ export function ArtistHeaderDisplay({
 }: {
   artist: Artist;
 }): JSX.Element {
-  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(artist.songs, cbInterface),
+  const onAddSongsClick = useRecoilCallback((cbInterface) => async () =>
+    await AddSongs(artist.songs, cbInterface),
   );
   const songCount = artist.songs.length;
   return (
@@ -154,8 +154,9 @@ export default function ArtistList(): JSX.Element {
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailState, item),
   );
-  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs([item.key], cbInterface),
+  const onAddSongClick = useRecoilCallback(
+    (cbInterface) => async (item: Song) =>
+      await AddSongs([item.key], cbInterface),
   );
 
   const [curSort, setSort] = useRecoilState(sortOrderState);
