@@ -1,7 +1,7 @@
-import { Album, MakeError, MakeLogger } from '@freik/core-utils';
+import { Album, MakeError, MakeLogger, SeqNum } from '@freik/core-utils';
 import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
-import { ProtocolRequest } from 'electron';
+import { app, ProtocolRequest } from 'electron';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
@@ -160,15 +160,24 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
       } catch (e) {
         err('Saving picture failed :(');
         err(e);
-        // TODO: Make a cache for read-only music shares!
-        // This would be useful for being able to annotate/"edit" music
-        // metadata in the same situation...
       }
-    } else {
-      // TODO: Save these files locally somewhere we look during the normal
-      // file scanning process
     }
+    // TODO: Save these files locally somewhere we look during the normal
+    // file scanning process
   }
+}
+
+function MakeImageStore() {
+  const artSN = SeqNum('ART');
+  const imageStoreDir = () => path.join(app.getPath('userData'), 'imageStore');
+
+  return {
+    get: async (album: Album): Promise<Buffer | void> => {},
+    put: async (data: Buffer, album: Album): Promise<void> => {},
+    clear: async (): Promise<void> => {
+      err('Flush ImageStore NYI');
+    },
+  };
 }
 
 export function FlushImageCache(): Promise<void> {
