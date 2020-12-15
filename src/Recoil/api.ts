@@ -79,10 +79,20 @@ export async function MaybePlayPrev({
  */
 export function AddSongs(
   listToAdd: Iterable<SongKey>,
-  { set }: CallbackInterface,
+  { snapshot, set }: CallbackInterface,
 ): void {
-  set(songListState, (songList) => [...songList, ...listToAdd]);
-  set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+  const doTheWork = async () => {
+    const shuffle = await snapshot.getPromise(shuffleState);
+    if (!shuffle) {
+      set(songListState, (songList) => [...songList, ...listToAdd]);
+      set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+    } else {
+      const shuffledList = ShuffleArray([...listToAdd]);
+      set(songListState, (songList) => [...songList, ...shuffledList]);
+      set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+    }
+  };
+  void doTheWork();
 }
 
 /**
@@ -94,16 +104,23 @@ export function AddSongs(
  * @returns void
  */
 export function PlaySongs(
-  { set }: CallbackInterface,
+  { set, snapshot }: CallbackInterface,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
-  const playList = [...listToPlay];
-  if (isPlaylist(playlistName) && Type.isString(playlistName)) {
-    set(activePlaylistState, playlistName);
-  }
-  set(songListState, playList);
-  set(currentIndexState, playList.length >= 0 ? 0 : -1);
+  const doTheWork = async () => {
+    let playList = [...listToPlay];
+    const shuffle = await snapshot.getPromise(shuffleState);
+    if (shuffle) {
+      playList = ShuffleArray(playList);
+    }
+    if (isPlaylist(playlistName) && Type.isString(playlistName)) {
+      set(activePlaylistState, playlistName);
+    }
+    set(songListState, playList);
+    set(currentIndexState, playList.length >= 0 ? 0 : -1);
+  };
+  void doTheWork();
 }
 
 /**
