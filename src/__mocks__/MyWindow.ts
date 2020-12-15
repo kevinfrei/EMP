@@ -48,6 +48,8 @@ const fakeStorage: Map<string, string> = new Map<string, string>([
   ['CurrentView', '1'],
   ['mute', 'false'],
   ['volume', '0.12'],
+  ['shuffle', 'false'],
+  ['repease', 'false'],
   ['locations', '["/Users/freik/Music/iTunes/iTunes Media/Music"]'],
   ['rSortWithArticles', 'false'],
   ['FullAlbumsOnly', 'true'],

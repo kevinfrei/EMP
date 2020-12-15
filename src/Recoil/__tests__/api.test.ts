@@ -40,7 +40,7 @@ it('Adding empty songs does nothing', () => {
   );
 });
 
-it('Adding a songs works properly', () => {
+it('Adding song(s) works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
     AddSongs(['a'], makeCallbackIfc(set, initialSnapshot)),

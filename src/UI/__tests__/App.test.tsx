@@ -9,7 +9,7 @@ jest.mock('../../MyWindow');
 
 it('Render Settings without crashing', async () => {
   initializeIcons();
-  act(() => {
+  await act(() => {
     create(
       <RecoilRoot>
         <Suspense fallback="">
@@ -18,12 +18,11 @@ it('Render Settings without crashing', async () => {
       </RecoilRoot>,
     );
   });
-  await Settings;
 });
 
 it('Render SearchResults without crashing', async () => {
   initializeIcons();
-  act(() => {
+  await act(() => {
     create(
       <RecoilRoot>
         <Suspense fallback="">
@@ -32,5 +31,4 @@ it('Render SearchResults without crashing', async () => {
       </RecoilRoot>,
     );
   });
-  await SearchResultsView;
 });

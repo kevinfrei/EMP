@@ -6,7 +6,7 @@ import VolumeControl from '../VolumeControl';
 
 jest.mock('../../MyWindow');
 
-it('renders without crashing', async () => {
+it('renders without crashing', () => {
   initializeIcons();
   const div = document.createElement('div');
   ReactDOM.render(
@@ -17,6 +17,5 @@ it('renders without crashing', async () => {
     </RecoilRoot>,
     div,
   );
-  await VolumeControl;
   ReactDOM.unmountComponentAtNode(div);
 });
