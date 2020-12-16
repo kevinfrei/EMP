@@ -3,6 +3,7 @@ import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { CurrentView, curViewState } from '../Recoil/ReadWrite';
+import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
 
 type ViewEntry = { name: CurrentView; title: string };
@@ -76,6 +77,7 @@ export default function Sidebar(): JSX.Element {
   const onFocus = useRecoilCallback(({ set }) => () => {
     set(curViewState, CurrentView.search);
   });
+
   return (
     <div id="sidebar">
       <SearchBox
@@ -86,6 +88,8 @@ export default function Sidebar(): JSX.Element {
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}
+      <br />
+      <Notifier />
     </div>
   );
 }

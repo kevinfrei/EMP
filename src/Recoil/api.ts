@@ -6,6 +6,7 @@ import {
   activePlaylistState,
   currentIndexState,
   nowPlayingSortState,
+  recentlyQueuedState,
   songListState,
 } from './Local';
 import { mediaTimeState } from './MediaPlaying';
@@ -82,14 +83,16 @@ export async function AddSongs(
   { snapshot, set }: CallbackInterface,
 ): Promise<void> {
   const shuffle = await snapshot.getPromise(shuffleState);
+  const playList = [...listToAdd];
   if (!shuffle) {
     set(songListState, (songList) => [...songList, ...listToAdd]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   } else {
-    const shuffledList = ShuffleArray([...listToAdd]);
+    const shuffledList = ShuffleArray(playList);
     set(songListState, (songList) => [...songList, ...shuffledList]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   }
+  set(recentlyQueuedState, playList.length);
 }
 
 /**
@@ -115,6 +118,7 @@ export async function PlaySongs(
   }
   set(songListState, playList);
   set(currentIndexState, playList.length >= 0 ? 0 : -1);
+  set(recentlyQueuedState, playList.length);
 }
 
 /**

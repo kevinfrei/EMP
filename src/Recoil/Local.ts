@@ -84,3 +84,9 @@ export const songDetailState = atom<Song | null>({
   key: 'songDetail',
   default: null,
 });
+
+// The # of recently added songs to show for a few seconds
+export const recentlyQueuedState = atom<number>({
+  key: 'recentlyQueued',
+  default: 0,
+});
