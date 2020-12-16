@@ -1,7 +1,7 @@
 import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
 import { ipcMain, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
-import { FlushImageCache } from './cover-art';
+import { FlushImageCache } from './ImageCache';
 import { setMediaInfoForSong } from './metadata';
 import {
   getMediaInfoForSong,

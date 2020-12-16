@@ -1,11 +1,12 @@
 import { Album, MakeError, MakeLogger } from '@freik/core-utils';
 import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
-import { app, ProtocolRequest } from 'electron';
+import { ProtocolRequest } from 'electron';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
 import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
+import { GetImageCache } from './ImageCache';
 import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
@@ -92,8 +93,13 @@ export async function picBufProcessor(
       // This pulls the image from the file metadata
       const album = db.albums.get(albumId);
       if (album) {
-        // TODO: Wire this up to FlushImageCache();
-        // TODO: Cache/save this somewhere, so we don't keep reading loads-o-files
+        // First, check the image cache
+        const ic = GetImageCache();
+        const cachedData = await ic.get(album);
+        if (cachedData) {
+          return { data: cachedData };
+        }
+        // Nope, let's look in the files
         for (const songKey of album.songs) {
           const song = db.songs.get(songKey);
           if (song) {
@@ -107,9 +113,8 @@ export async function picBufProcessor(
             }
           }
         }
+        // Nothing in the files, let's see if we're supposed to download
         if (await shouldDownloadAlbumArtwork()) {
-          // We didn't find something.
-          // Let's use the albumArt package
           const artist = db.artists.get(album.primaryArtists[0]);
           if (artist) {
             const res = await LookForAlbum(artist.name, album.title);
@@ -162,31 +167,9 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
         err(e);
       }
     }
-    // TODO: Save these files locally somewhere we look during the normal
-    // file scanning process
   }
-}
-
-function MakeImageStore() {
-  //  const artSN = SeqNum('ART');
-  const imageStoreDir = path.join(app.getPath('userData'), 'imageStore');
-  return {
-    get: async (album: Album): Promise<Buffer | void> => {
-      /* TODO */
-    },
-    put: async (data: Buffer, album: Album): Promise<void> => {
-      /* TODO */
-    },
-    clear: async (): Promise<void> => {
-      /* TODO */
-    },
-  };
-}
-
-export function FlushImageCache(): Promise<void> {
-  err('FlushImageCache NYI');
-  // TODO: Make this do something
-  return new Promise((res) => {
-    err('FlushImageCache NYI (really!)');
-  });
+  // We tried to save it with a song in the album, no such luck
+  // Save it in the cache
+  const ic = GetImageCache();
+  await ic.put(data, album);
 }
