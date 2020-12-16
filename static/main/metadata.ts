@@ -12,7 +12,7 @@ import { MD } from '@freik/media-utils';
 import { UpdateDB } from './musicDB';
 import * as persist from './persist';
 
-const log = MakeLogger('metadata', true);
+const log = MakeLogger('metadata');
 const err = MakeError('metadata-err');
 
 declare type NestedValue =
