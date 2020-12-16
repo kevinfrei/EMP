@@ -43,11 +43,8 @@ actually running, but overall? It's completely functional.
 - **render** Make a miniplayer!
 - **both** MediaInfo/Metadata editing!
   - Support adding album covers
-  - Cache/save media-sourced album covers for read-only data sources
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - Update data from file metadata (optionally overriding filename acquisition?)
-  - Save this stuff between runs, as it's going to be _s l o w_.
-  - Most of these capabilities already exist. Need to expose it!
 - **main** Version the persistence data. I have troubles if I change the disk
   format :/
 - **render** Add typing to scroll to the appropriate spot in the song list
