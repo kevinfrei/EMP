@@ -10,7 +10,7 @@ import {
   recentlyQueuedState,
   songListState,
 } from './Local';
-import { mediaTimeState } from './MediaPlaying';
+import { mediaTimeState, playingState } from './MediaPlaying';
 import {
   getPlaylistState,
   playlistNamesState,
@@ -137,6 +137,7 @@ export function StopAndClear({ reset }: CallbackInterface): void {
   reset(currentIndexState);
   reset(activePlaylistState);
   reset(mediaTimeState);
+  reset(playingState);
 }
 
 /**
