@@ -5,6 +5,7 @@ import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   activePlaylistState,
   currentIndexState,
+  displayMessageState,
   nowPlayingSortState,
   recentlyQueuedState,
   songListState,
@@ -93,6 +94,7 @@ export async function AddSongs(
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   }
   set(recentlyQueuedState, playList.length);
+  set(displayMessageState, true);
 }
 
 /**
@@ -119,6 +121,7 @@ export async function PlaySongs(
   set(songListState, playList);
   set(currentIndexState, playList.length >= 0 ? 0 : -1);
   set(recentlyQueuedState, playList.length);
+  set(displayMessageState, true);
 }
 
 /**

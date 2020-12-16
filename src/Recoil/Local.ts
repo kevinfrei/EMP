@@ -90,3 +90,8 @@ export const recentlyQueuedState = atom<number>({
   key: 'recentlyQueued',
   default: 0,
 });
+
+export const displayMessageState = atom<boolean>({
+  key: 'displayMessage',
+  default: false,
+});
