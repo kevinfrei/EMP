@@ -4,8 +4,6 @@
 
 ### Because macOS iTunes, er, "Music" doesn't play flac files
 
-- Why? Because Apple is lame.
-
 I'm old. I have a whole lot of music that I purchased on CD's over the past
 many, many years. I like having high quality music playable from the computer
 I'm working on. When that computer was a Windows PC, the incredibly ancient
