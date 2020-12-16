@@ -1,6 +1,8 @@
 import {
   DetailsList,
   IColumn,
+  Image,
+  ImageFit,
   SelectionMode,
   Stack,
   TextField,
@@ -71,23 +73,26 @@ export default function MediaInfoTable({
       key: '0',
       name: 'Field',
       fieldName: '0',
-      minWidth: 75,
+      minWidth: 25,
       className: 'md-field',
+      isResizable: true,
     },
-    { key: '1', name: 'Value', fieldName: '1', minWidth: 100 },
+    {
+      key: '1',
+      name: 'Value',
+      fieldName: '1',
+      minWidth: 100,
+      isResizable: true,
+    },
   ];
   return (
     <Stack>
-      <MetadataEditor
-        fullPath={thePath}
-        forSong={forSong}
-        artist={theArtist}
-        album={theAlbum.title}
-        track={theSong.track.toString()}
-        title={theSong.title}
-        year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
-        va={theAlbum.vatype}
-        variations={theSong.variations ? theSong.variations.join('; ') : ''}
+      <TextField
+        readOnly
+        prefix="File Path"
+        value={thePath}
+        styles={{ field: { direction: 'rtl' } }}
+        onDoubleClick={() => InvokeMain('show-file', thePath)}
       />
       <br />
       <Stack horizontal horizontalAlign="space-between">
@@ -104,14 +109,25 @@ export default function MediaInfoTable({
           style={{ width: '308px' }}
         />
       </Stack>
+      <MetadataEditor
+        fullPath={thePath}
+        forSong={forSong}
+        artist={theArtist}
+        album={theAlbum.title}
+        track={theSong.track.toString()}
+        title={theSong.title}
+        year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
+        va={theAlbum.vatype}
+        variations={theSong.variations ? theSong.variations.join('; ') : ''}
+      />
+      <br />
+      <Image
+        alt="Album Cover"
+        src={`pic://album/${theSong.albumId}`}
+        imageFit={ImageFit.centerContain}
+        height={350}
+      />
       <Expandable label="Raw Metadata" separator>
-        <TextField
-          label="File"
-          underlined
-          readOnly
-          value={thePath}
-          onDoubleClick={() => InvokeMain('show-file', thePath)}
-        />
         <DetailsList
           items={[...mediaInfo.entries()]}
           selectionMode={SelectionMode.none}
