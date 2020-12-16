@@ -34,16 +34,16 @@ actually running, but overall? It's completely functional.
 
 ### Bugs
 
+- Some of the artwork & metadata settings aren't implemented
 - Various Artists/Soundtracks still probably want some work (it's an eternal
   battle)
-- Some of the artwork & metadata settings aren't implemented
 
 ### Core Capabilities
 
-- **render** User feedback somehow for queueing songs
 - **render** Make a miniplayer!
 - **both** MediaInfo/Metadata editing!
   - Support adding album covers
+  - Cache/save media-sourced album covers for read-only data sources
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - Update data from file metadata (optionally overriding filename acquisition?)
   - Save this stuff between runs, as it's going to be _s l o w_.
@@ -69,7 +69,6 @@ actually running, but overall? It's completely functional.
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
   - The lion's share of the work for this is already in my `@freik/media-utils`
     module.
-- Playlist unique-ification
 
 ### UI Improvements
 
@@ -80,7 +79,6 @@ actually running, but overall? It's completely functional.
 
 ### Other
 
-- Cache/save media-sourced album covers for read-only data sources
 - Testing! Testing! Testing!
 
 ### "Other" communication

@@ -7,6 +7,7 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
+import { SongKey } from '@freik/core-utils';
 import { useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
@@ -56,6 +57,22 @@ export default function PlaylistView(): JSX.Element {
       await PlaySongs(cbInterface, songs, playlistName);
     },
   );
+
+  const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => async () => {
+    if (!playlistNames.has(contextPlaylist)) {
+      return;
+    }
+    const songs = await snapshot.getPromise(getPlaylistState(contextPlaylist));
+    const seen = new Set<SongKey>();
+    const newList: SongKey[] = [];
+    for (const song of songs) {
+      if (!seen.has(song)) {
+        newList.push(song);
+      }
+      seen.add(song);
+    }
+    set(getPlaylistState(contextPlaylist), newList);
+  });
 
   const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
     await deletePlaylist(selected, cbInterface);
@@ -162,6 +179,11 @@ export default function PlaylistView(): JSX.Element {
                 setSelected(contextPlaylist);
                 showDelete();
               },
+            },
+            {
+              key: 'unique',
+              text: 'Remove duplicates',
+              onClick: onRemoveDupes,
             },
           ]}
           target={contextTarget as MouseEvent}

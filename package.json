@@ -15,7 +15,7 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "@fluentui/react": "^7.154.0",
+    "@fluentui/react": "^7.155.0",
     "@freik/core-utils": "^0.8.2",
     "@freik/media-utils": "^0.7.1",
     "@uifabric/icons": "^7.5.17",
@@ -316,12 +316,12 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
-    "@babel/plugin-transform-react-jsx": "^7.12.10",
+    "@babel/plugin-transform-react-jsx": "^7.12.11",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/jest": "^26.0.19",
-    "@types/node": "^14.14.13",
+    "@types/node": "^14.14.14",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-test-renderer": "^17.0.0",
