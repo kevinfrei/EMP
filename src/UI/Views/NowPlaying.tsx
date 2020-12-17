@@ -167,7 +167,7 @@ function StickyDetailsHeader(
   const stackStyles: IStackItemStyles = { root: { background: '#ffffff' } };
   return (
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
-      <Stack styles={stackStyles}>
+      <Stack id="nowPlayingSticky" styles={stackStyles}>
         <TopLine />
         {defaultRender!({
           ...theProps,

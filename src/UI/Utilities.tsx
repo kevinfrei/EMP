@@ -18,27 +18,26 @@ import { Suspense, useEffect, useState } from 'react';
 import { Subscribe, Unsubscribe } from '../ipc';
 import { InitialWireUp } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
-import './styles/App.css';
+import './styles/Utilities.css';
 
+const log = MakeError('Utilities', true);
 const err = MakeError('Utilities-err');
 
 // This is a react component to enable the IPC subsystem to talk to the store
 export default function Utilities(): JSX.Element {
-  const [mainStatus, setMainStatus] = useState('');
   useEffect(InitialWireUp);
   useEffect(() => {
     const key = Subscribe('main-process-status', (val: FTONData) => {
       if (Type.isString(val)) {
-        setMainStatus(val);
+        log(`Main status: ${val}`);
       } else {
-        setMainStatus('Unknown val. Check logs.');
         err('Invalid value in main-process-status:');
         err(val);
       }
     });
     return () => Unsubscribe(key);
   });
-  return <div className="mainStatus">{mainStatus}</div>;
+  return <></>;
 }
 
 export type SpinnerProps = {
@@ -149,8 +148,8 @@ export function Expandable({
 export const mySliderStyles: Partial<ISliderStyles> = {
   thumb: {
     borderWidth: 1,
-    width: 8,
-    height: 12,
-    top: -4,
+    width: 6,
+    height: 10,
+    top: -3,
   },
 };

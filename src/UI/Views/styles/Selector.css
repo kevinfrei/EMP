@@ -1,0 +1,7 @@
+.current-view {
+  grid-row: 3;
+  grid-column: 2 / 5;
+  padding: 0px;
+  overflow: auto;
+  position: relative;
+}

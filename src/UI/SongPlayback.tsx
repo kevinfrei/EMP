@@ -39,7 +39,7 @@ function CoverArt(): JSX.Element {
   return (
     <span id="song-cover-art">
       <img
-        id="current-cover-art"
+        id="img-current-cover-art"
         src={`pic://album/${albumKey}`}
         alt="album cover"
       />
@@ -82,7 +82,7 @@ function MediaTimeSlider(): JSX.Element {
   );
   return (
     <Slider
-      className="song-slider"
+      className="song-slider" /* Can't put an ID on a slider :( */
       value={mediaTimePercent}
       min={0}
       max={1}

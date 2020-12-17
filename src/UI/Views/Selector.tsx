@@ -9,6 +9,7 @@ import PlaylistsView from './Playlists';
 import RecentlyAddedView from './RecentlyAdded';
 import SearchResultsView from './SearchResults';
 import SettingsView from './Settings';
+import './styles/Selector.css';
 
 export default function ViewSelector(): JSX.Element {
   const which = useRecoilValue(curViewState);

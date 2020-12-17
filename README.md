@@ -22,13 +22,14 @@ here you go:
 ![Playlist view](doc/playlist.jpg)
 
 It's not yet packaged for general consumption, but if you're a nerd like me, you
-can probably get it to work from the repository easily enough.
+can probably get it to work from the repository easily enough
+(`yarn ; yarn start` ought to do it)
 
 ## What's the current state?
 
-It pretty much works. Search is kinda messed up, and there are a few "first
-launch" problems that mean you might have to start it a couple times before it's
-actually running, but overall? It's completely functional.
+It pretty much works. There still might be a few "first launch" problems that
+mean you might have to start it a couple times before it's actually running, but
+overall? It's completely functional.
 
 ## Stuff to do
 
@@ -37,6 +38,8 @@ actually running, but overall? It's completely functional.
 - Some of the artwork & metadata settings aren't implemented
 - Various Artists/Soundtracks still probably want some work (it's an eternal
   battle)
+- FluentUI has a bug for RTL layout (file path in File Details sticks the first
+  character at the end of the string :D). Maybe report it?
 
 ### Core Capabilities
 
@@ -45,6 +48,8 @@ actually running, but overall? It's completely functional.
   - Support adding album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - Update data from file metadata (optionally overriding filename acquisition?)
+  - (longer term) Update file metadata!
+- **render** Add expandable (& editable) playlist view
 - **main** Version the persistence data. I have troubles if I change the disk
   format :/
 - **render** Add typing to scroll to the appropriate spot in the song list
@@ -53,7 +58,6 @@ actually running, but overall? It's completely functional.
 - **render** Get the cursor set properly for clickable stuff
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
-- **render** Add expandable (& editable) playlist view
 - **render** Improve the Search view a bit
 - **both** File placement for clean-up, perhaps?
 - **both** Add 'favorite/love' attribute for songs
@@ -73,6 +77,7 @@ actually running, but overall? It's completely functional.
 - Get some controls in the menu with appropriate keyboard shortcuts
 - Maybe use the album-art package to get artist pix
 - Improve/Expand the views for Albums and Artists.
+- DetailsList is nifty, but a little bit buggy. Maybe try making my own?
 
 ### Other
 

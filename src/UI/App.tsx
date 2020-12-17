@@ -12,9 +12,9 @@ export default function App(): JSX.Element {
   return (
     <RecoilRoot>
       <Utilities />
-      <span className="grabber"></span>
-      <span className="left-column"></span>
-      <span className="top-row"></span>
+      <span id="grabber"></span>
+      <span id="left-column"></span>
+      <span id="top-row"></span>
       <Spinner label="Intializing...">
         <SongControls />
         <SongPlayback />

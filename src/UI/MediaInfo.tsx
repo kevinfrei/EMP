@@ -19,6 +19,7 @@ import {
 import { divGrand, fractionalSecondsStrToHMS } from '../Tools';
 import { MetadataEditor } from './MetadataEditor';
 import { altRowRenderer } from './SongList';
+import './styles/MediaInfo.css';
 import { Expandable } from './Utilities';
 
 const fileTypeMap = new Map([
