@@ -1,4 +1,4 @@
-import { IconButton, Slider, Stack } from '@fluentui/react';
+import { FontIcon, Slider, Stack } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
 import { mutedState, volumeState } from '../Recoil/ReadWrite';
 import { GetAudioElem } from './SongPlaying';
@@ -19,11 +19,10 @@ export default function VolumeControl(): JSX.Element {
   const iconNum = Math.min(3, Math.floor(4 * (volume + 0.1))).toString();
   return (
     <Stack id="volume-container" horizontal>
-      <IconButton
-        className={muted ? 'mute' : 'volIcon'}
-        iconProps={{ iconName: muted ? 'VolumeDisabled' : `Volume${iconNum}` }}
+      <FontIcon
+        id={muted ? 'mute' : 'volIcon'}
+        iconName={muted ? 'VolumeDisabled' : `Volume${iconNum}`}
         onClick={() => setMuted(!muted)}
-        allowDisabledFocus={false}
       />
       <Slider
         className="volume-slider"

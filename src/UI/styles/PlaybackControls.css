@@ -1,125 +1,124 @@
 /* "Normal" view */
 
 @media (min-width: 500px) {
-    #control-container {
-        grid-row: 1;
-        grid-column: 2;
-        margin: 4px;
-        padding-left: 10px;
-        justify-self: center;
-        display: inline-grid;
-        grid-template-columns: 14px 24px 28px 24px 14px;
-        grid-template-rows: 36px;
-    }
-    #play-pause {
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        grid-column: 3;
-        align-self: center;
-        justify-self: center;
-    }
-    #next,
-    #prev {
-        width: 20px;
-        height: 20px;
-        cursor: pointer;
-        float: left;
-        background: url('../img/prev.svg');
-        background-size: cover;
-        align-self: center;
-        justify-self: center;
-    }
-    #repeat,
-    #shuffle {
-        width: 10px;
-        height: 10px;
-        cursor: pointer;
-        align-self: center;
-        justify-self: center;
-    }
+  #control-container {
+    grid-row: 1;
+    grid-column: 2;
+    margin: 4px;
+    padding-left: 10px;
+    justify-self: center;
+    display: inline-grid;
+    grid-template-columns: 14px 24px 28px 24px 14px;
+    grid-template-rows: 36px;
+  }
+  #play-pause {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    grid-column: 3;
+    align-self: center;
+    justify-self: center;
+  }
+  #next,
+  #prev {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    float: left;
+    background: url('../img/prev.svg');
+    background-size: cover;
+    align-self: center;
+    justify-self: center;
+  }
+  #repeat,
+  #shuffle {
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+    align-self: center;
+    justify-self: center;
+  }
 }
-
 
 /* Compact view */
 
 @media (max-width: 499px) {
-    #control-container {
-        grid-row: 2;
-        grid-column: 2;
-        justify-self: start;
-        align-self: end;
-        display: inline-grid;
-        grid-template-columns: 10px 14px 16px 14px 10px;
-        grid-template-rows: 16px;
-        z-index: 100;
-        margin-left: 5px;
-        margin-bottom: -2px;
-    }
-    #play-pause {
-        width: 14px;
-        height: 14px;
-        cursor: pointer;
-        grid-column: 3;
-        align-self: center;
-        justify-self: center;
-    }
-    #next,
-    #prev {
-        width: 12px;
-        height: 12px;
-        cursor: pointer;
-        float: left;
-        background: url('../img/prev.svg');
-        background-size: cover;
-        align-self: center;
-        justify-self: center;
-    }
-    #repeat,
-    #shuffle {
-        width: 7px;
-        height: 7px;
-        cursor: pointer;
-        align-self: center;
-        justify-self: center;
-    }
+  #control-container {
+    grid-row: 2;
+    grid-column: 2;
+    justify-self: start;
+    align-self: end;
+    display: inline-grid;
+    grid-template-columns: 10px 14px 16px 14px 10px;
+    grid-template-rows: 16px;
+    z-index: 100;
+    margin-left: 5px;
+    margin-bottom: -2px;
+  }
+  #play-pause {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    grid-column: 3;
+    align-self: center;
+    justify-self: center;
+  }
+  #next,
+  #prev {
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+    float: left;
+    background: url('../img/prev.svg');
+    background-size: cover;
+    align-self: center;
+    justify-self: center;
+  }
+  #repeat,
+  #shuffle {
+    width: 7px;
+    height: 7px;
+    cursor: pointer;
+    align-self: center;
+    justify-self: center;
+  }
 }
 
 #play-pause.paused {
-    background: url('../img/play.svg');
-    background-size: cover;
+  background: url('../img/play.svg');
+  background-size: cover;
 }
 
 #play-pause.playing {
-    background: url('../img/pause.svg');
-    background-size: cover;
+  background: url('../img/pause.svg');
+  background-size: cover;
 }
 
 #prev {
-    grid-column: 2;
+  grid-column: 2;
 }
 
 #next {
-    grid-column: 4;
-    transform: scaleX(-1);
+  grid-column: 4;
+  transform: scaleX(-1);
 }
 
 #shuffle {
-    grid-column: 1;
-    background: url('../img/shuffle.svg');
-    background-size: contain;
+  grid-column: 1;
+  background: url('../img/shuffle.svg');
+  background-size: contain;
 }
 
 #repeat {
-    grid-column: 5;
-    background: url('../img/repeat.svg');
-    background-size: contain;
+  grid-column: 5;
+  background: url('../img/repeat.svg');
+  background-size: contain;
 }
 
 .disabled {
-    filter: opacity(25%);
+  filter: opacity(25%);
 }
 
 .enabled {
-    filter: opacity(100%);
+  filter: opacity(100%);
 }

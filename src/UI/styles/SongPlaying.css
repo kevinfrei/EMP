@@ -1,126 +1,125 @@
 @media (min-width: 500px) {
-    #song-container {
-        grid-row: 1;
-        grid-column: 3;
-        justify-self: stretch;
-        align-self: center;
-        margin-left: 20px;
-        margin-right: 20px;
-        display: inline-grid;
-        grid-template-columns: 36px 36px auto 36px;
-        grid-template-rows: 15px 15px 6px;
-        font-size: x-small;
-        text-align: center;
-        background-color: white;
-        border: solid 1px rgb(230, 230, 230);
-        font-weight: lighter;
-    }
-    #img-current-cover-art {
-        height: 32px;
-        width: 32px;
-    }
-    #song-cover-art {
-        grid-column: 1;
-        grid-row: 1 / 4;
-        height: 32px;
-        width: 32px;
-        padding: 2px;
-        -webkit-app-region: drag;
-        border-right: solid 1px rgb(230, 230, 230);
-    }
-    #now-playing-current-time {
-        grid-row: 1;
-        grid-column: 2;
-        font-size: xx-small;
-        justify-self: left;
-        margin-left: 2px;
-    }
-    #now-playing-remaining-time {
-        grid-row: 1;
-        grid-column: 4;
-        font-size: xx-small;
-        justify-self: right;
-        margin-right: 2px;
-    }
-    #song-name {
-        font-weight: bold;
-        grid-row: 1;
-        grid-column: 3 / 4;
-        -webkit-app-region: drag;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    #artist-album {
-        font-weight: bold;
-        grid-row: 2;
-        grid-column: 2 / 5;
-        -webkit-app-region: drag;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    .song-slider {
-        grid-row: 3;
-        grid-column: 2 / 5;
-        margin: -12px 0px;
-        border: 0px;
-        padding: 0px;
-    }
+  #song-container {
+    grid-row: 1;
+    grid-column: 3;
+    justify-self: stretch;
+    align-self: center;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: inline-grid;
+    grid-template-columns: 36px 36px auto 36px;
+    grid-template-rows: 15px 15px 6px;
+    font-size: x-small;
+    text-align: center;
+    background-color: white;
+    border: solid 1px rgb(230, 230, 230);
+    font-weight: lighter;
+  }
+  #img-current-cover-art {
+    height: 32px;
+    width: 32px;
+  }
+  #song-cover-art {
+    grid-column: 1;
+    grid-row: 1 / 4;
+    height: 32px;
+    width: 32px;
+    padding: 2px;
+    -webkit-app-region: drag;
+    border-right: solid 1px rgb(230, 230, 230);
+  }
+  #now-playing-current-time {
+    grid-row: 1;
+    grid-column: 2;
+    font-size: xx-small;
+    justify-self: left;
+    margin-left: 2px;
+  }
+  #now-playing-remaining-time {
+    grid-row: 1;
+    grid-column: 4;
+    font-size: xx-small;
+    justify-self: right;
+    margin-right: 2px;
+  }
+  #song-name {
+    font-weight: bold;
+    grid-row: 1;
+    grid-column: 3 / 4;
+    -webkit-app-region: drag;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  #artist-album {
+    font-weight: bold;
+    grid-row: 2;
+    grid-column: 2 / 5;
+    -webkit-app-region: drag;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .song-slider {
+    grid-row: 3;
+    grid-column: 2 / 5;
+    margin: -12px 0px;
+    border: 0px;
+    padding: 0px;
+  }
 }
-
 
 /* TODO: Add @media for handling compact view */
 
 @media (max-width: 499px) {
-    #song-container {
-        grid-row: 1 / 3;
-        grid-column: 1 / 5;
-        justify-self: stretch;
-        align-self: stretch;
-        margin: 0px;
-        display: inline-grid;
-        grid-template-columns: 80px auto 80px;
-        grid-template-rows: auto 15px 15px 8px;
-        font-size: x-small;
-        text-align: center;
-        font-weight: lighter;
-    }
-    #song-cover-art {
-        grid-column: 1 / 4;
-        align-self: stretch;
-        justify-self: stretch;
-        -webkit-app-region: drag;
-    }
-    #img-current-cover-art {
-        display: block;
-        width: 100%;
-        height: auto;
-    }
-    #now-playing-current-time {
-        visibility: hidden;
-        display: none;
-    }
-    #now-playing-remaining-time {
-        visibility: hidden;
-        display: none;
-    }
-    #song-name {
-        font-weight: bold;
-        grid-row: 2;
-        grid-column: 2;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    #artist-album {
-        font-weight: bold;
-        grid-row: 3;
-        grid-column: 2;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    .song-slider {
-        grid-row: 4;
-        grid-column: 1 / 4;
-        margin: -12px 2px;
-        padding: 0px;
-    }
+  #song-container {
+    grid-row: 1 / 3;
+    grid-column: 1 / 5;
+    justify-self: stretch;
+    align-self: stretch;
+    margin: 0px;
+    display: inline-grid;
+    grid-template-columns: 80px auto 80px;
+    grid-template-rows: auto 15px 15px 8px;
+    font-size: x-small;
+    text-align: center;
+    font-weight: lighter;
+  }
+  #song-cover-art {
+    grid-column: 1 / 4;
+    align-self: stretch;
+    justify-self: stretch;
+    -webkit-app-region: drag;
+  }
+  #img-current-cover-art {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  #now-playing-current-time {
+    visibility: hidden;
+    display: none;
+  }
+  #now-playing-remaining-time {
+    visibility: hidden;
+    display: none;
+  }
+  #song-name {
+    font-weight: bold;
+    grid-row: 2;
+    grid-column: 2;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  #artist-album {
+    font-weight: bold;
+    grid-row: 3;
+    grid-column: 2;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .song-slider {
+    grid-row: 4;
+    grid-column: 1 / 4;
+    margin: -12px 2px;
+    padding: 0px;
+  }
 }

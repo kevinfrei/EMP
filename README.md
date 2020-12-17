@@ -43,7 +43,6 @@ overall? It's completely functional.
 
 ### Core Capabilities
 
-- **render** Make a miniplayer!
 - **both** MediaInfo/Metadata editing!
   - Support adding album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
