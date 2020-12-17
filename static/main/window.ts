@@ -47,8 +47,7 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
       enableRemoteModule: true,
       webSecurity: !isDev,
     },
-    titleBarStyle: 'hiddenInset', // TODO: Only Mac
-    frame: true, // TODO: !Mac, add close/min/max buttons
+    frame: false,
     show: false,
     autoHideMenuBar: true,
     minWidth: 270,
