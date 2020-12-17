@@ -15,15 +15,22 @@ import {
 } from '@fluentui/react';
 import { FTONData, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
+import { useRecoilCallback } from 'recoil';
 import { Subscribe, Unsubscribe } from '../ipc';
-import { InitialWireUp } from '../MyWindow';
+import {
+  InitialWireUp,
+  SubscribeMediaMatcher,
+  UnsubscribeMediaMatcher,
+} from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
+import { isMiniplayerState } from '../Recoil/Local';
 import './styles/Utilities.css';
 
 const log = MakeError('Utilities', true);
 const err = MakeError('Utilities-err');
 
-// This is a react component to enable the IPC subsystem to talk to the store
+// This is a react component to enable the IPC subsystem to talk to the store,
+// keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
   useEffect(InitialWireUp);
   useEffect(() => {
@@ -36,6 +43,15 @@ export default function Utilities(): JSX.Element {
       }
     });
     return () => Unsubscribe(key);
+  });
+  const handleWidthChange = useRecoilCallback(
+    ({ set }) => (ev: MediaQueryList | MediaQueryListEvent) => {
+      set(isMiniplayerState, ev.matches);
+    },
+  );
+  useEffect(() => {
+    SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);
+    return () => UnsubscribeMediaMatcher(handleWidthChange);
   });
   return <></>;
 }

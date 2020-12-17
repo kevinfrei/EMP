@@ -18,6 +18,18 @@ export function InitialWireUp(): void {
   //  realInitialWireUp();
 }
 
+export function SubscribeMediaMatcher(
+  mq: string,
+  handler: (ev: MediaQueryList | MediaQueryListEvent) => void,
+): void {
+  /* Don't do anything for now */
+}
+
+export function UnsubscribeMediaMatcher(
+  handler: (ev: MediaQueryList | MediaQueryListEvent) => void,
+): void {
+  /* Still don't do anything */
+}
 /*
   // "complex" API's (not just save/restore data to the persist cache)
   registerFlattened('get-media-info', getMediaInfoForSong);

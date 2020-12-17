@@ -95,3 +95,8 @@ export const displayMessageState = atom<boolean>({
   key: 'displayMessage',
   default: false,
 });
+
+export const isMiniplayerState = atom<boolean>({
+  key: 'isMiniplayer',
+  default: false,
+});

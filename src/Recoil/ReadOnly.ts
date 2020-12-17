@@ -4,17 +4,14 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
-  Comparisons,
   MakeLogger,
   Song,
   SongKey,
 } from '@freik/core-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
-import { isPlaylist } from '../Tools';
 import { syncWithMainEffect } from './helpers';
-import { activePlaylistState, songListState } from './Local';
-import { getPlaylistState } from './ReadWrite';
+import { songListState } from './Local';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -249,22 +246,5 @@ export const getSearchState = selectorFamily<ipc.SearchResults, string>({
       log('no results');
     }
     return res || { songs: [], albums: [], artists: [] };
-  },
-});
-
-// This decides if the current playlist is something that can be 'saved'
-// (Is it a playlist, and has it been modified)
-export const saveableState = selector<boolean>({
-  key: 'shouldSaveBeDisabled',
-  get: ({ get }): boolean => {
-    const curPlaylist = get(activePlaylistState);
-    if (isPlaylist(curPlaylist)) {
-      const theSongList = get(getPlaylistState(curPlaylist));
-      const songList = get(songListState);
-      return !Comparisons.ArraySetEqual(theSongList, songList);
-    } else {
-      // If it's not a playlist, you can't save it
-      return false;
-    }
   },
 });

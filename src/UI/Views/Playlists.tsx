@@ -18,7 +18,10 @@ import {
 } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
-import { getPlaylistState, playlistNamesState } from '../../Recoil/ReadWrite';
+import {
+  getPlaylistState,
+  playlistNamesState,
+} from '../../Recoil/PlaylistsState';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
 import { Spinner } from '../Utilities';

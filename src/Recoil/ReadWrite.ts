@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { FTON, PlaylistName, SongKey, Type } from '@freik/core-utils';
-import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { InvokeMain } from '../MyWindow';
+import { atom, selector } from 'recoil';
 import { syncWithMainEffect } from './helpers';
+import { isMiniplayerState } from './Local';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
@@ -97,10 +96,18 @@ export const minSongCountForArtistListState = atom<number>({
   effects_UNSTABLE: [syncWithMainEffect<number>()],
 });
 
-export const curViewState = atom<CurrentView>({
+const curViewBackerState = atom<CurrentView>({
   key: 'CurrentView',
   default: CurrentView.settings,
   effects_UNSTABLE: [syncWithMainEffect<CurrentView>()],
+});
+
+// This makes the miniplayer view always select the current view
+export const curViewState = selector<CurrentView>({
+  key: 'CurViewWithMiniplayerAwareness',
+  get: ({ get }) =>
+    get(isMiniplayerState) ? CurrentView.current : get(curViewBackerState),
+  set: ({ set }, newVal) => set(curViewBackerState, newVal),
 });
 
 // For these things:
@@ -122,66 +129,4 @@ export const artistListSortState = atom<string>({
 export const songListSortState = atom<string>({
   key: 'rSongListSort',
   default: 'rl',
-});
-
-// Stuff for playlists
-
-const playlistNamesBackerState = atom<string[] | false>({
-  key: 'playlistNames-backer',
-  default: false,
-});
-
-export const playlistNamesState = selector<Set<PlaylistName>>({
-  key: 'PlaylistNames',
-  get: async ({ get }) => {
-    const backed = get(playlistNamesBackerState);
-    if (backed === false) {
-      const playlistsString = await InvokeMain('get-playlists');
-      if (!playlistsString) {
-        return new Set();
-      }
-      const parsed = FTON.parse(playlistsString);
-      const strs = FTON.arrayOfStrings(parsed);
-      return new Set(strs || []);
-    } else {
-      return new Set(backed);
-    }
-  },
-  set: async ({ set }, newValue) => {
-    const data = Type.isSetOf(newValue, Type.isString) ? [...newValue] : [];
-    set(playlistNamesBackerState, data);
-    await InvokeMain('set-playlists', FTON.stringify(data));
-  },
-});
-
-const getPlaylistBackerState = atomFamily<SongKey[] | false, PlaylistName>({
-  key: 'playlistFamilyBacker',
-  default: false,
-});
-
-export const getPlaylistState = selectorFamily<SongKey[], PlaylistName>({
-  key: 'PlaylistContents',
-  get: (arg: PlaylistName) => async ({ get }) => {
-    const backed = get(getPlaylistBackerState(arg));
-    if (backed === false) {
-      const listStr = await InvokeMain('load-playlist', arg);
-      if (!listStr) {
-        return [];
-      }
-      const parse = FTON.parse(listStr);
-      return Type.isArrayOf(parse, Type.isString) ? parse : [];
-    } else {
-      return backed;
-    }
-  },
-  set: (name: PlaylistName) => async ({ set, get }, newValue) => {
-    const names = get(playlistNamesState);
-    if (!names.has(name)) {
-      names.add(name);
-      set(playlistNamesState, new Set(names));
-    }
-    const songs = Type.isArray(newValue) ? newValue : [];
-    set(getPlaylistBackerState(name), songs);
-    await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
-  },
 });

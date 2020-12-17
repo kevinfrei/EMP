@@ -11,13 +11,8 @@ import {
   songListState,
 } from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
-import {
-  getPlaylistState,
-  playlistNamesState,
-  repeatState,
-  shuffleState,
-} from './ReadWrite';
-
+import { getPlaylistState, playlistNamesState } from './PlaylistsState';
+import { repeatState, shuffleState } from './ReadWrite';
 /**
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)

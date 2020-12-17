@@ -39,17 +39,16 @@ import {
   songListState,
 } from '../../Recoil/Local';
 import {
+  getPlaylistState,
+  playlistNamesState,
+  saveableState,
+} from '../../Recoil/PlaylistsState';
+import {
   allAlbumsState,
   allArtistsState,
   curSongsState,
-  saveableState,
 } from '../../Recoil/ReadOnly';
-import {
-  getPlaylistState,
-  ignoreArticlesState,
-  playlistNamesState,
-  shuffleState,
-} from '../../Recoil/ReadWrite';
+import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongList } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
