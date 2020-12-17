@@ -34,6 +34,7 @@ import { useDialogState } from '../../Recoil/helpers';
 import {
   activePlaylistState,
   currentIndexState,
+  isMiniplayerState,
   nowPlayingSortState,
   songDetailState,
   songListState,
@@ -190,6 +191,7 @@ export default function NowPlaying(): JSX.Element {
   const resetShuffle = useResetRecoilState(shuffleState);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
   const curSongs = useRecoilValue(curSongsState);
+  const isMini = useRecoilValue(isMiniplayerState);
 
   const drawDeleter = (song: Song) => (
     <IconButton
@@ -231,9 +233,19 @@ export default function NowPlaying(): JSX.Element {
     }
   };
 
-  const columns = MakeColumns(
+  const normalColumns = MakeColumns(
     [
       ['X', '', '', 25, 25, drawDeleter],
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
+      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
+      ['n', 'track', '#', 10, 20],
+      ['t', 'title', 'Title', 50, 150],
+    ],
+    () => sortBy,
+    performSort,
+  );
+  const miniColumns = MakeColumns(
+    [
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
       ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
       ['n', 'track', '#', 10, 20],
@@ -256,7 +268,7 @@ export default function NowPlaying(): JSX.Element {
           }}
           selectionMode={SelectionMode.none}
           onRenderRow={altRowRenderer((props) => props.itemIndex === curIndex)}
-          columns={columns}
+          columns={isMini ? miniColumns : normalColumns}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
           onRenderDetailsHeader={StickyDetailsHeader}
