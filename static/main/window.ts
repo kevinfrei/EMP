@@ -51,8 +51,8 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
     frame: true, // TODO: !Mac, add close/min/max buttons
     show: false,
     autoHideMenuBar: true,
-    minWidth: 250,
-    minHeight: 250,
+    minWidth: 270,
+    minHeight: 308,
   });
 
   // Load the base URL
