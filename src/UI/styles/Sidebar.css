@@ -1,19 +1,39 @@
-#sidebar {
-  margin: 0px 3px;
-  overflow-y: hidden;
-  padding: 4px;
-  grid-row: 2 / 4;
-  grid-column: 1;
+@media (min-width: 500px) {
+  #sidebar {
+    margin: 0px 3px;
+    overflow-y: hidden;
+    padding: 4px;
+    grid-row: 2 / 4;
+    grid-column: 1;
+  }
+  .sidebar-container {
+    display: grid;
+    grid-template-columns: 26px auto;
+    cursor: pointer;
+  }
+
+  .sidebar-icon {
+    grid-column: 1;
+    height: 18px;
+    width: 18px;
+    margin-top: 6px;
+    margin-left: 4px;
+  }
+
+  .sidebar-text {
+    grid-column: 2;
+    align-self: center;
+    margin: 4px;
+  }
+}
+@media (max-width: 499px) {
+  #sidebar {
+    visibility: collapse;
+  }
 }
 
 ::placeholder {
   color: rgba(0, 0, 0, 0.2);
-}
-
-.sidebar-container {
-  display: grid;
-  grid-template-columns: 26px auto;
-  cursor: pointer;
 }
 
 hr {
@@ -25,14 +45,6 @@ hr {
     rgba(0, 0, 0, 0.25),
     rgba(0, 0, 0, 0)
   );
-}
-
-.sidebar-icon {
-  grid-column: 1;
-  height: 18px;
-  width: 18px;
-  margin-top: 6px;
-  margin-left: 4px;
 }
 
 #Settings {
@@ -63,12 +75,6 @@ hr {
 #Playlists {
   background: url('../img/playlist.svg');
   background-size: cover;
-}
-
-.sidebar-text {
-  grid-column: 2;
-  align-self: center;
-  margin: 4px;
 }
 
 .sidebar-selected {

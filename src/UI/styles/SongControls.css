@@ -19,8 +19,6 @@
   #control-container {
     grid-row: 1;
     grid-column: 2;
-    margin: 4px;
-    padding-left: 10px;
     justify-self: center;
     display: inline-grid;
     grid-template-columns: 14px 24px 28px 24px 14px;

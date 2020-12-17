@@ -1,7 +1,19 @@
-.current-view {
-  grid-row: 3;
-  grid-column: 2 / 5;
-  padding: 0px;
-  overflow: auto;
-  position: relative;
+@media (min-width: 500px) {
+  .current-view {
+    grid-row: 3;
+    grid-column: 2 / 5;
+    padding: 0px;
+    overflow: auto;
+    position: relative;
+  }
+}
+
+@media (max-width: 499px) {
+  .current-view {
+    grid-row: 3 / 5;
+    grid-column: 2 / 5;
+    padding: 0px;
+    overflow: auto;
+    position: relative;
+  }
 }
