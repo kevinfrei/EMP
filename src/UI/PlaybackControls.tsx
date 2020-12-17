@@ -8,8 +8,8 @@ import {
 } from '../Recoil/Local';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleState } from '../Recoil/ReadWrite';
-import { GetAudioElem } from './SongPlayback';
-import './styles/SongControls.css';
+import { GetAudioElem } from './SongPlaying';
+import './styles/PlaybackControls.css';
 
 const log = MakeLogger('SongControls');
 

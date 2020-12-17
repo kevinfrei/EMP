@@ -23,7 +23,7 @@ import {
   SongData,
 } from '../Recoil/ReadOnly';
 import { repeatState } from '../Recoil/ReadWrite';
-import './styles/SongPlayback.css';
+import './styles/SongPlaying.css';
 import { mySliderStyles } from './Utilities';
 
 const log = MakeLogger('SongPlayback');

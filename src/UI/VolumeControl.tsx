@@ -1,7 +1,7 @@
 import { IconButton, Slider, Stack } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
 import { mutedState, volumeState } from '../Recoil/ReadWrite';
-import { GetAudioElem } from './SongPlayback';
+import { GetAudioElem } from './SongPlaying';
 import './styles/VolumeControl.css';
 import { mySliderStyles } from './Utilities';
 

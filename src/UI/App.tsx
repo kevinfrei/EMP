@@ -1,8 +1,8 @@
 import { RecoilRoot } from 'recoil';
+import PlaybackControls from './PlaybackControls';
 import Sidebar from './Sidebar';
-import SongControls from './SongControls';
 import SongDetailPanel from './SongDetailPanel';
-import SongPlayback from './SongPlayback';
+import SongPlaying from './SongPlaying';
 import './styles/App.css';
 import Utilities, { Spinner } from './Utilities';
 import ViewSelector from './Views/Selector';
@@ -16,8 +16,8 @@ export default function App(): JSX.Element {
       <span id="left-column"></span>
       <span id="top-row"></span>
       <Spinner label="Intializing...">
-        <SongControls />
-        <SongPlayback />
+        <PlaybackControls />
+        <SongPlaying />
         <VolumeControl />
         <Sidebar />
       </Spinner>
