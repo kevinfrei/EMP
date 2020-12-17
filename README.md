@@ -44,7 +44,7 @@ overall? It's completely functional.
 ### Core Capabilities
 
 - **both** MediaInfo/Metadata editing!
-  - Support adding album covers
+  - Support adding/editing album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - Update data from file metadata (optionally overriding filename acquisition?)
   - (longer term) Update file metadata!
@@ -58,7 +58,7 @@ overall? It's completely functional.
 - **both** Add "Recently Added" capabilities
   - Something involving no Key Reuse probably...
 - **render** Improve the Search view a bit
-- **both** File placement for clean-up, perhaps?
+- **both** Audio file placement for clean-up, perhaps?
 - **both** Add 'favorite/love' attribute for songs
 - **both** "Auto" playlists (something involving stuff like "this artist" and
   "not this keyword" kind of stuff.
@@ -74,7 +74,7 @@ overall? It's completely functional.
 
 - Make an actual "About" screen
 - Get some controls in the menu with appropriate keyboard shortcuts
-- Maybe use the album-art package to get artist pix
+- Maybe use of the album-art package to get artist pix
 - Improve/Expand the views for Albums and Artists.
 - DetailsList is nifty, but a little bit buggy. Maybe try making my own?
 

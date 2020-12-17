@@ -44,9 +44,16 @@ const memoryCache = new Map<string, string>();
 const listeners = new Map<string, Map<string, ValueUpdateListener>>();
 const getNextListenerId = SeqNum();
 
+let ploc: string | null = null;
 // Here's a place for app settings & stuff...
+function persistenceLocation(): string {
+  if (!ploc) {
+    ploc = path.join(app.getPath('userData'), 'PersistedData');
+  }
+  return ploc;
+}
 function storageLocation(id: string): string {
-  return path.join(app.getPath('userData'), `persist-${id}.json`);
+  return path.join(persistenceLocation(), `${id}.json`);
 }
 
 log(`User data location: ${storageLocation('test')}`);
@@ -83,6 +90,11 @@ async function readFileAsync(id: string): Promise<string | void> {
 }
 
 function writeFile(id: string, val: string): void {
+  try {
+    fs.mkdirSync(persistenceLocation(), { recursive: true });
+  } catch (e) {
+    /* */
+  }
   fs.writeFileSync(storageLocation(id), val, 'utf8');
   memoryCache.set(id, val);
 }
