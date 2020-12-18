@@ -7,28 +7,34 @@ import Settings from '../Views/Settings';
 
 jest.mock('../../MyWindow');
 
-it('Render Settings without crashing', () => {
+it('Render Settings without crashing', async () => {
   initializeIcons();
-  void act(() => {
-    create(
+  await act(async () => {
+    const elem = (
       <RecoilRoot>
         <Suspense fallback="">
           <Settings />
         </Suspense>
-      </RecoilRoot>,
+      </RecoilRoot>
     );
+    const root = create(elem);
+    root.update(elem);
+    return new Promise((res, rej) => res());
   });
 });
 
-it('Render SearchResults without crashing', () => {
+it('Render SearchResults without crashing', async () => {
   initializeIcons();
-  void act(() => {
-    create(
+  await act(async () => {
+    const elem = (
       <RecoilRoot>
         <Suspense fallback="">
           <SearchResultsView />
         </Suspense>
-      </RecoilRoot>,
+      </RecoilRoot>
     );
+    const root = create(elem);
+    root.update(elem);
+    return new Promise((res, rej) => res());
   });
 });

@@ -1,14 +1,16 @@
-import ReactDOM from 'react-dom';
+import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
 import SongPlaying from '../SongPlaying';
 
-it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(
-    <RecoilRoot>
-      <SongPlaying />
-    </RecoilRoot>,
-    div,
-  );
-  ReactDOM.unmountComponentAtNode(div);
+jest.mock('../../MyWindow');
+
+it('renders without crashing', async () => {
+  await act(async () => {
+    create(
+      <RecoilRoot>
+        <SongPlaying />
+      </RecoilRoot>,
+    );
+    return new Promise((res, rej) => res());
+  });
 });

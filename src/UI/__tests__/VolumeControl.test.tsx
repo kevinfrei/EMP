@@ -1,21 +1,21 @@
 import { initializeIcons } from '@uifabric/icons';
 import { Suspense } from 'react';
-import ReactDOM from 'react-dom';
+import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
 import VolumeControl from '../VolumeControl';
 
 jest.mock('../../MyWindow');
 
-it('renders without crashing', () => {
+it('renders without crashing', async () => {
   initializeIcons();
-  const div = document.createElement('div');
-  ReactDOM.render(
-    <RecoilRoot>
-      <Suspense fallback="">
-        <VolumeControl />
-      </Suspense>
-    </RecoilRoot>,
-    div,
-  );
-  ReactDOM.unmountComponentAtNode(div);
+  await act(async () => {
+    create(
+      <RecoilRoot>
+        <Suspense fallback="">
+          <VolumeControl />
+        </Suspense>
+      </RecoilRoot>,
+    );
+    return new Promise((res, rej) => res());
+  });
 });
