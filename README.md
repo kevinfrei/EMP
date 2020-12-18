@@ -72,6 +72,8 @@ overall? It's completely functional.
 
 ### UI Improvements
 
+- When tracks change, keep the entry in the Now Playing list visible unless
+  there's been 'recent' movement
 - Make an actual "About" screen
 - Get some controls in the menu with appropriate keyboard shortcuts
 - Maybe use of the album-art package to get artist pix
