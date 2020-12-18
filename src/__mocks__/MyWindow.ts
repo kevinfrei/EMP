@@ -66,11 +66,10 @@ const fakeStorage: Map<string, string> = new Map<string, string>([
   ['rSortWithArticles', 'false'],
   ['FullAlbumsOnly', 'true'],
   ['MinSongCount', '1'],
-  ['albumCoverName', '.AlbumCover'],
   ['downloadAlbumArtwork', 'true'],
   ['downloadArtistArtwork', 'true'],
   ['saveAlbumArtworkWithMusic', 'true'],
-  ['albumCoverName', '.coverArt'],
+  ['albumCoverName', '".coverArt"'],
 ]);
 
 function MockWrite(key?: string): Promise<string> {
