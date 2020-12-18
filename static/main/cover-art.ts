@@ -6,7 +6,7 @@ import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
 import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
-import { GetImageCache } from './ImageCache';
+import { AlbumCoverCache } from './ImageCache';
 import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
@@ -49,6 +49,7 @@ async function getArt(album: string, artist: string): Promise<string | void> {
 }
 
 // Try to find an album title match, trimming off ending junk of the album title
+// TODO: Let's not keep trying for the same album a gazillion times
 async function LookForAlbum(
   artist: string,
   album: string,
@@ -71,6 +72,13 @@ async function LookForAlbum(
       if (albTrim.endsWith(pair[1]) && albTrim.indexOf(pair[0]) > 0) {
         albTrim = albTrim.substr(0, albTrim.lastIndexOf(pair[0])).trim();
         break;
+      } else {
+        const ind = albTrim.lastIndexOf(pair[0]);
+        if (ind > 0) {
+          // Maybe the stuff got cut off, let's just trim it anyway
+          albTrim = albTrim.substr(0, ind).trim();
+          break;
+        }
       }
     }
   } while (lastAlbum !== albTrim);
@@ -94,7 +102,7 @@ export async function picBufProcessor(
       const album = db.albums.get(albumId);
       if (album) {
         // First, check the image cache
-        const ic = GetImageCache();
+        const ic = AlbumCoverCache();
         const cachedData = await ic.get(album);
         if (cachedData) {
           return { data: cachedData };
@@ -137,7 +145,7 @@ export async function picBufProcessor(
   return await getDefaultPicBuffer();
 }
 
-let timeout: NodeJS.Timeout | null = null;
+let dbSaveDebounceTimer: NodeJS.Timeout | null = null;
 
 async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   const songKey = album.songs[0];
@@ -154,10 +162,10 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
         db.pictures.set(album.key, albumPath);
         // Delay saving the Music DB, so that we're not doing it a gazillion
         // times during DB scanning
-        if (timeout !== null) {
-          clearTimeout(timeout);
+        if (dbSaveDebounceTimer !== null) {
+          clearTimeout(dbSaveDebounceTimer);
         }
-        timeout = setTimeout(() => {
+        dbSaveDebounceTimer = setTimeout(() => {
           log('saving the DB to disk');
           saveMusicDB(db).catch((rej) => log('Error saving'));
         }, 1000);
@@ -170,6 +178,5 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   }
   // We tried to save it with a song in the album, no such luck
   // Save it in the cache
-  const ic = GetImageCache();
-  await ic.put(data, album);
+  await AlbumCoverCache().put(data, album);
 }

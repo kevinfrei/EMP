@@ -1,36 +1,40 @@
-import { Album } from '@freik/core-utils';
+import { Album, toSafeName } from '@freik/core-utils';
 import { app } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { getMusicDB } from './MusicAccess';
 
-export type ImageCache = {
-  get(album: Album): Promise<Buffer | void>;
-  put(data: Buffer, album: Album): Promise<void>;
+export type ImageCache<T> = {
+  get(key: T): Promise<Buffer | void>;
+  put(data: Buffer, key: T): Promise<void>;
   clear(): Promise<void>;
 };
 
-function MakeImageStore(name: string): ImageCache {
+function MakeImageStore<T>(
+  name: string,
+  keyLookup: (key: T) => Promise<string>,
+): ImageCache<T> {
   //  const artSN = SeqNum('ART');
   const imageStoreDir = path.join(app.getPath('userData'), name);
-  const thePath = async (album: Album): Promise<string> => {
+  const thePath = async (key: T): Promise<string> => {
     try {
       await fs.mkdir(imageStoreDir, { recursive: true });
     } catch (e) {
       // The dir was already created...
     }
-    return path.join(imageStoreDir, album.key);
+    return path.join(imageStoreDir, toSafeName(await keyLookup(key)));
   };
   return {
-    get: async (album: Album): Promise<Buffer | void> => {
+    get: async (key: T): Promise<Buffer | void> => {
       try {
-        const filepath = await thePath(album);
+        const filepath = await thePath(key);
         return await fs.readFile(filepath);
       } catch (e) {
         // No file found...
       }
     },
-    put: async (data: Buffer, album: Album): Promise<void> => {
-      const filepath = await thePath(album);
+    put: async (data: Buffer, key: T): Promise<void> => {
+      const filepath = await thePath(key);
       await fs.writeFile(filepath, data);
     },
     clear: async (): Promise<void> => {
@@ -39,14 +43,30 @@ function MakeImageStore(name: string): ImageCache {
   };
 }
 
-let theCache: ImageCache | null = null;
-export function GetImageCache(): ImageCache {
-  if (theCache === null) {
-    theCache = MakeImageStore('albumCoverCache');
+let albumCoverCache: ImageCache<Album> | null = null;
+export function AlbumCoverCache(): ImageCache<Album> {
+  if (albumCoverCache === null) {
+    albumCoverCache = MakeImageStore(
+      'albumCoverCache',
+      async (album: Album) => {
+        const db = await getMusicDB();
+        if (db) {
+          let artist = 'Compilation';
+          if (album.primaryArtists.length > 0) {
+            const art = db.artists.get(album.primaryArtists[0]);
+            if (art) {
+              artist = art.name;
+            }
+          }
+          return `${artist}*${album.title}`;
+        }
+        return '**' + album.title;
+      },
+    );
   }
-  return theCache;
+  return albumCoverCache;
 }
 
 export async function FlushImageCache(): Promise<void> {
-  await GetImageCache().clear();
+  await AlbumCoverCache().clear();
 }

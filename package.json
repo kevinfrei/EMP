@@ -15,8 +15,8 @@
   "main": "public/electron.js",
   "homepage": "./",
   "dependencies": {
-    "@fluentui/react": "^7.155.1",
-    "@freik/core-utils": "^0.8.2",
+    "@fluentui/react": "^7.155.2",
+    "@freik/core-utils": "^0.9.0",
     "@freik/media-utils": "^0.7.1",
     "@uifabric/icons": "^7.5.17",
     "@uifabric/react-hooks": "^7.13.9",

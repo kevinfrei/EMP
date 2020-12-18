@@ -1,8 +1,10 @@
 import {
   Comparisons,
+  fromSafeName,
   FTON,
   MakeError,
   MakeLogger,
+  toSafeName,
   Type,
 } from '@freik/core-utils';
 import { exception } from 'console';
@@ -17,28 +19,12 @@ function playlistDir(): string {
   return path.join(app.getPath('userData'), 'playlists');
 }
 
-// This spits out a string of hex numbers for each char with a '-' separator
-// That makes it safe for all OS'es and all characters
-function toFileSafe(file: string): string {
-  return [...file]
-    .map((chr: string) => chr.charCodeAt(0).toString(16))
-    .join('-');
-}
-
-// Undo toFileSafe...
-function fromFileSafe(safe: string): string {
-  return safe
-    .split('-')
-    .map((val: string) => String.fromCharCode(Number.parseInt(val, 16)))
-    .join('');
-}
-
 function playlistName(file: string): string {
-  return fromFileSafe(file);
+  return fromSafeName(file);
 }
 
 function playlistPath(name: string): string {
-  return path.join(playlistDir(), toFileSafe(name));
+  return path.join(playlistDir(), toSafeName(name));
 }
 
 export async function renamePlaylist(data?: string): Promise<void> {
