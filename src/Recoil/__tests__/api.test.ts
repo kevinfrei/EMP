@@ -1,3 +1,4 @@
+/*
 import { snapshot_UNSTABLE } from 'recoil';
 import { currentIndexState, songListState } from '../Local';
 
@@ -13,17 +14,34 @@ it('Adding empty songs does nothing', () => {
   ).toStrictEqual(-1);
 });
 
-/*
+*/
+import { MakeError } from '@freik/core-utils';
+import { act } from 'react-test-renderer';
 import {
   CallbackInterface,
   RecoilState,
   Snapshot,
   snapshot_UNSTABLE,
 } from 'recoil';
-import { AddSongs, PlaySongs } from '../api';
+import { AddSongs } from '../api';
 import { currentIndexState, songListState } from '../Local';
 
+const err = MakeError('api.test');
+
+jest.useFakeTimers();
 jest.mock('../../MyWindow');
+
+function flushPromisesAndTimers(): Promise<void> {
+  // Wrap flush with act() to avoid warning that only shows up in OSS environment
+  return act(
+    () =>
+      new Promise((resolve) => {
+        // eslint-disable-next-line no-restricted-globals
+        setTimeout(resolve, 100);
+        jest.runAllTimers();
+      }),
+  );
+}
 
 function makeCallbackIfc(
   set: <T>(rv: RecoilState<T>, valOrUpdate: ((curVal: T) => T) | T) => void,
@@ -33,6 +51,7 @@ function makeCallbackIfc(
     set,
     snapshot,
     reset: (rv: RecoilState<any>) => {
+      err("Reset doesn't work in here :(");
       return;
     },
     gotoSnapshot: (sh: Snapshot) => {
@@ -40,7 +59,7 @@ function makeCallbackIfc(
     },
   };
 }
-it('Adding empty songs does nothing', () => {
+it('Adding empty songs does nothing', async () => {
   const initialSnapshot = snapshot_UNSTABLE();
   expect(
     initialSnapshot.getLoadable(songListState).valueOrThrow(),
@@ -52,40 +71,49 @@ it('Adding empty songs does nothing', () => {
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
     AddSongs([], makeCallbackIfc(set, initialSnapshot)),
   );
-  setImmediate(() => {
-    expect(
-      nextSnapshot.getLoadable(songListState).valueOrThrow(),
-    ).toStrictEqual([]);
-  });
+  await flushPromisesAndTimers();
+  expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual(
+    [],
+  );
 });
 
-it('Adding song(s) works properly', () => {
+it('Adding song(s) works properly', async () => {
   const initialSnapshot = snapshot_UNSTABLE();
-  const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
-    AddSongs(['a'], makeCallbackIfc(set, initialSnapshot)),
+  const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
+    AddSongs(['a'], makeCallbackIfc(set, initialSnapshot))
+      .then(() => {
+        /* nothin' */
+      })
+      .catch((reason) => {
+        err('failed');
+        err(reason);
+      });
+  });
+  expect(initialSnapshot.getLoadable(currentIndexState).valueOrThrow()).toBe(
+    -1,
   );
-  process.nextTick(() => {
-    expect(
-      nextSnapshot.getLoadable(songListState).valueOrThrow(),
-    ).toStrictEqual(['a']);
-    expect(
-      nextSnapshot.getLoadable(currentIndexState).valueOrThrow(),
-    ).toStrictEqual(0);
-    const finalSnapshot = snapshot_UNSTABLE(({ set }) => {
-      AddSongs(['a', 'b'], makeCallbackIfc(set, nextSnapshot))
-        .then(() => {
-          AddSongs(['a', 'c'], makeCallbackIfc(set, nextSnapshot))
-            .then(() => {
-              expect(
-                finalSnapshot.getLoadable(songListState).valueOrThrow(),
-              ).toStrictEqual(['a', 'b', 'a', 'c']);
-            })
-            .catch((reason) => fail(reason));
-        })
-        .catch((reason) => fail(reason));
-    });
+  await flushPromisesAndTimers();
+  expect(
+    nextSnapshot.getLoadable(currentIndexState).valueOrThrow(),
+  ).toStrictEqual(0);
+  expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual([
+    'a',
+  ]);
+  const finalSnapshot = snapshot_UNSTABLE(({ set }) => {
+    AddSongs(['a', 'b'], makeCallbackIfc(set, nextSnapshot))
+      .then(() => {
+        AddSongs(['a', 'c'], makeCallbackIfc(set, nextSnapshot))
+          .then(() => {
+            expect(
+              finalSnapshot.getLoadable(songListState).valueOrThrow(),
+            ).toStrictEqual(['a', 'b', 'a', 'c']);
+          })
+          .catch((reason) => fail(reason));
+      })
+      .catch((reason) => fail(reason));
   });
 });
+/*
 it('Playing songs works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
