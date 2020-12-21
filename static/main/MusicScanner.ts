@@ -262,8 +262,6 @@ function getOrNewAlbum(
 function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   // We need to go from textual metadata to artist, album, and song keys
   // First, get the primary artist
-  // TODO: FullMetaData doesn't allow for multiple primary artists
-  // Check Trent Reznor & Atticus Ross for an example where it kinda matters
   const tmpArtist: string | string[] = md.artist;
   const artists = typeof tmpArtist === 'string' ? [tmpArtist] : tmpArtist;
   const allArtists = artists.map((a) => getOrNewArtist(db, a));

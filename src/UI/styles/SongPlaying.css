@@ -67,8 +67,6 @@
   }
 }
 
-/* TODO: Add @media for handling compact view */
-
 @media (max-width: 499px) {
   #song-container {
     grid-row: 1 / 3;

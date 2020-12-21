@@ -126,6 +126,7 @@ const sortedSongsState = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
     // TODO: Fix this for the filtered songs
+    // I *think* this is working now?
     const artists = get(allArtistsState);
     return SortItems(
       get(filteredSongsState),

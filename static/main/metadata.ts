@@ -294,5 +294,6 @@ export async function setMediaInfoForSong(
   await mdStore.save();
   // For now, Update the database
   // TODO: Make this faster. A full rescan seems awfully wasteful.
+  // First TODO is to debounce it every 10 seconds or so, probably
   UpdateDB();
 }

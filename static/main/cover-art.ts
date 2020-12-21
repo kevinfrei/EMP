@@ -1,4 +1,4 @@
-import { Album, MakeError, MakeLogger } from '@freik/core-utils';
+import { Album, FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
@@ -49,7 +49,6 @@ async function getArt(album: string, artist: string): Promise<string | void> {
 }
 
 // Try to find an album title match, trimming off ending junk of the album title
-// TODO: Let's not keep trying for the same album a gazillion times
 async function LookForAlbum(
   artist: string,
   album: string,
@@ -57,6 +56,15 @@ async function LookForAlbum(
   log(`Finding art for ${artist}: ${album}`);
   let albTrim = album.trim();
   let lastAlbum: string;
+
+  // Let's see if we should stop looking for this album
+  const bailData =
+    (await persist.getItemAsync('noMoreLooking')) ||
+    '{"@dataType":"Set","@dataValue":[]}';
+  const skip = FTON.parse(bailData);
+  if (Type.isSetOfString(skip) && skip.has(albTrim)) {
+    return;
+  }
   do {
     try {
       const attempt = await getArt(artist, albTrim);
@@ -82,6 +90,11 @@ async function LookForAlbum(
       }
     }
   } while (lastAlbum !== albTrim);
+
+  // Record the failure, so we stop looking...
+  const newSkip: Set<string> = Type.isSetOfString(skip) ? skip : new Set();
+  newSkip.add(albTrim);
+  await persist.setItemAsync('noMoreLooking', FTON.stringify(newSkip));
 }
 
 export async function picBufProcessor(
@@ -153,8 +166,13 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   if (song) {
     if (await shouldSaveAlbumArtworkWithMusicFiles()) {
       const coverName = await albumCoverName();
-      // TODO: This file type may not be correct. Check the data buffer!
-      const albumPath = path.join(path.dirname(song.path), `${coverName}.jpg`);
+      // This is pretty dumb, but it works for PNG's and assumes all else is JPG
+      const first4bytes = data.readInt32BE(0);
+      const suffix = first4bytes === 0x89504e47 ? '.png' : '.jpg';
+      const albumPath = path.join(
+        path.dirname(song.path),
+        `${coverName}${suffix}`,
+      );
       try {
         log('Saving to path: ' + albumPath);
         await fs.writeFile(albumPath, data);
