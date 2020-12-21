@@ -1,7 +1,7 @@
 import {
   DefaultButton,
   DetailsList,
-  IconButton,
+  FontIcon,
   IDetailsHeaderProps,
   ISeparatorStyles,
   IStackItemStyles,
@@ -194,9 +194,14 @@ export default function NowPlaying(): JSX.Element {
   const isMini = useRecoilValue(isMiniplayerState);
 
   const drawDeleter = (song: Song) => (
-    <IconButton
-      style={{ height: '18px', width: '18px' }}
-      iconProps={{ iconName: 'Delete' }}
+    <FontIcon
+      style={{
+        height: '18px',
+        width: '18px',
+        cursor: 'pointer',
+        paddingTop: '2px',
+      }}
+      iconName="Delete"
       onClick={() => {
         // If we're going to be removing a song before the current index
         // we need to move the curIndex pointer as well
@@ -235,7 +240,7 @@ export default function NowPlaying(): JSX.Element {
 
   const normalColumns = MakeColumns(
     [
-      ['X', '', '', 25, 25, drawDeleter],
+      ['X', '', '', 18, 18, drawDeleter],
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
       ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
       ['n', 'track', '#', 10, 20],
@@ -246,10 +251,11 @@ export default function NowPlaying(): JSX.Element {
   );
   const miniColumns = MakeColumns(
     [
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
-      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
+      ['X', '', '', 18, 18, drawDeleter],
       ['n', 'track', '#', 10, 20],
-      ['t', 'title', 'Title', 50, 150],
+      ['t', 'title', 'Title', 70, 150],
+      ['l', 'albumId', 'Album', 40, 150, AlbumFromSong],
+      ['r', 'artistIds', 'Artist(s)', 40, 150, ArtistsFromSong],
     ],
     () => sortBy,
     performSort,
@@ -261,6 +267,11 @@ export default function NowPlaying(): JSX.Element {
         <DetailsList
           compact={true}
           items={curSongs}
+          cellStyleProps={{
+            cellLeftPadding: isMini ? 4 : 8,
+            cellRightPadding: 0,
+            cellExtraRightPadding: 0,
+          }}
           getKey={(item: any, index?: number) => {
             const sng = item as Song;
             const idx = index !== undefined ? index : -1;
