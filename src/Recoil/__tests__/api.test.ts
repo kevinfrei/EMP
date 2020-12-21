@@ -55,6 +55,7 @@ function makeCallbackIfc(
       return;
     },
     gotoSnapshot: (sh: Snapshot) => {
+      err("gotoSnapshot doesn't work in here");
       return;
     },
   };

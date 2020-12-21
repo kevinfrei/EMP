@@ -2,6 +2,20 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Jest testui",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceFolder}/node_modules/.bin/jest",
+        "--runInBand",
+        "--config",
+        "${workspaceFolder}/jest.jsdom.config.js"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
       "name": "Electron: Main",
       "type": "node",
       "request": "launch",
@@ -11,7 +25,11 @@
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
       },
       "program": "${workspaceFolder}/public/electron.js",
-      "runtimeArgs": [".", "--enable-logging", "--remote-debugging-port=9223"],
+      "runtimeArgs": [
+        ".",
+        "--enable-logging",
+        "--remote-debugging-port=9223"
+      ],
       "outputCapture": "std",
       "preLaunchTask": "npm: prepare"
     },
@@ -37,7 +55,10 @@
   "compounds": [
     {
       "name": "Electron: All",
-      "configurations": ["Electron: Main", "Electron: Render"]
+      "configurations": [
+        "Electron: Main",
+        "Electron: Render"
+      ]
     }
   ]
 }
