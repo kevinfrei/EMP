@@ -23,7 +23,7 @@ import {
   Snapshot,
   snapshot_UNSTABLE,
 } from 'recoil';
-import { AddSongs } from '../api';
+import { AddSongs, PlaySongs } from '../api';
 import { currentIndexState, songListState } from '../Local';
 
 const err = MakeError('api.test');
@@ -43,8 +43,13 @@ function flushPromisesAndTimers(): Promise<void> {
   );
 }
 
+type RecoilSetter = <T>(
+  rv: RecoilState<T>,
+  valOrUpdate: ((curVal: T) => T) | T,
+) => void;
+
 function makeCallbackIfc(
-  set: <T>(rv: RecoilState<T>, valOrUpdate: ((curVal: T) => T) | T) => void,
+  set: RecoilSetter,
   snapshot: Snapshot,
 ): CallbackInterface {
   return {
@@ -69,8 +74,8 @@ it('Adding empty songs does nothing', async () => {
     initialSnapshot.getLoadable(currentIndexState).valueOrThrow(),
   ).toStrictEqual(-1);
 
-  const nextSnapshot = snapshot_UNSTABLE(
-    ({ set }) => void AddSongs([], makeCallbackIfc(set, initialSnapshot)),
+  const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
+    AddSongs([], makeCallbackIfc(set, initialSnapshot)),
   );
   await flushPromisesAndTimers();
   expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual(
@@ -78,44 +83,35 @@ it('Adding empty songs does nothing', async () => {
   );
 });
 
-it('Adding song(s) works properly', async () => {
+it('Adding song(s) works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   expect(initialSnapshot.getLoadable(currentIndexState).valueOrThrow()).toBe(
     -1,
   );
-  await flushPromisesAndTimers();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(['a'], makeCallbackIfc(set, initialSnapshot))
-      .then(() => {
-        /* nothin' */
-      })
-      .catch((reason) => {
-        err('failed');
-        err(reason);
-      });
+    AddSongs(['a'], makeCallbackIfc(set, initialSnapshot));
   });
-  await flushPromisesAndTimers();
-  /*  expect(
+  expect(
     nextSnapshot.getLoadable(currentIndexState).valueOrThrow(),
   ).toStrictEqual(0);
   expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual([
     'a',
-  ]);*/
+  ]);
+
   const finalSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(['a', 'b'], makeCallbackIfc(set, nextSnapshot))
-      .then(() => {
-        AddSongs(['a', 'c'], makeCallbackIfc(set, nextSnapshot))
-          .then(() => {
-            /*     expect(
-              finalSnapshot.getLoadable(songListState).valueOrThrow(),
-            ).toStrictEqual(['a', 'b', 'a', 'c']);*/
-          })
-          .catch((reason) => fail(reason));
-      })
-      .catch((reason) => fail(reason));
+    AddSongs(['a', 'b'], makeCallbackIfc(set, nextSnapshot));
+    AddSongs(['a', 'c'], makeCallbackIfc(set, nextSnapshot));
   });
+  expect(
+    finalSnapshot.getLoadable(currentIndexState).valueOrThrow(),
+  ).toStrictEqual(0);
+  expect(finalSnapshot.getLoadable(songListState).valueMaybe()).toStrictEqual([
+    'a',
+    'b',
+    'a',
+    'c',
+  ]);
 });
-/*
 it('Playing songs works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
@@ -127,4 +123,3 @@ it('Playing songs works properly', () => {
     'e',
   ]);
 });
-*/

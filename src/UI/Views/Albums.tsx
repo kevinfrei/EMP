@@ -42,8 +42,8 @@ const err = MakeError('Albums-err'); // eslint-disable-line
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumState(props.album.key));
-  const onAddSongsClick = useRecoilCallback((cbInterface) => async () =>
-    await AddSongs(props.album.songs, cbInterface),
+  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
+    AddSongs(props.album.songs, cbInterface),
   );
   return (
     <Stack
@@ -91,9 +91,8 @@ export default function AlbumList(): JSX.Element {
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailState, item),
   );
-  const onAddSongClick = useRecoilCallback(
-    (cbInterface) => async (item: Song) =>
-      await AddSongs([item.key], cbInterface),
+  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
+    AddSongs([item.key], cbInterface),
   );
 
   const curExpandedState = useState(new Set<AlbumKey>());

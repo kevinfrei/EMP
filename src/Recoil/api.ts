@@ -74,11 +74,11 @@ export async function MaybePlayPrev({
  *
  * @returns void
  */
-export async function AddSongs(
+export function AddSongs(
   listToAdd: Iterable<SongKey>,
   { snapshot, set }: CallbackInterface,
-): Promise<void> {
-  const shuffle = await snapshot.getPromise(shuffleState);
+): void {
+  const shuffle = snapshot.getLoadable(shuffleState).valueMaybe();
   const playList = [...listToAdd];
   if (!shuffle) {
     set(songListState, (songList) => [...songList, ...listToAdd]);
@@ -100,13 +100,13 @@ export async function AddSongs(
  *
  * @returns void
  */
-export async function PlaySongs(
+export function PlaySongs(
   { set, snapshot }: CallbackInterface,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
-): Promise<void> {
+): void {
   let playList = [...listToPlay];
-  const shuffle = await snapshot.getPromise(shuffleState);
+  const shuffle = snapshot.getLoadable(shuffleState).valueOrThrow();
   if (shuffle) {
     playList = ShuffleArray(playList);
   }

@@ -49,15 +49,15 @@ export default function PlaylistView(): JSX.Element {
     const songs = await cbInterface.snapshot.getPromise(
       getPlaylistState(contextPlaylist),
     );
-    await AddSongs(songs, cbInterface);
+    AddSongs(songs, cbInterface);
   });
 
   const onPlaylistInvoked = useRecoilCallback(
-    (cbInterface) => async (playlistName: PlaylistName) => {
-      const songs = await cbInterface.snapshot.getPromise(
-        getPlaylistState(playlistName),
-      );
-      await PlaySongs(cbInterface, songs, playlistName);
+    (cbInterface) => (playlistName: PlaylistName) => {
+      const songs = cbInterface.snapshot
+        .getLoadable(getPlaylistState(playlistName))
+        .valueOrThrow();
+      PlaySongs(cbInterface, songs, playlistName);
     },
   );
 

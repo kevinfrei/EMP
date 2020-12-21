@@ -54,9 +54,8 @@ export default function MixedSongsList(): JSX.Element {
   const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
     set(songDetailState, item),
   );
-  const onAddSongClick = useRecoilCallback(
-    (cbInterface) => async (item: Song) =>
-      await AddSongs([item.key], cbInterface),
+  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
+    AddSongs([item.key], cbInterface),
   );
 
   const columns = MakeColumns(
