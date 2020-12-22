@@ -6,6 +6,7 @@ import {
   MakeLogger,
   SongKey,
 } from '@freik/core-utils';
+import { promisify } from 'util';
 import { asyncSend } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
@@ -14,6 +15,8 @@ import { MakeSearchable } from './Search';
 
 const log = MakeLogger('musicDB');
 const err = MakeError('musicDB-err');
+
+const sleep = promisify(setTimeout);
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');
@@ -51,20 +54,45 @@ async function CreateMusicDB(): Promise<void> {
   log(`Total time to build index: ${stop - start} ms`);
 }
 
+let scanning = false;
+let scansWaiting = false;
+// Only allow 1 rescan at a time
+// Single thread execution makes this *super* easy :D
 export async function RescanDB(): Promise<void> {
-  const prevDB = await getMusicDB();
-  if (prevDB) {
-    log('Songs before:' + prevDB.songs.size.toString());
+  // Hurray for simple non-atomic synchronization :)
+  if (scanning) {
+    if (scansWaiting) {
+      return;
+    }
+    scansWaiting = true;
+    while (scanning) {
+      await sleep(200);
+    }
   }
-  await CreateMusicDB();
-  const db = await getMusicDB();
-  if (db) {
-    log('About to send the update');
-    asyncSend({ musicDatabase: db });
+  if (scanning) {
+    throw Error('WTaF');
+  }
+  try {
+    scanning = true;
+    scansWaiting = false;
+    const prevDB = await getMusicDB();
     if (prevDB) {
       log('Songs before:' + prevDB.songs.size.toString());
-      log('Songs after: ' + db.songs.size.toString());
+    } else {
+      log('No MusicDB existing prior to this scan');
     }
+    await CreateMusicDB();
+    const db = await getMusicDB();
+    if (db) {
+      log('About to send the update');
+      asyncSend({ musicDatabase: db });
+      if (prevDB) {
+        log('Songs before:' + prevDB.songs.size.toString());
+        log('Songs after: ' + db.songs.size.toString());
+      }
+    }
+  } finally {
+    scanning = false;
   }
 }
 

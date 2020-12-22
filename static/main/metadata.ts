@@ -9,6 +9,7 @@ import {
   Type,
 } from '@freik/core-utils';
 import { MD } from '@freik/media-utils';
+import { getMusicDB } from './MusicAccess';
 import { UpdateDB } from './musicDB';
 import * as persist from './persist';
 
@@ -293,7 +294,23 @@ export async function setMediaInfoForSong(
     err(metadataToUpdate);
     return;
   }
-  const fullPath: string = metadataToUpdate.originalPath;
+  let fullPath: string = metadataToUpdate.originalPath;
+  if (fullPath.startsWith('*')) {
+    // This means we've got a SongKey instead of a path
+    // Get the path from the database
+    const db = await getMusicDB();
+    if (!db) {
+      err('Unable to get the path for a song key for a Metadata update');
+      return;
+    }
+    const sng = db.songs.get(fullPath.substr(1));
+    if (!sng) {
+      err('Unable to get the song for the song key for a metadata update');
+      return;
+    }
+    fullPath = sng.path;
+    metadataToUpdate.originalPath = fullPath;
+  }
   const mdStore = await GetMetadataStore('metadataOverride');
   if (isOnlyMetadata(metadataToUpdate)) {
     const prevMd = mdStore.get(fullPath);
@@ -302,6 +319,7 @@ export async function setMediaInfoForSong(
   await mdStore.save();
   // For now, Update the database
   // TODO: Make this faster. A full rescan seems awfully wasteful.
-  // First TODO is to debounce it every 10 seconds or so, probably
-  UpdateDB();
+  // For now, just delay for a second to start a scan. The scan itself
+  // only allows one pending update, so nothing fancier is necessary
+  setTimeout(UpdateDB, 1000);
 }

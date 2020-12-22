@@ -32,7 +32,6 @@ export function MetadataEditor(props: {
   title?: string;
   year?: string;
   va?: string;
-  fullPath?: string;
   variations?: string;
   moreArtists?: string;
 }): JSX.Element {
@@ -50,6 +49,10 @@ export function MetadataEditor(props: {
   const secArtistsId = useId('md-secArtists');
   const variationsId = useId('md-variations');
 
+  const isMultiple =
+    props.forSong === undefined && Type.isArrayOfString(props.forSongs);
+  const isSingle = Type.isString(props.forSong) && props.forSongs === undefined;
+
   // I don't fully understand why I have to do this, but it seems to work...
   // Without it, if you right-click different songs, whichever fields were
   // edited don't return to their new values :/
@@ -64,22 +67,6 @@ export function MetadataEditor(props: {
     setVars(false);
     setMoreArtists(false);
   }, [props.forSong]);
-  if (!Type.isString(props.forSong) || !Type.isString(props.fullPath)) {
-    return <></>;
-  }
-
-  const isMultiple =
-    props.forSong === undefined && Type.isArrayOfString(props.forSongs);
-  const isSingle = Type.isString(props.forSong) && props.forSongs === undefined;
-  if (isMultiple === isSingle) {
-    return (
-      <Text variant="xLarge">
-        {isSingle
-          ? 'Either forSong or forSongs. Not both, dummy!'
-          : 'Pick one: forSong, forSongs. Gotta choose one!'}
-      </Text>
-    );
-  }
 
   // This is a helper to read the overridden value (from state) if it's set
   // otherwise, fall back to the pv (props.val) data (and then empty string)
@@ -112,52 +99,67 @@ export function MetadataEditor(props: {
 
     // Worst case: trigger a rescan of the music on the back end, I guess :(
 
-    log(`onSubmit for song: ${props.forSong || ''}`);
-    log('Originally:');
-    log(props);
-    log('updated to:');
-    const md: Partial<FullMetadata> = {
-      originalPath: props.fullPath || '',
-    };
-    if (artist) {
-      md.artist = Media.splitArtistString(artist);
-    }
-    if (album) {
-      md.album = album;
-    }
-    if (year !== false) {
-      md.year = Number.parseInt(year.trim(), 10);
-    }
-    if (trackNum !== '') {
-      md.track = Number.parseInt(trackNum.trim(), 10);
-    }
-    if (title) {
-      md.title = title;
-    }
-    if (vaType !== false && vaType !== undefined && vaType !== '') {
-      md.vaType = vaType;
-    }
-    if (diskNum !== '') {
-      md.disk = Number.parseInt(diskNum.trim(), 10);
-    }
-    if (vars !== false) {
-      md.variations = vars.split(';').map((s) => s.trim());
-    }
-    if (moreArtists !== false) {
-      md.moreArtists = Media.splitArtistString(moreArtists);
-    }
-    log(md);
-    SetMediaInfo(md)
-      .then()
-      .catch((rej) => {
-        err('Saving Metadata failed.');
+    for (const songKey of Type.isArrayOfString(props.forSongs)
+      ? props.forSongs
+      : [props.forSong!]) {
+      log('Originally:');
+      log(props);
+      log('updated to:');
+      const md: Partial<FullMetadata> = { originalPath: '*' + songKey };
+      if (artist) {
+        md.artist = Media.splitArtistString(artist);
+      }
+      if (album) {
+        md.album = album;
+      }
+      if (year !== false) {
+        md.year = Number.parseInt(year.trim(), 10);
+      }
+      if (isSingle) {
+        // Cowardly refuse to update track # and title for multi-edit
+        if (trackNum !== '') {
+          md.track = Number.parseInt(trackNum.trim(), 10);
+        }
+        if (title) {
+          md.title = title;
+        }
+      }
+      if (vaType !== false && vaType !== undefined && vaType !== '') {
+        md.vaType = vaType;
+      }
+      if (diskNum !== '') {
+        md.disk = Number.parseInt(diskNum.trim(), 10);
+        log('Disk Number:' + md.disk.toString());
+      }
+      if (vars !== false) {
+        md.variations = vars.split(';').map((s) => s.trim());
+      }
+      if (moreArtists !== false) {
+        md.moreArtists = Media.splitArtistString(moreArtists);
+      }
+      log(md);
+      SetMediaInfo(md).catch((rej) => {
+        err('Saving Metadata failed');
         err(rej);
       });
+    }
   };
+
+  // Nothing selected: EMPTY!
+  if (!isSingle && !isMultiple) {
+    return <></>;
+  }
+
+  if (isMultiple && isSingle) {
+    return (
+      <Text variant="xLarge">Either forSong or forSongs. Not both, dummy!</Text>
+    );
+  }
 
   return (
     <>
       <TextField
+        disabled={isMultiple}
         label="Title"
         value={val(title, props.title)}
         onChange={(e, nv) => nv && setTitle(nv)}
@@ -194,6 +196,7 @@ export function MetadataEditor(props: {
       </Stack>
       <Stack horizontal horizontalAlign="space-between">
         <TextField
+          disabled={isMultiple}
           label="Track #"
           value={val(track, trackNum)}
           onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}

@@ -126,18 +126,15 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
 
 function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
   const theSong = useRecoilValue(getSongByKeyState(songKey));
-  const mediaInfo = useRecoilValue(getMediaInfoState(songKey));
   const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
   const moreArtists = useRecoilValue(
     getArtistStringState(theSong.secondaryIds),
   );
   const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
-  const thePath = mediaInfo.get('File Path') || '';
 
   return (
     <>
       <MetadataEditor
-        fullPath={thePath}
         forSong={songKey}
         artist={theArtist}
         album={theAlbum.title}
