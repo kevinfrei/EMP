@@ -5,9 +5,10 @@ import {
   ImageFit,
   SelectionMode,
   Stack,
+  Text,
   TextField,
 } from '@fluentui/react';
-import { SongKey } from '@freik/core-utils';
+import { SongKey, Type } from '@freik/core-utils';
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import {
@@ -51,19 +52,10 @@ function getSampleRate(sr: string | void): string {
   return `${sr ? divGrand(sr) : '??'}KHz`;
 }
 
-export default function MediaInfoTable({
-  forSong,
-}: {
-  forSong: SongKey;
-}): JSX.Element {
+// This is the header for single-file editing
+function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
   const mediaInfo = useRecoilValue(getMediaInfoState(forSong));
-  const theSong = useRecoilValue(getSongByKeyState(forSong));
-  const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
-  const moreArtists = useRecoilValue(
-    getArtistStringState(theSong.secondaryIds),
-  );
-  const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
-  const thePath = mediaInfo.get('File Path') || '';
+
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = fractionalSecondsStrToHMS(
     mediaInfo.get('format.duration') || '0',
@@ -72,25 +64,10 @@ export default function MediaInfoTable({
   const bps = mediaInfo.get('format.bitsPerSample') || '16';
   const channels = channelDescr(mediaInfo.get('format.numberOfChannels'));
   const bitrate = getBitRate(mediaInfo.get('format.bitrate'));
-  const columns: IColumn[] = [
-    {
-      key: '0',
-      name: 'Field',
-      fieldName: '0',
-      minWidth: 25,
-      className: 'md-field',
-      isResizable: true,
-    },
-    {
-      key: '1',
-      name: 'Value',
-      fieldName: '1',
-      minWidth: 100,
-      isResizable: true,
-    },
-  ];
+  const thePath = mediaInfo.get('File Path') || '';
+
   return (
-    <Stack>
+    <>
       <TextField
         readOnly
         prefix="File Path"
@@ -113,9 +90,55 @@ export default function MediaInfoTable({
           style={{ width: '308px' }}
         />
       </Stack>
+    </>
+  );
+}
+function RawMetadata({ key }: { key: SongKey }): JSX.Element {
+  const columns: IColumn[] = [
+    {
+      key: '0',
+      name: 'Field',
+      fieldName: '0',
+      minWidth: 25,
+      className: 'md-field',
+      isResizable: true,
+    },
+    {
+      key: '1',
+      name: 'Value',
+      fieldName: '1',
+      minWidth: 100,
+      isResizable: true,
+    },
+  ];
+
+  const mediaInfo = useRecoilValue(getMediaInfoState(key));
+  return (
+    <DetailsList
+      items={[...mediaInfo.entries()]}
+      selectionMode={SelectionMode.none}
+      columns={columns}
+      compact
+      onRenderRow={altRowRenderer()}
+    />
+  );
+}
+
+function SingleFileEditor({ key }: { key: SongKey }): JSX.Element {
+  const theSong = useRecoilValue(getSongByKeyState(key));
+  const mediaInfo = useRecoilValue(getMediaInfoState(key));
+  const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
+  const moreArtists = useRecoilValue(
+    getArtistStringState(theSong.secondaryIds),
+  );
+  const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
+  const thePath = mediaInfo.get('File Path') || '';
+
+  return (
+    <>
       <MetadataEditor
         fullPath={thePath}
-        forSong={forSong}
+        forSong={key}
         artist={theArtist}
         album={theAlbum.title}
         track={theSong.track.toString()}
@@ -131,15 +154,47 @@ export default function MediaInfoTable({
         imageFit={ImageFit.centerContain}
         height={350}
       />
-      <Expandable label="Raw Metadata" separator>
-        <DetailsList
-          items={[...mediaInfo.entries()]}
-          selectionMode={SelectionMode.none}
-          columns={columns}
-          compact
-          onRenderRow={altRowRenderer()}
-        />
-      </Expandable>
+    </>
+  );
+}
+
+function MultiFileEditor({ keys }: { keys: SongKey[] }): JSX.Element {
+  return <Text>Not Yet Implemented</Text>;
+}
+
+export default function MediaInfoTable({
+  keyOrKeys,
+}: {
+  keyOrKeys: SongKey | SongKey[];
+}): JSX.Element {
+  if (keyOrKeys.length === 0) {
+    return <></>;
+  }
+  // Either Details or a Multi-editing header
+  const theHeader = Type.isString(keyOrKeys) ? (
+    <MediaFormatDetails forSong={keyOrKeys} />
+  ) : (
+    <Text variant="large">Multi-editing mode</Text>
+  );
+
+  // For single-song, the raw metadata in a table
+  const theFooter = Type.isString(keyOrKeys) ? (
+    <Expandable label="Raw Metadata" separator>
+      <RawMetadata key={keyOrKeys} />
+    </Expandable>
+  ) : (
+    <></>
+  );
+  const theEditor = Type.isString(keyOrKeys) ? (
+    <SingleFileEditor key={keyOrKeys} />
+  ) : (
+    <MultiFileEditor keys={keyOrKeys} />
+  );
+  return (
+    <Stack>
+      {theHeader}
+      {theEditor}
+      {theFooter}
     </Stack>
   );
 }

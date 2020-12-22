@@ -41,17 +41,6 @@ export const getMediaInfoState = selectorFamily<Map<string, string>, SongKey>({
   },
 });
 
-// This is needed for multi-metadata editing
-export const getMediaInfoForListState = selectorFamily<
-  Map<string, string>[],
-  SongKey[]
->({
-  key: 'mediaInfoSelForMany',
-  get: (skl: SongKey[]) => ({ get }): Map<string, string>[] => {
-    return skl.map((val) => get(getMediaInfoState(val)));
-  },
-});
-
 type SongMap = Map<SongKey, Song>;
 type AlbumMap = Map<AlbumKey, Album>;
 type ArtistMap = Map<ArtistKey, Artist>;
