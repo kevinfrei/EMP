@@ -4,6 +4,7 @@ import {
   DirectionalHint,
   PrimaryButton,
   Stack,
+  Text,
   TextField,
   TooltipHost,
 } from '@fluentui/react';
@@ -24,6 +25,7 @@ const err = MakeError('MetadataEditor-err');
 
 export function MetadataEditor(props: {
   forSong?: SongKey;
+  forSongs?: SongKey[];
   artist?: string;
   album?: string;
   track?: string;
@@ -43,6 +45,7 @@ export function MetadataEditor(props: {
   const [vaType, setVaType] = useState<false | 'ost' | 'va' | ''>(false);
   const [vars, setVars] = useState<false | string>(false);
   const [moreArtists, setMoreArtists] = useState<false | string>(false);
+  // These are for tooltips in FluentUI
   const priArtistsId = useId('md-priArtists');
   const secArtistsId = useId('md-secArtists');
   const variationsId = useId('md-variations');
@@ -64,6 +67,20 @@ export function MetadataEditor(props: {
   if (!Type.isString(props.forSong) || !Type.isString(props.fullPath)) {
     return <></>;
   }
+
+  const isMultiple =
+    props.forSong === undefined && Type.isArrayOfString(props.forSongs);
+  const isSingle = Type.isString(props.forSong) && props.forSongs === undefined;
+  if (isMultiple === isSingle) {
+    return (
+      <Text variant="xLarge">
+        {isSingle
+          ? 'Either forSong or forSongs. Not both, dummy!'
+          : 'Pick one: forSong, forSongs. Gotta choose one!'}
+      </Text>
+    );
+  }
+
   // This is a helper to read the overridden value (from state) if it's set
   // otherwise, fall back to the pv (props.val) data (and then empty string)
   const val = (v: false | string, pv?: string) => (v !== false ? v : pv || '');
