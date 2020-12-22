@@ -185,14 +185,14 @@ export default function SongPlayback(): JSX.Element {
     />
   );
   const showDetail = useRecoilCallback(
-    ({ set, snapshot }) => async (
+    (cbInterface) => async (
       event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
     ) => {
       if (songKey !== '') {
-        const songs = await snapshot.getPromise(allSongsState);
+        const songs = await cbInterface.snapshot.getPromise(allSongsState);
         const song = songs.get(songKey);
         if (song) {
-          SongDetailClick(set, song, event.shiftKey);
+          SongDetailClick(cbInterface, song, event.shiftKey);
         }
       }
     },

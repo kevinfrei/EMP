@@ -186,9 +186,9 @@ export default function SearchResultsView(): JSX.Element {
   const albums = useRecoilValue(allAlbumsState);
   const [curExpandedSet, setExpandedSet] = useState(new Set<string>());
   const onSongDetailClick = useRecoilCallback(
-    ({ set }) => (item: SearchSongData, index?: number, ev?: Event) =>
+    (cbInterface) => (item: SearchSongData, index?: number, ev?: Event) =>
       SongDetailClick(
-        set,
+        cbInterface,
         item.song,
         Type.has(ev, 'shiftKey') && ev.shiftKey === true,
       ),

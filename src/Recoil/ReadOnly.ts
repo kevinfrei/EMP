@@ -7,6 +7,7 @@ import {
   MakeLogger,
   Song,
   SongKey,
+  Type,
 } from '@freik/core-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
@@ -205,6 +206,19 @@ export const getDataForSongState = selectorFamily<SongData, SongKey>({
     const track = song.track;
 
     return { title, track, ...get(getDataForAlbumState(song.albumId)) };
+  },
+});
+
+export const maybeGetDataForSongState = selectorFamily<
+  SongData | null,
+  SongKey | any
+>({
+  key: 'DataForSong',
+  get: (sk: SongKey | any) => ({ get }): SongData | null => {
+    if (!Type.isString(sk)) {
+      return null;
+    }
+    return get(getDataForSongState(sk));
   },
 });
 

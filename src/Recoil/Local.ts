@@ -1,4 +1,4 @@
-import { Song, SongKey } from '@freik/core-utils';
+import { SongKey } from '@freik/core-utils';
 import { atom, selector } from 'recoil';
 import { repeatState } from './ReadWrite';
 
@@ -81,7 +81,7 @@ export const nowPlayingSortState = atom<string>({
 
 // The currently selected song to display details for
 // TODO: Make this a Song or a SongKey[] to support multi-editing
-export const songDetailState = atom<Song | SongKey[] | null>({
+export const songDetailState = atom<SongKey | Set<SongKey> | null>({
   key: 'songDetail',
   default: null,
 });
