@@ -100,6 +100,11 @@ function writeFile(id: string, val: string): void {
 }
 
 async function writeFileAsync(id: string, val: string): Promise<void> {
+  try {
+    await fsp.mkdir(persistenceLocation(), { recursive: true });
+  } catch (e) {
+    /* */
+  }
   await fsp.writeFile(storageLocation(id), val, 'utf8');
   memoryCache.set(id, val);
 }
