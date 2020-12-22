@@ -19,7 +19,6 @@ import {
 } from 'recoil';
 import { GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailState } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
@@ -31,6 +30,7 @@ import {
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { MakeSongComparator, SortItems } from '../../Tools';
+import { SongDetailContextMenuClick } from '../SongDetailPanel';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -125,8 +125,6 @@ const sortOrderState = atom({ key: 'artistsSortOrder', default: 'rylnt' });
 const sortedSongsState = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
-    // TODO: Fix this for the filtered songs
-    // I *think* this is working now?
     const artists = get(allArtistsState);
     return SortItems(
       get(filteredSongsState),
@@ -152,9 +150,7 @@ const sortedSongsState = selector({
 export default function ArtistList(): JSX.Element {
   const filteredArtistList = useRecoilValue(filteredArtistsState);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
-  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailState, item),
-  );
+  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs([item.key], cbInterface),
   );

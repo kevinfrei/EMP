@@ -36,7 +36,6 @@ import {
   currentIndexState,
   isMiniplayerState,
   nowPlayingSortState,
-  songDetailState,
   songListState,
 } from '../../Recoil/Local';
 import {
@@ -52,6 +51,7 @@ import {
 import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongList } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
+import { SongDetailContextMenuClick } from '../SongDetailPanel';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -183,9 +183,7 @@ export default function NowPlaying(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsState);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsState);
   const articles = useRecoilValue(ignoreArticlesState);
-  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailState, item),
-  );
+  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexState);
   const [songList, setSongList] = useRecoilState(songListState);
   const resetShuffle = useResetRecoilState(shuffleState);

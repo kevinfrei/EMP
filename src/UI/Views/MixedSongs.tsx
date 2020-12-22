@@ -13,7 +13,6 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailState } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
@@ -21,6 +20,7 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
+import { SongDetailContextMenuClick } from '../SongDetailPanel';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -48,12 +48,8 @@ const sortedSongsState = selector({
 
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
-
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-
-  const onSongDetailClick = useRecoilCallback(({ set }) => (item: Song) =>
-    set(songDetailState, item),
-  );
+  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs([item.key], cbInterface),
   );

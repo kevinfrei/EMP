@@ -3,11 +3,7 @@ import { MakeLogger } from '@freik/core-utils';
 import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
-import {
-  currentSongKeyState,
-  songDetailState,
-  songListState,
-} from '../Recoil/Local';
+import { currentSongKeyState, songListState } from '../Recoil/Local';
 import {
   MediaTime,
   mediaTimePercentState,
@@ -23,6 +19,7 @@ import {
   SongData,
 } from '../Recoil/ReadOnly';
 import { repeatState } from '../Recoil/ReadWrite';
+import { SongDetailClick } from './SongDetailPanel';
 import './styles/SongPlaying.css';
 import { mySliderStyles } from './Utilities';
 
@@ -187,15 +184,19 @@ export default function SongPlayback(): JSX.Element {
       onTimeUpdate={onTimeUpdate}
     />
   );
-  const showDetail = useRecoilCallback(({ set, snapshot }) => async () => {
-    if (songKey !== '') {
-      const songs = await snapshot.getPromise(allSongsState);
-      const song = songs.get(songKey);
-      if (song) {
-        set(songDetailState, song);
+  const showDetail = useRecoilCallback(
+    ({ set, snapshot }) => async (
+      event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    ) => {
+      if (songKey !== '') {
+        const songs = await snapshot.getPromise(allSongsState);
+        const song = songs.get(songKey);
+        if (song) {
+          SongDetailClick(set, song, event.shiftKey);
+        }
       }
-    }
-  });
+    },
+  );
   return (
     <span id="song-container" onAuxClick={showDetail}>
       <CoverArt />

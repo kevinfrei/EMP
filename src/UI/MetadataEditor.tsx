@@ -93,7 +93,7 @@ export function MetadataEditor(props: {
     // TODO: Save the changed values to the metadata override 'cache'
     // and reflect those changes in the music DB
 
-    // Worst case: trigger a rescan of the music on the back end, I guess...
+    // Worst case: trigger a rescan of the music on the back end, I guess :(
 
     log(`onSubmit for song: ${props.forSong || ''}`);
     log('Originally:');

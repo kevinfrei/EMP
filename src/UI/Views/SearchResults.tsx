@@ -16,13 +16,13 @@ import {
   ArtistKey,
   Song,
   SongKey,
+  Type,
 } from '@freik/core-utils';
 import { useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
 import { AddSongs } from '../../Recoil/api';
-import { songDetailState } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
@@ -30,6 +30,7 @@ import {
   getSearchState,
   searchTermState,
 } from '../../Recoil/ReadOnly';
+import { SongDetailClick } from '../SongDetailPanel';
 import {
   altRowRenderer,
   MakeColumns,
@@ -185,7 +186,12 @@ export default function SearchResultsView(): JSX.Element {
   const albums = useRecoilValue(allAlbumsState);
   const [curExpandedSet, setExpandedSet] = useState(new Set<string>());
   const onSongDetailClick = useRecoilCallback(
-    ({ set }) => (item: SearchSongData) => set(songDetailState, item.song),
+    ({ set }) => (item: SearchSongData, index?: number, ev?: Event) =>
+      SongDetailClick(
+        set,
+        item.song,
+        Type.has(ev, 'shiftKey') && ev.shiftKey === true,
+      ),
   );
   const onAddSongClick = useRecoilCallback(
     (cbInterface) => (item: SearchSongData) =>
