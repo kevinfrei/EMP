@@ -152,11 +152,11 @@ export default function Settings(): JSX.Element {
       <Expandable separator label="Music Locations" defaultShow={true}>
         <RecoilLocations />
       </Expandable>
-      <Expandable separator label="Sorting & Filtering">
+      <Expandable separator label="Sorting & Filtering" defaultShow={true}>
         <ArticleSorting />
         <ArtistFiltering />
       </Expandable>
-      <Expandable separator label="Artwork">
+      <Expandable separator label="Artwork" defaultShow={true}>
         <ArtworkSettings />
       </Expandable>
       <Expandable separator label="NYI: Metadata">
