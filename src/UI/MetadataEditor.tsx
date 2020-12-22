@@ -1,5 +1,6 @@
 import {
   Checkbox,
+  DefaultButton,
   DirectionalHint,
   PrimaryButton,
   Stack,
@@ -94,47 +95,41 @@ export function MetadataEditor(props: {
 
     // Worst case: trigger a rescan of the music on the back end, I guess...
 
-    const e = (v: string | false) => (v === false ? '' : v);
-    const ed = (v: string | false) => (v === false ? undefined : v);
-    const nd = (n: string | false) =>
-      n === false ? undefined : Number.parseInt(n, 10);
     log(`onSubmit for song: ${props.forSong || ''}`);
     log('Originally:');
     log(props);
     log('updated to:');
-    log(`Artist(s): ${e(artist)}`);
-    log(`Album:  ${e(album)}`);
-    if (disk) {
-      const tn = '0' + val(track, trackNum);
-      log(`Track:  ${disk}${tn.substr(tn.length - 2, 2)}`);
-    } else if (track) {
-      const dn = val(disk, diskNum);
-      const tn = '0' + val(track, trackNum);
-      log(`Track: ${dn}${tn.substr(tn.length - 2, 2)}`);
-    } else {
-      log('Track:');
-    }
-    log(`Title:  ${e(title)}`);
-    log(`VAType: ${e(vaType)}`);
-    log(`Year:   ${e(year)}`);
-    log(`More Artists:${e(moreArtists)}`);
-    log(`Variations: ${e(vars)}`);
     const md: Partial<FullMetadata> = {
       originalPath: props.fullPath || '',
-      artist: artist ? Media.splitArtistString(artist) : undefined,
-      album: ed(album),
-      year: nd(year),
-      track: nd(trackNum),
-      title: ed(title),
-      vaType: vaType === false || vaType === '' ? undefined : vaType,
-      disk: nd(diskNum),
-      variations: ed(vars)
-        ?.split(';')
-        .map((s) => s.trim()),
-      moreArtists: moreArtists
-        ? Media.splitArtistString(moreArtists)
-        : undefined,
     };
+    if (artist) {
+      md.artist = Media.splitArtistString(artist);
+    }
+    if (album) {
+      md.album = album;
+    }
+    if (year !== false) {
+      md.year = Number.parseInt(year.trim(), 10);
+    }
+    if (trackNum !== '') {
+      md.track = Number.parseInt(trackNum.trim(), 10);
+    }
+    if (title) {
+      md.title = title;
+    }
+    if (vaType !== false && vaType !== undefined && vaType !== '') {
+      md.vaType = vaType;
+    }
+    if (diskNum !== '') {
+      md.disk = Number.parseInt(diskNum.trim(), 10);
+    }
+    if (vars !== false) {
+      md.variations = vars.split(';').map((s) => s.trim());
+    }
+    if (moreArtists !== false) {
+      md.moreArtists = Media.splitArtistString(moreArtists);
+    }
+    log(md);
     SetMediaInfo(md)
       .then()
       .catch((rej) => {
@@ -177,7 +172,7 @@ export function MetadataEditor(props: {
           label="Year"
           value={val(year, props.year)}
           onChange={(e, nv) => (nv === '' || isNumber(nv)) && setYear(nv!)}
-          style={{ width: 100 }}
+          style={{ width: 80 }}
         />
       </Stack>
       <Stack horizontal horizontalAlign="space-between">
@@ -187,55 +182,67 @@ export function MetadataEditor(props: {
           onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
           style={{ width: 100 }}
         />
-        <TextField
-          label="Disk #"
-          value={val(disk, diskNum)}
-          onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
-          style={{ width: 100 }}
-        />
-        <Stack verticalAlign="space-between" style={{ marginRight: 20 }}>
-          <div style={{ height: 10 }} />
+        <Stack horizontal verticalAlign="end">
+          <TextField
+            label="Disk #"
+            value={val(disk, diskNum)}
+            onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
+            style={{ width: 100 }}
+          />
+          &nbsp;
+          <DefaultButton>Clear</DefaultButton>
+        </Stack>
+        <Stack
+          verticalAlign="space-evenly"
+          style={{ marginTop: 15, marginRight: 20, width: 85 }}
+        >
           <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
           <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
         </Stack>
       </Stack>
-      <TooltipHost
-        content="Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'"
-        // This id is used on the tooltip itself, not the host
-        // (so an element with this id only exists when the tooltip is shown)
-        id={secArtistsId}
-        calloutProps={{ gapSpace: 0 }}
-        styles={{ root: { display: 'inline-block' } }}
-        directionalHint={DirectionalHint.bottomAutoEdge}
-      >
-        <TextField
-          label="Additional Artist(s)"
-          aria-describedby={secArtistsId}
-          value={val(moreArtists, props.moreArtists)}
-          onChange={(e, nv) => nv && setMoreArtists(nv)}
-        />
-      </TooltipHost>
-      <TooltipHost
-        content="Separate vartiations with a semicolon"
-        // This id is used on the tooltip itself, not the host
-        // (so an element with this id only exists when the tooltip is shown)
-        id={variationsId}
-        calloutProps={{ gapSpace: 0 }}
-        styles={{ root: { display: 'inline-block' } }}
-        directionalHint={DirectionalHint.bottomAutoEdge}
-      >
-        <TextField
-          label="Variation(s)"
-          aria-describedby={variationsId}
-          value={val(vars, props.variations)}
-          onChange={(e, nv) => nv && setVars(nv)}
-        />
-      </TooltipHost>
+      <Stack horizontal verticalAlign="end" horizontalAlign="space-between">
+        <TooltipHost
+          content="Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'"
+          // This id is used on the tooltip itself, not the host
+          // (so an element with this id only exists when the tooltip is shown)
+          id={secArtistsId}
+          calloutProps={{ gapSpace: 0 }}
+          styles={{ root: { display: 'inline-block' } }}
+          directionalHint={DirectionalHint.bottomAutoEdge}
+        >
+          <TextField
+            style={{ width: 400 }}
+            label="Additional Artist(s)"
+            aria-describedby={secArtistsId}
+            value={val(moreArtists, props.moreArtists)}
+            onChange={(e, nv) => nv && setMoreArtists(nv)}
+          />
+        </TooltipHost>
+        <DefaultButton onClick={() => setMoreArtists('')}>Clear</DefaultButton>
+      </Stack>
+      <Stack horizontal verticalAlign="end" horizontalAlign="space-between">
+        <TooltipHost
+          content="Separate vartiations with a semicolon"
+          // This id is used on the tooltip itself, not the host
+          // (so an element with this id only exists when the tooltip is shown)
+          id={variationsId}
+          calloutProps={{ gapSpace: 0 }}
+          styles={{ root: { display: 'inline-block' } }}
+          directionalHint={DirectionalHint.bottomAutoEdge}
+        >
+          <TextField
+            style={{ width: 400 }}
+            label="Variation(s)"
+            aria-describedby={variationsId}
+            value={val(vars, props.variations)}
+            onChange={(e, nv) => nv && setVars(nv)}
+          />
+        </TooltipHost>
+        <DefaultButton onClick={() => setVars('')}>Clear</DefaultButton>
+      </Stack>
       <div style={{ height: 10 }} />
       <Stack horizontal horizontalAlign="end">
-        <PrimaryButton onClick={onSubmit} style={{ width: 100 }}>
-          Save
-        </PrimaryButton>
+        <PrimaryButton onClick={onSubmit}>Save</PrimaryButton>
       </Stack>
     </>
   );

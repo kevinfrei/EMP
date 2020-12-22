@@ -269,6 +269,14 @@ export async function GetMetadataStore(name: string): Promise<MetadataStore> {
   return mdc;
 }
 
+/**
+ * @function setMediaInfoForSong
+ * Responds to a request from the Render process with a flattened set of
+ * partial metadata
+ * @param  {string} flattenedData? - The (partial) metadata to be used to
+ * override file name or internal metadata with
+ * @returns Promise
+ */
 export async function setMediaInfoForSong(
   flattenedData?: string,
 ): Promise<void> {

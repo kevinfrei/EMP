@@ -59,6 +59,9 @@ export default function MediaInfoTable({
   const mediaInfo = useRecoilValue(getMediaInfoState(forSong));
   const theSong = useRecoilValue(getSongByKeyState(forSong));
   const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
+  const moreArtists = useRecoilValue(
+    getArtistStringState(theSong.secondaryIds),
+  );
   const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
   const thePath = mediaInfo.get('File Path') || '';
   const fileType = getType(mediaInfo.get('format.codec'));
@@ -119,9 +122,9 @@ export default function MediaInfoTable({
         title={theSong.title}
         year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
         va={theAlbum.vatype}
+        moreArtists={moreArtists}
         variations={theSong.variations ? theSong.variations.join('; ') : ''}
       />
-      <br />
       <Image
         alt="Album Cover"
         src={`pic://album/${theSong.albumId}`}

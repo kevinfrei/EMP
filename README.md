@@ -44,9 +44,9 @@ overall? It's completely functional.
 ### Core Capabilities
 
 - **both** MediaInfo/Metadata editing!
+  - Multiple-file editing/overrides
   - Support adding/editing album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
-  - Update data from file metadata (optionally overriding filename acquisition?)
   - (longer term) Update file metadata!
 - **render** Add expandable (& editable) playlist view
 - **main** Version the persistence data. I have troubles if I change the disk

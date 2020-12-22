@@ -416,6 +416,7 @@ async function fileNamesToDatabase(
     // and I'd rather not waste the space
     AddSongToDatabase(md, db);
   }
+
   const fileNameParseTime = Date.now();
   await HandleAlbumCovers(db, pics);
   for (const file of tryHarder) {
@@ -440,7 +441,7 @@ async function fileNamesToDatabase(
     const mdOverride = metadataOverride.get(file);
     const md = { ...fullMd, ...mdOverride };
     metadataCache.set(file, md);
-    AddSongToDatabase(fullMd, db);
+    AddSongToDatabase(md, db);
   }
   const fileMetadataParseTime = Date.now();
   log(`File names: ${fileNameParseTime - now}`);
