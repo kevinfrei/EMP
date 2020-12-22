@@ -93,7 +93,7 @@ function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
     </>
   );
 }
-function RawMetadata({ key }: { key: SongKey }): JSX.Element {
+function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
   const columns: IColumn[] = [
     {
       key: '0',
@@ -112,7 +112,7 @@ function RawMetadata({ key }: { key: SongKey }): JSX.Element {
     },
   ];
 
-  const mediaInfo = useRecoilValue(getMediaInfoState(key));
+  const mediaInfo = useRecoilValue(getMediaInfoState(songKey));
   return (
     <DetailsList
       items={[...mediaInfo.entries()]}
@@ -124,9 +124,9 @@ function RawMetadata({ key }: { key: SongKey }): JSX.Element {
   );
 }
 
-function SingleFileEditor({ key }: { key: SongKey }): JSX.Element {
-  const theSong = useRecoilValue(getSongByKeyState(key));
-  const mediaInfo = useRecoilValue(getMediaInfoState(key));
+function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
+  const theSong = useRecoilValue(getSongByKeyState(songKey));
+  const mediaInfo = useRecoilValue(getMediaInfoState(songKey));
   const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
   const moreArtists = useRecoilValue(
     getArtistStringState(theSong.secondaryIds),
@@ -138,7 +138,7 @@ function SingleFileEditor({ key }: { key: SongKey }): JSX.Element {
     <>
       <MetadataEditor
         fullPath={thePath}
-        forSong={key}
+        forSong={songKey}
         artist={theArtist}
         album={theAlbum.title}
         track={theSong.track.toString()}
@@ -158,7 +158,7 @@ function SingleFileEditor({ key }: { key: SongKey }): JSX.Element {
   );
 }
 
-function MultiFileEditor({ keys }: { keys: SongKey[] }): JSX.Element {
+function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
   return <Text>Not Yet Implemented</Text>;
 }
 
@@ -180,15 +180,15 @@ export default function MediaInfoTable({
   // For single-song, the raw metadata in a table
   const theFooter = Type.isString(keyOrKeys) ? (
     <Expandable label="Raw Metadata" separator>
-      <RawMetadata key={keyOrKeys} />
+      <RawMetadata songKey={keyOrKeys} />
     </Expandable>
   ) : (
     <></>
   );
   const theEditor = Type.isString(keyOrKeys) ? (
-    <SingleFileEditor key={keyOrKeys} />
+    <SingleFileEditor songKey={keyOrKeys} />
   ) : (
-    <MultiFileEditor keys={keyOrKeys} />
+    <MultiFileEditor songKeys={keyOrKeys} />
   );
   return (
     <Stack>
