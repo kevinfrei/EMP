@@ -286,7 +286,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
     artistIds,
     secondaryIds,
     albumId: album.key,
-    track: md.track,
+    track: md.track + (md.disk || 0) * 100,
     title: md.title,
     key: getSongKey(md.originalPath),
     variations: md.variations,
