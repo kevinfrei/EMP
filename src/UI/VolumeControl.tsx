@@ -23,6 +23,7 @@ export default function VolumeControl(): JSX.Element {
         id={muted ? 'mute' : 'volIcon'}
         iconName={muted ? 'VolumeDisabled' : `Volume${iconNum}`}
         onClick={() => setMuted(!muted)}
+        style={{ cursor: 'pointer' }}
       />
       <Slider
         className="volume-slider"
