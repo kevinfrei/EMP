@@ -9,6 +9,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import {
+  AlbumKey,
   FullMetadata,
   MakeError,
   MakeLogger,
@@ -23,7 +24,7 @@ import { SetMediaInfo } from '../ipc';
 const log = MakeLogger('MetadataEditor', true);
 const err = MakeError('MetadataEditor-err');
 
-export function MetadataEditor(props: {
+export type MetadataProps = {
   forSong?: SongKey;
   forSongs?: SongKey[];
   artist?: string;
@@ -34,7 +35,11 @@ export function MetadataEditor(props: {
   va?: string;
   variations?: string;
   moreArtists?: string;
-}): JSX.Element {
+  // TODO: Move the cover art into the MetadataEditor
+  albumId?: AlbumKey;
+};
+
+export function MetadataEditor(props: MetadataProps): JSX.Element {
   const [artist, setArtist] = useState<false | string>(false);
   const [album, setAlbum] = useState<false | string>(false);
   const [track, setTrack] = useState<false | string>(false);
@@ -49,9 +54,8 @@ export function MetadataEditor(props: {
   const secArtistsId = useId('md-secArtists');
   const variationsId = useId('md-variations');
 
-  const isMultiple =
-    props.forSong === undefined && Type.isArrayOfString(props.forSongs);
-  const isSingle = Type.isString(props.forSong) && props.forSongs === undefined;
+  const isMultiple = !props.forSong && Type.isArrayOfString(props.forSongs);
+  const isSingle = Type.isString(props.forSong) && !props.forSongs;
 
   // I don't fully understand why I have to do this, but it seems to work...
   // Without it, if you right-click different songs, whichever fields were
@@ -147,13 +151,11 @@ export function MetadataEditor(props: {
 
   // Nothing selected: EMPTY!
   if (!isSingle && !isMultiple) {
-    return <></>;
+    return <Text>Not Single and not Multiple (This is a bug!)</Text>;
   }
 
   if (isMultiple && isSingle) {
-    return (
-      <Text variant="xLarge">Either forSong or forSongs. Not both, dummy!</Text>
-    );
+    return <Text>Both Single and Multiple (This is a bug!)</Text>;
   }
 
   return (

@@ -53,7 +53,7 @@
     "testnode": "jest --config jest.node.config.js --watch",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"*.js\" \"*.json\" \"*.md\" \"src/**/*.css\" .prettierrc",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
-    "chk": "yarn format && yarn compile && yarn lint && yarn test",
+    "chk": "yarn compile && yarn lint && yarn test",
     "linecount": "git ls-files|grep \".tsx\\?$\"|grep -v \"__tests__\"|xargs wc -l"
   },
   "eslintConfig": {

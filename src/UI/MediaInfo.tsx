@@ -14,6 +14,7 @@ import { InvokeMain } from '../MyWindow';
 import {
   getAlbumByKeyState,
   getArtistStringState,
+  getCommonDataState,
   getMediaInfoState,
   getSongByKeyState,
 } from '../Recoil/ReadOnly';
@@ -156,7 +157,8 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
-  return <Text>Not Yet Implemented</Text>;
+  const allTheInfos = useRecoilValue(getCommonDataState(songKeys));
+  return <MetadataEditor forSongs={songKeys} {...allTheInfos} />;
 }
 
 export default function MediaInfoTable({

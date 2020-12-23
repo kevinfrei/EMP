@@ -10,6 +10,7 @@ import {
 } from '@freik/core-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
+import { MetadataProps } from '../UI/MetadataEditor';
 import { syncWithMainEffect } from './helpers';
 import { songListState } from './Local';
 
@@ -262,5 +263,76 @@ export const getSearchState = selectorFamily<ipc.SearchResults, string>({
       log('no results');
     }
     return res || { songs: [], albums: [], artists: [] };
+  },
+});
+
+// Given a collection of SongKeys, get all the common metadata info
+// and shove it in the Partial<FullMetadata> object
+// This is used in conjunction with the Metadata Editor
+export const getCommonDataState = selectorFamily<MetadataProps, SongKey[]>({
+  key: 'commonData',
+  get: (keys: SongKey[]) => ({ get }) => {
+    const theSongsData = keys.map((songKey) => {
+      const song = get(getSongByKeyState(songKey));
+      const artists = get(getArtistStringState(song.artistIds));
+      const moreArtists = get(getArtistStringState(song.secondaryIds));
+      const album = get(getAlbumByKeyState(song.albumId));
+      return { song, artists, moreArtists, album };
+    });
+    let artist: string | null = null;
+    let albumTitle: string | null = null;
+    let year: string | null = null;
+    let va: 'va' | 'ost' | '' | null = null;
+    let moreArtistsList: string | null = null;
+    let variations: string | null = null;
+    let albumId: string | null = null;
+    let first = true;
+    for (const songData of theSongsData) {
+      if (first) {
+        artist = songData.artists;
+        albumTitle = songData.album.title;
+        year =
+          songData.album.year !== 0 ? songData.album.year.toString() : null;
+        va = songData.album.vatype;
+        moreArtistsList = songData.moreArtists;
+        variations = songData.song.variations
+          ? songData.song.variations.join(';')
+          : null;
+        albumId = songData.album.key;
+        first = false;
+      } else {
+        if (artist !== songData.artists) artist = null;
+        if (albumTitle !== songData.album.title) albumTitle = null;
+        if (year !== songData.album.year.toString()) year = null;
+        if (va !== songData.album.vatype) va = null;
+        if (moreArtistsList !== songData.moreArtists) moreArtistsList = null;
+        if (variations !== songData.song.variations?.join(';'))
+          variations = null;
+        if (albumId !== songData.album.key) albumId = null;
+      }
+    }
+    const props: MetadataProps = {};
+    if (artist !== null) {
+      props.artist = artist;
+    }
+    if (albumTitle !== null) {
+      props.album = albumTitle;
+    }
+    if (year !== null) {
+      props.year = year;
+    }
+    if (va !== null) {
+      props.va = va;
+    }
+    if (variations !== null) {
+      props.variations = variations;
+    }
+    if (moreArtistsList !== null) {
+      props.moreArtists = moreArtistsList;
+    }
+    if (albumId !== null) {
+      props.albumId = albumId;
+    }
+    return props;
   },
 });
