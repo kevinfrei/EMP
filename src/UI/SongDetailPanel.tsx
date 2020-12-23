@@ -1,5 +1,5 @@
 import { Panel, PanelType } from '@fluentui/react';
-import { MakeError, Song, Type } from '@freik/core-utils';
+import { MakeError, Song, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../Recoil/Local';
 import { maybeGetDataForSongState } from '../Recoil/ReadOnly';
@@ -14,7 +14,6 @@ export function SongDetailClick(
   shift?: boolean,
 ): void {
   set(songDetailState, (prev) => {
-    err(prev);
     const vals = new Set(shift ? prev : []);
     if (shift && prev.has(song.key)) {
       vals.delete(song.key);
@@ -30,6 +29,42 @@ export function SongDetailContextMenuClick(cbInterface: CallbackInterface) {
   return (item: Song, index?: number, ev?: Event): void => {
     const shift = Type.has(ev, 'shiftKey') && ev.shiftKey === true;
     SongDetailClick(cbInterface, item, shift);
+  };
+}
+
+function SetInvert<T>(theSet: Set<T>, toToggle: Iterable<T>): void {
+  for (const item of toToggle) {
+    if (theSet.has(item)) {
+      theSet.delete(item);
+    } else {
+      theSet.add(item);
+    }
+  }
+}
+
+export function SongListDetailClick(
+  { set }: CallbackInterface,
+  songs: SongKey[],
+  shift?: boolean,
+): void {
+  set(songDetailState, (prev) => {
+    if (shift) {
+      const vals = new Set(prev);
+      SetInvert(vals, songs);
+      return vals;
+    }
+    return new Set(songs);
+  });
+}
+
+// This is a helper to shift-click for song details
+export function SongListDetailContextMenuClick(
+  cbInterface: CallbackInterface,
+  items: SongKey[],
+) {
+  return (event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
+    const shift = event.shiftKey === true;
+    SongListDetailClick(cbInterface, items, shift);
   };
 }
 

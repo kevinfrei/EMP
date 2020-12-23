@@ -30,7 +30,10 @@ import {
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { MakeSongComparator, SortItems } from '../../Tools';
-import { SongDetailContextMenuClick } from '../SongDetailPanel';
+import {
+  SongDetailContextMenuClick,
+  SongListDetailContextMenuClick,
+} from '../SongDetailPanel';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -52,9 +55,12 @@ export function ArtistHeaderDisplay({
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(artist.songs, cbInterface),
   );
+  const onRightClick = useRecoilCallback((cbInterface) =>
+    SongListDetailContextMenuClick(cbInterface, artist.songs),
+  );
   const songCount = artist.songs.length;
   return (
-    <Text onDoubleClick={onAddSongsClick}>
+    <Text onDoubleClick={onAddSongsClick} onContextMenu={onRightClick}>
       {`${artist.name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
     </Text>
   );
