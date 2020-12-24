@@ -1,7 +1,7 @@
 import { RecoilRoot } from 'recoil';
+import SongDetailPanel from './DetailPanel/SongDetailPanel';
 import PlaybackControls from './PlaybackControls';
 import Sidebar from './Sidebar';
-import SongDetailPanel from './SongDetailPanel';
 import SongPlaying from './SongPlaying';
 import './styles/App.css';
 import Utilities, { Spinner } from './Utilities';

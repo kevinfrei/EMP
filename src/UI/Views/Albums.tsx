@@ -28,7 +28,7 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
-import { SongDetailContextMenuClick } from '../SongDetailPanel';
+import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,

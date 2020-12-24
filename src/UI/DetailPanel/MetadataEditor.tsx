@@ -19,7 +19,7 @@ import {
 } from '@freik/core-utils';
 import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
-import { SetMediaInfo } from '../ipc';
+import { SetMediaInfo } from '../../ipc';
 
 const log = MakeLogger('MetadataEditor', true);
 const err = MakeError('MetadataEditor-err');

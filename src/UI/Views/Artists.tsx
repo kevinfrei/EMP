@@ -33,7 +33,7 @@ import { MakeSongComparator, SortItems } from '../../Tools';
 import {
   SongDetailContextMenuClick,
   SongListDetailContextMenuClick,
-} from '../SongDetailPanel';
+} from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,

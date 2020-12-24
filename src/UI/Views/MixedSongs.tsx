@@ -21,7 +21,7 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
-import { SongDetailContextMenuClick } from '../SongDetailPanel';
+import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -93,6 +93,19 @@ export function SimpleSongsList({
   if (!songList) {
     return <></>;
   }
+  const rl = songList
+    .map((val) => val.artist.length)
+    .reduce((pv, cv) => Math.max(pv, cv));
+  const ll = songList
+    .map((val) => val.album.length)
+    .reduce((pv, cv) => Math.max(pv, cv));
+  const nl = songList
+    .map((val) => val.track.toString().length)
+    .reduce((pv, cv) => Math.max(pv, cv));
+  const tl = songList
+    .map((val) => val.title.length)
+    .reduce((pv, cv) => Math.max(pv, cv));
+  const tot = rl + ll + nl + tl;
   return (
     <Expandable label="Files Selected">
       <div>
@@ -103,32 +116,32 @@ export function SimpleSongsList({
               key: 'r',
               fieldName: 'artist',
               name: 'Artist',
-              minWidth: 50,
-              maxWidth: 150,
+              minWidth: (100 * rl) / tot,
+              maxWidth: (400 * rl) / tot,
               isResizable: true,
             },
             {
               key: 'l',
               fieldName: 'album',
               name: 'Album',
-              minWidth: 50,
-              maxWidth: 150,
+              minWidth: (100 * ll) / tot,
+              maxWidth: (400 * ll) / tot,
               isResizable: true,
             },
             {
               key: 'n',
               fieldName: 'track',
               name: '#',
-              minWidth: 15,
-              maxWidth: 25,
+              minWidth: (100 * nl) / tot,
+              maxWidth: (400 * nl) / tot,
               isResizable: true,
             },
             {
               key: 't',
               fieldName: 'title',
               name: 'Title',
-              minWidth: 50,
-              maxWidth: 150,
+              minWidth: (100 * tl) / tot,
+              maxWidth: (400 * tl) / tot,
               isResizable: true,
             },
           ]}

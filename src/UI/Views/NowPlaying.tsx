@@ -50,8 +50,8 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongList } from '../../Tools';
+import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
-import { SongDetailContextMenuClick } from '../SongDetailPanel';
 import {
   AlbumFromSong,
   altRowRenderer,

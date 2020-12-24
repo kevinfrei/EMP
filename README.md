@@ -44,7 +44,6 @@ overall? It's completely functional.
 ### Core Capabilities
 
 - **both** MediaInfo/Metadata editing!
-  - Multiple-file editing/overrides
   - Support adding/editing album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - (longer term) Update file metadata!

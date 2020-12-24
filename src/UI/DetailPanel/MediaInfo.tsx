@@ -9,20 +9,20 @@ import {
 } from '@fluentui/react';
 import { SongKey, Type } from '@freik/core-utils';
 import { useRecoilValue } from 'recoil';
-import { InvokeMain } from '../MyWindow';
+import { InvokeMain } from '../../MyWindow';
 import {
   getAlbumByKeyState,
   getArtistStringState,
   getCommonDataState,
   getMediaInfoState,
   getSongByKeyState,
-} from '../Recoil/ReadOnly';
-import { divGrand, fractionalSecondsStrToHMS } from '../Tools';
+} from '../../Recoil/ReadOnly';
+import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
+import { altRowRenderer } from './../SongList';
+import { Expandable } from './../Utilities';
+import { SimpleSongsList } from './../Views/MixedSongs';
 import { MetadataEditor } from './MetadataEditor';
-import { altRowRenderer } from './SongList';
 import './styles/MediaInfo.css';
-import { Expandable } from './Utilities';
-import { SimpleSongsList } from './Views/MixedSongs';
 
 const fileTypeMap = new Map([
   ['FLAC', 'flac'],

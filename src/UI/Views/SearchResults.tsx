@@ -30,7 +30,7 @@ import {
   getSearchState,
   searchTermState,
 } from '../../Recoil/ReadOnly';
-import { SongDetailClick } from '../SongDetailPanel';
+import { SongDetailClick } from '../DetailPanel/Clickers';
 import {
   altRowRenderer,
   MakeColumns,

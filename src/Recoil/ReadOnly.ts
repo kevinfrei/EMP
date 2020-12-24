@@ -10,7 +10,7 @@ import {
 } from '@freik/core-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
-import { MetadataProps } from '../UI/MetadataEditor';
+import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import { syncWithMainEffect } from './helpers';
 import { songListState } from './Local';
 

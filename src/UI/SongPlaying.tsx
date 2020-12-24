@@ -19,7 +19,7 @@ import {
   SongData,
 } from '../Recoil/ReadOnly';
 import { repeatState } from '../Recoil/ReadWrite';
-import { SongDetailClick } from './SongDetailPanel';
+import { SongDetailClick } from './DetailPanel/Clickers';
 import './styles/SongPlaying.css';
 import { mySliderStyles } from './Utilities';
 
