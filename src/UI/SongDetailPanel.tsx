@@ -2,7 +2,7 @@ import { Panel, PanelType } from '@fluentui/react';
 import { MakeError, Song, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../Recoil/Local';
-import { allSongsState, maybeGetDataForSongState } from '../Recoil/ReadOnly';
+import { maybeGetDataForSongState } from '../Recoil/ReadOnly';
 import MediaInfoTable from './MediaInfo';
 import { Spinner } from './Utilities';
 
@@ -71,7 +71,6 @@ export function SongListDetailContextMenuClick(
 export default function SongDetailPanel(): JSX.Element {
   const detailSongs = useRecoilValue(songDetailState);
   const songInfo = useRecoilValue(maybeGetDataForSongState([...detailSongs]));
-  const allSongs = useRecoilValue(allSongsState);
   const dismissClick = useRecoilCallback(({ reset }) => () =>
     reset(songDetailState),
   );
