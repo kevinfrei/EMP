@@ -27,9 +27,10 @@ can probably get it to work from the repository easily enough
 
 ## What's the current state?
 
-It pretty much works. There still might be a few "first launch" problems that
-mean you might have to start it a couple times before it's actually running, but
-overall? It's completely functional.
+It pretty much works. There are occasionally "first launch" problems that mean
+you might have to start it a couple times before it's actually running, but
+overall? It's completely functional (though with a few random minor bugs laying
+around).
 
 ## Stuff to do
 
@@ -40,16 +41,17 @@ overall? It's completely functional.
   battle)
 - FluentUI has a bug for RTL layout (file path in File Details sticks the first
   character at the end of the string :D). Maybe report it?
+- Search seems to behave weird after first interaction. (Try searching for
+  "Disc") and see what happens with my default collection-o-stuff)
+- Editing Disk # in Metadata Multi-edit seems to have no effect
 
 ### Core Capabilities
 
-- **both** MediaInfo/Metadata editing!
+- **render** Add expandable (& editable) playlist view
+- **both** MediaInfo/Metadata editing:
   - Support adding/editing album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - (longer term) Update file metadata!
-- **render** Add expandable (& editable) playlist view
-- **main** Version the persistence data. I have troubles if I change the disk
-  format :/
 - **render** Add typing to scroll to the appropriate spot in the song list
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)
@@ -68,6 +70,8 @@ overall? It's completely functional.
 - Transcode for phone (dump stuff out ready to import into iTunes, for example)
   - The lion's share of the work for this is already in my `@freik/media-utils`
     module.
+- **main** Version the persistence data. I have troubles if I change the disk
+  format :/
 
 ### UI Improvements
 
@@ -175,14 +179,3 @@ but I should also be able to address the MusicDB update race that I've been
 ignoring. I might switch back to something less integrated into the Atom, but it
 has definitely forced me to be more clear about how back end communication
 occurs.
-
-### Electron quick start stuff:
-
-This is a minimal Electron application based on the
-[Quick Start Guide](https://electronjs.org/docs/tutorial/quick-start) within the
-Electron documentation.
-
-### Create React App stuff:
-
-This project was bootstrapped with
-[Create React App](https://github.com/facebook/create-react-app).
