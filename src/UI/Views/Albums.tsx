@@ -28,7 +28,10 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
-import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
+import {
+  SongDetailContextMenuClick,
+  SongListDetailContextMenuClick,
+} from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -45,12 +48,16 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(props.album.songs, cbInterface),
   );
+  const onRightClick = useRecoilCallback((cbInterface) =>
+    SongListDetailContextMenuClick(cbInterface, props.album.songs),
+  );
   return (
     <Stack
       horizontal
       verticalAlign="center"
       onDoubleClick={onAddSongsClick}
-      style={{ padding: '2px 0px' }}
+      onContextMenu={onRightClick}
+      style={{ padding: '2px 0px', cursor: 'pointer' }}
     >
       <Image
         src={`pic://album/${props.album.key}`}

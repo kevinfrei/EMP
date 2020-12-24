@@ -14,6 +14,7 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
+  MakeError,
   Song,
   SongKey,
   Type,
@@ -30,7 +31,10 @@ import {
   getSearchState,
   searchTermState,
 } from '../../Recoil/ReadOnly';
-import { SongDetailClick } from '../DetailPanel/Clickers';
+import {
+  SongDetailClick,
+  SongListDetailContextMenuClick,
+} from '../DetailPanel/Clickers';
 import {
   altRowRenderer,
   MakeColumns,
@@ -38,7 +42,8 @@ import {
 } from '../SongList';
 import './styles/SearchResults.css';
 
-// const log = MakeLogger('SearchResults', true);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const err = MakeError('SearchResults-err');
 
 type SearchSongData = SongData & { key: string; group: string };
 
@@ -178,6 +183,35 @@ function AggregateSearchResults(
   return [results, groups];
 }
 
+function SearchResultsGroupHeader(props: {
+  depth: number;
+  collapsed: boolean;
+  expander: () => void;
+  text: string;
+  keys: SongKey[];
+}): JSX.Element {
+  const onAddSongListClick = useRecoilCallback((cbInterface) => () => {
+    AddSongs(props.keys, cbInterface);
+  });
+  const onRightClick = useRecoilCallback((cbInterface) =>
+    SongListDetailContextMenuClick(cbInterface, props.keys),
+  );
+  const theStyle = { marginLeft: props.depth * 20 };
+  return (
+    <Stack horizontal verticalAlign="center" style={theStyle}>
+      <IconButton
+        iconProps={{
+          iconName: props.collapsed ? 'ChevronRight' : 'ChevronDown',
+        }}
+        onClick={props.expander}
+      />
+      <Text onDoubleClick={onAddSongListClick} onContextMenu={onRightClick}>
+        {props.text}
+      </Text>
+    </Stack>
+  );
+}
+
 export default function SearchResultsView(): JSX.Element {
   const searchTerm = useRecoilValue(searchTermState);
   const searchResults = useRecoilValue(getSearchState(searchTerm));
@@ -196,11 +230,6 @@ export default function SearchResultsView(): JSX.Element {
   const onAddSongClick = useRecoilCallback(
     (cbInterface) => (item: SearchSongData) =>
       AddSongs([item.song.key], cbInterface),
-  );
-  const onAddSongListClick = useRecoilCallback(
-    (cbInterface) => (songList: SongKey[]) => {
-      AddSongs(songList, cbInterface);
-    },
   );
 
   if (
@@ -240,32 +269,18 @@ export default function SearchResultsView(): JSX.Element {
       if (!props || !props.group) return null;
       const groupProps = props.group;
       const groupKey = groupProps.key;
-      const theStyle = IsTopGroup(groupKey) ? {} : { margin: '0 0 0 20px' };
+      const songKeys = resultEntries
+        .slice(groupProps.startIndex, groupProps.startIndex + groupProps.count)
+        .map((entry) => entry.song.key);
       return (
-        <Stack horizontal verticalAlign="center" style={theStyle}>
-          <IconButton
-            iconProps={{
-              iconName: groupProps.isCollapsed ? 'ChevronRight' : 'ChevronDown',
-            }}
-            onClick={() => props.onToggleCollapse!(groupProps)}
-          />
-          <Text
-            onDoubleClick={() =>
-              onAddSongListClick(
-                resultEntries
-                  .slice(
-                    groupProps.startIndex,
-                    groupProps.startIndex + groupProps.count,
-                  )
-                  .map((entry) => entry.song.key),
-              )
-            }
-          >
-            {groupProps.name} [{groupProps.count} songs]
-          </Text>
-        </Stack>
+        <SearchResultsGroupHeader
+          depth={IsTopGroup(groupKey) ? 0 : 1}
+          collapsed={!!groupProps.isCollapsed}
+          expander={() => props.onToggleCollapse!(groupProps)}
+          text={`${groupProps.name} [${groupProps.count} songs]`}
+          keys={songKeys}
+        />
       );
-      // <AlbumHeaderDisplay album={albums.get(albumId)!} />
     },
   };
   //  log(resultEntries);
