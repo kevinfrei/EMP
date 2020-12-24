@@ -9,7 +9,7 @@
     "appId": "com.music-player.freik",
     "productName": "Electron Music Player",
     "mac": {
-      "icon": "build/icon.icns"
+      "icon": "static/icon.icns"
     }
   },
   "main": "public/electron.js",
@@ -54,7 +54,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"*.js\" \"*.json\" \"*.md\" \"src/**/*.css\" .prettierrc",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
     "chk": "yarn compile && yarn lint && yarn test",
-    "linecount": "git ls-files|grep \".tsx\\?$\"|grep -v \"__tests__\"|xargs wc -l"
+    "linecount": "git ls-files|grep \"\\.\\(css\\|ts\\|tsx\\)$\"|grep -v \"__\\|\\.d\\.ts\"|xargs wc -l"
   },
   "eslintConfig": {
     "root": true,
