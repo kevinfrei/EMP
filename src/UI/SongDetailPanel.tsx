@@ -2,11 +2,11 @@ import { Panel, PanelType } from '@fluentui/react';
 import { MakeError, Song, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../Recoil/Local';
-import { maybeGetDataForSongState } from '../Recoil/ReadOnly';
+import { allSongsState, maybeGetDataForSongState } from '../Recoil/ReadOnly';
 import MediaInfoTable from './MediaInfo';
 import { Spinner } from './Utilities';
 
-const err = MakeError('SongDetailPanel-err');
+const err = MakeError('SongDetailPanel-err'); // eslint-disable-line
 
 export function SongDetailClick(
   { set }: CallbackInterface,
@@ -71,6 +71,7 @@ export function SongListDetailContextMenuClick(
 export default function SongDetailPanel(): JSX.Element {
   const detailSongs = useRecoilValue(songDetailState);
   const songInfo = useRecoilValue(maybeGetDataForSongState([...detailSongs]));
+  const allSongs = useRecoilValue(allSongsState);
   const dismissClick = useRecoilCallback(({ reset }) => () =>
     reset(songDetailState),
   );
@@ -84,9 +85,7 @@ export default function SongDetailPanel(): JSX.Element {
     header = `Details for ${songInfo!.title}`;
   } else {
     elem = <MediaInfoTable keyOrKeys={[...detailSongs]} />;
-    header = `Details for ${detailSongs.size} songs:${[...detailSongs].join(
-      ';',
-    )}`;
+    header = `Details for ${detailSongs.size} songs`;
   }
 
   return (

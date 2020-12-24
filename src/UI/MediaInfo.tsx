@@ -5,7 +5,6 @@ import {
   ImageFit,
   SelectionMode,
   Stack,
-  Text,
   TextField,
 } from '@fluentui/react';
 import { SongKey, Type } from '@freik/core-utils';
@@ -23,6 +22,7 @@ import { MetadataEditor } from './MetadataEditor';
 import { altRowRenderer } from './SongList';
 import './styles/MediaInfo.css';
 import { Expandable } from './Utilities';
+import { SimpleSongsList } from './Views/MixedSongs';
 
 const fileTypeMap = new Map([
   ['FLAC', 'flac'],
@@ -173,7 +173,7 @@ export default function MediaInfoTable({
   const theHeader = Type.isString(keyOrKeys) ? (
     <MediaFormatDetails forSong={keyOrKeys} />
   ) : (
-    <Text variant="large">Multi-editing mode</Text>
+    <SimpleSongsList forSongs={keyOrKeys} />
   );
 
   // For single-song, the raw metadata in a table

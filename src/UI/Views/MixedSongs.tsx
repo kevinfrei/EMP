@@ -4,7 +4,7 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { MakeError, Song } from '@freik/core-utils';
+import { MakeError, Song, SongKey } from '@freik/core-utils';
 import {
   atom,
   selector,
@@ -17,6 +17,7 @@ import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
+  getDataForSongListState,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
@@ -28,6 +29,7 @@ import {
   MakeColumns,
   StickyRenderDetailsHeader,
 } from '../SongList';
+import { Expandable } from '../Utilities';
 import './styles/MixedSongs.css';
 
 const err = MakeError('MixedSongs-err'); // eslint-disable-line
@@ -79,5 +81,62 @@ export default function MixedSongsList(): JSX.Element {
         />
       </ScrollablePane>
     </div>
+  );
+}
+
+export function SimpleSongsList({
+  forSongs,
+}: {
+  forSongs: SongKey[];
+}): JSX.Element {
+  const songList = useRecoilValue(getDataForSongListState(forSongs));
+  if (!songList) {
+    return <></>;
+  }
+  return (
+    <Expandable label="Files Selected">
+      <div>
+        <DetailsList
+          items={songList}
+          columns={[
+            {
+              key: 'r',
+              fieldName: 'artist',
+              name: 'Artist',
+              minWidth: 50,
+              maxWidth: 150,
+              isResizable: true,
+            },
+            {
+              key: 'l',
+              fieldName: 'album',
+              name: 'Album',
+              minWidth: 50,
+              maxWidth: 150,
+              isResizable: true,
+            },
+            {
+              key: 'n',
+              fieldName: 'track',
+              name: '#',
+              minWidth: 15,
+              maxWidth: 25,
+              isResizable: true,
+            },
+            {
+              key: 't',
+              fieldName: 'title',
+              name: 'Title',
+              minWidth: 50,
+              maxWidth: 150,
+              isResizable: true,
+            },
+          ]}
+          compact={true}
+          selectionMode={SelectionMode.none}
+          onRenderRow={altRowRenderer()}
+        />
+      </div>
+    </Expandable>
   );
 }

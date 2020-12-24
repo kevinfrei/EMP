@@ -60,7 +60,11 @@ export function ArtistHeaderDisplay({
   );
   const songCount = artist.songs.length;
   return (
-    <Text onDoubleClick={onAddSongsClick} onContextMenu={onRightClick}>
+    <Text
+      onDoubleClick={onAddSongsClick}
+      onContextMenu={onRightClick}
+      style={{ cursor: 'pointer' }}
+    >
       {`${artist.name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
     </Text>
   );

@@ -209,6 +209,12 @@ export const getDataForSongState = selectorFamily<SongData, SongKey>({
   },
 });
 
+export const getDataForSongListState = selectorFamily<SongData[], SongKey[]>({
+  key: 'DataForSongs',
+  get: (sks: SongKey[]) => ({ get }): SongData[] =>
+    sks.map((sk: SongKey) => get(getDataForSongState(sk))),
+});
+
 export const maybeGetDataForSongState = selectorFamily<
   SongData | null,
   SongKey[]
