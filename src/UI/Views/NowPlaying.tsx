@@ -22,6 +22,7 @@ import {
   ArtistKey,
   Song,
   SongKey,
+  Type,
 } from '@freik/core-utils';
 import {
   useRecoilCallback,
@@ -191,7 +192,7 @@ export default function NowPlaying(): JSX.Element {
   const curSongs = useRecoilValue(curSongsState);
   const isMini = useRecoilValue(isMiniplayerState);
 
-  const drawDeleter = (song: Song) => (
+  const drawDeleter = (song: Song, index?: number) => (
     <FontIcon
       style={{
         height: '18px',
@@ -203,11 +204,13 @@ export default function NowPlaying(): JSX.Element {
       onClick={() => {
         // If we're going to be removing a song before the current index
         // we need to move the curIndex pointer as well
-        const listLocation = songList.indexOf(song.key);
+        const listLocation = Type.isNumber(index)
+          ? index
+          : songList.indexOf(song.key);
         if (listLocation < curIndex) {
           setCurIndex(curIndex - 1);
         }
-        setSongList(songList.filter((v) => v !== song.key));
+        setSongList(songList.filter((v, i) => i !== listLocation));
       }}
     />
   );

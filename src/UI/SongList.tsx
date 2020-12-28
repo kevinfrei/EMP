@@ -45,7 +45,7 @@ export function MakeColumns<T>(
     name: string,
     minWidth: number,
     maxWidth?: number,
-    render?: (song: T) => JSX.Element,
+    render?: (song: T, index?: number) => JSX.Element,
   ][],
   getSort: () => string,
   performSort: (sort: string) => void,
