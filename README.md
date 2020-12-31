@@ -47,12 +47,12 @@ around).
 
 ### Core Capabilities
 
-- **render** Add expandable (& editable) playlist view
 - **both** MediaInfo/Metadata editing:
   - Support adding/editing album covers
   - File name vs. metadata difference cleanup (this would be _awesome_)
   - (longer term) Update file metadata!
 - **render** Add typing to scroll to the appropriate spot in the song list
+- **render** Add expandable (& editable) playlist view
 - **render** Make search group headers a little more informative
 - **render** Make search headers clickable (i.e. sort the list of stuff)
 - **render** Get the cursor set properly for clickable stuff

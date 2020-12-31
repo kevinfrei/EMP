@@ -1,8 +1,6 @@
 import {
   DetailsList,
   IColumn,
-  Image,
-  ImageFit,
   SelectionMode,
   Stack,
   TextField,
@@ -134,25 +132,18 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
   const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
 
   return (
-    <>
-      <MetadataEditor
-        forSong={songKey}
-        artist={theArtist}
-        album={theAlbum.title}
-        track={theSong.track.toString()}
-        title={theSong.title}
-        year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
-        va={theAlbum.vatype}
-        moreArtists={moreArtists}
-        variations={theSong.variations ? theSong.variations.join('; ') : ''}
-      />
-      <Image
-        alt="Album Cover"
-        src={`pic://album/${theSong.albumId}`}
-        imageFit={ImageFit.centerContain}
-        height={350}
-      />
-    </>
+    <MetadataEditor
+      forSong={songKey}
+      artist={theArtist}
+      album={theAlbum.title}
+      track={theSong.track.toString()}
+      title={theSong.title}
+      year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
+      va={theAlbum.vatype}
+      moreArtists={moreArtists}
+      variations={theSong.variations ? theSong.variations.join('; ') : ''}
+      albumId={theSong.albumId}
+    />
   );
 }
 

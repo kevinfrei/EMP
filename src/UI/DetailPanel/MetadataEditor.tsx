@@ -2,6 +2,8 @@ import {
   Checkbox,
   DefaultButton,
   DirectionalHint,
+  Image,
+  ImageFit,
   PrimaryButton,
   Stack,
   Text,
@@ -266,6 +268,12 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       <Stack horizontal horizontalAlign="end">
         <PrimaryButton onClick={onSubmit}>Save</PrimaryButton>
       </Stack>
+      <Image
+        alt="Album Cover"
+        src={`pic://album/${props.albumId ? props.albumId : '____'}`}
+        imageFit={ImageFit.centerContain}
+        height={350}
+      />
     </>
   );
 }
