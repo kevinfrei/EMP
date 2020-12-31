@@ -1,7 +1,7 @@
 {
   "license": "CC0-1.0",
   "name": "emp",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "private": true,
   "description": "Electron Music Player",
   "author": "Kevin Frei <kevinfrei@hotmail.com>",
