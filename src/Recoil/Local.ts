@@ -79,8 +79,7 @@ export const nowPlayingSortState = atom<string>({
   default: '',
 });
 
-// The currently selected song to display details for
-// TODO: Make this a Song or a SongKey[] to support multi-editing
+// The currently selected song(s) to display details for
 export const songDetailState = atom<Set<SongKey>>({
   key: 'songDetail',
   default: new Set(),
