@@ -1,6 +1,7 @@
 import { MakeError, MakeLogger } from '@freik/core-utils';
 import { app } from 'electron';
 import isDev from 'electron-is-dev';
+import { makeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
 
 export type OnWindowCreated = () => Promise<void>;
@@ -18,18 +19,12 @@ async function WhenReady(windowCreated: OnWindowCreated) {
         default: installExtension,
         REACT_DEVELOPER_TOOLS,
       } = require('electron-devtools-installer');
-      try {
-        const name = await installExtension(REACT_DEVELOPER_TOOLS);
-        console.log('Added Extension: ' + name);
-      } catch (e) {
-        console.log(
-          'An error occurred while trying to load the React Dev Tools:',
-        );
-        console.log(e);
-      }
+      const name = await installExtension(REACT_DEVELOPER_TOOLS);
+      log('Added Extension: ' + name);
       /* eslint-enable */
     } catch (e) {
-      /* */
+      err('An error occurred while trying to load the React Dev Tools:');
+      err(e);
     }
   }
   // This method will be called when Electron has finished
@@ -39,6 +34,9 @@ async function WhenReady(windowCreated: OnWindowCreated) {
 }
 
 export function StartApp(windowCreated: OnWindowCreated): void {
+  // Make & attach the application-wide menu
+  makeMainMenu();
+
   // Quit when all windows are closed.
   app.on('window-all-closed', () => {
     // On macOS it is common for applications and their menu bar
