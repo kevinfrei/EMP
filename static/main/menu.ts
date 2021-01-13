@@ -1,7 +1,26 @@
-import { app, Menu, MenuItemConstructorOptions } from 'electron';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import {
+  app,
+  BrowserWindow,
+  Menu,
+  MenuItem,
+  MenuItemConstructorOptions,
+} from 'electron';
 import isDev from 'electron-is-dev';
+import { KeyboardEvent } from 'electron/main';
+import open from 'open';
+
+const log = MakeLogger('menu', true);
+const err = MakeError('menu-err'); // eslint-disable-line
+
+type ClickHandler = (
+  mnu?: MenuItem,
+  wnd?: BrowserWindow | undefined,
+  event?: KeyboardEvent,
+) => void;
 
 const isMac = process.platform === 'darwin';
+
 // eslint-disable-next-line
 const ___: MenuItemConstructorOptions = { type: 'separator' };
 
@@ -9,7 +28,7 @@ const ___: MenuItemConstructorOptions = { type: 'separator' };
 function xaction(
   label: string,
   accelerator: string,
-  handler?: () => Promise<void>,
+  handler?: ClickHandler,
 ): MenuItemConstructorOptions {
   if (accelerator) {
     return { label, accelerator: `CmdOrCtrl+${accelerator}`, click: handler };
@@ -17,12 +36,30 @@ function xaction(
   return { label, click: handler };
 }
 
+// Typescript Method Overloading is kinda weird...
 function action(
   label: string,
-  accelerator?: string,
-  handler?: () => Promise<void>,
+  handler?: ClickHandler,
+): MenuItemConstructorOptions;
+function action(
+  label: string,
+  accelerator: string,
+  handler?: ClickHandler,
+): MenuItemConstructorOptions;
+function action(
+  label: string,
+  accOrHdlr: string | ClickHandler | void,
+  handler?: ClickHandler,
 ): MenuItemConstructorOptions {
-  return { label, accelerator, click: handler };
+  if (Type.isString(accOrHdlr)) {
+    return { label, accelerator: accOrHdlr, click: handler };
+  } else if (!accOrHdlr) {
+    log('in here...');
+    return { label };
+  } else {
+    log('Right here...');
+    return { label, click: handler };
+  }
 }
 
 export function makeMainMenu(): void {
@@ -85,16 +122,19 @@ export function makeMainMenu(): void {
   const mediaMenu: MenuItemConstructorOptions = {
     label: '&Media',
     submenu: [
-      action('Pla&y', 'MediaPlayPause'),
-      action('Pre&vious Track', 'MediaPreviousTrack'),
-      action('Ne&xt Track', 'MediaNextTrack'),
+      xaction('Pla&y', 'P', () => log('howdy')),
+      xaction('Pre&vious Track', 'Left'),
+      xaction('Ne&xt Track', 'Right'),
+      ___,
+      xaction('Skip &Forward 10s', 'Down'),
+      xaction('Skip &Back 10s', 'Up'),
       ___,
       { ...xaction('Toggle &Shuffle', 'S'), type: 'checkbox' },
-      { ...xaction('Toggler &Repeat', 'R'), type: 'checkbox' },
+      { ...xaction('Toggle &Repeat', 'T'), type: 'checkbox' },
       ___,
-      action('&Mute', 'VolumeMute'),
-      action('Volume &Up', 'VolumeUp'),
-      action('Volume &Down', 'VolumeDown'),
+      xaction('&Mute', 'VolumeMute'),
+      xaction('Volume &Up', 'VolumeUp'),
+      xaction('Volume &Down', 'VolumeDown'),
     ],
   };
   const windowMenu: MenuItemConstructorOptions = {
@@ -124,9 +164,15 @@ export function makeMainMenu(): void {
           { role: 'togglefullscreen' },
         ],
   };
-  const helpItem: MenuItemConstructorOptions = action(`${app.name} help`);
+  const helpItem: MenuItemConstructorOptions = action(
+    `${app.name} help`,
+    () => {
+      log('HERE!');
+      void open('https://github.com/kevinfrei/EMP/wiki');
+    },
+  );
   const helpMenu: MenuItemConstructorOptions = {
-    role: 'help',
+    //    role: 'help',
     label: '&Help',
     submenu: isMac ? [helpItem] : [helpItem, ___, { role: 'about' }],
   };

@@ -1,5 +1,5 @@
 import { MakeError, MakeLogger } from '@freik/core-utils';
-import { app } from 'electron';
+import { app, globalShortcut } from 'electron';
 import isDev from 'electron-is-dev';
 import { makeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
@@ -8,6 +8,20 @@ export type OnWindowCreated = () => Promise<void>;
 
 const log = MakeLogger('electronSetup');
 const err = MakeError('electronSetup-err');
+
+function registerGlobalShortcuts() {
+  /*
+  globalShortcut.register('MediaNextTrack', () => {});
+  globalShortcut.register('MediaPreviousTrack', () => {});
+  globalShortcut.register('MediaPlayPause', () => {});
+  */
+}
+
+function unregisterGlobalShortcuts() {
+  globalShortcut.unregister('MediaNextTrack');
+  globalShortcut.unregister('MediaPreviousTrack');
+  globalShortcut.unregister('MediaPlayPause');
+}
 
 async function WhenReady(windowCreated: OnWindowCreated) {
   await app.whenReady();
@@ -54,8 +68,13 @@ export function StartApp(windowCreated: OnWindowCreated): void {
     }
   });
 
+  app.on('will-quit', () => unregisterGlobalShortcuts());
+
   WhenReady(windowCreated)
-    .then(() => log('App Launched'))
+    .then(() => {
+      registerGlobalShortcuts();
+      log('App Launched');
+    })
     .catch((e) => {
       err('App Launch exception');
       err(e);

@@ -223,7 +223,13 @@ function MakeMetadataStore(name: string) {
       dirty = true;
       return true;
     }
-    const valuesToRestore = FTON.parse(fromFile);
+    let valuesToRestore;
+    try {
+      valuesToRestore = FTON.parse(fromFile);
+    } catch (e) {
+      err('Invalid file format for MDS');
+      return false;
+    }
     if (
       !Type.has(valuesToRestore, 'store') ||
       !Type.has(valuesToRestore, 'fails')
