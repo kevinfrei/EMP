@@ -1,4 +1,4 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { FTONObject, MakeError, MakeLogger, Type } from '@freik/core-utils';
 import {
   app,
   BrowserWindow,
@@ -9,6 +9,7 @@ import {
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
+import { asyncSend } from './Communication';
 
 const log = MakeLogger('menu', true);
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -24,41 +25,50 @@ const isMac = process.platform === 'darwin';
 // eslint-disable-next-line
 const ___: MenuItemConstructorOptions = { type: 'separator' };
 
+function getClick(handler?: ClickHandler | FTONObject) {
+  if (!handler) {
+    return;
+  }
+  if (Type.isFunction(handler)) {
+    return handler;
+  }
+  return () => void asyncSend({ menuAction: handler });
+}
+
 // TODO: Add an action to be taken, with a quick x-plat shortcut key
 function xaction(
   label: string,
   accelerator: string,
-  handler?: ClickHandler,
+  handler?: ClickHandler | FTONObject,
 ): MenuItemConstructorOptions {
-  if (accelerator) {
-    return { label, accelerator: `CmdOrCtrl+${accelerator}`, click: handler };
-  }
-  return { label, click: handler };
+  return {
+    label,
+    accelerator: `CmdOrCtrl+${accelerator}`,
+    click: getClick(handler),
+  };
 }
 
 // Typescript Method Overloading is kinda weird...
 function action(
   label: string,
-  handler?: ClickHandler,
+  handler?: ClickHandler | FTONObject,
 ): MenuItemConstructorOptions;
 function action(
   label: string,
   accelerator: string,
-  handler?: ClickHandler,
+  handler?: ClickHandler | FTONObject,
 ): MenuItemConstructorOptions;
 function action(
   label: string,
-  accOrHdlr: string | ClickHandler | void,
-  handler?: ClickHandler,
+  accOrHdlr: string | ClickHandler | FTONObject | void,
+  handler?: ClickHandler | FTONObject,
 ): MenuItemConstructorOptions {
   if (Type.isString(accOrHdlr)) {
-    return { label, accelerator: accOrHdlr, click: handler };
+    return { label, accelerator: accOrHdlr, click: getClick(handler) };
   } else if (!accOrHdlr) {
-    log('in here...');
     return { label };
   } else {
-    log('Right here...');
-    return { label, click: handler };
+    return { label, click: getClick(handler) };
   }
 }
 
@@ -83,7 +93,7 @@ export function makeMainMenu(): void {
     role: 'fileMenu',
     label: '&File',
     submenu: [
-      xaction('Add F&ile Location', 'O'),
+      xaction('Add F&ile Location', 'O', { state: 'addLocation' }),
       ___,
       isMac ? { role: 'close' } : { role: 'quit' },
     ],
@@ -101,40 +111,46 @@ export function makeMainMenu(): void {
       { role: 'paste' },
       { role: 'selectAll' },
       ___,
-      xaction('F&ind', 'F'),
+      xaction('F&ind', 'F', { state: 'find' }),
     ],
   };
   const viewMenu: MenuItemConstructorOptions = {
     role: 'viewMenu',
     label: '&View',
     submenu: [
-      xaction('&Now Playing', '1'),
-      xaction('A&rtists', '2'),
-      xaction('A&lbums', '3'),
-      xaction('&Songs', '4'),
-      xaction('&Playlists', '5'),
-      xaction('Se&ttings', ','),
+      xaction('&Now Playing', '1', { state: 'view', select: 'NowPlaying' }),
+      xaction('A&lbums', '2', { state: 'view', select: 'Albums' }),
+      xaction('A&rtists', '3', { state: 'view', select: 'Artists' }),
+      xaction('&Songs', '4', { state: 'view', select: 'Songs' }),
+      xaction('&Playlists', '5', { state: 'view', select: 'Playlists' }),
+      xaction('Se&ttings', ',', { state: 'view', select: 'Settings' }),
       ___,
-      xaction('M&iniPlayer', '0'),
+      xaction('M&iniPlayer', '0', { state: 'MiniPlayer' }),
     ],
   };
   // TODO: Make this stuff all work :D
   const mediaMenu: MenuItemConstructorOptions = {
     label: '&Media',
     submenu: [
-      xaction('Pla&y', 'P', () => log('howdy')),
-      xaction('Pre&vious Track', 'Left'),
-      xaction('Ne&xt Track', 'Right'),
+      xaction('Pla&y', 'P', { state: 'playback' }),
+      xaction('Pre&vious Track', 'Left', { state: 'prevTrack' }),
+      xaction('Ne&xt Track', 'Right', { state: 'nextTrack' }),
       ___,
-      xaction('Skip &Forward 10s', 'Down'),
-      xaction('Skip &Back 10s', 'Up'),
+      xaction('Skip &Forward 10s', 'Down', { state: 'fwd' }),
+      xaction('Skip &Back 10s', 'Up', { state: 'back' }),
       ___,
-      { ...xaction('Toggle &Shuffle', 'S'), type: 'checkbox' },
-      { ...xaction('Toggle &Repeat', 'T'), type: 'checkbox' },
+      {
+        ...xaction('Toggle &Shuffle', 'S', { state: 'shuffle' }),
+        type: 'checkbox',
+      },
+      {
+        ...xaction('Toggle &Repeat', 'T', { state: 'repeat' }),
+        type: 'checkbox',
+      },
       ___,
-      xaction('&Mute', 'VolumeMute'),
-      xaction('Volume &Up', 'VolumeUp'),
-      xaction('Volume &Down', 'VolumeDown'),
+      xaction('&Mute', 'VolumeMute', { state: 'mute' }),
+      xaction('Volume &Up', 'VolumeUp', { state: 'louder' }),
+      xaction('Volume &Down', 'VolumeDown', { state: 'quieter' }),
     ],
   };
   const windowMenu: MenuItemConstructorOptions = {

@@ -16,7 +16,7 @@ import {
 import { FTONData, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { Subscribe, Unsubscribe } from '../ipc';
+import { useListener } from '../Hooks';
 import {
   InitialWireUp,
   SubscribeMediaMatcher,
@@ -24,6 +24,7 @@ import {
 } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
 import { isMiniplayerState } from '../Recoil/Local';
+import { MenuHandler } from './MenuHandler';
 import './styles/Utilities.css';
 
 const log = MakeError('Utilities', true);
@@ -33,16 +34,17 @@ const err = MakeError('Utilities-err');
 // keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
   useEffect(InitialWireUp);
-  useEffect(() => {
-    const key = Subscribe('main-process-status', (val: FTONData) => {
-      if (Type.isString(val)) {
-        log(`Main status: ${val}`);
-      } else {
-        err('Invalid value in main-process-status:');
-        err(val);
-      }
-    });
-    return () => Unsubscribe(key);
+  const callback = useRecoilCallback((cbInterface) => (data: FTONData) =>
+    MenuHandler(cbInterface, data),
+  );
+  useListener('menuAction', callback);
+  useListener('main-process-status', (val: FTONData) => {
+    if (Type.isString(val)) {
+      log(`Main status: ${val}`);
+    } else {
+      err('Invalid value in main-process-status:');
+      err(val);
+    }
   });
   const handleWidthChange = useRecoilCallback(
     ({ set }) => (ev: MediaQueryList | MediaQueryListEvent) => {
