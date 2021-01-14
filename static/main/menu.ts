@@ -10,6 +10,7 @@ import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
 import { asyncSend } from './Communication';
+import * as persist from './persist';
 
 const log = MakeLogger('menu', true);
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -35,6 +36,10 @@ function getClick(handler?: ClickHandler | FTONObject) {
   return () => void asyncSend({ menuAction: handler });
 }
 
+function getId(lbl: string) {
+  return lbl.replace('&', '').toLocaleLowerCase();
+}
+
 // TODO: Add an action to be taken, with a quick x-plat shortcut key
 function xaction(
   label: string,
@@ -43,6 +48,7 @@ function xaction(
 ): MenuItemConstructorOptions {
   return {
     label,
+    id: getId(label),
     accelerator: `CmdOrCtrl+${accelerator}`,
     click: getClick(handler),
   };
@@ -64,11 +70,16 @@ function action(
   handler?: ClickHandler | FTONObject,
 ): MenuItemConstructorOptions {
   if (Type.isString(accOrHdlr)) {
-    return { label, accelerator: accOrHdlr, click: getClick(handler) };
+    return {
+      label,
+      id: getId(label),
+      accelerator: accOrHdlr,
+      click: getClick(handler),
+    };
   } else if (!accOrHdlr) {
-    return { label };
+    return { label, id: getId(label) };
   } else {
-    return { label, click: getClick(handler) };
+    return { label, id: getId(label), click: getClick(handler) };
   }
 }
 
@@ -119,6 +130,7 @@ export function makeMainMenu(): void {
     label: '&View',
     submenu: [
       xaction('&Now Playing', '1', { state: 'view', select: 'NowPlaying' }),
+      ___,
       xaction('A&lbums', '2', { state: 'view', select: 'Albums' }),
       xaction('A&rtists', '3', { state: 'view', select: 'Artists' }),
       xaction('&Songs', '4', { state: 'view', select: 'Songs' }),
@@ -140,11 +152,11 @@ export function makeMainMenu(): void {
       xaction('Skip &Back 10s', 'Up', { state: 'back' }),
       ___,
       {
-        ...xaction('Toggle &Shuffle', 'S', { state: 'shuffle' }),
+        ...xaction('&Shuffle', 'S', { state: 'shuffle' }),
         type: 'checkbox',
       },
       {
-        ...xaction('Toggle &Repeat', 'T', { state: 'repeat' }),
+        ...xaction('&Repeat', 'T', { state: 'repeat' }),
         type: 'checkbox',
       },
       ___,
@@ -220,4 +232,50 @@ export function makeMainMenu(): void {
   }
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+
+  // TODO: Get the initial state working
+
+  // This is the world's slowest way to respond to state changes :D
+  persist.subscribe('repeat', (val: string) => {
+    const itm = menu.getMenuItemById('repeat');
+    if (itm) {
+      itm.checked = val === 'true';
+    }
+  });
+  persist.subscribe('shuffle', (val: string) => {
+    const itm = menu.getMenuItemById('shuffle');
+    if (itm) {
+      itm.checked = val === 'true';
+    }
+  });
+  persist.subscribe('CurrentView', (val: string) => {
+    const views = [
+      ['now playing', '6'],
+      ['albums', '2'],
+      ['artists', '3'],
+      ['songs', '4'],
+      ['playlists', '5'],
+      ['settings', '7'],
+    ].map(([id, idx]) => [menu.getMenuItemById(id), idx]);
+    views.forEach(([mnu, idx]) => {
+      (mnu as MenuItem).enabled = idx !== val;
+    });
+  });
+
+  // Toggle mute/adjust vol up/dn
+  persist.subscribe('volume', (val: string) => {
+    const vol = Number.parseFloat(val);
+    const up = menu.getMenuItemById('volume up');
+    const dn = menu.getMenuItemById('volume down');
+    if (up && dn) {
+      up.enabled = vol < 1.0;
+      dn.enabled = vol > 0.0;
+    }
+  });
+  persist.subscribe('mute', (val: string) => {
+    const itm = menu.getMenuItemById('mute');
+    if (itm) {
+      itm.enabled = val !== 'true';
+    }
+  });
 }
