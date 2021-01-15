@@ -19,6 +19,10 @@ export function InitialWireUp(): void {
   //  realInitialWireUp();
 }
 
+export function SetSearch(srch: any): void {
+  // Do nothing
+}
+
 export function SubscribeMediaMatcher(
   mq: string,
   handler: (ev: MediaQueryList | MediaQueryListEvent) => void,

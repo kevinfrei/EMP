@@ -31,9 +31,20 @@ function getClick(handler?: ClickHandler | FTONObject) {
     return;
   }
   if (Type.isFunction(handler)) {
-    return handler;
+    return (
+      mnu?: MenuItem,
+      wnd?: BrowserWindow | undefined,
+      event?: KeyboardEvent,
+    ) => {
+      log('Menu handler invoked');
+      handler(mnu, wnd, event);
+    };
   }
-  return () => void asyncSend({ menuAction: handler });
+  return () => {
+    log('Menu item invoked:');
+    log(handler);
+    void asyncSend({ menuAction: handler });
+  };
 }
 
 function getId(lbl: string) {
@@ -57,15 +68,6 @@ function xaction(
 // Typescript Method Overloading is kinda weird...
 function action(
   label: string,
-  handler?: ClickHandler | FTONObject,
-): MenuItemConstructorOptions;
-function action(
-  label: string,
-  accelerator: string,
-  handler?: ClickHandler | FTONObject,
-): MenuItemConstructorOptions;
-function action(
-  label: string,
   accOrHdlr: string | ClickHandler | FTONObject | void,
   handler?: ClickHandler | FTONObject,
 ): MenuItemConstructorOptions {
@@ -79,7 +81,7 @@ function action(
   } else if (!accOrHdlr) {
     return { label, id: getId(label) };
   } else {
-    return { label, id: getId(label), click: getClick(handler) };
+    return { label, id: getId(label), click: getClick(accOrHdlr) };
   }
 }
 
@@ -126,7 +128,6 @@ export function makeMainMenu(): void {
     ],
   };
   const viewMenu: MenuItemConstructorOptions = {
-    role: 'viewMenu',
     label: '&View',
     submenu: [
       xaction('&Now Playing', '1', { state: 'view', select: 'NowPlaying' }),
@@ -140,7 +141,6 @@ export function makeMainMenu(): void {
       xaction('M&iniPlayer', '0', { state: 'MiniPlayer' }),
     ],
   };
-  // TODO: Make this stuff all work :D
   const mediaMenu: MenuItemConstructorOptions = {
     label: '&Media',
     submenu: [
@@ -148,8 +148,8 @@ export function makeMainMenu(): void {
       xaction('Pre&vious Track', 'Left', { state: 'prevTrack' }),
       xaction('Ne&xt Track', 'Right', { state: 'nextTrack' }),
       ___,
-      xaction('Skip &Forward 10s', 'Down', { state: 'fwd' }),
-      xaction('Skip &Back 10s', 'Up', { state: 'back' }),
+      xaction('Skip &Forward 10s', ']', { state: 'fwd' }),
+      xaction('Skip &Back 10s', '[', { state: 'back' }),
       ___,
       {
         ...xaction('&Shuffle', 'S', { state: 'shuffle' }),
@@ -160,9 +160,9 @@ export function makeMainMenu(): void {
         type: 'checkbox',
       },
       ___,
-      xaction('&Mute', 'VolumeMute', { state: 'mute' }),
-      xaction('Volume &Up', 'VolumeUp', { state: 'louder' }),
-      xaction('Volume &Down', 'VolumeDown', { state: 'quieter' }),
+      action('&Mute', { state: 'mute' }),
+      action('Volume &Up', { state: 'louder' }),
+      action('Volume &Down', { state: 'quieter' }),
     ],
   };
   const windowMenu: MenuItemConstructorOptions = {
@@ -275,7 +275,7 @@ export function makeMainMenu(): void {
   persist.subscribe('mute', (val: string) => {
     const itm = menu.getMenuItemById('mute');
     if (itm) {
-      itm.enabled = val !== 'true';
+      itm.label = val === 'true' ? 'Unm&ute' : 'M&ute';
     }
   });
 }

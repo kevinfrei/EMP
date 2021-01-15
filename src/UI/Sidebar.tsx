@@ -1,6 +1,7 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
+import { SetSearch } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { CurrentView, curViewState } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
@@ -77,7 +78,6 @@ export default function Sidebar(): JSX.Element {
   const onFocus = useRecoilCallback(({ set }) => () => {
     set(curViewState, CurrentView.search);
   });
-
   return (
     <div id="sidebar">
       <SearchBox
@@ -85,6 +85,7 @@ export default function Sidebar(): JSX.Element {
         onSearch={onSearch}
         onFocus={onFocus}
         onChange={(e, nv) => nv && onSearch(nv)}
+        componentRef={(ref) => SetSearch(ref)}
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}

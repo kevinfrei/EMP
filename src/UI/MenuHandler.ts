@@ -1,18 +1,45 @@
 import { FTONData, MakeError, Type } from '@freik/core-utils';
 import { CallbackInterface } from 'recoil';
+import { FocusSearch } from '../MyWindow';
+import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
+import { mediaTimeState } from '../Recoil/MediaPlaying';
 import {
   CurrentView,
   curViewState,
+  mutedState,
   repeatState,
   shuffleState,
+  volumeState,
 } from '../Recoil/ReadWrite';
+import { onClickPlayPause } from './PlaybackControls';
+import { GetAudioElem } from './SongPlaying';
 
-const err = MakeError('MenuHandler'); // eslint-disable-line
+const log = MakeError('MenuHandler'); // eslint-disable-line
+const err = MakeError('MenuHandler-err'); // eslint-disable-line
+
+function updateTime({ set }: CallbackInterface, offset: number) {
+  const ae = GetAudioElem();
+  if (!ae) {
+    return;
+  }
+  const targetTime = Math.min(
+    ae.duration,
+    Math.max(0, ae.currentTime + offset),
+  );
+  // eslint-disable-next-line id-blacklist
+  if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
+    ae.currentTime = targetTime;
+  }
+  set(mediaTimeState, { position: targetTime, duration: ae.duration });
+}
 
 export function MenuHandler(
-  { set }: CallbackInterface,
+  callbackInterface: CallbackInterface,
   message: FTONData,
 ): void {
+  log('Menu command:');
+  log(message);
+  const { set } = callbackInterface;
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
   if (Type.hasStr(message, 'state')) {
     switch (message.state) {
@@ -22,17 +49,47 @@ export function MenuHandler(
       case 'repeat':
         set(repeatState, (cur) => !cur);
         break;
+
       case 'addLocation':
-      case 'find':
       case 'MiniPlayer':
+        break;
+      case 'find':
+        FocusSearch();
+        break;
+
+      // Playback control:
       case 'playback':
+        onClickPlayPause(callbackInterface);
+        break;
       case 'nextTrack':
+        MaybePlayNext(callbackInterface).catch((rej) => {
+          err('Play next failed:');
+          err(rej);
+        });
+        break;
       case 'prevTrack':
+        MaybePlayPrev(callbackInterface).catch((rej) => {
+          err('Play next failed:');
+          err(rej);
+        });
+        break;
+
+      // Time control
       case 'fwd':
+        updateTime(callbackInterface, 10);
+        break;
       case 'back':
+        updateTime(callbackInterface, -10);
+        break;
+
       case 'mute':
+        set(mutedState, (cur) => !cur);
+        break;
       case 'louder':
+        set(volumeState, (val) => Math.min(1.0, val + 0.1));
+        break;
       case 'quieter':
+        set(volumeState, (val) => Math.max(0, val - 0.1));
         break;
       case 'view':
         if (Type.hasStr(message, 'select')) {

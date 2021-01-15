@@ -1,5 +1,10 @@
 import { MakeLogger } from '@freik/core-utils';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import {
+  CallbackInterface,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
 import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
   hasAnySongsState,
@@ -12,9 +17,30 @@ import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
 
 const log = MakeLogger('SongControls');
+const err = MakeLogger('SongControls-err');
+
+export function onClickPlayPause({ set }: CallbackInterface): void {
+  const ae = GetAudioElem();
+  if (!ae) {
+    err('Clicking but no audio element');
+    return;
+  }
+  set(playingState, (isPlaying) => {
+    if (isPlaying) {
+      ae.pause();
+      return false;
+    } else if (ae.readyState === 4) {
+      ae.play().catch((e) => '');
+      return true;
+    } else {
+      log(`We're not playing, but also not state 4: ${ae.readyState}`);
+    }
+    return isPlaying;
+  });
+}
 
 export default function SongControls(): JSX.Element {
-  const [isPlaying, setIsPlaying] = useRecoilState(playingState);
+  const isPlaying = useRecoilValue(playingState);
 
   const hasAnySong = useRecoilValue(hasAnySongsState);
   const shuf = useRecoilValue(shuffleState);
@@ -39,23 +65,10 @@ export default function SongControls(): JSX.Element {
     cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
-  const clickPlayPause = () => {
-    const ae = GetAudioElem();
-    if (!ae) {
-      log('Clicking but no audio element');
-      return;
-    }
-    if (isPlaying) {
-      ae.pause();
-      setIsPlaying(false);
-    } else if (ae.readyState === 4) {
-      ae.play()
-        .then(() => setIsPlaying(true))
-        .catch((e) => '');
-    } else {
-      log(`We're not playing, but also not state 4: ${ae.readyState}`);
-    }
-  };
+  const clickPlayPause = useRecoilCallback((cbInterface) => () =>
+    onClickPlayPause(cbInterface),
+  );
+
   const clickPrev = useRecoilCallback((cbInterface) => async () => {
     if (hasPrevSong) {
       await MaybePlayPrev(cbInterface);

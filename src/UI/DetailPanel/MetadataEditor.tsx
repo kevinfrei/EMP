@@ -37,7 +37,6 @@ export type MetadataProps = {
   va?: string;
   variations?: string;
   moreArtists?: string;
-  // TODO: Move the cover art into the MetadataEditor
   albumId?: AlbumKey;
 };
 

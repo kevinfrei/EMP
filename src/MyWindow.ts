@@ -1,4 +1,5 @@
 // This is for getting at "global" stuff from the window object
+import { ISearchBox } from '@fluentui/react';
 import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { IpcRenderer } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
@@ -12,11 +13,12 @@ const err = MakeError('MyWindow-err');
  */
 
 interface MyWindow extends Window {
-  ipc: IpcRenderer | undefined;
-  remote: Electron.Remote | undefined;
-  isDev: boolean | undefined;
-  initApp: undefined | (() => void);
-  ipcSet: boolean | undefined;
+  ipc?: IpcRenderer;
+  remote?: Electron.Remote;
+  isDev?: boolean;
+  initApp?: () => void;
+  ipcSet?: boolean;
+  searchBox?: ISearchBox | null;
 }
 
 declare let window: MyWindow;
@@ -28,6 +30,16 @@ export function ShowOpenDialog(
 }
 export function SetInit(func: () => void): void {
   window.initApp = func;
+}
+export function SetSearch(searchBox: ISearchBox | null): void {
+  window.searchBox = searchBox;
+}
+export function FocusSearch(): boolean {
+  if (window.searchBox) {
+    window.searchBox.focus();
+    return true;
+  }
+  return false;
 }
 
 export function InitialWireUp(): void {
