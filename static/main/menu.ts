@@ -11,8 +11,9 @@ import { KeyboardEvent } from 'electron/main';
 import open from 'open';
 import { asyncSend } from './Communication';
 import * as persist from './persist';
+import { toggleMiniPlayer } from './window';
 
-const log = MakeLogger('menu', true);
+const log = MakeLogger('menu', isDev);
 const err = MakeError('menu-err'); // eslint-disable-line
 
 type ClickHandler = (
@@ -31,18 +32,9 @@ function getClick(handler?: ClickHandler | FTONObject) {
     return;
   }
   if (Type.isFunction(handler)) {
-    return (
-      mnu?: MenuItem,
-      wnd?: BrowserWindow | undefined,
-      event?: KeyboardEvent,
-    ) => {
-      log('Menu handler invoked');
-      handler(mnu, wnd, event);
-    };
+    return handler;
   }
   return () => {
-    log('Menu item invoked:');
-    log(handler);
     void asyncSend({ menuAction: handler });
   };
 }
@@ -138,7 +130,7 @@ export function makeMainMenu(): void {
       xaction('&Playlists', '5', { state: 'view', select: 'Playlists' }),
       xaction('Se&ttings', ',', { state: 'view', select: 'Settings' }),
       ___,
-      xaction('M&iniPlayer', '0', { state: 'MiniPlayer' }),
+      xaction('M&iniPlayer', '9', toggleMiniPlayer),
     ],
   };
   const mediaMenu: MenuItemConstructorOptions = {

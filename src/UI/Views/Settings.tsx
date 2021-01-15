@@ -7,7 +7,7 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { useRecoilState } from 'recoil';
+import { CallbackInterface, useRecoilCallback, useRecoilState } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';
 import {
@@ -33,8 +33,20 @@ function GetDirs(): string[] | void {
   return ShowOpenDialog({ properties: ['openDirectory'] });
 }
 
+export function addLocation({ set }: CallbackInterface): boolean {
+  const locs: string[] | void = GetDirs();
+  if (locs) {
+    set(locationsState, (curLocs) => [...locs, ...curLocs]);
+    return true;
+  }
+  return false;
+}
+
 function RecoilLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
+  const onAddLocation = useRecoilCallback((cbInterface) => () => {
+    addLocation(cbInterface);
+  });
   return (
     <>
       {(newLoc || []).map((elem) => (
@@ -49,12 +61,7 @@ function RecoilLocations(): JSX.Element {
       <Stack horizontal>
         <DefaultButton
           text="Add Location"
-          onClick={() => {
-            const locs: string[] | void = GetDirs();
-            if (locs) {
-              setNewLoc([...locs, ...(newLoc || [])]);
-            }
-          }}
+          onClick={onAddLocation}
           iconProps={{ iconName: 'Add' }}
         />
         &nbsp;

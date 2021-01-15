@@ -1,5 +1,5 @@
-import { MakeError } from '@freik/core-utils';
-import { BrowserWindow } from 'electron';
+import { MakeError, Type } from '@freik/core-utils';
+import { BrowserWindow, screen } from 'electron';
 import isDev from 'electron-is-dev';
 import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
@@ -105,4 +105,44 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
   mainWindow.on('resize', updateWindowPos);
   mainWindow.on('move', updateWindowPos);
   mainWindow.on('close', updateWindowPos);
+}
+
+let prevWidth = 0;
+
+export function toggleMiniPlayer(): void {
+  if (
+    mainWindow !== null &&
+    Type.isNumber(windowPos.bounds.x) &&
+    Type.isNumber(windowPos.bounds.y)
+  ) {
+    const display = screen.getDisplayMatching(
+      windowPos.bounds as Electron.Rectangle,
+    );
+    // TODO: Make this thing stick to the sides of the screen
+    const atEdge =
+      display.bounds.x +
+        display.bounds.width -
+        windowPos.bounds.x -
+        windowPos.bounds.width <
+      15;
+    if (prevWidth > 450 || windowPos.bounds.width < 450) {
+      mainWindow.setSize(Math.max(prevWidth, 550), windowPos.bounds.height);
+      if (atEdge) {
+        mainWindow.setPosition(
+          display.bounds.x + display.bounds.width - prevWidth,
+          windowPos.bounds.y,
+        );
+      }
+      prevWidth = 0;
+    } else {
+      prevWidth = windowPos.bounds.width;
+      mainWindow.setSize(270, windowPos.bounds.height);
+      if (atEdge) {
+        mainWindow.setPosition(
+          display.bounds.x + display.bounds.width - 270,
+          windowPos.bounds.y,
+        );
+      }
+    }
+  }
 }

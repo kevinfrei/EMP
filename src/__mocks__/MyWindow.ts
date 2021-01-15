@@ -19,6 +19,7 @@ export function InitialWireUp(): void {
   //  realInitialWireUp();
 }
 
+// eslint-disable-next-line
 export function SetSearch(srch: any): void {
   // Do nothing
 }

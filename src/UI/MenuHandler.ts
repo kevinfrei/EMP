@@ -13,6 +13,7 @@ import {
 } from '../Recoil/ReadWrite';
 import { onClickPlayPause } from './PlaybackControls';
 import { GetAudioElem } from './SongPlaying';
+import { addLocation } from './Views/Settings';
 
 const log = MakeError('MenuHandler'); // eslint-disable-line
 const err = MakeError('MenuHandler-err'); // eslint-disable-line
@@ -51,8 +52,9 @@ export function MenuHandler(
         break;
 
       case 'addLocation':
-      case 'MiniPlayer':
+        addLocation(callbackInterface);
         break;
+
       case 'find':
         FocusSearch();
         break;
