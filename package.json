@@ -44,7 +44,7 @@
     "electron-build": "electron-builder",
     "release": "yarn clean && yarn build && electron-builder -mwl --publish=always",
     "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo build dist",
-    "build": "concurrently \"tsc -p tsconfig.static.json\" \"tsc -p tsconfig.render.json\" \"yarn react-build\"",
+    "build": "concurrently \"tsc -p tsconfig.static.json\" \"tsc -p tsconfig.render.json\" && yarn react-build",
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "prepare": "concurrently \"tsc -p tsconfig.static.json\" \"tsc -p tsconfig.render.json\"",
     "types": "concurrently \"tsc --noEmit\" \"tsc --noEmit -p tsconfig.static.json\" \"tsc --noEmit -p tsconfig.render.json\"",
