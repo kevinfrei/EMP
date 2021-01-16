@@ -18,6 +18,7 @@
   #img-current-cover-art {
     height: 32px;
     width: 32px;
+    object-fit: contain;
   }
   #song-cover-art {
     grid-column: 1;
@@ -82,15 +83,23 @@
     font-weight: lighter;
   }
   #song-cover-art {
+    display: block;
+    height: 270px; /* min-width */
     grid-column: 1 / 4;
     align-self: stretch;
     justify-self: stretch;
     -webkit-app-region: drag;
+    background-color: whitesmoke;
   }
   #img-current-cover-art {
     display: block;
-    width: 100%;
-    height: auto;
+    object-fit: contain;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    max-width: 100%;
+    max-height: 100%;
   }
   #now-playing-current-time {
     visibility: hidden;
