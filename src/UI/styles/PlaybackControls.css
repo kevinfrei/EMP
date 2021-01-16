@@ -14,7 +14,6 @@
   #play-pause {
     width: 24px;
     height: 24px;
-    cursor: pointer;
     grid-column: 3;
     align-self: center;
     justify-self: center;
@@ -23,7 +22,6 @@
   #prev {
     width: 20px;
     height: 20px;
-    cursor: pointer;
     float: left;
     background: url('../img/prev.svg');
     background-size: cover;
@@ -34,7 +32,6 @@
   #shuffle {
     width: 10px;
     height: 10px;
-    cursor: pointer;
     align-self: center;
     justify-self: center;
   }
@@ -58,7 +55,6 @@
   #play-pause {
     width: 16px;
     height: 16px;
-    cursor: pointer;
     grid-column: 3;
     align-self: center;
     justify-self: center;
@@ -68,7 +64,6 @@
   #prev {
     width: 13px;
     height: 13px;
-    cursor: pointer;
     float: left;
     background: url('../img/prev.svg');
     background-size: cover;
@@ -80,7 +75,6 @@
   #shuffle {
     width: 7px;
     height: 7px;
-    cursor: pointer;
     align-self: center;
     justify-self: center;
     z-index: 12;
@@ -93,6 +87,7 @@
 #play-pause:hover {
   filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(180deg)
     brightness(104%) contrast(97%);
+  cursor: pointer;
 }
 #play-pause.paused {
   background: url('../img/play.svg');
@@ -132,6 +127,7 @@
 #prev.disabled:hover,
 #next.disabled:hover {
   filter: opacity(25%);
+  cursor: default;
 }
 .enabled {
   filter: opacity(100%);
