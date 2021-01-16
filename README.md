@@ -17,87 +17,29 @@ bad music player (a great video player, but not great for music, IMO)
 What's it look like? Kind of like iTunes' ugly stepsister (#notadesigner!), but
 here you go:
 
-![Albums view](doc/albums.jpg)
+<img src="doc/albums.jpg" width="550" alt="Albums view">
 
-![Playlist view](doc/playlist.jpg)
+<img src="doc/playlist.jpg" width="550" alt="Playlists view">
 
-It's not yet packaged for general consumption, but if you're a nerd like me, you
-can probably get it to work from the repository easily enough
-(`yarn ; yarn start` ought to do it)
+<img src="doc/miniplayer.jpg" width="270" alt="Miniplayer">
+
+I only have MacOS releases currently, but feel free to download one, if you want
+to try it out. Releases are [here](https://github.com/kevinfrei/EMP/releases).
+I'll try to get a Windows & Linux release out at some point. The Windows release
+will likely occur after Ryzen 5000 series processors as back in stock, as I'm on
+my personal Mac Mini until then (cuz the Mini's i7 8600B is faster than my PC's
+iv
 
 ## What's the current state?
 
-It pretty much works. There are occasionally "first launch" problems that mean
-you might have to start it a couple times before it's actually running, but
-overall? It's completely functional (though with a few random minor bugs laying
-around).
+It pretty much works. There are a few random minor bugs laying around, and
+there's a memory leak that means it will die a horrible death after a few hours,
+but it's now my main music player while COVID-19 WFH is in place.
 
 ## Stuff to do
 
-### Bugs
-
-- Some of the artwork & metadata settings aren't implemented
-- Various Artists/Soundtracks still probably want some work (it's an eternal
-  battle)
-- FluentUI has a bug for RTL layout (file path in File Details sticks the first
-  character at the end of the string :D). Maybe report it?
-- Search seems to behave weird after first interaction. (Try searching for
-  "Disc") and see what happens with my default collection-o-stuff)
-- Editing Disk # in Metadata Multi-edit seems to have no effect
-
-### Core Capabilities
-
-- **both** MediaInfo/Metadata editing:
-  - Support adding/editing album covers
-  - File name vs. metadata difference cleanup (this would be _awesome_)
-  - (longer term) Update file metadata!
-- **render** Add typing to scroll to the appropriate spot in the song list
-- **render** Add expandable (& editable) playlist view
-- **render** Make search group headers a little more informative
-- **render** Make search headers clickable (i.e. sort the list of stuff)
-- **render** Get the cursor set properly for clickable stuff
-- **both** Add "Recently Added" capabilities
-  - Something involving no Key Reuse probably...
-- **render** Improve the Search view a bit
-- **both** Audio file placement for clean-up, perhaps?
-- **both** Add 'favorite/love' attribute for songs
-- **both** "Auto" playlists (something involving stuff like "this artist" and
-  "not this keyword" kind of stuff.
-- **both** Import/Export M3U's (and other playlist formats one might care about)
-
-### Logic improvements/changes
-
-- Transcode for phone (dump stuff out ready to import into iTunes, for example)
-  - The lion's share of the work for this is already in my `@freik/media-utils`
-    module.
-- **main** Version the persistence data. I have troubles if I change the disk
-  format :/
-
-### UI Improvements
-
-- When tracks change, keep the entry in the Now Playing list visible unless
-  there's been 'recent' movement
-- Make an actual "About" screen
-- Get some controls in the menu with appropriate keyboard shortcuts
-- Maybe use of the album-art package to get artist pix
-- Improve/Expand the views for Albums and Artists.
-- DetailsList is nifty, but a little bit buggy. Maybe try making my own?
-
-### Other
-
-- Testing! Testing! Testing!
-
-### "Other" communication
-
-To generally communicate, you'll need to have a message name registered on both
-sides. In the **main** process, you'll need to register it in the `CommsSetup`
-function in
-[Communication.ts](https://github.com/kevinfrei/EMP/blob/main/static/main/Communication.ts).
-In the **render** process, you should add a function that handles any data
-validation in [ipc.ts](https://github.com/kevinfrei/EMP/blob/main/src/ipc.ts).
-The 'get-media-info' message is a reasonable example to check out. Nothing is
-persisted between runs, it's just a simple little "please give me the data for
-this song" RPC.
+I moved everything into [GitHub Issues](https://github.com/kevinfrei/EMP/issues)
+to make book keeping & tracking easier. Go look there.
 
 ## Old stuff
 
