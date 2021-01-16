@@ -122,6 +122,57 @@ export function setMusicIndex(index: MusicIndex): void {
   theMusicIndex = index;
 }
 
+function intersect<T>(a: Set<T>, b: Iterable<T>): Set<T> {
+  const res: Set<T> = new Set();
+  for (const i of b) {
+    if (a.has(i)) {
+      res.add(i);
+    }
+  }
+  return res;
+}
+
+/**
+ * @param  {boolean} substr - true for mid-word substring searches, false for
+ * only 'starts with' search
+ * @param  {string} term - The space-separated list of words to search for
+ * @returns 3 arrays (songs, albums, artists) that have words that begin with
+ * all of the search terms
+ */
+function indexSearch(substr: boolean, terms: string): SearchResults {
+  if (!theMusicIndex) {
+    throw Error(
+      "Don't call this function directly without initializing theMusicIndex",
+    );
+  }
+  let first = true;
+  let songs: Set<SongKey> = new Set();
+  let albums: Set<AlbumKey> = new Set();
+  let artists: Set<ArtistKey> = new Set();
+  for (const t of terms.split(' ').map((s) => s.trim())) {
+    if (t.length > 0) {
+      const sng = theMusicIndex.songs(t, substr);
+      const alb = theMusicIndex.albums(t, substr);
+      const art = theMusicIndex.artists(t, substr);
+      songs = first ? new Set(sng) : intersect(songs, sng);
+      albums = first ? new Set(alb) : intersect(albums, alb);
+      artists = first ? new Set(art) : intersect(artists, art);
+      first = false;
+    }
+  }
+  log('songs:');
+  log(songs);
+  log('albums:');
+  log(albums);
+  log('artists:');
+  log(artists);
+  return {
+    songs: [...songs],
+    albums: [...albums],
+    artists: [...artists],
+  };
+}
+
 export function searchWholeWord(term?: string): Promise<SearchResults | void> {
   return new Promise((resolve) => {
     if (!theMusicIndex || !term) {
@@ -129,16 +180,7 @@ export function searchWholeWord(term?: string): Promise<SearchResults | void> {
       log('term:' + (!term ? 'something' : 'empty'));
       resolve();
     } else {
-      const songs: SongKey[] = [...theMusicIndex.songs(term)];
-      const albums: AlbumKey[] = [...theMusicIndex.albums(term)];
-      const artists: ArtistKey[] = [...theMusicIndex.artists(term)];
-      log('songs:');
-      log(songs);
-      log('albums:');
-      log(albums);
-      log('artists:');
-      log(artists);
-      resolve({ songs, albums, artists });
+      resolve(indexSearch(false, term));
     }
   });
 }
@@ -150,10 +192,7 @@ export function searchSubstring(term?: string): Promise<SearchResults | void> {
       log('term:' + (!term ? 'something' : 'empty'));
       resolve();
     } else {
-      const songs = [...theMusicIndex.songs(term, true)];
-      const albums = [...theMusicIndex.albums(term, true)];
-      const artists = [...theMusicIndex.artists(term, true)];
-      resolve({ songs, albums, artists });
+      resolve(indexSearch(true, term));
     }
   });
 }
