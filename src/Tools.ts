@@ -4,6 +4,7 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
+  MakeError,
   MakeLogger,
   Song,
   Type,
@@ -11,6 +12,7 @@ import {
 import { GetArtistStringFromSong } from './DataSchema';
 
 const log = MakeLogger('Tools');
+const err = MakeError('Tools-err');
 
 /*
  * Sorting
@@ -28,11 +30,17 @@ export function noArticles(phrase: string): string {
   return res;
 }
 
+// Gotta use this instead of localeCompare, thanks to
+// BLUE ÖYSTER CULT and BLUE ÖYSTER CULT being locale equal, but not ===
+// which causes problems in the ArtistMap of the Music database
+const stringCompare = (a: string, b: string): number =>
+  (a > b ? 1 : 0) - (a < b ? 1 : 0);
+
 const articlesCmp = (a: string, b: string): number =>
-  a.toLocaleUpperCase().localeCompare(b.toLocaleUpperCase());
+  stringCompare(a.toLocaleUpperCase(), b.toLocaleUpperCase());
 
 const noArticlesCmp = (a: string, b: string): number =>
-  noArticles(a).localeCompare(noArticles(b));
+  stringCompare(noArticles(a), noArticles(b));
 
 export function SortItems<TItem>(
   items: TItem[],
@@ -131,7 +139,7 @@ export function MakeSongComparator(
           } else if (!v2) {
             failReason = 'Invalid album ID ' + b.albumId;
           } else {
-            const vd = v1.vatype.localeCompare(v2.vatype);
+            const vd = stringCompare(v1.vatype, v2.vatype);
             if (vd === 0) {
               continue;
             } else {
@@ -141,7 +149,7 @@ export function MakeSongComparator(
         default:
           failReason = 'Invalid sort order: ' + c;
       }
-      throw new Error(failReason);
+      Fail('Sorting', failReason);
     }
     return 0;
   };
@@ -182,11 +190,12 @@ export function GetIndexOf<T>(
   // Binary search, assuming the songs are sorted in either ascending or
   // descending value of the selector
   const ascending =
-    selector(sortedValues[0]).localeCompare(
+    stringCompare(
+      selector(sortedValues[0]),
       selector(sortedValues[sortedValues.length - 1]),
     ) > 0;
   const before = (a: number): boolean => {
-    const sort = selector(sortedValues[a]).localeCompare(searchString) < 0;
+    const sort = stringCompare(selector(sortedValues[a]), searchString) < 0;
     return ascending ? sort : !sort;
   };
   let lo = 0;
@@ -255,4 +264,37 @@ export function divGrand(val: string): string {
   flt = flt.replace(/0+$/g, '');
   flt = flt.replace(/\.$/, '');
   return flt;
+}
+
+export function Fail(name?: string, message?: string): never {
+  const e = new Error();
+  if (Type.isString(name)) {
+    e.name = name;
+  }
+  if (Type.isString(message)) {
+    e.message = message;
+  }
+  throw e;
+}
+
+// eslint-disable-next-line
+export function Catch(e: any, msg?: string): void {
+  if (msg) {
+    err(msg);
+  }
+  if (e instanceof Error) {
+    err(e);
+  } else if (Type.has(e, 'toString') && Type.isFunction(e.toString)) {
+    err(e.toString());
+  }
+}
+
+// eslint-disable-next-line
+export function onRejected(msg?: string): (reason: any) => void {
+  return (reason: any) => {
+    if (Type.isString(msg)) {
+      err(msg);
+    }
+    err(reason);
+  };
 }

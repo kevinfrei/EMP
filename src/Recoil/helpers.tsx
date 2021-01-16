@@ -16,6 +16,7 @@ import {
   Unsubscribe,
   WriteToStorage,
 } from '../ipc';
+import { onRejected } from '../Tools';
 
 export type StatePair<T> = [T, SetterOrUpdater<T>];
 
@@ -86,20 +87,18 @@ export function translateToMainEffect<T>(
             }
           }
         })
-        .catch((rej) => {
-          err(`${node.key} Get failed in translateToMainEffect`);
-          err(rej);
-        });
+        .catch(onRejected(`${node.key} Get failed in translateToMainEffect`));
     }
     onSet((newVal, oldVal) => {
       if (newVal instanceof DefaultValue) {
         return;
       }
       const newStr = toString(newVal);
-      if (oldVal instanceof DefaultValue || newStr !== toString(oldVal))
-        WriteToStorage(node.key, newStr).catch((reason) => {
-          err(`${node.key} save to main failed`);
-        });
+      if (oldVal instanceof DefaultValue || newStr !== toString(oldVal)) {
+        WriteToStorage(node.key, newStr).catch(
+          onRejected(`${node.key} save to main failed`),
+        );
+      }
     });
   };
 }
@@ -144,10 +143,7 @@ export function bidirectionalSyncWithTranslateEffect<T>(
             }
           }
         })
-        .catch((rej) => {
-          err(`${node.key} Get failed in bidirectional sync`);
-          err(rej);
-        });
+        .catch(onRejected(`${node.key} Get failed in bidirectional sync`));
     }
     let lKey: ListenKey | null = null;
     if (asyncUpdates) {
@@ -175,7 +171,7 @@ export function bidirectionalSyncWithTranslateEffect<T>(
         log(`Saving ${node.key} back to server...`);
         WriteToStorage(node.key, FTON.stringify(newFton))
           .then(() => log(`${node.key} saved properly`))
-          .catch((reason) => err(`${node.key} save to main failed`));
+          .catch(onRejected(`${node.key} save to main failed`));
       }
     });
 

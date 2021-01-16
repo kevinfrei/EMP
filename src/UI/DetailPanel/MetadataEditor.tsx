@@ -22,6 +22,7 @@ import {
 import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
 import { SetMediaInfo } from '../../ipc';
+import { onRejected } from '../../Tools';
 
 const log = MakeLogger('MetadataEditor', true);
 const err = MakeError('MetadataEditor-err');
@@ -143,10 +144,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         md.moreArtists = Media.splitArtistString(moreArtists);
       }
       log(md);
-      SetMediaInfo(md).catch((rej) => {
-        err('Saving Metadata failed');
-        err(rej);
-      });
+      SetMediaInfo(md).catch(onRejected('Saving Metadata failed'));
     }
   };
 

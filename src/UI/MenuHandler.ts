@@ -11,6 +11,7 @@ import {
   shuffleState,
   volumeState,
 } from '../Recoil/ReadWrite';
+import { onRejected } from '../Tools';
 import { onClickPlayPause } from './PlaybackControls';
 import { GetAudioElem } from './SongPlaying';
 import { addLocation } from './Views/Settings';
@@ -64,16 +65,10 @@ export function MenuHandler(
         onClickPlayPause(callbackInterface);
         break;
       case 'nextTrack':
-        MaybePlayNext(callbackInterface).catch((rej) => {
-          err('Play next failed:');
-          err(rej);
-        });
+        MaybePlayNext(callbackInterface).catch(onRejected('Play next failed:'));
         break;
       case 'prevTrack':
-        MaybePlayPrev(callbackInterface).catch((rej) => {
-          err('Play next failed:');
-          err(rej);
-        });
+        MaybePlayPrev(callbackInterface).catch(onRejected('Play prev failed:'));
         break;
 
       // Time control

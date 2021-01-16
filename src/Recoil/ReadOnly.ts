@@ -10,6 +10,7 @@ import {
 } from '@freik/core-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
+import { Catch, Fail } from '../Tools';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import { syncWithMainEffect } from './helpers';
 import { songListState } from './Local';
@@ -27,15 +28,17 @@ export type SongData = {
   track: number;
 } & AlbumData;
 
-const log = MakeLogger('ReadOnly');
-const err = MakeLogger('ReadOnly-err');
+const log = MakeLogger('ReadOnly'); // eslint-disable-line
+const err = MakeLogger('ReadOnly-err'); // eslint-disable-line
 
 export const getMediaInfoState = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
   get: (sk: SongKey) => async (): Promise<Map<string, string>> => {
     if (!sk) return new Map<string, string>();
     const result = await ipc.GetMediaInfo(sk);
-    if (!result) throw new Error(sk);
+    if (!result) {
+      Fail(sk, 'Unfound song key');
+    }
     log(`Got media info for ${sk}:`);
     log(result);
     return result;
@@ -72,8 +75,7 @@ export const getSongByKeyState = selectorFamily<Song, SongKey>({
     const songs = get(allSongsState);
     const song = songs.get(sk);
     if (!song) {
-      err(`Unfound song key: ${sk}`);
-      throw new Error(sk);
+      Fail(sk, 'Unfound song key');
     }
     return song;
   },
@@ -89,7 +91,9 @@ export const getAlbumByKeyState = selectorFamily<Album, AlbumKey>({
   get: (ak: AlbumKey) => ({ get }): Album => {
     const albums = get(allAlbumsState);
     const album = albums.get(ak);
-    if (!album) throw new Error(ak);
+    if (!album) {
+      Fail(ak, 'Unfound album key');
+    }
     return album;
   },
 });
@@ -122,7 +126,9 @@ export const getArtistByKeyState = selectorFamily<Artist, ArtistKey>({
   get: (ak: ArtistKey) => ({ get }): Artist => {
     const artists = get(allArtistsState);
     const artist = artists.get(ak);
-    if (!artist) throw new Error(ak);
+    if (!artist) {
+      Fail(ak, 'Unfound artist key');
+    }
     return artist;
   },
 });
@@ -182,8 +188,7 @@ export const curSongsState = selector<Song[]>({
         const s = get(getSongByKeyState(sk));
         songList.push(s);
       } catch (e) {
-        err(`Error for SongKey '${sk}'`);
-        err(e);
+        Catch(e, `Error for SongKey '${sk}'`);
       }
     }
     return songList; // curList.map((sk: SongKey) => get(getSongByKeyState(sk)));
