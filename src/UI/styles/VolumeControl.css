@@ -69,3 +69,9 @@
     margin-right: -4px;
   }
 }
+
+#volIcon:hover,
+#mute:hover {
+  filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(180deg)
+    brightness(104%) contrast(97%);
+}
