@@ -169,5 +169,9 @@ export const mySliderStyles: Partial<ISliderStyles> = {
     width: 6,
     height: 10,
     top: -3,
+    zIndex: 100,
+  },
+  line: {
+    zIndex: 100,
   },
 };
