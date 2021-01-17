@@ -12,11 +12,14 @@ import {
   SimpleMetadata,
   Song,
   SongKey,
+  Type,
 } from '@freik/core-utils';
 import { Metadata } from '@freik/media-utils';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
 import { GetMetadataStore, isFullMetadata } from './metadata';
+import { getMusicDB, setMusicIndex } from './MusicAccess';
+import { sendUpdatedDB, UpdateDB } from './musicDB';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
@@ -543,4 +546,45 @@ export function makeIndex(musicDB: MusicDB): MusicIndex {
   );
 
   return { songs, artists, albums };
+}
+
+// TODO: Make this intelligent about just minor DB adjustments...
+export async function UpdateSongMetadata(
+  fullPath: string,
+  newMetadata: Partial<FullMetadata>,
+): Promise<void> {
+  const db = await getMusicDB();
+  if (db) {
+    const hasArtist = Type.has(newMetadata, 'artist'); // string | string[]
+    const hasAlbum = Type.hasStr(newMetadata, 'album');
+    const hasTrack = Type.has(newMetadata, 'track'); // number
+    const hasTitle = Type.hasStr(newMetadata, 'title');
+    const hasVA = Type.hasStr(newMetadata, 'vaType'); // 'va' | 'ost'
+    const hasMoreArtists = Type.has(newMetadata, 'moreArtists'); // string[]
+    const hasVariations = Type.has(newMetadata, 'variations'); // string[]
+    const hasDisk = Type.has(newMetadata, 'disk'); // number
+    // Let's handle the simple stuff: title, track number, disk number
+    const songKey = getSongKey(fullPath);
+    const song = db.songs.get(songKey);
+    if (song && !hasArtist && !hasAlbum && !hasVA && !hasMoreArtists) {
+      if (hasVariations) {
+        song.variations = newMetadata.variations;
+      }
+      const tn: number = hasTrack ? newMetadata.track! : song.track % 100;
+      const dn: number = hasDisk ? newMetadata.disk! : song.track / 100;
+      if (hasDisk || hasTrack) {
+        song.track = tn + dn * 100;
+      }
+      if (hasTitle) {
+        song.title = newMetadata.title!;
+      }
+      // Update the search index
+      setMusicIndex(makeIndex(db));
+      sendUpdatedDB(db);
+      return;
+    }
+    // TODO: Add album & artist change capabilities,
+    // but for now, just do a full rescan the DB
+  }
+  UpdateDB();
 }

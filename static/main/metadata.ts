@@ -10,7 +10,7 @@ import {
 } from '@freik/core-utils';
 import { MD } from '@freik/media-utils';
 import { getMusicDB } from './MusicAccess';
-import { UpdateDB } from './musicDB';
+import { UpdateSongMetadata } from './MusicScanner';
 import * as persist from './persist';
 
 const log = MakeLogger('metadata');
@@ -276,6 +276,8 @@ export async function GetMetadataStore(name: string): Promise<MetadataStore> {
   return mdc;
 }
 
+let mdSaveTimer: NodeJS.Timeout | null = null;
+
 /**
  * @function setMediaInfoForSong
  * Responds to a request from the Render process with a flattened set of
@@ -321,11 +323,17 @@ export async function setMediaInfoForSong(
   if (isOnlyMetadata(metadataToUpdate)) {
     const prevMd = mdStore.get(fullPath);
     mdStore.set(fullPath, { ...prevMd, ...metadataToUpdate });
+    // commit the change to the music database
+    await UpdateSongMetadata(fullPath, { ...prevMd, ...metadataToUpdate });
   }
-  await mdStore.save();
-  // For now, Update the database
-  // TODO: Make this faster. A full rescan seems awfully wasteful.
-  // For now, just delay for a second to start a scan. The scan itself
-  // only allows one pending update, so nothing fancier is necessary
-  setTimeout(UpdateDB, 1000);
+  // Debounced the whole file save
+  if (mdSaveTimer !== null) {
+    clearTimeout(mdSaveTimer);
+  }
+  mdSaveTimer = setTimeout(() => {
+    mdStore.save().catch((e) => {
+      err('unable to save media info');
+      err(flattenedData);
+    });
+  }, 250);
 }

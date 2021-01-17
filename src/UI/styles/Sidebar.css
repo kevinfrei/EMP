@@ -33,6 +33,7 @@
 @media (max-width: 499px) {
   #sidebar {
     visibility: collapse;
+    display: none;
   }
 }
 

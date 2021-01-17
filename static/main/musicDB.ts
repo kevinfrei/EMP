@@ -1,17 +1,9 @@
-import {
-  AlbumKey,
-  ArtistKey,
-  FTON,
-  MakeError,
-  MakeLogger,
-  SongKey,
-} from '@freik/core-utils';
+import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
 import { promisify } from 'util';
 import { asyncSend } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
 import * as persist from './persist';
-import { MakeSearchable } from './Search';
 
 const log = MakeLogger('musicDB');
 const err = MakeError('musicDB-err');
@@ -26,7 +18,7 @@ function getLocations(): string[] {
   return (rawLocations && FTON.arrayOfStrings(rawLocations)) || [];
 }
 
-async function CreateMusicDB(): Promise<void> {
+export async function CreateMusicDB(): Promise<void> {
   const musicLocations = getLocations();
   log('Got music locations:');
   log(musicLocations);
@@ -36,19 +28,7 @@ async function CreateMusicDB(): Promise<void> {
   await saveMusicDB(musicDB);
 
   const start = new Date().getTime();
-  const songs = MakeSearchable<SongKey>(
-    musicDB.songs.keys(),
-    (key: SongKey) => musicDB.songs.get(key)?.title || '',
-  );
-  const albums = MakeSearchable<AlbumKey>(
-    musicDB.albums.keys(),
-    (key: AlbumKey) => musicDB.albums.get(key)?.title || '',
-  );
-  const artists = MakeSearchable<ArtistKey>(
-    musicDB.artists.keys(),
-    (key: ArtistKey) => musicDB.artists.get(key)?.name || '',
-  );
-  setMusicIndex({ songs, artists, albums });
+  setMusicIndex(music.makeIndex(musicDB));
   const stop = new Date().getTime();
 
   log(`Total time to build index: ${stop - start} ms`);
@@ -103,4 +83,13 @@ export function UpdateDB(): void {
       err('Caught an exception while trying to update the db');
       err(rej);
     });
+}
+
+let updateSendTimeout: NodeJS.Timeout | null = null;
+
+export function sendUpdatedDB(db: music.MusicDB): void {
+  if (updateSendTimeout !== null) {
+    clearTimeout(updateSendTimeout);
+  }
+  updateSendTimeout = setTimeout(() => asyncSend({ musicDatabase: db }), 250);
 }
