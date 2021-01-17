@@ -25,7 +25,7 @@ import { SetMediaInfo } from '../../ipc';
 import { onRejected } from '../../Tools';
 
 const log = MakeLogger('MetadataEditor', true);
-const err = MakeError('MetadataEditor-err');
+const err = MakeError('MetadataEditor-err'); // eslint-disable-line
 
 export type MetadataProps = {
   forSong?: SongKey;
@@ -121,10 +121,10 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       if (year !== false) {
         md.year = Number.parseInt(year.trim(), 10);
       }
+      // Cowardly refuse to update track # and title for multi-edit
       if (isSingle) {
-        // Cowardly refuse to update track # and title for multi-edit
-        if (trackNum !== '') {
-          md.track = Number.parseInt(trackNum.trim(), 10);
+        if (track) {
+          md.track = Number.parseInt(track.trim(), 10);
         }
         if (title) {
           md.title = title;
@@ -133,8 +133,8 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       if (vaType !== false && vaType !== undefined && vaType !== '') {
         md.vaType = vaType;
       }
-      if (diskNum !== '') {
-        md.disk = Number.parseInt(diskNum.trim(), 10);
+      if (disk !== false) {
+        md.disk = disk.trim() ? Number.parseInt(disk.trim(), 10) : 0;
         log('Disk Number:' + md.disk.toString());
       }
       if (vars !== false) {
