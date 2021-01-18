@@ -27,8 +27,8 @@ I only have MacOS releases currently, but feel free to download one, if you want
 to try it out. Releases are [here](https://github.com/kevinfrei/EMP/releases).
 I'll try to get a Windows & Linux release out at some point. The Windows release
 will likely occur after Ryzen 5000 series processors as back in stock, as I'm on
-my personal Mac Mini until then (cuz the Mini's i7 8600B is faster than my PC's
-iv
+my personal Mac Mini until then (cuz the Mini's i7-8700B is faster than my PC's
+i7 6700K)
 
 ## What's the current state?
 
