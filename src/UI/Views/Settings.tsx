@@ -4,6 +4,7 @@ import {
   Label,
   SpinButton,
   Stack,
+  Text,
   TextField,
   TooltipHost,
 } from '@fluentui/react';
@@ -12,6 +13,7 @@ import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';
 import {
   albumCoverNameState,
+  defaultLocationState,
   downloadAlbumArtworkState,
   downloadArtistArtworkState,
   ignoreArticlesState,
@@ -42,20 +44,40 @@ export function addLocation({ set }: CallbackInterface): boolean {
   return false;
 }
 
-function RecoilLocations(): JSX.Element {
+function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
+  const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
   const onAddLocation = useRecoilCallback((cbInterface) => () => {
     addLocation(cbInterface);
   });
+  const setSaveStyle = {
+    textContainer: { fontSize: 11 },
+    root: { height: 22, padding: 5, minWidth: 45 },
+    flexContainer: {
+      flexDirection: 'row-reverse',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  };
   return (
     <>
       {(newLoc || []).map((elem) => (
-        <Stack horizontal key={elem}>
+        <Stack horizontal key={elem} verticalAlign="center">
           <IconButton
             onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
             iconProps={{ iconName: 'Delete' }}
           />
-          <Label>{elem}</Label>
+          <Label>{elem}</Label>&nbsp;
+          {defLoc === elem ? (
+            <Text variant="small">[NYI: Save Location]</Text>
+          ) : (
+            <DefaultButton
+              styles={setSaveStyle}
+              iconProps={{ iconName: 'Save' }}
+              onClick={() => setDefLoc(elem)}
+              text="NYI: Set as"
+            />
+          )}
         </Stack>
       ))}
       <Stack horizontal>
@@ -157,7 +179,7 @@ export default function Settings(): JSX.Element {
   return (
     <Stack className="settings-view">
       <Expandable separator label="Music Locations" defaultShow={true}>
-        <RecoilLocations />
+        <MusicLocations />
       </Expandable>
       <Expandable separator label="Sorting & Filtering" defaultShow={true}>
         <ArticleSorting />

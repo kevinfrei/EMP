@@ -51,6 +51,12 @@ export const locationsState = atom<string[]>({
   effects_UNSTABLE: [syncWithMainEffect<string[]>()],
 });
 
+export const defaultLocationState = atom<string>({
+  key: 'defaultLocation',
+  default: '',
+  effects_UNSTABLE: [syncWithMainEffect<string>()],
+});
+
 // Sort with/without articles setting
 export const ignoreArticlesState = atom<boolean>({
   key: 'rSortWithArticles',
