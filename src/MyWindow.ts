@@ -14,7 +14,7 @@ import { PathLike } from 'fs';
 import { FileHandle } from 'fs/promises';
 import { HandleMessage } from './ipc';
 
-const log = MakeLogger('MyWindow', true);
+const log = MakeLogger('MyWindow', false && IsDev());
 const err = MakeError('MyWindow-err');
 
 type ReadFile1 = (path: PathLike | FileHandle) => Promise<Buffer>;
@@ -53,6 +53,10 @@ export function FocusSearch(): boolean {
     return true;
   }
   return false;
+}
+
+export function IsDev(): boolean {
+  return window.isDev === true;
 }
 
 export function InitialWireUp(): void {

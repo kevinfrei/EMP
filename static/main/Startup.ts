@@ -1,9 +1,10 @@
 import { MakeLogger } from '@freik/core-utils';
+import electronIsDev from 'electron-is-dev';
 import { CommsSetup } from './Communication';
 import { getMusicDB } from './MusicAccess';
 import { UpdateDB } from './musicDB';
 
-const log = MakeLogger('Startup', true);
+const log = MakeLogger('Startup', false && electronIsDev);
 
 /**
  * Called to set stuff up before *anything* else has been done.

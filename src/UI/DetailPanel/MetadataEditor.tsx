@@ -25,6 +25,7 @@ import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
 import {
   ImageFromClipboard,
+  IsDev,
   ShowOpenDialog,
   UploadFileForAlbum,
   UploadFileForSong,
@@ -35,7 +36,7 @@ import { albumCoverUrlState, picCacheAvoiderState } from '../../Recoil/Local';
 import { getAlbumKeyForSongKeyState } from '../../Recoil/ReadOnly';
 import { onRejected } from '../../Tools';
 
-const log = MakeLogger('MetadataEditor', true);
+const log = MakeLogger('MetadataEditor', false && IsDev());
 const err = MakeError('MetadataEditor-err'); // eslint-disable-line
 
 export type MetadataProps = {

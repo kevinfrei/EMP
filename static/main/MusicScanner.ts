@@ -15,6 +15,7 @@ import {
   Type,
 } from '@freik/core-utils';
 import { Metadata } from '@freik/media-utils';
+import electronIsDev from 'electron-is-dev';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
 import { GetMetadataStore, isFullMetadata } from './metadata';
@@ -25,7 +26,7 @@ import { MakeSearchable, Searchable } from './Search';
 
 export type ServerSong = Song & { path: string };
 
-const log = MakeLogger('music', true);
+const log = MakeLogger('music', false && electronIsDev);
 const err = MakeError('music-err');
 
 const setEqual = Comparisons.ArraySetEqual;

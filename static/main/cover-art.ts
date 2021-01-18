@@ -10,6 +10,7 @@ import {
 import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
+import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
@@ -19,7 +20,7 @@ import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
 
-const log = MakeLogger('cover-art', true);
+const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
