@@ -1,12 +1,23 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
-import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { IpcRenderer } from 'electron';
+import {
+  AlbumKey,
+  FTON,
+  MakeError,
+  MakeLogger,
+  SongKey,
+  Type,
+} from '@freik/core-utils';
+import { IpcRenderer, NativeImage } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
+import { PathLike } from 'fs';
+import { FileHandle } from 'fs/promises';
 import { HandleMessage } from './ipc';
 
-const log = MakeLogger('MyWindow');
+const log = MakeLogger('MyWindow', true);
 const err = MakeError('MyWindow-err');
+
+type ReadFile1 = (path: PathLike | FileHandle) => Promise<Buffer>;
 
 /*
  * "Window" stuff goes here
@@ -19,6 +30,8 @@ interface MyWindow extends Window {
   initApp?: () => void;
   ipcSet?: boolean;
   searchBox?: ISearchBox | null;
+  clipboard: Electron.Clipboard | undefined;
+  readFile: ReadFile1; // | ReadFile2 | ReadFile3;
 }
 
 declare let window: MyWindow;
@@ -87,15 +100,15 @@ export function UnsubscribeMediaMatcher(
   mediaQuery?.removeEventListener('change', handler);
 }
 
-export async function InvokeMain(
+export async function InvokeMain<T>(
   channel: string,
-  key?: string,
+  key?: T,
 ): Promise<string | void> {
   let result;
   if (key) {
-    log(`Invoking main("${channel}", "${key}")`);
+    log(`Invoking main("${channel}", "...")`);
     result = (await window.ipc!.invoke(channel, key)) as string;
-    log(`Invoke main ("${channel}" "${key}") returned:`);
+    log(`Invoke main ("${channel}" "...") returned:`);
   } else {
     log(`Invoking main("${channel}")`);
     result = (await window.ipc!.invoke(channel)) as string;
@@ -103,4 +116,46 @@ export async function InvokeMain(
   }
   log(result);
   return result;
+}
+
+export function ImageFromClipboard(): NativeImage | undefined {
+  return window.clipboard?.readImage();
+}
+
+export async function UploadImageForSong(
+  songKey: SongKey,
+  nativeImage: NativeImage,
+): Promise<void> {
+  // Have to turn a nativeImage into something that can be cloned
+  const buffer = nativeImage.toJPEG(90);
+  await InvokeMain('upload-image', { songKey, nativeImage: buffer });
+}
+
+export async function UploadImageForAlbum(
+  albumKey: AlbumKey,
+  nativeImage: NativeImage,
+): Promise<void> {
+  // Have to turn a nativeImage into something that can be cloned
+  const buffer = nativeImage.toJPEG(90);
+  await InvokeMain('upload-image', { albumKey, nativeImage: buffer });
+}
+
+export async function UploadFileForSong(
+  songKey: SongKey,
+  path: string,
+): Promise<void> {
+  // Have to turn a nativeImage into something that can be cloned
+  const buffer = await window.readFile(path);
+  log(typeof buffer);
+  await InvokeMain('upload-image', { songKey, nativeImage: buffer });
+}
+
+export async function UploadFileForAlbum(
+  albumKey: AlbumKey,
+  path: string,
+): Promise<void> {
+  // Have to turn a nativeImage into something that can be cloned
+  const buffer = await window.readFile(path);
+  log(typeof buffer);
+  await InvokeMain('upload-image', { albumKey, nativeImage: buffer });
 }

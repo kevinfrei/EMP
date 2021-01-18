@@ -1,4 +1,12 @@
-import { Album, FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import {
+  Album,
+  AlbumKey,
+  FTON,
+  MakeError,
+  MakeLogger,
+  SongKey,
+  Type,
+} from '@freik/core-utils';
 import { Cover } from '@freik/media-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
@@ -11,7 +19,7 @@ import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
 import * as persist from './persist';
 
-const log = MakeLogger('cover-art');
+const log = MakeLogger('cover-art', true);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
@@ -105,8 +113,13 @@ export async function picBufProcessor(
   try {
     const db = await getMusicDB();
     if (db) {
+      log(`Got a request for ${albumId}`);
+      if (albumId.lastIndexOf('#') !== -1) {
+        albumId = albumId.substr(0, albumId.lastIndexOf('#'));
+      }
       const maybePath = db.pictures.get(albumId);
       if (maybePath) {
+        log(`Returning ${maybePath}`);
         return {
           data: await fs.readFile(maybePath),
         };
@@ -118,6 +131,8 @@ export async function picBufProcessor(
         const ic = AlbumCoverCache();
         const cachedData = await ic.get(album);
         if (cachedData) {
+          log(`Returning from cache:`);
+          log(cachedData);
           return { data: cachedData };
         }
         // Nope, let's look in the files
@@ -160,11 +175,16 @@ export async function picBufProcessor(
 
 let dbSaveDebounceTimer: NodeJS.Timeout | null = null;
 
-async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
+async function SavePicForAlbum(
+  db: MusicDB,
+  album: Album,
+  data: Buffer,
+  overridePref?: boolean,
+) {
   const songKey = album.songs[0];
   const song = db.songs.get(songKey);
   if (song) {
-    if (await shouldSaveAlbumArtworkWithMusicFiles()) {
+    if (overridePref || (await shouldSaveAlbumArtworkWithMusicFiles())) {
       const coverName = await albumCoverName();
       // This is pretty dumb, but it works for PNG's and assumes all else is JPG
       const first4bytes = data.readInt32BE(0);
@@ -197,4 +217,60 @@ async function SavePicForAlbum(db: MusicDB, album: Album, data: Buffer) {
   // We tried to save it with a song in the album, no such luck
   // Save it in the cache
   await AlbumCoverCache().put(data, album);
+}
+
+export type AlbumCoverData =
+  | {
+      songKey: SongKey;
+      nativeImage: Uint8Array;
+    }
+  | {
+      albumKey: AlbumKey;
+      nativeImage: Uint8Array;
+    };
+
+// eslint-disable-next-line
+export function isAlbumCoverData(arg: any): arg is AlbumCoverData {
+  log('Checking argument type:');
+  log(arg);
+  if (!Type.has(arg, 'nativeImage')) {
+    log('No nativeImage property');
+    return false;
+  }
+  if (!(arg.nativeImage instanceof Uint8Array)) {
+    log('Not a UInt8Array instance');
+    log(typeof arg.nativeImage);
+    return false;
+  }
+  if (Type.hasStr(arg, 'songKey')) {
+    return true;
+  }
+  return Type.hasStr(arg, 'albumKey');
+}
+
+export async function SaveNativeImageForAlbum(
+  arg: AlbumCoverData,
+): Promise<string> {
+  const db = await getMusicDB();
+  if (!db) {
+    return 'failed to get MusicDB';
+  }
+  let albumKey;
+  if (Type.hasStr(arg, 'albumKey')) {
+    albumKey = arg.albumKey;
+  } else {
+    const song = db.songs.get(arg.songKey);
+    if (song) {
+      albumKey = song.albumId;
+    }
+  }
+  if (!albumKey) {
+    return 'Failed to find albumKey';
+  }
+  const album = db.albums.get(albumKey);
+  if (!album) {
+    return 'Unable to find Album from key';
+  }
+  await SavePicForAlbum(db, album, Buffer.from(arg.nativeImage));
+  return '';
 }

@@ -3,7 +3,11 @@ import { MakeLogger } from '@freik/core-utils';
 import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
-import { currentSongKeyState, songListState } from '../Recoil/Local';
+import {
+  albumCoverUrlState,
+  currentSongKeyState,
+  songListState,
+} from '../Recoil/Local';
 import {
   MediaTime,
   mediaTimePercentState,
@@ -32,14 +36,10 @@ export function GetAudioElem(): HTMLMediaElement | void {
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyState);
   const albumKey = useRecoilValue(getAlbumKeyForSongKeyState(songKey));
-
+  const picurl = useRecoilValue(albumCoverUrlState(albumKey));
   return (
     <span id="song-cover-art">
-      <img
-        id="img-current-cover-art"
-        src={`pic://album/${albumKey}`}
-        alt="album cover"
-      />
+      <img id="img-current-cover-art" src={picurl} alt="album cover" />
     </span>
   );
 }

@@ -21,7 +21,18 @@ import {
 } from '@freik/core-utils';
 import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
+import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
+import {
+  ImageFromClipboard,
+  ShowOpenDialog,
+  UploadFileForAlbum,
+  UploadFileForSong,
+  UploadImageForAlbum,
+  UploadImageForSong,
+} from '../../MyWindow';
+import { albumCoverUrlState, picCacheAvoiderState } from '../../Recoil/Local';
+import { getAlbumKeyForSongKeyState } from '../../Recoil/ReadOnly';
 import { onRejected } from '../../Tools';
 
 const log = MakeLogger('MetadataEditor', true);
@@ -148,6 +159,67 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     }
   };
 
+  const uploadImage = async (
+    cbInterface: CallbackInterface,
+    uploadSong: (sk: SongKey) => Promise<void>,
+    uploadAlbum: (ak: AlbumKey) => Promise<void>,
+  ) => {
+    // Easy: one song:
+    if (props.forSong !== undefined) {
+      await uploadSong(props.forSong);
+      const albumKey = await cbInterface.snapshot.getPromise(
+        getAlbumKeyForSongKeyState(props.forSong),
+      );
+      setTimeout(
+        () => cbInterface.set(picCacheAvoiderState(albumKey), (p) => p + 1),
+        250,
+      );
+    } else {
+      // Messy: Multiple songs
+      const albumsSet: Set<AlbumKey> = new Set();
+      for (const song of props.forSongs!) {
+        const albumKey = await cbInterface.snapshot.getPromise(
+          getAlbumKeyForSongKeyState(song),
+        );
+        if (albumsSet.has(albumKey)) {
+          continue;
+        }
+        albumsSet.add(albumKey);
+        await uploadAlbum(albumKey);
+        // This bonks the URL so it will be reloaded after we've uploaded the image
+        setTimeout(
+          () => cbInterface.set(picCacheAvoiderState(albumKey), (p) => p + 1),
+          250,
+        );
+      }
+    }
+  };
+
+  const onImageFromClipboard = useRecoilCallback((cbInterface) => async () => {
+    const img = ImageFromClipboard();
+    if (img !== undefined) {
+      await uploadImage(
+        cbInterface,
+        async (sk: SongKey) => await UploadImageForSong(sk, img),
+        async (ak: AlbumKey) => await UploadImageForAlbum(ak, img),
+      );
+    }
+  });
+  const onSelectFile = useRecoilCallback((cbInterface) => async () => {
+    const selected = ShowOpenDialog({
+      title: 'Select Cover Art image',
+      properties: ['openFile'],
+      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],
+    });
+    if (selected !== undefined) {
+      await uploadImage(
+        cbInterface,
+        async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
+        async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
+      );
+    }
+  });
+  const coverUrl = useRecoilValue(albumCoverUrlState(props.albumId || '___'));
   // Nothing selected: EMPTY!
   if (!isSingle && !isMultiple) {
     return <Text>Not Single and not Multiple (This is a bug!)</Text>;
@@ -267,10 +339,16 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       </Stack>
       <Image
         alt="Album Cover"
-        src={`pic://album/${props.albumId ? props.albumId : '____'}`}
+        src={coverUrl}
         imageFit={ImageFit.centerContain}
         height={350}
       />
+      <br />
+      <Stack horizontal horizontalAlign="center">
+        <DefaultButton text="Choose File..." onClick={onSelectFile} />
+        &nbsp;
+        <DefaultButton text="From Clipboard" onClick={onImageFromClipboard} />
+      </Stack>
     </>
   );
 }

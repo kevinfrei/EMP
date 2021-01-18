@@ -220,6 +220,12 @@ export function isPlaylist(playlist?: string): boolean {
   return Type.isString(playlist) && playlist.length > 0;
 }
 
+export function RandomInt(max: number): number {
+  const values = new Uint32Array(4);
+  window.crypto.getRandomValues(values);
+  return values[0] % max;
+}
+
 export function ShuffleArray<T>(array: T[]): T[] {
   const values = new Uint32Array(array.length);
   window.crypto.getRandomValues(values);

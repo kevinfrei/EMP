@@ -20,6 +20,7 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
+import { albumCoverUrlState } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
@@ -51,6 +52,7 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const onRightClick = useRecoilCallback((cbInterface) =>
     SongListDetailContextMenuClick(cbInterface, props.album.songs),
   );
+  const picurl = useRecoilValue(albumCoverUrlState(props.album.key));
   return (
     <Stack
       horizontal
@@ -60,7 +62,7 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
       style={{ padding: '2px 0px', cursor: 'pointer' }}
     >
       <Image
-        src={`pic://album/${props.album.key}`}
+        src={picurl}
         height={50}
         width={50}
         imageFit={ImageFit.centerContain}

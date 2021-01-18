@@ -25,7 +25,7 @@ import { MakeSearchable, Searchable } from './Search';
 
 export type ServerSong = Song & { path: string };
 
-const log = MakeLogger('music');
+const log = MakeLogger('music', true);
 const err = MakeError('music-err');
 
 const setEqual = Comparisons.ArraySetEqual;
@@ -468,11 +468,19 @@ async function fileNamesToDatabase(
 
 const audioTypes = new Set(['.flac', '.mp3', '.aac', '.m4a']);
 const imageTypes = new Set(['.png', '.jpg', '.jpeg']);
-const isOfType = (filename: string, types: Set<string>) =>
-  !path.basename(filename).startsWith('.') &&
-  types.has(path.extname(filename).toLowerCase());
+function isOfType(
+  filename: string,
+  types: Set<string>,
+  hidden?: boolean,
+): boolean {
+  return (
+    (hidden || !path.basename(filename).startsWith('.')) &&
+    types.has(path.extname(filename).toLowerCase())
+  );
+}
 const isMusicType = (filename: string) => isOfType(filename, audioTypes);
-const isImageType = (filename: string) => isOfType(filename, imageTypes);
+// Hidden images are fine for cover art (actually, maybe preferred!
+const isImageType = (filename: string) => isOfType(filename, imageTypes, true);
 
 export async function find(locations: string[]): Promise<MusicDB> {
   // If we have too many locations, this is *baaaad* but oh well...
@@ -526,6 +534,7 @@ export async function find(locations: string[]): Promise<MusicDB> {
     }
   }
   log(`${songsList.length} songs found during folder scan`);
+  log(`${picList.length} images found during folder scan`);
   const theDb = await fileNamesToDatabase(songsList, picList);
   log(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
   return theDb;

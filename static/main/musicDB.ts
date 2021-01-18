@@ -46,7 +46,7 @@ export async function RescanDB(): Promise<void> {
     }
     scansWaiting = true;
     while (scanning) {
-      await sleep(200);
+      await sleep(100);
     }
   }
   if (scanning) {

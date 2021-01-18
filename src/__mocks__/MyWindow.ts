@@ -1,9 +1,17 @@
 // This is for getting at "global" stuff from the window object
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import crypto from 'crypto';
 import { OpenDialogSyncOptions } from 'electron/main';
 
 const log = MakeLogger('MyWindow-mock');
 const err = MakeError('MyWindow-mock-err');
+
+// This fixes window.crypto for the Jest environment
+Object.defineProperty(global, 'crypto', {
+  value: {
+    getRandomValues: (arr: any[]) => crypto.randomBytes(arr.length),
+  },
+});
 
 export function ShowOpenDialog(
   options: OpenDialogSyncOptions,

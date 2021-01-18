@@ -1,5 +1,6 @@
-import { SongKey } from '@freik/core-utils';
-import { atom, selector } from 'recoil';
+import { AlbumKey, SongKey } from '@freik/core-utils';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { RandomInt } from '../Tools';
 import { repeatState } from './ReadWrite';
 
 export type PlaylistName = string;
@@ -99,4 +100,20 @@ export const displayMessageState = atom<boolean>({
 export const isMiniplayerState = atom<boolean>({
   key: 'isMiniplayer',
   default: false,
+});
+
+/* This stuff is to make it so that pic URL's will refresh, when we update
+ * the "picCacheAvoider" for a particularly album cover
+ * It's efficacy is not guaranteed, but it's a best effort, i guess
+ */
+export const picCacheAvoiderState = atomFamily<number, AlbumKey>({
+  key: 'picCacheAvoider',
+  default: RandomInt(0xfffff),
+});
+
+export const albumCoverUrlState = selectorFamily<string, AlbumKey>({
+  key: 'albuCoverUrl',
+  get: (key: AlbumKey) => ({ get }) => {
+    return `pic://album/${key}#${get(picCacheAvoiderState(key))}`;
+  },
 });

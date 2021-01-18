@@ -1,6 +1,7 @@
 import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
 import { ipcMain, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
+import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { FlushImageCache } from './ImageCache';
 import { setMediaInfoForSong } from './metadata';
 import {
@@ -24,6 +25,7 @@ const log = MakeLogger('Communication');
 const err = MakeError('Communication-err');
 
 type Handler<T> = (arg?: string) => Promise<T | void>;
+type TypeHandler<T> = (arg: T) => Promise<string | void>;
 
 /**
  * Read a value from persistence by name, returning it's unprocessed contents
@@ -122,6 +124,31 @@ export function register(key: string, handleIt: Handler<string>): void {
     },
   );
 }
+/**
+ * Registers with `ipcMain.handle` a function that takes a mandatory parameter
+ * and returns *string* data untouched. It also requires a checker to ensure the
+ * data is properly typed
+ * @param  {string} key - The id to register a listener for
+ * @param  {TypeHandler<T>} handler - the function that handles the data
+ * @param  {(v:any)=>v is T} checker - a Type Check function for type T
+ * @returns void
+ */
+export function registerKey<T>(
+  key: string,
+  handler: TypeHandler<T>,
+  checker: (v: any) => v is T,
+): void {
+  ipcMain.handle(
+    key,
+    async (event: IpcMainInvokeEvent, arg: any): Promise<string | void> => {
+      if (checker(arg)) {
+        return await handler(arg);
+      } else {
+        err(`Invalid argument type to ${key} handler`);
+      }
+    },
+  );
+}
 
 /**
  * Show a file in the shell
@@ -172,4 +199,7 @@ export function CommsSetup(): void {
   // because they don't just read/write to disk.
   register('read-from-storage', readFromStorage);
   register('write-to-storage', writeToStorage);
+
+  // Unflattened data handlers (everything should switch to these eventually
+  registerKey('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
 }
