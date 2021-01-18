@@ -4,6 +4,7 @@ import {
   FTON,
   MakeError,
   MakeLogger,
+  SongKey,
   toSafeName,
   Type,
 } from '@freik/core-utils';
@@ -11,6 +12,8 @@ import { exception } from 'console';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
+import { getMusicDB } from './MusicAccess';
+import * as persist from './persist';
 
 const log = MakeLogger('playlists');
 const err = MakeError('playlists-err');
@@ -99,7 +102,10 @@ export async function savePlaylist(data?: string): Promise<void> {
     } catch (e) {
       /* */
     }
-    await fsp.writeFile(playlistPath(info.name), info.songs.join('\n'));
+    await fsp.writeFile(
+      playlistPath(info.name),
+      await toDiskFormat(info.songs),
+    );
   } catch (e) {
     err('Error while saving playlist:');
     err(data);
@@ -117,7 +123,7 @@ export async function loadPlaylist(data?: string): Promise<string[]> {
       return [];
     } else {
       const vals = await fsp.readFile(playlistPath(data), 'utf-8');
-      return vals.split('\n').filter((s) => s.length > 0);
+      return await fromDiskFormat(vals);
     }
   } catch (e) {
     err('Error while loading playlist:');
@@ -142,4 +148,66 @@ export async function checkPlaylists(data?: string): Promise<void> {
   }
   err('checkPlaylists error:');
   err(data);
+}
+
+let keyToPath: null | Map<SongKey, string> = null;
+let pathToKey: null | Map<string, SongKey> = null;
+
+async function loadHash(): Promise<void> {
+  const songHash = await persist.getItemAsync('songHashIndex');
+  if (!songHash) {
+    throw Error('Oh poop'); // This shouldn't ever be possible...
+  }
+  const path2key = FTON.parse(songHash) as Map<string, SongKey>;
+  if (Type.isMapOfStrings(path2key)) {
+    pathToKey = path2key;
+    keyToPath = new Map();
+    pathToKey.forEach((val, key) => keyToPath!.set(val, key));
+  } else {
+    throw Error('Invalid songHashIndex');
+  }
+}
+
+async function getKeyToPath(): Promise<Map<SongKey, string>> {
+  while (keyToPath === null) {
+    await loadHash();
+  }
+  return keyToPath;
+}
+
+async function getPathToKey(): Promise<Map<string, SongKey>> {
+  while (pathToKey === null) {
+    await loadHash();
+  }
+  return pathToKey;
+}
+
+async function toDiskFormat(keys: SongKey[]): Promise<string> {
+  const k2p = await getKeyToPath();
+  const res = ['#EXTM3U'];
+  for (const key of keys) {
+    const songpath = k2p.get(key);
+    if (!songpath) {
+      log(`Invalid SongKey ${key} in playlist`);
+    } else {
+      res.push(songpath);
+    }
+  }
+  return res.join('\n');
+}
+
+async function fromDiskFormat(flat: string): Promise<SongKey[]> {
+  const lines = flat.split('\n');
+  const db = await getMusicDB();
+  if (!db) {
+    return [];
+  }
+  if (lines.length < 2 || lines[0] !== '#EXTM3U') {
+    // Old format: Just a list of song keys. Filter 'em down
+    return lines.filter((key) => db.songs.has(key));
+  }
+  const p2k = await getPathToKey();
+  return lines
+    .map((p) => p2k.get(p))
+    .filter((kOrV) => Type.isString(kOrV) && db.songs.has(kOrV)) as SongKey[];
 }
