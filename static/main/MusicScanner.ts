@@ -93,6 +93,7 @@ const cleaners: [RegExp, string][] = [
   [/^AN /, ''],
 ];
 
+// TODO: https://stackoverflow.com/questions/990904
 export function normalizeName(phrase: string): string {
   let res = phrase.toLocaleUpperCase();
   for (const [rg, str] of cleaners) {
