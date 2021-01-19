@@ -1262,6 +1262,13 @@
   dependencies:
     "@freik/core-utils" "^0.9.2"
 
+"@freik/node-utils@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.4.0.tgz#7dcc87044ee662f3b47f07180b951c161ec29fa8"
+  integrity sha512-wiq7+cZePxa3EATCTYEn0PITdc4YfyLz4HFwGT6ebB3HqmlhP9eAAF9M8pKD4igB5fNbaARMvZ7iRemfp6QZDw==
+  dependencies:
+    "@freik/core-utils" "^0.9.2"
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"

@@ -8,6 +8,7 @@ import {
   Type,
 } from '@freik/core-utils';
 import { Cover } from '@freik/media-utils';
+import { hideFile } from '@freik/node-utils/lib/file';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
@@ -197,6 +198,9 @@ async function SavePicForAlbum(
       try {
         log('Saving to path: ' + albumPath);
         await fs.writeFile(albumPath, data);
+        if (coverName.startsWith('.')) {
+          await hideFile(albumPath);
+        }
         log('And, saved it to disk!');
         db.pictures.set(album.key, albumPath);
         // Delay saving the Music DB, so that we're not doing it a gazillion
