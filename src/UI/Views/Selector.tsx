@@ -5,6 +5,7 @@ import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
 import NowPlayingView from './NowPlaying';
+import NuAlbumView from './NuAlbums';
 import PlaylistsView from './Playlists';
 import RecentlyAddedView from './RecentlyAdded';
 import SearchResultsView from './SearchResults';
@@ -17,6 +18,9 @@ export default function ViewSelector(): JSX.Element {
     which === v ? {} : { visibility: 'hidden' };
   return (
     <>
+      <div className="current-view" style={sl(CurrentView.recent)}>
+        <NuAlbumView />
+      </div>
       <div className="current-view" style={sl(CurrentView.album)}>
         <AlbumView />
       </div>

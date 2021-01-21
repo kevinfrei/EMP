@@ -49,3 +49,7 @@
   grid-column: 3;
   grid-row: 1;
 }
+
+.albumCoverList {
+  margin: 10px;
+}

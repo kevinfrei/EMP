@@ -1,38 +1,149 @@
-import { List, Text } from '@fluentui/react';
+import {
+  getTheme,
+  IRectangle,
+  ITheme,
+  List,
+  mergeStyleSets,
+} from '@fluentui/react';
+import { Album } from '@freik/core-utils';
+import { useCallback, useRef } from 'react';
+import { useRecoilValue } from 'recoil';
+import { albumCoverUrlState } from '../../Recoil/Local';
+import { allAlbumsState } from '../../Recoil/ReadOnly';
+import './styles/Albums.css';
 
-// Gonna make a better looking list. Check to make sure you can expand it
-// https://developer.microsoft.com/en-us/fluentui#/controls/web/list
-export function NuAlbums(): JSX.Element {
+const theme: ITheme = getTheme();
+const { palette, fonts } = theme;
+const ROWS_PER_PAGE = 8;
+const MAX_ROW_HEIGHT = 300;
+
+const classNames = mergeStyleSets({
+  listGridExample: {
+    overflow: 'hidden',
+    fontSize: 0,
+    position: 'relative',
+  },
+  listGridExampleTile: {
+    textAlign: 'center',
+    outline: 'none',
+    position: 'relative',
+    float: 'left',
+    // background: palette.neutralLighter,
+    selectors: {
+      'focus:after': {
+        content: '',
+        position: 'absolute',
+        left: 2,
+        right: 2,
+        top: 2,
+        bottom: 2,
+        boxSizing: 'border-box',
+        border: `1px solid ${palette.white}`,
+      },
+    },
+  },
+  listGridExampleSizer: {
+    paddingBottom: '100%',
+  },
+  listGridExamplePadder: {
+    position: 'absolute',
+    left: 5,
+    top: 5,
+    right: 5,
+    bottom: 5,
+  },
+  listGridExampleLabel: {
+    background: 'rgba(0, 0, 0, 0.3)',
+    color: '#FFFFFF',
+    position: 'absolute',
+    padding: 10,
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    fontSize: fonts.small.fontSize,
+    boxSizing: 'border-box',
+  },
+  listGridExampleImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    borderRadius: '10px',
+    margin: 0,
+  },
+});
+
+function AlbumCoverView({
+  album,
+  cols,
+}: {
+  album: Album;
+  cols: number;
+}): JSX.Element {
+  const picurl = useRecoilValue(albumCoverUrlState(album.key));
+  if (!album) {
+    return <></>;
+  }
   return (
-    <div>
-      <List>
-        <Text>Howdy</Text>
-        <Text>Howdy</Text>
-        <Text>Howdy</Text>
-        <Text>Howdy</Text>
-        <Text>Howdy</Text>
-        <Text>Howdy</Text>
-      </List>
+    <div
+      className={classNames.listGridExampleTile}
+      data-is-focusable
+      style={{
+        width: `${100 / cols}%`,
+      }}
+    >
+      <div className={classNames.listGridExampleSizer}>
+        <div className={classNames.listGridExamplePadder}>
+          <img
+            src={picurl}
+            alt="album cover"
+            className={classNames.listGridExampleImage}
+          />
+          <span
+            className={classNames.listGridExampleLabel}
+          >{`${album.title}`}</span>
+        </div>
+      </div>
     </div>
   );
 }
 
-function foo() {
-  let total = 0;
-  let max = 0;
-  for (let i = 0; i < 1048576; i++) {
-    const c = String.fromCharCode(i);
-    const n = c.charCodeAt(0);
-    if (n < i) {
-      max = i;
-      break;
-    }
-    const lc = c.toLocaleLowerCase();
-    const uc = c.toLocaleUpperCase();
-    if (lc !== uc) {
-      console.log(`${i}: ${c} -- ${lc}/${uc}`);
-      total++;
-    }
-  }
-  console.log(`${total} out of ${max}`);
+export default function NuAlbums(): JSX.Element {
+  const columnCount = useRef(0);
+  const rowHeight = useRef(0);
+
+  const getItemCountForPage = useCallback(
+    (itemIndex?: number, surfaceRect?: IRectangle) => {
+      if (itemIndex === 0 && surfaceRect) {
+        columnCount.current = Math.ceil(surfaceRect.width / MAX_ROW_HEIGHT);
+        rowHeight.current = Math.floor(surfaceRect.width / columnCount.current);
+      }
+      return columnCount.current * ROWS_PER_PAGE;
+    },
+    [],
+  );
+
+  const onRenderCell = (item?: Album, index?: number) => {
+    return item !== undefined ? (
+      <AlbumCoverView album={item} cols={columnCount.current} />
+    ) : (
+      <></>
+    );
+  };
+  const albums = useRecoilValue(allAlbumsState);
+  const getPageHeight = useCallback((): number => {
+    return rowHeight.current * ROWS_PER_PAGE;
+  }, []);
+  return (
+    <div className="albumCoverList">
+      <List
+        className={classNames.listGridExample}
+        items={[...albums.values()]}
+        getItemCountForPage={getItemCountForPage}
+        getPageHeight={getPageHeight}
+        renderedWindowsAhead={4}
+        onRenderCell={onRenderCell}
+      />
+    </div>
+  );
 }
