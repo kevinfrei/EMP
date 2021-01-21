@@ -87,15 +87,15 @@ function getSongKey(songPath: string) {
 
 const cleaners: [RegExp, string][] = [
   [/[`’]/g, "'"],
+  [/[\u0300-\u036f]/g, ''], // This kills diacriticals after .normalize()
   [/‐/g, '-'],
   [/^THE /, ''],
   [/^A /, ''],
   [/^AN /, ''],
 ];
 
-// TODO: https://stackoverflow.com/questions/990904
 export function normalizeName(phrase: string): string {
-  let res = phrase.toLocaleUpperCase();
+  let res = phrase.toLocaleUpperCase().normalize();
   for (const [rg, str] of cleaners) {
     res = res.replace(rg, str);
   }
