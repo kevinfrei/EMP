@@ -8,7 +8,6 @@
     "incremental": true,
     "allowJs": true,
     "tsBuildInfoFile": ".tsmain.tsbuildinfo",
-    "downlevelIteration": true,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,

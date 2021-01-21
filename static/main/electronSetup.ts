@@ -4,6 +4,8 @@ import isDev from 'electron-is-dev';
 import { makeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
 
+app.commandLine.appendSwitch('disable-http-cache');
+
 export type OnWindowCreated = () => Promise<void>;
 
 const log = MakeLogger('electronSetup');

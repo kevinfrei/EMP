@@ -8,7 +8,6 @@
     "incremental": true,
     "allowJs": true,
     "tsBuildInfoFile": ".tsrender.tsbuildinfo",
-    "downlevelIteration": true,
     "isolatedModules": true,
     "strict": true,
     "noImplicitAny": true,

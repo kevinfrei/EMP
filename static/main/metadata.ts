@@ -227,7 +227,7 @@ function MakeMetadataStore(name: string) {
     try {
       valuesToRestore = FTON.parse(fromFile);
     } catch (e) {
-      err('Invalid file format for MDS');
+      err(`Invalid file format for MDS '${name}'`);
       return false;
     }
     if (
