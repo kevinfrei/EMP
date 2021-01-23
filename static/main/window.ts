@@ -120,11 +120,12 @@ export function toggleMiniPlayer(): void {
     );
     // TODO: Make this thing stick to the sides of the screen
     const atEdge =
-      display.bounds.x +
-        display.bounds.width -
-        windowPos.bounds.x -
-        windowPos.bounds.width <
-      15;
+      Math.abs(
+        display.bounds.x +
+          display.bounds.width -
+          windowPos.bounds.x -
+          windowPos.bounds.width,
+      ) < 20;
     if (prevWidth > 450 || windowPos.bounds.width < 450) {
       mainWindow.setSize(Math.max(prevWidth, 550), windowPos.bounds.height);
       if (atEdge) {

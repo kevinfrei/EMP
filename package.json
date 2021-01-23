@@ -288,7 +288,12 @@
       "react/jsx-equals-spacing": "off",
       "react/jsx-wrap-multilines": "off",
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/exhaustive-deps": [
+        "warn",
+        {
+          "additionalHooks": "useRecoilCallback"
+        }
+      ],
       "space-before-function-paren": "off",
       "space-in-parens": [
         "off",
