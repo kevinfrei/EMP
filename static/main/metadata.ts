@@ -1,5 +1,6 @@
 import {
   Attributes,
+  Comparisons,
   FTON,
   FTONData,
   FullMetadata,
@@ -23,6 +24,8 @@ declare type NestedValue =
   | string
   | boolean;
 declare type NestedObject = { [key: string]: NestedValue };
+
+export type MinimumMetadata = Partial<FullMetadata> & { originalPath: string };
 
 function flatten(obj: NestedObject): Map<string, string> {
   const result = new Map<string, string>();
@@ -82,8 +85,8 @@ export async function getMediaInfo(
 }
 
 export type MetadataStore = {
-  get: (path: string) => Partial<FullMetadata> | void;
-  set: (path: string, md: Partial<FullMetadata>) => void;
+  get: (path: string) => MinimumMetadata | void;
+  set: (path: string, md: MinimumMetadata) => void;
   fail: (path: string) => void;
   shouldTry: (path: string) => boolean;
   save: () => Promise<void>;
@@ -115,39 +118,63 @@ const mandatoryMetadataKeys: string[] = [
 ];
 
 // Checks to make sure obj is a Partial<FullMetadata>
-export function isOnlyMetadata(
-  obj: unknown,
-): obj is Partial<FullMetadata> & { originalPath: string } {
+export function isOnlyMetadata(obj: unknown): obj is MinimumMetadata {
   if (!Type.isObjectNonNull(obj)) {
     err("object isn't non-null");
     err(obj);
     return false;
   }
-  for (const fieldName in obj) {
-    if (obj.hasOwnProperty(fieldName)) {
-      if (obj[fieldName] === undefined || obj[fieldName] === null) {
-        delete obj[fieldName];
-        continue;
-      }
-      const fieldTypeChecker = fullMetadataKeys.get(fieldName);
-      if (!fieldTypeChecker) {
-        err(`Object has unknown field ${fieldName}`);
-        err(obj);
-        return false;
-      }
-      if (!fieldTypeChecker(obj[fieldName])) {
-        err(`object failure for ${fieldName}:`);
-        err(obj);
-        err(
-          `Type check result: ${
-            fieldTypeChecker(obj[fieldName]) ? 'true' : 'false'
-          }`,
-        );
-        return false;
-      }
+  for (const fieldName of Object.keys(obj)) {
+    if (obj[fieldName] === undefined || obj[fieldName] === null) {
+      delete obj[fieldName];
+      continue;
+    }
+    const fieldTypeChecker = fullMetadataKeys.get(fieldName);
+    if (!fieldTypeChecker) {
+      err(`Object has unknown field ${fieldName}`);
+      err(obj);
+      return false;
+    }
+    if (!fieldTypeChecker(obj[fieldName])) {
+      err(`object failure for ${fieldName}:`);
+      err(obj);
+      err(
+        `Type check result: ${
+          fieldTypeChecker(obj[fieldName]) ? 'true' : 'false'
+        }`,
+      );
+      return false;
     }
   }
   return Type.hasStr(obj, 'originalPath');
+}
+
+function minMetadataEqual(a: MinimumMetadata, b: MinimumMetadata): boolean {
+  const ak = Object.keys(a);
+  const bk = Object.keys(b);
+  if (!Comparisons.ArraySetEqual(ak, bk)) {
+    return false;
+  }
+  const aa: { [index: string]: undefined | string | number | string[] } = a;
+  const bb: { [index: string]: undefined | string | number | string[] } = b;
+  for (const k of Object.keys(aa)) {
+    if (aa[k] === undefined && bb[k] === undefined) {
+      continue;
+    }
+    if (Type.isString(aa[k]) && Type.isString(bb[k]) && aa[k] === bb[k]) {
+      continue;
+    }
+    if (Type.isArrayOfString(aa[k]) && Type.isArrayOfString(bb[k])) {
+      if (Comparisons.ArraySetEqual(aa[k] as string[], bb[k] as string[])) {
+        continue;
+      }
+    }
+    if (Type.isNumber(aa[k]) && Type.isNumber(bb[k]) && aa[k] === bb[k]) {
+      continue;
+    }
+    return false;
+  }
+  return true;
 }
 
 export function isFullMetadata(obj: unknown): obj is FullMetadata {
@@ -164,7 +191,7 @@ export function isFullMetadata(obj: unknown): obj is FullMetadata {
 
 function MakeMetadataStore(name: string) {
   // The lookup for metadata
-  const store = new Map<string, Partial<FullMetadata>>();
+  const store = new Map<string, MinimumMetadata>();
   // A flag to keep track of if we've changed anything
   let dirty = false;
   // The set of stuff we've already attempted and failed to get MD for
@@ -174,12 +201,9 @@ function MakeMetadataStore(name: string) {
   function get(path: string) {
     return store.get(path);
   }
-  function set(path: string, md: Partial<FullMetadata>) {
+  function set(path: string, md: MinimumMetadata) {
     const curMd = get(path);
-    if (
-      curMd &&
-      FTON.stringify(curMd as FTONData) === FTON.stringify(md as FTONData)
-    ) {
+    if (curMd && minMetadataEqual(curMd, md)) {
       return;
     }
     dirty = true;
@@ -287,21 +311,8 @@ let mdSaveTimer: NodeJS.Timeout | null = null;
  * @returns Promise
  */
 export async function setMediaInfoForSong(
-  flattenedData?: string,
+  metadataToUpdate: MinimumMetadata,
 ): Promise<void> {
-  if (!flattenedData) {
-    return;
-  }
-  const metadataToUpdate = FTON.parse(flattenedData);
-  if (!Type.isObjectNonNull(metadataToUpdate)) {
-    err('Invalid data to setMediaInfoForSong');
-    return;
-  }
-  if (!Type.hasStr(metadataToUpdate, 'originalPath')) {
-    err('Missing "originalPath" attribute');
-    err(metadataToUpdate);
-    return;
-  }
   let fullPath: string = metadataToUpdate.originalPath;
   if (fullPath.startsWith('*')) {
     // This means we've got a SongKey instead of a path
@@ -320,12 +331,12 @@ export async function setMediaInfoForSong(
     metadataToUpdate.originalPath = fullPath;
   }
   const mdStore = await GetMetadataStore('metadataOverride');
-  if (isOnlyMetadata(metadataToUpdate)) {
-    const prevMd = mdStore.get(fullPath);
-    mdStore.set(fullPath, { ...prevMd, ...metadataToUpdate });
-    // commit the change to the music database
-    await UpdateSongMetadata(fullPath, { ...prevMd, ...metadataToUpdate });
-  }
+
+  const prevMd = mdStore.get(fullPath);
+  mdStore.set(fullPath, { ...prevMd, ...metadataToUpdate });
+  // commit the change to the music database
+  await UpdateSongMetadata(fullPath, { ...prevMd, ...metadataToUpdate });
+
   // Debounced the whole file save
   if (mdSaveTimer !== null) {
     clearTimeout(mdSaveTimer);
@@ -333,7 +344,7 @@ export async function setMediaInfoForSong(
   mdSaveTimer = setTimeout(() => {
     mdStore.save().catch((e) => {
       err('unable to save media info');
-      err(flattenedData);
+      err(metadataToUpdate);
     });
   }, 250);
 }

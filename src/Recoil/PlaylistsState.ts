@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {
-  Comparisons,
-  FTON,
-  PlaylistName,
-  SongKey,
-  Type,
-} from '@freik/core-utils';
+import { Comparisons, PlaylistName, SongKey, Type } from '@freik/core-utils';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { InvokeMain } from '../MyWindow';
+import { CallMain, PostMain } from '../MyWindow';
 import { isPlaylist } from '../Tools';
 import { activePlaylistState, songListState } from './Local';
 
@@ -23,21 +17,23 @@ export const playlistNamesState = selector<Set<PlaylistName>>({
   get: async ({ get }) => {
     const backed = get(playlistNamesBackerState);
     if (backed === false) {
-      const playlistsString = await InvokeMain('get-playlists');
+      const playlistsString = await CallMain<string[], void>(
+        'get-playlists',
+        undefined,
+        Type.isArrayOfString,
+      );
       if (!playlistsString) {
         return new Set();
       }
-      const parsed = FTON.parse(playlistsString);
-      const strs = FTON.arrayOfStrings(parsed);
-      return new Set(strs || []);
+      return new Set(playlistsString);
     } else {
       return new Set(backed);
     }
   },
   set: async ({ set }, newValue) => {
-    const data = Type.isSetOf(newValue, Type.isString) ? [...newValue] : [];
+    const data = Type.isSetOfString(newValue) ? [...newValue] : [];
     set(playlistNamesBackerState, data);
-    await InvokeMain('set-playlists', FTON.stringify(data));
+    await PostMain('set-playlists', data);
   },
 });
 
@@ -51,12 +47,15 @@ export const getPlaylistState = selectorFamily<SongKey[], PlaylistName>({
   get: (arg: PlaylistName) => async ({ get }) => {
     const backed = get(getPlaylistBackerState(arg));
     if (backed === false) {
-      const listStr = await InvokeMain('load-playlist', arg);
+      const listStr = await CallMain(
+        'load-playlist',
+        arg,
+        Type.isArrayOfString,
+      );
       if (!listStr) {
         return [];
       }
-      const parse = FTON.parse(listStr);
-      return Type.isArrayOf(parse, Type.isString) ? parse : [];
+      return listStr;
     } else {
       return backed;
     }
@@ -69,7 +68,7 @@ export const getPlaylistState = selectorFamily<SongKey[], PlaylistName>({
     }
     const songs = Type.isArray(newValue) ? newValue : [];
     set(getPlaylistBackerState(name), songs);
-    await InvokeMain('save-playlist', FTON.stringify({ name, songs }));
+    await PostMain('save-playlist', { name, songs });
   },
 });
 

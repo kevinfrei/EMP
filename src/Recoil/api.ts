@@ -1,6 +1,6 @@
-import { FTON, PlaylistName, SongKey, Type } from '@freik/core-utils';
+import { PlaylistName, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface } from 'recoil';
-import { InvokeMain } from '../MyWindow';
+import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   activePlaylistState,
@@ -177,7 +177,7 @@ export async function renamePlaylist(
   const curSongs = await snapshot.getPromise(getPlaylistState(curName));
   curNames.delete(curName);
   curNames.add(newName);
-  await InvokeMain('rename-playlist', FTON.stringify({ curName, newName }));
+  await PostMain('rename-playlist', [curName, newName]);
   set(getPlaylistState(newName), curSongs);
   set(playlistNamesState, new Set(curNames));
 }
@@ -192,7 +192,7 @@ export async function deletePlaylist(
   const curNames = await snapshot.getPromise(playlistNamesState);
   const activePlaylist = await snapshot.getPromise(activePlaylistState);
   curNames.delete(toDelete);
-  await InvokeMain('delete-playlist', toDelete);
+  await PostMain('delete-playlist', toDelete);
   set(playlistNamesState, new Set(curNames));
   if (activePlaylist === toDelete) {
     set(activePlaylistState, '');

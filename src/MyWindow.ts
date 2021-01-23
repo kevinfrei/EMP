@@ -122,6 +122,35 @@ export async function InvokeMain<T>(
   return result;
 }
 
+export async function CallMain<R, T>(
+  channel: string,
+  key: T,
+  typecheck: (val: any) => val is R,
+): Promise<R | void> {
+  let result: any;
+  if (key) {
+    log(`CallMain("${channel}", "...")`);
+    // eslint-disable-next-line
+    result = await window.ipc!.invoke(channel, key);
+    log(`CallMain ("${channel}" "...") returned:`);
+  } else {
+    log(`CallMain("${channel}")`);
+    // eslint-disable-next-line
+    result = await window.ipc!.invoke(channel);
+    log(`CallMain ("${channel}") returned:`);
+  }
+  log(result);
+  if (typecheck(result)) {
+    return result;
+  }
+  err('CallMain result failed typecheck');
+}
+
+export async function PostMain<T>(channel: string, key: T): Promise<void> {
+  const isVoid = (a: any): a is void => true;
+  return await CallMain(channel, key, isVoid);
+}
+
 export function ImageFromClipboard(): NativeImage | undefined {
   return window.clipboard?.readImage();
 }

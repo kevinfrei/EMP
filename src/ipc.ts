@@ -1,7 +1,6 @@
 import {
   AlbumKey,
   ArtistKey,
-  FTON,
   FTONData,
   FullMetadata,
   MakeError,
@@ -10,7 +9,7 @@ import {
   SongKey,
   Type,
 } from '@freik/core-utils';
-import { InvokeMain } from './MyWindow';
+import { CallMain, InvokeMain, PostMain } from './MyWindow';
 
 const log = MakeLogger('ipc');
 const err = MakeError('ipc-err');
@@ -24,17 +23,15 @@ export type SearchResults = {
 export async function GetMediaInfo(
   key: SongKey,
 ): Promise<Map<string, string> | void> {
-  const blob = await InvokeMain('get-media-info', key);
-  if (blob) {
-    const res = FTON.parse(blob);
-    if (Type.isMapOf(res, Type.isString, Type.isString)) {
-      return res;
-    }
-  }
+  return await CallMain<Map<string, string>, string>(
+    'media-info',
+    key,
+    Type.isMapOfStrings,
+  );
 }
 
 export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {
-  await InvokeMain('set-media-info', FTON.stringify(md));
+  await PostMain('set-media-info', md);
 }
 
 export async function ReadFromStorage(key: string): Promise<string | void> {
@@ -42,19 +39,36 @@ export async function ReadFromStorage(key: string): Promise<string | void> {
 }
 
 export async function WriteToStorage(key: string, data: string): Promise<void> {
-  await InvokeMain('write-to-storage', key + ':' + data);
+  await InvokeMain('write-to-storage', [key, data]);
+}
+
+function isSearchResults(arg: any): arg is SearchResults {
+  if (
+    Type.isObjectNonNull(arg) &&
+    Type.has(arg, 'songs') &&
+    Type.has(arg, 'albums') &&
+    Type.has(arg, 'artists')
+  ) {
+    return (
+      Type.isArrayOfString(arg.albums) &&
+      Type.isArrayOfString(arg.artists) &&
+      Type.isArrayOfString(arg.songs)
+    );
+  }
+  return false;
 }
 
 export async function SearchWhole(
   searchTerm: string,
 ): Promise<SearchResults | void> {
   log('Searching for:' + searchTerm);
-  const blob = await InvokeMain('search', searchTerm);
-  if (blob) {
-    log('Got a blob of size: ' + blob.length.toString());
-    return FTON.parse(blob) as SearchResults;
+  const res = await CallMain('search', searchTerm, isSearchResults);
+  if (res) {
+    log('Got a search results blob:');
+    log(res);
+    return res;
   } else {
-    log('Got no blob back');
+    log('Got no search results back');
   }
 }
 

@@ -1,9 +1,9 @@
-import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
+import { FTONData, MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { ipcMain, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { FlushImageCache } from './ImageCache';
-import { setMediaInfoForSong } from './metadata';
+import { isOnlyMetadata, setMediaInfoForSong } from './metadata';
 import {
   getMediaInfoForSong,
   searchSubstring,
@@ -15,6 +15,7 @@ import {
   checkPlaylists,
   deletePlaylist,
   getPlaylists,
+  isPlaylistSaveData,
   loadPlaylist,
   renamePlaylist,
   savePlaylist,
@@ -24,8 +25,7 @@ import { SendToMain } from './window';
 const log = MakeLogger('Communication');
 const err = MakeError('Communication-err');
 
-type Handler<T> = (arg?: string) => Promise<T | void>;
-type TypeHandler<T> = (arg: T) => Promise<string | void>;
+type Handler<R, T> = (arg: T) => Promise<R | void>;
 
 /**
  * Read a value from persistence by name, returning it's unprocessed contents
@@ -55,75 +55,22 @@ export async function readFromStorage(name?: string): Promise<string> {
  * @async @function
  * @param {string?} keyValuePair - The key:value string to write
  */
-export async function writeToStorage(keyValuePair?: string): Promise<void> {
-  if (!keyValuePair) return;
+export async function writeToStorage([key, value]: [
+  string,
+  string,
+]): Promise<void> {
   try {
     // First, split off the key name:
-    const pos = keyValuePair.indexOf(':');
-    const name = keyValuePair.substring(0, pos);
-    const value = keyValuePair.substring(pos + 1);
-    log(`writeToStorage(${name} : ${value})`);
+    log(`writeToStorage(${key} : ${value})`);
     // Push the data into the persistence system
-    await persist.setItemAsync(name, value);
-    log(`writeToStorage(${name}...) completed`);
+    await persist.setItemAsync(key, value);
+    log(`writeToStorage(${key}...) completed`);
   } catch (e) {
-    err(`error from writeToStorage(${keyValuePair})`);
+    err(`error from writeToStorage([${key}, ${value}])`);
     err(e);
   }
 }
 
-/**
- * Registers with `ipcMain.handle` a function that takes an optional string
- * (from the query) and returns UNFLATTENED data, which will then be returned
- * using the Flat Type Object Notation stingifier
- *
- * @function
- * @param {string} key - the name of the "channel" to respond to
- * @param {Handler<T>} handleIt - the function that takes a string and returns
- *  the corresponding object value for the channel
- * @returns {void}
- */
-export function registerFlattened<T>(key: string, handleIt: Handler<T>): void {
-  ipcMain.handle(
-    key,
-    async (event: IpcMainInvokeEvent, arg?: any): Promise<string | void> => {
-      if (typeof arg === 'string' || !arg) {
-        log('arg: ');
-        log(arg);
-        const res = await handleIt(arg);
-        log(res);
-        if (res) {
-          return FTON.stringify((res as unknown) as FTONData);
-        }
-      } else {
-        err(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
-      }
-    },
-  );
-}
-
-/**
- * Registers with `ipcMain.handle` a function that takes an optional string
- * (from the query) and returns *string* data, which is returned, untouched
- *
- * @function
- * @param {string} key - the name of the "channel" to respond to
- * @param {Handler<string>} handleIt - the function that takes a string and
- *   returns a string
- * @returns void
- */
-export function register(key: string, handleIt: Handler<string>): void {
-  ipcMain.handle(
-    key,
-    async (event: IpcMainInvokeEvent, arg: any): Promise<string | void> => {
-      if (typeof arg === 'string') {
-        return await handleIt(arg);
-      } else {
-        err(`Bad (flattened) type for argument to ${key}: ${typeof arg}`);
-      }
-    },
-  );
-}
 /**
  * Registers with `ipcMain.handle` a function that takes a mandatory parameter
  * and returns *string* data untouched. It also requires a checker to ensure the
@@ -133,14 +80,14 @@ export function register(key: string, handleIt: Handler<string>): void {
  * @param  {(v:any)=>v is T} checker - a Type Check function for type T
  * @returns void
  */
-export function registerKey<T>(
+export function registerChannel<R, T>(
   key: string,
-  handler: TypeHandler<T>,
+  handler: Handler<R, T>,
   checker: (v: any) => v is T,
 ): void {
   ipcMain.handle(
     key,
-    async (event: IpcMainInvokeEvent, arg: any): Promise<string | void> => {
+    async (event: IpcMainInvokeEvent, arg: any): Promise<R | void> => {
       if (checker(arg)) {
         return await handler(arg);
       } else {
@@ -173,33 +120,40 @@ export function asyncSend(message: FTONData): void {
   SendToMain('async-data', { message });
 }
 
+function isKeyValue(obj: any): obj is [string, string] {
+  return Type.isArray(obj) && obj.length === 2 && Type.isArrayOfString(obj);
+}
+
+// I don't actually care about this type :)
+function isVoid(obj: any): obj is void {
+  return true;
+}
+
 /**
  * Setup any async listeners, plus register all the "invoke" handlers
  */
 export function CommsSetup(): void {
-  // "complex" API's (not just save/restore data to the persist cache)
-  registerFlattened('get-media-info', getMediaInfoForSong);
-  registerFlattened('search', searchWholeWord);
-  registerFlattened('subsearch', searchSubstring);
-  registerFlattened('show-file', showFile);
-  registerFlattened('rename-playlist', renamePlaylist);
-  registerFlattened('delete-playlist', deletePlaylist);
-  registerFlattened('get-playlists', getPlaylists);
-  registerFlattened('save-playlist', savePlaylist);
-  registerFlattened('load-playlist', loadPlaylist);
-  registerFlattened('set-playlists', checkPlaylists);
-
-  // Some "do something, please" API's
-  register('set-media-info', setMediaInfoForSong);
-  registerFlattened('manual-rescan', RescanDB);
-  registerFlattened('flush-image-cache', FlushImageCache);
-
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler
   // because they don't just read/write to disk.
-  register('read-from-storage', readFromStorage);
-  register('write-to-storage', writeToStorage);
+  registerChannel('read-from-storage', readFromStorage, Type.isString);
+  registerChannel('write-to-storage', writeToStorage, isKeyValue);
 
-  // Unflattened data handlers (everything should switch to these eventually
-  registerKey('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
+  // "complex" API's (not just save/restore data to the persist cache)
+  registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
+  registerChannel('media-info', getMediaInfoForSong, Type.isString);
+  registerChannel('flush-image-cache', FlushImageCache, isVoid);
+  registerChannel('manual-rescan', RescanDB, isVoid);
+  registerChannel('show-file', showFile, Type.isString);
+  registerChannel('set-media-info', setMediaInfoForSong, isOnlyMetadata);
+
+  registerChannel('search', searchWholeWord, Type.isString);
+  registerChannel('subsearch', searchSubstring, Type.isString);
+
+  registerChannel('load-playlist', loadPlaylist, Type.isString);
+  registerChannel('get-playlists', getPlaylists, isVoid);
+  registerChannel('set-playlists', checkPlaylists, Type.isArrayOfString);
+  registerChannel('rename-playlist', renamePlaylist, isKeyValue);
+  registerChannel('save-playlist', savePlaylist, isPlaylistSaveData);
+  registerChannel('delete-playlist', deletePlaylist, Type.isString);
 }

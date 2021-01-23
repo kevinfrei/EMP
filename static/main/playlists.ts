@@ -30,30 +30,23 @@ function playlistPath(name: string): string {
   return path.join(playlistDir(), toSafeName(name));
 }
 
-export async function renamePlaylist(data?: string): Promise<void> {
+export async function renamePlaylist([curName, newName]: [
+  string,
+  string,
+]): Promise<void> {
   log('renamePlaylist');
   try {
-    const obj = FTON.parse(data || '');
-    if (
-      !Type.isObjectNonNull(obj) ||
-      !Type.hasStr(obj, 'curName') ||
-      !Type.hasStr(obj, 'newName')
-    ) {
-      err('Malformed message from rename-playlist invoke:');
-      err(obj);
-      return;
-    }
-    await fsp.rename(playlistPath(obj.curName), playlistPath(obj.newName));
+    await fsp.rename(playlistPath(curName), playlistPath(newName));
     log('Renamed successfully:');
-    log(data);
   } catch (e) {
     err('Unable to rename playlist:');
-    err(data);
+    err(curName);
+    err(newName);
     err(e);
   }
 }
 
-export async function deletePlaylist(data?: string): Promise<void> {
+export async function deletePlaylist(data: string): Promise<void> {
   log('deletePlaylist');
   try {
     if (!data) throw exception('no data');
@@ -67,7 +60,7 @@ export async function deletePlaylist(data?: string): Promise<void> {
   }
 }
 
-export async function getPlaylists(data?: string): Promise<string[]> {
+export async function getPlaylists(): Promise<string[]> {
   log('getPlaylists');
   try {
     const res = await fsp.readdir(playlistDir());
@@ -81,30 +74,31 @@ export async function getPlaylists(data?: string): Promise<string[]> {
   return [];
 }
 
-export async function savePlaylist(data?: string): Promise<void> {
+export type PlaylistSaveData = {
+  name: string;
+  songs: SongKey[];
+};
+
+// eslint-disable-next-line
+export function isPlaylistSaveData(data: any): data is PlaylistSaveData {
+  return (
+    Type.hasStr(data, 'name') &&
+    Type.has(data, 'songs') &&
+    Type.isArrayOfString(data.songs)
+  );
+}
+
+export async function savePlaylist(data: PlaylistSaveData): Promise<void> {
   log('savePlaylist');
   try {
-    if (!data) throw exception('No data!');
-    const info = FTON.parse(data);
-    if (
-      !Type.hasStr(info, 'name') ||
-      !Type.has(info, 'songs') ||
-      !Type.isArrayOf(info.songs, Type.isString)
-    ) {
-      err('Invalid loadPlaylist data');
-      err(data);
-      err('--- parsed to ---');
-      err(info);
-      return;
-    }
     try {
       await fsp.mkdir(playlistDir(), { recursive: true });
     } catch (e) {
       /* */
     }
     await fsp.writeFile(
-      playlistPath(info.name),
-      await toDiskFormat(info.songs),
+      playlistPath(data.name),
+      await toDiskFormat(data.songs),
     );
   } catch (e) {
     err('Error while saving playlist:');
@@ -113,18 +107,11 @@ export async function savePlaylist(data?: string): Promise<void> {
   }
 }
 
-export async function loadPlaylist(data?: string): Promise<string[]> {
+export async function loadPlaylist(data: string): Promise<string[]> {
   log('loadPlaylist');
   try {
-    if (!data) throw exception('No data!');
-    if (!Type.isString(data)) {
-      err('Invalid loadPlaylist data');
-      err(data);
-      return [];
-    } else {
-      const vals = await fsp.readFile(playlistPath(data), 'utf-8');
-      return await fromDiskFormat(vals);
-    }
+    const vals = await fsp.readFile(playlistPath(data), 'utf-8');
+    return await fromDiskFormat(vals);
   } catch (e) {
     err('Error while loading playlist:');
     err(data);
@@ -133,21 +120,14 @@ export async function loadPlaylist(data?: string): Promise<string[]> {
   return [];
 }
 
-export async function checkPlaylists(data?: string): Promise<void> {
+export async function checkPlaylists(names: string[]): Promise<void> {
   log('checkPlaylists');
-  if (data) {
-    const names = FTON.parse(data);
-    if (Type.isArrayOf(names, Type.isString)) {
-      if (Comparisons.ArraySetEqual<string>(names, await getPlaylists())) {
-        log("They're equal");
-      } else {
-        err('NOT equal :/');
-      }
-      return;
-    }
+  if (Comparisons.ArraySetEqual<string>(names, await getPlaylists())) {
+    log("They're equal");
+  } else {
+    err('NOT equal :/');
   }
-  err('checkPlaylists error:');
-  err(data);
+  return;
 }
 
 let keyToPath: null | Map<SongKey, string> = null;
@@ -158,7 +138,7 @@ async function loadHash(): Promise<void> {
   if (!songHash) {
     throw Error('Oh poop'); // This shouldn't ever be possible...
   }
-  const path2key = FTON.parse(songHash) as Map<string, SongKey>;
+  const path2key = FTON.parse(songHash);
   if (Type.isMapOfStrings(path2key)) {
     pathToKey = path2key;
     keyToPath = new Map();
