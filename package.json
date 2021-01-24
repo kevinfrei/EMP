@@ -8,8 +8,17 @@
   "build": {
     "appId": "com.music-player.freik",
     "productName": "Electron Music Player",
+    "directories": {
+      "buildResources": "build"
+    },
     "mac": {
-      "icon": "static/icon.icns"
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "icon": "build/icon.png"
     }
   },
   "main": "public/electron.js",

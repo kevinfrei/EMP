@@ -1,7 +1,7 @@
 {
   "search.exclude": {
     "public/**/*.js": true,
-    "public/**/*.js.map": true,
+    "public/**/*.js.map": true
   },
   "files.exclude": {
     "**/.git": true,
@@ -23,5 +23,7 @@
     "source.organizeImports": true
   },
   "editor.formatOnSave": true,
-  "prettier.configPath": ".prettierrc"
+  "editor.tabSize": 2,
+  "prettier.configPath": ".prettierrc",
+  "json.format.enable": false
 }
