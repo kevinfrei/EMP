@@ -18,10 +18,10 @@ export default function ViewSelector(): JSX.Element {
     which === v ? {} : { visibility: 'hidden' };
   return (
     <>
-      <div className="current-view" style={sl(CurrentView.recent)}>
+      <div className="current-view" style={sl(CurrentView.album)}>
         <NuAlbumView />
       </div>
-      <div className="current-view" style={sl(CurrentView.album)}>
+      <div className="current-view" style={sl(CurrentView.recent)}>
         <AlbumView />
       </div>
       <div className="current-view" style={sl(CurrentView.artist)}>

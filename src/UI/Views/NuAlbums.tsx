@@ -7,9 +7,11 @@ import {
 } from '@fluentui/react';
 import { Album } from '@freik/core-utils';
 import { useCallback, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { AddSongs } from '../../Recoil/api';
 import { albumCoverUrlState } from '../../Recoil/Local';
-import { allAlbumsState } from '../../Recoil/ReadOnly';
+import { allAlbumsState, getDataForAlbumState } from '../../Recoil/ReadOnly';
+import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
 
 const theme: ITheme = getTheme();
@@ -18,11 +20,6 @@ const ROWS_PER_PAGE = 8;
 const MAX_ROW_HEIGHT = 300;
 
 const classNames = mergeStyleSets({
-  listGridExample: {
-    overflow: 'hidden',
-    fontSize: 0,
-    position: 'relative',
-  },
   listGridExampleTile: {
     textAlign: 'center',
     outline: 'none',
@@ -53,10 +50,10 @@ const classNames = mergeStyleSets({
     bottom: 5,
   },
   listGridExampleLabel: {
-    background: 'rgba(0, 0, 0, 0.3)',
+    background: 'rgba(0, 0, 0, 0.4)',
     color: '#FFFFFF',
     position: 'absolute',
-    padding: 10,
+    padding: 5,
     bottom: 0,
     left: 0,
     width: '100%',
@@ -81,6 +78,13 @@ function AlbumCoverView({
   cols: number;
 }): JSX.Element {
   const picurl = useRecoilValue(albumCoverUrlState(album.key));
+  const albumData = useRecoilValue(getDataForAlbumState(album.key));
+  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
+    AddSongs(album.songs, cbInterface),
+  );
+  const onRightClick = useRecoilCallback((cbInterface) =>
+    SongListDetailContextMenuClick(cbInterface, album.songs),
+  );
   if (!album) {
     return <></>;
   }
@@ -101,7 +105,7 @@ function AlbumCoverView({
           />
           <span
             className={classNames.listGridExampleLabel}
-          >{`${album.title}`}</span>
+          >{`${albumData.album}- ${albumData.year} [${albumData.artist}]`}</span>
         </div>
       </div>
     </div>
@@ -137,7 +141,7 @@ export default function NuAlbums(): JSX.Element {
   return (
     <div className="albumCoverList">
       <List
-        className={classNames.listGridExample}
+        className="listGridExample"
         items={[...albums.values()]}
         getItemCountForPage={getItemCountForPage}
         getPageHeight={getPageHeight}
