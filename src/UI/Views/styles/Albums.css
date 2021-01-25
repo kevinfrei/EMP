@@ -1,94 +1,94 @@
 .albumChevron {
-    transform: rotate(-90deg);
-    height: 16px;
-    width: 16px;
+  transform: rotate(-90deg);
+  height: 16px;
+  width: 16px;
 }
 
 .albumContainer {
-    padding: 5px;
+  padding: 5px;
 }
 
 .albumContainer:hover,
 .albumContainer:focus,
 .albumContainer:active {
-    background-color: lavender;
-    color: black;
+  background-color: lavender;
+  color: black;
 }
 
 .albumCover {
-    height: 55px;
-    width: 55px;
-    float: left;
-    margin-right: 5px;
+  height: 55px;
+  width: 55px;
+  float: left;
+  margin-right: 5px;
 }
 
 .albumTitle {
-    font-size: large;
-    font-weight: 600;
+  font-size: large;
+  font-weight: 600;
 }
 
 .songForAlbum {
-    display: grid;
-    grid-template-columns: 1fr 25px 1fr;
-    grid-template-rows: auto;
-    overflow: hidden;
-    vertical-align: middle;
+  display: grid;
+  grid-template-columns: 1fr 25px 1fr;
+  grid-template-rows: auto;
+  overflow: hidden;
+  vertical-align: middle;
 }
 
 .songForAlbum .songArtist {
-    grid-column: 1;
-    grid-row: 1;
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .songForAlbum .songTrack {
-    grid-column: 2;
-    grid-row: 1;
+  grid-column: 2;
+  grid-row: 1;
 }
 
 .songForAlbum .songTitle {
-    grid-column: 3;
-    grid-row: 1;
+  grid-column: 3;
+  grid-row: 1;
 }
 
 .albumCoverList {
-    margin: 10px;
+  margin: 10px;
 }
 
 .listGridExample {
-    overflow: 'hidden';
-    font-size: 0;
-    position: 'relative';
+  overflow: 'hidden';
+  font-size: 0;
+  position: 'relative';
 }
 
 .listGridExampleSizer {
-    padding-bottom: '100%';
+  padding-bottom: '100%';
 }
 
 .listGridExamplePadder {
-    position: 'absolute';
-    left: 5;
-    top: 5;
-    right: 5;
-    bottom: 5;
+  position: 'absolute';
+  left: 5;
+  top: 5;
+  right: 5;
+  bottom: 5;
 }
 
 .listGridExampleLabel {
-    background: 'rgba(0, 0, 0, 0.4)';
-    color: '#FFFFFF';
-    position: 'absolute';
-    padding: 5;
-    bottom: 0;
-    left: 0;
-    width: '100%';
-    font-size: 'small';
-    box-sizing: 'border-box';
+  background: 'rgba(0, 0, 0, 0.4)';
+  color: '#FFFFFF';
+  position: 'absolute';
+  padding: 5;
+  bottom: 0;
+  left: 0;
+  width: '100%';
+  font-size: 'small';
+  box-sizing: 'border-box';
 }
 
 .listGridExampleImage {
-    position: 'absolute';
-    top: 0;
-    left: 0;
-    width: '100%';
-    border-radius: '10px';
-    margin: 0;
+  position: 'absolute';
+  top: 0;
+  left: 0;
+  width: '100%';
+  border-radius: '10px';
+  margin: 0;
 }

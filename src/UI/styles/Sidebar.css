@@ -11,8 +11,8 @@
     grid-template-columns: 26px auto;
   }
   .sidebar-container:hover {
-    filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(180deg)
-      brightness(104%) contrast(97%);
+    filter: invert(38%) sepia(34%) saturate(2292%) hue-rotate(183deg)
+      brightness(95%) contrast(94%);
     cursor: pointer;
   }
 
