@@ -143,7 +143,10 @@ export async function CallMain<R, T>(
   if (typecheck(result)) {
     return result;
   }
-  err('CallMain result failed typecheck');
+  err(
+    `CallMain(${channel}, <T>, ${typecheck.name}(...)) result failed typecheck`,
+  );
+  err(result);
 }
 
 export async function PostMain<T>(channel: string, key: T): Promise<void> {

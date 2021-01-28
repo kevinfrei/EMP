@@ -92,6 +92,7 @@ export function registerChannel<R, T>(
         return await handler(arg);
       } else {
         err(`Invalid argument type to ${key} handler`);
+        err(arg);
       }
     },
   );
@@ -129,6 +130,10 @@ function isVoid(obj: any): obj is void {
   return true;
 }
 
+function isStrOrUndef(obj: any): obj is string | undefined {
+  return Type.isString(obj) || obj === undefined;
+}
+
 /**
  * Setup any async listeners, plus register all the "invoke" handlers
  */
@@ -147,7 +152,7 @@ export function CommsSetup(): void {
   registerChannel('show-file', showFile, Type.isString);
   registerChannel('set-media-info', setMediaInfoForSong, isOnlyMetadata);
 
-  registerChannel('search', searchWholeWord, Type.isString);
+  registerChannel('search', searchWholeWord, isStrOrUndef);
   registerChannel('subsearch', searchSubstring, Type.isString);
 
   registerChannel('load-playlist', loadPlaylist, Type.isString);

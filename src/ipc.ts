@@ -42,7 +42,7 @@ export async function WriteToStorage(key: string, data: string): Promise<void> {
   await InvokeMain('write-to-storage', [key, data]);
 }
 
-function isSearchResults(arg: any): arg is SearchResults {
+function isSearchResults(arg: any): arg is SearchResults | undefined {
   if (
     Type.isObjectNonNull(arg) &&
     Type.has(arg, 'songs') &&
@@ -55,7 +55,7 @@ function isSearchResults(arg: any): arg is SearchResults {
       Type.isArrayOfString(arg.songs)
     );
   }
-  return false;
+  return arg === undefined;
 }
 
 export async function SearchWhole(
