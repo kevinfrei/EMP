@@ -1,9 +1,12 @@
 import {
+  ContextualMenu,
   DetailsList,
+  DirectionalHint,
   IconButton,
   IDetailsGroupRenderProps,
   Image,
   ImageFit,
+  Point,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -29,10 +32,7 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
-import {
-  SongDetailContextMenuClick,
-  SongListDetailContextMenuClick,
-} from '../DetailPanel/Clickers';
+import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -44,13 +44,23 @@ import './styles/Albums.css';
 
 const err = MakeError('Albums-err'); // eslint-disable-line
 
+const albumContextState = atom<[string, Point]>({
+  key: 'albumContext',
+  default: ['', { left: 0, top: 0 }],
+});
+
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumState(props.album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(props.album.songs, cbInterface),
   );
-  const onRightClick = useRecoilCallback((cbInterface) =>
-    SongListDetailContextMenuClick(cbInterface, props.album.songs),
+  const onRightClick = useRecoilCallback(
+    ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+      set(albumContextState, [
+        props.album.key,
+        { left: event.clientX, top: event.clientY },
+      ]),
+    // SongListDetailContextMenuClick(cbInterface, props.album.songs),
   );
   const picurl = useRecoilValue(albumCoverUrlState(props.album.key));
   return (
@@ -92,6 +102,7 @@ const sortedSongsState = selector({
 });
 
 export default function AlbumList(): JSX.Element {
+  const [albumContext, setAlbumContext] = useRecoilState(albumContextState);
   const albums = useRecoilValue(allAlbumsState);
   const sortedSongs = useRecoilValue(sortedSongsState);
 
@@ -160,6 +171,20 @@ export default function AlbumList(): JSX.Element {
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={onAddSongClick}
           groupProps={groupProps}
+        />
+        <ContextualMenu
+          directionalHint={DirectionalHint.bottomRightEdge}
+          isBeakVisible={true}
+          hidden={albumContext[0] === ''}
+          items={[
+            { key: 'thing', name: albumContext[0] },
+            { key: 'add', name: 'Add to Now Playing' },
+            { key: 'queue', name: 'Replace current queue' },
+            { key: 'props', name: 'Show Properties' },
+          ]}
+          target={albumContext[1]}
+          onDismiss={() => setAlbumContext(['', { left: 0, top: 0 }])}
+          styles={{ container: { margin: 0, padding: 0, fontSize: 'small' } }}
         />
       </ScrollablePane>
     </div>

@@ -136,8 +136,9 @@ export default function NuAlbums(): JSX.Element {
   };
   const albums = useRecoilValue(allAlbumsState);
   const getPageHeight = useCallback((): number => {
-    return rowHeight.current * ROWS_PER_PAGE;
-  }, []);
+    const res = rowHeight.current * ROWS_PER_PAGE;
+    return Number.isNaN(res) ? ROWS_PER_PAGE : res;
+  }, [rowHeight]);
   return (
     <div className="albumCoverList">
       <List
