@@ -165,11 +165,13 @@ export default function PlaylistView(): JSX.Element {
             {
               key: 'queue',
               text: 'Add to Now Playing',
+              iconProps: { iconName: 'Add' },
               onClick: onQueuePlaylist,
             },
             {
               key: 'rename',
-              text: 'Rename',
+              text: `Rename "${contextPlaylist}"`,
+              iconProps: { iconName: 'Rename' },
               onClick: () => {
                 showRename();
                 return true;
@@ -177,7 +179,8 @@ export default function PlaylistView(): JSX.Element {
             },
             {
               key: 'delete',
-              text: 'Delete',
+              text: `Delete "${contextPlaylist}"`,
+              iconProps: { iconName: 'Delete' },
               onClick: () => {
                 setSelected(contextPlaylist);
                 showDelete();
@@ -185,7 +188,8 @@ export default function PlaylistView(): JSX.Element {
             },
             {
               key: 'unique',
-              text: 'Remove duplicates',
+              text: 'Remove Duplicates',
+              iconProps: { iconName: 'MergeDuplicates' },
               onClick: onRemoveDupes,
             },
           ]}
