@@ -12,6 +12,7 @@ import { Artist, ArtistKey, MakeError, Song, Type } from '@freik/core-utils';
 import { useState } from 'react';
 import {
   atom,
+  CallbackInterface,
   selector,
   useRecoilCallback,
   useRecoilState,
@@ -23,6 +24,7 @@ import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
+  getArtistByKeyState,
 } from '../../Recoil/ReadOnly';
 import {
   ignoreArticlesState,
@@ -30,10 +32,7 @@ import {
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { MakeSongComparator, SortItems } from '../../Tools';
-import {
-  SongDetailContextMenuClick,
-  SongListDetailContextMenuClick,
-} from '../DetailPanel/Clickers';
+import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -41,11 +40,17 @@ import {
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
+import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Artists.css';
 
 const err = MakeError('Artists-err'); // eslint-disable-line
 
 type ArtistSong = Song & { sortedArtistId: ArtistKey; comboKey: string };
+
+const artistContextState = atom<SongListMenuData>({
+  key: 'artistContext',
+  default: { data: '', spot: { left: 0, top: 0 } },
+});
 
 export function ArtistHeaderDisplay({
   artist,
@@ -55,8 +60,12 @@ export function ArtistHeaderDisplay({
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(cbInterface, artist.songs),
   );
-  const onRightClick = useRecoilCallback((cbInterface) =>
-    SongListDetailContextMenuClick(cbInterface, artist.songs),
+  const onRightClick = useRecoilCallback(
+    ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+      set(artistContextState, {
+        data: artist.key,
+        spot: { left: event.clientX + 14, top: event.clientY },
+      }),
   );
   const songCount = artist.songs.length;
   return (
@@ -158,6 +167,8 @@ const sortedSongsState = selector({
 });
 
 export default function ArtistList(): JSX.Element {
+  const [artistContext, setArtistContext] = useRecoilState(artistContextState);
+
   const filteredArtistList = useRecoilValue(filteredArtistsState);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
@@ -225,6 +236,18 @@ export default function ArtistList(): JSX.Element {
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={onSongDetailClick}
           onItemInvoked={onAddSongClick}
+        />
+        <SongListMenu
+          context={artistContext}
+          onClearContext={() =>
+            setArtistContext({ data: '', spot: { left: 0, top: 0 } })
+          }
+          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
+            const alb = cbInterface.snapshot
+              .getLoadable(getArtistByKeyState(data))
+              .valueMaybe();
+            return alb ? alb.songs : undefined;
+          }}
         />
       </ScrollablePane>
     </div>

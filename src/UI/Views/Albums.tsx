@@ -20,6 +20,7 @@ import {
 import { useState } from 'react';
 import {
   atom,
+  CallbackInterface,
   selector,
   useRecoilCallback,
   useRecoilState,
@@ -31,6 +32,7 @@ import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
+  getAlbumByKeyState,
   getDataForAlbumState,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
@@ -181,6 +183,12 @@ export default function AlbumList(): JSX.Element {
           onClearContext={() =>
             setAlbumContext({ data: '', spot: { left: 0, top: 0 } })
           }
+          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
+            const alb = cbInterface.snapshot
+              .getLoadable(getAlbumByKeyState(data))
+              .valueMaybe();
+            return alb ? alb.songs : undefined;
+          }}
         />
       </ScrollablePane>
     </div>

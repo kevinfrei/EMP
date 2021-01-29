@@ -5,10 +5,9 @@ import {
   IContextualMenuItem,
   Point,
 } from '@fluentui/react';
-import { MakeLogger } from '@freik/core-utils';
-import { useRecoilCallback } from 'recoil';
+import { MakeLogger, SongKey } from '@freik/core-utils';
+import { CallbackInterface, useRecoilCallback } from 'recoil';
 import { AddSongs, PlaySongs } from '../Recoil/api';
-import { getAlbumByKeyState } from '../Recoil/ReadOnly';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 
 const log = MakeLogger('SongMenus'); // eslint-disable-line
@@ -19,10 +18,15 @@ export function SongListMenu({
   title,
   context,
   onClearContext,
+  onGetSongList,
 }: {
   title?: string;
   context: SongListMenuData;
   onClearContext: () => void;
+  onGetSongList: (
+    cbInterface: CallbackInterface,
+    data: string,
+  ) => SongKey[] | undefined;
 }): JSX.Element {
   const i = (
     name: string,
@@ -41,27 +45,21 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
   const onAdd = useRecoilCallback((cbInterface) => () => {
-    const alb = cbInterface.snapshot
-      .getLoadable(getAlbumByKeyState(context.data))
-      .valueMaybe();
-    if (alb) {
-      AddSongs(cbInterface, alb.songs);
+    const maybeSongs = onGetSongList(cbInterface, context.data);
+    if (maybeSongs) {
+      AddSongs(cbInterface, maybeSongs);
     }
   });
   const onReplace = useRecoilCallback((cbInterface) => () => {
-    const alb = cbInterface.snapshot
-      .getLoadable(getAlbumByKeyState(context.data))
-      .valueMaybe();
-    if (alb) {
-      PlaySongs(cbInterface, alb.songs);
+    const maybeSongs = onGetSongList(cbInterface, context.data);
+    if (maybeSongs) {
+      PlaySongs(cbInterface, maybeSongs);
     }
   });
   const onProps = useRecoilCallback((cbInterface) => () => {
-    const alb = cbInterface.snapshot
-      .getLoadable(getAlbumByKeyState(context.data))
-      .valueMaybe();
-    if (alb) {
-      SongListDetailClick(cbInterface, alb.songs, false);
+    const maybeSongs = onGetSongList(cbInterface, context.data);
+    if (maybeSongs) {
+      SongListDetailClick(cbInterface, maybeSongs, false);
     }
   });
   const onLove = useRecoilCallback((cbInterface) => () => log('love'));
@@ -89,7 +87,7 @@ export function SongListMenu({
       target={context.spot}
       onDismiss={(ev) => {
         // The DetailsList panel wiggles. A lot. So turn off dismissal for
-        // scroll events...
+        // scroll events, cuz otherwise, it disappears almost immediately
         if (ev?.type !== 'scroll') {
           onClearContext();
         }
