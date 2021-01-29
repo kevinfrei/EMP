@@ -186,8 +186,8 @@ export async function renamePlaylist(
  * Delete a playlist (make sure you've got the name right)
  **/
 export async function deletePlaylist(
-  toDelete: PlaylistName,
   { set, snapshot }: CallbackInterface,
+  toDelete: PlaylistName,
 ): Promise<void> {
   const curNames = await snapshot.getPromise(playlistNamesState);
   const activePlaylist = await snapshot.getPromise(activePlaylistState);

@@ -78,7 +78,7 @@ export default function PlaylistView(): JSX.Element {
   });
 
   const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
-    await deletePlaylist(selected, cbInterface);
+    await deletePlaylist(cbInterface, selected);
   });
 
   const renameConfirmed = useRecoilCallback(
