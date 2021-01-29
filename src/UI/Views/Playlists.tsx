@@ -49,7 +49,7 @@ export default function PlaylistView(): JSX.Element {
     const songs = await cbInterface.snapshot.getPromise(
       getPlaylistState(contextPlaylist),
     );
-    AddSongs(songs, cbInterface);
+    AddSongs(cbInterface, songs);
   });
 
   const onPlaylistInvoked = useRecoilCallback(

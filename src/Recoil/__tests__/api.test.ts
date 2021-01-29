@@ -75,7 +75,7 @@ it('Adding empty songs does nothing', async () => {
   ).toStrictEqual(-1);
 
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
-    AddSongs([], makeCallbackIfc(set, initialSnapshot)),
+    AddSongs(makeCallbackIfc(set, initialSnapshot), []),
   );
   await flushPromisesAndTimers();
   expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual(
@@ -89,7 +89,7 @@ it('Adding song(s) works properly', () => {
     -1,
   );
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(['a'], makeCallbackIfc(set, initialSnapshot));
+    AddSongs(makeCallbackIfc(set, initialSnapshot), ['a']);
   });
   expect(
     nextSnapshot.getLoadable(currentIndexState).valueOrThrow(),
@@ -99,8 +99,8 @@ it('Adding song(s) works properly', () => {
   ]);
 
   const finalSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(['a', 'b'], makeCallbackIfc(set, nextSnapshot));
-    AddSongs(['a', 'c'], makeCallbackIfc(set, nextSnapshot));
+    AddSongs(makeCallbackIfc(set, nextSnapshot), ['a', 'b']);
+    AddSongs(makeCallbackIfc(set, nextSnapshot), ['a', 'c']);
   });
   expect(
     finalSnapshot.getLoadable(currentIndexState).valueOrThrow(),
@@ -115,7 +115,7 @@ it('Adding song(s) works properly', () => {
 it('Playing songs works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(['a', 'b'], makeCallbackIfc(set, initialSnapshot));
+    AddSongs(makeCallbackIfc(set, initialSnapshot), ['a', 'b']);
     PlaySongs(makeCallbackIfc(set, initialSnapshot), ['d', 'e']);
   });
   expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual([

@@ -1,19 +1,22 @@
 import {
-  ContextualMenu,
   DetailsList,
-  DirectionalHint,
   IconButton,
   IDetailsGroupRenderProps,
   Image,
   ImageFit,
-  Point,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
   Stack,
   Text,
 } from '@fluentui/react';
-import { Album, AlbumKey, MakeError, Song } from '@freik/core-utils';
+import {
+  Album,
+  AlbumKey,
+  MakeError,
+  MakeLogger,
+  Song,
+} from '@freik/core-utils';
 import { useState } from 'react';
 import {
   atom,
@@ -40,27 +43,28 @@ import {
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
+import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Albums.css';
 
 const err = MakeError('Albums-err'); // eslint-disable-line
+const log = MakeLogger('Albums'); // eslint-disable-line
 
-const albumContextState = atom<[string, Point]>({
+const albumContextState = atom<SongListMenuData>({
   key: 'albumContext',
-  default: ['', { left: 0, top: 0 }],
+  default: { data: '', spot: { left: 0, top: 0 } },
 });
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumState(props.album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(props.album.songs, cbInterface),
+    AddSongs(cbInterface, props.album.songs),
   );
   const onRightClick = useRecoilCallback(
     ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-      set(albumContextState, [
-        props.album.key,
-        { left: event.clientX, top: event.clientY },
-      ]),
-    // SongListDetailContextMenuClick(cbInterface, props.album.songs),
+      set(albumContextState, {
+        data: props.album.key,
+        spot: { left: event.clientX + 14, top: event.clientY },
+      }),
   );
   const picurl = useRecoilValue(albumCoverUrlState(props.album.key));
   return (
@@ -110,7 +114,7 @@ export default function AlbumList(): JSX.Element {
 
   const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs([item.key], cbInterface),
+    AddSongs(cbInterface, [item.key]),
   );
 
   const curExpandedState = useState(new Set<AlbumKey>());
@@ -172,19 +176,11 @@ export default function AlbumList(): JSX.Element {
           onItemInvoked={onAddSongClick}
           groupProps={groupProps}
         />
-        <ContextualMenu
-          directionalHint={DirectionalHint.bottomRightEdge}
-          isBeakVisible={true}
-          hidden={albumContext[0] === ''}
-          items={[
-            { key: 'thing', name: albumContext[0] },
-            { key: 'add', name: 'Add to Now Playing' },
-            { key: 'queue', name: 'Replace current queue' },
-            { key: 'props', name: 'Show Properties' },
-          ]}
-          target={albumContext[1]}
-          onDismiss={() => setAlbumContext(['', { left: 0, top: 0 }])}
-          styles={{ container: { margin: 0, padding: 0, fontSize: 'small' } }}
+        <SongListMenu
+          context={albumContext}
+          onClearContext={() =>
+            setAlbumContext({ data: '', spot: { left: 0, top: 0 } })
+          }
         />
       </ScrollablePane>
     </div>

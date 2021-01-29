@@ -53,7 +53,7 @@ export default function MixedSongsList(): JSX.Element {
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
   const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs([item.key], cbInterface),
+    AddSongs(cbInterface, [item.key]),
   );
 
   const columns = MakeColumns(

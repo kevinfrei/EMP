@@ -75,8 +75,8 @@ export async function MaybePlayPrev({
  * @returns void
  */
 export function AddSongs(
-  listToAdd: Iterable<SongKey>,
   { snapshot, set }: CallbackInterface,
+  listToAdd: Iterable<SongKey>,
 ): void {
   const shuffle = snapshot.getLoadable(shuffleState).valueMaybe();
   const playList = [...listToAdd];

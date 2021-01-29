@@ -80,7 +80,7 @@ function AlbumCoverView({
   const picurl = useRecoilValue(albumCoverUrlState(album.key));
   const albumData = useRecoilValue(getDataForAlbumState(album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(album.songs, cbInterface),
+    AddSongs(cbInterface, album.songs),
   );
   const onRightClick = useRecoilCallback((cbInterface) =>
     SongListDetailContextMenuClick(cbInterface, album.songs),

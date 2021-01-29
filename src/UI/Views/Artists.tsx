@@ -53,7 +53,7 @@ export function ArtistHeaderDisplay({
   artist: Artist;
 }): JSX.Element {
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(artist.songs, cbInterface),
+    AddSongs(cbInterface, artist.songs),
   );
   const onRightClick = useRecoilCallback((cbInterface) =>
     SongListDetailContextMenuClick(cbInterface, artist.songs),
@@ -162,7 +162,7 @@ export default function ArtistList(): JSX.Element {
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs([item.key], cbInterface),
+    AddSongs(cbInterface, [item.key]),
   );
 
   const [curSort, setSort] = useRecoilState(sortOrderState);
