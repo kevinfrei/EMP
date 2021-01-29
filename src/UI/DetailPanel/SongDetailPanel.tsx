@@ -1,4 +1,4 @@
-import { Panel, PanelType } from '@fluentui/react';
+import { ContextualMenu, Dialog, DialogType } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
@@ -28,21 +28,26 @@ export default function SongDetailPanel(): JSX.Element {
   }
 
   return (
-    <Panel
-      isOpen={detailSongs.size !== 0}
-      type={PanelType.medium}
-      onDismiss={dismissClick}
-      headerText={header}
-      isBlocking={false}
-      closeButtonAriaLabel="Close"
-      styles={{
-        header: {
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
+    <Dialog
+      hidden={detailSongs.size === 0}
+      dialogContentProps={{
+        type: DialogType.normal,
+        title: header,
+      }}
+      modalProps={{
+        isBlocking: true,
+        dragOptions: {
+          moveMenuItemText: 'Move',
+          closeMenuItemText: 'Close',
+          menu: ContextualMenu,
         },
       }}
+      minWidth={575}
+      onDismiss={dismissClick}
+      isBlocking={false}
+      closeButtonAriaLabel="Close"
     >
       <Spinner label="Loading...">{elem}</Spinner>
-    </Panel>
+    </Dialog>
   );
 }
