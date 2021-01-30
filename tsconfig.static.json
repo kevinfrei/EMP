@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2018",
+    "target": "es2020",
     "module": "commonjs",
     "sourceMap": true,
     "outDir": "./public",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "incremental": true,
     "allowJs": true,
     "tsBuildInfoFile": ".tsmain.tsbuildinfo",
