@@ -27,7 +27,9 @@ export default function SongDetailPanel(): JSX.Element {
     header = `Details for ${detailSongs.size} songs`;
   }
 
-  return (
+  return detailSongs.size === 0 ? (
+    <></> // Doing it this way makes it disappear, instead of 2-phase mess
+  ) : (
     <Dialog
       hidden={detailSongs.size === 0}
       dialogContentProps={{
