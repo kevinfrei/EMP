@@ -189,7 +189,7 @@ export default function PlaylistView(): JSX.Element {
             {
               key: 'unique',
               text: 'Remove Duplicates',
-              iconProps: { iconName: 'MergeDuplicates' },
+              iconProps: { iconName: 'MergeDuplicate' },
               onClick: onRemoveDupes,
             },
           ]}

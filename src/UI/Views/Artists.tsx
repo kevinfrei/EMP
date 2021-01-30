@@ -238,6 +238,7 @@ export default function ArtistList(): JSX.Element {
           onItemInvoked={onAddSongClick}
         />
         <SongListMenu
+          title="TODO: Put Artist Name Here"
           context={artistContext}
           onClearContext={() =>
             setArtistContext({ data: '', spot: { left: 0, top: 0 } })

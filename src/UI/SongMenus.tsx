@@ -5,7 +5,7 @@ import {
   IContextualMenuItem,
   Point,
 } from '@fluentui/react';
-import { MakeLogger, SongKey } from '@freik/core-utils';
+import { MakeLogger, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface, useRecoilCallback } from 'recoil';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import { SongListDetailClick } from './DetailPanel/Clickers';
@@ -19,6 +19,7 @@ export function SongListMenu({
   context,
   onClearContext,
   onGetSongList,
+  items,
 }: {
   title?: string;
   context: SongListMenuData;
@@ -27,6 +28,7 @@ export function SongListMenu({
     cbInterface: CallbackInterface,
     data: string,
   ) => SongKey[] | undefined;
+  items?: (IContextualMenuItem | string)[];
 }): JSX.Element {
   const i = (
     name: string,
@@ -65,25 +67,52 @@ export function SongListMenu({
   const onLove = useRecoilCallback((cbInterface) => () => log('love'));
   const onHate = useRecoilCallback((cbInterface) => () => log('hate'));
 
-  const items: IContextualMenuItem[] = title
-    ? [{ key: 'Header', title, itemType: ContextualMenuItemType.Header }]
+  const realItems: IContextualMenuItem[] = title
+    ? [{ key: 'Header', name: title, itemType: ContextualMenuItemType.Header }]
     : [];
-  items.push(
-    i('Add to Now Playing', 'Add', onAdd),
-    i('Replace current queue', 'DependencyAdd', onReplace),
-    d(),
-    i('Properties', 'Info', onProps),
-    d(),
-    i('Love [NYI]', 'Heart', onLove),
-    i('Hate [NYI]', 'Dislike', onHate),
-  );
+  for (const itm of items || ['add', 'rep', '', 'prop', '', 'love', 'hate']) {
+    if (Type.isString(itm)) {
+      switch (itm.toLowerCase()) {
+        case 'add':
+          realItems.push(i('Add to Now Playing', 'Add', onAdd));
+          break;
+        case 'rep':
+        case 'replace':
+          realItems.push(
+            i('Replace current queue', 'DependencyAdd', onReplace),
+          );
+          break;
+        case 'prop':
+        case 'props':
+        case 'properties':
+          realItems.push(i('Properties', 'Info', onProps));
+          break;
+        case 'love':
+        case 'like':
+          realItems.push(i('Love [NYI]', 'Heart', onLove));
+          break;
+        case 'hate':
+          realItems.push(i('Hate [NYI]', 'Dislike', onHate));
+          break;
+        case '':
+        case '-':
+        case '_':
+          realItems.push(d());
+          break;
+        default:
+          realItems.push(i(itm, 'Unknown', () => undefined));
+      }
+    } else {
+      realItems.push(itm);
+    }
+  }
 
   return (
     <ContextualMenu
       directionalHint={DirectionalHint.bottomRightEdge}
       isBeakVisible={true}
       hidden={context.data === ''}
-      items={items}
+      items={realItems}
       target={context.spot}
       onDismiss={(ev) => {
         // The DetailsList panel wiggles. A lot. So turn off dismissal for

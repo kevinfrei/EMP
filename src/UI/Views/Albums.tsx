@@ -37,7 +37,6 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
-import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSong,
   altRowRenderer,
@@ -114,7 +113,6 @@ export default function AlbumList(): JSX.Element {
 
   const [curSort, setSort] = useRecoilState(sortOrderState);
 
-  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs(cbInterface, [item.key]),
   );
