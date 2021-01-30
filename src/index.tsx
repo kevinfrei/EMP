@@ -1,4 +1,4 @@
-import { initializeIcons } from '@uifabric/icons';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import ReactDOM from 'react-dom';
 import { SetInit } from './MyWindow';
 import * as serviceWorker from './serviceWorker';

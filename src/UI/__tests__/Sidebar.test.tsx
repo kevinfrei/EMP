@@ -1,4 +1,4 @@
-import { initializeIcons } from '@uifabric/icons';
+import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { Suspense } from 'react';
 import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';

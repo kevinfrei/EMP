@@ -10,6 +10,7 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
+import { useId } from '@fluentui/react-hooks';
 import {
   AlbumKey,
   FullMetadata,
@@ -19,7 +20,6 @@ import {
   SongKey,
   Type,
 } from '@freik/core-utils';
-import { useId } from '@uifabric/react-hooks';
 import { useEffect, useState } from 'react';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
