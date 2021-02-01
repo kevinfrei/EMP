@@ -79,9 +79,12 @@ function AlbumCoverView({
 }): JSX.Element {
   const picurl = useRecoilValue(albumCoverUrlState(album.key));
   const albumData = useRecoilValue(getDataForAlbumState(album.key));
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(cbInterface, album.songs),
   );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onRightClick = useRecoilCallback((cbInterface) =>
     SongListDetailContextMenuClick(cbInterface, album.songs),
   );
