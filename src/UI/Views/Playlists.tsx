@@ -1,5 +1,4 @@
 import {
-  ContextualMenu,
   DetailsList,
   IColumn,
   IconButton,
@@ -9,13 +8,14 @@ import {
 } from '@fluentui/react';
 import { SongKey } from '@freik/core-utils';
 import { useState } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
-  AddSongs,
-  deletePlaylist,
-  PlaySongs,
-  renamePlaylist,
-} from '../../Recoil/api';
+  atom,
+  CallbackInterface,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
+import { deletePlaylist, PlaySongs, renamePlaylist } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
@@ -24,6 +24,7 @@ import {
 } from '../../Recoil/PlaylistsState';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
+import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { Spinner } from '../Utilities';
 import './styles/Playlists.css';
 
@@ -34,23 +35,20 @@ export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
   return <>{playlist.length}</>;
 }
 
+const playlistContextState = atom<SongListMenuData>({
+  key: 'playlistContext',
+  default: { data: '', spot: { left: 0, top: 0 } },
+});
+
 export default function PlaylistView(): JSX.Element {
   const playlistNames = useRecoilValue(playlistNamesState);
   const [selected, setSelected] = useState('');
   const [showDelete, deleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
 
-  const [contextPlaylist, setContextPlaylist] = useState<string>('');
-  const [contextTarget, setContextTarget] = useState<
-    EventTarget | Event | null
-  >(null);
-
-  const onQueuePlaylist = useRecoilCallback((cbInterface) => async () => {
-    const songs = await cbInterface.snapshot.getPromise(
-      getPlaylistState(contextPlaylist),
-    );
-    AddSongs(cbInterface, songs);
-  });
+  const [playlistContext, setPlaylistContext] = useRecoilState(
+    playlistContextState,
+  );
 
   const onPlaylistInvoked = useRecoilCallback(
     (cbInterface) => (playlistName: PlaylistName) => {
@@ -62,10 +60,12 @@ export default function PlaylistView(): JSX.Element {
   );
 
   const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => async () => {
-    if (!playlistNames.has(contextPlaylist)) {
+    if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = await snapshot.getPromise(getPlaylistState(contextPlaylist));
+    const songs = await snapshot.getPromise(
+      getPlaylistState(playlistContext.data),
+    );
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
     for (const song of songs) {
@@ -74,7 +74,7 @@ export default function PlaylistView(): JSX.Element {
       }
       seen.add(song);
     }
-    set(getPlaylistState(contextPlaylist), newList);
+    set(getPlaylistState(playlistContext.data), newList);
   });
 
   const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
@@ -83,7 +83,7 @@ export default function PlaylistView(): JSX.Element {
 
   const renameConfirmed = useRecoilCallback(
     (cbInterface) => async (newName: string) => {
-      await renamePlaylist(cbInterface, contextPlaylist, newName);
+      await renamePlaylist(cbInterface, selected, newName);
     },
   );
 
@@ -136,9 +136,9 @@ export default function PlaylistView(): JSX.Element {
         <TextInputDialog
           data={renameData}
           onConfirm={renameConfirmed}
-          title={`Rename ${contextPlaylist}...`}
+          title={`Rename ${selected}...`}
           text="What would you like the playlist to be renamed to?"
-          initialValue={contextPlaylist}
+          initialValue={selected}
           yesText="Rename"
           noText="Cancel"
         />
@@ -152,37 +152,48 @@ export default function PlaylistView(): JSX.Element {
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={(item?: ItemType, index?: number, ev?: Event) => {
             if (ev && item) {
-              setContextPlaylist(item);
-              setContextTarget(ev);
+              const mev = (ev as unknown) as React.MouseEvent<
+                HTMLElement,
+                MouseEvent
+              >;
+              setPlaylistContext({
+                data: item,
+                spot: { left: mev.clientX + 14, top: mev.clientY },
+              });
             }
             return false;
           }}
         />
-        <ContextualMenu
-          hidden={contextTarget === null}
-          onDismiss={() => setContextTarget(null)}
+        <SongListMenu
+          context={playlistContext}
+          onClearContext={() =>
+            setPlaylistContext({ data: '', spot: { left: 0, top: 0 } })
+          }
+          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
+            const list = cbInterface.snapshot
+              .getLoadable(getPlaylistState(data))
+              .valueMaybe();
+            return list ? list : undefined;
+          }}
           items={[
-            {
-              key: 'queue',
-              text: 'Add to Now Playing',
-              iconProps: { iconName: 'Add' },
-              onClick: onQueuePlaylist,
-            },
+            'add',
+            'rep',
             {
               key: 'rename',
-              text: `Rename "${contextPlaylist}"`,
+              text: `Rename "${playlistContext.data}"`,
               iconProps: { iconName: 'Rename' },
               onClick: () => {
+                setSelected(playlistContext.data);
                 showRename();
                 return true;
               },
             },
             {
               key: 'delete',
-              text: `Delete "${contextPlaylist}"`,
+              text: `Delete "${playlistContext.data}"`,
               iconProps: { iconName: 'Delete' },
               onClick: () => {
-                setSelected(contextPlaylist);
+                setSelected(playlistContext.data);
                 showDelete();
               },
             },
@@ -193,7 +204,6 @@ export default function PlaylistView(): JSX.Element {
               onClick: onRemoveDupes,
             },
           ]}
-          target={contextTarget as MouseEvent}
         />
       </ScrollablePane>
     </div>
