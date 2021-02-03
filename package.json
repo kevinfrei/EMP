@@ -51,10 +51,12 @@
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-eject": "react-scripts eject",
-    "electron-build": "electron-builder",
-    "release": "yarn clean && yarn build && electron-builder --publish=always",
-    "tryrel": "yarn build && electron-builder --publish=never",
+    "release": "yarn prep-release && yarn opt-release && electron-builder --publish=always",
+    "tryrel": "yarn prep-release && yarn opt-release && electron-builder --publish=never",
+    "opt-release": "tools minify -i build/**/*.js",
+    "prep-release": "yarn clean && yarn release-build && rimraf build/main/__tests__",
     "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo build dist",
+    "release-build": "concurrently \"tsc -p tsconfig.static.rel.json\" \"tsc -p tsconfig.render.rel.json\" && yarn react-build",
     "build": "concurrently \"tsc -p tsconfig.static.json\" \"tsc -p tsconfig.render.json\" && yarn react-build",
     "start": "yarn prepare && concurrently --kill-others \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
     "prepare": "concurrently \"tsc -p tsconfig.static.json\" \"tsc -p tsconfig.render.json\"",
@@ -333,6 +335,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/plugin-transform-react-jsx": "^7.12.12",
+    "@freik/build-tools": "git+https://github.com/kevinfrei/build-tools.git",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.3",
     "@types/electron-devtools-installer": "^2.2.0",
@@ -363,12 +366,14 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "husky": "^4.3.7",
     "jest-transform-css": "^2.1.0",
+    "prepack": "^0.2.54",
     "prettier": "^2.2.1",
     "react-test-renderer": "^17.0.1",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",
     "ts-jest": "^26.4.4",
     "typescript": "^4.1.3",
+    "uglify-es": "^3.3.9",
     "wait-on": "^5.2.1"
   }
 }
