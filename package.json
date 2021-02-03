@@ -50,7 +50,7 @@
     "react-eject": "react-scripts eject",
     "release": "yarn prep-release && yarn opt-release && electron-builder --publish=always",
     "tryrel": "yarn prep-release && yarn opt-release && electron-builder --publish=never",
-    "opt-release": "minify -i build/**/*.js",
+    "opt-release": "minify -i -r build",
     "prep-release": "yarn clean && yarn release-build && rimraf build/main/__tests__",
     "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo build dist",
     "release-build": "concurrently \"tsc -p tsconfig.static.rel.json\" \"tsc -p tsconfig.render.rel.json\" && yarn react-build",
@@ -332,7 +332,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@babel/plugin-transform-react-jsx": "^7.12.13",
-    "@freik/build-tools": "^2.0.0",
+    "@freik/build-tools": "^2.0.2",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.5",
     "@types/electron-devtools-installer": "^2.2.0",

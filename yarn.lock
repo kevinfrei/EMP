@@ -7,7 +7,7 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@babel/cli@^7.8.4":
+"@babel/cli@^7.12.13":
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.12.13.tgz#ae2c6a75fa43f3db4bca0659799b0dfca3f5212b"
   integrity sha512-Zto3HPeE0GRmaxobUl7NvFTo97NKe1zdAuWqTO8oka7nE0IIqZ4CFvuRZe1qf+ZMd7eHMhwqrecjwc10mjXo/g==
@@ -65,7 +65,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.12.10", "@babel/core@^7.12.13", "@babel/core@^7.12.3", "@babel/core@^7.7.5", "@babel/core@^7.8.4", "@babel/core@^7.9.0":
+"@babel/core@^7.0.0", "@babel/core@^7.1.0", "@babel/core@^7.12.13", "@babel/core@^7.12.3", "@babel/core@^7.7.5", "@babel/core@^7.8.4", "@babel/core@^7.9.0":
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.12.13.tgz#b73a87a3a3e7d142a66248bf6ad88b9ceb093425"
   integrity sha512-BQKE9kXkPlXHPeqissfxo0lySWJcYdEP0hdtJOH/iJfDdhOCcgtNCjftCJg3qqauB4h+lz2N6ixM++b9DN1Tcw==
@@ -1084,7 +1084,7 @@
     core-js-compat "^3.8.0"
     semver "^5.5.0"
 
-"@babel/preset-flow@^7.0.0", "@babel/preset-flow@^7.12.1":
+"@babel/preset-flow@^7.0.0", "@babel/preset-flow@^7.12.13":
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/preset-flow/-/preset-flow-7.12.13.tgz#71ee7fe65a95b507ac12bcad65a4ced27d8dfc3e"
   integrity sha512-gcEjiwcGHa3bo9idURBp5fmJPcyFPOszPQjztXrOjUE2wWVqc6fIVJPgWPIQksaQ5XZ2HWiRsf2s1fRGVjUtVw==
@@ -1116,7 +1116,7 @@
     "@babel/plugin-transform-react-jsx-source" "^7.12.1"
     "@babel/plugin-transform-react-pure-annotations" "^7.12.1"
 
-"@babel/preset-react@^7.12.10", "@babel/preset-react@^7.9.4":
+"@babel/preset-react@^7.12.13", "@babel/preset-react@^7.9.4":
   version "7.12.13"
   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.12.13.tgz#5f911b2eb24277fa686820d5bd81cad9a0602a0a"
   integrity sha512-TYM0V9z6Abb6dj1K7i5NrEhA13oS5ujUYQYDfqIBXYHOc2c2VkFgc+q9kyssIyUfy4/hEwqrgSlJ/Qgv8zJLsA==
@@ -1499,16 +1499,17 @@
     prop-types "^15.7.2"
     tslib "^1.10.0"
 
-"@freik/build-tools@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.0.0.tgz#713d77a11c6910da80f22b3dd979465a801856a0"
-  integrity sha512-qqw6B8zDpST3Vzri0S9cEzokgcxIaKLuEwSosKLDwzx6xqSdXgY/GrmNyGZLl+Y8yOuNZwJi8PhYa6qw+vJoKA==
+"@freik/build-tools@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.0.2.tgz#9c65dc1c91a957d980b12e91c494535392938a5f"
+  integrity sha512-fkFizCKWi5gaccjRG2bwJoeFKbJjUO1EbggSMewcNBtOhfaGfj/uln6ytXp0zLDHiH1y6clmWfq2QwrvVpKL7g==
   dependencies:
-    "@babel/cli" "^7.8.4"
-    "@babel/core" "^7.12.10"
-    "@babel/preset-flow" "^7.12.1"
-    "@babel/preset-react" "^7.12.10"
+    "@babel/cli" "^7.12.13"
+    "@babel/core" "^7.12.13"
+    "@babel/preset-flow" "^7.12.13"
+    "@babel/preset-react" "^7.12.13"
     "@freik/core-utils" "^0.9.2"
+    "@freik/node-utils" "^0.5.0"
     "@typescript-eslint/parser" "^4.14.2"
     concurrently "^5.3.0"
     cross-env "^7.0.3"
@@ -1548,6 +1549,13 @@
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.4.0.tgz#7dcc87044ee662f3b47f07180b951c161ec29fa8"
   integrity sha512-wiq7+cZePxa3EATCTYEn0PITdc4YfyLz4HFwGT6ebB3HqmlhP9eAAF9M8pKD4igB5fNbaARMvZ7iRemfp6QZDw==
+  dependencies:
+    "@freik/core-utils" "^0.9.2"
+
+"@freik/node-utils@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.5.0.tgz#fb2330d5376c3f261a801d969249cc1fb5b3fb2f"
+  integrity sha512-7i6CrbfHbetOebkTS0VCpOEkT7mjr/nutKEsg884SKzo1y3qB5GgRDCc2Jitd81QIWz1wEKJoUPBnBy8drohrA==
   dependencies:
     "@freik/core-utils" "^0.9.2"
 
