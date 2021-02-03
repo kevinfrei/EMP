@@ -53,7 +53,7 @@
     "react-eject": "react-scripts eject",
     "release": "yarn prep-release && yarn opt-release && electron-builder --publish=always",
     "tryrel": "yarn prep-release && yarn opt-release && electron-builder --publish=never",
-    "opt-release": "yarn tools minify -i build/**/*.js",
+    "opt-release": "tools minify -i build/**/*.js",
     "prep-release": "yarn clean && yarn release-build && rimraf build/main/__tests__",
     "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo build dist",
     "release-build": "concurrently \"tsc -p tsconfig.static.rel.json\" \"tsc -p tsconfig.render.rel.json\" && yarn react-build",
