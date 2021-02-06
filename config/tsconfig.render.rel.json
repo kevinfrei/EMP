@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "commonjs",
-    "outDir": "./public",
+    "outDir": "../public",
     "allowJs": true,
     "isolatedModules": true,
     "strict": true,
@@ -14,5 +14,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["static/renderer.ts"]
+  "include": ["../static/renderer.ts"]
 }

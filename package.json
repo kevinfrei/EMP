@@ -27,9 +27,9 @@
     "@fluentui/font-icons-mdl2": "^8.0.0-beta.0",
     "@fluentui/react": "^8.0.0-beta.47",
     "@fluentui/react-hooks": "^8.0.0-beta.0",
-    "@freik/core-utils": "^0.9.2",
-    "@freik/media-utils": "^0.7.2",
-    "@freik/node-utils": "^0.4.0",
+    "@freik/core-utils": "^0.10.0",
+    "@freik/media-utils": "^0.8.0",
+    "@freik/node-utils": "^0.6.0",
     "album-art": "^2.0.2",
     "electron-is-dev": "^1.2.0",
     "open": "^7.4.0",
@@ -44,7 +44,7 @@
     }
   },
   "scripts": {
-    "analyze": "yarn react-scripts build && yarn source-map-explorer 'build/static/js/*.js'",
+    "analyze": "GENERATE_SOURCEMAP=true yarn build && yarn source-map-explorer 'build/static/js/*.js' 'build/main/*.js' 'build/*.js'",
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-eject": "react-scripts eject",
@@ -66,261 +66,6 @@
     "chk": "concurrently \"yarn types\" \"yarn lint\" \"yarn test\"",
     "linecount": "git ls-files|grep \"\\.\\(css\\|ts\\|tsx\\)$\"|grep -v \"__\\|\\.d\\.ts\"|xargs wc -l"
   },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "browser": true,
-      "node": true
-    },
-    "extends": [
-      "react-app",
-      "plugin:@typescript-eslint/recommended",
-      "plugin:@typescript-eslint/recommended-requiring-type-checking",
-      "prettier",
-      "prettier/@typescript-eslint"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "project": "tsconfig.json",
-      "sourceType": "module"
-    },
-    "plugins": [
-      "@typescript-eslint",
-      "react",
-      "react-hooks"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "static/renderer.ts"
-        ],
-        "parserOptions": {
-          "project": "tsconfig.render.json"
-        }
-      },
-      {
-        "files": [
-          "static/main/**/*.ts",
-          "static/electron.ts",
-          "static/main.d.ts"
-        ],
-        "parserOptions": {
-          "project": "tsconfig.static.json"
-        }
-      }
-    ],
-    "rules": {
-      "@typescript-eslint/adjacent-overload-signatures": "error",
-      "@typescript-eslint/array-type": [
-        "error",
-        {
-          "default": "array"
-        }
-      ],
-      "@typescript-eslint/ban-types": [
-        "error",
-        {
-          "types": {
-            "Object": {
-              "message": "Avoid using the `Object` type. Did you mean `object`?"
-            },
-            "Function": {
-              "message": "Avoid using the `Function` type. Prefer a specific function type, like `() => void`."
-            },
-            "Boolean": {
-              "message": "Avoid using the `Boolean` type. Did you mean `boolean`?"
-            },
-            "Number": {
-              "message": "Avoid using the `Number` type. Did you mean `number`?"
-            },
-            "String": {
-              "message": "Avoid using the `String` type. Did you mean `string`?"
-            },
-            "Symbol": {
-              "message": "Avoid using the `Symbol` type. Did you mean `symbol`?"
-            }
-          }
-        }
-      ],
-      "@typescript-eslint/consistent-type-assertions": "error",
-      "@typescript-eslint/dot-notation": "error",
-      "@typescript-eslint/indent": "off",
-      "@typescript-eslint/member-delimiter-style": [
-        "off",
-        {
-          "multiline": {
-            "delimiter": "none",
-            "requireLast": true
-          },
-          "singleline": {
-            "delimiter": "semi",
-            "requireLast": false
-          }
-        }
-      ],
-      "@typescript-eslint/naming-convention": [
-        "warn",
-        {
-          "selector": "default",
-          "format": [
-            "camelCase"
-          ],
-          "leadingUnderscore": "allow",
-          "trailingUnderscore": "allow"
-        },
-        {
-          "selector": "variable",
-          "format": [
-            "camelCase",
-            "UPPER_CASE"
-          ],
-          "leadingUnderscore": "allow",
-          "trailingUnderscore": "allow"
-        },
-        {
-          "selector": "typeLike",
-          "format": [
-            "PascalCase"
-          ]
-        },
-        {
-          "selector": "function",
-          "format": [
-            "camelCase",
-            "PascalCase"
-          ],
-          "leadingUnderscore": "forbid",
-          "trailingUnderscore": "forbid"
-        }
-      ],
-      "@typescript-eslint/no-empty-function": "warn",
-      "@typescript-eslint/no-empty-interface": "error",
-      "@typescript-eslint/no-explicit-any": "off",
-      "@typescript-eslint/no-misused-new": "error",
-      "@typescript-eslint/no-namespace": "error",
-      "@typescript-eslint/no-non-null-assertion": "off",
-      "@typescript-eslint/no-parameter-properties": "off",
-      "@typescript-eslint/no-unused-expressions": "warn",
-      "@typescript-eslint/no-use-before-define": "off",
-      "@typescript-eslint/no-var-requires": "error",
-      "@typescript-eslint/prefer-for-of": "warn",
-      "@typescript-eslint/prefer-function-type": "error",
-      "@typescript-eslint/prefer-namespace-keyword": "error",
-      "@typescript-eslint/quotes": "off",
-      "@typescript-eslint/semi": [
-        "off",
-        null
-      ],
-      "@typescript-eslint/triple-slash-reference": [
-        "error",
-        {
-          "path": "always",
-          "types": "prefer-import",
-          "lib": "always"
-        }
-      ],
-      "@typescript-eslint/type-annotation-spacing": "off",
-      "@typescript-eslint/unified-signatures": "error",
-      "arrow-parens": [
-        "off",
-        "always"
-      ],
-      "brace-style": [
-        "off",
-        "off"
-      ],
-      "comma-dangle": "off",
-      "complexity": "off",
-      "constructor-super": "error",
-      "eol-last": "off",
-      "eqeqeq": [
-        "error",
-        "smart"
-      ],
-      "guard-for-in": "error",
-      "id-blacklist": [
-        "error",
-        "any",
-        "Number",
-        "number",
-        "String",
-        "string",
-        "Boolean",
-        "boolean",
-        "Undefined",
-        "undefined"
-      ],
-      "id-match": "error",
-      "linebreak-style": "off",
-      "max-classes-per-file": [
-        "error",
-        1
-      ],
-      "max-len": "off",
-      "new-parens": "off",
-      "newline-per-chained-call": "off",
-      "no-bitwise": "error",
-      "no-caller": "error",
-      "no-cond-assign": "error",
-      "no-console": "warn",
-      "no-debugger": "warn",
-      "no-empty": "warn",
-      "no-eval": "error",
-      "no-extra-semi": "off",
-      "no-fallthrough": "off",
-      "no-invalid-this": "off",
-      "no-irregular-whitespace": "off",
-      "no-multiple-empty-lines": "off",
-      "no-new-wrappers": "error",
-      "no-shadow": [
-        "error",
-        {
-          "hoist": "all"
-        }
-      ],
-      "no-throw-literal": "error",
-      "no-trailing-spaces": "off",
-      "no-undef-init": "error",
-      "no-underscore-dangle": "error",
-      "no-unsafe-finally": "error",
-      "no-unused-labels": "error",
-      "no-var": "error",
-      "object-shorthand": "error",
-      "one-var": [
-        "error",
-        "never"
-      ],
-      "prefer-const": "warn",
-      "quote-props": "off",
-      "radix": "error",
-      "react/jsx-curly-spacing": "off",
-      "react/jsx-equals-spacing": "off",
-      "react/jsx-wrap-multilines": "off",
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": [
-        "warn",
-        {
-          "additionalHooks": "useRecoilCallback"
-        }
-      ],
-      "space-before-function-paren": "off",
-      "space-in-parens": [
-        "off",
-        "never"
-      ],
-      "spaced-comment": [
-        "error",
-        "always",
-        {
-          "markers": [
-            "/"
-          ]
-        }
-      ],
-      "use-isnan": "error",
-      "valid-typeof": "off"
-    }
-  },
   "browserslist": {
     "production": [
       "last 1 chrome version"
@@ -332,7 +77,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@babel/plugin-transform-react-jsx": "^7.12.13",
-    "@freik/build-tools": "^2.1.0",
+    "@freik/build-tools": "^2.2.0",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.5",
     "@types/electron-devtools-installer": "^2.2.0",
@@ -341,8 +86,6 @@
     "@types/react": "^17.0.1",
     "@types/react-dom": "^17.0.0",
     "@types/react-test-renderer": "^17.0.0",
-    "@types/react-virtualized-auto-sizer": "^1.0.0",
-    "@types/react-window": "^1.8.2",
     "@types/recoil": "^0.0.1",
     "@typescript-eslint/eslint-plugin": "^4.14.2",
     "@typescript-eslint/parser": "^4.14.2",

@@ -1513,10 +1513,10 @@
     prop-types "^15.7.2"
     tslib "^1.10.0"
 
-"@freik/build-tools@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.1.0.tgz#d0aba98a41d75b75739c8568a121436d388466ca"
-  integrity sha512-0tFAAq8ad2eWFtJez2nLQ4/jWYClnAjmgzWZBH/EOyyW/ONxzuJYdOGrNpJ04ZEhNUh/rYvm9nGWrgghxRM4fg==
+"@freik/build-tools@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.2.0.tgz#65313ef239ff2c87b85e004c25f6a8948cf2db38"
+  integrity sha512-rJZ4wnEplKfvjfryFcYeyK53jaDjrMfl7KFDhfZb5Zu8YfThNF6+/WoZxYwKyYRj8EDjngOHYom8sJoYMEwebw==
   dependencies:
     "@babel/cli" "^7.12.13"
     "@babel/core" "^7.12.13"
@@ -1539,33 +1539,24 @@
     typescript "^4.1.3"
     uglify-es "^3.3.9"
 
-"@freik/core-utils@^0.9.1", "@freik/core-utils@^0.9.2":
+"@freik/core-utils@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.10.0.tgz#8c483b4bf8dce369977748bef4fac03e0630e9d6"
+  integrity sha512-mMkgPDADuqNhaU37hmyh2iiadaevg2nR8GN1EJXzA6mUz5XSbZ/ZzvnHmdU3oUDE16o37RPv37uhDVO1rM66sw==
+
+"@freik/core-utils@^0.9.2":
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.9.2.tgz#ab499f30a82743a7f226698d88874d5fff7fa2c8"
   integrity sha512-iNQpI1ByTqqCMCWaRpcNqxcwk4lrUkDxIVQaok2ktW7FPCMeW5U1Yne6ZiPNxwBGnuITc+gV6/hNsLr0AOLKLQ==
 
-"@freik/media-utils@^0.7.2":
-  version "0.7.2"
-  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.7.2.tgz#759927db73a59229c65fec1609bb5cd74cc9eb2e"
-  integrity sha512-vyZBNXJS8PRSJawZU2ezOcicDcFIXYYZBFC9CivZDi4UxsuQMshaATXILw2/d4ZRGYxYmb9TfbMefKStpzNyZA==
+"@freik/media-utils@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.8.0.tgz#1e674a1a4e386e8d482b85a1b6639551598a3f24"
+  integrity sha512-Y0I2k8l6gydcKKAiKd3N7QVEylnti9oOtVhqITLapkUcWXq6AVXcZ+yoYGBu/rXLGrHX8n0NlvWwUcTTOmBtjw==
   dependencies:
-    "@freik/core-utils" "^0.9.1"
-    "@freik/node-utils" "^0.3.2"
-    music-metadata "^7.5.2"
-
-"@freik/node-utils@^0.3.2":
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.3.4.tgz#b122172f137a621bb48f6e4c0be5758379c52e85"
-  integrity sha512-R+Gz4wpMZtTWKE8w0FUovMCdbCQyoezjWI4fjJY2tB3pPO7lNUAK3DyYKBO+TjwXFycSc1wO7QNNxwuImju7lg==
-  dependencies:
-    "@freik/core-utils" "^0.9.2"
-
-"@freik/node-utils@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.4.0.tgz#7dcc87044ee662f3b47f07180b951c161ec29fa8"
-  integrity sha512-wiq7+cZePxa3EATCTYEn0PITdc4YfyLz4HFwGT6ebB3HqmlhP9eAAF9M8pKD4igB5fNbaARMvZ7iRemfp6QZDw==
-  dependencies:
-    "@freik/core-utils" "^0.9.2"
+    "@freik/core-utils" "^0.10.0"
+    "@freik/node-utils" "^0.6.0"
+    music-metadata "^7.6.3"
 
 "@freik/node-utils@^0.5.0":
   version "0.5.0"
@@ -1573,6 +1564,13 @@
   integrity sha512-7i6CrbfHbetOebkTS0VCpOEkT7mjr/nutKEsg884SKzo1y3qB5GgRDCc2Jitd81QIWz1wEKJoUPBnBy8drohrA==
   dependencies:
     "@freik/core-utils" "^0.9.2"
+
+"@freik/node-utils@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.6.0.tgz#61685757393c1376a7d31e007d6168ceb6bf498d"
+  integrity sha512-3HghUBzrpCslzx/8dBfthNqtJ/v/WDdnY4/J4v3pV6gWmSDHYEgoTkDRJpK31inQITrDktFjoM/XkQ+v14UbFQ==
+  dependencies:
+    "@freik/core-utils" "^0.10.0"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -8967,10 +8965,10 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-music-metadata@^7.5.2:
-  version "7.6.6"
-  resolved "https://registry.yarnpkg.com/music-metadata/-/music-metadata-7.6.6.tgz#3bc9cc64def429cc42582066b73f8300809d25b8"
-  integrity sha512-QZ9SjWhXoLA+JcCokFblxeUcwet8nDKFOh6zghjax/Kz7LBcBhRLhoozMP1sRBEs2SopFcjVr8MSpzhpdBr6ew==
+music-metadata@^7.6.3:
+  version "7.6.7"
+  resolved "https://registry.yarnpkg.com/music-metadata/-/music-metadata-7.6.7.tgz#a67341975918cd342c0adfb3794655798ee6b123"
+  integrity sha512-RUrLM7YD1k9Y4/vynO+w+DmGyu1wzLkBVIiLEh8Nf/sd+zRs8famhXvc5aIoGS5Jc2mzOtKIuKND9R+URuLtMw==
   dependencies:
     content-type "^1.0.4"
     debug "^4.3.1"

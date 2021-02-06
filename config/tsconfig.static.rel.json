@@ -1,12 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es2020",
+    "target": "ES2018",
     "module": "commonjs",
-    "sourceMap": true,
-    "outDir": "./public",
-    "incremental": true,
+    "outDir": "../public",
     "allowJs": true,
-    "tsBuildInfoFile": ".tsmain.tsbuildinfo",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -14,10 +11,9 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "inlineSources": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["static/**/*.ts", "static/main.d.ts"],
-  "exclude": ["static/renderer.*"]
+  "include": ["../static/**/*.ts", "../static/main.d.ts"],
+  "exclude": ["../static/renderer.*"]
 }

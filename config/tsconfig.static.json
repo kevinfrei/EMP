@@ -1,22 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "es2020",
     "module": "commonjs",
     "sourceMap": true,
-    "outDir": "./public",
+    "outDir": "../public",
     "incremental": true,
     "allowJs": true,
-    "tsBuildInfoFile": ".tsrender.tsbuildinfo",
-    "isolatedModules": true,
+    "tsBuildInfoFile": "../.tsmain.tsbuildinfo",
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "inlineSources": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["static/renderer.ts"]
+  "include": ["../static/**/*.ts", "../static/main.d.ts"],
+  "exclude": ["../static/renderer.*"]
 }
