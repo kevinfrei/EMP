@@ -20,6 +20,14 @@ import {
   renamePlaylist,
   savePlaylist,
 } from './playlists';
+import {
+  clearSongHates,
+  clearSongLikes,
+  getSongHates,
+  getSongLikes,
+  setSongHates,
+  setSongLikes,
+} from './SongLikesAndHates';
 import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
@@ -161,4 +169,12 @@ export function CommsSetup(): void {
   registerChannel('rename-playlist', renamePlaylist, isKeyValue);
   registerChannel('save-playlist', savePlaylist, isPlaylistSaveData);
   registerChannel('delete-playlist', deletePlaylist, Type.isString);
+
+  registerChannel('get-likes', getSongLikes, isVoid);
+  registerChannel('set-likes', setSongLikes, Type.isArrayOfString);
+  registerChannel('clear-likes', clearSongLikes, Type.isArrayOfString);
+
+  registerChannel('get-hates', getSongHates, isVoid);
+  registerChannel('set-hates', setSongHates, Type.isArrayOfString);
+  registerChannel('clear-hates', clearSongHates, Type.isArrayOfString);
 }
