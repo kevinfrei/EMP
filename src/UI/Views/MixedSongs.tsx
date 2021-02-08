@@ -1,5 +1,6 @@
 import {
   DetailsList,
+  FontIcon,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -19,7 +20,7 @@ import {
   allSongsState,
   getDataForSongListState,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState, songLikeState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
@@ -48,6 +49,18 @@ const sortedSongsState = selector({
   },
 });
 
+export function Liker({ songId }: { songId: SongKey }): JSX.Element {
+  const like = useRecoilValue(songLikeState(songId));
+  //  const hate = useRecoilValue(songHateState(songId));
+  return <FontIcon iconName={like ? 'Like' : 'Empty'} />;
+}
+
+// This is a function, and not a React Function Component, so you can't
+// have state in it: Gotta wrap it. Kinda weird, but whatever...
+export function LikeOrHate(song: Song): JSX.Element {
+  return <Liker songId={song.key} />;
+}
+
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
@@ -62,6 +75,7 @@ export default function MixedSongsList(): JSX.Element {
       ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
       ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
       ['t', 'title', 'Title', 150],
+      ['', '', 'L', 30, 30, LikeOrHate],
     ],
     () => sortOrder,
     setSortOrder,

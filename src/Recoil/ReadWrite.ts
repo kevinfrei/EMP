@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { atom, selector } from 'recoil';
-import { syncWithMainEffect } from './helpers';
+import { FTONData, SongKey, Type } from '@freik/core-utils';
+import { atom, selector, selectorFamily } from 'recoil';
+import {
+  bidirectionalSyncWithTranslateEffect,
+  syncWithMainEffect,
+} from './helpers';
 import { isMiniplayerState } from './Local';
 
 // const log = MakeLogger('ReadWrite');
@@ -135,4 +139,35 @@ export const artistListSortState = atom<string>({
 export const songListSortState = atom<string>({
   key: 'rSongListSort',
   default: 'rl',
+});
+
+const songLikeBackerState = atom<Set<SongKey>>({
+  key: 'likedSongs',
+  default: new Set<SongKey>(),
+  effects_UNSTABLE: [
+    bidirectionalSyncWithTranslateEffect<Set<SongKey>>(
+      (a: Set<string>) => [...a.keys()],
+      (b: FTONData) =>
+        Type.isArrayOfString(b) ? new Set<SongKey>(b) : undefined,
+      false,
+    ),
+  ],
+});
+
+export const songLikeState = selectorFamily<boolean, SongKey>({
+  key: 'songLikeState',
+  get: (arg: SongKey) => ({ get }) => {
+    const likes = get(songLikeBackerState);
+    return likes.has(arg);
+  },
+  set: (arg: SongKey) => ({ get, set }, newValue) => {
+    const likes = get(songLikeBackerState);
+    const copy = new Set(likes);
+    if (newValue) {
+      copy.add(arg);
+    } else {
+      copy.delete(arg);
+    }
+    set(songLikeBackerState, copy);
+  },
 });
