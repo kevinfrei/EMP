@@ -106,14 +106,14 @@ export const isMiniplayerState = atom<boolean>({
  * the "picCacheAvoider" for a particularly album cover
  * It's efficacy is not guaranteed, but it's a best effort, i guess
  */
-export const picCacheAvoiderState = atomFamily<number, AlbumKey>({
+export const picCacheAvoiderFamily = atomFamily<number, AlbumKey>({
   key: 'picCacheAvoider',
   default: RandomInt(0xfffff),
 });
 
-export const albumCoverUrlState = selectorFamily<string, AlbumKey>({
+export const albumCoverUrlFamily = selectorFamily<string, AlbumKey>({
   key: 'albuCoverUrl',
   get: (key: AlbumKey) => ({ get }) => {
-    return `pic://album/${key}#${get(picCacheAvoiderState(key))}`;
+    return `pic://album/${key}#${get(picCacheAvoiderFamily(key))}`;
   },
 });

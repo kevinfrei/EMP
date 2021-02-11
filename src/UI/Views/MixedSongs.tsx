@@ -18,9 +18,9 @@ import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
-  getDataForSongListState,
+  getDataForSongListFamily,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState, songLikeState } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState, songLikeFamily } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
@@ -50,7 +50,7 @@ const sortedSongsState = selector({
 });
 
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
-  const like = useRecoilValue(songLikeState(songId));
+  const like = useRecoilValue(songLikeFamily(songId));
   //  const hate = useRecoilValue(songHateState(songId));
   return <FontIcon iconName={like ? 'Like' : 'Empty'} />;
 }
@@ -103,7 +103,7 @@ export function SimpleSongsList({
 }: {
   forSongs: SongKey[];
 }): JSX.Element {
-  const songList = useRecoilValue(getDataForSongListState(forSongs));
+  const songList = useRecoilValue(getDataForSongListFamily(forSongs));
   if (!songList) {
     return <></>;
   }

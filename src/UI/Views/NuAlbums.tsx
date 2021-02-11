@@ -9,8 +9,8 @@ import { Album } from '@freik/core-utils';
 import { useCallback, useRef } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { albumCoverUrlState } from '../../Recoil/Local';
-import { allAlbumsState, getDataForAlbumState } from '../../Recoil/ReadOnly';
+import { albumCoverUrlFamily } from '../../Recoil/Local';
+import { allAlbumsState, getDataForAlbumFamily } from '../../Recoil/ReadOnly';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
 
@@ -77,8 +77,8 @@ function AlbumCoverView({
   album: Album;
   cols: number;
 }): JSX.Element {
-  const picurl = useRecoilValue(albumCoverUrlState(album.key));
-  const albumData = useRecoilValue(getDataForAlbumState(album.key));
+  const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
+  const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>

@@ -31,7 +31,7 @@ export type SongData = {
 const log = MakeLogger('ReadOnly'); // eslint-disable-line
 const err = MakeLogger('ReadOnly-err'); // eslint-disable-line
 
-export const getMediaInfoState = selectorFamily<Map<string, string>, SongKey>({
+export const getMediaInfoFamily = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
   get: (sk: SongKey) => async (): Promise<Map<string, string>> => {
     if (!sk) return new Map<string, string>();
@@ -69,7 +69,7 @@ export const allSongsState = selector<SongMap>({
   },
 });
 
-export const getSongByKeyState = selectorFamily<Song, SongKey>({
+export const getSongByKeyFamily = selectorFamily<Song, SongKey>({
   key: 'SongByKey',
   get: (sk: SongKey) => ({ get }): Song => {
     const songs = get(allSongsState);
@@ -86,7 +86,7 @@ export const allAlbumsState = selector<AlbumMap>({
   get: ({ get }): AlbumMap => get(musicLibraryState).albums,
 });
 
-export const getAlbumByKeyState = selectorFamily<Album, AlbumKey>({
+export const getAlbumByKeyFamily = selectorFamily<Album, AlbumKey>({
   key: 'AlbumByKey',
   get: (ak: AlbumKey) => ({ get }): Album => {
     const albums = get(allAlbumsState);
@@ -98,11 +98,11 @@ export const getAlbumByKeyState = selectorFamily<Album, AlbumKey>({
   },
 });
 
-export const getMaybeAlbumByKeyState = selectorFamily<Album | null, AlbumKey>({
+export const getMaybeAlbumByKeyFamily = selectorFamily<Album | null, AlbumKey>({
   key: 'MaybeAlbumByKey',
   get: (ak: AlbumKey) => ({ get }): Album | null => {
     if (ak.length === 0) return null;
-    return get(getAlbumByKeyState(ak));
+    return get(getAlbumByKeyFamily(ak));
   },
 });
 
@@ -121,7 +121,7 @@ export const allArtistsState = selector<ArtistMap>({
   get: ({ get }): ArtistMap => get(musicLibraryState).artists,
 });
 
-export const getArtistByKeyState = selectorFamily<Artist, ArtistKey>({
+export const getArtistByKeyFamily = selectorFamily<Artist, ArtistKey>({
   key: 'ArtistByKey',
   get: (ak: ArtistKey) => ({ get }): Artist => {
     const artists = get(allArtistsState);
@@ -133,22 +133,22 @@ export const getArtistByKeyState = selectorFamily<Artist, ArtistKey>({
   },
 });
 
-export const getMaybeArtistByKeyState = selectorFamily<
+export const getMaybeArtistByKeyFamily = selectorFamily<
   Artist | null,
   ArtistKey
 >({
   key: 'MaybeArtistByKey',
   get: (ak: ArtistKey) => ({ get }): Artist | null => {
     if (ak.length === 0) return null;
-    return get(getArtistByKeyState(ak));
+    return get(getArtistByKeyFamily(ak));
   },
 });
 
-export const getAlbumKeyForSongKeyState = selectorFamily<AlbumKey, SongKey>({
+export const getAlbumKeyForSongKeyFamily = selectorFamily<AlbumKey, SongKey>({
   key: 'AlbumKeyForSongKey',
   get: (sk: SongKey) => ({ get }): AlbumKey => {
     if (sk.length > 0) {
-      const song: Song = get(getSongByKeyState(sk));
+      const song: Song = get(getSongByKeyFamily(sk));
       return song.albumId;
     } else {
       return '';
@@ -156,7 +156,7 @@ export const getAlbumKeyForSongKeyState = selectorFamily<AlbumKey, SongKey>({
   },
 });
 
-export const getArtistStringState = selectorFamily<string, ArtistKey[]>({
+export const getArtistStringFamily = selectorFamily<string, ArtistKey[]>({
   key: 'ArtistString',
 
   get: (artistList: ArtistKey[]) => ({ get }): string => {
@@ -165,7 +165,7 @@ export const getArtistStringState = selectorFamily<string, ArtistKey[]>({
     }
     const artists: string[] = artistList
       .map((ak) => {
-        const art: Artist = get(getArtistByKeyState(ak));
+        const art: Artist = get(getArtistByKeyFamily(ak));
         return art ? art.name : '';
       })
       .filter((a: string) => a.length > 0);
@@ -185,7 +185,7 @@ export const curSongsState = selector<Song[]>({
     const songList: Song[] = [];
     for (const sk of curList) {
       try {
-        const s = get(getSongByKeyState(sk));
+        const s = get(getSongByKeyFamily(sk));
         songList.push(s);
       } catch (e) {
         Catch(e, `Error for SongKey '${sk}'`);
@@ -195,7 +195,7 @@ export const curSongsState = selector<Song[]>({
   },
 });
 
-export const getDataForSongState = selectorFamily<SongData, SongKey>({
+export const getDataForSongFamily = selectorFamily<SongData, SongKey>({
   key: 'DataForSong',
   get: (sk: SongKey) => ({ get }): SongData => {
     const res = { title: '', track: 0, artist: '', album: '', year: '' };
@@ -203,21 +203,21 @@ export const getDataForSongState = selectorFamily<SongData, SongKey>({
     if (sk.length === 0) {
       return res;
     }
-    const song: Song = get(getSongByKeyState(sk));
+    const song: Song = get(getSongByKeyFamily(sk));
     if (!song) {
       return res;
     }
     const title = song.title;
     const track = song.track;
 
-    return { title, track, ...get(getDataForAlbumState(song.albumId)) };
+    return { title, track, ...get(getDataForAlbumFamily(song.albumId)) };
   },
 });
 
-export const getDataForSongListState = selectorFamily<SongData[], SongKey[]>({
+export const getDataForSongListFamily = selectorFamily<SongData[], SongKey[]>({
   key: 'DataForSongs',
   get: (sks: SongKey[]) => ({ get }): SongData[] =>
-    sks.map((sk: SongKey) => get(getDataForSongState(sk))),
+    sks.map((sk: SongKey) => get(getDataForSongFamily(sk))),
 });
 
 export const maybeGetDataForSongState = selectorFamily<
@@ -229,24 +229,24 @@ export const maybeGetDataForSongState = selectorFamily<
     if (ssk.length !== 1) {
       return null;
     }
-    return get(getDataForSongState(ssk[0]));
+    return get(getDataForSongFamily(ssk[0]));
   },
 });
 
-export const getDataForAlbumState = selectorFamily<AlbumData, AlbumKey>({
+export const getDataForAlbumFamily = selectorFamily<AlbumData, AlbumKey>({
   key: 'DataForAlbum',
   get: (ak: AlbumKey) => ({ get }): AlbumData => {
     const res = { artist: '', album: '', year: '' };
     if (!ak) {
       return res;
     }
-    const album: Album = get(getAlbumByKeyState(ak));
+    const album: Album = get(getAlbumByKeyFamily(ak));
     if (album) {
       res.album = album.title;
       res.year = album.year ? album.year.toString() : '';
     }
     if (album.primaryArtists.length) {
-      const maybeArtistName = get(getArtistStringState(album.primaryArtists));
+      const maybeArtistName = get(getArtistStringFamily(album.primaryArtists));
       if (maybeArtistName) {
         res.artist = maybeArtistName;
       }
@@ -263,7 +263,7 @@ export const getDataForAlbumState = selectorFamily<AlbumData, AlbumKey>({
 
 export const searchTermState = atom<string>({ key: 'searchTerm', default: '' });
 
-export const getSearchState = selectorFamily<ipc.SearchResults, string>({
+export const getSearchFamily = selectorFamily<ipc.SearchResults, string>({
   key: 'search',
   get: (searchTerm: string) => async ({ get }): Promise<ipc.SearchResults> => {
     const res = await ipc.SearchWhole(searchTerm);
@@ -280,14 +280,14 @@ export const getSearchState = selectorFamily<ipc.SearchResults, string>({
 // Given a collection of SongKeys, get all the common metadata info
 // and shove it in the Partial<FullMetadata> object
 // This is used in conjunction with the Metadata Editor
-export const getCommonDataState = selectorFamily<MetadataProps, SongKey[]>({
+export const getCommonDataFamily = selectorFamily<MetadataProps, SongKey[]>({
   key: 'commonData',
   get: (keys: SongKey[]) => ({ get }) => {
     const theSongsData = keys.map((songKey) => {
-      const song = get(getSongByKeyState(songKey));
-      const artists = get(getArtistStringState(song.artistIds));
-      const moreArtists = get(getArtistStringState(song.secondaryIds));
-      const album = get(getAlbumByKeyState(song.albumId));
+      const song = get(getSongByKeyFamily(songKey));
+      const artists = get(getArtistStringFamily(song.artistIds));
+      const moreArtists = get(getArtistStringFamily(song.secondaryIds));
+      const album = get(getAlbumByKeyFamily(song.albumId));
       return { song, artists, moreArtists, album };
     });
     let artist: string | null = null;

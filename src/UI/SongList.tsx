@@ -14,7 +14,7 @@ import {
 } from '@fluentui/react';
 import { Album, AlbumKey, ArtistKey, MakeError, Song } from '@freik/core-utils';
 import { useRecoilValue } from 'recoil';
-import { getAlbumByKeyState, getArtistStringState } from '../Recoil/ReadOnly';
+import { getAlbumByKeyFamily, getArtistStringFamily } from '../Recoil/ReadOnly';
 
 const err = MakeError('SongList-err');
 
@@ -138,11 +138,11 @@ export function ArtistName({
 }: {
   artistIds: ArtistKey[];
 }): JSX.Element {
-  return <>{useRecoilValue(getArtistStringState(artistIds))}</>;
+  return <>{useRecoilValue(getArtistStringFamily(artistIds))}</>;
 }
 
 export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
-  return <>{useRecoilValue(getAlbumByKeyState(albumId)).title}</>;
+  return <>{useRecoilValue(getAlbumByKeyFamily(albumId)).title}</>;
 }
 
 export function ArtistsFromSong(theSong: Song): JSX.Element {

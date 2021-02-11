@@ -28,7 +28,7 @@ import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
-  getSearchState,
+  getSearchFamily,
   searchTermState,
 } from '../../Recoil/ReadOnly';
 import {
@@ -214,7 +214,7 @@ function SearchResultsGroupHeader(props: {
 
 export default function SearchResultsView(): JSX.Element {
   const searchTerm = useRecoilValue(searchTermState);
-  const searchResults = useRecoilValue(getSearchState(searchTerm));
+  const searchResults = useRecoilValue(getSearchFamily(searchTerm));
   const songs = useRecoilValue(allSongsState);
   const artists = useRecoilValue(allArtistsState);
   const albums = useRecoilValue(allAlbumsState);

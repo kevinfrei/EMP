@@ -11,7 +11,7 @@ import {
   songListState,
 } from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
-import { getPlaylistState, playlistNamesState } from './PlaylistsState';
+import { getPlaylistFamily, playlistNamesState } from './PlaylistsState';
 import { repeatState, shuffleState } from './ReadWrite';
 /**
  * Try to play the next song in the playlist
@@ -174,11 +174,11 @@ export async function renamePlaylist(
   newName: PlaylistName,
 ): Promise<void> {
   const curNames = await snapshot.getPromise(playlistNamesState);
-  const curSongs = await snapshot.getPromise(getPlaylistState(curName));
+  const curSongs = await snapshot.getPromise(getPlaylistFamily(curName));
   curNames.delete(curName);
   curNames.add(newName);
   await PostMain('rename-playlist', [curName, newName]);
-  set(getPlaylistState(newName), curSongs);
+  set(getPlaylistFamily(newName), curSongs);
   set(playlistNamesState, new Set(curNames));
 }
 

@@ -6,7 +6,10 @@ import {
   syncWithMainEffect,
 } from './helpers';
 import { isMiniplayerState } from './Local';
-import { getMaybeAlbumByKeyState, getMaybeArtistByKeyState } from './ReadOnly';
+import {
+  getMaybeAlbumByKeyFamily,
+  getMaybeArtistByKeyFamily,
+} from './ReadOnly';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
@@ -155,7 +158,7 @@ const songLikeBackerState = atom<Set<SongKey>>({
   ],
 });
 
-export const songLikeState = selectorFamily<boolean, SongKey>({
+export const songLikeFamily = selectorFamily<boolean, SongKey>({
   key: 'songLikeState',
   get: (arg: SongKey) => ({ get }) => {
     const likes = get(songLikeBackerState);
@@ -186,7 +189,7 @@ const songHateBackerState = atom<Set<SongKey>>({
   ],
 });
 
-export const songHateState = selectorFamily<boolean, SongKey>({
+export const songHateFamily = selectorFamily<boolean, SongKey>({
   key: 'songHateState',
   get: (arg: SongKey) => ({ get }) => {
     const likes = get(songLikeBackerState);
@@ -211,14 +214,14 @@ export const songListFromKeyFamily = selectorFamily<SongKey[] | null, string>({
       return [arg];
     }
     if (arg.startsWith('L')) {
-      const alb = get(getMaybeAlbumByKeyState(arg));
+      const alb = get(getMaybeAlbumByKeyFamily(arg));
       if (!alb) {
         return null;
       }
       return alb.songs;
     }
     if (arg.startsWith('R')) {
-      const art = get(getMaybeArtistByKeyState(arg));
+      const art = get(getMaybeArtistByKeyFamily(arg));
       if (!art) {
         return null;
       }
@@ -236,7 +239,7 @@ export const songLikeFromStringFamily = selectorFamily<number, string>({
       return 0;
     }
     const val = songs
-      .map((songKey) => (get(songLikeState(songKey)) ? -1 : 1))
+      .map((songKey) => (get(songLikeFamily(songKey)) ? -1 : 1))
       .reduce((a, b) => a + b, 0);
     // Return 1 or -1 only if the entire batch agrees
     return Math.abs(val) === songs.length ? val / songs.length : 0;

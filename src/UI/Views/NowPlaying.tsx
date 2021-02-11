@@ -40,7 +40,7 @@ import {
   songListState,
 } from '../../Recoil/Local';
 import {
-  getPlaylistState,
+  getPlaylistFamily,
   playlistNamesState,
   saveableState,
 } from '../../Recoil/PlaylistsState';
@@ -75,7 +75,7 @@ function TopLine(): JSX.Element {
     if (playlists.has(inputName)) {
       window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
-      set(getPlaylistState(inputName), [...songList]);
+      set(getPlaylistFamily(inputName), [...songList]);
       set(activePlaylistState, inputName);
     }
   });
@@ -90,7 +90,7 @@ function TopLine(): JSX.Element {
     }
   });
   const save = useRecoilCallback(({ set }) => () => {
-    set(getPlaylistState(nowPlaying), songList);
+    set(getPlaylistFamily(nowPlaying), songList);
   });
 
   const emptyQueue = songList.length === 0;

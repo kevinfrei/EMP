@@ -19,7 +19,7 @@ import { deletePlaylist, PlaySongs, renamePlaylist } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
-  getPlaylistState,
+  getPlaylistFamily,
   playlistNamesState,
 } from '../../Recoil/PlaylistsState';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
@@ -31,7 +31,7 @@ import './styles/Playlists.css';
 type ItemType = PlaylistName;
 
 export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
-  const playlist = useRecoilValue(getPlaylistState(id));
+  const playlist = useRecoilValue(getPlaylistFamily(id));
   return <>{playlist.length}</>;
 }
 
@@ -53,7 +53,7 @@ export default function PlaylistView(): JSX.Element {
   const onPlaylistInvoked = useRecoilCallback(
     (cbInterface) => (playlistName: PlaylistName) => {
       const songs = cbInterface.snapshot
-        .getLoadable(getPlaylistState(playlistName))
+        .getLoadable(getPlaylistFamily(playlistName))
         .valueOrThrow();
       PlaySongs(cbInterface, songs, playlistName);
     },
@@ -64,7 +64,7 @@ export default function PlaylistView(): JSX.Element {
       return;
     }
     const songs = await snapshot.getPromise(
-      getPlaylistState(playlistContext.data),
+      getPlaylistFamily(playlistContext.data),
     );
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
@@ -74,7 +74,7 @@ export default function PlaylistView(): JSX.Element {
       }
       seen.add(song);
     }
-    set(getPlaylistState(playlistContext.data), newList);
+    set(getPlaylistFamily(playlistContext.data), newList);
   });
 
   const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
@@ -171,7 +171,7 @@ export default function PlaylistView(): JSX.Element {
           }
           onGetSongList={(cbInterface: CallbackInterface, data: string) => {
             const list = cbInterface.snapshot
-              .getLoadable(getPlaylistState(data))
+              .getLoadable(getPlaylistFamily(data))
               .valueMaybe();
             return list ? list : undefined;
           }}

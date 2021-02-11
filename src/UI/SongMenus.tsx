@@ -9,9 +9,9 @@ import { MakeLogger, SongKey, Type } from '@freik/core-utils';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
-  songHateState,
+  songHateFamily,
+  songLikeFamily,
   songLikeFromStringFamily,
-  songLikeState,
 } from '../Recoil/ReadWrite';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 
@@ -73,7 +73,7 @@ export function SongListMenu({
     const maybeSongs = onGetSongList(cbInterface, context.data);
     if (maybeSongs) {
       for (const song of maybeSongs) {
-        cbInterface.set(songLikeState(song), (pv) => !pv);
+        cbInterface.set(songLikeFamily(song), (pv) => !pv);
       }
     }
   });
@@ -81,7 +81,7 @@ export function SongListMenu({
     const maybeSongs = onGetSongList(cbInterface, context.data);
     if (maybeSongs) {
       for (const song of maybeSongs) {
-        cbInterface.set(songHateState(song), (pv) => !pv);
+        cbInterface.set(songHateFamily(song), (pv) => !pv);
       }
     }
   });

@@ -4,7 +4,7 @@ import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
-  albumCoverUrlState,
+  albumCoverUrlFamily,
   currentSongKeyState,
   songListState,
 } from '../Recoil/Local';
@@ -18,8 +18,8 @@ import {
 } from '../Recoil/MediaPlaying';
 import {
   allSongsState,
-  getAlbumKeyForSongKeyState,
-  getDataForSongState,
+  getAlbumKeyForSongKeyFamily,
+  getDataForSongFamily,
   SongData,
 } from '../Recoil/ReadOnly';
 import { repeatState } from '../Recoil/ReadWrite';
@@ -35,8 +35,8 @@ export function GetAudioElem(): HTMLMediaElement | void {
 
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyState);
-  const albumKey = useRecoilValue(getAlbumKeyForSongKeyState(songKey));
-  const picurl = useRecoilValue(albumCoverUrlState(albumKey));
+  const albumKey = useRecoilValue(getAlbumKeyForSongKeyFamily(songKey));
+  const picurl = useRecoilValue(albumCoverUrlFamily(albumKey));
   return (
     <span id="song-cover-art">
       <img id="img-current-cover-art" src={picurl} alt="album cover" />
@@ -105,7 +105,7 @@ function MediaTimeSlider(): JSX.Element {
 
 function SongName(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyState);
-  const { title }: SongData = useRecoilValue(getDataForSongState(songKey));
+  const { title }: SongData = useRecoilValue(getDataForSongFamily(songKey));
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
       {title}
@@ -116,7 +116,7 @@ function SongName(): JSX.Element {
 function ArtistAlbum(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyState);
   const { artist, album }: SongData = useRecoilValue(
-    getDataForSongState(songKey),
+    getDataForSongFamily(songKey),
   );
   if (songKey) {
     const split = artist.length && album.length ? ': ' : '';

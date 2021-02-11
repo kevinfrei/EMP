@@ -24,7 +24,7 @@ import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
-  getArtistByKeyState,
+  getArtistByKeyFamily,
 } from '../../Recoil/ReadOnly';
 import {
   ignoreArticlesState,
@@ -244,7 +244,7 @@ export default function ArtistList(): JSX.Element {
           }
           onGetSongList={(cbInterface: CallbackInterface, data: string) => {
             const alb = cbInterface.snapshot
-              .getLoadable(getArtistByKeyState(data))
+              .getLoadable(getArtistByKeyFamily(data))
               .valueMaybe();
             return alb ? alb.songs : undefined;
           }}

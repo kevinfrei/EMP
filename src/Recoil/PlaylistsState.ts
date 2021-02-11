@@ -37,15 +37,15 @@ export const playlistNamesState = selector<Set<PlaylistName>>({
   },
 });
 
-const getPlaylistBackerState = atomFamily<SongKey[] | false, PlaylistName>({
+const getPlaylistBackerFamily = atomFamily<SongKey[] | false, PlaylistName>({
   key: 'playlistFamilyBacker',
   default: false,
 });
 
-export const getPlaylistState = selectorFamily<SongKey[], PlaylistName>({
+export const getPlaylistFamily = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
   get: (arg: PlaylistName) => async ({ get }) => {
-    const backed = get(getPlaylistBackerState(arg));
+    const backed = get(getPlaylistBackerFamily(arg));
     if (backed === false) {
       const listStr = await CallMain(
         'load-playlist',
@@ -67,7 +67,7 @@ export const getPlaylistState = selectorFamily<SongKey[], PlaylistName>({
       set(playlistNamesState, new Set(names));
     }
     const songs = Type.isArray(newValue) ? newValue : [];
-    set(getPlaylistBackerState(name), songs);
+    set(getPlaylistBackerFamily(name), songs);
     await PostMain('save-playlist', { name, songs });
   },
 });
@@ -79,7 +79,7 @@ export const saveableState = selector<boolean>({
   get: ({ get }): boolean => {
     const curPlaylist = get(activePlaylistState);
     if (isPlaylist(curPlaylist)) {
-      const theSongList = get(getPlaylistState(curPlaylist));
+      const theSongList = get(getPlaylistFamily(curPlaylist));
       const songList = get(songListState);
       return !Comparisons.ArraySetEqual(theSongList, songList);
     } else {

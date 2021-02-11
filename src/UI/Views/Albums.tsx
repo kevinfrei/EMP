@@ -27,13 +27,13 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { albumCoverUrlState } from '../../Recoil/Local';
+import { albumCoverUrlFamily } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
-  getAlbumByKeyState,
-  getDataForAlbumState,
+  getAlbumByKeyFamily,
+  getDataForAlbumFamily,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
@@ -56,7 +56,7 @@ const albumContextState = atom<SongListMenuData>({
 });
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
-  const albumData = useRecoilValue(getDataForAlbumState(props.album.key));
+  const albumData = useRecoilValue(getDataForAlbumFamily(props.album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
     AddSongs(cbInterface, props.album.songs),
   );
@@ -67,7 +67,7 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
         spot: { left: event.clientX + 14, top: event.clientY },
       }),
   );
-  const picurl = useRecoilValue(albumCoverUrlState(props.album.key));
+  const picurl = useRecoilValue(albumCoverUrlFamily(props.album.key));
   return (
     <Stack
       horizontal
@@ -198,7 +198,7 @@ export default function AlbumList(): JSX.Element {
                 return [data];
               } else if (data[0] === 'L') {
                 const alb = cbInterface.snapshot
-                  .getLoadable(getAlbumByKeyState(data))
+                  .getLoadable(getAlbumByKeyFamily(data))
                   .valueMaybe();
                 return alb ? alb.songs : undefined;
               }

@@ -9,11 +9,11 @@ import { SongKey, Type } from '@freik/core-utils';
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../../MyWindow';
 import {
-  getAlbumByKeyState,
-  getArtistStringState,
-  getCommonDataState,
-  getMediaInfoState,
-  getSongByKeyState,
+  getAlbumByKeyFamily,
+  getArtistStringFamily,
+  getCommonDataFamily,
+  getMediaInfoFamily,
+  getSongByKeyFamily,
 } from '../../Recoil/ReadOnly';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
 import { altRowRenderer } from './../SongList';
@@ -53,7 +53,7 @@ function getSampleRate(sr: string | void): string {
 
 // This is the header for single-file editing
 function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
-  const mediaInfo = useRecoilValue(getMediaInfoState(forSong));
+  const mediaInfo = useRecoilValue(getMediaInfoFamily(forSong));
 
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = fractionalSecondsStrToHMS(
@@ -111,7 +111,7 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
     },
   ];
 
-  const mediaInfo = useRecoilValue(getMediaInfoState(songKey));
+  const mediaInfo = useRecoilValue(getMediaInfoFamily(songKey));
   return (
     <DetailsList
       items={[...mediaInfo.entries()]}
@@ -124,12 +124,12 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
-  const theSong = useRecoilValue(getSongByKeyState(songKey));
-  const theArtist = useRecoilValue(getArtistStringState(theSong.artistIds));
+  const theSong = useRecoilValue(getSongByKeyFamily(songKey));
+  const theArtist = useRecoilValue(getArtistStringFamily(theSong.artistIds));
   const moreArtists = useRecoilValue(
-    getArtistStringState(theSong.secondaryIds),
+    getArtistStringFamily(theSong.secondaryIds),
   );
-  const theAlbum = useRecoilValue(getAlbumByKeyState(theSong.albumId));
+  const theAlbum = useRecoilValue(getAlbumByKeyFamily(theSong.albumId));
 
   return (
     <MetadataEditor
@@ -148,7 +148,7 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
-  const allTheInfos = useRecoilValue(getCommonDataState(songKeys));
+  const allTheInfos = useRecoilValue(getCommonDataFamily(songKeys));
   return <MetadataEditor forSongs={songKeys} {...allTheInfos} />;
 }
 
