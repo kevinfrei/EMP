@@ -6,6 +6,7 @@ import {
   syncWithMainEffect,
 } from './helpers';
 import { isMiniplayerState } from './Local';
+import { getMaybeAlbumByKeyState, getMaybeArtistByKeyState } from './ReadOnly';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
@@ -169,5 +170,75 @@ export const songLikeState = selectorFamily<boolean, SongKey>({
       copy.delete(arg);
     }
     set(songLikeBackerState, copy);
+  },
+});
+
+const songHateBackerState = atom<Set<SongKey>>({
+  key: 'hatedSongs',
+  default: new Set<SongKey>(),
+  effects_UNSTABLE: [
+    bidirectionalSyncWithTranslateEffect<Set<SongKey>>(
+      (a: Set<string>) => [...a.keys()],
+      (b: FTONData) =>
+        Type.isArrayOfString(b) ? new Set<SongKey>(b) : undefined,
+      false,
+    ),
+  ],
+});
+
+export const songHateState = selectorFamily<boolean, SongKey>({
+  key: 'songHateState',
+  get: (arg: SongKey) => ({ get }) => {
+    const likes = get(songLikeBackerState);
+    return likes.has(arg);
+  },
+  set: (arg: SongKey) => ({ get, set }, newValue) => {
+    const likes = get(songLikeBackerState);
+    const copy = new Set(likes);
+    if (newValue) {
+      copy.add(arg);
+    } else {
+      copy.delete(arg);
+    }
+    set(songLikeBackerState, copy);
+  },
+});
+
+export const songListFromKeyFamily = selectorFamily<SongKey[] | null, string>({
+  key: 'songsFromKey',
+  get: (arg: string) => ({ get }) => {
+    if (arg.startsWith('S')) {
+      return [arg];
+    }
+    if (arg.startsWith('L')) {
+      const alb = get(getMaybeAlbumByKeyState(arg));
+      if (!alb) {
+        return null;
+      }
+      return alb.songs;
+    }
+    if (arg.startsWith('R')) {
+      const art = get(getMaybeArtistByKeyState(arg));
+      if (!art) {
+        return null;
+      }
+      return art.songs;
+    }
+    return null;
+  },
+});
+
+export const songLikeFromStringFamily = selectorFamily<number, string>({
+  key: 'songLikesFromKey',
+  get: (arg: string) => ({ get }) => {
+    const songs = get(songListFromKeyFamily(arg));
+    if (!songs) {
+      return 0;
+    }
+    const val = songs
+      .map((songKey) => (get(songLikeState(songKey)) ? -1 : 1))
+      .reduce((a, b) => a + b, 0);
+    // Return 1 or -1 only if the entire batch agrees
+    return Math.abs(val) === songs.length ? val / songs.length : 0;
   },
 });

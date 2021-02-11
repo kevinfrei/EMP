@@ -6,8 +6,13 @@ import {
   Point,
 } from '@fluentui/react';
 import { MakeLogger, SongKey, Type } from '@freik/core-utils';
-import { CallbackInterface, useRecoilCallback } from 'recoil';
+import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { AddSongs, PlaySongs } from '../Recoil/api';
+import {
+  songHateState,
+  songLikeFromStringFamily,
+  songLikeState,
+} from '../Recoil/ReadWrite';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 
 const log = MakeLogger('SongMenus'); // eslint-disable-line
@@ -64,9 +69,24 @@ export function SongListMenu({
       SongListDetailClick(cbInterface, maybeSongs, false);
     }
   });
-  const onLove = useRecoilCallback((cbInterface) => () => log('love'));
-  const onHate = useRecoilCallback((cbInterface) => () => log('hate'));
-
+  const onLove = useRecoilCallback((cbInterface) => () => {
+    const maybeSongs = onGetSongList(cbInterface, context.data);
+    if (maybeSongs) {
+      for (const song of maybeSongs) {
+        cbInterface.set(songLikeState(song), (pv) => !pv);
+      }
+    }
+  });
+  const onHate = useRecoilCallback((cbInterface) => () => {
+    const maybeSongs = onGetSongList(cbInterface, context.data);
+    if (maybeSongs) {
+      for (const song of maybeSongs) {
+        cbInterface.set(songHateState(song), (pv) => !pv);
+      }
+    }
+  });
+  const like = 1 + useRecoilValue(songLikeFromStringFamily(context.data));
+  const likeIcons = ['HeartFill', '', 'Heart'];
   const realItems: IContextualMenuItem[] = title
     ? [{ key: 'Header', name: title, itemType: ContextualMenuItemType.Header }]
     : [];
@@ -89,10 +109,10 @@ export function SongListMenu({
           break;
         case 'love':
         case 'like':
-          realItems.push(i('Love [NYI]', 'Heart', onLove));
+          realItems.push(i('Like [NYI]', likeIcons[like], onLove));
           break;
         case 'hate':
-          realItems.push(i('Hate [NYI]', 'Dislike', onHate));
+          realItems.push(i('Disklie [NYI]', 'Dislike', onHate));
           break;
         case '':
         case '-':
