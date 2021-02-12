@@ -1470,10 +1470,10 @@
     prop-types "^15.7.2"
     tslib "^1.10.0"
 
-"@freik/build-tools@^2.3.1":
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.3.1.tgz#e0396e50506dae35c82f9450b4f614bf7389b23d"
-  integrity sha512-VjHJBJh02dboI4SMYlUkZHNYJy9GYjpocrEkr8KYA8mmHDen6aJoZqOsjELkF+IYGLIFTb95xqEiUXgZFppVmQ==
+"@freik/build-tools@^2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.3.2.tgz#43c360eaea16d827e152dc401c033a9168c4d492"
+  integrity sha512-ODD+m+zrFlFgViWalFr5rO/1TPfxdt6EOwZqNh+albRyrHQRbmqICjG6uaM1arjrqZstMYUXikK3Qhqp/t2P8g==
   dependencies:
     "@babel/cli" "^7.12.16"
     "@babel/core" "^7.12.16"

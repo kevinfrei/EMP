@@ -24,9 +24,9 @@ import { ignoreArticlesState, songLikeFamily } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
-  AlbumFromSong,
+  AlbumFromSongRender,
   altRowRenderer,
-  ArtistsFromSong,
+  ArtistsFromSongRender,
   MakeColumns,
   StickyRenderDetailsHeader,
 } from '../SongList';
@@ -52,7 +52,7 @@ const sortedSongsState = selector({
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
   const like = useRecoilValue(songLikeFamily(songId));
   //  const hate = useRecoilValue(songHateState(songId));
-  return <FontIcon iconName={like ? 'Like' : 'Empty'} />;
+  return <FontIcon iconName={like ? 'LikeSolid' : 'Empty'} />;
 }
 
 // This is a function, and not a React Function Component, so you can't
@@ -72,8 +72,8 @@ export default function MixedSongsList(): JSX.Element {
   const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
-      ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSong],
-      ['l', 'albumId', 'Album', 150, 450, AlbumFromSong],
+      ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSongRender],
+      ['l', 'albumId', 'Album', 150, 450, AlbumFromSongRender],
       ['t', 'title', 'Title', 150],
       ['', '', 'L', 30, 30, LikeOrHate],
     ],

@@ -145,15 +145,15 @@ export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
   return <>{useRecoilValue(getAlbumByKeyFamily(albumId)).title}</>;
 }
 
-export function ArtistsFromSong(theSong: Song): JSX.Element {
+export function ArtistsFromSongRender(theSong: Song): JSX.Element {
   return <ArtistName artistIds={theSong.artistIds} />;
 }
 
-export function AlbumFromSong(song: Song): JSX.Element {
+export function AlbumFromSongRender(song: Song): JSX.Element {
   return <AlbumName albumId={song.albumId} />;
 }
 
-export function ArtistsFromAlbum(album: Album): JSX.Element {
+export function ArtistsFromAlbumRender(album: Album): JSX.Element {
   return <ArtistName artistIds={album.primaryArtists} />;
 }
 

@@ -38,9 +38,9 @@ import {
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import {
-  AlbumFromSong,
+  AlbumFromSongRender,
   altRowRenderer,
-  ArtistsFromSong,
+  ArtistsFromSongRender,
   GetSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
@@ -161,8 +161,8 @@ export default function AlbumList(): JSX.Element {
     'l',
     'albumId',
     [
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
-      ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsFromSong],
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
+      ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsFromSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],

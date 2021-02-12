@@ -23,20 +23,6 @@
   },
   "main": "public/electron.js",
   "homepage": "./",
-  "dependencies": {
-    "@fluentui/font-icons-mdl2": "^8.0.0-beta.0",
-    "@fluentui/react": "^8.0.0-beta.53",
-    "@fluentui/react-hooks": "^8.0.0-beta.0",
-    "@freik/core-utils": "^0.10.0",
-    "@freik/media-utils": "^0.8.0",
-    "@freik/node-utils": "^0.6.0",
-    "album-art": "^2.0.2",
-    "electron-is-dev": "^1.2.0",
-    "open": "^7.4.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "recoil": "^0.1.2"
-  },
   "scripts": {
     "analyze": "er-analyze",
     "react-start": "react-scripts start",
@@ -52,14 +38,28 @@
     "start": "er-start",
     "prepare": "er-prepare",
     "types": "er-types",
-    "test": "concurrently \"jest --config config/jest.jsdom.js\" \"jest --config config/jest.node.js --passWithNoTests\"",
+    "test": "er-test",
     "testui": "jest --config config/jest.jsdom.js --watch",
     "testnode": "jest --config config/jest.node.js --watch",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"config/*.js\" \"config/*.json\" \"*.json\" \"*.md\" \"src/**/*.css\" .prettierrc",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
-    "chk": "concurrently \"yarn types\" \"yarn lint\" \"yarn test\"",
+    "chk": "er-check",
     "linecount": "git ls-files|grep \"\\.\\(css\\|ts\\|tsx\\)$\"|grep -v \"__\\|\\.d\\.ts\"|xargs wc -l",
     "postinstall": "husky install"
+  },
+  "dependencies": {
+    "@fluentui/font-icons-mdl2": "^8.0.0-beta.0",
+    "@fluentui/react": "^8.0.0-beta.53",
+    "@fluentui/react-hooks": "^8.0.0-beta.0",
+    "@freik/core-utils": "^0.10.0",
+    "@freik/media-utils": "^0.8.0",
+    "@freik/node-utils": "^0.6.0",
+    "album-art": "^2.0.2",
+    "electron-is-dev": "^1.2.0",
+    "open": "^7.4.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "recoil": "^0.1.2"
   },
   "browserslist": {
     "production": [
@@ -72,7 +72,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/plugin-transform-react-jsx": "^7.12.16",
-    "@freik/build-tools": "^2.3.1",
+    "@freik/build-tools": "^2.3.2",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.5",
     "@types/electron-devtools-installer": "^2.2.0",
@@ -85,7 +85,6 @@
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
     "babel-eslint": "^10.1.0",
-    "concurrently": "^5.3.0",
     "electron": "^11.2.3",
     "electron-builder": "^22.9.1",
     "electron-devtools-installer": "^3.1.1",

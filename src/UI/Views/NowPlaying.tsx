@@ -54,9 +54,9 @@ import { isPlaylist, SortSongList } from '../../Tools';
 import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
-  AlbumFromSong,
+  AlbumFromSongRender,
   altRowRenderer,
-  ArtistsFromSong,
+  ArtistsFromSongRender,
   MakeColumns,
 } from '../SongList';
 import './styles/NowPlaying.css';
@@ -242,8 +242,8 @@ export default function NowPlaying(): JSX.Element {
   const normalColumns = MakeColumns(
     [
       ['X', '', '', 18, 18, drawDeleter],
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
-      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSong],
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
+      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
@@ -255,8 +255,8 @@ export default function NowPlaying(): JSX.Element {
       ['X', '', '', 18, 18, drawDeleter],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 70, 150],
-      ['l', 'albumId', 'Album', 40, 150, AlbumFromSong],
-      ['r', 'artistIds', 'Artist(s)', 40, 150, ArtistsFromSong],
+      ['l', 'albumId', 'Album', 40, 150, AlbumFromSongRender],
+      ['r', 'artistIds', 'Artist(s)', 40, 150, ArtistsFromSongRender],
     ],
     () => sortBy,
     performSort,

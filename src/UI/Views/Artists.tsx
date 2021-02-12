@@ -34,7 +34,7 @@ import {
 import { MakeSongComparator, SortItems } from '../../Tools';
 import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
-  AlbumFromSong,
+  AlbumFromSongRender,
   altRowRenderer,
   ArtistName,
   GetSongGroupData,
@@ -213,7 +213,7 @@ export default function ArtistList(): JSX.Element {
     'sortedArtistId',
     [
       ['r', 'sortedArtistId', 'Artist', 50, 175, filteredArtistsFromSong],
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSong],
+      ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
