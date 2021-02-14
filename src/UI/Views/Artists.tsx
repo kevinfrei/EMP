@@ -32,7 +32,6 @@ import {
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { MakeSongComparator, SortItems } from '../../Tools';
-import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSongRender,
   altRowRenderer,
@@ -171,7 +170,17 @@ export default function ArtistList(): JSX.Element {
 
   const filteredArtistList = useRecoilValue(filteredArtistsState);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
-  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
+  const onRightClick = useRecoilCallback(
+    ({ set }) => (item: Song, index?: number, ev?: Event) => {
+      if (ev) {
+        const event = (ev as any) as MouseEvent;
+        set(artistContextState, {
+          data: item.key,
+          spot: { left: event.clientX + 14, top: event.clientY },
+        });
+      }
+    },
+  );
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs(cbInterface, [item.key]),
   );
@@ -234,7 +243,7 @@ export default function ArtistList(): JSX.Element {
           groupProps={groupProps}
           columns={columns}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={onSongDetailClick}
+          onItemContextMenu={onRightClick}
           onItemInvoked={onAddSongClick}
         />
         <SongListMenu
@@ -243,10 +252,16 @@ export default function ArtistList(): JSX.Element {
             setArtistContext({ data: '', spot: { left: 0, top: 0 } })
           }
           onGetSongList={(cbInterface: CallbackInterface, data: string) => {
-            const alb = cbInterface.snapshot
-              .getLoadable(getArtistByKeyFamily(data))
-              .valueMaybe();
-            return alb ? alb.songs : undefined;
+            if (data.length > 0) {
+              if (data[0] === 'S') {
+                return [data];
+              } else if (data[0] === 'R') {
+                const alb = cbInterface.snapshot
+                  .getLoadable(getArtistByKeyFamily(data))
+                  .valueMaybe();
+                return alb ? alb.songs : undefined;
+              }
+            }
           }}
         />
       </ScrollablePane>

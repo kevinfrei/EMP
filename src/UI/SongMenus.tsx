@@ -86,7 +86,7 @@ export function SongListMenu({
     }
   });
   const like = 1 + useRecoilValue(songLikeFromStringFamily(context.data));
-  const likeIcons = ['HeartFill', '', 'Heart'];
+  const likeIcons = ['LikeSolid', 'More', 'Like'];
   const realItems: IContextualMenuItem[] = title
     ? [{ key: 'Header', name: title, itemType: ContextualMenuItemType.Header }]
     : [];
