@@ -112,6 +112,7 @@ export function SongListMenu({
           realItems.push(i('Like [NYI]', likeIcons[like], onLove));
           break;
         case 'hate':
+        case 'dislike':
           realItems.push(i('Disklie [NYI]', 'Dislike', onHate));
           break;
         case '':

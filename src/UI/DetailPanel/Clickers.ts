@@ -1,4 +1,4 @@
-import { Song, SongKey, Type } from '@freik/core-utils';
+import { Song, SongKey } from '@freik/core-utils';
 import { CallbackInterface } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
 
@@ -16,14 +16,6 @@ export function SongDetailClick(
     }
     return vals;
   });
-}
-
-// This is a helper to shift-click for song details
-export function SongDetailContextMenuClick(cbInterface: CallbackInterface) {
-  return (item: Song, index?: number, ev?: Event): void => {
-    const shift = Type.has(ev, 'shiftKey') && ev.shiftKey === true;
-    SongDetailClick(cbInterface, item, shift);
-  };
 }
 
 function SetInvert<T>(theSet: Set<T>, toToggle: Iterable<T>): void {

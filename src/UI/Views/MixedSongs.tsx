@@ -8,6 +8,7 @@ import {
 import { MakeError, Song, SongKey } from '@freik/core-utils';
 import {
   atom,
+  CallbackInterface,
   selector,
   useRecoilCallback,
   useRecoilState,
@@ -22,7 +23,6 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState, songLikeFamily } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
-import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import {
   AlbumFromSongRender,
   altRowRenderer,
@@ -30,6 +30,7 @@ import {
   MakeColumns,
   StickyRenderDetailsHeader,
 } from '../SongList';
+import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { Expandable } from '../Utilities';
 import './styles/MixedSongs.css';
 
@@ -48,6 +49,10 @@ const sortedSongsState = selector({
     );
   },
 });
+const songContextState = atom<SongListMenuData>({
+  key: 'songContext',
+  default: { data: '', spot: { left: 0, top: 0 } },
+});
 
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
   const like = useRecoilValue(songLikeFamily(songId));
@@ -64,11 +69,19 @@ export function LikeOrHate(song: Song): JSX.Element {
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
     AddSongs(cbInterface, [item.key]),
   );
-
+  const [songContext, setSongContext] = useRecoilState(songContextState);
+  const onRightClick = (item?: Song, index?: number, ev?: Event) => {
+    const event = (ev as any) as MouseEvent;
+    if (ev && item) {
+      setSongContext({
+        data: item.key,
+        spot: { left: event.clientX + 14, top: event.clientY },
+      });
+    }
+  };
   const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
@@ -90,8 +103,19 @@ export default function MixedSongsList(): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={altRowRenderer()}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={onSongDetailClick}
+          onItemContextMenu={onRightClick}
           onItemInvoked={onAddSongClick}
+        />
+        <SongListMenu
+          context={songContext}
+          onClearContext={() =>
+            setSongContext({ data: '', spot: { left: 0, top: 0 } })
+          }
+          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
+            if (data.length > 0) {
+              return [data];
+            }
+          }}
         />
       </ScrollablePane>
     </div>

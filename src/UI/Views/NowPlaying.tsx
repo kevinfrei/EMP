@@ -25,6 +25,8 @@ import {
   Type,
 } from '@freik/core-utils';
 import {
+  atom,
+  CallbackInterface,
   useRecoilCallback,
   useRecoilState,
   useRecoilValue,
@@ -51,7 +53,6 @@ import {
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
 import { isPlaylist, SortSongList } from '../../Tools';
-import { SongDetailContextMenuClick } from '../DetailPanel/Clickers';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
   AlbumFromSongRender,
@@ -59,7 +60,13 @@ import {
   ArtistsFromSongRender,
   MakeColumns,
 } from '../SongList';
+import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/NowPlaying.css';
+
+const nowPlayingContextState = atom<SongListMenuData>({
+  key: 'nowPlayingContext',
+  default: { data: '', spot: { left: 0, top: 0 } },
+});
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
@@ -184,13 +191,22 @@ export default function NowPlaying(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsState);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsState);
   const articles = useRecoilValue(ignoreArticlesState);
-  const onSongDetailClick = useRecoilCallback(SongDetailContextMenuClick);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexState);
   const [songList, setSongList] = useRecoilState(songListState);
   const resetShuffle = useResetRecoilState(shuffleState);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
   const curSongs = useRecoilValue(curSongsState);
   const isMini = useRecoilValue(isMiniplayerState);
+  const [songContext, setSongContext] = useRecoilState(nowPlayingContextState);
+  const onRightClick = (item?: Song, index?: number, ev?: Event) => {
+    const event = (ev as any) as MouseEvent;
+    if (ev && item) {
+      setSongContext({
+        data: item.key,
+        spot: { left: event.clientX + 14, top: event.clientY },
+      });
+    }
+  };
 
   const drawDeleter = (song: Song, index?: number) => (
     <FontIcon
@@ -281,9 +297,21 @@ export default function NowPlaying(): JSX.Element {
           selectionMode={SelectionMode.none}
           onRenderRow={altRowRenderer((props) => props.itemIndex === curIndex)}
           columns={isMini ? miniColumns : normalColumns}
-          onItemContextMenu={onSongDetailClick}
+          onItemContextMenu={onRightClick}
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
           onRenderDetailsHeader={StickyDetailsHeader}
+        />
+        <SongListMenu
+          context={songContext}
+          onClearContext={() =>
+            setSongContext({ data: '', spot: { left: 0, top: 0 } })
+          }
+          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
+            if (data.length > 0) {
+              return [data];
+            }
+          }}
+          items={['prop', '-', 'like', 'hate']}
         />
       </ScrollablePane>
     </div>
