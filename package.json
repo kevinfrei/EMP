@@ -67,7 +67,7 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.12.17",
+    "@babel/core": "^7.13.1",
     "@babel/plugin-transform-react-jsx": "^7.12.17",
     "@freik/build-tools": "^2.4.0",
     "@testing-library/jest-dom": "^5.11.8",
@@ -79,23 +79,23 @@
     "@types/react-dom": "^17.0.1",
     "@types/react-test-renderer": "^17.0.1",
     "@types/recoil": "^0.0.1",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
-    "@typescript-eslint/parser": "^4.15.1",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
     "babel-eslint": "^10.1.0",
-    "electron": "^11.2.3",
+    "electron": "^11.3.0",
     "electron-builder": "^22.9.1",
     "electron-devtools-installer": "^3.1.1",
     "electron-react-devtools": "^0.5.3",
     "eslint": "^7.20.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-react-app": "^6.0.0",
-    "eslint-plugin-flowtype": "^5.2.2",
+    "eslint-plugin-flowtype": "^5.3.1",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^5.0.9",
+    "husky": "^5.1.1",
     "jest-transform-css": "^2.1.0",
     "postcss": "^8.2.6",
     "prettier": "^2.2.1",
@@ -103,7 +103,7 @@
     "react-test-renderer": "^17.0.1",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",
-    "ts-jest": "^26.5.1",
-    "typescript": "^4.1.5"
+    "ts-jest": "^26.5.2",
+    "typescript": "^4.2.2"
   }
 }
