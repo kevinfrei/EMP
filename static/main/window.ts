@@ -46,6 +46,7 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
       nodeIntegration: true,
       enableRemoteModule: true,
       webSecurity: !isDev,
+      contextIsolation: false,
     },
     frame: false,
     show: false,

@@ -45,9 +45,9 @@
     }
   },
   "dependencies": {
-    "@fluentui/font-icons-mdl2": "^8.0.0-beta.18",
-    "@fluentui/react": "^8.0.0-beta.58",
-    "@fluentui/react-hooks": "^8.0.0-beta.14",
+    "@fluentui/font-icons-mdl2": "^8.0.1",
+    "@fluentui/react": "^8.1.0",
+    "@fluentui/react-hooks": "^8.0.1",
     "@freik/core-utils": "^0.10.0",
     "@freik/media-utils": "^0.8.0",
     "@freik/node-utils": "^0.6.0",
@@ -69,7 +69,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.17",
     "@babel/plugin-transform-react-jsx": "^7.12.17",
-    "@freik/build-tools": "^2.3.4",
+    "@freik/build-tools": "^2.4.0",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.5",
     "@types/electron-devtools-installer": "^2.2.0",
@@ -87,7 +87,7 @@
     "electron-devtools-installer": "^3.1.1",
     "electron-react-devtools": "^0.5.3",
     "eslint": "^7.20.0",
-    "eslint-config-prettier": "^7.2.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.2",
     "eslint-plugin-import": "^2.22.1",
@@ -99,6 +99,7 @@
     "jest-transform-css": "^2.1.0",
     "postcss": "^8.2.6",
     "prettier": "^2.2.1",
+    "react-scripts": "^4.0.3",
     "react-test-renderer": "^17.0.1",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",
