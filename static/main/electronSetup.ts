@@ -1,8 +1,10 @@
 import { MakeError, MakeLogger } from '@freik/core-utils';
 import { app, globalShortcut } from 'electron';
-import isDev from 'electron-is-dev';
 import { makeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
+
+// import isDev from 'electron-is-dev';
+const isDev = true;
 
 app.commandLine.appendSwitch('disable-http-cache');
 

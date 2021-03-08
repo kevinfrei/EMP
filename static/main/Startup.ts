@@ -1,9 +1,9 @@
+import { main } from '@electron/remote';
 import { MakeLogger } from '@freik/core-utils';
 import electronIsDev from 'electron-is-dev';
 import { CommsSetup } from './Communication';
 import { getMusicDB } from './MusicAccess';
 import { UpdateDB } from './musicDB';
-
 const log = MakeLogger('Startup', false && electronIsDev);
 
 /**
@@ -11,6 +11,7 @@ const log = MakeLogger('Startup', false && electronIsDev);
  */
 export function InitBeforeAnythingElse(): void {
   CommsSetup();
+  main.initialize();
 }
 
 // This is awaited upon initial window creation

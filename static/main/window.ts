@@ -1,6 +1,5 @@
 import { MakeError, Type } from '@freik/core-utils';
 import { BrowserWindow, screen } from 'electron';
-import isDev from 'electron-is-dev';
 import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
 import { OnWindowCreated } from './electronSetup';
@@ -10,6 +9,9 @@ import {
   setWindowPos,
   WindowPosition,
 } from './persist';
+
+// import isDev from 'electron-is-dev';
+const isDev = true;
 
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)

@@ -4,9 +4,11 @@
 
 import { MakeError } from '@freik/core-utils';
 import { clipboard, IpcRenderer, ipcRenderer, remote } from 'electron';
-import isDev from 'electron-is-dev';
 import { BaseEncodingOptions, OpenMode, PathLike, promises as fsp } from 'fs';
 import { FileHandle } from 'fs/promises';
+
+// import isDev from 'electron-is-dev';
+const isDev = true;
 
 const err = MakeError('renderer-err');
 
