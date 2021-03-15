@@ -7,7 +7,7 @@
   resolved "https://registry.yarnpkg.com/7zip-bin/-/7zip-bin-5.0.3.tgz#bc5b5532ecafd923a61f2fb097e3b108c0106a3f"
   integrity sha512-GLyWIFBbGvpKPGo55JyRZAo4lVbnBiD52cKlw/0Vt+wnmKvWJkpZvsjVoaIolyBXDeAQKSicRtqFNPem9w0WYA==
 
-"@babel/cli@^7.13.0":
+"@babel/cli@^7.13.10":
   version "7.13.10"
   resolved "https://registry.yarnpkg.com/@babel/cli/-/cli-7.13.10.tgz#3a9254cbe806639c8ca4ebd49ebe54b4267b88c9"
   integrity sha512-lYSBC7B4B9hJ7sv0Ojx1BrGhuzCoOIYfLjd+Xpd4rOzdS+a47yi8voV8vFkfjlZR1N5qZO7ixOCbobUdT304PQ==
@@ -72,7 +72,7 @@
     semver "^5.4.1"
     source-map "^0.5.0"
 
-"@babel/core@^7.1.0", "@babel/core@^7.12.3", "@babel/core@^7.13.1", "@babel/core@^7.13.8", "@babel/core@^7.7.5", "@babel/core@^7.8.4":
+"@babel/core@^7.1.0", "@babel/core@^7.12.3", "@babel/core@^7.13.1", "@babel/core@^7.13.10", "@babel/core@^7.7.5", "@babel/core@^7.8.4":
   version "7.13.10"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.13.10.tgz#07de050bbd8193fcd8a3c27918c0890613a94559"
   integrity sha512-bfIYcT0BdKeAZrovpMqX2Mx5NrgAckGbwT982AkdS5GNfn3KMGiprlBAtmBcFZRUmpaufS6WZFP8trvx8ptFDw==
@@ -1430,18 +1430,18 @@
     "@fluentui/set-version" "^8.0.1"
     tslib "^1.10.0"
 
-"@freik/build-tools@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.4.0.tgz#ea603769a64b2a4b1459ae1c388fbd70b24c0ed2"
-  integrity sha512-nYdhAnHHppOKWmxHK7vRpNbVpCWaB8nwm1UrJdesUJPbfMctQTegCGOt4OkvdrT0YWkf1JcA6Wj8PTR+fiNmYA==
+"@freik/build-tools@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.4.1.tgz#5d08f21da8564a8dd892b968e1bc7199341cc420"
+  integrity sha512-DbyMG3l9IMZjIALfw9kh16HhUgYykepPEjO2MYuYsQxH+ta/q9BnvE86H5ezj9fOXosVxNfW4H6gKSgjKs3Y8Q==
   dependencies:
-    "@babel/cli" "^7.13.0"
-    "@babel/core" "^7.13.8"
+    "@babel/cli" "^7.13.10"
+    "@babel/core" "^7.13.10"
     "@babel/preset-flow" "^7.12.13"
     "@babel/preset-react" "^7.12.13"
     "@freik/core-utils" "^0.10.0"
     "@freik/node-utils" "^0.6.0"
-    "@typescript-eslint/parser" "^4.15.2"
+    "@typescript-eslint/parser" "^4.17.0"
     concurrently "^6.0.0"
     cross-env "^7.0.3"
     eslint-config-prettier "^8.1.0"
@@ -1452,14 +1452,14 @@
     jest-extended "^0.11.5"
     jest-transform-css "^2.1.0"
     minimist "^1.2.5"
-    postcss "^8.2.6"
+    postcss "^8.2.8"
     prettier "^2.2.1"
     rimraf "^3.0.2"
     shelljs "^0.8.4"
     source-map-explorer "^2.5.2"
-    ts-jest "^26.5.2"
-    typescript "^4.2.2"
-    uglify-es "^3.3.9"
+    terser "^5.6.0"
+    ts-jest "^26.5.3"
+    typescript "^4.2.3"
     wait-on "^5.2.1"
 
 "@freik/core-utils@^0.10.0":
@@ -1467,14 +1467,19 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.10.0.tgz#8c483b4bf8dce369977748bef4fac03e0630e9d6"
   integrity sha512-mMkgPDADuqNhaU37hmyh2iiadaevg2nR8GN1EJXzA6mUz5XSbZ/ZzvnHmdU3oUDE16o37RPv37uhDVO1rM66sw==
 
-"@freik/media-utils@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.8.0.tgz#1e674a1a4e386e8d482b85a1b6639551598a3f24"
-  integrity sha512-Y0I2k8l6gydcKKAiKd3N7QVEylnti9oOtVhqITLapkUcWXq6AVXcZ+yoYGBu/rXLGrHX8n0NlvWwUcTTOmBtjw==
+"@freik/core-utils@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.11.0.tgz#9d8897a231ed76a14a6808ad8368d524b80f0b59"
+  integrity sha512-OIyIKU64921cPbkJN+b1RLSfDS6/bEZ3tdB6r5CxnFojbLmUVIqtNNojTFCpUUdktZo0a4lqSNmCeHGYy/ifZA==
+
+"@freik/media-utils@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.8.1.tgz#49b37e979504b769b1a06596974a4deef7d9264b"
+  integrity sha512-L0/u4Vyr+Heqa8AF67aJem5wMfPZfV6JPDGAFU0CGIJzCqlt6sMrHjdt6cri6f1kpTBm9qLcCY/Du4kTeQ1thQ==
   dependencies:
-    "@freik/core-utils" "^0.10.0"
-    "@freik/node-utils" "^0.6.0"
-    music-metadata "^7.6.3"
+    "@freik/core-utils" "^0.11.0"
+    "@freik/node-utils" "^0.7.1"
+    music-metadata "^7.8.1"
 
 "@freik/node-utils@^0.6.0":
   version "0.6.0"
@@ -1482,6 +1487,13 @@
   integrity sha512-3HghUBzrpCslzx/8dBfthNqtJ/v/WDdnY4/J4v3pV6gWmSDHYEgoTkDRJpK31inQITrDktFjoM/XkQ+v14UbFQ==
   dependencies:
     "@freik/core-utils" "^0.10.0"
+
+"@freik/node-utils@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.7.1.tgz#3cecadf50fedcea36b5d778b33529ea539be3139"
+  integrity sha512-kij7eoFk1hU3PzSz6BXnVCuTo27MAuyjTEnheOPnAqLR1zhFx5LhZ1ZNcxLAEFy7p/W1Bs4aBacN3sU0JfeUBQ==
+  dependencies:
+    "@freik/core-utils" "^0.11.0"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -2399,7 +2411,7 @@
     eslint-scope "^5.0.0"
     eslint-utils "^2.0.0"
 
-"@typescript-eslint/parser@^4.15.2", "@typescript-eslint/parser@^4.5.0":
+"@typescript-eslint/parser@^4.15.2", "@typescript-eslint/parser@^4.17.0", "@typescript-eslint/parser@^4.5.0":
   version "4.17.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-4.17.0.tgz#141b647ffc72ebebcbf9b0fe6087f65b706d3215"
   integrity sha512-KYdksiZQ0N1t+6qpnl6JeK9ycCFprS9xBAiIrw4gSphqONt8wydBw4BXJi3C11ywZmyHulvMaLjWsxDjUSDwAw==
@@ -4151,11 +4163,6 @@ commander@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
   integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
-
-commander@~2.13.0:
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-2.13.0.tgz#6964bca67685df7c1f1430c584f07d7597885b9c"
-  integrity sha512-MVuS359B+YzaWqjCL/c+22gfryv+mCBPHAv3zyVI2GN8EY6IRP8VwtasXn8jyyhvvq84R4ImN1OKRtcbIasjYA==
 
 common-tags@1.8.0, common-tags@^1.8.0:
   version "1.8.0"
@@ -8979,7 +8986,7 @@ multicast-dns@^6.0.1:
     dns-packet "^1.3.1"
     thunky "^1.0.2"
 
-music-metadata@^7.6.3:
+music-metadata@^7.8.1:
   version "7.8.1"
   resolved "https://registry.yarnpkg.com/music-metadata/-/music-metadata-7.8.1.tgz#09d493b1b370c8313489a10786e75fe5e83e09de"
   integrity sha512-Q4PhR788jp2VDh/JgPvEUZ3NCqxgW4+hV0H2XrYKfGwq5aGagm1ek9kbCJvUCvejVnmyn6Rb+ggIPxrIVPfzww==
@@ -10533,7 +10540,7 @@ postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.17, po
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
-postcss@^8.1.0, postcss@^8.2.6, postcss@^8.2.7:
+postcss@^8.1.0, postcss@^8.2.7, postcss@^8.2.8:
   version "8.2.8"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.2.8.tgz#0b90f9382efda424c4f0f69a2ead6f6830d08ece"
   integrity sha512-1F0Xb2T21xET7oQV9eKuctbM9S7BC0fetoHCc4H13z0PT6haiRLP4T0ZY4XWh7iLP0usgqykT6p9B2RtOf4FPw==
@@ -12644,7 +12651,7 @@ terser@^4.1.2, terser@^4.6.2, terser@^4.6.3:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-terser@^5.3.4:
+terser@^5.3.4, terser@^5.6.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/terser/-/terser-5.6.0.tgz#138cdf21c5e3100b1b3ddfddf720962f88badcd2"
   integrity sha512-vyqLMoqadC1uR0vywqOZzriDYzgEkNJFK4q9GeyOBHIbiECHiWLKcWfbQWAUaPfxkjDhapSlZB9f7fkMrvkVjA==
@@ -12818,7 +12825,7 @@ tryer@^1.0.1:
   resolved "https://registry.yarnpkg.com/tryer/-/tryer-1.0.1.tgz#f2c85406800b9b0f74c9f7465b81eaad241252f8"
   integrity sha512-c3zayb8/kWWpycWYg87P71E1S1ZL6b6IJxfb5fvsUgsf0S2MVGaDhDXXjDMpdCpfWXqptc+4mXwmiy1ypXqRAA==
 
-ts-jest@^26.5.2, ts-jest@^26.5.3:
+ts-jest@^26.5.3:
   version "26.5.3"
   resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-26.5.3.tgz#a6ee00ba547be3b09877550df40a1465d0295554"
   integrity sha512-nBiiFGNvtujdLryU7MiMQh1iPmnZ/QvOskBbD2kURiI1MwqvxlxNnaAB/z9TbslMqCsSbu5BXvSSQPc5tvHGeA==
@@ -12967,18 +12974,10 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.2.2, typescript@^4.2.3:
+typescript@^4.2.3:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.3.tgz#39062d8019912d43726298f09493d598048c1ce3"
   integrity sha512-qOcYwxaByStAWrBf4x0fibwZvMRG+r4cQoTjbPtUlrWjBHbmCAww1i448U0GJ+3cNNEtebDteo/cHOR3xJ4wEw==
-
-uglify-es@^3.3.9:
-  version "3.3.9"
-  resolved "https://registry.yarnpkg.com/uglify-es/-/uglify-es-3.3.9.tgz#0c1c4f0700bed8dbc124cdb304d2592ca203e677"
-  integrity sha512-r+MU0rfv4L/0eeW3xZrd16t4NZfK8Ld4SWVglYBb7ez5uXFWHuVRs6xCTrf1yirs9a4j4Y27nn7SRfO6v67XsQ==
-  dependencies:
-    commander "~2.13.0"
-    source-map "~0.6.1"
 
 unbox-primitive@^1.0.0:
   version "1.0.0"
