@@ -1,4 +1,3 @@
-import { main } from '@electron/remote';
 import { MakeLogger } from '@freik/core-utils';
 import electronIsDev from 'electron-is-dev';
 import { CommsSetup } from './Communication';
@@ -11,7 +10,6 @@ const log = MakeLogger('Startup', false && electronIsDev);
  */
 export function InitBeforeAnythingElse(): void {
   CommsSetup();
-  main.initialize();
 }
 
 // This is awaited upon initial window creation

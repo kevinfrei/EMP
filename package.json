@@ -73,7 +73,6 @@
     "@freik/build-tools": "^2.4.1",
     "@testing-library/jest-dom": "^5.11.8",
     "@testing-library/react": "^11.2.5",
-    "@types/": "electron/remote",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.31",
