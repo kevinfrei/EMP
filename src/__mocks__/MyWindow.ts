@@ -13,10 +13,10 @@ Object.defineProperty(global, 'crypto', {
   },
 });
 
-export function ShowOpenDialog(
+export async function ShowOpenDialog(
   options: OpenDialogSyncOptions,
-): string[] | undefined {
-  return [];
+): Promise<string[] | void> {
+  return Promise.resolve([]);
 }
 
 export function SetInit(func: () => void): void {

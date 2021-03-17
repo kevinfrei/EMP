@@ -1,5 +1,5 @@
 import { FTONData, MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { ipcMain, shell } from 'electron';
+import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { FlushImageCache } from './ImageCache';
@@ -28,7 +28,7 @@ import {
   setSongHates,
   setSongLikes,
 } from './SongLikesAndHates';
-import { SendToMain } from './window';
+import { SendToMain, showOpenDialog } from './window';
 
 const log = MakeLogger('Communication');
 const err = MakeError('Communication-err');
@@ -142,6 +142,11 @@ function isStrOrUndef(obj: any): obj is string | undefined {
   return Type.isString(obj) || obj === undefined;
 }
 
+function isOpenDialogOptions(obj: any): obj is OpenDialogOptions {
+  // TODO: Should probably actually check...
+  return true;
+}
+
 /**
  * Setup any async listeners, plus register all the "invoke" handlers
  */
@@ -177,4 +182,6 @@ export function CommsSetup(): void {
   registerChannel('get-hates', getSongHates, isVoid);
   registerChannel('set-hates', setSongHates, Type.isArrayOfString);
   registerChannel('clear-hates', clearSongHates, Type.isArrayOfString);
+
+  registerChannel('show-open-dialog', showOpenDialog, isOpenDialogOptions);
 }

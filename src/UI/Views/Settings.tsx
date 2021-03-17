@@ -31,12 +31,14 @@ const removeFromSet = (set: string[], val: string): string[] => {
   return [...newSet];
 };
 
-function GetDirs(): string[] | void {
-  return ShowOpenDialog({ properties: ['openDirectory'] });
+async function GetDirs(): Promise<string[] | void> {
+  return await ShowOpenDialog({ properties: ['openDirectory'] });
 }
 
-export function addLocation({ set }: CallbackInterface): boolean {
-  const locs: string[] | void = GetDirs();
+export async function addLocation({
+  set,
+}: CallbackInterface): Promise<boolean> {
+  const locs = await GetDirs();
   if (locs) {
     set(locationsState, (curLocs) => [...locs, ...curLocs]);
     return true;
@@ -47,8 +49,8 @@ export function addLocation({ set }: CallbackInterface): boolean {
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
-  const onAddLocation = useRecoilCallback((cbInterface) => () => {
-    addLocation(cbInterface);
+  const onAddLocation = useRecoilCallback((cbInterface) => async () => {
+    await addLocation(cbInterface);
   });
   const setSaveStyle = {
     textContainer: { fontSize: 11 },

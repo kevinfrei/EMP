@@ -45,7 +45,6 @@
     }
   },
   "dependencies": {
-    "@electron/remote": "^1.0.4",
     "@fluentui/font-icons-mdl2": "^8.0.2",
     "@fluentui/react": "^8.1.5",
     "@fluentui/react-hooks": "^8.0.2",

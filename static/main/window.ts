@@ -1,5 +1,6 @@
 import { MakeError, Type } from '@freik/core-utils';
-import { BrowserWindow, screen } from 'electron';
+import { BrowserWindow, dialog, screen } from 'electron';
+import { OpenDialogOptions } from 'electron/main';
 import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
 import { OnWindowCreated } from './electronSetup';
@@ -149,4 +150,17 @@ export function toggleMiniPlayer(): void {
       }
     }
   }
+}
+
+export async function showOpenDialog(
+  options: OpenDialogOptions,
+): Promise<string[] | void> {
+  if (!mainWindow) {
+    return;
+  }
+  const res = await dialog.showOpenDialog(mainWindow, options);
+  if (res.canceled) {
+    return;
+  }
+  return res.filePaths;
 }

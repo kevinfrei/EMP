@@ -207,7 +207,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     }
   });
   const onSelectFile = useRecoilCallback((cbInterface) => async () => {
-    const selected = ShowOpenDialog({
+    const selected = await ShowOpenDialog({
       title: 'Select Cover Art image',
       properties: ['openFile'],
       filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],

@@ -3,7 +3,7 @@
 // All of the Node.js APIs are available in this process.
 
 import { MakeError } from '@freik/core-utils';
-import { clipboard, IpcRenderer, ipcRenderer, remote } from 'electron';
+import { clipboard, IpcRenderer, ipcRenderer } from 'electron';
 import { BaseEncodingOptions, OpenMode, PathLike, promises as fsp } from 'fs';
 import { FileHandle } from 'fs/promises';
 
@@ -29,7 +29,6 @@ type ReadFile3 = (
 
 interface MyWindow extends Window {
   ipc: IpcRenderer | undefined;
-  remote: Electron.Remote | undefined;
   isDev: boolean | undefined;
   initApp: undefined | (() => void);
   ipcSet: boolean | undefined;
@@ -51,11 +50,6 @@ declare let window: MyWindow;
 
 window.addEventListener('DOMContentLoaded', () => {
   window.ipc = ipcRenderer;
-  if (remote) {
-    window.remote = remote;
-  } else {
-    err('remote is falsy :(');
-  }
   if (isDev) {
     window.isDev = isDev;
   }

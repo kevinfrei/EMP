@@ -53,7 +53,7 @@ export function MenuHandler(
         break;
 
       case 'addLocation':
-        addLocation(callbackInterface);
+        void addLocation(callbackInterface);
         break;
 
       case 'find':

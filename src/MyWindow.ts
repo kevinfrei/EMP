@@ -25,8 +25,7 @@ type ReadFile1 = (path: PathLike | FileHandle) => Promise<Buffer>;
 
 interface MyWindow extends Window {
   ipc?: IpcRenderer;
-  remote?: Electron.Remote;
-  isDev?: boolean;
+  isDev: boolean;
   initApp?: () => void;
   ipcSet?: boolean;
   searchBox?: ISearchBox | null;
@@ -36,17 +35,20 @@ interface MyWindow extends Window {
 
 declare let window: MyWindow;
 
-export function ShowOpenDialog(
+export async function ShowOpenDialog(
   options: OpenDialogSyncOptions,
-): string[] | undefined {
-  return window.remote!.dialog.showOpenDialogSync(options);
+): Promise<string[] | void> {
+  return await CallMain('show-open-dialog', options, Type.isArrayOfString);
 }
+
 export function SetInit(func: () => void): void {
   window.initApp = func;
 }
+
 export function SetSearch(searchBox: ISearchBox | null): void {
   window.searchBox = searchBox;
 }
+
 export function FocusSearch(): boolean {
   if (window.searchBox) {
     window.searchBox.focus();
