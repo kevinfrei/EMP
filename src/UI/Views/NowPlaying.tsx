@@ -61,6 +61,7 @@ import {
   MakeColumns,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
 
 const nowPlayingContextState = atom<SongListMenuData>({
@@ -262,6 +263,7 @@ export default function NowPlaying(): JSX.Element {
       ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
+      ['', '', '👎/👍', 35, 35, LikeOrHate],
     ],
     () => sortBy,
     performSort,

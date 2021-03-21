@@ -1,6 +1,5 @@
 import {
   DetailsList,
-  FontIcon,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -16,12 +15,17 @@ import {
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
 import {
+  songHateFamily,
+  songLikeFamily,
+  songLikeNumFromStringFamily,
+} from '../../Recoil/Likes';
+import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
   getDataForSongListFamily,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState, songLikeFamily } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortSongList } from '../../Tools';
 import {
   AlbumFromSongRender,
@@ -55,9 +59,26 @@ const songContextState = atom<SongListMenuData>({
 });
 
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
-  const like = useRecoilValue(songLikeFamily(songId));
-  //  const hate = useRecoilValue(songHateState(songId));
-  return <FontIcon iconName={like ? 'LikeSolid' : 'Empty'} />;
+  const likeNum = useRecoilValue(songLikeNumFromStringFamily(songId));
+  const strings = ['⋯', '👍', '👎', '⋮'];
+  const onClick = useRecoilCallback(({ set }) => () => {
+    switch (likeNum) {
+      case 0: // neutral
+        set(songLikeFamily(songId), true);
+        break;
+      case 1: // like
+        set(songHateFamily(songId), true);
+        break;
+      case 2: // hate
+        set(songHateFamily(songId), false);
+        break;
+      case 3: // mixed
+        set(songLikeFamily(songId), false);
+        set(songHateFamily(songId), false);
+        break;
+    }
+  });
+  return <div onClick={onClick}>{strings[likeNum]}</div>;
 }
 
 // This is a function, and not a React Function Component, so you can't
@@ -88,7 +109,7 @@ export default function MixedSongsList(): JSX.Element {
       ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSongRender],
       ['l', 'albumId', 'Album', 150, 450, AlbumFromSongRender],
       ['t', 'title', 'Title', 150],
-      ['', '', 'L', 30, 30, LikeOrHate],
+      ['', '', '👎/👍', 35, 35, LikeOrHate],
     ],
     () => sortOrder,
     setSortOrder,

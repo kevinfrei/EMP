@@ -11,8 +11,8 @@ import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
   songHateFamily,
   songLikeFamily,
-  songLikeFromStringFamily,
-} from '../Recoil/ReadWrite';
+  songLikeNumFromStringFamily,
+} from '../Recoil/Likes';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 
 const log = MakeLogger('SongMenus'); // eslint-disable-line
@@ -44,9 +44,10 @@ export function SongListMenu({
     name: string,
     iconName: string,
     onClick: () => void,
+    key?: string,
   ): IContextualMenuItem => ({
     name,
-    key: iconName,
+    key: key ? key : iconName,
     iconProps: { iconName },
     onClick,
   });
@@ -78,21 +79,31 @@ export function SongListMenu({
   const onLove = useRecoilCallback((cbInterface) => () => {
     const maybeSongs = onGetSongList(cbInterface, context.data);
     if (maybeSongs) {
+      const likeVal = cbInterface.snapshot
+        .getLoadable(songLikeNumFromStringFamily(context.data))
+        .valueOrThrow();
       for (const song of maybeSongs) {
-        cbInterface.set(songLikeFamily(song), (pv) => !pv);
+        // Set it to true if there's any song that *isn't* liked
+        cbInterface.set(songLikeFamily(song), likeVal !== 1);
       }
     }
   });
   const onHate = useRecoilCallback((cbInterface) => () => {
     const maybeSongs = onGetSongList(cbInterface, context.data);
     if (maybeSongs) {
+      const hateVal = cbInterface.snapshot
+        .getLoadable(songLikeNumFromStringFamily(context.data))
+        .valueOrThrow();
       for (const song of maybeSongs) {
-        cbInterface.set(songHateFamily(song), (pv) => !pv);
+        // Set it to true if there's any song that *isn't* hated
+        cbInterface.set(songHateFamily(song), hateVal !== 2);
       }
     }
   });
-  const like = 1 + useRecoilValue(songLikeFromStringFamily(context.data));
-  const likeIcons = ['LikeSolid', 'More', 'Like'];
+  const likeNum = useRecoilValue(songLikeNumFromStringFamily(context.data));
+  const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
+  const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
+
   const realItems: IContextualMenuItem[] = title
     ? [{ key: 'Header', name: title, itemType: ContextualMenuItemType.Header }]
     : [];
@@ -115,11 +126,11 @@ export function SongListMenu({
           break;
         case 'love':
         case 'like':
-          realItems.push(i('Like [NYI]', likeIcons[like], onLove));
+          realItems.push(i('Like', likeIcons[likeNum], onLove, 'like'));
           break;
         case 'hate':
         case 'dislike':
-          realItems.push(i('Dislike [NYI]', 'Dislike', onHate));
+          realItems.push(i('Dislike', hateIcons[likeNum], onHate, 'hate'));
           break;
         case '':
         case '-':
