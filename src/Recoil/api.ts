@@ -1,7 +1,19 @@
-import { PlaylistName, SongKey, Type } from '@freik/core-utils';
+import {
+  MakeError,
+  MakeLogger,
+  PlaylistName,
+  SongKey,
+  Type,
+} from '@freik/core-utils';
 import { CallbackInterface, RecoilState, Snapshot } from 'recoil';
 import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
+import {
+  neverPlayHatesState,
+  onlyPlayLikesState,
+  songHateFamily,
+  songLikeFamily,
+} from './Likes';
 import {
   activePlaylistState,
   currentIndexState,
@@ -13,6 +25,9 @@ import {
 import { mediaTimeState, playingState } from './MediaPlaying';
 import { getPlaylistFamily, playlistNamesState } from './PlaylistsState';
 import { repeatState, shuffleState } from './ReadWrite';
+
+const log = MakeLogger('api'); // eslint-disable-line
+const err = MakeError('ReadWrite-err'); // eslint-disable-line
 
 // A helper for snapshot value loading
 function getVal<T>(snapshot: Snapshot, atomOrSel: RecoilState<T>): T {
@@ -67,6 +82,33 @@ export function MaybePlayPrev({ snapshot, set }: CallbackInterface): void {
 }
 
 /**
+ * Filters down the list of songs to play according to filter preferences
+ *
+ * @param {Iterable<SongKey>} listToFilter - The list of songs to add
+ * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
+ *
+ * @returns {SongKey[]} The filtered list of songs
+ */
+export function GetFilteredSongs(
+  snapshot: Snapshot,
+  listToFilter: Iterable<SongKey>,
+): SongKey[] {
+  const onlyLikes = getVal(snapshot, onlyPlayLikesState);
+  const neverHates = getVal(snapshot, neverPlayHatesState);
+  const playList = [...listToFilter];
+  const filtered = playList.filter((songKey: SongKey) => {
+    if (onlyLikes) {
+      return getVal(snapshot, songLikeFamily(songKey));
+    }
+    if (neverHates) {
+      return !getVal(snapshot, songHateFamily(songKey));
+    }
+    return true;
+  });
+  return filtered.length === 0 ? playList : filtered;
+}
+
+/**
  * Adds a list of songs to the end of the current song list
  *
  * @param {Iterable<SongKey>} listToAdd - The list of songs to add
@@ -79,7 +121,7 @@ export function AddSongs(
   listToAdd: Iterable<SongKey>,
 ): void {
   const shuffle = getVal(snapshot, shuffleState);
-  const playList = [...listToAdd];
+  const playList = GetFilteredSongs(snapshot, listToAdd);
   if (!shuffle) {
     set(songListState, (songList) => [...songList, ...listToAdd]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
@@ -105,7 +147,7 @@ export function PlaySongs(
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
-  let playList = [...listToPlay];
+  let playList = GetFilteredSongs(snapshot, listToPlay);
   const shuffle = getVal(snapshot, shuffleState);
   if (shuffle) {
     playList = ShuffleArray(playList);

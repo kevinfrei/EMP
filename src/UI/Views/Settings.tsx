@@ -11,6 +11,7 @@ import {
 import { CallbackInterface, useRecoilCallback, useRecoilState } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';
+import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   albumCoverNameState,
   defaultLocationState,
@@ -131,6 +132,20 @@ function ArtistFiltering(): JSX.Element {
   );
 }
 
+function LikeFiltering(): JSX.Element {
+  const neverPlayHates = useBoolRecoilState(neverPlayHatesState);
+  const onlyPlayLikes = useBoolRecoilState(onlyPlayLikesState);
+  return (
+    <>
+      <StateToggle
+        label="Never queue up songs you dislike"
+        state={neverPlayHates}
+      />
+      <StateToggle label="Only queue up songs you like" state={onlyPlayLikes} />
+    </>
+  );
+}
+
 function ArtworkSettings(): JSX.Element {
   const dlAlbumArtwork = useBoolRecoilState(downloadAlbumArtworkState);
   const dlArtistArtwork = useBoolRecoilState(downloadArtistArtworkState);
@@ -184,6 +199,7 @@ export default function Settings(): JSX.Element {
         <MusicLocations />
       </Expandable>
       <Expandable separator label="Sorting & Filtering" defaultShow={true}>
+        <LikeFiltering />
         <ArticleSorting />
         <ArtistFiltering />
       </Expandable>

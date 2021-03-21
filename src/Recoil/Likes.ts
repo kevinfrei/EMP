@@ -1,11 +1,26 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FTONData, SongKey, Type } from '@freik/core-utils';
 import { atom, selectorFamily } from 'recoil';
-import { bidirectionalSyncWithTranslateEffect } from './helpers';
+import {
+  bidirectionalSyncWithTranslateEffect,
+  syncWithMainEffect,
+} from './helpers';
 import { songListFromKeyFamily } from './ReadWrite';
 
 // const log = MakeLogger('Likes');
 // const err = MakeError('Likes-err');
+
+export const neverPlayHatesState = atom<boolean>({
+  key: 'neverPlayHates',
+  default: true,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
+
+export const onlyPlayLikesState = atom<boolean>({
+  key: 'onlyPlayLikes',
+  default: false,
+  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+});
 
 const songLikeBackerState = atom<Set<SongKey>>({
   key: 'likedSongs',
