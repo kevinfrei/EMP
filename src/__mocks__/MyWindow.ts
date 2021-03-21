@@ -84,6 +84,10 @@ const fakeStorage: Map<string, string> = new Map<string, string>([
   ['saveAlbumArtworkWithMusic', 'true'],
   ['albumCoverName', '".coverArt"'],
   ['defaultLocation', ''],
+  ['onlyPlayLikes', 'false'],
+  ['neverPlayHates', 'true'],
+  ['likedSongs', '[]'],
+  ['hatedSongs', '[]'],
 ]);
 
 function MockWrite(key?: string): Promise<void> {
