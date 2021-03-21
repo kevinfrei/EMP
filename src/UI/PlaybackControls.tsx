@@ -58,9 +58,9 @@ export default function SongControls(): JSX.Element {
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useRecoilCallback((cbInterface) => async () => {
+  const clickShuffle = useRecoilCallback((cbInterface) => () => {
     if (!cbInterface.snapshot.getLoadable(shuffleState).valueOrThrow()) {
-      await ShufflePlaying(cbInterface);
+      ShufflePlaying(cbInterface);
     }
     cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
   });
@@ -69,14 +69,14 @@ export default function SongControls(): JSX.Element {
     onClickPlayPause(cbInterface),
   );
 
-  const clickPrev = useRecoilCallback((cbInterface) => async () => {
+  const clickPrev = useRecoilCallback((cbInterface) => () => {
     if (hasPrevSong) {
-      await MaybePlayPrev(cbInterface);
+      MaybePlayPrev(cbInterface);
     }
   });
-  const clickNext = useRecoilCallback((cbInterface) => async () => {
+  const clickNext = useRecoilCallback((cbInterface) => () => {
     if (hasNextSong) {
-      await MaybePlayNext(cbInterface);
+      MaybePlayNext(cbInterface);
     }
   });
   return (
