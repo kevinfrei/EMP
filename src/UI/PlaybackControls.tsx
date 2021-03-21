@@ -59,7 +59,7 @@ export default function SongControls(): JSX.Element {
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
   const clickShuffle = useRecoilCallback((cbInterface) => async () => {
-    if (!(await cbInterface.snapshot.getPromise(shuffleState))) {
+    if (!cbInterface.snapshot.getLoadable(shuffleState).valueOrThrow()) {
       await ShufflePlaying(cbInterface);
     }
     cbInterface.set(shuffleState, (prevShuf) => !prevShuf);

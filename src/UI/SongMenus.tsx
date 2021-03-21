@@ -19,13 +19,7 @@ const log = MakeLogger('SongMenus'); // eslint-disable-line
 
 export type SongListMenuData = { data: string; spot: Point };
 
-export function SongListMenu({
-  title,
-  context,
-  onClearContext,
-  onGetSongList,
-  items,
-}: {
+type SongListMenuArgs = {
   title?: string;
   context: SongListMenuData;
   onClearContext: () => void;
@@ -34,7 +28,18 @@ export function SongListMenu({
     data: string,
   ) => SongKey[] | undefined;
   items?: (IContextualMenuItem | string)[];
-}): JSX.Element {
+};
+
+/**
+ *
+ */
+export function SongListMenu({
+  title,
+  context,
+  onClearContext,
+  onGetSongList,
+  items,
+}: SongListMenuArgs): JSX.Element {
   const i = (
     name: string,
     iconName: string,
@@ -45,7 +50,8 @@ export function SongListMenu({
     iconProps: { iconName },
     onClick,
   });
-  // Does this 'side effect' actually matter?
+  // This isn't actually a side effect, as it's strictly a function of the
+  // input of the menu
   let dk = 0;
   const d = (): IContextualMenuItem => ({
     key: 'divider' + (dk++).toString(),
@@ -113,7 +119,7 @@ export function SongListMenu({
           break;
         case 'hate':
         case 'dislike':
-          realItems.push(i('Disklie [NYI]', 'Dislike', onHate));
+          realItems.push(i('Dislike [NYI]', 'Dislike', onHate));
           break;
         case '':
         case '-':

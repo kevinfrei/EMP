@@ -168,9 +168,9 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     // Easy: one song:
     if (props.forSong !== undefined) {
       await uploadSong(props.forSong);
-      const albumKey = await cbInterface.snapshot.getPromise(
-        getAlbumKeyForSongKeyFamily(props.forSong),
-      );
+      const albumKey = cbInterface.snapshot
+        .getLoadable(getAlbumKeyForSongKeyFamily(props.forSong))
+        .valueOrThrow();
       setTimeout(
         () => cbInterface.set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
         250,
@@ -179,9 +179,9 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       // Messy: Multiple songs
       const albumsSet: Set<AlbumKey> = new Set();
       for (const song of props.forSongs!) {
-        const albumKey = await cbInterface.snapshot.getPromise(
-          getAlbumKeyForSongKeyFamily(song),
-        );
+        const albumKey = cbInterface.snapshot
+          .getLoadable(getAlbumKeyForSongKeyFamily(song))
+          .valueOrThrow();
         if (albumsSet.has(albumKey)) {
           continue;
         }

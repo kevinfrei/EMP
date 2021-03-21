@@ -59,13 +59,13 @@ export default function PlaylistView(): JSX.Element {
     },
   );
 
-  const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => async () => {
+  const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = await snapshot.getPromise(
-      getPlaylistFamily(playlistContext.data),
-    );
+    const songs = snapshot
+      .getLoadable(getPlaylistFamily(playlistContext.data))
+      .valueOrThrow();
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
     for (const song of songs) {

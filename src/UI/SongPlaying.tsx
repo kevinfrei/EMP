@@ -142,8 +142,8 @@ export default function SongPlayback(): JSX.Element {
   const onEnded = useRecoilCallback((cbInterface) => async () => {
     const { snapshot, set } = cbInterface;
     log('Heading to the next song!!!');
-    const songList = await snapshot.getPromise(songListState);
-    const rep = await snapshot.getPromise(repeatState);
+    const songList = snapshot.getLoadable(songListState).valueOrThrow();
+    const rep = snapshot.getLoadable(repeatState).valueOrThrow();
     if (rep && songList.length === 1) {
       // Because we rely on auto-play, if we just try to play the same song
       // again, it won't start playing
@@ -152,7 +152,7 @@ export default function SongPlayback(): JSX.Element {
         await ae.play();
       }
     }
-    const isPlaying = await MaybePlayNext(cbInterface);
+    const isPlaying = MaybePlayNext(cbInterface);
     set(playingState, isPlaying);
   });
   const onTimeUpdate = useRecoilCallback(
@@ -185,11 +185,11 @@ export default function SongPlayback(): JSX.Element {
     />
   );
   const showDetail = useRecoilCallback(
-    (cbInterface) => async (
-      event: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    ) => {
+    (cbInterface) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       if (songKey !== '') {
-        const songs = await cbInterface.snapshot.getPromise(allSongsState);
+        const songs = cbInterface.snapshot
+          .getLoadable(allSongsState)
+          .valueOrThrow();
         const song = songs.get(songKey);
         if (song) {
           SongDetailClick(cbInterface, song, event.shiftKey);
