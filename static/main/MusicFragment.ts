@@ -4,13 +4,11 @@ import {
   Artist,
   ArtistKey,
   Comparisons,
-  FTON,
   FullMetadata,
   MakeError,
   MakeLogger,
   SeqNum,
   SimpleMetadata,
-  Song,
   SongKey,
   Type,
 } from '@freik/core-utils';
@@ -20,105 +18,41 @@ import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
 import { h32 } from 'xxhashjs';
 import { GetMetadataStore, isFullMetadata } from './metadata';
-import { getMusicDB, setMusicIndex } from './MusicAccess';
-import { sendUpdatedDB, UpdateDB } from './musicDB';
-import { FindFilesForFragment } from './MusicFragment';
-import * as persist from './persist';
-import { MakeSearchable, Searchable } from './Search';
-
-export type ServerSong = Song & { path: string };
-
-const log = MakeLogger('music', false && electronIsDev);
-const err = MakeError('music-err');
+import {
+  MusicFragment,
+  noArticlesCmp,
+  normalizeName,
+  ServerSong,
+  setIntersection,
+  VAType,
+} from './MusicScanner';
+const log = MakeLogger('new-db', false && electronIsDev);
+const err = MakeError('new-db-err');
 
 const setEqual = Comparisons.ArraySetEqual;
 
-export type VAType = '' | 'ost' | 'va';
-
-export type MusicDB = {
-  songs: Map<SongKey, ServerSong>;
-  albums: Map<AlbumKey, Album>;
-  artists: Map<ArtistKey, Artist>;
-  pictures: Map<AlbumKey, string>;
-  albumTitleIndex: Map<string, AlbumKey[]>;
-  artistNameIndex: Map<string, ArtistKey>;
-};
-
-export type MusicFragment = MusicDB & {
-  fragmentKey: number;
-};
-
-export type MusicIndex = {
-  songs: Searchable<SongKey>;
-  albums: Searchable<AlbumKey>;
-  artists: Searchable<ArtistKey>;
-};
-
-export type SearchResults = {
-  songs: SongKey[];
-  albums: AlbumKey[];
-  artists: ArtistKey[];
-};
-
-export function setIntersection<T>(a: T[], b: T[]): Set<T> {
-  // set.has = O(log n)
-  // so O(a log b)
-  // so you want a to be smaller than b
-  if (a.length > b.length) return setIntersection(b, a);
-  const set = new Set<T>(b);
-  return new Set(a.filter((x) => set.has(x)));
-}
-
-let existingKeys: Map<string, SongKey> | null = null;
-const newSongKey = (() => {
-  const highestSongKey = persist.getItem('highestSongKey');
-  if (highestSongKey) {
-    log(`highestSongKey: ${highestSongKey}`);
-    return SeqNum('S', highestSongKey);
-  } else {
-    log('no highest song key found');
-    return SeqNum('S');
-  }
-})();
 const newAlbumKey = SeqNum('L');
 const newArtistKey = SeqNum('R');
+const existingSongKeys = new Map<number, [string, string]>();
 
-function getSongKey(songPath: string) {
-  if (existingKeys) {
-    return existingKeys.get(songPath) || newSongKey();
-  } else {
-    return newSongKey();
+function getSongKey(prefix: string, fragmentNum: number, songPath: string) {
+  if (songPath.startsWith(prefix)) {
+    let hash = h32(songPath, fragmentNum).toNumber();
+    while (existingSongKeys.has(hash)) {
+      const val = existingSongKeys.get(hash);
+      if (Type.isArray(val) && val[0] === prefix && songPath === val[1]) {
+        break;
+      }
+      err(`songKey hash collision: "${songPath}"`);
+      hash = h32(songPath, hash).toNumber();
+    }
+    existingSongKeys.set(hash, [prefix, songPath]);
+    return `S${hash.toString(36)}`;
   }
+  throw Error(`Invalid prefix ${prefix} for songPath ${songPath}`);
 }
 
-const cleaners: [RegExp, string][] = [
-  [/[`’‘]/g, "'"],
-  [/[“”]/g, '"'],
-  [/[\u0300-\u036f]/g, ''], // This kills diacriticals after .normalize()
-  [/‐/g, '-'],
-  [/^THE /, ''],
-  [/^A /, ''],
-  [/^AN /, ''],
-];
-
-export function normalizeName(phrase: string): string {
-  let res = phrase.toLocaleUpperCase().normalize();
-  for (const [rg, str] of cleaners) {
-    res = res.replace(rg, str);
-  }
-  return res;
-}
-
-// Gotta use this instead of localeCompare, thanks to
-// BLUE ÖYSTER CULT and BLUE ÖYSTER CULT being locale equal, but not ===
-// which causes problems in the ArtistMap of the Music database
-export const stringCompare = (a: string, b: string): number =>
-  (a > b ? 1 : 0) - (a < b ? 1 : 0);
-
-export const noArticlesCmp = (a: string, b: string): number =>
-  stringCompare(normalizeName(a), normalizeName(b));
-
-function getOrNewArtist(db: MusicDB, name: string): Artist {
+function getOrNewArtist(db: MusicFragment, name: string): Artist {
   const maybeKey: ArtistKey | undefined = db.artistNameIndex.get(
     normalizeName(name),
   );
@@ -138,7 +72,7 @@ function getOrNewArtist(db: MusicDB, name: string): Artist {
 }
 
 function getOrNewAlbum(
-  db: MusicDB,
+  db: MusicFragment,
   title: string,
   year: number,
   artists: ArtistKey[],
@@ -155,6 +89,7 @@ function getOrNewAlbum(
   } else {
     sharedNames = maybeSharedNames;
   }
+
   // sharedNames is the list of existing albums with this title
   // It might be empty (coming from a few lines up there ^^^ )
   for (const albumKey of sharedNames) {
@@ -277,7 +212,11 @@ function getOrNewAlbum(
   return album;
 }
 
-function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
+function AddSongToDatabase(
+  prefix: string,
+  md: FullMetadata,
+  db: MusicFragment,
+) {
   // We need to go from textual metadata to artist, album, and song keys
   // First, get the primary artist
   const tmpArtist: string | string[] = md.artist;
@@ -306,7 +245,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
     albumId: album.key,
     track: md.track + (md.disk || 0) * 100,
     title: md.title,
-    key: getSongKey(md.originalPath),
+    key: getSongKey(prefix, db.fragmentKey, md.originalPath),
     variations: md.variations,
   };
   album.songs.push(theSong.key);
@@ -314,7 +253,7 @@ function AddSongToDatabase(md: FullMetadata, db: MusicDB) {
   db.songs.set(theSong.key, theSong);
 }
 
-async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
+async function HandleAlbumCovers(db: MusicFragment, pics: string[]) {
   // Get all pictures from each directory.
   // Find the biggest and make it the album picture for any albums in that dir
   const dirsToPics = new Map<string, Set<string>>();
@@ -370,17 +309,20 @@ async function HandleAlbumCovers(db: MusicDB, pics: string[]) {
   // Metadata-hosted album covers are only acquired "on demand"?
 }
 
-async function fileNamesToDatabase(
+async function fileNamesToFragment(
+  prefix: string,
+  fragmentKey: number,
   files: string[],
   pics: string[],
-): Promise<MusicDB> {
+): Promise<MusicFragment> {
   const songs = new Map<SongKey, ServerSong>();
   const albums = new Map<AlbumKey, Album>();
   const artists = new Map<ArtistKey, Artist>();
   const albumTitleIndex = new Map<string, AlbumKey[]>();
   const artistNameIndex = new Map<string, ArtistKey>();
   const pictures = new Map<AlbumKey, string>();
-  const db: MusicDB = {
+  const db: MusicFragment = {
+    fragmentKey,
     songs,
     albums,
     artists,
@@ -389,11 +331,6 @@ async function fileNamesToDatabase(
     artistNameIndex,
   };
 
-  // Get the list of existing paths to song-keys
-  const songHash = await persist.getItemAsync('songHashIndex');
-  existingKeys = songHash
-    ? (FTON.parse(songHash) as Map<string, SongKey>)
-    : new Map<string, SongKey>();
   const now = Date.now();
   const metadataCache = await GetMetadataStore('metadataCache');
   const metadataOverride = await GetMetadataStore('metadataOverride');
@@ -432,7 +369,7 @@ async function fileNamesToDatabase(
     // We *could* save this data to disk, but honestly,
     // I don't think it's going to be measurably faster,
     // and I'd rather not waste the space
-    AddSongToDatabase(md, db);
+    AddSongToDatabase(prefix, md, db);
   }
 
   const fileNameParseTime = Date.now();
@@ -459,19 +396,12 @@ async function fileNamesToDatabase(
     const mdOverride = metadataOverride.get(file);
     const md = { ...fullMd, ...mdOverride };
     metadataCache.set(file, md);
-    AddSongToDatabase(md, db);
+    AddSongToDatabase(prefix, md, db);
   }
   const fileMetadataParseTime = Date.now();
   log(`File names: ${fileNameParseTime - now}`);
   log(`Metadata  : ${fileMetadataParseTime - fileNameParseTime}`);
   await metadataCache.save();
-  await persist.setItemAsync(
-    'songHashIndex',
-    FTON.stringify(
-      new Map([...db.songs.values()].map((val) => [val.path, val.key])),
-    ),
-  );
-  await persist.setItemAsync('highestSongKey', newSongKey());
   return db;
 }
 
@@ -491,53 +421,28 @@ const isMusicType = (filename: string) => isOfType(filename, audioTypes);
 // Hidden images are fine for cover art (actually, maybe preferred!
 const isImageType = (filename: string) => isOfType(filename, imageTypes, true);
 
-function MergeMusicFragment(db: MusicDB, fragment: MusicFragment) {
-  // Add the fragment to the music database. Fundamentally this is about
-  // identifying and re-keying common artists & albums.
-}
-
-async function MergeMusicFragments(
-  fragments: Promise<MusicFragment>[],
-): Promise<MusicDB> {
-  // This takes a group of separate music fragments and sticks them into a
-  // single MusicDB.
-  let db: MusicDB | null = null;
-  for (const pfrag of fragments) {
-    const fragment = await pfrag;
-    if (db === null) {
-      db = {
-        songs: fragment.songs,
-        albums: fragment.albums,
-        artists: fragment.artists,
-        pictures: fragment.pictures,
-        albumTitleIndex: fragment.albumTitleIndex,
-        artistNameIndex: fragment.artistNameIndex,
-      };
-      continue;
+function getSharedPrefix(paths: string[]): string {
+  let curPrefix: string | null = null;
+  for (const filePath of paths) {
+    if (curPrefix === null) {
+      curPrefix = filePath;
+    } else {
+      while (!filePath.startsWith(curPrefix)) {
+        curPrefix = curPrefix.substr(0, curPrefix.length - 1);
+      }
+      if (curPrefix.length === 0) {
+        return '';
+      }
     }
-    MergeMusicFragment(db, fragment);
   }
-  if (db === null) {
-    throw Error('No fragments found');
-  }
-  return db;
+  return curPrefix || '';
 }
 
-export async function findFragments(locations: string[]): Promise<MusicDB> {
-  // TODO: This might be nondeterministic, which is an issue for SongKey's
-  const pfrag = locations.map(
-    async (location: string): Promise<MusicFragment> => {
-      // Get the hash for the location
-      // TODO: This should be cached locally, right?
-      const hash = h32(location, 0xdeadbeef).toNumber();
-      return await FindFilesForFragment(location, hash);
-    },
-  );
-  return await MergeMusicFragments(pfrag);
-}
-
-export async function find(locations: string[]): Promise<MusicDB> {
-  const queue: string[] = locations;
+export async function FindFilesForFragment(
+  location: string,
+  fragmentHash: number,
+): Promise<MusicFragment> {
+  const queue: string[] = [location];
   const songsList: string[] = [];
   const picList: string[] = [];
   while (queue.length > 0) {
@@ -588,65 +493,13 @@ export async function find(locations: string[]): Promise<MusicDB> {
   }
   log(`${songsList.length} songs found during folder scan`);
   log(`${picList.length} images found during folder scan`);
-  const theDb = await fileNamesToDatabase(songsList, picList);
+  const prefix = getSharedPrefix(songsList);
+  const theDb = await fileNamesToFragment(
+    prefix,
+    fragmentHash,
+    songsList,
+    picList,
+  );
   log(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
   return theDb;
-}
-
-export function makeIndex(musicDB: MusicDB): MusicIndex {
-  const songs = MakeSearchable<SongKey>(
-    musicDB.songs.keys(),
-    (key: SongKey) => musicDB.songs.get(key)?.title || '',
-  );
-  const albums = MakeSearchable<AlbumKey>(
-    musicDB.albums.keys(),
-    (key: AlbumKey) => musicDB.albums.get(key)?.title || '',
-  );
-  const artists = MakeSearchable<ArtistKey>(
-    musicDB.artists.keys(),
-    (key: ArtistKey) => musicDB.artists.get(key)?.name || '',
-  );
-
-  return { songs, artists, albums };
-}
-
-// TODO: Make this intelligent about just minor DB adjustments...
-export async function UpdateSongMetadata(
-  fullPath: string,
-  newMetadata: Partial<FullMetadata>,
-): Promise<void> {
-  const db = await getMusicDB();
-  if (db) {
-    const hasArtist = Type.has(newMetadata, 'artist'); // string | string[]
-    const hasAlbum = Type.hasStr(newMetadata, 'album');
-    const hasTrack = Type.has(newMetadata, 'track'); // number
-    const hasTitle = Type.hasStr(newMetadata, 'title');
-    const hasVA = Type.hasStr(newMetadata, 'vaType'); // 'va' | 'ost'
-    const hasMoreArtists = Type.has(newMetadata, 'moreArtists'); // string[]
-    const hasVariations = Type.has(newMetadata, 'variations'); // string[]
-    const hasDisk = Type.has(newMetadata, 'disk'); // number
-    // Let's handle the simple stuff: title, track number, disk number
-    const songKey = getSongKey(fullPath);
-    const song = db.songs.get(songKey);
-    if (song && !hasArtist && !hasAlbum && !hasVA && !hasMoreArtists) {
-      if (hasVariations) {
-        song.variations = newMetadata.variations;
-      }
-      const tn: number = hasTrack ? newMetadata.track! : song.track % 100;
-      const dn: number = hasDisk ? newMetadata.disk! : song.track / 100;
-      if (hasDisk || hasTrack) {
-        song.track = tn + dn * 100;
-      }
-      if (hasTitle) {
-        song.title = newMetadata.title!;
-      }
-      // Update the search index
-      setMusicIndex(makeIndex(db));
-      sendUpdatedDB(db);
-      return;
-    }
-    // TODO: Add album & artist change capabilities,
-    // but for now, just do a full rescan the DB
-  }
-  UpdateDB();
 }
