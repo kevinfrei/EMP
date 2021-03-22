@@ -2,7 +2,7 @@ import { MakeLogger } from '@freik/core-utils';
 import electronIsDev from 'electron-is-dev';
 import { CommsSetup } from './Communication';
 import { getMusicDB } from './MusicAccess';
-import { UpdateDB } from './musicDB';
+import { UpdateDB } from './MusicUpdates';
 const log = MakeLogger('Startup', false && electronIsDev);
 
 /**

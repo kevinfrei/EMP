@@ -9,7 +9,7 @@ import {
   searchSubstring,
   searchWholeWord,
 } from './MusicAccess';
-import { RescanDB } from './musicDB';
+import { RescanDB } from './MusicUpdates';
 import * as persist from './persist';
 import {
   checkPlaylists,

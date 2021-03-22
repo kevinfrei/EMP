@@ -4,7 +4,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { picBufProcessor } from './cover-art';
 import { getMusicDB } from './MusicAccess';
-import { UpdateDB } from './musicDB';
+import { UpdateDB } from './MusicUpdates';
 import * as persist from './persist';
 
 export type FileResponse = string | ProtocolResponse;

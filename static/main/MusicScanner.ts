@@ -21,8 +21,8 @@ import path from 'path';
 import { h32 } from 'xxhashjs';
 import { GetMetadataStore, isFullMetadata } from './metadata';
 import { getMusicDB, setMusicIndex } from './MusicAccess';
-import { sendUpdatedDB, UpdateDB } from './musicDB';
 import { FindFilesForFragment } from './MusicFragment';
+import { sendUpdatedDB, UpdateDB } from './MusicUpdates';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
