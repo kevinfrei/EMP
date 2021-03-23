@@ -19,9 +19,9 @@ import electronIsDev from 'electron-is-dev';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
 import { h32 } from 'xxhashjs';
+import { AudioFileIndex, MakeAudioFileIndex } from './AudioFileIndex';
 import { GetMetadataStore, isFullMetadata } from './metadata';
 import { getMusicDB, setMusicIndex } from './MusicAccess';
-import { FindFilesForFragment } from './MusicFragment';
 import { sendUpdatedDB, UpdateDB } from './MusicUpdates';
 import * as persist from './persist';
 import { MakeSearchable, Searchable } from './Search';
@@ -491,49 +491,38 @@ const isMusicType = (filename: string) => isOfType(filename, audioTypes);
 // Hidden images are fine for cover art (actually, maybe preferred!
 const isImageType = (filename: string) => isOfType(filename, imageTypes, true);
 
-function MergeMusicFragment(db: MusicDB, fragment: MusicFragment) {
-  // Add the fragment to the music database. Fundamentally this is about
-  // identifying and re-keying common artists & albums.
-}
-
-async function MergeMusicFragments(
-  fragments: Promise<MusicFragment>[],
+// This is *not* a good implementation. It's an *interim* implementation.
+// TODO: Make this a *good* implementation :)
+async function MergeMusicIndices(
+  fragments: Promise<AudioFileIndex>[],
 ): Promise<MusicDB> {
   // This takes a group of separate music fragments and sticks them into a
   // single MusicDB.
-  let db: MusicDB | null = null;
+  const songList: string[] = [];
+  const picList: string[] = [];
   for (const pfrag of fragments) {
     const fragment = await pfrag;
-    if (db === null) {
-      db = {
-        songs: fragment.songs,
-        albums: fragment.albums,
-        artists: fragment.artists,
-        pictures: fragment.pictures,
-        albumTitleIndex: fragment.albumTitleIndex,
-        artistNameIndex: fragment.artistNameIndex,
-      };
-      continue;
-    }
-    MergeMusicFragment(db, fragment);
+    fragment.forEachAudioFile((filePath: string) => songList.push(filePath));
+    fragment.forEachImageFile((filePath: string) => picList.push(filePath));
   }
-  if (db === null) {
-    throw Error('No fragments found');
-  }
-  return db;
+  log(`${songList.length} songs found during folder scan`);
+  log(`${picList.length} images found during folder scan`);
+  const theDb = await fileNamesToDatabase(songList, picList);
+  log(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
+  return theDb;
 }
 
-export async function findFragments(locations: string[]): Promise<MusicDB> {
+export async function findAudio(locations: string[]): Promise<MusicDB> {
   // TODO: This might be nondeterministic, which is an issue for SongKey's
   const pfrag = locations.map(
-    async (location: string): Promise<MusicFragment> => {
+    async (location: string): Promise<AudioFileIndex> => {
       // Get the hash for the location
       // TODO: This should be cached locally, right?
       const hash = h32(location, 0xdeadbeef).toNumber();
-      return await FindFilesForFragment(location, hash);
+      return await MakeAudioFileIndex(location, hash);
     },
   );
-  return await MergeMusicFragments(pfrag);
+  return await MergeMusicIndices(pfrag);
 }
 
 export async function find(locations: string[]): Promise<MusicDB> {

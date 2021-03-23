@@ -22,7 +22,8 @@ export async function CreateMusicDB(): Promise<void> {
   const musicLocations = getLocations();
   log('Got music locations:');
   log(musicLocations);
-  const musicDB = await music.find(musicLocations);
+  //  const musicDB = await music.find(musicLocations);
+  const musicDB = await music.findAudio(musicLocations);
   log('Got Music DB with songs count:');
   log(musicDB.songs.size);
   await saveMusicDB(musicDB);
