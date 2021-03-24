@@ -11,6 +11,7 @@ import {
   SeqNum,
   SimpleMetadata,
   SongKey,
+  Type,
 } from '@freik/core-utils';
 import { Metadata } from '@freik/media-utils';
 import electronIsDev from 'electron-is-dev';
@@ -40,6 +41,9 @@ export type AudioDatabase = {
   delSongFromPath: (filepath: string) => boolean;
   delSongFromKey: (key: SongKey) => boolean;
   sendUpdate: () => void;
+  load: () => void;
+  save: () => void;
+  refresh: () => void;
 };
 
 let existingKeys: Map<string, SongKey> | null = null;
@@ -76,7 +80,8 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
   const artistNameIndex = new Map<string, ArtistKey>();
   const metadataCache = await GetMetadataStore('metadataCache');
   const metadataOverride = await GetMetadataStore('metadataOverride');
-  const fileNamesSeen: Set<string> = new Set<string>();
+  // If the key in this cache is an empty string, the song wasn't added
+  const fileNamesSeen = new Map<string, SongKey>();
 
   /*
    * Member functions
@@ -281,14 +286,31 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
     album.songs.push(theSong.key);
     allArtists.forEach((artist) => artist.songs.push(theSong.key));
     dbSongs.set(theSong.key, theSong);
+    // Set this thing as appropriately "observed"
+    fileNamesSeen.set(theSong.path, theSong.key);
   }
 
   function delSongFromKey(key: SongKey): boolean {
     // TODO: Make this work
     return false;
   }
+
   function delSongFromPath(filepath: string): boolean {
+    // First, remove it froom the fileNamesSeen set
+    const key = fileNamesSeen.get(filepath);
+    if (!Type.isString(key)) {
+      return false;
+    }
+    // If we have an 'empty' key, then the song doesn't exist in the DB, but
+    // we saw it, so let's remove it from that set and be done
+    if (key === '') {
+      fileNamesSeen.delete(filepath);
+      return true;
+    }
+
+    // Now, let's see if we can find this song
     // TODO: Make this work
+
     return false;
   }
 
@@ -299,7 +321,8 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
     if (fileNamesSeen.has(file)) {
       return false;
     }
-    fileNamesSeen.add(file);
+    // Flag the file as having been seen
+    fileNamesSeen.set(file, '');
 
     // If we've previously failed doing anything with this file, don't keep
     // banging our head against a wall
@@ -439,9 +462,11 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
    */
 
   // Get the list of existing paths to song-keys
-  const songHash = await persist.getItemAsync('songHashIndex');
-  existingKeys = songHash
-    ? (FTON.parse(songHash) as Map<string, SongKey>)
+  const songHash = FTON.parse(
+    (await persist.getItemAsync('songHashIndex')) || '',
+  );
+  existingKeys = Type.isMapOfStrings(songHash)
+    ? songHash
     : new Map<string, SongKey>();
 
   return {
@@ -455,6 +480,25 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
       asyncSend({
         musicDatabase: { songs: dbSongs, artists: dbArtists, albums: dbAlbums },
       });
+    },
+    load: () => {
+      // TODO: Load contents from persistence instead of scanning
+      /*
+      const dbSongs = new Map<SongKey, ServerSong>();
+      const dbAlbums = new Map<AlbumKey, Album>();
+      const dbArtists = new Map<ArtistKey, Artist>();
+      const dbPictures = new Map<ArtistKey, string>();
+      const albumTitleIndex = new Map<string, AlbumKey[]>();
+      const artistNameIndex = new Map<string, ArtistKey>();
+      */
+    },
+    save: () => {
+      // TODO: Save contents to persistence (if changed?)
+      // I think this should just be handled automatically, instead of requiring
+      // clients to remember to do this..
+    },
+    refresh: () => {
+      // TODO: Trigger a database refresh in the background
     },
   };
 }

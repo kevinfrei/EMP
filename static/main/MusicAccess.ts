@@ -8,7 +8,7 @@ import {
   MakeLogger,
   SongKey,
 } from '@freik/core-utils';
-import { AudioDatabase } from './AudioDatabase';
+import { AudioDatabase, MakeAudioDatabase } from './AudioDatabase';
 import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';
@@ -57,6 +57,14 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   } else {
     return theMusicDatabase;
   }
+}
+
+export async function getAudioDatabase(): Promise<AudioDatabase> {
+  if (!theAudioDatabase) {
+    theAudioDatabase = await MakeAudioDatabase();
+    theAudioDatabase.load();
+  }
+  return theAudioDatabase;
 }
 
 export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
