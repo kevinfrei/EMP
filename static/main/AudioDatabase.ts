@@ -437,6 +437,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
    * Begin 'constructor' code here
    *
    */
+
   // Get the list of existing paths to song-keys
   const songHash = await persist.getItemAsync('songHashIndex');
   existingKeys = songHash

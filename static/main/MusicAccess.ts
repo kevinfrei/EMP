@@ -8,6 +8,7 @@ import {
   MakeLogger,
   SongKey,
 } from '@freik/core-utils';
+import { AudioDatabase } from './AudioDatabase';
 import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import * as persist from './persist';
@@ -17,6 +18,8 @@ const err = MakeError('MusicAccess-err');
 
 let theMusicDatabase: MusicDB | null = null;
 let theMusicIndex: MusicIndex | null = null;
+
+let theAudioDatabase: AudioDatabase | null = null;
 
 /**
  * Read the Music Database *from persistence*. This does *not* re-scan locations
@@ -65,39 +68,6 @@ export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
   } else {
     err("MusicDB isn't FTON data!");
   }
-}
-
-export async function getAllSongs(): Promise<Map<SongKey, ServerSong>> {
-  log('get-all-songs called');
-  const musicDB = await getMusicDB();
-  if (musicDB) {
-    log(`get-all-songs: ${musicDB.songs.size} total songs`);
-    return musicDB.songs || new Map();
-  }
-  err('get-all-songs result is empty');
-  return new Map();
-}
-
-export async function getAllArtists(): Promise<Map<ArtistKey, Artist>> {
-  log('get-all-artists called');
-  const musicDB = await getMusicDB();
-  if (musicDB) {
-    log(`get-all-artists: ${musicDB.artists.size} total artists`);
-    return musicDB.artists;
-  }
-  err('get-all-artists result is empty');
-  return new Map();
-}
-
-export async function getAllAlbums(): Promise<Map<AlbumKey, Album>> {
-  log('get-all-albums called');
-  const musicDB = await getMusicDB();
-  if (musicDB) {
-    log(`get-all-albums: ${musicDB.albums.size} total albums`);
-    return musicDB.albums;
-  }
-  err('get-all-albums result is empty');
-  return new Map();
 }
 
 export async function getMediaInfoForSong(

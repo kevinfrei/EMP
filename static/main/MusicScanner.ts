@@ -112,11 +112,13 @@ export function normalizeName(phrase: string): string {
 // Gotta use this instead of localeCompare, thanks to
 // BLUE ÖYSTER CULT and BLUE ÖYSTER CULT being locale equal, but not ===
 // which causes problems in the ArtistMap of the Music database
-export const stringCompare = (a: string, b: string): number =>
-  (a > b ? 1 : 0) - (a < b ? 1 : 0);
+export function stringCompare(a: string, b: string): number {
+  return (a > b ? 1 : 0) - (a < b ? 1 : 0);
+}
 
-export const noArticlesCmp = (a: string, b: string): number =>
-  stringCompare(normalizeName(a), normalizeName(b));
+export function noArticlesCmp(a: string, b: string): number {
+  return stringCompare(normalizeName(a), normalizeName(b));
+}
 
 function getOrNewArtist(db: MusicDB, name: string): Artist {
   const maybeKey: ArtistKey | undefined = db.artistNameIndex.get(
