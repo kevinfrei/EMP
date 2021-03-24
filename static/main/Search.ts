@@ -1,3 +1,5 @@
+import { Type } from '@freik/core-utils';
+
 export type TrieNode<T> = {
   character: string;
   children: TrieMap<T>;
@@ -5,6 +7,8 @@ export type TrieNode<T> = {
 };
 export type TrieMap<T> = Map<string, TrieNode<T>>;
 export type Searchable<T> = (str: string, substrs?: boolean) => Iterable<T>;
+export type TrieTree<T> = [TrieMap<T>, TrieMap<T>];
+
 /*
 type Flattener<T> = (flattener: (obj: T) => FTONData) => FTONData;
 export interface Searchable<T> {
@@ -54,36 +58,89 @@ function addToIndex<T>(idx: number, str: string, o: T, trieParent: TrieMap<T>) {
   }
 }
 
+// Typescript Overloading is kinda weird, but better than nothing...
 /**
- * @function MakeIndex takes a collection of T's, and a "getter" that will
+ * AddToIndex takes a collection of T's, and a "getter" that will
+ * return the string that you want to index for each T, and adds the object
+ * string to the index provided
+ * @param {TrieTree<T>} trieTree - The root of the trie node for string indexing
+ * @param {Iterable<T>} objects - the collection of objects to index
+ * @param {(arg:T)=>string} getter - accessor to get the indexable string for T
+ */
+export function AddToIndex<T>(
+  trieTree: TrieTree<T>,
+  objects: Iterable<T>,
+  getter: (arg: T) => string,
+): void;
+/**
+ * AddToIndex takes a string you want to index, and the object T for
+ * which that string is referring, and adds the string to the trie tree provided
+ * @param {TrieTree<T>} trieTree - The root of the trie node for string indexing
+ * @param {T} object - the object to index
+ * @param {string} name - the 'name' of the object to index
+ */
+export function AddToIndex<T>(
+  trieTree: TrieTree<T>,
+  object: T,
+  name: string,
+): void;
+export function AddToIndex<T>(
+  trieTree: TrieTree<T>,
+  objectOrObjects: T | Iterable<T>,
+  nameOrGetter: string | ((arg: T) => string),
+): void {
+  function addStringToIndex(object: T, name: string) {
+    for (const str of name.split(splitter)) {
+      // We have a string for the object 'o' that needs to be added to the trie
+      // This makes an index for only whole words
+      if (str.length) {
+        addToIndex(0, str, object, trieTree[0]);
+      }
+      // This will make the "substrings also" index:
+      for (let i = 1; i < str.length; i++) {
+        addToIndex(i, str, object, trieTree[1]);
+      }
+    }
+  }
+  if (Type.isString(nameOrGetter)) {
+    addStringToIndex(objectOrObjects as T, nameOrGetter);
+  } else {
+    for (const o of objectOrObjects as Iterable<T>) {
+      AddToIndex(trieTree, o, nameOrGetter(o));
+    }
+  }
+}
+
+/**
+ * MakeIndex takes a collection of T's, and a "getter" that will
  * return the string that you want to index for each T, and return a "root"
  * trie node for use with general text searching
  * @param  {Iterable<T>} objects - the collection of objects to index
  * @param  {(arg:T)=>string} getter - accessor to get the indexable string for T
- * @returns {TrieNode<T>} The root of the trie node for string indexing
+ * @returns {TrieTree<T>} The root of the trie node for string indexing
  */
 export function MakeIndex<T>(
   objects: Iterable<T>,
   getter: (arg: T) => string,
-): [TrieMap<T>, TrieMap<T>] {
-  const wholeWords = new Map<string, TrieNode<T>>();
-  const substrings = new Map<string, TrieNode<T>>();
-  for (const o of objects) {
-    const wholeString = getter(o);
-    for (const str of wholeString.split(splitter)) {
-      // We have a string for the object 'o' that needs to be added to the trie
-
-      // This makes an index for only whole words
-      if (str.length) {
-        addToIndex(0, str, o, wholeWords);
-      }
-      // This will make the "substrings also" index:
-      for (let i = 1; i < str.length; i++) {
-        addToIndex(i, str, o, substrings);
-      }
-    }
+): TrieTree<T>;
+/**
+ * MakeIndex returns a "root"
+ * trie node for use with general text searching
+ * @returns {TrieTree<T>} The root of the trie node for string indexing
+ */
+export function MakeIndex<T>(): TrieTree<T>;
+export function MakeIndex<T>(
+  objects?: Iterable<T>,
+  getter?: (arg: T) => string,
+): TrieTree<T> {
+  const trieTree: TrieTree<T> = [
+    new Map<string, TrieNode<T>>(),
+    new Map<string, TrieNode<T>>(),
+  ];
+  if (objects && getter) {
+    AddToIndex(trieTree, objects, getter);
   }
-  return [wholeWords, substrings];
+  return trieTree;
 }
 
 function SearchTrie<T>(str: string, trie: TrieMap<T>): Set<T> {

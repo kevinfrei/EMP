@@ -16,7 +16,7 @@ import {
 } from '@freik/core-utils';
 import { Metadata } from '@freik/media-utils';
 import electronIsDev from 'electron-is-dev';
-import { Dirent, promises as fsp } from 'fs';
+import { promises as fsp } from 'fs';
 import path from 'path';
 import { h32 } from 'xxhashjs';
 import { AudioFileIndex, MakeAudioFileIndex } from './AudioFileIndex';
@@ -475,22 +475,6 @@ async function fileNamesToDatabase(
   return db;
 }
 
-const audioTypes = new Set(['.flac', '.mp3', '.aac', '.m4a']);
-const imageTypes = new Set(['.png', '.jpg', '.jpeg']);
-function isOfType(
-  filename: string,
-  types: Set<string>,
-  hidden?: boolean,
-): boolean {
-  return (
-    (hidden || !path.basename(filename).startsWith('.')) &&
-    types.has(path.extname(filename).toLowerCase())
-  );
-}
-const isMusicType = (filename: string) => isOfType(filename, audioTypes);
-// Hidden images are fine for cover art (actually, maybe preferred!
-const isImageType = (filename: string) => isOfType(filename, imageTypes, true);
-
 // This is *not* a good implementation. It's an *interim* implementation.
 // TODO: Make this a *good* implementation :)
 async function MergeMusicIndices(
@@ -525,63 +509,6 @@ export async function findAudio(locations: string[]): Promise<MusicDB> {
   return await MergeMusicIndices(pfrag);
 }
 
-export async function find(locations: string[]): Promise<MusicDB> {
-  const queue: string[] = locations;
-  const songsList: string[] = [];
-  const picList: string[] = [];
-  while (queue.length > 0) {
-    const i = queue.pop();
-    let dirents: Dirent[] | null = null;
-    try {
-      if (i) {
-        dirents = await fsp.readdir(i, { withFileTypes: true });
-      } else {
-        continue;
-      }
-    } catch (e) {
-      err(`Unable to read ${i || '<unknown>'}`);
-      continue;
-    }
-    if (!dirents) {
-      continue;
-    }
-    for (const dirent of dirents) {
-      try {
-        if (dirent.isSymbolicLink()) {
-          const ap = await fsp.realpath(path.join(i, dirent.name));
-          const st = await fsp.stat(ap);
-          if (st.isDirectory()) {
-            queue.push(ap);
-          } else if (st.isFile()) {
-            if (isMusicType(ap)) {
-              songsList.push(ap);
-            } else if (isImageType(ap)) {
-              picList.push(ap);
-            }
-          }
-        } else if (dirent.isDirectory()) {
-          queue.push(path.join(i, dirent.name));
-        } else if (dirent.isFile()) {
-          if (isMusicType(dirent.name)) {
-            songsList.push(path.join(i, dirent.name));
-          } else if (isImageType(dirent.name)) {
-            picList.push(path.join(i, dirent.name));
-          }
-        }
-      } catch (e) {
-        err('Unable to process dirent:');
-        err(dirent);
-        continue;
-      }
-    }
-  }
-  log(`${songsList.length} songs found during folder scan`);
-  log(`${picList.length} images found during folder scan`);
-  const theDb = await fileNamesToDatabase(songsList, picList);
-  log(`${theDb.songs.size} song entries from the fileNamesToDatabase scan`);
-  return theDb;
-}
-
 export function makeIndex(musicDB: MusicDB): MusicIndex {
   const songs = MakeSearchable<SongKey>(
     musicDB.songs.keys(),
@@ -600,6 +527,8 @@ export function makeIndex(musicDB: MusicDB): MusicIndex {
 }
 
 // TODO: Make this intelligent about just minor DB adjustments...
+// TOREALLYDO: Migrate this to the new AudioDatabase by just using a delete
+// and then an add. It should be much more straight forward, at least mentally.
 export async function UpdateSongMetadata(
   fullPath: string,
   newMetadata: Partial<FullMetadata>,
