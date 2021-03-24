@@ -77,6 +77,7 @@ export type AudioFileIndex = {
   getHash: () => number;
   forEachAudioFile: (fn: PathHandler) => void;
   forEachImageFile: (fn: PathHandler) => void;
+  getLastScanTime: () => Date | null;
   // When we rescan files, look at file path diffs
   rescanFiles: (
     addAudio: PathHandler,
@@ -132,11 +133,17 @@ export async function MakeAudioFileIndex(
   location: string,
   fragmentHash: number,
 ): Promise<AudioFileIndex> {
+  /*
+   * "member" data goes here
+   */
+  // non-const: these things update "atomically" so the whole array gets changed
   let songList: string[] = [];
   let picList: string[] = [];
+  let lastScanTime: Date | null = null;
+
   // TODO: Read this stuff from disk, either from the MDF cache,
   // or directly from the path provided
-  async function existingFileIndex(): Promise<boolean> {
+  async function loadExistingFileIndex(): Promise<boolean> {
     try {
       const dir = await fsp.opendir(path.join(location, '.emp'));
       await dir.close();
@@ -147,6 +154,9 @@ export async function MakeAudioFileIndex(
     }
     return false;
   }
+
+  // Rescan the location, calling a function for each add/delete of image
+  // or audio files
   async function rescanFiles(
     addAudioFn: PathHandler,
     delAudioFn: PathHandler,
@@ -158,6 +168,7 @@ export async function MakeAudioFileIndex(
     const queue: string[] = [location];
     const newSongList: string[] = [];
     const newPicList: string[] = [];
+    const newLastScanTime = new Date();
     while (queue.length > 0) {
       const i = queue.pop();
       let dirents: Dirent[] | null = null;
@@ -206,14 +217,20 @@ export async function MakeAudioFileIndex(
     }
     songList = newSongList.sort(pathCompare);
     picList = newPicList.sort(pathCompare);
+    lastScanTime = newLastScanTime;
     // Alright, we've got the new list, now call the handlers to
     // post-process any differences from the previous list
     SortedArrayDiff(oldSongList, songList, delAudioFn, addAudioFn);
     SortedArrayDiff(oldPicList, picList, delImageFn, addImageFn);
+    // TODO: Save the new list back to disk in the .emp file index
   }
-  if (await existingFileIndex()) {
-    // Read in the index files
-  } else {
+
+  /*
+   *
+   * Begin 'constructor' code here:
+   *
+   */
+  if (!(await loadExistingFileIndex())) {
     songList = [];
     picList = [];
     // Just rebuild the file list, don't do any processing right now
@@ -225,7 +242,9 @@ export async function MakeAudioFileIndex(
     // file metadata override
   }
   return {
+    // Don't know if this is necessary
     getHash: () => fragmentHash,
+    getLastScanTime: () => lastScanTime,
     forEachImageFile: (fn: PathHandler) => picList.forEach(fn),
     forEachAudioFile: (fn: PathHandler) => songList.forEach(fn),
     rescanFiles,
