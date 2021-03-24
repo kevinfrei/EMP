@@ -173,27 +173,7 @@ function buildSearchable<T>(whole: TrieMap<T>, sub: TrieMap<T>): Searchable<T> {
       wholeRes.forEach((val: T) => subRes.add(val));
       return subRes.values();
     }
-  }; /*
-  const flattenIndex = (
-    idx: TrieMap<T>,
-    flattener: (obj: T) => FTONData,
-  ): FTONData => {
-    return new Map(
-      [...idx.entries()].map(([str, node]) => [
-        str,
-        {
-          c: node.character,
-          v: [...node.values].map(flattener),
-          m: flattenIndex(node.children, flattener),
-        },
-      ]),
-    );
   };
-  const flattenFn = (flattener: (obj: T) => FTONData): FTONData => {
-    return [flattenIndex(whole, flattener), flattenIndex(sub, flattener)];
-  };
-  searchFn.flatten = flattenFn;
-  */
   return searchFn;
 }
 
@@ -212,39 +192,3 @@ export function MakeSearchable<T>(
   const [whole, sub] = MakeIndex(objects, getter);
   return buildSearchable(whole, sub);
 }
-/*
-export function UnflattenSearchable<T>(
-  flattened: FTONData,
-  exploder: (data: FTONData) => T,
-): Searchable<T> | string {
-  const explodeIndex = (data: FTONData): TrieMap<T> | string => {
-    if (!Type.isMap(data)) return "TrieMap<T> isn't actually a map";
-    let error = '';
-    const newMap = [...data.entries()].map(([key, value]) => {
-      let newKey = key;
-      if (!Type.isString(key)) {
-        newKey = key.toString();
-      }
-      let character = '';
-      if (!ObjUtil.hasStr('c', value)) {
-        error += '\nMissing character';
-      } else {
-        character = value.c;
-      }
-      const children = new Map<string, TrieNode<T>>();
-      const values = new Set<T>();
-      const newValue: TrieNode<T> = { character, children, values };
-      return [newKey, newValue];
-    });
-    if (error.length > 0) return error;
-    return new Map<string, TrieNode<T>>(newMap);
-  };
-  if (!Type.isArray(flattened)) return 'Invalid top index element';
-  if (flattened.length !== 2) return 'Invalide top length';
-  const whole = explodeIndex(flattened[0]);
-  const sub = explodeIndex(flattened[1]);
-  if (Type.isString(whole)) return whole;
-  if (Type.isString(sub)) return sub;
-  return buildSearchable(whole, sub);
-}
-*/

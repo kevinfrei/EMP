@@ -5,8 +5,8 @@ import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
 import * as persist from './persist';
 
-const log = MakeLogger('musicDB');
-const err = MakeError('musicDB-err');
+const log = MakeLogger('MusicUpdates');
+const err = MakeError('MusicUpdates-err');
 
 const sleep = promisify(setTimeout);
 
@@ -65,7 +65,7 @@ export async function RescanDB(): Promise<void> {
     await CreateMusicDB();
     const db = await getMusicDB();
     if (db) {
-      log('About to send the update');
+      log('About to send the database update');
       asyncSend({ musicDatabase: db });
       if (prevDB) {
         log('Songs before:' + prevDB.songs.size.toString());
@@ -92,5 +92,8 @@ export function sendUpdatedDB(db: music.MusicDB): void {
   if (updateSendTimeout !== null) {
     clearTimeout(updateSendTimeout);
   }
-  updateSendTimeout = setTimeout(() => asyncSend({ musicDatabase: db }), 250);
+  updateSendTimeout = setTimeout(() => {
+    log('Sending database');
+    asyncSend({ musicDatabase: db });
+  }, 250);
 }

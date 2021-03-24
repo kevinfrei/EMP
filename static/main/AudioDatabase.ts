@@ -17,6 +17,7 @@ import electronIsDev from 'electron-is-dev';
 import { promises as fsp } from 'fs';
 import path from 'path';
 import { AudioFileIndex } from './AudioFileIndex';
+import { asyncSend } from './Communication';
 import { GetMetadataStore, isFullMetadata } from './metadata';
 import {
   noArticlesCmp,
@@ -33,14 +34,12 @@ const err = MakeError('AudioDatabase-err');
 
 export type AudioDatabase = {
   addAudioFileIndex: (idx: AudioFileIndex) => Promise<void>;
-  getSongs: () => Map<SongKey, ServerSong>;
-  getAlbums: () => Map<AlbumKey, Album>;
-  getArtists: () => Map<ArtistKey, Artist>;
   getPicture: (key: AlbumKey) => string;
   addSongFromPath: (filepath: string) => void;
   addOrUpdateSong: (md: FullMetadata) => void;
   delSongFromPath: (filepath: string) => boolean;
   delSongFromKey: (key: SongKey) => boolean;
+  sendUpdate: () => void;
 };
 
 let existingKeys: Map<string, SongKey> | null = null;
@@ -446,13 +445,15 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
 
   return {
     addAudioFileIndex,
-    getSongs: () => dbSongs,
-    getAlbums: () => dbAlbums,
-    getArtists: () => dbArtists,
     getPicture,
+    addSongFromPath,
     addOrUpdateSong,
     delSongFromPath,
     delSongFromKey,
-    addSongFromPath,
+    sendUpdate: () => {
+      asyncSend({
+        musicDatabase: { songs: dbSongs, artists: dbArtists, albums: dbAlbums },
+      });
+    },
   };
 }
