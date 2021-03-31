@@ -1,13 +1,7 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
-import {
-  AlbumKey,
-  FTON,
-  MakeError,
-  MakeLogger,
-  SongKey,
-  Type,
-} from '@freik/core-utils';
+import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { AlbumKey, SongKey } from '@freik/media-core';
 import { IpcRenderer, NativeImage } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { PathLike } from 'fs';

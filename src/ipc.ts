@@ -1,14 +1,11 @@
 import {
-  AlbumKey,
-  ArtistKey,
   FTONData,
-  FullMetadata,
   MakeError,
   MakeLogger,
   SeqNum,
-  SongKey,
   Type,
 } from '@freik/core-utils';
+import { AlbumKey, ArtistKey, FullMetadata, SongKey } from '@freik/media-core';
 import { CallMain, InvokeMain, PostMain } from './MyWindow';
 
 const log = MakeLogger('ipc');

@@ -10,13 +10,8 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import {
-  Album,
-  AlbumKey,
-  MakeError,
-  MakeLogger,
-  Song,
-} from '@freik/core-utils';
+import { MakeError, MakeLogger } from '@freik/core-utils';
+import { Album, AlbumKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,

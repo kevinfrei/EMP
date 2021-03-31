@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { SongKey } from '@freik/core-utils';
+import { SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
 import { syncWithMainEffect } from './helpers';
 import { isMiniplayerState } from './Local';

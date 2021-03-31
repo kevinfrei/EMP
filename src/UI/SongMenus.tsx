@@ -5,7 +5,8 @@ import {
   IContextualMenuItem,
   Point,
 } from '@fluentui/react';
-import { MakeLogger, SongKey, Type } from '@freik/core-utils';
+import { MakeLogger, Type } from '@freik/core-utils';
+import { SongKey } from '@freik/media-core';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import {

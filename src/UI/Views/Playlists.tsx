@@ -6,7 +6,7 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { SongKey } from '@freik/core-utils';
+import { SongKey } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,

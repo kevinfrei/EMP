@@ -12,7 +12,8 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { Album, AlbumKey, ArtistKey, MakeError, Song } from '@freik/core-utils';
+import { MakeError } from '@freik/core-utils';
+import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-core';
 import { useRecoilValue } from 'recoil';
 import { getAlbumByKeyFamily, getArtistStringFamily } from '../Recoil/ReadOnly';
 

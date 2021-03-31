@@ -1,10 +1,5 @@
-import {
-  MakeError,
-  MakeLogger,
-  PlaylistName,
-  SongKey,
-  Type,
-} from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { PlaylistName, SongKey } from '@freik/media-core';
 import { CallbackInterface, RecoilState, Snapshot } from 'recoil';
 import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';

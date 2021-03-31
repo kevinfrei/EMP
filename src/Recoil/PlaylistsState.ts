@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Comparisons, PlaylistName, SongKey, Type } from '@freik/core-utils';
+import { Operations, Type } from '@freik/core-utils';
+import { PlaylistName, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { CallMain, PostMain } from '../MyWindow';
 import { isPlaylist } from '../Tools';
@@ -81,7 +82,7 @@ export const saveableState = selector<boolean>({
     if (isPlaylist(curPlaylist)) {
       const theSongList = get(getPlaylistFamily(curPlaylist));
       const songList = get(songListState);
-      return !Comparisons.ArraySetEqual(theSongList, songList);
+      return !Operations.ArraySetEqual(theSongList, songList);
     } else {
       // If it's not a playlist, you can't save it
       return false;

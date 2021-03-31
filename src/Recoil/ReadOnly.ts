@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { MakeLogger } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  MakeLogger,
   Song,
   SongKey,
-} from '@freik/core-utils';
+} from '@freik/media-core';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 import { Catch, Fail } from '../Tools';

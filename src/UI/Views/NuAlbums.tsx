@@ -5,7 +5,7 @@ import {
   List,
   mergeStyleSets,
 } from '@fluentui/react';
-import { Album } from '@freik/core-utils';
+import { Album } from '@freik/media-core';
 import { useCallback, useRef } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { AddSongs } from '../../Recoil/api';

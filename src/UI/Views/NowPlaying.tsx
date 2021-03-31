@@ -15,6 +15,7 @@ import {
   Text,
   TooltipHost,
 } from '@fluentui/react';
+import { Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -22,8 +23,7 @@ import {
   ArtistKey,
   Song,
   SongKey,
-  Type,
-} from '@freik/core-utils';
+} from '@freik/media-core';
 import {
   atom,
   CallbackInterface,

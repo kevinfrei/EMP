@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { FTONData, SongKey, Type } from '@freik/core-utils';
+import { FTONData, Type } from '@freik/core-utils';
+import { SongKey } from '@freik/media-core';
 import { atom, selectorFamily } from 'recoil';
 import {
   bidirectionalSyncWithTranslateEffect,

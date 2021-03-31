@@ -11,15 +11,8 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
-import {
-  AlbumKey,
-  FullMetadata,
-  MakeError,
-  MakeLogger,
-  Media,
-  SongKey,
-  Type,
-} from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { useEffect, useState } from 'react';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
@@ -125,7 +118,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       log('updated to:');
       const md: Partial<FullMetadata> = { originalPath: '*' + songKey };
       if (artist) {
-        md.artist = Media.splitArtistString(artist);
+        md.artist = Metadata.SplitArtistString(artist);
       }
       if (album) {
         md.album = album;
@@ -153,7 +146,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         md.variations = vars.split(';').map((s) => s.trim());
       }
       if (moreArtists !== false) {
-        md.moreArtists = Media.splitArtistString(moreArtists);
+        md.moreArtists = Metadata.SplitArtistString(moreArtists);
       }
       log(md);
       SetMediaInfo(md).catch(onRejected('Saving Metadata failed'));

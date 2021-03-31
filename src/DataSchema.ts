@@ -1,4 +1,4 @@
-import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/core-utils';
+import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-core';
 
 export type SongData = {
   song: Song;

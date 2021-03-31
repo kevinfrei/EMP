@@ -1,4 +1,4 @@
-import { SongKey } from '@freik/core-utils';
+import { SongKey } from '@freik/media-core';
 import { selectorFamily } from 'recoil';
 import { getMediaInfoFamily } from './ReadOnly';
 

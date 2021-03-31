@@ -1,4 +1,4 @@
-import { AlbumKey, SongKey } from '@freik/core-utils';
+import { AlbumKey, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { RandomInt } from '../Tools';
 import { repeatState } from './ReadWrite';

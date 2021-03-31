@@ -8,7 +8,8 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { Artist, ArtistKey, MakeError, Song, Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
+import { Artist, ArtistKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
@@ -238,7 +239,7 @@ export default function ArtistList(): JSX.Element {
           onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={sortedSongs}
-          getKey={(item: any, index?: number) => (item ).comboKey}
+          getKey={(item: any, index?: number) => item.comboKey}
           groups={artistGroups}
           groupProps={groupProps}
           columns={columns}

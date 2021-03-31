@@ -1,4 +1,4 @@
-import { Song, SongKey } from '@freik/core-utils';
+import { Song, SongKey } from '@freik/media-core';
 import { CallbackInterface } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
 

@@ -9,16 +9,15 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
+import { MakeError, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  MakeError,
   Song,
   SongKey,
-  Type,
-} from '@freik/core-utils';
+} from '@freik/media-core';
 import { useState } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
@@ -103,11 +102,14 @@ function AggregateSearchResults(
     if (!artist) return [];
     return artist.songs.map((sk, idx) => {
       const song = songs.get(sk);
-      return MakeSongSearchEntry(
-        song,
-        idx,
-        MakeArtistGroupKey(artist.key, song.albumId),
-      );
+      if (song) {
+        return MakeSongSearchEntry(
+          song,
+          idx,
+          MakeArtistGroupKey(artist.key, song.albumId),
+        );
+      }
+      throw new Error('oop');
     });
   }
   const groups: IGroup[] = [];
