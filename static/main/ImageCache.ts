@@ -1,4 +1,5 @@
-import { Album, toSafeName } from '@freik/core-utils';
+import { ToPathSafeName } from '@freik/core-utils';
+import { Album } from '@freik/media-core';
 import { app } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -22,7 +23,7 @@ function MakeImageStore<T>(
     } catch (e) {
       // The dir was already created...
     }
-    return path.join(imageStoreDir, toSafeName(await keyLookup(key)));
+    return path.join(imageStoreDir, ToPathSafeName(await keyLookup(key)));
   };
   return {
     get: async (key: T): Promise<Buffer | void> => {

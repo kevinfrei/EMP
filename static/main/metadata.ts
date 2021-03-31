@@ -1,15 +1,14 @@
 import {
-  Attributes,
-  Comparisons,
   FTON,
   FTONData,
-  FullMetadata,
   MakeError,
   MakeLogger,
   ObjUtil,
+  Operations,
   Type,
 } from '@freik/core-utils';
-import { MD } from '@freik/media-utils';
+import { Attributes, FullMetadata } from '@freik/media-core';
+import { Metadata as MD } from '@freik/media-utils';
 import { getMusicDB } from './MusicAccess';
 import { UpdateSongMetadata } from './MusicScanner';
 import * as persist from './persist';
@@ -59,12 +58,12 @@ export async function getMediaInfo(
   mediaPath: string,
 ): Promise<Map<string, string>> {
   const trackInfo = await MD.RawMetadata(mediaPath);
-  const maybeSimple = await MD.fromFileAsync(mediaPath);
+  const maybeSimple = await MD.FromFileAsync(mediaPath);
   const simple: NestedObject = ((maybeSimple as any) as NestedObject) || {};
   const maybeFull = maybeSimple
     ? MD.FullFromObj(mediaPath, (maybeSimple as any) as Attributes)
     : null;
-  const full: NestedObject = ((maybeFull as any) as NestedObject) || {};
+  const full: NestedObject = (maybeFull as NestedObject) || {};
   let res: Map<string, string>;
   if (Type.isObjectNonNull(trackInfo)) {
     delete trackInfo.native;
@@ -152,7 +151,7 @@ export function isOnlyMetadata(obj: unknown): obj is MinimumMetadata {
 function minMetadataEqual(a: MinimumMetadata, b: MinimumMetadata): boolean {
   const ak = Object.keys(a);
   const bk = Object.keys(b);
-  if (!Comparisons.ArraySetEqual(ak, bk)) {
+  if (!Operations.ArraySetEqual(ak, bk)) {
     return false;
   }
   const aa: { [index: string]: undefined | string | number | string[] } = a;
@@ -165,7 +164,7 @@ function minMetadataEqual(a: MinimumMetadata, b: MinimumMetadata): boolean {
       continue;
     }
     if (Type.isArrayOfString(aa[k]) && Type.isArrayOfString(bb[k])) {
-      if (Comparisons.ArraySetEqual(aa[k] as string[], bb[k] as string[])) {
+      if (Operations.ArraySetEqual(aa[k] as string[], bb[k] as string[])) {
         continue;
       }
     }

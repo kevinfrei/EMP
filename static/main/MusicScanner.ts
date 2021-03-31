@@ -1,19 +1,21 @@
 import {
+  FTON,
+  MakeError,
+  MakeLogger,
+  Operations,
+  SeqNum,
+  Type,
+} from '@freik/core-utils';
+import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  Comparisons,
-  FTON,
   FullMetadata,
-  MakeError,
-  MakeLogger,
-  SeqNum,
   SimpleMetadata,
   Song,
   SongKey,
-  Type,
-} from '@freik/core-utils';
+} from '@freik/media-core';
 import { Metadata } from '@freik/media-utils';
 import electronIsDev from 'electron-is-dev';
 import { promises as fsp } from 'fs';
@@ -31,7 +33,7 @@ export type ServerSong = Song & { path: string };
 const log = MakeLogger('music', false && electronIsDev);
 const err = MakeError('music-err');
 
-const setEqual = Comparisons.ArraySetEqual;
+const setEqual = Operations.ArraySetEqual;
 
 export type VAType = '' | 'ost' | 'va';
 
@@ -416,13 +418,13 @@ async function fileNamesToDatabase(
     }
     // Cached data overrides file path acquired metadata
     const mdOverride = metadataOverride.get(file);
-    const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
+    const littlemd: SimpleMetadata | void = Metadata.FromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
       tryHarder.push(file);
       continue;
     }
-    const fullMd = Metadata.FullFromObj(file, littlemd as any);
+    const fullMd = Metadata.FullFromObj(file, littlemd);
     const md = { ...fullMd, ...mdOverride };
 
     if (!isFullMetadata(md)) {
@@ -442,7 +444,7 @@ async function fileNamesToDatabase(
   for (const file of tryHarder) {
     let maybeMetadata = null;
     try {
-      maybeMetadata = await Metadata.fromFileAsync(file);
+      maybeMetadata = await Metadata.FromFileAsync(file);
     } catch (e) {
       err(`Failed acquiring metadata from ${file}:`);
       err(e);
@@ -452,7 +454,7 @@ async function fileNamesToDatabase(
       metadataCache.fail(file);
       continue;
     }
-    const fullMd = Metadata.FullFromObj(file, maybeMetadata as any);
+    const fullMd = Metadata.FullFromObj(file, maybeMetadata);
     if (!fullMd) {
       log(`Partial metadata failure for ${file}`);
       metadataCache.fail(file);

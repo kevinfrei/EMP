@@ -1,18 +1,20 @@
 import {
+  FTON,
+  MakeError,
+  MakeLogger,
+  Operations,
+  SeqNum,
+  Type,
+} from '@freik/core-utils';
+import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  Comparisons,
-  FTON,
   FullMetadata,
-  MakeError,
-  MakeLogger,
-  SeqNum,
   SimpleMetadata,
   SongKey,
-  Type,
-} from '@freik/core-utils';
+} from '@freik/media-core';
 import { Metadata } from '@freik/media-utils';
 import electronIsDev from 'electron-is-dev';
 import { promises as fsp } from 'fs';
@@ -153,7 +155,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
         return check;
       }
       // Set equality...
-      if (!Comparisons.ArraySetEqual(check.primaryArtists, artists)) {
+      if (!Operations.ArraySetEqual(check.primaryArtists, artists)) {
         // If the primaryArtists is different, but the files are in the same
         // location, override the VA type update the primaryArtists list and
         // return this one.
@@ -331,12 +333,12 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
     }
     // Cached data overrides file path acquired metadata
     const mdOverride = metadataOverride.get(file);
-    const littlemd: SimpleMetadata | void = Metadata.fromPath(file);
+    const littlemd: SimpleMetadata | void = Metadata.FromPath(file);
     if (!littlemd) {
       log('Unable to get metadata from file ' + file);
       return true;
     }
-    const fullMd = Metadata.FullFromObj(file, littlemd as any);
+    const fullMd = Metadata.FullFromObj(file, littlemd);
     const md = { ...fullMd, ...mdOverride };
 
     if (!isFullMetadata(md)) {
@@ -420,7 +422,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
     for (const file of tryHarder) {
       let maybeMetadata = null;
       try {
-        maybeMetadata = await Metadata.fromFileAsync(file);
+        maybeMetadata = await Metadata.FromFileAsync(file);
       } catch (e) {
         err(`Failed acquiring metadata from ${file}:`);
         err(e);
@@ -430,7 +432,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
         metadataCache.fail(file);
         continue;
       }
-      const fullMd = Metadata.FullFromObj(file, maybeMetadata as any);
+      const fullMd = Metadata.FullFromObj(file, maybeMetadata);
       if (!fullMd) {
         log(`Partial metadata failure for ${file}`);
         metadataCache.fail(file);

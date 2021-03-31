@@ -1,13 +1,13 @@
 import {
-  Comparisons,
-  fromSafeName,
+  FromPathSafeName,
   FTON,
   MakeError,
   MakeLogger,
-  SongKey,
-  toSafeName,
+  Operations,
+  ToPathSafeName,
   Type,
 } from '@freik/core-utils';
+import { SongKey } from '@freik/media-core';
 import { exception } from 'console';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
@@ -23,11 +23,11 @@ function playlistDir(): string {
 }
 
 function playlistName(file: string): string {
-  return fromSafeName(file);
+  return FromPathSafeName(file);
 }
 
 function playlistPath(name: string): string {
-  return path.join(playlistDir(), toSafeName(name));
+  return path.join(playlistDir(), ToPathSafeName(name));
 }
 
 export async function renamePlaylist([curName, newName]: [
@@ -122,7 +122,7 @@ export async function loadPlaylist(data: string): Promise<string[]> {
 
 export async function checkPlaylists(names: string[]): Promise<void> {
   log('checkPlaylists');
-  if (Comparisons.ArraySetEqual<string>(names, await getPlaylists())) {
+  if (Operations.ArraySetEqual<string>(names, await getPlaylists())) {
     log("They're equal");
   } else {
     err('NOT equal :/');

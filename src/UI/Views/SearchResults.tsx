@@ -104,9 +104,9 @@ function AggregateSearchResults(
     return artist.songs.map((sk, idx) => {
       const song = songs.get(sk);
       return MakeSongSearchEntry(
-        song!,
+        song,
         idx,
-        MakeArtistGroupKey(artist.key, song!.albumId),
+        MakeArtistGroupKey(artist.key, song.albumId),
       );
     });
   }

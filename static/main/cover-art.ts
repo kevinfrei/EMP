@@ -1,13 +1,6 @@
-import {
-  Album,
-  AlbumKey,
-  FTON,
-  MakeError,
-  MakeLogger,
-  SongKey,
-  Type,
-} from '@freik/core-utils';
-import { Cover } from '@freik/media-utils';
+import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { Album, AlbumKey, SongKey } from '@freik/media-core';
+import { Covers } from '@freik/media-utils';
 import { hideFile } from '@freik/node-utils/lib/file';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
@@ -142,7 +135,7 @@ export async function picBufProcessor(
           const song = db.songs.get(songKey);
           if (song) {
             log(`Looking for cover in ${song.path}`);
-            const buf = await Cover.readFromFile(song.path);
+            const buf = await Covers.ReadFromFile(song.path);
             if (buf) {
               log(`Got a buffer ${buf.data.length} bytes long`);
               const data = Buffer.from(buf.data, 'base64');

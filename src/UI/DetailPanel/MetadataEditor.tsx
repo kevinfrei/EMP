@@ -119,7 +119,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
 
     for (const songKey of Type.isArrayOfString(props.forSongs)
       ? props.forSongs
-      : [props.forSong!]) {
+      : [props.forSong]) {
       log('Originally:');
       log(props);
       log('updated to:');
