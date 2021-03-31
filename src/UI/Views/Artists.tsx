@@ -239,7 +239,9 @@ export default function ArtistList(): JSX.Element {
           onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={sortedSongs}
-          getKey={(item: any, index?: number) => item.comboKey}
+          getKey={(item: any, index?: number) =>
+            Type.hasStr(item, 'comboKey') ? item.comboKey : ''
+          }
           groups={artistGroups}
           groupProps={groupProps}
           columns={columns}

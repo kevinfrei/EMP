@@ -116,7 +116,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       log('Originally:');
       log(props);
       log('updated to:');
-      const md: Partial<FullMetadata> = { originalPath: '*' + songKey };
+      const md: Partial<FullMetadata> = { originalPath: '*' + songKey! };
       if (artist) {
         md.artist = Metadata.SplitArtistString(artist);
       }

@@ -118,11 +118,11 @@ export function AddSongs(
   const shuffle = getVal(snapshot, shuffleState);
   const playList = GetFilteredSongs(snapshot, listToAdd);
   if (!shuffle) {
-    set(songListState, (songList) => [...songList, ...listToAdd]);
+    set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   } else {
     const shuffledList = ShuffleArray(playList);
-    set(songListState, (songList) => [...songList, ...shuffledList]);
+    set(songListState, (songList: string[]) => [...songList, ...shuffledList]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   }
   set(recentlyQueuedState, playList.length);
@@ -186,7 +186,7 @@ export function ShufflePlaying({
   const curIndex = getVal(snapshot, currentIndexState);
   set(nowPlayingSortState, '');
   if (curIndex < 0) {
-    set(songListState, (prevSongList) => ShuffleArray(prevSongList));
+    set(songListState, (prevSongList: string[]) => ShuffleArray(prevSongList));
   } else {
     const curSongList = getVal(snapshot, songListState);
     const curKey = curSongList[curIndex];
