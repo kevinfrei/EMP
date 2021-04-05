@@ -14,6 +14,7 @@
     "dist": true,
     "yarn*.l*": true,
     "LICENSE.md": true,
+    ".husky": true,
     "*.tsbuildinfo": true,
     ".gitmodules": true,
     ".eslintcache": true
