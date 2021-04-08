@@ -31,10 +31,10 @@ export const playlistNamesState = selector<Set<PlaylistName>>({
       return new Set(backed);
     }
   },
-  set: async ({ set }, newValue) => {
+  set: ({ set }, newValue) => {
     const data = Type.isSetOfString(newValue) ? [...newValue] : [];
     set(playlistNamesBackerState, data);
-    await PostMain('set-playlists', data);
+    void PostMain('set-playlists', data);
   },
 });
 
@@ -61,7 +61,7 @@ export const getPlaylistFamily = selectorFamily<SongKey[], PlaylistName>({
       return backed;
     }
   },
-  set: (name: PlaylistName) => async ({ set, get }, newValue) => {
+  set: (name: PlaylistName) => ({ set, get }, newValue) => {
     const names = get(playlistNamesState);
     if (!names.has(name)) {
       names.add(name);
@@ -69,7 +69,7 @@ export const getPlaylistFamily = selectorFamily<SongKey[], PlaylistName>({
     }
     const songs = Type.isArray(newValue) ? newValue : [];
     set(getPlaylistBackerFamily(name), songs);
-    await PostMain('save-playlist', { name, songs });
+    void PostMain('save-playlist', { name, songs });
   },
 });
 
