@@ -6,14 +6,12 @@ import {
   MenuItem,
   MenuItemConstructorOptions,
 } from 'electron';
+import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
 import { asyncSend } from './Communication';
 import * as persist from './persist';
 import { toggleMiniPlayer } from './window';
-
-// import isDev from 'electron-is-dev';
-const isDev = true;
 
 const log = MakeLogger('menu', isDev);
 const err = MakeError('menu-err'); // eslint-disable-line
