@@ -238,17 +238,11 @@ export function getWindowPos(): WindowPosition {
     if (Type.has(tmpws, 'bounds')) {
       const bounds = tmpws.bounds;
       if (
-        bounds &&
-        Type.has(bounds, 'x') &&
-        Type.isNumber(bounds.x) &&
-        Type.has(bounds, 'y') &&
-        Type.isNumber(bounds.y) &&
-        Type.has(bounds, 'width') &&
-        Type.isNumber(bounds.width) &&
-        Type.has(bounds, 'height') &&
-        Type.isNumber(bounds.height) &&
-        Type.has(tmpws, 'isMaximized') &&
-        Type.isBoolean(tmpws.isMaximized)
+        Type.hasType(bounds, 'x', Type.isNumber) &&
+        Type.hasType(bounds, 'y', Type.isNumber) &&
+        Type.hasType(bounds, 'width', Type.isNumber) &&
+        Type.hasType(bounds, 'height', Type.isNumber) &&
+        Type.hasType(tmpws, 'isMaximized', Type.isBoolean)
       ) {
         return makeWindowPos(
           bounds.x,
