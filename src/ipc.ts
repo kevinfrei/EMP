@@ -1,10 +1,4 @@
-import {
-  FTONData,
-  MakeError,
-  MakeLogger,
-  SeqNum,
-  Type,
-} from '@freik/core-utils';
+import { MakeError, MakeLogger, SeqNum, Type } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, FullMetadata, SongKey } from '@freik/media-core';
 import { CallMain, InvokeMain, PostMain } from './MyWindow';
 
@@ -70,7 +64,7 @@ export async function SearchWhole(
 }
 
 export type ListenKey = { key: string; id: string };
-export type MessageHandler = (val: FTONData) => void;
+export type MessageHandler = (val: unknown) => void;
 
 const sn = SeqNum('Listen');
 
@@ -80,7 +74,7 @@ const listeners = new Map<string, Map<string, MessageHandler>>();
 // Subscribe to the message
 export function Subscribe(
   key: string,
-  handler: (val: FTONData) => void,
+  handler: (val: unknown) => void,
 ): ListenKey {
   const theKey = { key, id: sn() };
   let handlerMap: Map<string, MessageHandler> | void = listeners.get(key);
@@ -102,7 +96,7 @@ export function Unsubscribe(listenKey: ListenKey): void {
 
 // Called when an async message comes in from the main process
 // Ideally, these should just be subscribed to as part of an AtomEffect
-export function HandleMessage(message: FTONData): void {
+export function HandleMessage(message: unknown): void {
   // Walk the list of ID's to see if we've got anything with a format of:
   // { "id" : data }
   // This has an interesting side effect of letting the server process

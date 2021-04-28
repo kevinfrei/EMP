@@ -1,4 +1,9 @@
-import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
+import {
+  MakeError,
+  MakeLogger,
+  Pickle,
+  UnsafelyUnpickle,
+} from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -37,7 +42,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
       const musicDBstr = await persist.getItemAsync('musicDatabase');
       if (musicDBstr) {
         log(`get-music-db: ${musicDBstr.length} bytes in the JSON blob.`);
-        theMusicDatabase = FTON.parse(musicDBstr) as unknown as MusicDB;
+        theMusicDatabase = UnsafelyUnpickle<MusicDB>(musicDBstr);
         log(theMusicDatabase);
         return theMusicDatabase;
       }
@@ -53,7 +58,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
         albumTitleIndex: new Map<string, AlbumKey[]>(),
         artistNameIndex: new Map<string, ArtistKey>(),
       };
-      await persist.setItemAsync('musicDatabase', FTON.stringify(emptyDB));
+      await persist.setItemAsync('musicDatabase', Pickle(emptyDB));
       return;
     }
   } else {
@@ -71,13 +76,8 @@ export async function getAudioDatabase(): Promise<AudioDatabase> {
 
 export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
   theMusicDatabase = musicDB;
-  const asFT = FTON.asFTON(musicDB);
-  if (asFT) {
-    log(`Saving DB with ${musicDB.songs.size} songs`);
-    await persist.setItemAsync('musicDatabase', FTON.stringify(asFT));
-  } else {
-    err("MusicDB isn't FTON data!");
-  }
+  log(`Saving DB with ${musicDB.songs.size} songs`);
+  await persist.setItemAsync('musicDatabase', Pickle(theMusicDatabase));
 }
 
 export async function getMediaInfoForSong(

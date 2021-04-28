@@ -1,8 +1,9 @@
 import {
-  FTON,
   MakeError,
   MakeLogger,
   Operations,
+  Pickle,
+  SafelyUnpickle,
   SeqNum,
   Type,
 } from '@freik/core-utils';
@@ -396,7 +397,8 @@ async function fileNamesToDatabase(
   // Get the list of existing paths to song-keys
   const songHash = await persist.getItemAsync('songHashIndex');
   existingKeys = songHash
-    ? (FTON.parse(songHash) as Map<string, SongKey>)
+    ? SafelyUnpickle(songHash, Type.isMapOfStrings) ||
+      new Map<string, SongKey>()
     : new Map<string, SongKey>();
   const now = Date.now();
   const metadataCache = await GetMetadataStore('metadataCache');
@@ -471,9 +473,7 @@ async function fileNamesToDatabase(
   await metadataCache.save();
   await persist.setItemAsync(
     'songHashIndex',
-    FTON.stringify(
-      new Map([...db.songs.values()].map((val) => [val.path, val.key])),
-    ),
+    Pickle(new Map([...db.songs.values()].map((val) => [val.path, val.key]))),
   );
   await persist.setItemAsync('highestSongKey', newSongKey());
   return db;

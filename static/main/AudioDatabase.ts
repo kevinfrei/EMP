@@ -1,10 +1,11 @@
 import {
-  FTON,
   MakeError,
   MakeLogger,
   Operations,
+  Pickle,
   SeqNum,
   Type,
+  Unpickle,
 } from '@freik/core-utils';
 import {
   Album,
@@ -450,9 +451,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
     await metadataCache.save();
     await persist.setItemAsync(
       'songHashIndex',
-      FTON.stringify(
-        new Map([...dbSongs.values()].map((val) => [val.path, val.key])),
-      ),
+      Pickle(new Map([...dbSongs.values()].map((val) => [val.path, val.key]))),
     );
     await persist.setItemAsync('highestSongKey', newSongKey());
   }
@@ -464,7 +463,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
    */
 
   // Get the list of existing paths to song-keys
-  const songHash = FTON.parse(
+  const songHash = Unpickle(
     (await persist.getItemAsync('songHashIndex')) || '',
   );
   existingKeys = Type.isMapOfStrings(songHash)

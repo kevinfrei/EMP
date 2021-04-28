@@ -1,11 +1,11 @@
 import {
   FromPathSafeName,
-  FTON,
   MakeError,
   MakeLogger,
   Operations,
   ToPathSafeName,
   Type,
+  Unpickle,
 } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
 import { exception } from 'console';
@@ -138,7 +138,7 @@ async function loadHash(): Promise<void> {
   if (!songHash) {
     throw Error('Oh poop'); // This shouldn't ever be possible...
   }
-  const path2key = FTON.parse(songHash);
+  const path2key = Unpickle(songHash);
   if (Type.isMapOfStrings(path2key)) {
     pathToKey = path2key;
     keyToPath = new Map();

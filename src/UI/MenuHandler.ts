@@ -1,4 +1,4 @@
-import { FTONData, MakeError, Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { CallbackInterface } from 'recoil';
 import { FocusSearch } from '../MyWindow';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
@@ -36,7 +36,7 @@ function updateTime({ set }: CallbackInterface, offset: number) {
 
 export function MenuHandler(
   callbackInterface: CallbackInterface,
-  message: FTONData,
+  message: unknown,
 ): void {
   log('Menu command:');
   log(message);

@@ -9,14 +9,6 @@ export type TrieMap<T> = Map<string, TrieNode<T>>;
 export type Searchable<T> = (str: string, substrs?: boolean) => Iterable<T>;
 export type TrieTree<T> = [TrieMap<T>, TrieMap<T>];
 
-/*
-type Flattener<T> = (flattener: (obj: T) => FTONData) => FTONData;
-export interface Searchable<T> {
-  (str: string, substrs?: boolean): Iterable<T>;
-  flatten(flattener: (obj: T) => FTONData): FTONData;
-}
-*/
-
 const splitter = /[- .;:]/;
 
 function makeNode<T>(character: string, o: T): TrieNode<T> {

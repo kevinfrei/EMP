@@ -1,4 +1,4 @@
-import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
+import { MakeError, MakeLogger, SafelyUnpickle, Type } from '@freik/core-utils';
 import { promisify } from 'util';
 import { asyncSend } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
@@ -12,10 +12,12 @@ const sleep = promisify(setTimeout);
 
 function getLocations(): string[] {
   const strLocations = persist.getItem('locations');
-  const rawLocations = strLocations ? FTON.parse(strLocations) : [];
+  const rawLocations: string[] = strLocations
+    ? SafelyUnpickle(strLocations, Type.isArrayOfString) || []
+    : [];
   log('getLocations:');
   log(rawLocations);
-  return (rawLocations && FTON.arrayOfStrings(rawLocations)) || [];
+  return rawLocations;
 }
 
 export async function CreateMusicDB(): Promise<void> {

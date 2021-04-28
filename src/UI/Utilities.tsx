@@ -11,16 +11,16 @@ import {
   SpinnerSize,
   Stack,
   Text,
-  Toggle,
+  Toggle
 } from '@fluentui/react';
-import { FTONData, MakeError, Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { useListener } from '../Hooks';
 import {
   InitialWireUp,
   SubscribeMediaMatcher,
-  UnsubscribeMediaMatcher,
+  UnsubscribeMediaMatcher
 } from '../MyWindow';
 import { BoolState } from '../Recoil/helpers';
 import { isMiniplayerState } from '../Recoil/Local';
@@ -34,11 +34,11 @@ const err = MakeError('Utilities-err');
 // keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
   useEffect(InitialWireUp);
-  const callback = useRecoilCallback(
-    (cbInterface) => (data: FTONData) => MenuHandler(cbInterface, data),
+  const callback = useRecoilCallback((cbInterface) => (data: unknown) =>
+    MenuHandler(cbInterface, data),
   );
   useListener('menuAction', callback);
-  useListener('main-process-status', (val: FTONData) => {
+  useListener('main-process-status', (val: unknown) => {
     if (Type.isString(val)) {
       log(`Main status: ${val}`);
     } else {

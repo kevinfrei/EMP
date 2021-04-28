@@ -1,6 +1,6 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
-import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { IpcRenderer, NativeImage } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
@@ -63,11 +63,9 @@ export function InitialWireUp(): void {
     // send from the main process
     window.ipc?.on('async-data', (event: IpcRendererEvent, data: unknown) => {
       if (
-        FTON.isFTON(data) &&
         Type.isArray(data) &&
         Type.isObject(data[0]) &&
-        Type.has(data[0], 'message') &&
-        FTON.isFTON(data[0].message)
+        Type.has(data[0], 'message')
       ) {
         log('*** Async message formed properly:');
         log(data[0]);

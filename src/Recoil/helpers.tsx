@@ -1,5 +1,11 @@
 import { IDetailsList } from '@fluentui/react';
-import { FTON, FTONData, MakeError, MakeLogger } from '@freik/core-utils';
+import {
+  MakeError,
+  MakeLogger,
+  Pickle,
+  Type,
+  Unpickle
+} from '@freik/core-utils';
 import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   AtomEffect,
@@ -7,14 +13,14 @@ import {
   DefaultValue,
   RecoilState,
   SetterOrUpdater,
-  useRecoilState,
+  useRecoilState
 } from 'recoil';
 import {
   ListenKey,
   ReadFromStorage,
   Subscribe,
   Unsubscribe,
-  WriteToStorage,
+  WriteToStorage
 } from '../ipc';
 import { onRejected } from '../Tools';
 
@@ -105,20 +111,14 @@ export function translateToMainEffect<T>(
 
 /**
  * An Atom effect to acquire the value from main, and save it back when
- * modified, after processing it from the original type to FTON (JSON).
+ * modified, after processing it from the original type to JSON using Pickling.
  *
- * @param {(val: T) => FTONData} toFton
- * The function to convert T to FTON data
- * @param {(val: FTONData) => T | void} fromFton
- * The funciton to convert FTON data to T or void if it's malformed
  * @param {boolean} asyncUpdates
  * Optionally true if you also need to actively respond to server changes
  *
  * @returns an AtomEffect<T>
  */
 export function bidirectionalSyncWithTranslateEffect<T>(
-  toFton: (val: T) => FTONData,
-  fromFton: (val: FTONData) => T | void,
   asyncUpdates?: boolean,
 ): AtomEffect<T> {
   return ({
@@ -135,11 +135,11 @@ export function bidirectionalSyncWithTranslateEffect<T>(
           if (value) {
             log(value);
             log('***');
-            const data = fromFton(FTON.parse(value));
+            const data = Unpickle(value);
             log(data);
             if (data) {
               log(`Setting Self for ${node.key}`);
-              setSelf(data);
+              setSelf(data as T);
             }
           }
         })
@@ -147,12 +147,12 @@ export function bidirectionalSyncWithTranslateEffect<T>(
     }
     let lKey: ListenKey | null = null;
     if (asyncUpdates) {
-      lKey = Subscribe(node.key, (val: FTONData) => {
-        const theRightType = fromFton(val);
+      lKey = Subscribe(node.key, (val: unknown) => {
+        const theRightType = Type.isString(val) ? Unpickle(val) : val;
         if (theRightType) {
           log(`Async data for ${node.key}:`);
           log(theRightType);
-          setSelf(theRightType);
+          setSelf(theRightType as T);
         } else {
           err(`Async invalid data received for ${node.key}:`);
           err(val);
@@ -163,13 +163,10 @@ export function bidirectionalSyncWithTranslateEffect<T>(
       if (newVal instanceof DefaultValue) {
         return;
       }
-      const newFton = toFton(newVal);
-      if (
-        oldVal instanceof DefaultValue ||
-        !FTON.valEqual(toFton(oldVal), newFton)
-      ) {
+      const newData = Pickle(newVal);
+      if (oldVal instanceof DefaultValue || Pickle(oldVal) !== newData) {
         log(`Saving ${node.key} back to server...`);
-        WriteToStorage(node.key, FTON.stringify(newFton))
+        WriteToStorage(node.key, newData)
           .then(() => log(`${node.key} saved properly`))
           .catch(onRejected(`${node.key} save to main failed`));
       }
@@ -187,11 +184,7 @@ export function bidirectionalSyncWithTranslateEffect<T>(
 }
 
 export function syncWithMainEffect<T>(asyncUpdates?: boolean): AtomEffect<T> {
-  return bidirectionalSyncWithTranslateEffect<T>(
-    (a) => a as unknown as FTONData,
-    (b) => b as unknown as T,
-    asyncUpdates,
-  );
+  return bidirectionalSyncWithTranslateEffect<T>(asyncUpdates);
 }
 
 /*

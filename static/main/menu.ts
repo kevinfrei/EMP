@@ -1,4 +1,4 @@
-import { FTONObject, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import {
   app,
   BrowserWindow,
@@ -17,9 +17,9 @@ const log = MakeLogger('menu', isDev);
 const err = MakeError('menu-err'); // eslint-disable-line
 
 type ClickHandler = (
-  mnu?: MenuItem,
-  wnd?: BrowserWindow | undefined,
-  event?: KeyboardEvent,
+  mnu: MenuItem,
+  wnd: BrowserWindow | undefined,
+  event: KeyboardEvent,
 ) => void;
 
 const isMac = process.platform === 'darwin';
@@ -27,12 +27,12 @@ const isMac = process.platform === 'darwin';
 // eslint-disable-next-line
 const ___: MenuItemConstructorOptions = { type: 'separator' };
 
-function getClick(handler?: ClickHandler | FTONObject) {
+function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
   if (!handler) {
     return;
   }
   if (Type.isFunction(handler)) {
-    return handler;
+    return handler as ClickHandler;
   }
   return () => {
     void asyncSend({ menuAction: handler });
@@ -47,7 +47,7 @@ function getId(lbl: string) {
 function xaction(
   label: string,
   accelerator: string,
-  handler?: ClickHandler | FTONObject,
+  handler?: ClickHandler | unknown,
 ): MenuItemConstructorOptions {
   return {
     label,
@@ -60,8 +60,8 @@ function xaction(
 // Typescript Method Overloading is kinda weird...
 function action(
   label: string,
-  accOrHdlr: string | ClickHandler | FTONObject | void,
-  handler?: ClickHandler | FTONObject,
+  accOrHdlr: string | ClickHandler | unknown | void,
+  handler?: ClickHandler | unknown,
 ): MenuItemConstructorOptions {
   if (Type.isString(accOrHdlr)) {
     return {

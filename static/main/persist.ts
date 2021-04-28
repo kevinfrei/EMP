@@ -1,9 +1,10 @@
 import {
-  FTON,
-  FTONData,
   MakeError,
   MakeLogger,
+  Pickle,
   SeqNum,
+  Type,
+  Unpickle,
 } from '@freik/core-utils';
 import { app, Rectangle } from 'electron';
 import fs, { promises as fsp } from 'fs';
@@ -233,22 +234,21 @@ export function getWindowPos(): WindowPosition {
     if (!tmp) {
       return defaultWindowPosition;
     }
-    const tmpws = FTON.parse(tmp);
-    if (tmpws && typeof tmpws === 'object' && 'bounds' in tmpws) {
+    const tmpws = Unpickle(tmp);
+    if (Type.has(tmpws, 'bounds')) {
       const bounds = tmpws.bounds;
       if (
         bounds &&
-        typeof bounds === 'object' &&
-        'x' in bounds &&
-        typeof bounds.x === 'number' &&
-        'y' in bounds &&
-        typeof bounds.y === 'number' &&
-        'width' in bounds &&
-        typeof bounds.width === 'number' &&
-        'height' in bounds &&
-        typeof bounds.height === 'number' &&
-        'isMaximized' in tmpws &&
-        typeof tmpws.isMaximized === 'boolean'
+        Type.has(bounds, 'x') &&
+        Type.isNumber(bounds.x) &&
+        Type.has(bounds, 'y') &&
+        Type.isNumber(bounds.y) &&
+        Type.has(bounds, 'width') &&
+        Type.isNumber(bounds.width) &&
+        Type.has(bounds, 'height') &&
+        Type.isNumber(bounds.height) &&
+        Type.has(tmpws, 'isMaximized') &&
+        Type.isBoolean(tmpws.isMaximized)
       ) {
         return makeWindowPos(
           bounds.x,
@@ -268,7 +268,7 @@ export function getWindowPos(): WindowPosition {
 }
 
 export function setWindowPos(st: WindowPosition): void {
-  setItem('windowPosition', FTON.stringify(st as FTONData));
+  setItem('windowPosition', Pickle(st));
 }
 
 export function getBrowserWindowPos(st: WindowPosition): Rectangle {

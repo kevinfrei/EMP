@@ -1,4 +1,4 @@
-import { FTONData, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
@@ -136,10 +136,10 @@ function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
 /**
  * Send a message to the rendering process
  *
- * @param  {FTONData} message
+ * @param  {unknown} message
  * The (flattenable) message to send.
  */
-export function asyncSend(message: FTONData): void {
+export function asyncSend(message: unknown): void {
   SendToMain('async-data', { message });
 }
 

@@ -1,4 +1,10 @@
-import { FTON, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import {
+  MakeError,
+  MakeLogger,
+  Pickle,
+  SafelyUnpickle,
+  Type,
+} from '@freik/core-utils';
 import { Album, AlbumKey, SongKey } from '@freik/media-core';
 import { Covers } from '@freik/media-utils';
 import { hideFile } from '@freik/node-utils/lib/file';
@@ -64,7 +70,7 @@ async function LookForAlbum(
   const bailData =
     (await persist.getItemAsync('noMoreLooking')) ||
     '{"@dataType":"Set","@dataValue":[]}';
-  const skip = FTON.parse(bailData);
+  const skip = SafelyUnpickle(bailData, Type.isSetOfString);
   if (Type.isSetOfString(skip) && skip.has(albTrim)) {
     return;
   }
@@ -97,7 +103,7 @@ async function LookForAlbum(
   // Record the failure, so we stop looking...
   const newSkip: Set<string> = Type.isSetOfString(skip) ? skip : new Set();
   newSkip.add(albTrim);
-  await persist.setItemAsync('noMoreLooking', FTON.stringify(newSkip));
+  await persist.setItemAsync('noMoreLooking', Pickle(newSkip));
 }
 
 export async function picBufProcessor(
