@@ -45,32 +45,36 @@ const getPlaylistBackerFamily = atomFamily<SongKey[] | false, PlaylistName>({
 
 export const getPlaylistFamily = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
-  get: (arg: PlaylistName) => async ({ get }) => {
-    const backed = get(getPlaylistBackerFamily(arg));
-    if (backed === false) {
-      const listStr = await CallMain(
-        'load-playlist',
-        arg,
-        Type.isArrayOfString,
-      );
-      if (!listStr) {
-        return [];
+  get:
+    (arg: PlaylistName) =>
+    async ({ get }) => {
+      const backed = get(getPlaylistBackerFamily(arg));
+      if (backed === false) {
+        const listStr = await CallMain(
+          'load-playlist',
+          arg,
+          Type.isArrayOfString,
+        );
+        if (!listStr) {
+          return [];
+        }
+        return listStr;
+      } else {
+        return backed;
       }
-      return listStr;
-    } else {
-      return backed;
-    }
-  },
-  set: (name: PlaylistName) => ({ set, get }, newValue) => {
-    const names = get(playlistNamesState);
-    if (!names.has(name)) {
-      names.add(name);
-      set(playlistNamesState, new Set(names));
-    }
-    const songs = Type.isArray(newValue) ? newValue : [];
-    set(getPlaylistBackerFamily(name), songs);
-    void PostMain('save-playlist', { name, songs });
-  },
+    },
+  set:
+    (name: PlaylistName) =>
+    ({ set, get }, newValue) => {
+      const names = get(playlistNamesState);
+      if (!names.has(name)) {
+        names.add(name);
+        set(playlistNamesState, new Set(names));
+      }
+      const songs = Type.isArray(newValue) ? newValue : [];
+      set(getPlaylistBackerFamily(name), songs);
+      void PostMain('save-playlist', { name, songs });
+    },
 });
 
 // This decides if the current playlist is something that can be 'saved'

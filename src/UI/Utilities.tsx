@@ -34,8 +34,8 @@ const err = MakeError('Utilities-err');
 // keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
   useEffect(InitialWireUp);
-  const callback = useRecoilCallback((cbInterface) => (data: FTONData) =>
-    MenuHandler(cbInterface, data),
+  const callback = useRecoilCallback(
+    (cbInterface) => (data: FTONData) => MenuHandler(cbInterface, data),
   );
   useListener('menuAction', callback);
   useListener('main-process-status', (val: FTONData) => {
@@ -47,9 +47,10 @@ export default function Utilities(): JSX.Element {
     }
   });
   const handleWidthChange = useRecoilCallback(
-    ({ set }) => (ev: MediaQueryList | MediaQueryListEvent) => {
-      set(isMiniplayerState, ev.matches);
-    },
+    ({ set }) =>
+      (ev: MediaQueryList | MediaQueryListEvent) => {
+        set(isMiniplayerState, ev.matches);
+      },
   );
   useEffect(() => {
     SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);

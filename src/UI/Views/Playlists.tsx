@@ -46,9 +46,8 @@ export default function PlaylistView(): JSX.Element {
   const [showDelete, deleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
 
-  const [playlistContext, setPlaylistContext] = useRecoilState(
-    playlistContextState,
-  );
+  const [playlistContext, setPlaylistContext] =
+    useRecoilState(playlistContextState);
 
   const onPlaylistInvoked = useRecoilCallback(
     (cbInterface) => (playlistName: PlaylistName) => {
@@ -152,7 +151,7 @@ export default function PlaylistView(): JSX.Element {
           onRenderDetailsHeader={StickyRenderDetailsHeader}
           onItemContextMenu={(item?: ItemType, index?: number, ev?: Event) => {
             if (ev && item) {
-              const mev = (ev as unknown) as React.MouseEvent<
+              const mev = ev as unknown as React.MouseEvent<
                 HTMLElement,
                 MouseEvent
               >;

@@ -65,8 +65,8 @@ export default function SongControls(): JSX.Element {
     cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
-  const clickPlayPause = useRecoilCallback((cbInterface) => () =>
-    onClickPlayPause(cbInterface),
+  const clickPlayPause = useRecoilCallback(
+    (cbInterface) => () => onClickPlayPause(cbInterface),
   );
 
   const clickPrev = useRecoilCallback((cbInterface) => () => {

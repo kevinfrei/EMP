@@ -57,15 +57,16 @@ export function ArtistHeaderDisplay({
 }: {
   artist: Artist;
 }): JSX.Element {
-  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(cbInterface, artist.songs),
+  const onAddSongsClick = useRecoilCallback(
+    (cbInterface) => () => AddSongs(cbInterface, artist.songs),
   );
   const onRightClick = useRecoilCallback(
-    ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-      set(artistContextState, {
-        data: artist.key,
-        spot: { left: event.clientX + 14, top: event.clientY },
-      }),
+    ({ set }) =>
+      (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+        set(artistContextState, {
+          data: artist.key,
+          spot: { left: event.clientX + 14, top: event.clientY },
+        }),
   );
   const songCount = artist.songs.length;
   return (
@@ -172,18 +173,19 @@ export default function ArtistList(): JSX.Element {
   const filteredArtistList = useRecoilValue(filteredArtistsState);
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onRightClick = useRecoilCallback(
-    ({ set }) => (item: Song, index?: number, ev?: Event) => {
-      if (ev) {
-        const event = (ev as any) as MouseEvent;
-        set(artistContextState, {
-          data: item.key,
-          spot: { left: event.clientX + 14, top: event.clientY },
-        });
-      }
-    },
+    ({ set }) =>
+      (item: Song, index?: number, ev?: Event) => {
+        if (ev) {
+          const event = ev as any as MouseEvent;
+          set(artistContextState, {
+            data: item.key,
+            spot: { left: event.clientX + 14, top: event.clientY },
+          });
+        }
+      },
   );
-  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs(cbInterface, [item.key]),
+  const onAddSongClick = useRecoilCallback(
+    (cbInterface) => (item: Song) => AddSongs(cbInterface, [item.key]),
   );
 
   const [curSort, setSort] = useRecoilState(sortOrderState);

@@ -38,28 +38,32 @@ const songLikeBackerState = atom<Set<SongKey>>({
 
 export const songLikeFamily = selectorFamily<boolean, SongKey>({
   key: 'songLikeState',
-  get: (arg: SongKey) => ({ get }) => {
-    const likes = get(songLikeBackerState);
-    return likes.has(arg);
-  },
-  set: (arg: SongKey) => ({ get, set }, newValue) => {
-    const likes = get(songLikeBackerState);
-    const hates = get(songHateBackerState);
-    if (newValue !== likes.has(arg)) {
-      const copy = new Set(likes);
-      if (newValue) {
-        copy.add(arg);
-        if (hates.has(arg)) {
-          const hcopy = new Set(hates);
-          hcopy.delete(arg);
-          set(songHateBackerState, hcopy);
+  get:
+    (arg: SongKey) =>
+    ({ get }) => {
+      const likes = get(songLikeBackerState);
+      return likes.has(arg);
+    },
+  set:
+    (arg: SongKey) =>
+    ({ get, set }, newValue) => {
+      const likes = get(songLikeBackerState);
+      const hates = get(songHateBackerState);
+      if (newValue !== likes.has(arg)) {
+        const copy = new Set(likes);
+        if (newValue) {
+          copy.add(arg);
+          if (hates.has(arg)) {
+            const hcopy = new Set(hates);
+            hcopy.delete(arg);
+            set(songHateBackerState, hcopy);
+          }
+        } else {
+          copy.delete(arg);
         }
-      } else {
-        copy.delete(arg);
+        set(songLikeBackerState, copy);
       }
-      set(songLikeBackerState, copy);
-    }
-  },
+    },
 });
 
 const songHateBackerState = atom<Set<SongKey>>({
@@ -77,52 +81,58 @@ const songHateBackerState = atom<Set<SongKey>>({
 
 export const songHateFamily = selectorFamily<boolean, SongKey>({
   key: 'songHateState',
-  get: (arg: SongKey) => ({ get }) => {
-    const hates = get(songHateBackerState);
-    return hates.has(arg);
-  },
-  set: (arg: SongKey) => ({ get, set }, newValue) => {
-    const hates = get(songHateBackerState);
-    const likes = get(songLikeBackerState);
-    if (newValue !== hates.has(arg)) {
-      const copy = new Set(hates);
-      if (newValue) {
-        copy.add(arg);
-        if (likes.has(arg)) {
-          const lcopy = new Set(likes);
-          lcopy.delete(arg);
-          set(songLikeBackerState, lcopy);
+  get:
+    (arg: SongKey) =>
+    ({ get }) => {
+      const hates = get(songHateBackerState);
+      return hates.has(arg);
+    },
+  set:
+    (arg: SongKey) =>
+    ({ get, set }, newValue) => {
+      const hates = get(songHateBackerState);
+      const likes = get(songLikeBackerState);
+      if (newValue !== hates.has(arg)) {
+        const copy = new Set(hates);
+        if (newValue) {
+          copy.add(arg);
+          if (likes.has(arg)) {
+            const lcopy = new Set(likes);
+            lcopy.delete(arg);
+            set(songLikeBackerState, lcopy);
+          }
+        } else {
+          copy.delete(arg);
         }
-      } else {
-        copy.delete(arg);
+        set(songHateBackerState, copy);
       }
-      set(songHateBackerState, copy);
-    }
-  },
+    },
 });
 
 // 0 = neutral, 1 == like, 2 = hate, 3 = mixed
 export const songLikeNumFromStringFamily = selectorFamily<number, string>({
   key: 'songLikeNumFromKey',
-  get: (arg: string) => ({ get }) => {
-    const songs = get(songListFromKeyFamily(arg));
-    if (!songs) {
-      return 0;
-    }
-    let likes = false;
-    let hates = false;
-    songs.forEach((songKey) => {
-      if (get(songLikeFamily(songKey))) {
-        likes = true;
+  get:
+    (arg: string) =>
+    ({ get }) => {
+      const songs = get(songListFromKeyFamily(arg));
+      if (!songs) {
+        return 0;
       }
-      if (get(songHateFamily(songKey))) {
-        hates = true;
+      let likes = false;
+      let hates = false;
+      songs.forEach((songKey) => {
+        if (get(songLikeFamily(songKey))) {
+          likes = true;
+        }
+        if (get(songHateFamily(songKey))) {
+          hates = true;
+        }
+      });
+      if (likes === hates) {
+        return likes ? 3 : 0;
+      } else {
+        return likes ? 1 : 2;
       }
-    });
-    if (likes === hates) {
-      return likes ? 3 : 0;
-    } else {
-      return likes ? 1 : 2;
-    }
-  },
+    },
 });

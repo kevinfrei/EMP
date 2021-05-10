@@ -188,8 +188,8 @@ export function bidirectionalSyncWithTranslateEffect<T>(
 
 export function syncWithMainEffect<T>(asyncUpdates?: boolean): AtomEffect<T> {
   return bidirectionalSyncWithTranslateEffect<T>(
-    (a) => (a as unknown) as FTONData,
-    (b) => (b as unknown) as T,
+    (a) => a as unknown as FTONData,
+    (b) => b as unknown as T,
     asyncUpdates,
   );
 }
@@ -234,17 +234,18 @@ let lastHeard = performance.now();
 export function keyboardHook<T extends KeyEventType>(
   filterState: RecoilState<string>,
 ): KeyboardHookType<T> {
-  return ({ set }: CallbackInterface) => (ev: T) => {
-    err(ev.key);
-    if (ev.key.length > 1 || ev.key === ' ') {
-      set(filterState, '');
-      return;
-    }
-    const time = performance.now();
-    const clear: boolean = time - lastHeard > 750;
-    lastHeard = time;
-    set(filterState, (curVal) => (clear ? ev.key : curVal + ev.key));
-  };
+  return ({ set }: CallbackInterface) =>
+    (ev: T) => {
+      err(ev.key);
+      if (ev.key.length > 1 || ev.key === ' ') {
+        set(filterState, '');
+        return;
+      }
+      const time = performance.now();
+      const clear: boolean = time - lastHeard > 750;
+      lastHeard = time;
+      set(filterState, (curVal) => (clear ? ev.key : curVal + ev.key));
+    };
 }
 export function kbHook<T extends KeyEventType>(
   filterState: RecoilState<string>,
@@ -252,22 +253,23 @@ export function kbHook<T extends KeyEventType>(
   shouldFocus: () => boolean,
   getIndex: (srch: string) => number,
 ) {
-  return ({ set }: CallbackInterface) => (ev: T): void => {
-    if (ev.key.length > 1 || ev.key === ' ') {
-      set(filterState, '');
-      return;
-    }
-    const time = performance.now();
-    const clear: boolean = time - lastHeard > 750;
-    lastHeard = time;
-    // const newFilter = clear ? ev.key : keyFilter + ev.key;
-    set(filterState, (oldVal): string => {
-      const srchString = clear ? ev.key : oldVal + ev.key;
-      if (shouldFocus() && listRef !== null && srchString.length > 0) {
-        const index = getIndex(srchString);
-        listRef.focusIndex(index);
+  return ({ set }: CallbackInterface) =>
+    (ev: T): void => {
+      if (ev.key.length > 1 || ev.key === ' ') {
+        set(filterState, '');
+        return;
       }
-      return srchString;
-    });
-  };
+      const time = performance.now();
+      const clear: boolean = time - lastHeard > 750;
+      lastHeard = time;
+      // const newFilter = clear ? ev.key : keyFilter + ev.key;
+      set(filterState, (oldVal): string => {
+        const srchString = clear ? ev.key : oldVal + ev.key;
+        if (shouldFocus() && listRef !== null && srchString.length > 0) {
+          const index = getIndex(srchString);
+          listRef.focusIndex(index);
+        }
+        return srchString;
+      });
+    };
 }

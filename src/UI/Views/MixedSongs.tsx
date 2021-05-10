@@ -91,12 +91,12 @@ export function LikeOrHate(song: Song): JSX.Element {
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs(cbInterface, [item.key]),
+  const onAddSongClick = useRecoilCallback(
+    (cbInterface) => (item: Song) => AddSongs(cbInterface, [item.key]),
   );
   const [songContext, setSongContext] = useRecoilState(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
-    const event = (ev as any) as MouseEvent;
+    const event = ev as any as MouseEvent;
     if (ev && item) {
       setSongContext({
         data: item.key,

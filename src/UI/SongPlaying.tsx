@@ -135,9 +135,15 @@ function ArtistAlbum(): JSX.Element {
 
 export default function SongPlayback(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyState);
-  const onPlay = useRecoilCallback(({ set }) => () => set(playingState, true));
-  const onPause = useRecoilCallback(({ set }) => () =>
-    set(playingState, false),
+  const onPlay = useRecoilCallback(
+    ({ set }) =>
+      () =>
+        set(playingState, true),
+  );
+  const onPause = useRecoilCallback(
+    ({ set }) =>
+      () =>
+        set(playingState, false),
   );
   const onEnded = useRecoilCallback((cbInterface) => async () => {
     const { snapshot, set } = cbInterface;
@@ -156,22 +162,23 @@ export default function SongPlayback(): JSX.Element {
     set(playingState, isPlaying);
   });
   const onTimeUpdate = useRecoilCallback(
-    ({ set }) => (ev: SyntheticEvent<HTMLMediaElement>) => {
-      const ae = ev.currentTarget;
-      // eslint-disable-next-line id-blacklist
-      if (!Number.isNaN(ae.duration)) {
-        set(mediaTimeState, (prevTime: MediaTime) => {
-          if (
-            Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
-            Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
-          ) {
-            return { position: ae.currentTime, duration: ae.duration };
-          } else {
-            return prevTime;
-          }
-        });
-      }
-    },
+    ({ set }) =>
+      (ev: SyntheticEvent<HTMLMediaElement>) => {
+        const ae = ev.currentTarget;
+        // eslint-disable-next-line id-blacklist
+        if (!Number.isNaN(ae.duration)) {
+          set(mediaTimeState, (prevTime: MediaTime) => {
+            if (
+              Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
+              Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
+            ) {
+              return { position: ae.currentTime, duration: ae.duration };
+            } else {
+              return prevTime;
+            }
+          });
+        }
+      },
   );
   const audio = (
     <audio

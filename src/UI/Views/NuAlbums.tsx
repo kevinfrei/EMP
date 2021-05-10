@@ -81,8 +81,8 @@ function AlbumCoverView({
   const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(cbInterface, album.songs),
+  const onAddSongsClick = useRecoilCallback(
+    (cbInterface) => () => AddSongs(cbInterface, album.songs),
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onRightClick = useRecoilCallback((cbInterface) =>

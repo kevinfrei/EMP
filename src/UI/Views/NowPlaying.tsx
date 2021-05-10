@@ -200,7 +200,7 @@ export default function NowPlaying(): JSX.Element {
   const isMini = useRecoilValue(isMiniplayerState);
   const [songContext, setSongContext] = useRecoilState(nowPlayingContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
-    const event = (ev as any) as MouseEvent;
+    const event = ev as any as MouseEvent;
     if (ev && item) {
       setSongContext({
         data: item.key,

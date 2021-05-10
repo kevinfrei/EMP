@@ -113,7 +113,9 @@ export const picCacheAvoiderFamily = atomFamily<number, AlbumKey>({
 
 export const albumCoverUrlFamily = selectorFamily<string, AlbumKey>({
   key: 'albuCoverUrl',
-  get: (key: AlbumKey) => ({ get }) => {
-    return `pic://album/${key}#${get(picCacheAvoiderFamily(key))}`;
-  },
+  get:
+    (key: AlbumKey) =>
+    ({ get }) => {
+      return `pic://album/${key}#${get(picCacheAvoiderFamily(key))}`;
+    },
 });

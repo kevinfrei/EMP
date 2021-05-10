@@ -8,7 +8,9 @@ export const getMediaInfoForListFamily = selectorFamily<
   SongKey[]
 >({
   key: 'mediaInfoSelForMany',
-  get: (skl: SongKey[]) => ({ get }): Map<string, string>[] => {
-    return skl.map((val) => get(getMediaInfoFamily(val)));
-  },
+  get:
+    (skl: SongKey[]) =>
+    ({ get }): Map<string, string>[] => {
+      return skl.map((val) => get(getMediaInfoFamily(val)));
+    },
 });

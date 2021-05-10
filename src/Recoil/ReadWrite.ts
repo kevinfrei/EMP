@@ -144,24 +144,26 @@ export const songListSortState = atom<string>({
 
 export const songListFromKeyFamily = selectorFamily<SongKey[] | null, string>({
   key: 'songsFromKey',
-  get: (arg: string) => ({ get }) => {
-    if (arg.startsWith('S')) {
-      return [arg];
-    }
-    if (arg.startsWith('L')) {
-      const alb = get(getMaybeAlbumByKeyFamily(arg));
-      if (!alb) {
-        return null;
+  get:
+    (arg: string) =>
+    ({ get }) => {
+      if (arg.startsWith('S')) {
+        return [arg];
       }
-      return alb.songs;
-    }
-    if (arg.startsWith('R')) {
-      const art = get(getMaybeArtistByKeyFamily(arg));
-      if (!art) {
-        return null;
+      if (arg.startsWith('L')) {
+        const alb = get(getMaybeAlbumByKeyFamily(arg));
+        if (!alb) {
+          return null;
+        }
+        return alb.songs;
       }
-      return art.songs;
-    }
-    return null;
-  },
+      if (arg.startsWith('R')) {
+        const art = get(getMaybeArtistByKeyFamily(arg));
+        if (!art) {
+          return null;
+        }
+        return art.songs;
+      }
+      return null;
+    },
 });

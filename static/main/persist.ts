@@ -287,7 +287,7 @@ export function getBrowserWindowPos(st: WindowPosition): Rectangle {
   return {
     width: st.bounds.width,
     height: st.bounds.height,
-    x: (st.bounds.x as any) as number,
-    y: (st.bounds.y as any) as number,
+    x: st.bounds.x as any as number,
+    y: st.bounds.y as any as number,
   };
 }

@@ -52,15 +52,16 @@ const albumContextState = atom<SongListMenuData>({
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumFamily(props.album.key));
-  const onAddSongsClick = useRecoilCallback((cbInterface) => () =>
-    AddSongs(cbInterface, props.album.songs),
+  const onAddSongsClick = useRecoilCallback(
+    (cbInterface) => () => AddSongs(cbInterface, props.album.songs),
   );
   const onRightClick = useRecoilCallback(
-    ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-      set(albumContextState, {
-        data: props.album.key,
-        spot: { left: event.clientX + 14, top: event.clientY },
-      }),
+    ({ set }) =>
+      (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+        set(albumContextState, {
+          data: props.album.key,
+          spot: { left: event.clientX + 14, top: event.clientY },
+        }),
   );
   const picurl = useRecoilValue(albumCoverUrlFamily(props.album.key));
   return (
@@ -108,19 +109,20 @@ export default function AlbumList(): JSX.Element {
 
   const [curSort, setSort] = useRecoilState(sortOrderState);
 
-  const onAddSongClick = useRecoilCallback((cbInterface) => (item: Song) =>
-    AddSongs(cbInterface, [item.key]),
+  const onAddSongClick = useRecoilCallback(
+    (cbInterface) => (item: Song) => AddSongs(cbInterface, [item.key]),
   );
   const onRightClick = useRecoilCallback(
-    ({ set }) => (item: Song, index?: number, ev?: Event) => {
-      if (ev) {
-        const event = (ev as any) as MouseEvent;
-        set(albumContextState, {
-          data: item.key,
-          spot: { left: event.clientX + 14, top: event.clientY },
-        });
-      }
-    },
+    ({ set }) =>
+      (item: Song, index?: number, ev?: Event) => {
+        if (ev) {
+          const event = ev as any as MouseEvent;
+          set(albumContextState, {
+            data: item.key,
+            spot: { left: event.clientX + 14, top: event.clientY },
+          });
+        }
+      },
   );
 
   const curExpandedState = useState(new Set<AlbumKey>());
