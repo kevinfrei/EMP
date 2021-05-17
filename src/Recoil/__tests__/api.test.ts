@@ -77,8 +77,10 @@ it('Adding empty songs does nothing', async () => {
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
     AddSongs(makeCallbackIfc(set, initialSnapshot), []),
   );
+  expect(nextSnapshot).toBeDefined();
   await flushPromisesAndTimers();
-  expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual(
+  const finalSnapshot = snapshot_UNSTABLE();
+  expect(finalSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual(
     [],
   );
 });
