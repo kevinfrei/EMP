@@ -34,6 +34,7 @@ import {
   ArtistsFromSongRender,
   MakeColumns,
   StickyRenderDetailsHeader,
+  YearFromSongRender,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { Expandable } from '../Utilities';
@@ -109,6 +110,7 @@ export default function MixedSongsList(): JSX.Element {
       ['n', 'track', '#', 30, 30],
       ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSongRender],
       ['l', 'albumId', 'Album', 150, 450, AlbumFromSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
       ['t', 'title', 'Title', 150],
       ['', '', '👎/👍', 35, 35, LikeOrHate],
     ],

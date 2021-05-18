@@ -146,12 +146,21 @@ export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
   return <>{useRecoilValue(getAlbumByKeyFamily(albumId)).title}</>;
 }
 
+export function AlbumYear({ albumId }: { albumId: AlbumKey }): JSX.Element {
+  const album = useRecoilValue(getAlbumByKeyFamily(albumId));
+  return <>{album.year !== 0 ? album.year : ''}</>;
+}
+
 export function ArtistsFromSongRender(theSong: Song): JSX.Element {
   return <ArtistName artistIds={theSong.artistIds} />;
 }
 
 export function AlbumFromSongRender(song: Song): JSX.Element {
   return <AlbumName albumId={song.albumId} />;
+}
+
+export function YearFromSongRender(song: Song): JSX.Element {
+  return <AlbumYear albumId={song.albumId} />;
 }
 
 export function ArtistsFromAlbumRender(album: Album): JSX.Element {

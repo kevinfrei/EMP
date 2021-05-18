@@ -39,6 +39,7 @@ import {
   ArtistName,
   GetSongGroupData,
   StickyRenderDetailsHeader,
+  YearFromSongRender,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Artists.css';
@@ -226,6 +227,7 @@ export default function ArtistList(): JSX.Element {
     [
       ['r', 'sortedArtistId', 'Artist', 50, 175, filteredArtistsFromSong],
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
