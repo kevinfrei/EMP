@@ -8,7 +8,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Artist, ArtistKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
@@ -38,6 +38,7 @@ import {
   altRowRenderer,
   ArtistName,
   GetSongGroupData,
+  HeaderExpanderClick,
   StickyRenderDetailsHeader,
   YearFromSongRender,
 } from '../SongList';
@@ -45,6 +46,7 @@ import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Artists.css';
 
 const err = MakeError('Artists-err'); // eslint-disable-line
+const log = MakeLogger('Artists'); // eslint-disable-line
 
 type ArtistSong = Song & { sortedArtistId: ArtistKey; comboKey: string };
 
@@ -211,7 +213,7 @@ export default function ArtistList(): JSX.Element {
           iconProps={{
             iconName: props.group?.isCollapsed ? 'ChevronRight' : 'ChevronDown',
           }}
-          onClick={() => props.onToggleCollapse!(props.group!)}
+          onClick={() => HeaderExpanderClick(props, curExpandedState)}
         />
         <ArtistHeaderDisplay artist={artist} />
       </Stack>

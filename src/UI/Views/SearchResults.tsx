@@ -36,6 +36,7 @@ import {
 } from '../DetailPanel/Clickers';
 import {
   altRowRenderer,
+  HeaderExpanderClick,
   MakeColumns,
   StickyRenderDetailsHeader,
 } from '../SongList';
@@ -220,7 +221,8 @@ export default function SearchResultsView(): JSX.Element {
   const songs = useRecoilValue(allSongsState);
   const artists = useRecoilValue(allArtistsState);
   const albums = useRecoilValue(allAlbumsState);
-  const [curExpandedSet, setExpandedSet] = useState(new Set<string>());
+  const curExpandedState = useState(new Set<string>());
+  const [curExpandedSet, setExpandedSet] = curExpandedState;
   const onSongDetailClick = useRecoilCallback(
     (cbInterface) => (item: SearchSongData, index?: number, ev?: Event) =>
       SongDetailClick(
@@ -259,12 +261,13 @@ export default function SearchResultsView(): JSX.Element {
     },
     headerProps: {
       onToggleCollapse: (curGroup: IGroup) => {
-        if (curExpandedSet.has(curGroup.key)) {
-          curExpandedSet.delete(curGroup.key);
+        const newSet = new Set<string>(curExpandedSet);
+        if (newSet.has(curGroup.key)) {
+          newSet.delete(curGroup.key);
         } else {
-          curExpandedSet.add(curGroup.key);
+          newSet.add(curGroup.key);
         }
-        setExpandedSet(curExpandedSet);
+        setExpandedSet(newSet);
       },
     },
     onRenderHeader: (props): JSX.Element | null => {
@@ -278,7 +281,7 @@ export default function SearchResultsView(): JSX.Element {
         <SearchResultsGroupHeader
           depth={IsTopGroup(groupKey) ? 0 : 1}
           collapsed={!!groupProps.isCollapsed}
-          expander={() => props.onToggleCollapse!(groupProps)}
+          expander={() => HeaderExpanderClick(props, curExpandedState)}
           text={`${groupProps.name} [${groupProps.count} songs]`}
           keys={songKeys}
         />

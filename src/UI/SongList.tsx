@@ -2,6 +2,7 @@ import {
   DetailsRow,
   getTheme,
   IColumn,
+  IDetailsGroupDividerProps,
   IDetailsGroupRenderProps,
   IDetailsHeaderProps,
   IDetailsRowProps,
@@ -14,6 +15,7 @@ import {
 } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-core';
+import { Dispatch, SetStateAction } from 'react';
 import { useRecoilValue } from 'recoil';
 import { getAlbumByKeyFamily, getArtistStringFamily } from '../Recoil/ReadOnly';
 
@@ -251,12 +253,13 @@ export function GetSongGroupData<T>(
     },
     headerProps: {
       onToggleCollapse: (group: IGroup) => {
-        if (curExpandedSet.has(group.key)) {
-          curExpandedSet.delete(group.key);
+        const newSet = new Set<ArtistKey>(curExpandedSet);
+        if (newSet.has(group.key)) {
+          newSet.delete(group.key);
         } else {
-          curExpandedSet.add(group.key);
+          newSet.add(group.key);
         }
-        setExpandedSet(curExpandedSet);
+        setExpandedSet(newSet);
       },
     },
   };
@@ -318,4 +321,20 @@ export function StickyRenderDetailsHeader(
       })}
     </Sticky>
   );
+}
+
+export function HeaderExpanderClick(
+  props: IDetailsGroupDividerProps,
+  [theSet, setTheSet]: [Set<string>, Dispatch<SetStateAction<Set<string>>>],
+): void {
+  if (props.group) {
+    const newSet = new Set<string>(theSet);
+    if (props.group.isCollapsed) {
+      newSet.add(props.group.key);
+    } else {
+      newSet.delete(props.group.key);
+    }
+    setTheSet(newSet);
+    props.onToggleCollapse!(props.group);
+  }
 }

@@ -37,6 +37,7 @@ import {
   altRowRenderer,
   ArtistsFromSongRender,
   GetSongGroupData,
+  HeaderExpanderClick,
   StickyRenderDetailsHeader,
   YearFromSongRender,
 } from '../SongList';
@@ -139,7 +140,7 @@ export default function AlbumList(): JSX.Element {
           iconProps={{
             iconName: props.group?.isCollapsed ? 'ChevronRight' : 'ChevronDown',
           }}
-          onClick={() => props.onToggleCollapse!(props.group!)}
+          onClick={() => HeaderExpanderClick(props, curExpandedState)}
         />
         <AlbumHeaderDisplay album={albums.get(albumId)!} />
       </Stack>
