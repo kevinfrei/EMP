@@ -8,10 +8,20 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { CallbackInterface, useRecoilCallback, useRecoilState } from 'recoil';
+import {
+  CallbackInterface,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
+import {
+  allAlbumsState,
+  allArtistsState,
+  allSongsState,
+} from '../../Recoil/ReadOnly';
 import {
   albumCoverNameState,
   defaultLocationState,
@@ -53,6 +63,9 @@ function MusicLocations(): JSX.Element {
   const onAddLocation = useRecoilCallback((cbInterface) => async () => {
     await addLocation(cbInterface);
   });
+  const songs = useRecoilValue(allSongsState);
+  const albums = useRecoilValue(allAlbumsState);
+  const artists = useRecoilValue(allArtistsState);
   const setSaveStyle = {
     textContainer: { fontSize: 11 },
     root: { height: 22, padding: 5, minWidth: 45 },
@@ -100,6 +113,7 @@ function MusicLocations(): JSX.Element {
           />
         </TooltipHost>
       </Stack>
+      <Text>{`${artists.size} Artists, ${albums.size} Albums, ${songs.size} Songs`}</Text>
     </>
   );
 }
