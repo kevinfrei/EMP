@@ -203,7 +203,7 @@
     "space-before-function-paren": "off",
     "space-in-parens": ["off", "never"],
     "spaced-comment": [
-      "error",
+      "warn",
       "always",
       {
         "markers": ["/"]

@@ -166,11 +166,11 @@ export function SongListMenu({
       items={realItems}
       target={context.spot}
       onDismiss={(ev) => {
-        // The DetailsList panel wiggles. A lot. So turn off dismissal for
-        // scroll events, cuz otherwise, it disappears almost immediately
-        if (ev?.type !== 'scroll') {
-          onClearContext();
-        }
+        // In FluentUI 7, the DetailsList panel wiggled. A lot.
+        // So I had to turn off dismissal for scroll events, cuz otherwise it
+        // would disappear almost immediately. Looks like it was fixed in 8
+        // if (ev?.type !== 'scroll')
+        onClearContext();
       }}
       styles={{ container: { margin: 0, padding: 0, fontSize: 'small' } }}
     />
