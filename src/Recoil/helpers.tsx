@@ -27,7 +27,7 @@ export type DialogData = [boolean, () => void];
 // A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
 export type DialogState = [() => void, DialogData];
 
-const log = MakeLogger('helpers', true);
+const log = MakeLogger('helpers');
 const err = MakeError('helpers-err');
 
 /**
