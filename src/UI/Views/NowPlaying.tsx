@@ -262,7 +262,7 @@ export default function NowPlaying(): JSX.Element {
       ['X', '', '', 18, 18, drawDeleter],
       ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
       ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSongRender],
-      ['l', 'albumId', 'Year', 45, 25, YearFromSongRender],
+      ['y', 'albumId', 'Year', 45, 25, YearFromSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
       ['', '', '👎/👍', 35, 35, LikeOrHate],
@@ -315,7 +315,7 @@ export default function NowPlaying(): JSX.Element {
               return [data];
             }
           }}
-          items={['prop', '-', 'like', 'hate']}
+          items={['prop', 'show', '-', 'like', 'hate']}
         />
       </ScrollablePane>
     </div>

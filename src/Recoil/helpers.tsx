@@ -1,11 +1,5 @@
 import { IDetailsList } from '@fluentui/react';
-import {
-  MakeError,
-  MakeLogger,
-  Pickle,
-  Type,
-  Unpickle
-} from '@freik/core-utils';
+import { MakeError, MakeLogger, Pickle, Unpickle } from '@freik/core-utils';
 import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   AtomEffect,
@@ -13,14 +7,14 @@ import {
   DefaultValue,
   RecoilState,
   SetterOrUpdater,
-  useRecoilState
+  useRecoilState,
 } from 'recoil';
 import {
   ListenKey,
   ReadFromStorage,
   Subscribe,
   Unsubscribe,
-  WriteToStorage
+  WriteToStorage,
 } from '../ipc';
 import { onRejected } from '../Tools';
 
@@ -33,7 +27,7 @@ export type DialogData = [boolean, () => void];
 // A simplifier for dialogs: [0] shows the dialog, [1] is used in the dialog
 export type DialogState = [() => void, DialogData];
 
-const log = MakeLogger('helpers');
+const log = MakeLogger('helpers', true);
 const err = MakeError('helpers-err');
 
 /**
@@ -119,6 +113,8 @@ export function translateToMainEffect<T>(
  * @returns an AtomEffect<T>
  */
 export function bidirectionalSyncWithTranslateEffect<T>(
+  toPickleable: (val: T) => unknown,
+  fromUnpickled: (val: unknown) => T | void,
   asyncUpdates?: boolean,
 ): AtomEffect<T> {
   return ({
@@ -135,11 +131,11 @@ export function bidirectionalSyncWithTranslateEffect<T>(
           if (value) {
             log(value);
             log('***');
-            const data = Unpickle(value);
+            const data = fromUnpickled(Unpickle(value));
             log(data);
             if (data) {
               log(`Setting Self for ${node.key}`);
-              setSelf(data as T);
+              setSelf(data);
             }
           }
         })
@@ -148,11 +144,11 @@ export function bidirectionalSyncWithTranslateEffect<T>(
     let lKey: ListenKey | null = null;
     if (asyncUpdates) {
       lKey = Subscribe(node.key, (val: unknown) => {
-        const theRightType = Type.isString(val) ? Unpickle(val) : val;
+        const theRightType = fromUnpickled(val);
         if (theRightType) {
           log(`Async data for ${node.key}:`);
           log(theRightType);
-          setSelf(theRightType as T);
+          setSelf(theRightType);
         } else {
           err(`Async invalid data received for ${node.key}:`);
           err(val);
@@ -163,10 +159,13 @@ export function bidirectionalSyncWithTranslateEffect<T>(
       if (newVal instanceof DefaultValue) {
         return;
       }
-      const newData = Pickle(newVal);
-      if (oldVal instanceof DefaultValue || Pickle(oldVal) !== newData) {
+      const newPickled = Pickle(toPickleable(newVal));
+      if (
+        oldVal instanceof DefaultValue ||
+        Pickle(toPickleable(oldVal)) !== newPickled
+      ) {
         log(`Saving ${node.key} back to server...`);
-        WriteToStorage(node.key, newData)
+        WriteToStorage(node.key, newPickled)
           .then(() => log(`${node.key} saved properly`))
           .catch(onRejected(`${node.key} save to main failed`));
       }
@@ -184,7 +183,11 @@ export function bidirectionalSyncWithTranslateEffect<T>(
 }
 
 export function syncWithMainEffect<T>(asyncUpdates?: boolean): AtomEffect<T> {
-  return bidirectionalSyncWithTranslateEffect<T>(asyncUpdates);
+  return bidirectionalSyncWithTranslateEffect<T>(
+    (a) => a as unknown,
+    (a) => a as T,
+    asyncUpdates,
+  );
 }
 
 /*

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
 import { atom, selectorFamily } from 'recoil';
 import {
@@ -25,7 +26,14 @@ export const onlyPlayLikesState = atom<boolean>({
 const songLikeBackerState = atom<Set<SongKey>>({
   key: 'likedSongs',
   default: new Set<SongKey>(),
-  effects_UNSTABLE: [bidirectionalSyncWithTranslateEffect<Set<SongKey>>(false)],
+  effects_UNSTABLE: [
+    bidirectionalSyncWithTranslateEffect<Set<SongKey>>(
+      (val: Set<string>) => [...val],
+      (val: unknown) =>
+        Type.isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
+      false,
+    ),
+  ],
 });
 
 export const songLikeFamily = selectorFamily<boolean, SongKey>({
@@ -61,7 +69,14 @@ export const songLikeFamily = selectorFamily<boolean, SongKey>({
 const songHateBackerState = atom<Set<SongKey>>({
   key: 'hatedSongs',
   default: new Set<SongKey>(),
-  effects_UNSTABLE: [bidirectionalSyncWithTranslateEffect<Set<SongKey>>(false)],
+  effects_UNSTABLE: [
+    bidirectionalSyncWithTranslateEffect<Set<SongKey>>(
+      (val: Set<string>) => [...val],
+      (val: unknown) =>
+        Type.isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
+      false,
+    ),
+  ],
 });
 
 export const songHateFamily = selectorFamily<boolean, SongKey>({
