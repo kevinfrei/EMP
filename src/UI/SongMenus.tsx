@@ -26,7 +26,7 @@ type SongListMenuArgs = {
   onGetSongList: (
     cbInterface: CallbackInterface,
     data: string,
-  ) => SongKey[] | undefined;
+  ) => Promise<SongKey[]>;
   items?: (IContextualMenuItem | string)[];
 };
 
@@ -43,13 +43,13 @@ export function SongListMenu({
   const i = (
     name: string,
     iconName: string,
-    onClick: () => void,
+    click: () => Promise<void>,
     key?: string,
   ): IContextualMenuItem => ({
     name,
     key: key ? key : iconName,
     iconProps: { iconName },
-    onClick,
+    onClick: () => void click(),
   });
   // This isn't actually a side effect, as it's strictly a function of the
   // input of the menu
@@ -58,49 +58,57 @@ export function SongListMenu({
     key: 'divider' + (dk++).toString(),
     itemType: ContextualMenuItemType.Divider,
   });
-  const onAdd = useRecoilCallback((cbInterface) => () => {
-    const maybeSongs = onGetSongList(cbInterface, context.data);
-    if (maybeSongs) {
-      AddSongs(cbInterface, maybeSongs);
-    }
-  });
-  const onReplace = useRecoilCallback((cbInterface) => () => {
-    const maybeSongs = onGetSongList(cbInterface, context.data);
-    if (maybeSongs) {
-      PlaySongs(cbInterface, maybeSongs);
-    }
-  });
-  const onProps = useRecoilCallback((cbInterface) => () => {
-    const maybeSongs = onGetSongList(cbInterface, context.data);
-    if (maybeSongs) {
-      SongListDetailClick(cbInterface, maybeSongs, false);
-    }
-  });
-  const onLove = useRecoilCallback((cbInterface) => () => {
-    const maybeSongs = onGetSongList(cbInterface, context.data);
-    if (maybeSongs) {
-      const likeVal = cbInterface.snapshot
-        .getLoadable(songLikeNumFromStringFamily(context.data))
-        .valueOrThrow();
-      for (const song of maybeSongs) {
+
+  const onAdd = useRecoilCallback(
+    (cbInterface) => async () =>
+      AddSongs(cbInterface, await onGetSongList(cbInterface, context.data)),
+  );
+  const onReplace = useRecoilCallback(
+    (cbInterface) => async () =>
+      PlaySongs(cbInterface, await onGetSongList(cbInterface, context.data)),
+  );
+  const onProps = useRecoilCallback(
+    (cbInterface) => async () =>
+      SongListDetailClick(
+        cbInterface,
+        await onGetSongList(cbInterface, context.data),
+        false,
+      ),
+  );
+  const onLove = useRecoilCallback((cbInterface) => async () => {
+    const release = cbInterface.snapshot.retain();
+    try {
+      const songs = await onGetSongList(cbInterface, context.data);
+      const likeVal = await cbInterface.snapshot.getPromise(
+        songLikeNumFromStringFamily(context.data),
+      );
+      for (const song of songs) {
         // Set it to true if there's any song that *isn't* liked
         cbInterface.set(songLikeFamily(song), likeVal !== 1);
       }
+    } finally {
+      release();
     }
   });
-  const onHate = useRecoilCallback((cbInterface) => () => {
-    const maybeSongs = onGetSongList(cbInterface, context.data);
-    if (maybeSongs) {
-      const hateVal = cbInterface.snapshot
-        .getLoadable(songLikeNumFromStringFamily(context.data))
-        .valueOrThrow();
-      for (const song of maybeSongs) {
+
+  const onHate = useRecoilCallback((cbInterface) => async () => {
+    const release = cbInterface.snapshot.retain();
+    try {
+      const songs = await onGetSongList(cbInterface, context.data);
+      const hateVal = await cbInterface.snapshot.getPromise(
+        songLikeNumFromStringFamily(context.data),
+      );
+      for (const song of songs) {
         // Set it to true if there's any song that *isn't* hated
         cbInterface.set(songHateFamily(song), hateVal !== 2);
       }
+    } finally {
+      release();
     }
   });
-  const onShow = () => void InvokeMain('show-location-from-key', context.data);
+
+  const onShow = () =>
+    InvokeMain('show-location-from-key', context.data).then(() => {});
   const likeNum = useRecoilValue(songLikeNumFromStringFamily(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
@@ -151,7 +159,7 @@ export function SongListMenu({
           realItems.push(d());
           break;
         default:
-          realItems.push(i(itm, 'Unknown', () => undefined));
+          realItems.push(i(itm, 'Unknown', () => new Promise(() => 0)));
       }
     } else {
       realItems.push(itm);

@@ -1,5 +1,12 @@
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { PlaylistName, SongKey } from '@freik/media-core';
+import {
+  isAlbumKey,
+  isArtistKey,
+  isSongKey,
+  MediaKey,
+  PlaylistName,
+  SongKey,
+} from '@freik/media-core';
 import { CallbackInterface, RecoilState, Snapshot } from 'recoil';
 import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
@@ -19,6 +26,7 @@ import {
 } from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
 import { getPlaylistFamily, playlistNamesState } from './PlaylistsState';
+import { getAlbumByKeyFamily, getArtistByKeyFamily } from './ReadOnly';
 import { repeatState, shuffleState } from './ReadWrite';
 
 const log = MakeLogger('api'); // eslint-disable-line
@@ -38,23 +46,31 @@ function getVal<T>(snapshot: Snapshot, atomOrSel: RecoilState<T>): T {
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
  */
-export function MaybePlayNext({ snapshot, set }: CallbackInterface): boolean {
-  const curIndex = getVal(snapshot, currentIndexState);
-  const songList = getVal(snapshot, songListState);
-  if (curIndex + 1 < songList.length) {
-    set(currentIndexState, curIndex + 1);
+export async function MaybePlayNext({
+  snapshot,
+  set,
+}: CallbackInterface): Promise<boolean> {
+  const release = snapshot.retain();
+  try {
+    const curIndex = await snapshot.getPromise(currentIndexState);
+    const songList = await snapshot.getPromise(songListState);
+    if (curIndex + 1 < songList.length) {
+      set(currentIndexState, curIndex + 1);
+      return true;
+    }
+    const repeat = await snapshot.getPromise(repeatState);
+    if (!repeat) {
+      return false;
+    }
+    const shuffle = await snapshot.getPromise(shuffleState);
+    if (shuffle) {
+      set(songListState, ShuffleArray(songList));
+    }
+    set(currentIndexState, 0);
     return true;
+  } finally {
+    release();
   }
-  const repeat = getVal(snapshot, repeatState);
-  if (!repeat) {
-    return false;
-  }
-  const shuffle = getVal(snapshot, shuffleState);
-  if (shuffle) {
-    set(songListState, ShuffleArray(songList));
-  }
-  set(currentIndexState, 0);
-  return true;
 }
 
 /**
@@ -62,17 +78,25 @@ export function MaybePlayNext({ snapshot, set }: CallbackInterface): boolean {
  *
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  *
- * @returns void
+ * @returns Promise<void>
  */
-export function MaybePlayPrev({ snapshot, set }: CallbackInterface): void {
-  const songList = getVal(snapshot, songListState);
-  if (songList.length > 0) {
-    const curIndex = getVal(snapshot, currentIndexState);
-    if (curIndex > 0) {
-      set(currentIndexState, curIndex - 1);
-    } else if (getVal(snapshot, repeatState)) {
-      set(currentIndexState, songList.length - 1);
+export async function MaybePlayPrev({
+  snapshot,
+  set,
+}: CallbackInterface): Promise<void> {
+  const release = snapshot.retain();
+  try {
+    const songList = await snapshot.getPromise(songListState);
+    if (songList.length > 0) {
+      const curIndex = await snapshot.getPromise(currentIndexState);
+      if (curIndex > 0) {
+        set(currentIndexState, curIndex - 1);
+      } else if (await snapshot.getPromise(repeatState)) {
+        set(currentIndexState, songList.length - 1);
+      }
     }
+  } finally {
+    release();
   }
 }
 
@@ -84,7 +108,7 @@ export function MaybePlayPrev({ snapshot, set }: CallbackInterface): void {
  *
  * @returns {SongKey[]} The filtered list of songs
  */
-export function GetFilteredSongs(
+function GetFilteredSongsSync( // Deprecated
   snapshot: Snapshot,
   listToFilter: Iterable<SongKey>,
 ): SongKey[] {
@@ -103,6 +127,28 @@ export function GetFilteredSongs(
   return filtered.length === 0 ? playList : filtered;
 }
 
+// The snapshot needs to already be retained!
+async function GetFilteredSongs(
+  snapshot: Snapshot,
+  listToFilter: Iterable<SongKey>,
+): Promise<SongKey[]> {
+  const onlyLikes = await snapshot.getPromise(onlyPlayLikesState);
+  const neverHates = await snapshot.getPromise(neverPlayHatesState);
+  const playList = [...listToFilter];
+  const filtered = await Promise.all(
+    playList.filter((songKey: SongKey) => {
+      if (onlyLikes) {
+        return snapshot.getPromise(songLikeFamily(songKey));
+      }
+      if (neverHates) {
+        return snapshot.getPromise(songHateFamily(songKey)).then((val) => !val);
+      }
+      return true;
+    }),
+  );
+  return filtered.length === 0 ? playList : filtered;
+}
+
 /**
  * Adds a list of songs to the end of the current song list
  *
@@ -111,12 +157,12 @@ export function GetFilteredSongs(
  *
  * @returns void
  */
-export function AddSongs(
+export function AddSongsSync( // Deprecate this: It's only for tests now :/
   { snapshot, set }: CallbackInterface,
   listToAdd: Iterable<SongKey>,
 ): void {
   const shuffle = getVal(snapshot, shuffleState);
-  const playList = GetFilteredSongs(snapshot, listToAdd);
+  const playList = GetFilteredSongsSync(snapshot, listToAdd);
   if (!shuffle) {
     set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
@@ -128,6 +174,31 @@ export function AddSongs(
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
 }
+export async function AddSongs(
+  { snapshot, set }: CallbackInterface,
+  listToAdd: Iterable<SongKey>,
+): Promise<void> {
+  const release = snapshot.retain();
+  try {
+    const shuffle = await snapshot.getPromise(shuffleState);
+    const playList = await GetFilteredSongs(snapshot, listToAdd);
+    if (!shuffle) {
+      set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
+      set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+    } else {
+      const shuffledList = ShuffleArray(playList);
+      set(songListState, (songList: string[]) => [
+        ...songList,
+        ...shuffledList,
+      ]);
+      set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+    }
+    set(recentlyQueuedState, playList.length);
+    set(displayMessageState, true);
+  } finally {
+    release();
+  }
+}
 
 /**
  * Adds a list of songs to the end of the current song list
@@ -137,12 +208,12 @@ export function AddSongs(
  *
  * @returns void
  */
-export function PlaySongs(
+export function PlaySongsSync( // Deprecate this: It's only for tests now :/
   { set, snapshot }: CallbackInterface,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
-  let playList = GetFilteredSongs(snapshot, listToPlay);
+  let playList = GetFilteredSongsSync(snapshot, listToPlay);
   const shuffle = getVal(snapshot, shuffleState);
   if (shuffle) {
     playList = ShuffleArray(playList);
@@ -154,6 +225,30 @@ export function PlaySongs(
   set(currentIndexState, playList.length >= 0 ? 0 : -1);
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
+}
+
+export async function PlaySongs(
+  { set, snapshot }: CallbackInterface,
+  listToPlay: Iterable<SongKey>,
+  playlistName?: PlaylistName,
+): Promise<void> {
+  const release = snapshot.retain();
+  try {
+    let playList = await GetFilteredSongs(snapshot, listToPlay);
+    const shuffle = await snapshot.getPromise(shuffleState);
+    if (shuffle) {
+      playList = ShuffleArray(playList);
+    }
+    if (isPlaylist(playlistName) && Type.isString(playlistName)) {
+      set(activePlaylistState, playlistName);
+    }
+    set(songListState, playList);
+    set(currentIndexState, playList.length >= 0 ? 0 : -1);
+    set(recentlyQueuedState, playList.length);
+    set(displayMessageState, true);
+  } finally {
+    release();
+  }
 }
 
 /**
@@ -178,60 +273,103 @@ export function StopAndClear({ reset }: CallbackInterface): void {
  *
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  */
-export function ShufflePlaying({
+export async function ShufflePlaying({
   snapshot,
   reset,
   set,
-}: CallbackInterface): void {
-  const curIndex = getVal(snapshot, currentIndexState);
-  set(nowPlayingSortState, '');
-  if (curIndex < 0) {
-    set(songListState, (prevSongList: string[]) => ShuffleArray(prevSongList));
-  } else {
-    const curSongList = getVal(snapshot, songListState);
-    const curKey = curSongList[curIndex];
-    let newSongs = [...curSongList];
-    // Remove curKey from the array
-    newSongs.splice(curIndex, 1);
-    // Shuffle the array (without curKey)
-    newSongs = ShuffleArray(newSongs);
-    // Re-insert curKey back where it was
-    newSongs.splice(curIndex, 0, curKey);
-    reset(nowPlayingSortState);
-    set(songListState, newSongs);
+}: CallbackInterface): Promise<void> {
+  const release = snapshot.retain();
+  try {
+    const curIndex = await snapshot.getPromise(currentIndexState);
+    set(nowPlayingSortState, '');
+    if (curIndex < 0) {
+      set(songListState, (prevSongList: string[]) =>
+        ShuffleArray(prevSongList),
+      );
+    } else {
+      const curSongList = await snapshot.getPromise(songListState);
+      const curKey = curSongList[curIndex];
+      let newSongs = [...curSongList];
+      // Remove curKey from the array
+      newSongs.splice(curIndex, 1);
+      // Shuffle the array (without curKey)
+      newSongs = ShuffleArray(newSongs);
+      // Re-insert curKey back where it was
+      newSongs.splice(curIndex, 0, curKey);
+      reset(nowPlayingSortState);
+      set(songListState, newSongs);
+    }
+  } finally {
+    release();
   }
 }
 
 /**
  * Rename a playlist (make sure you've got the name right)
  **/
-export async function renamePlaylist(
+export async function RenamePlaylist(
   { set, snapshot }: CallbackInterface,
   curName: PlaylistName,
   newName: PlaylistName,
 ): Promise<void> {
-  const curNames = getVal(snapshot, playlistNamesState);
-  const curSongs = getVal(snapshot, getPlaylistFamily(curName));
-  curNames.delete(curName);
-  curNames.add(newName);
-  await PostMain('rename-playlist', [curName, newName]);
-  set(getPlaylistFamily(newName), curSongs);
-  set(playlistNamesState, new Set(curNames));
+  const release = snapshot.retain();
+  try {
+    const curNames = await snapshot.getPromise(playlistNamesState);
+    const curSongs = await snapshot.getPromise(getPlaylistFamily(curName));
+    curNames.delete(curName);
+    curNames.add(newName);
+    await PostMain('rename-playlist', [curName, newName]);
+    set(getPlaylistFamily(newName), curSongs);
+    set(playlistNamesState, new Set(curNames));
+  } finally {
+    release();
+  }
 }
 
 /**
  * Delete a playlist (make sure you've got the name right)
  **/
-export async function deletePlaylist(
+export async function DeletePlaylist(
   { set, snapshot }: CallbackInterface,
   toDelete: PlaylistName,
 ): Promise<void> {
-  const curNames = getVal(snapshot, playlistNamesState);
-  const activePlaylist = getVal(snapshot, activePlaylistState);
-  curNames.delete(toDelete);
-  await PostMain('delete-playlist', toDelete);
-  set(playlistNamesState, new Set(curNames));
-  if (activePlaylist === toDelete) {
-    set(activePlaylistState, '');
+  const release = snapshot.retain();
+  try {
+    const curNames = await snapshot.getPromise(playlistNamesState);
+    const activePlaylist = await snapshot.getPromise(activePlaylistState);
+    curNames.delete(toDelete);
+    await PostMain('delete-playlist', toDelete);
+    set(playlistNamesState, new Set(curNames));
+    if (activePlaylist === toDelete) {
+      set(activePlaylistState, '');
+    }
+  } finally {
+    release();
   }
+}
+
+export async function SongListFromKey(
+  { snapshot }: CallbackInterface,
+  data: MediaKey,
+): Promise<SongKey[]> {
+  if (data.length === 0) {
+    return [];
+  }
+  if (isSongKey(data)) {
+    return [data];
+  }
+  const release = snapshot.retain();
+  try {
+    if (isAlbumKey(data)) {
+      const alb = await snapshot.getPromise(getAlbumByKeyFamily(data));
+      return alb ? alb.songs : [];
+    }
+    if (isArtistKey(data)) {
+      const art = await snapshot.getPromise(getArtistByKeyFamily(data));
+      return art ? art.songs : [];
+    }
+  } finally {
+    release();
+  }
+  return [];
 }

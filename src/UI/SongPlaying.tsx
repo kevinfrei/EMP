@@ -148,18 +148,23 @@ export default function SongPlayback(): JSX.Element {
   const onEnded = useRecoilCallback((cbInterface) => async () => {
     const { snapshot, set } = cbInterface;
     log('Heading to the next song!!!');
-    const songList = snapshot.getLoadable(songListState).valueOrThrow();
-    const rep = snapshot.getLoadable(repeatState).valueOrThrow();
-    if (rep && songList.length === 1) {
-      // Because we rely on auto-play, if we just try to play the same song
-      // again, it won't start playing
-      const ae = GetAudioElem();
-      if (ae) {
-        await ae.play();
+    const release = snapshot.retain();
+    try {
+      const songList = await snapshot.getPromise(songListState);
+      const rep = await snapshot.getPromise(repeatState);
+      if (rep && songList.length === 1) {
+        // Because we rely on auto-play, if we just try to play the same song
+        // again, it won't start playing
+        const ae = GetAudioElem();
+        if (ae) {
+          await ae.play();
+        }
       }
+      const isPlaying = await MaybePlayNext(cbInterface);
+      set(playingState, isPlaying);
+    } finally {
+      release();
     }
-    const isPlaying = MaybePlayNext(cbInterface);
-    set(playingState, isPlaying);
   });
   const onTimeUpdate = useRecoilCallback(
     ({ set }) =>
@@ -194,13 +199,16 @@ export default function SongPlayback(): JSX.Element {
   const showDetail = useRecoilCallback(
     (cbInterface) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       if (songKey !== '') {
-        const songs = cbInterface.snapshot
-          .getLoadable(allSongsState)
-          .valueOrThrow();
-        const song = songs.get(songKey);
-        if (song) {
-          SongDetailClick(cbInterface, song, event.shiftKey);
-        }
+        const release = cbInterface.snapshot.retain();
+        cbInterface.snapshot
+          .getPromise(allSongsState)
+          .then((songs) => {
+            const song = songs.get(songKey);
+            if (song) {
+              SongDetailClick(cbInterface, song, event.shiftKey);
+            }
+          })
+          .finally(release);
       }
     },
   );

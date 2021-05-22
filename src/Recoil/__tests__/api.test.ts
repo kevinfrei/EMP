@@ -23,7 +23,7 @@ import {
   Snapshot,
   snapshot_UNSTABLE,
 } from 'recoil';
-import { AddSongs, PlaySongs } from '../api';
+import { AddSongsSync, PlaySongsSync } from '../api';
 import { currentIndexState, songListState } from '../Local';
 
 const err = MakeError('api.test');
@@ -75,7 +75,7 @@ it('Adding empty songs does nothing', async () => {
   ).toStrictEqual(-1);
 
   const nextSnapshot = snapshot_UNSTABLE(({ set }) =>
-    AddSongs(makeCallbackIfc(set, initialSnapshot), []),
+    AddSongsSync(makeCallbackIfc(set, initialSnapshot), []),
   );
   expect(nextSnapshot).toBeDefined();
   await flushPromisesAndTimers();
@@ -91,7 +91,7 @@ it('Adding song(s) works properly', () => {
     -1,
   );
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(makeCallbackIfc(set, initialSnapshot), ['a']);
+    AddSongsSync(makeCallbackIfc(set, initialSnapshot), ['a']);
   });
   expect(
     nextSnapshot.getLoadable(currentIndexState).valueOrThrow(),
@@ -101,8 +101,8 @@ it('Adding song(s) works properly', () => {
   ]);
 
   const finalSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(makeCallbackIfc(set, nextSnapshot), ['a', 'b']);
-    AddSongs(makeCallbackIfc(set, nextSnapshot), ['a', 'c']);
+    AddSongsSync(makeCallbackIfc(set, nextSnapshot), ['a', 'b']);
+    AddSongsSync(makeCallbackIfc(set, nextSnapshot), ['a', 'c']);
   });
   expect(
     finalSnapshot.getLoadable(currentIndexState).valueOrThrow(),
@@ -117,8 +117,8 @@ it('Adding song(s) works properly', () => {
 it('Playing songs works properly', () => {
   const initialSnapshot = snapshot_UNSTABLE();
   const nextSnapshot = snapshot_UNSTABLE(({ set }) => {
-    AddSongs(makeCallbackIfc(set, initialSnapshot), ['a', 'b']);
-    PlaySongs(makeCallbackIfc(set, initialSnapshot), ['d', 'e']);
+    AddSongsSync(makeCallbackIfc(set, initialSnapshot), ['a', 'b']);
+    PlaySongsSync(makeCallbackIfc(set, initialSnapshot), ['d', 'e']);
   });
   expect(nextSnapshot.getLoadable(songListState).valueOrThrow()).toStrictEqual([
     'd',

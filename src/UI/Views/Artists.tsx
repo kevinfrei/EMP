@@ -20,12 +20,11 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { GetArtistStringFromKeys } from '../../DataSchema';
-import { AddSongs } from '../../Recoil/api';
+import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
-  getArtistByKeyFamily,
 } from '../../Recoil/ReadOnly';
 import {
   ignoreArticlesState,
@@ -60,9 +59,9 @@ export function ArtistHeaderDisplay({
 }: {
   artist: Artist;
 }): JSX.Element {
-  const onAddSongsClick = useRecoilCallback(
-    (cbInterface) => () => AddSongs(cbInterface, artist.songs),
-  );
+  const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
+    await AddSongs(cbInterface, artist.songs);
+  });
   const onRightClick = useRecoilCallback(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
@@ -188,7 +187,9 @@ export default function ArtistList(): JSX.Element {
       },
   );
   const onAddSongClick = useRecoilCallback(
-    (cbInterface) => (item: Song) => AddSongs(cbInterface, [item.key]),
+    (cbInterface) => async (item: Song) => {
+      await AddSongs(cbInterface, [item.key]);
+    },
   );
 
   const [curSort, setSort] = useRecoilState(sortOrderState);
@@ -260,18 +261,9 @@ export default function ArtistList(): JSX.Element {
           onClearContext={() =>
             setArtistContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
-            if (data.length > 0) {
-              if (data[0] === 'S') {
-                return [data];
-              } else if (data[0] === 'R') {
-                const alb = cbInterface.snapshot
-                  .getLoadable(getArtistByKeyFamily(data))
-                  .valueMaybe();
-                return alb ? alb.songs : undefined;
-              }
-            }
-          }}
+          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
+            SongListFromKey(cbInterface, data)
+          }
         />
       </ScrollablePane>
     </div>

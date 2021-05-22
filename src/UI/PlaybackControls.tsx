@@ -58,25 +58,30 @@ export default function SongControls(): JSX.Element {
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useRecoilCallback((cbInterface) => () => {
-    if (!cbInterface.snapshot.getLoadable(shuffleState).valueOrThrow()) {
-      ShufflePlaying(cbInterface);
+  const clickShuffle = useRecoilCallback((cbInterface) => async () => {
+    const release = cbInterface.snapshot.retain();
+    try {
+      if (!(await cbInterface.snapshot.getPromise(shuffleState))) {
+        await ShufflePlaying(cbInterface);
+      }
+      cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
+    } finally {
+      release();
     }
-    cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = useRecoilCallback(
     (cbInterface) => () => onClickPlayPause(cbInterface),
   );
 
-  const clickPrev = useRecoilCallback((cbInterface) => () => {
+  const clickPrev = useRecoilCallback((cbInterface) => async () => {
     if (hasPrevSong) {
-      MaybePlayPrev(cbInterface);
+      await MaybePlayPrev(cbInterface);
     }
   });
-  const clickNext = useRecoilCallback((cbInterface) => () => {
+  const clickNext = useRecoilCallback((cbInterface) => async () => {
     if (hasNextSong) {
-      MaybePlayNext(cbInterface);
+      await MaybePlayNext(cbInterface);
     }
   });
   return (

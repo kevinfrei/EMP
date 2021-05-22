@@ -64,10 +64,10 @@ export function MenuHandler(
         onClickPlayPause(callbackInterface);
         break;
       case 'nextTrack':
-        MaybePlayNext(callbackInterface);
+        void MaybePlayNext(callbackInterface);
         break;
       case 'prevTrack':
-        MaybePlayPrev(callbackInterface);
+        void MaybePlayPrev(callbackInterface);
         break;
 
       // Time control

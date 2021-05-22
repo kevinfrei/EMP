@@ -310,11 +310,9 @@ export default function NowPlaying(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
-            if (data.length > 0) {
-              return [data];
-            }
-          }}
+          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
+            new Promise((resolve) => resolve(data.length > 0 ? [data] : []))
+          }
           items={['prop', 'show', '-', 'like', 'hate']}
         />
       </ScrollablePane>

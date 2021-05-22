@@ -15,7 +15,7 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { deletePlaylist, PlaySongs, renamePlaylist } from '../../Recoil/api';
+import { DeletePlaylist, PlaySongs, RenamePlaylist } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
@@ -50,21 +50,26 @@ export default function PlaylistView(): JSX.Element {
     useRecoilState(playlistContextState);
 
   const onPlaylistInvoked = useRecoilCallback(
-    (cbInterface) => (playlistName: PlaylistName) => {
-      const songs = cbInterface.snapshot
-        .getLoadable(getPlaylistFamily(playlistName))
-        .valueOrThrow();
-      PlaySongs(cbInterface, songs, playlistName);
+    (cbInterface) => async (playlistName: PlaylistName) => {
+      const release = cbInterface.snapshot.retain();
+      try {
+        const songs = await cbInterface.snapshot.getPromise(
+          getPlaylistFamily(playlistName),
+        );
+        await PlaySongs(cbInterface, songs, playlistName);
+      } finally {
+        release();
+      }
     },
   );
 
-  const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => () => {
+  const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => async () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = snapshot
-      .getLoadable(getPlaylistFamily(playlistContext.data))
-      .valueOrThrow();
+    const songs = await snapshot.getPromise(
+      getPlaylistFamily(playlistContext.data),
+    );
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
     for (const song of songs) {
@@ -77,12 +82,12 @@ export default function PlaylistView(): JSX.Element {
   });
 
   const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
-    await deletePlaylist(cbInterface, selected);
+    await DeletePlaylist(cbInterface, selected);
   });
 
   const renameConfirmed = useRecoilCallback(
     (cbInterface) => async (newName: string) => {
-      await renamePlaylist(cbInterface, selected, newName);
+      await RenamePlaylist(cbInterface, selected, newName);
     },
   );
 
@@ -168,12 +173,9 @@ export default function PlaylistView(): JSX.Element {
           onClearContext={() =>
             setPlaylistContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
-            const list = cbInterface.snapshot
-              .getLoadable(getPlaylistFamily(data))
-              .valueMaybe();
-            return list ? list : undefined;
-          }}
+          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
+            cbInterface.snapshot.getPromise(getPlaylistFamily(data))
+          }
           items={[
             'add',
             'rep',

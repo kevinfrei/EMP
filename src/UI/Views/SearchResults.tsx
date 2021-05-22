@@ -193,8 +193,8 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useRecoilCallback((cbInterface) => () => {
-    AddSongs(cbInterface, props.keys);
+  const onAddSongListClick = useRecoilCallback((cbInterface) => async () => {
+    await AddSongs(cbInterface, props.keys);
   });
   const onRightClick = useRecoilCallback((cbInterface) =>
     SongListDetailContextMenuClick(cbInterface, props.keys),
@@ -232,8 +232,9 @@ export default function SearchResultsView(): JSX.Element {
       ),
   );
   const onAddSongClick = useRecoilCallback(
-    (cbInterface) => (item: SearchSongData) =>
-      AddSongs(cbInterface, [item.song.key]),
+    (cbInterface) => async (item: SearchSongData) => {
+      await AddSongs(cbInterface, [item.song.key]);
+    },
   );
 
   if (

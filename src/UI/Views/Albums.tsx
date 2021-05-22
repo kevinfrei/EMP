@@ -21,13 +21,12 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { AddSongs } from '../../Recoil/api';
+import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { albumCoverUrlFamily } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
-  getAlbumByKeyFamily,
   getDataForAlbumFamily,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
@@ -54,9 +53,9 @@ const albumContextState = atom<SongListMenuData>({
 
 export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumFamily(props.album.key));
-  const onAddSongsClick = useRecoilCallback(
-    (cbInterface) => () => AddSongs(cbInterface, props.album.songs),
-  );
+  const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
+    await AddSongs(cbInterface, props.album.songs);
+  });
   const onRightClick = useRecoilCallback(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
@@ -112,7 +111,9 @@ export default function AlbumList(): JSX.Element {
   const [curSort, setSort] = useRecoilState(sortOrderState);
 
   const onAddSongClick = useRecoilCallback(
-    (cbInterface) => (item: Song) => AddSongs(cbInterface, [item.key]),
+    (cbInterface) => async (item: Song) => {
+      await AddSongs(cbInterface, [item.key]);
+    },
   );
   const onRightClick = useRecoilCallback(
     ({ set }) =>
@@ -192,18 +193,9 @@ export default function AlbumList(): JSX.Element {
           onClearContext={() =>
             setAlbumContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
-            if (data.length > 0) {
-              if (data[0] === 'S') {
-                return [data];
-              } else if (data[0] === 'L') {
-                const alb = cbInterface.snapshot
-                  .getLoadable(getAlbumByKeyFamily(data))
-                  .valueMaybe();
-                return alb ? alb.songs : undefined;
-              }
-            }
-          }}
+          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
+            SongListFromKey(cbInterface, data)
+          }
         />
       </ScrollablePane>
     </div>

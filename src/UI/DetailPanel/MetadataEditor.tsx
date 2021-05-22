@@ -158,34 +158,40 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     uploadSong: (sk: SongKey) => Promise<void>,
     uploadAlbum: (ak: AlbumKey) => Promise<void>,
   ) => {
-    // Easy: one song:
-    if (props.forSong !== undefined) {
-      await uploadSong(props.forSong);
-      const albumKey = cbInterface.snapshot
-        .getLoadable(getAlbumKeyForSongKeyFamily(props.forSong))
-        .valueOrThrow();
-      setTimeout(
-        () => cbInterface.set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
-        250,
-      );
-    } else {
-      // Messy: Multiple songs
-      const albumsSet: Set<AlbumKey> = new Set();
-      for (const song of props.forSongs!) {
-        const albumKey = cbInterface.snapshot
-          .getLoadable(getAlbumKeyForSongKeyFamily(song))
-          .valueOrThrow();
-        if (albumsSet.has(albumKey)) {
-          continue;
-        }
-        albumsSet.add(albumKey);
-        await uploadAlbum(albumKey);
-        // This bonks the URL so it will be reloaded after we've uploaded the image
+    const release = cbInterface.snapshot.retain();
+    try {
+      // Easy: one song:
+      if (props.forSong !== undefined) {
+        await uploadSong(props.forSong);
+        const albumKey = await cbInterface.snapshot.getPromise(
+          getAlbumKeyForSongKeyFamily(props.forSong),
+        );
         setTimeout(
           () => cbInterface.set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
           250,
         );
+      } else {
+        // Messy: Multiple songs
+        const albumsSet: Set<AlbumKey> = new Set();
+        for (const song of props.forSongs!) {
+          const albumKey = await cbInterface.snapshot.getPromise(
+            getAlbumKeyForSongKeyFamily(song),
+          );
+          if (albumsSet.has(albumKey)) {
+            continue;
+          }
+          albumsSet.add(albumKey);
+          await uploadAlbum(albumKey);
+          // This bonks the URL so it will be reloaded after we've uploaded the image
+          setTimeout(
+            () =>
+              cbInterface.set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
+            250,
+          );
+        }
       }
+    } finally {
+      release();
     }
   };
 

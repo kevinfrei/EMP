@@ -93,7 +93,9 @@ export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
   const onAddSongClick = useRecoilCallback(
-    (cbInterface) => (item: Song) => AddSongs(cbInterface, [item.key]),
+    (cbInterface) => async (item: Song) => {
+      await AddSongs(cbInterface, [item.key]);
+    },
   );
   const [songContext, setSongContext] = useRecoilState(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
@@ -135,11 +137,9 @@ export default function MixedSongsList(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) => {
-            if (data.length > 0) {
-              return [data];
-            }
-          }}
+          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
+            new Promise((resolve) => resolve(data.length > 0 ? [data] : []))
+          }
         />
       </ScrollablePane>
     </div>
