@@ -5,9 +5,10 @@ import {
   IContextualMenuItem,
   Point,
 } from '@fluentui/react';
-import { MakeLogger, Type } from '@freik/core-utils';
+import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
 import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
+import { InvokeMain } from '../MyWindow';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
   songHateFamily,
@@ -15,8 +16,6 @@ import {
   songLikeNumFromStringFamily,
 } from '../Recoil/Likes';
 import { SongListDetailClick } from './DetailPanel/Clickers';
-
-const log = MakeLogger('SongMenus'); // eslint-disable-line
 
 export type SongListMenuData = { data: string; spot: Point };
 
@@ -101,6 +100,7 @@ export function SongListMenu({
       }
     }
   });
+  const onShow = () => void InvokeMain('show-location-from-key', context.data);
   const likeNum = useRecoilValue(songLikeNumFromStringFamily(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
@@ -108,7 +108,16 @@ export function SongListMenu({
   const realItems: IContextualMenuItem[] = title
     ? [{ key: 'Header', name: title, itemType: ContextualMenuItemType.Header }]
     : [];
-  for (const itm of items || ['add', 'rep', '', 'prop', '', 'love', 'hate']) {
+  for (const itm of items || [
+    'add',
+    'rep',
+    '',
+    'prop',
+    'show',
+    '',
+    'love',
+    'hate',
+  ]) {
     if (Type.isString(itm)) {
       switch (itm.toLowerCase()) {
         case 'add':
@@ -132,6 +141,9 @@ export function SongListMenu({
         case 'hate':
         case 'dislike':
           realItems.push(i('Dislike', hateIcons[likeNum], onHate, 'hate'));
+          break;
+        case 'show':
+          realItems.push(i('Show Location', 'FolderSearch', onShow));
           break;
         case '':
         case '-':

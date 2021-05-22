@@ -1,4 +1,5 @@
 import { FTONData, MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
@@ -6,6 +7,7 @@ import { FlushImageCache } from './ImageCache';
 import { isOnlyMetadata, setMediaInfoForSong } from './metadata';
 import {
   getMediaInfoForSong,
+  getPathFromKey,
   searchSubstring,
   searchWholeWord,
 } from './MusicAccess';
@@ -120,6 +122,18 @@ function showFile(filePath?: string): Promise<void> {
 }
 
 /**
+ * Show a file in the shell
+ * @param filePath - The path to the file to show
+ */
+function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
+  return getPathFromKey(mediaKey).then((filePath) => {
+    if (filePath) {
+      shell.showItemInFolder(filePath);
+    }
+  });
+}
+
+/**
  * Send a message to the rendering process
  *
  * @param  {FTONData} message
@@ -163,6 +177,7 @@ export function CommsSetup(): void {
   registerChannel('flush-image-cache', FlushImageCache, isVoid);
   registerChannel('manual-rescan', RescanDB, isVoid);
   registerChannel('show-file', showFile, Type.isString);
+  registerChannel('show-location-from-key', showLocFromKey, Type.isString);
   registerChannel('set-media-info', setMediaInfoForSong, isOnlyMetadata);
 
   registerChannel('search', searchWholeWord, isStrOrUndef);

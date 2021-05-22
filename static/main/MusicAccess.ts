@@ -1,5 +1,15 @@
 import { FTON, MakeError, MakeLogger } from '@freik/core-utils';
-import { Album, AlbumKey, Artist, ArtistKey, SongKey } from '@freik/media-core';
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  isAlbumKey,
+  isArtistKey,
+  isSongKey,
+  MediaKey,
+  SongKey,
+} from '@freik/media-core';
 import { AudioDatabase, MakeAudioDatabase } from './AudioDatabase';
 import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
@@ -84,6 +94,54 @@ export async function getMediaInfoForSong(
       log(`Fetched the media info for ${song.path}:`);
       log(data);
       return data;
+    }
+  }
+}
+
+function getCommonPrefix(db: MusicDB, songKeys: SongKey[]): string | undefined {
+  const paths: string[] = songKeys
+    .map((sk) => {
+      const song = db.songs.get(sk);
+      return song ? song.path : undefined;
+    })
+    .filter((s) => s !== undefined) as string[];
+  let prefix = '';
+  if (paths.length === 0) {
+    return prefix;
+  }
+
+  for (let i = 0; i < paths[0].length; i++) {
+    const char = paths[0][i]; // loop through all characters of the very first string.
+    for (let j = 1; j < paths.length; j++) {
+      // loop through all other strings in the array
+      if (paths[j][i] !== char) {
+        return prefix;
+      }
+    }
+    prefix = prefix + char;
+  }
+
+  return prefix;
+}
+
+export async function getPathFromKey(
+  key?: MediaKey,
+): Promise<string | undefined> {
+  if (key) {
+    const musicDB = await getMusicDB();
+    if (musicDB) {
+      if (isAlbumKey(key)) {
+        const theAlbum = musicDB.albums.get(key);
+        return theAlbum ? getCommonPrefix(musicDB, theAlbum.songs) : undefined;
+      } else if (isArtistKey(key)) {
+        const theArtist = musicDB.artists.get(key);
+        return theArtist
+          ? getCommonPrefix(musicDB, theArtist.songs)
+          : undefined;
+      } else if (isSongKey(key)) {
+        const theSong = musicDB.songs.get(key);
+        return theSong ? theSong.path : undefined;
+      }
     }
   }
 }
