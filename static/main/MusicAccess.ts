@@ -18,7 +18,7 @@ import {
 import { AudioDatabase, MakeAudioDatabase } from './AudioDatabase';
 import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 const log = MakeLogger('MusicAccess');
 const err = MakeError('MusicAccess-err');
@@ -39,7 +39,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   if (!theMusicDatabase) {
     try {
       log('get-music-db called');
-      const musicDBstr = await persist.getItemAsync('musicDatabase');
+      const musicDBstr = await Persistence.getItemAsync('musicDatabase');
       if (musicDBstr) {
         log(`get-music-db: ${musicDBstr.length} bytes in the JSON blob.`);
         theMusicDatabase = UnsafelyUnpickle<MusicDB>(musicDBstr);
@@ -58,7 +58,7 @@ export async function getMusicDB(): Promise<MusicDB | void> {
         albumTitleIndex: new Map<string, AlbumKey[]>(),
         artistNameIndex: new Map<string, ArtistKey>(),
       };
-      await persist.setItemAsync('musicDatabase', Pickle(emptyDB));
+      await Persistence.setItemAsync('musicDatabase', Pickle(emptyDB));
       return;
     }
   } else {
@@ -77,7 +77,7 @@ export async function getAudioDatabase(): Promise<AudioDatabase> {
 export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
   theMusicDatabase = musicDB;
   log(`Saving DB with ${musicDB.songs.size} songs`);
-  await persist.setItemAsync('musicDatabase', Pickle(theMusicDatabase));
+  await Persistence.setItemAsync('musicDatabase', Pickle(theMusicDatabase));
 }
 
 export async function getMediaInfoForSong(

@@ -13,7 +13,7 @@ import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
 import { getMusicDB } from './MusicAccess';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 const log = MakeLogger('playlists');
 const err = MakeError('playlists-err');
@@ -134,7 +134,7 @@ let keyToPath: null | Map<SongKey, string> = null;
 let pathToKey: null | Map<string, SongKey> = null;
 
 async function loadHash(): Promise<void> {
-  const songHash = await persist.getItemAsync('songHashIndex');
+  const songHash = await Persistence.getItemAsync('songHashIndex');
   if (!songHash) {
     throw Error('Oh poop'); // This shouldn't ever be possible...
   }

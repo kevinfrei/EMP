@@ -10,7 +10,7 @@ import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
 import { asyncSend } from './Communication';
-import * as persist from './persist';
+import { Persistence } from './persist';
 import { toggleMiniPlayer } from './window';
 
 const log = MakeLogger('menu', isDev);
@@ -228,19 +228,19 @@ export function makeMainMenu(): void {
   // TODO: Get the initial state working
 
   // This is the world's slowest way to respond to state changes :D
-  persist.subscribe('repeat', (val: string) => {
+  Persistence.subscribe('repeat', (val: string) => {
     const itm = menu.getMenuItemById('repeat');
     if (itm) {
       itm.checked = val === 'true';
     }
   });
-  persist.subscribe('shuffle', (val: string) => {
+  Persistence.subscribe('shuffle', (val: string) => {
     const itm = menu.getMenuItemById('shuffle');
     if (itm) {
       itm.checked = val === 'true';
     }
   });
-  persist.subscribe('CurrentView', (val: string) => {
+  Persistence.subscribe('CurrentView', (val: string) => {
     const views = [
       ['now playing', '6'],
       ['albums', '2'],
@@ -255,7 +255,7 @@ export function makeMainMenu(): void {
   });
 
   // Toggle mute/adjust vol up/dn
-  persist.subscribe('volume', (val: string) => {
+  Persistence.subscribe('volume', (val: string) => {
     const vol = Number.parseFloat(val);
     const up = menu.getMenuItemById('volume up');
     const dn = menu.getMenuItemById('volume down');
@@ -264,7 +264,7 @@ export function makeMainMenu(): void {
       dn.enabled = vol > 0.0;
     }
   });
-  persist.subscribe('mute', (val: string) => {
+  Persistence.subscribe('mute', (val: string) => {
     const itm = menu.getMenuItemById('mute');
     if (itm) {
       itm.label = val === 'true' ? 'Unm&ute' : 'M&ute';

@@ -26,7 +26,7 @@ import { AudioFileIndex, MakeAudioFileIndex } from './AudioFileIndex';
 import { GetMetadataStore, isFullMetadata } from './metadata';
 import { getMusicDB, setMusicIndex } from './MusicAccess';
 import { sendUpdatedDB, UpdateDB } from './MusicUpdates';
-import * as persist from './persist';
+import { Persistence } from './persist';
 import { MakeSearchable, Searchable } from './Search';
 
 export type ServerSong = Song & { path: string };
@@ -74,7 +74,7 @@ export function setIntersection<T>(a: T[], b: T[]): Set<T> {
 
 let existingKeys: Map<string, SongKey> | null = null;
 const newSongKey = (() => {
-  const highestSongKey = persist.getItem('highestSongKey');
+  const highestSongKey = Persistence.getItem('highestSongKey');
   if (highestSongKey) {
     log(`highestSongKey: ${highestSongKey}`);
     return SeqNum('S', highestSongKey);
@@ -395,7 +395,7 @@ async function fileNamesToDatabase(
   };
 
   // Get the list of existing paths to song-keys
-  const songHash = await persist.getItemAsync('songHashIndex');
+  const songHash = await Persistence.getItemAsync('songHashIndex');
   existingKeys = songHash
     ? SafelyUnpickle(songHash, Type.isMapOfStrings) ||
       new Map<string, SongKey>()
@@ -471,11 +471,11 @@ async function fileNamesToDatabase(
   log(`File names: ${fileNameParseTime - now}`);
   log(`Metadata  : ${fileMetadataParseTime - fileNameParseTime}`);
   await metadataCache.save();
-  await persist.setItemAsync(
+  await Persistence.setItemAsync(
     'songHashIndex',
     Pickle(new Map([...db.songs.values()].map((val) => [val.path, val.key]))),
   );
-  await persist.setItemAsync('highestSongKey', newSongKey());
+  await Persistence.setItemAsync('highestSongKey', newSongKey());
   return db;
 }
 

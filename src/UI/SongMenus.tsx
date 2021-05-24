@@ -108,6 +108,7 @@ export function SongListMenu({
   });
 
   const onShow = () =>
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     InvokeMain('show-location-from-key', context.data).then(() => {});
   const likeNum = useRecoilValue(songLikeNumFromStringFamily(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];

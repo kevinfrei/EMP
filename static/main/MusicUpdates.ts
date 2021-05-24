@@ -3,7 +3,7 @@ import { promisify } from 'util';
 import { asyncSend } from './Communication';
 import { getMusicDB, saveMusicDB, setMusicIndex } from './MusicAccess';
 import * as music from './MusicScanner';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 const log = MakeLogger('MusicUpdates');
 const err = MakeError('MusicUpdates-err');
@@ -11,7 +11,7 @@ const err = MakeError('MusicUpdates-err');
 const sleep = promisify(setTimeout);
 
 function getLocations(): string[] {
-  const strLocations = persist.getItem('locations');
+  const strLocations = Persistence.getItem('locations');
   const rawLocations: string[] = strLocations
     ? SafelyUnpickle(strLocations, Type.isArrayOfString) || []
     : [];

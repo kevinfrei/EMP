@@ -6,9 +6,9 @@ import * as path from 'path';
 import { configureListeners, configureProtocols } from './conf-protocols';
 import { OnWindowCreated } from './electronSetup';
 import {
-  getBrowserWindowPos,
-  getWindowPos,
-  setWindowPos,
+  GetBrowserWindowPos,
+  LoadWindowPos,
+  SaveWindowPos,
   WindowPosition,
 } from './persist';
 
@@ -32,14 +32,14 @@ export function SendToMain(channel: string, ...data: any[]): void {
   }
 }
 
-const windowPos: WindowPosition = getWindowPos();
+const windowPos: WindowPosition = LoadWindowPos();
 
 export function CreateWindow(windowCreated: OnWindowCreated): void {
   configureProtocols();
   configureListeners();
   // Create the window, but don't show it just yet
   mainWindow = new BrowserWindow({
-    ...getBrowserWindowPos(windowPos),
+    ...GetBrowserWindowPos(windowPos),
     title: 'EMP: Electron Music Player',
     // backgroundColor: '#282c34', // Unnecessary if you're not showing :)
     webPreferences: {
@@ -100,7 +100,7 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
         // only update bounds if the window isn’t currently maximized
         windowPos.bounds = mainWindow.getBounds();
       }
-      setWindowPos(windowPos);
+      SaveWindowPos(windowPos);
     }
   };
 

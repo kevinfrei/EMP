@@ -12,7 +12,7 @@ import {
   searchWholeWord,
 } from './MusicAccess';
 import { RescanDB } from './MusicUpdates';
-import * as persist from './persist';
+import { Persistence } from './persist';
 import {
   checkPlaylists,
   deletePlaylist,
@@ -48,7 +48,7 @@ export async function readFromStorage(name?: string): Promise<string> {
   if (!name) return '';
   try {
     log(`readFromStorage(${name})`);
-    const value = await persist.getItemAsync(name);
+    const value = await Persistence.getItemAsync(name);
     log(`Sending ${name} response:`);
     log(value);
     return value || '';
@@ -73,7 +73,7 @@ export async function writeToStorage([key, value]: [
     // First, split off the key name:
     log(`writeToStorage(${key} : ${value})`);
     // Push the data into the persistence system
-    await persist.setItemAsync(key, value);
+    await Persistence.setItemAsync(key, value);
     log(`writeToStorage(${key}...) completed`);
   } catch (e) {
     err(`error from writeToStorage([${key}, ${value}])`);

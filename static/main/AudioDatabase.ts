@@ -30,7 +30,7 @@ import {
   setIntersection,
   VAType,
 } from './MusicScanner';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 // eslint-disable-next-line
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
@@ -51,7 +51,7 @@ export type AudioDatabase = {
 
 let existingKeys: Map<string, SongKey> | null = null;
 const newSongKey = (() => {
-  const highestSongKey = persist.getItem('highestSongKey');
+  const highestSongKey = Persistence.getItem('highestSongKey');
   if (highestSongKey) {
     log(`highestSongKey: ${highestSongKey}`);
     return SeqNum('S', highestSongKey);
@@ -449,11 +449,11 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
 
     // Save
     await metadataCache.save();
-    await persist.setItemAsync(
+    await Persistence.setItemAsync(
       'songHashIndex',
       Pickle(new Map([...dbSongs.values()].map((val) => [val.path, val.key]))),
     );
-    await persist.setItemAsync('highestSongKey', newSongKey());
+    await Persistence.setItemAsync('highestSongKey', newSongKey());
   }
 
   /*
@@ -464,7 +464,7 @@ export async function MakeAudioDatabase(): Promise<AudioDatabase> {
 
   // Get the list of existing paths to song-keys
   const songHash = Unpickle(
-    (await persist.getItemAsync('songHashIndex')) || '',
+    (await Persistence.getItemAsync('songHashIndex')) || '',
   );
   existingKeys = Type.isMapOfStrings(songHash)
     ? songHash

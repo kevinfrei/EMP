@@ -18,27 +18,29 @@ import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
 import { AlbumCoverCache } from './ImageCache';
 import { getMusicDB, saveMusicDB } from './MusicAccess';
 import { MusicDB } from './MusicScanner';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
-  return (await persist.getItemAsync('downloadAlbumArtwork')) === 'true';
+  return (await Persistence.getItemAsync('downloadAlbumArtwork')) === 'true';
 }
 
 // TODO: This isn't used anywhere... yet...
 // eslint-disable-next-line
 async function shouldDownloadArtistArtwork(): Promise<boolean> {
-  return (await persist.getItemAsync('downloadArtistArtwork')) === 'true';
+  return (await Persistence.getItemAsync('downloadArtistArtwork')) === 'true';
 }
 
 async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
-  return (await persist.getItemAsync('saveAlbumArtworkWithMusic')) === 'true';
+  return (
+    (await Persistence.getItemAsync('saveAlbumArtworkWithMusic')) === 'true'
+  );
 }
 
 async function albumCoverName(): Promise<string> {
-  const val = await persist.getItemAsync('albumCoverName');
+  const val = await Persistence.getItemAsync('albumCoverName');
   return val || '.CoverArt';
 }
 
@@ -68,7 +70,7 @@ async function LookForAlbum(
 
   // Let's see if we should stop looking for this album
   const bailData =
-    (await persist.getItemAsync('noMoreLooking')) ||
+    (await Persistence.getItemAsync('noMoreLooking')) ||
     '{"@dataType":"Set","@dataValue":[]}';
   const skip = SafelyUnpickle(bailData, Type.isSetOfString);
   if (Type.isSetOfString(skip) && skip.has(albTrim)) {
@@ -103,7 +105,7 @@ async function LookForAlbum(
   // Record the failure, so we stop looking...
   const newSkip: Set<string> = Type.isSetOfString(skip) ? skip : new Set();
   newSkip.add(albTrim);
-  await persist.setItemAsync('noMoreLooking', Pickle(newSkip));
+  await Persistence.setItemAsync('noMoreLooking', Pickle(newSkip));
 }
 
 export async function picBufProcessor(

@@ -11,7 +11,7 @@ import { Attributes, FullMetadata } from '@freik/media-core';
 import { Metadata as MD } from '@freik/media-utils';
 import { getMusicDB } from './MusicAccess';
 import { UpdateSongMetadata } from './MusicScanner';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 const log = MakeLogger('metadata');
 const err = MakeError('metadata-err');
@@ -230,13 +230,13 @@ function MakeMetadataStore(name: string) {
       fails: [...stopTrying],
     };
     dirty = false;
-    await persist.setItemAsync(name, Pickle(valueToSave));
+    await Persistence.setItemAsync(name, Pickle(valueToSave));
   }
   async function load() {
     if (loaded) {
       return true;
     }
-    const fromFile = await persist.getItemAsync(name);
+    const fromFile = await Persistence.getItemAsync(name);
     if (!fromFile) {
       log('MDS File Not Found: Empty store!');
       // Don't keep trying to load an empty file :)

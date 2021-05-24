@@ -1,12 +1,12 @@
 import { MakeLogger, Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 const log = MakeLogger('SongLikesAndHates'); // eslint-disable-line
 
 async function getSongPrefs(which: string): Promise<SongKey[]> {
   log('getSongPrefs');
-  const songList = await persist.getItemAsync(which);
+  const songList = await Persistence.getItemAsync(which);
   if (Type.isString(songList)) {
     return songList.split('\n');
   }
@@ -31,10 +31,10 @@ export async function setSongLikes(keys: SongKey[]): Promise<void> {
     hates.delete(nu);
   }
   if (likes.size !== likeCount) {
-    await persist.setItemAsync('likes', [...likes.keys()].join('\n'));
+    await Persistence.setItemAsync('likes', [...likes.keys()].join('\n'));
   }
   if (hates.size !== hateCount) {
-    await persist.setItemAsync('hates', [...hates.keys()].join('\n'));
+    await Persistence.setItemAsync('hates', [...hates.keys()].join('\n'));
   }
 }
 
@@ -48,10 +48,10 @@ export async function setSongHates(keys: SongKey[]): Promise<void> {
     hates.add(nu);
   }
   if (likes.size !== likeCount) {
-    await persist.setItemAsync('likes', [...likes.keys()].join('\n'));
+    await Persistence.setItemAsync('likes', [...likes.keys()].join('\n'));
   }
   if (hates.size !== hateCount) {
-    await persist.setItemAsync('hates', [...hates.keys()].join('\n'));
+    await Persistence.setItemAsync('hates', [...hates.keys()].join('\n'));
   }
 }
 
@@ -62,7 +62,7 @@ export async function clearSongLikes(keys: SongKey[]): Promise<void> {
     likes.delete(nu);
   }
   if (likes.size !== likeCount) {
-    await persist.setItemAsync('likes', [...likes.keys()].join('\n'));
+    await Persistence.setItemAsync('likes', [...likes.keys()].join('\n'));
   }
 }
 
@@ -73,6 +73,6 @@ export async function clearSongHates(keys: SongKey[]): Promise<void> {
     hates.delete(nu);
   }
   if (hates.size !== hateCount) {
-    await persist.setItemAsync('hates', [...hates.keys()].join('\n'));
+    await Persistence.setItemAsync('hates', [...hates.keys()].join('\n'));
   }
 }

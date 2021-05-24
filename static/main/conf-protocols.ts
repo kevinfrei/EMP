@@ -6,7 +6,7 @@ import path from 'path';
 import { picBufProcessor } from './cover-art';
 import { getMusicDB } from './MusicAccess';
 import { UpdateDB } from './MusicUpdates';
-import * as persist from './persist';
+import { Persistence } from './persist';
 
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
@@ -126,5 +126,5 @@ export function configureProtocols(): void {
 // This sets up reactive responses to changes, for example:
 // locations change, so music needs to be rescanned
 export function configureListeners(): void {
-  persist.subscribe('locations', UpdateDB);
+  Persistence.subscribe('locations', UpdateDB);
 }
