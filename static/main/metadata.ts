@@ -106,6 +106,7 @@ const fullMetadataKeys: Map<string, (obj: unknown) => boolean> = new Map<
   ['moreArtists', Type.isArrayOfString],
   ['variations', Type.isArrayOfString],
   ['disk', Type.isNumber],
+  ['diskName', Type.isString],
 ]);
 
 const mandatoryMetadataKeys: string[] = [
