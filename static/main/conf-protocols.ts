@@ -97,24 +97,18 @@ function registerProtocolHandler<ResponseType>(
 }
 
 // This sets up all protocol handlers
-export function configureProtocols(): void {
-  getDefaultPicBuffer()
-    .then((val) =>
-      // TODO: Enable both song & album pictures
-      // folder-level photos are fine, but for song requests, check the song
-      // then fall back to the album
-      registerProtocolHandler(
-        'pic://album/',
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        protocol.registerBufferProtocol,
-        picBufProcessor,
-        val,
-      ),
-    )
-    .catch((reason) => {
-      log('Unable to register pic:// handling');
-      log(reason);
-    });
+export async function configureProtocols(): Promise<void> {
+  const defPicBuffer = await getDefaultPicBuffer();
+  // TODO: Enable both song & album pictures
+  // folder-level photos are fine, but for song requests, check the song
+  // then fall back to the album
+  registerProtocolHandler(
+    'pic://album/',
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    protocol.registerBufferProtocol,
+    picBufProcessor,
+    defPicBuffer,
+  );
   registerProtocolHandler(
     'tune://song/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
