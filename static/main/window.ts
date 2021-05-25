@@ -1,4 +1,4 @@
-import { MakeError, Type } from '@freik/core-utils';
+import { DebouncedEvery, MakeError, Type } from '@freik/core-utils';
 import { BrowserWindow, dialog, screen } from 'electron';
 import isDev from 'electron-is-dev';
 import { OpenDialogOptions } from 'electron/main';
@@ -34,8 +34,25 @@ export function SendToMain(channel: string, ...data: any[]): void {
 
 const windowPos: WindowPosition = LoadWindowPos();
 
-export function CreateWindow(windowCreated: OnWindowCreated): void {
-  configureProtocols();
+// This will get called after a 1 second delay (and subsequent callers will
+// not be registered if one is waiting) to not be so aggressive about saving
+// the window position to disk
+const windowPosUpdated = DebouncedEvery(() => {
+  // Get the window state & save it
+  if (mainWindow) {
+    windowPos.isMaximized = mainWindow.isMaximized();
+    if (!windowPos.isMaximized) {
+      // only update bounds if the window isn’t currently maximized
+      windowPos.bounds = mainWindow.getBounds();
+    }
+    SaveWindowPos(windowPos);
+  }
+}, 1000);
+
+export async function CreateWindow(
+  windowCreated: OnWindowCreated,
+): Promise<void> {
+  await configureProtocols();
   configureListeners();
   // Create the window, but don't show it just yet
   mainWindow = new BrowserWindow({
@@ -54,59 +71,43 @@ export function CreateWindow(windowCreated: OnWindowCreated): void {
     autoHideMenuBar: true,
     minWidth: 270,
     minHeight: 308,
-  });
+  })
+    .on('closed', () => {
+      // Clear the reference to the window object.
+      // Usually you would store windows in an array.
+      // If your app supports multiple windows, this is the time when you should
+      // delete the corresponding element.
+      mainWindow = null;
+    })
+    .on('ready-to-show', () => {
+      // Wait to show the main window until it's actually ready...
+      if (mainWindow) {
+        mainWindow.show();
+        mainWindow.focus();
+        // TODO: On Mac, there's 'full screen max' and then 'just big'
+        // This code makes full screen max turn into just big
+        if (windowPos.isMaximized) {
+          mainWindow.maximize();
+        }
+        // Call the user specified "ready to go" function
+        windowCreated().catch(err);
+      }
+    })
+    // Save the window position when it's changed:
+    .on('resize', windowPosUpdated)
+    .on('move', windowPosUpdated)
+    .on('close', windowPosUpdated);
 
   // Load the base URL
-  mainWindow
-    .loadURL(
-      isDev
-        ? 'http://localhost:3000'
-        : // If this file moves, you have to fix this to make it work for release
-          `file://${path.join(__dirname, '../index.html')}`,
-    )
-    .catch(err);
+  await mainWindow.loadURL(
+    isDev
+      ? 'http://localhost:3000'
+      : // If this file moves, you have to fix this to make it work for release
+        `file://${path.join(__dirname, '../index.html')}`,
+  );
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
-
-  mainWindow.on('closed', () => {
-    // Clear the reference to the window object.
-    // Usually you would store windows in an array.
-    // If your app supports multiple windows, this is the time when you should
-    // delete the corresponding element.
-    mainWindow = null;
-  });
-
-  // Wait to show the main window until it's actually ready...
-  mainWindow.on('ready-to-show', () => {
-    if (mainWindow) {
-      mainWindow.show();
-      mainWindow.focus();
-      // TODO: On Mac, there's 'full screen max' and then 'just big'
-      // This code makes full screen max turn into just big
-      if (windowPos.isMaximized) {
-        mainWindow.maximize();
-      }
-      // Call the user specified "ready to go" function
-      windowCreated().catch(err);
-    }
-  });
-
-  const updateWindowPos = () => {
-    // Get the window state & save it
-    if (mainWindow) {
-      windowPos.isMaximized = mainWindow.isMaximized();
-      if (!windowPos.isMaximized) {
-        // only update bounds if the window isn’t currently maximized
-        windowPos.bounds = mainWindow.getBounds();
-      }
-      SaveWindowPos(windowPos);
-    }
-  };
-
-  mainWindow.on('resize', updateWindowPos);
-  mainWindow.on('move', updateWindowPos);
-  mainWindow.on('close', updateWindowPos);
 }
 
 let prevWidth = 0;
