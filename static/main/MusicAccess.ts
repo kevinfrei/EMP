@@ -1,6 +1,7 @@
 import {
   MakeError,
   MakeLogger,
+  Operations,
   Pickle,
   UnsafelyUnpickle,
 } from '@freik/core-utils';
@@ -15,7 +16,6 @@ import {
   MediaKey,
   SongKey,
 } from '@freik/media-core';
-import { AudioDatabase, MakeAudioDatabase } from './AudioDatabase';
 import { getMediaInfo } from './metadata';
 import { MusicDB, MusicIndex, SearchResults, ServerSong } from './MusicScanner';
 import { Persistence } from './persist';
@@ -25,8 +25,6 @@ const err = MakeError('MusicAccess-err');
 
 let theMusicDatabase: MusicDB | null = null;
 let theMusicIndex: MusicIndex | null = null;
-
-let theAudioDatabase: AudioDatabase | null = null;
 
 /**
  * Read the Music Database *from persistence*. This does *not* re-scan locations
@@ -64,14 +62,6 @@ export async function getMusicDB(): Promise<MusicDB | void> {
   } else {
     return theMusicDatabase;
   }
-}
-
-export async function getAudioDatabase(): Promise<AudioDatabase> {
-  if (!theAudioDatabase) {
-    theAudioDatabase = await MakeAudioDatabase();
-    theAudioDatabase.load();
-  }
-  return theAudioDatabase;
 }
 
 export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
@@ -150,16 +140,6 @@ export function setMusicIndex(index: MusicIndex): void {
   theMusicIndex = index;
 }
 
-function intersect<T>(a: Set<T>, b: Iterable<T>): Set<T> {
-  const res: Set<T> = new Set();
-  for (const i of b) {
-    if (a.has(i)) {
-      res.add(i);
-    }
-  }
-  return res;
-}
-
 /**
  * @param  {boolean} substr - true for mid-word substring searches, false for
  * only 'starts with' search
@@ -182,9 +162,9 @@ function indexSearch(substr: boolean, terms: string): SearchResults {
       const sng = theMusicIndex.songs(t, substr);
       const alb = theMusicIndex.albums(t, substr);
       const art = theMusicIndex.artists(t, substr);
-      songs = first ? new Set(sng) : intersect(songs, sng);
-      albums = first ? new Set(alb) : intersect(albums, alb);
-      artists = first ? new Set(art) : intersect(artists, art);
+      songs = first ? new Set(sng) : Operations.SetIntersection(songs, sng);
+      albums = first ? new Set(alb) : Operations.SetIntersection(albums, alb);
+      artists = first ? new Set(art) : Operations.SetIntersection(artists, art);
       first = false;
     }
   }

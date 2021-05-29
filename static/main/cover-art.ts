@@ -28,10 +28,11 @@ async function shouldDownloadAlbumArtwork(): Promise<boolean> {
 }
 
 // TODO: This isn't used anywhere... yet...
-// eslint-disable-next-line
+/*
 async function shouldDownloadArtistArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadArtistArtwork')) === 'true';
 }
+*/
 
 async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
   return (

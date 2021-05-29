@@ -1,5 +1,5 @@
 import { MakeError, MakeLogger } from '@freik/core-utils';
-import { app, globalShortcut } from 'electron';
+import { app } from 'electron';
 import isDev from 'electron-is-dev';
 import { makeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
@@ -20,9 +20,11 @@ function registerGlobalShortcuts() {
 }
 
 function unregisterGlobalShortcuts() {
+  /*
   globalShortcut.unregister('MediaNextTrack');
   globalShortcut.unregister('MediaPreviousTrack');
   globalShortcut.unregister('MediaPlayPause');
+  */
 }
 
 async function WhenReady(windowCreated: OnWindowCreated) {
@@ -55,13 +57,11 @@ export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
 
   // Quit when all windows are closed.
   app
-    .on('window-all-closed', () => {
-      // On macOS it is common for applications and their menu bar
-      // to stay active until the user quits explicitly with Cmd + Q
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
-    })
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    // But tough crap: This feels more sensible
+    // if (process.platform !== 'darwin') {
+    .on('window-all-closed', () => app.quit())
     .on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
@@ -69,7 +69,7 @@ export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
         CreateWindow(windowCreated).catch(err);
       }
     })
-    .on('will-quit', () => unregisterGlobalShortcuts());
+    .on('will-quit', unregisterGlobalShortcuts);
 
   await WhenReady(windowCreated);
   registerGlobalShortcuts();

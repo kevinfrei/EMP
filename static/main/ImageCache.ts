@@ -15,7 +15,6 @@ function MakeImageStore<T>(
   name: string,
   keyLookup: (key: T) => Promise<string>,
 ): ImageCache<T> {
-  //  const artSN = SeqNum('ART');
   const imageStoreDir = path.join(app.getPath('userData'), name);
   const thePath = async (key: T): Promise<string> => {
     try {

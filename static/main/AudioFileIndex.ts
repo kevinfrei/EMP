@@ -1,31 +1,10 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import electronIsDev from 'electron-is-dev';
+import { MakeError } from '@freik/core-utils';
 import { Dirent, promises as fsp } from 'fs';
 import path from 'path';
-import { h32 } from 'xxhashjs';
 
-// eslint-disable-next-line
-const log = MakeLogger('MusicFragment', false && electronIsDev);
 const err = MakeError('MusicFragment-err');
 
 const existingSongKeys = new Map<number, [string, string]>();
-
-function getSongKey(prefix: string, fragmentNum: number, songPath: string) {
-  if (songPath.startsWith(prefix)) {
-    let hash = h32(songPath, fragmentNum).toNumber();
-    while (existingSongKeys.has(hash)) {
-      const val = existingSongKeys.get(hash);
-      if (Type.isArray(val) && val[0] === prefix && songPath === val[1]) {
-        break;
-      }
-      err(`songKey hash collision: "${songPath}"`);
-      hash = h32(songPath, hash).toNumber();
-    }
-    existingSongKeys.set(hash, [prefix, songPath]);
-    return `S${hash.toString(36)}`;
-  }
-  throw Error(`Invalid prefix ${prefix} for songPath ${songPath}`);
-}
 
 const audioTypes = new Set(['.flac', '.mp3', '.aac', '.m4a']);
 const imageTypes = new Set(['.png', '.jpg', '.jpeg']);
@@ -43,23 +22,6 @@ function isOfType(
 const isMusicType = (filename: string) => isOfType(filename, audioTypes);
 // Hidden images are fine for cover art (actually, maybe preferred!
 const isImageType = (filename: string) => isOfType(filename, imageTypes, true);
-
-function getSharedPrefix(paths: string[]): string {
-  let curPrefix: string | null = null;
-  for (const filePath of paths) {
-    if (curPrefix === null) {
-      curPrefix = filePath;
-    } else {
-      while (!filePath.startsWith(curPrefix)) {
-        curPrefix = curPrefix.substr(0, curPrefix.length - 1);
-      }
-      if (curPrefix.length === 0) {
-        return '';
-      }
-    }
-  }
-  return curPrefix || '';
-}
 
 // An "audio data fragment" is a list of files and metadata info.
 // The idea is that it should be a handful of files to read, instead of an
