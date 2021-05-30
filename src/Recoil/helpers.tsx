@@ -1,5 +1,11 @@
 import { IDetailsList } from '@fluentui/react';
-import { MakeError, MakeLogger, Pickle, Unpickle } from '@freik/core-utils';
+import {
+  MakeError,
+  MakeLogger,
+  Pickle,
+  Type,
+  Unpickle,
+} from '@freik/core-utils';
 import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
 import {
   AtomEffect,
@@ -100,6 +106,67 @@ export function translateToMainEffect<T>(
         );
       }
     });
+  };
+}
+
+export function oneWayFromMainEffect<T>(
+  get: () => T | Promise<T>,
+  asyncKey: string,
+  asyncHandler: (data: any) => T | undefined,
+): AtomEffect<T>;
+export function oneWayFromMainEffect<T>(
+  get: () => T | Promise<T>,
+): AtomEffect<T>;
+
+export function oneWayFromMainEffect<T>(
+  get: () => T | Promise<T>,
+  asyncKey?: string,
+  asyncHandler?: (data: any) => T | undefined,
+): AtomEffect<T> {
+  return ({
+    node,
+    trigger,
+    setSelf,
+    onSet,
+  }: AtomEffectParams<T>): (() => void) | void => {
+    if (trigger === 'get') {
+      const res = get();
+      if (!Type.isPromise(res)) {
+        setSelf(res);
+      } else {
+        res
+          .then(setSelf)
+          .catch(onRejected(`${node.key} Get failed in oneWayFromMain`));
+      }
+    }
+    let lKey: ListenKey | null = null;
+    if (asyncKey && asyncHandler) {
+      lKey = Subscribe(asyncKey, (val: unknown) => {
+        const theRightType = asyncHandler(val);
+        if (theRightType) {
+          log(`Async data for ${node.key}:`);
+          log(theRightType);
+          setSelf(theRightType);
+        } else {
+          err(`Async invalid data received for ${node.key}:`);
+          err(val);
+        }
+      });
+    }
+    onSet((newVal, oldVal) => {
+      if (newVal instanceof DefaultValue) {
+        return;
+      }
+      throw Error(`Invalid assignment to server-side-only atom ${node.key}`);
+    });
+    if (asyncKey) {
+      return () => {
+        if (lKey) {
+          log(`Unsubscribing listener for ${asyncKey}`);
+          Unsubscribe(lKey);
+        }
+      };
+    }
   };
 }
 
@@ -243,6 +310,7 @@ export function keyboardHook<T extends KeyEventType>(
       set(filterState, (curVal) => (clear ? ev.key : curVal + ev.key));
     };
 }
+
 export function kbHook<T extends KeyEventType>(
   filterState: RecoilState<string>,
   listRef: IDetailsList | null,

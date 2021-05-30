@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { MakeLogger } from '@freik/core-utils';
+import { MakeLogger, SafelyUnpickle, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -8,11 +8,13 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { FlatAudioDatabase } from 'audio-database';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
+import { InvokeMain } from '../MyWindow';
 import { Catch, Fail } from '../Tools';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
-import { syncWithMainEffect } from './helpers';
+import { oneWayFromMainEffect } from './helpers';
 import { songListState } from './Local';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
@@ -50,6 +52,53 @@ type AlbumMap = Map<AlbumKey, Album>;
 type ArtistMap = Map<ArtistKey, Artist>;
 type MusicLibrary = { songs: SongMap; albums: AlbumMap; artists: ArtistMap };
 
+function isSong(sng: unknown): sng is Song {
+  return (
+    Type.hasStr(sng, 'key') &&
+    Type.hasType(sng, 'track', Type.isNumber) &&
+    Type.hasStr(sng, 'title') &&
+    Type.hasStr(sng, 'albumId') &&
+    Type.hasType(sng, 'artistIds', Type.isArrayOfString) &&
+    Type.hasType(sng, 'secondaryIds', Type.isArrayOfString) &&
+    (!Type.has(sng, 'variations') ||
+      Type.hasType(sng, 'variations', Type.isArrayOfString))
+  );
+}
+
+function isAlbum(alb: unknown): alb is Album {
+  return (
+    Type.hasStr(alb, 'key') &&
+    Type.hasType(alb, 'year', Type.isNumber) &&
+    Type.hasStr(alb, 'title') &&
+    (!Type.hasStr(alb, 'vatype') ||
+      alb.vatype === '' ||
+      alb.vatype === 'ost' ||
+      alb.vatype === 'va') &&
+    Type.hasType(alb, 'primaryArtists', Type.isArrayOfString) &&
+    Type.hasType(alb, 'aongs', Type.isArrayOfString)
+  );
+}
+
+function isArtist(art: unknown): art is Artist {
+  return (
+    Type.hasStr(art, 'key') &&
+    Type.hasStr(art, 'name') &&
+    Type.hasType(art, 'albums', Type.isArrayOfString) &&
+    Type.hasType(art, 'songs', Type.isArrayOfString)
+  );
+}
+
+function IsFlatAudioDatabase(val: unknown): val is FlatAudioDatabase {
+  return (
+    Type.has(val, 'songs') &&
+    Type.isArrayOf(val.songs, isSong) &&
+    Type.has(val, 'albums') &&
+    Type.isArrayOf(val.albums, isAlbum) &&
+    Type.has(val, 'artists') &&
+    Type.isArrayOf(val.artists, isArtist)
+  );
+}
+
 const musicLibraryState = atom<MusicLibrary>({
   key: 'musicDatabase',
   default: {
@@ -57,7 +106,35 @@ const musicLibraryState = atom<MusicLibrary>({
     albums: new Map<AlbumKey, Album>(),
     artists: new Map<ArtistKey, Artist>(),
   },
-  effects_UNSTABLE: [syncWithMainEffect(true)],
+  effects_UNSTABLE: [
+    oneWayFromMainEffect(
+      async (): Promise<MusicLibrary> => {
+        const res = await InvokeMain('get-music-database');
+        if (res) {
+          const ml = SafelyUnpickle(res, IsFlatAudioDatabase);
+          if (ml !== undefined) {
+            return {
+              songs: new Map(ml.songs.map((swp) => [swp.key, swp])),
+              albums: new Map(ml.albums.map((alb) => [alb.key, alb])),
+              artists: new Map(ml.artists.map((art) => [art.key, art])),
+            };
+          }
+        }
+        throw Error(`Invalid value coming from get-music-database`);
+      },
+      'music-database-update',
+      (data: unknown) => {
+        const ml = SafelyUnpickle(data, IsFlatAudioDatabase);
+        if (ml !== undefined) {
+          return {
+            songs: new Map(ml.songs.map((swp) => [swp.key, swp])),
+            albums: new Map(ml.albums.map((alb) => [alb.key, alb])),
+            artists: new Map(ml.artists.map((art) => [art.key, art])),
+          };
+        }
+      },
+    ),
+  ],
 });
 
 export const allSongsState = selector<SongMap>({

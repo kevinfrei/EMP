@@ -3,9 +3,9 @@ import { SongKey } from '@freik/media-core';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { UpdateAudioLocations } from './AudioDatabase';
 import { picBufProcessor } from './cover-art';
 import { getMusicDB } from './MusicAccess';
-import { UpdateDB } from './MusicUpdates';
 import { Persistence } from './persist';
 
 export type FileResponse = string | ProtocolResponse;
@@ -120,5 +120,5 @@ export async function configureProtocols(): Promise<void> {
 // This sets up reactive responses to changes, for example:
 // locations change, so music needs to be rescanned
 export function configureListeners(): void {
-  Persistence.subscribe('locations', UpdateDB);
+  Persistence.subscribe('locations', UpdateAudioLocations);
 }

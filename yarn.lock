@@ -3107,6 +3107,16 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
+"audio-database@git+https://github.com/kevinfrei/audio-database.git":
+  version "0.0.1"
+  resolved "git+https://github.com/kevinfrei/audio-database.git#3a0330c76a7e8b2419c5f361cee917502a1e9cab"
+  dependencies:
+    "@freik/core-utils" "^0.24.0"
+    "@freik/media-core" "^0.5.1"
+    "@freik/media-utils" "^0.11.0"
+    "@freik/node-utils" "^0.14.6"
+    xxhashjs "^0.2.2"
+
 autoprefixer@^9.6.1:
   version "9.8.6"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-9.8.6.tgz#3b73594ca1bf9266320c5acf1588d74dea74210f"

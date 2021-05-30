@@ -2,6 +2,7 @@ import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
+import { getSimpleMusicDatabase } from './AudioDatabase';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { FlushImageCache } from './ImageCache';
 import { isOnlyMetadata, setMediaInfoForSong } from './metadata';
@@ -172,6 +173,7 @@ export function CommsSetup(): void {
   registerChannel('write-to-storage', writeToStorage, isKeyValue);
 
   // "complex" API's (not just save/restore data to the persist cache)
+  registerChannel('get-music-database', getSimpleMusicDatabase, isVoid);
   registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
   registerChannel('media-info', getMediaInfoForSong, Type.isString);
   registerChannel('flush-image-cache', FlushImageCache, isVoid);
