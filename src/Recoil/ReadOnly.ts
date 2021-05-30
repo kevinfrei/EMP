@@ -59,9 +59,9 @@ function isSong(sng: unknown): sng is Song {
     Type.hasStr(sng, 'title') &&
     Type.hasStr(sng, 'albumId') &&
     Type.hasType(sng, 'artistIds', Type.isArrayOfString) &&
-    Type.hasType(sng, 'secondaryIds', Type.isArrayOfString) &&
-    (!Type.has(sng, 'variations') ||
-      Type.hasType(sng, 'variations', Type.isArrayOfString))
+    (!Type.has(sng, 'secondaryIds') ||
+      Type.isArrayOfString(sng.secondaryIds)) &&
+    (!Type.has(sng, 'variations') || Type.isArrayOfString(sng.variations))
   );
 }
 
@@ -75,7 +75,7 @@ function isAlbum(alb: unknown): alb is Album {
       alb.vatype === 'ost' ||
       alb.vatype === 'va') &&
     Type.hasType(alb, 'primaryArtists', Type.isArrayOfString) &&
-    Type.hasType(alb, 'aongs', Type.isArrayOfString)
+    Type.hasType(alb, 'songs', Type.isArrayOfString)
   );
 }
 
@@ -124,14 +124,16 @@ const musicLibraryState = atom<MusicLibrary>({
       },
       'music-database-update',
       (data: unknown) => {
-        const ml = SafelyUnpickle(data, IsFlatAudioDatabase);
-        if (ml !== undefined) {
+        if (IsFlatAudioDatabase(data)) {
+          const ml = data;
           return {
             songs: new Map(ml.songs.map((swp) => [swp.key, swp])),
             albums: new Map(ml.albums.map((alb) => [alb.key, alb])),
             artists: new Map(ml.artists.map((art) => [art.key, art])),
           };
         }
+        err('Invalid result from music-database-update:');
+        err(data);
       },
     ),
   ],

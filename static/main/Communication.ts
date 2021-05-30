@@ -2,7 +2,7 @@ import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
-import { getSimpleMusicDatabase } from './AudioDatabase';
+import { getSimpleMusicDatabase, RescanAudioDatase } from './AudioDatabase';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { FlushImageCache } from './ImageCache';
 import { isOnlyMetadata, setMediaInfoForSong } from './metadata';
@@ -12,7 +12,6 @@ import {
   searchSubstring,
   searchWholeWord,
 } from './MusicAccess';
-import { RescanDB } from './MusicUpdates';
 import { Persistence } from './persist';
 import {
   checkPlaylists,
@@ -177,7 +176,7 @@ export function CommsSetup(): void {
   registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
   registerChannel('media-info', getMediaInfoForSong, Type.isString);
   registerChannel('flush-image-cache', FlushImageCache, isVoid);
-  registerChannel('manual-rescan', RescanDB, isVoid);
+  registerChannel('manual-rescan', RescanAudioDatase, isVoid);
   registerChannel('show-file', showFile, Type.isString);
   registerChannel('show-location-from-key', showLocFromKey, Type.isString);
   registerChannel('set-media-info', setMediaInfoForSong, isOnlyMetadata);

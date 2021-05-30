@@ -8,10 +8,11 @@ import {
 } from '@freik/core-utils';
 import { AudioDatabase, MakeAudioDatabase } from 'audio-database';
 import electronIsDev from 'electron-is-dev';
+import { asyncSend } from './Communication';
 import { Persistence } from './persist';
 
 // eslint-disable-next-line
-const log = MakeLogger('AudioDatabase', false && electronIsDev);
+const log = MakeLogger('AudioDatabase', true && electronIsDev);
 // eslint-disable-next-line
 const err = MakeError('AudioDatabase-err');
 
@@ -29,6 +30,16 @@ export async function getSimpleMusicDatabase(): Promise<string> {
   return Pickle(db.getFlatDatabase());
 }
 
+export async function RescanAudioDatase(): Promise<void> {
+  const db = await GetAudioDB();
+  log('Rescanning the DB');
+  await db.refresh();
+  log('Rescanning complete');
+  const flat = db.getFlatDatabase();
+  log(flat);
+  asyncSend({ 'music-database-update': flat });
+}
+
 async function UpdateLocations(locs: string): Promise<void> {
   try {
     const locations = SafelyUnpickle(locs, Type.isArrayOfString);
@@ -37,13 +48,18 @@ async function UpdateLocations(locs: string): Promise<void> {
     }
     const db = await GetAudioDB();
     const existingLocations = db.getLocations();
+    const add = Operations.SetDifference(new Set(locations), existingLocations);
     const remove = Operations.SetDifference(
-      new Set(locations),
-      existingLocations,
+      new Set(existingLocations),
+      locations,
     );
-    const add = Operations.SetDifference(new Set(existingLocations), locations);
+    log('Adding:');
+    log(add);
+    log('removing:');
+    log(remove);
     await Promise.all([...remove].map((loc) => db.removeFileLocation(loc)));
     await Promise.all([...add].map((loc) => db.addFileLocation(loc)));
+    await RescanAudioDatase();
   } catch (e) {
     err(e);
   }
