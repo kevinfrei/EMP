@@ -175,30 +175,14 @@ async function SavePicForAlbum(
         if (coverName.startsWith('.')) {
           await hideFile(albumPath);
         }
-        log('And, saved it to disk!');
-        await db.setAlbumPicture(album.key, albumPath);
-        // Delay saving the Music DB, so that we're not doing it a gazillion
-        // times during DB scanning
-        // TODO: Do we need to save?
-        /*
-        if (dbSaveDebounceTimer !== null) {
-          clearTimeout(dbSaveDebounceTimer);
-        }
-        dbSaveDebounceTimer = setTimeout(() => {
-          log('saving the DB to disk');
-          saveMusicDB(db).catch((rej) => log('Error saving'));
-        }, 1000);
-        return;*/
       } catch (e) {
         err('Saving picture failed :(');
         err(e);
       }
     }
   }
-  // We tried to save it with a song in the album, no such luck
-  // Save it in the cache
-  // TODO: Check in on this
-  // await AlbumCoverCache().put(data, album);
+  log('Saving to blob store');
+  await db.setAlbumPicture(album.key, data);
 }
 
 export type AlbumCoverData =
@@ -219,7 +203,6 @@ export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
   );
 }
 
-// TODO: Fix this to work properly...
 export async function SaveNativeImageForAlbum(
   arg: AlbumCoverData,
 ): Promise<string> {
@@ -236,7 +219,6 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  await db.setAlbumPicture(albumKey, "this-isn't-a-path");
-  //  await SavePicForAlbum(db, album, Buffer.from(arg.nativeImage));
+  await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
   return '';
 }

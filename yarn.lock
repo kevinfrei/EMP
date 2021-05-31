@@ -3107,9 +3107,9 @@ atob@^2.1.2:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-"audio-database@git+https://github.com/kevinfrei/audio-database.git":
-  version "0.0.1"
-  resolved "git+https://github.com/kevinfrei/audio-database.git#90c730b6f7c278b96578bab42fb49fcc40da6412"
+"audio-database@git+https://github.com/kevinfrei/audio-database.git#v0.1.0":
+  version "0.1.0"
+  resolved "git+https://github.com/kevinfrei/audio-database.git#4b31e9ef53395d03d5ca1ea0a40eca1814e9aad1"
   dependencies:
     "@freik/core-utils" "^0.24.0"
     "@freik/media-core" "^0.5.1"
