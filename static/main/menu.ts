@@ -1,4 +1,4 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import {
   app,
   BrowserWindow,
@@ -13,7 +13,6 @@ import { asyncSend } from './Communication';
 import { Persistence } from './persist';
 import { toggleMiniPlayer } from './window';
 
-const log = MakeLogger('menu', isDev);
 const err = MakeError('menu-err'); // eslint-disable-line
 
 type ClickHandler = (
@@ -187,7 +186,6 @@ export function makeMainMenu(): void {
   const helpItem: MenuItemConstructorOptions = action(
     `${app.name} help`,
     () => {
-      log('HERE!');
       void open('https://github.com/kevinfrei/EMP/wiki');
     },
   );
