@@ -158,3 +158,15 @@ export async function InvokeMain(
       return await MockWrite(key);
   }
 }
+
+export async function CallMain(
+  channel: string,
+  key?: string,
+): Promise<string | void> {
+  switch (channel) {
+    case 'read-from-storage':
+      return await MockRead(key);
+    case 'write-to-storage':
+      return await MockWrite(key);
+  }
+}

@@ -151,8 +151,6 @@ export async function picBufProcessor(
   return await getDefaultPicBuffer();
 }
 
-let dbSaveDebounceTimer: NodeJS.Timeout | null = null;
-
 async function SavePicForAlbum(
   db: AudioDatabase,
   album: Album,
@@ -247,8 +245,8 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  // TODO: THis is wrong
+  // TODO: This is wrong
   await db.setAlbumPicture(albumKey, "this-isn't-a-path");
   //  await SavePicForAlbum(db, album, Buffer.from(arg.nativeImage));
-  //  return '';
+  return '';
 }
