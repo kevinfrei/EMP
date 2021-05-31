@@ -35,7 +35,7 @@ export async function GetDefaultPicBuffer(): Promise<BufferResponse> {
 
 const e404 = { error: 404 };
 
-async function tuneProcessor(
+async function tuneProtocolHandler(
   req: ProtocolRequest,
   trimmedUrl: string,
 ): Promise<FileResponse> {
@@ -109,7 +109,7 @@ export async function RegisterProtocols(): Promise<void> {
     'tune://song/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerFileProtocol,
-    tuneProcessor,
+    tuneProtocolHandler,
   );
 }
 

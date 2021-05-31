@@ -30,7 +30,7 @@ function playlistPath(name: string): string {
   return path.join(playlistDir(), ToPathSafeName(name));
 }
 
-export async function renamePlaylist([curName, newName]: [
+export async function RenamePlaylist([curName, newName]: [
   string,
   string,
 ]): Promise<void> {
@@ -46,7 +46,7 @@ export async function renamePlaylist([curName, newName]: [
   }
 }
 
-export async function deletePlaylist(data: string): Promise<void> {
+export async function DeletePlaylist(data: string): Promise<void> {
   log('deletePlaylist');
   try {
     if (!data) throw exception('no data');
@@ -60,7 +60,7 @@ export async function deletePlaylist(data: string): Promise<void> {
   }
 }
 
-export async function getPlaylists(): Promise<string[]> {
+export async function GetPlaylists(): Promise<string[]> {
   log('getPlaylists');
   try {
     const res = await fsp.readdir(playlistDir());
@@ -88,7 +88,7 @@ export function isPlaylistSaveData(data: any): data is PlaylistSaveData {
   );
 }
 
-export async function savePlaylist(data: PlaylistSaveData): Promise<void> {
+export async function SavePlaylist(data: PlaylistSaveData): Promise<void> {
   log('savePlaylist');
   try {
     try {
@@ -107,7 +107,7 @@ export async function savePlaylist(data: PlaylistSaveData): Promise<void> {
   }
 }
 
-export async function loadPlaylist(data: string): Promise<string[]> {
+export async function LoadPlaylist(data: string): Promise<string[]> {
   log('loadPlaylist');
   try {
     const vals = await fsp.readFile(playlistPath(data), 'utf-8');
@@ -120,9 +120,9 @@ export async function loadPlaylist(data: string): Promise<string[]> {
   return [];
 }
 
-export async function checkPlaylists(names: string[]): Promise<void> {
+export async function CheckPlaylists(names: string[]): Promise<void> {
   log('checkPlaylists');
-  if (Operations.ArraySetEqual<string>(names, await getPlaylists())) {
+  if (Operations.ArraySetEqual<string>(names, await GetPlaylists())) {
     log("They're equal");
   } else {
     err('NOT equal :/');

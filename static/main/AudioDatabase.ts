@@ -49,11 +49,15 @@ export async function RescanAudioDatase(): Promise<void> {
   await db.refresh();
   log('Rescanning complete');
   const flat = db.getFlatDatabase();
-  log(flat);
+  log(
+    `${flat.songs.length} songs, ` +
+      `${flat.albums.length} albums,` +
+      `${flat.artists.length} artists`,
+  );
   AsyncSend({ 'music-database-update': flat });
 }
 
-async function UpdateLocations(locs: string): Promise<void> {
+export async function UpdateLocations(locs: string): Promise<void> {
   try {
     const locations = SafelyUnpickle(locs, Type.isArrayOfString);
     if (!locations) {

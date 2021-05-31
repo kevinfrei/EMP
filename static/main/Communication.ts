@@ -15,13 +15,13 @@ import {
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { Persistence } from './persist';
 import {
-  checkPlaylists,
-  deletePlaylist,
-  getPlaylists,
+  CheckPlaylists,
+  DeletePlaylist,
+  GetPlaylists,
   isPlaylistSaveData,
-  loadPlaylist,
-  renamePlaylist,
-  savePlaylist,
+  LoadPlaylist,
+  RenamePlaylist,
+  SavePlaylist,
 } from './playlists';
 import {
   clearSongHates,
@@ -196,12 +196,12 @@ export function CommsSetup(): void {
   registerChannel('search', SearchWholeWord, isStrOrUndef);
   registerChannel('subsearch', SearchSubstring, Type.isString);
 
-  registerChannel('load-playlist', loadPlaylist, Type.isString);
-  registerChannel('get-playlists', getPlaylists, isVoid);
-  registerChannel('set-playlists', checkPlaylists, Type.isArrayOfString);
-  registerChannel('rename-playlist', renamePlaylist, isKeyValue);
-  registerChannel('save-playlist', savePlaylist, isPlaylistSaveData);
-  registerChannel('delete-playlist', deletePlaylist, Type.isString);
+  registerChannel('load-playlist', LoadPlaylist, Type.isString);
+  registerChannel('get-playlists', GetPlaylists, isVoid);
+  registerChannel('set-playlists', CheckPlaylists, Type.isArrayOfString);
+  registerChannel('rename-playlist', RenamePlaylist, isKeyValue);
+  registerChannel('save-playlist', SavePlaylist, isPlaylistSaveData);
+  registerChannel('delete-playlist', DeletePlaylist, Type.isString);
 
   // These are implementing functionality not currently in
   // the audio-database module

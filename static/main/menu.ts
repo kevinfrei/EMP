@@ -76,142 +76,140 @@ function action(
   }
 }
 
-export function MakeMainMenu(): void {
-  const appMenu: MenuItemConstructorOptions = {
-    role: 'appMenu',
-    label: app.name,
-    submenu: [
-      { role: 'about' },
-      ___,
-      { role: 'services' },
-      ___,
-      { role: 'hide' },
-      { role: 'hideOthers' },
-      { role: 'unhide' },
-      ___,
-      { role: 'quit' },
-    ],
-  };
+const appMenu: MenuItemConstructorOptions = {
+  role: 'appMenu',
+  label: app.name,
+  submenu: [
+    { role: 'about' },
+    ___,
+    { role: 'services' },
+    ___,
+    { role: 'hide' },
+    { role: 'hideOthers' },
+    { role: 'unhide' },
+    ___,
+    { role: 'quit' },
+  ],
+};
 
-  const fileMenu: MenuItemConstructorOptions = {
-    role: 'fileMenu',
-    label: '&File',
-    submenu: [
-      xaction('Add F&ile Location', 'O', { state: 'addLocation' }),
-      ___,
-      isMac ? { role: 'close' } : { role: 'quit' },
-    ],
-  };
+const fileMenu: MenuItemConstructorOptions = {
+  role: 'fileMenu',
+  label: '&File',
+  submenu: [
+    xaction('Add F&ile Location', 'O', { state: 'addLocation' }),
+    ___,
+    isMac ? { role: 'close' } : { role: 'quit' },
+  ],
+};
 
-  const editMenu: MenuItemConstructorOptions = {
-    role: 'editMenu',
-    label: '&Edit',
-    submenu: [
-      { role: 'undo' },
-      { role: 'redo' },
-      ___,
-      { role: 'cut' },
-      { role: 'copy' },
-      { role: 'paste' },
-      { role: 'selectAll' },
-      ___,
-      xaction('F&ind', 'F', { state: 'find' }),
-    ],
-  };
-  const viewMenu: MenuItemConstructorOptions = {
-    label: '&View',
-    submenu: [
-      xaction('&Now Playing', '1', { state: 'view', select: 'NowPlaying' }),
-      ___,
-      xaction('A&lbums', '2', { state: 'view', select: 'Albums' }),
-      xaction('A&rtists', '3', { state: 'view', select: 'Artists' }),
-      xaction('&Songs', '4', { state: 'view', select: 'Songs' }),
-      xaction('&Playlists', '5', { state: 'view', select: 'Playlists' }),
-      xaction('Se&ttings', ',', { state: 'view', select: 'Settings' }),
-      ___,
-      xaction('M&iniPlayer', '9', ToggleMiniPlayer),
-    ],
-  };
-  const mediaMenu: MenuItemConstructorOptions = {
-    label: '&Media',
-    submenu: [
-      xaction('Pla&y', 'P', { state: 'playback' }),
-      xaction('Pre&vious Track', 'Left', { state: 'prevTrack' }),
-      xaction('Ne&xt Track', 'Right', { state: 'nextTrack' }),
-      ___,
-      xaction('Skip &Forward 10s', ']', { state: 'fwd' }),
-      xaction('Skip &Back 10s', '[', { state: 'back' }),
-      ___,
-      {
-        ...xaction('&Shuffle', 'S', { state: 'shuffle' }),
-        type: 'checkbox',
-      },
-      {
-        ...xaction('&Repeat', 'T', { state: 'repeat' }),
-        type: 'checkbox',
-      },
-      ___,
-      action('&Mute', { state: 'mute' }),
-      action('Volume &Up', { state: 'louder' }),
-      action('Volume &Down', { state: 'quieter' }),
-    ],
-  };
-  const windowMenu: MenuItemConstructorOptions = {
-    role: 'windowMenu',
-    label: '&Window',
-    submenu: isMac
-      ? [
-          { role: 'minimize' },
-          { role: 'zoom' },
-          ___,
-          { role: 'resetZoom' },
-          { role: 'zoomIn' },
-          { role: 'zoomOut' },
-          ___,
-          { role: 'togglefullscreen' },
-          ___,
-          { role: 'front' },
-        ]
-      : [
-          { role: 'minimize' },
-          { role: 'zoom' },
-          ___,
-          { role: 'resetZoom' },
-          { role: 'zoomIn' },
-          { role: 'zoomOut' },
-          ___,
-          { role: 'togglefullscreen' },
-        ],
-  };
-  const helpItem: MenuItemConstructorOptions = action(
-    `${app.name} help`,
-    () => {
-      void open('https://github.com/kevinfrei/EMP/wiki');
+const editMenu: MenuItemConstructorOptions = {
+  role: 'editMenu',
+  label: '&Edit',
+  submenu: [
+    { role: 'undo' },
+    { role: 'redo' },
+    ___,
+    { role: 'cut' },
+    { role: 'copy' },
+    { role: 'paste' },
+    { role: 'selectAll' },
+    ___,
+    xaction('F&ind', 'F', { state: 'find' }),
+  ],
+};
+const viewMenu: MenuItemConstructorOptions = {
+  label: '&View',
+  submenu: [
+    xaction('&Now Playing', '1', { state: 'view', select: 'NowPlaying' }),
+    ___,
+    xaction('A&lbums', '2', { state: 'view', select: 'Albums' }),
+    xaction('A&rtists', '3', { state: 'view', select: 'Artists' }),
+    xaction('&Songs', '4', { state: 'view', select: 'Songs' }),
+    xaction('&Playlists', '5', { state: 'view', select: 'Playlists' }),
+    xaction('Se&ttings', ',', { state: 'view', select: 'Settings' }),
+    ___,
+    xaction('M&iniPlayer', '9', ToggleMiniPlayer),
+  ],
+};
+const mediaMenu: MenuItemConstructorOptions = {
+  label: '&Media',
+  submenu: [
+    xaction('Pla&y', 'P', { state: 'playback' }),
+    xaction('Pre&vious Track', 'Left', { state: 'prevTrack' }),
+    xaction('Ne&xt Track', 'Right', { state: 'nextTrack' }),
+    ___,
+    xaction('Skip &Forward 10s', ']', { state: 'fwd' }),
+    xaction('Skip &Back 10s', '[', { state: 'back' }),
+    ___,
+    {
+      ...xaction('&Shuffle', 'S', { state: 'shuffle' }),
+      type: 'checkbox',
     },
-  );
-  const helpMenu: MenuItemConstructorOptions = {
-    //    role: 'help',
-    label: '&Help',
-    submenu: isMac ? [helpItem] : [helpItem, ___, { role: 'about' }],
-  };
-  const dbgMenu: MenuItemConstructorOptions = {
-    label: '&Debug',
-    submenu: [
-      { role: 'reload' },
-      { role: 'forceReload' },
-      { role: 'toggleDevTools' },
-    ],
-  };
+    {
+      ...xaction('&Repeat', 'T', { state: 'repeat' }),
+      type: 'checkbox',
+    },
+    ___,
+    action('&Mute', { state: 'mute' }),
+    action('Volume &Up', { state: 'louder' }),
+    action('Volume &Down', { state: 'quieter' }),
+  ],
+};
+const windowMenu: MenuItemConstructorOptions = {
+  role: 'windowMenu',
+  label: '&Window',
+  submenu: isMac
+    ? [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        ___,
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        ___,
+        { role: 'togglefullscreen' },
+        ___,
+        { role: 'front' },
+      ]
+    : [
+        { role: 'minimize' },
+        { role: 'zoom' },
+        ___,
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        ___,
+        { role: 'togglefullscreen' },
+      ],
+};
+const helpItem: MenuItemConstructorOptions = action(`${app.name} help`, () => {
+  void open('https://github.com/kevinfrei/EMP/wiki');
+});
+const helpMenu: MenuItemConstructorOptions = {
+  //    role: 'help',
+  label: '&Help',
+  submenu: isMac ? [helpItem] : [helpItem, ___, { role: 'about' }],
+};
+const dbgMenu: MenuItemConstructorOptions = {
+  label: '&Debug',
+  submenu: [
+    { role: 'reload' },
+    { role: 'forceReload' },
+    { role: 'toggleDevTools' },
+  ],
+};
 
-  const template: MenuItemConstructorOptions[] = [
-    appMenu,
-    fileMenu,
-    editMenu,
-    viewMenu,
-    mediaMenu,
-    windowMenu,
-    helpMenu,
-  ];
+const template: MenuItemConstructorOptions[] = [
+  appMenu,
+  fileMenu,
+  editMenu,
+  viewMenu,
+  mediaMenu,
+  windowMenu,
+  helpMenu,
+];
+
+export function MakeMainMenu(): void {
   if (!isMac) {
     // Rip off the appMenu for non-Mac
     template.shift();
@@ -239,17 +237,18 @@ export function MakeMainMenu(): void {
     }
   });
   Persistence.subscribe('CurrentView', (val: string) => {
-    const views = [
+    [
       ['now playing', '6'],
       ['albums', '2'],
       ['artists', '3'],
       ['songs', '4'],
       ['playlists', '5'],
       ['settings', '7'],
-    ].map(([id, idx]) => [menu.getMenuItemById(id), idx]);
-    views.forEach(([mnu, idx]) => {
-      (mnu as MenuItem).enabled = idx !== val;
-    });
+    ]
+      .map(([id, idx]): [MenuItem, string] => [menu.getMenuItemById(id), idx])
+      .forEach(([mnu, idx]) => {
+        mnu.enabled = idx !== val;
+      });
   });
 
   // Toggle mute/adjust vol up/dn
