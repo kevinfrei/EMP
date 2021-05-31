@@ -101,15 +101,15 @@ export function UnsubscribeMediaMatcher(
 export async function InvokeMain<T>(
   channel: string,
   key?: T,
-): Promise<string | void> {
+): Promise<unknown | void> {
   let result;
   if (key) {
     log(`Invoking main("${channel}", "...")`);
-    result = (await window.ipc!.invoke(channel, key)) as string;
+    result = (await window.ipc!.invoke(channel, key)) as unknown;
     log(`Invoke main ("${channel}" "...") returned:`);
   } else {
     log(`Invoking main("${channel}")`);
-    result = (await window.ipc!.invoke(channel)) as string;
+    result = (await window.ipc!.invoke(channel)) as unknown;
     log(`Invoke main ("${channel}") returned:`);
   }
   log(result);

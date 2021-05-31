@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { MakeLogger, SafelyUnpickle, Type } from '@freik/core-utils';
+import { MakeLogger, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -11,7 +11,7 @@ import {
 import { FlatAudioDatabase } from 'audio-database';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
-import { InvokeMain } from '../MyWindow';
+import { CallMain } from '../MyWindow';
 import { Catch, Fail } from '../Tools';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import { oneWayFromMainEffect } from './helpers';
@@ -99,41 +99,40 @@ function IsFlatAudioDatabase(val: unknown): val is FlatAudioDatabase {
   );
 }
 
+const emptyLibrary = {
+  songs: new Map<SongKey, Song>(),
+  albums: new Map<AlbumKey, Album>(),
+  artists: new Map<ArtistKey, Artist>(),
+};
+
+function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
+  return {
+    songs: new Map(fad.songs.map((swp) => [swp.key, swp])),
+    albums: new Map(fad.albums.map((alb) => [alb.key, alb])),
+    artists: new Map(fad.artists.map((art) => [art.key, art])),
+  };
+}
+
 const musicLibraryState = atom<MusicLibrary>({
   key: 'musicDatabase',
-  default: {
-    songs: new Map<SongKey, Song>(),
-    albums: new Map<AlbumKey, Album>(),
-    artists: new Map<ArtistKey, Artist>(),
-  },
+  default: emptyLibrary,
   effects_UNSTABLE: [
     oneWayFromMainEffect(
       async (): Promise<MusicLibrary> => {
-        const res = await InvokeMain('get-music-database');
-        if (res) {
-          const ml = SafelyUnpickle(res, IsFlatAudioDatabase);
-          if (ml !== undefined) {
-            return {
-              songs: new Map(ml.songs.map((swp) => [swp.key, swp])),
-              albums: new Map(ml.albums.map((alb) => [alb.key, alb])),
-              artists: new Map(ml.artists.map((art) => [art.key, art])),
-            };
-          }
-        }
-        throw Error(`Invalid value coming from get-music-database`);
+        const fad = await CallMain(
+          'get-music-database',
+          undefined,
+          IsFlatAudioDatabase,
+        );
+        return fad ? MakeMusicLibraryFromFlatAudioDatabase(fad) : emptyLibrary;
       },
       'music-database-update',
-      (data: unknown) => {
-        if (IsFlatAudioDatabase(data)) {
-          const ml = data;
-          return {
-            songs: new Map(ml.songs.map((swp) => [swp.key, swp])),
-            albums: new Map(ml.albums.map((alb) => [alb.key, alb])),
-            artists: new Map(ml.artists.map((art) => [art.key, art])),
-          };
+      (fad: unknown) => {
+        if (IsFlatAudioDatabase(fad)) {
+          return MakeMusicLibraryFromFlatAudioDatabase(fad);
         }
         err('Invalid result from music-database-update:');
-        err(data);
+        err(fad);
       },
     ),
   ],

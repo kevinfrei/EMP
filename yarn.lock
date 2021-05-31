@@ -3109,7 +3109,7 @@ atob@^2.1.2:
 
 "audio-database@git+https://github.com/kevinfrei/audio-database.git":
   version "0.0.1"
-  resolved "git+https://github.com/kevinfrei/audio-database.git#fafc736f51928d48270aa66ddbe8fb5f9136d69c"
+  resolved "git+https://github.com/kevinfrei/audio-database.git#94380a3164acbc7788f1b95c95b0250eefb65992"
   dependencies:
     "@freik/core-utils" "^0.24.0"
     "@freik/media-core" "^0.5.1"

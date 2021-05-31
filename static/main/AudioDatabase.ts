@@ -2,11 +2,14 @@ import {
   MakeError,
   MakeLogger,
   Operations,
-  Pickle,
   SafelyUnpickle,
   Type,
 } from '@freik/core-utils';
-import { AudioDatabase, MakeAudioDatabase } from 'audio-database';
+import {
+  AudioDatabase,
+  FlatAudioDatabase,
+  MakeAudioDatabase,
+} from 'audio-database';
 import electronIsDev from 'electron-is-dev';
 import { asyncSend } from './Communication';
 import { Persistence } from './persist';
@@ -25,9 +28,9 @@ export async function GetAudioDB(): Promise<AudioDatabase> {
   return theAudioDb;
 }
 
-export async function getSimpleMusicDatabase(): Promise<string> {
+export async function getSimpleMusicDatabase(): Promise<FlatAudioDatabase> {
   const db = await GetAudioDB();
-  return Pickle(db.getFlatDatabase());
+  return db.getFlatDatabase();
 }
 
 export async function RescanAudioDatase(): Promise<void> {

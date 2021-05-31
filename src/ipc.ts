@@ -26,7 +26,7 @@ export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {
 }
 
 export async function ReadFromStorage(key: string): Promise<string | void> {
-  return await InvokeMain('read-from-storage', key);
+  return await CallMain('read-from-storage', key, Type.isString);
 }
 
 export async function WriteToStorage(key: string, data: string): Promise<void> {
