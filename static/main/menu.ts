@@ -245,9 +245,14 @@ export function MakeMainMenu(): void {
       ['playlists', '5'],
       ['settings', '7'],
     ]
-      .map(([id, idx]): [MenuItem, string] => [menu.getMenuItemById(id), idx])
+      .map(([id, idx]): [MenuItem | null, string] => [
+        menu.getMenuItemById(id),
+        idx,
+      ])
       .forEach(([mnu, idx]) => {
-        mnu.enabled = idx !== val;
+        if (mnu) {
+          mnu.enabled = idx !== val;
+        }
       });
   });
 

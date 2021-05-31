@@ -3,9 +3,9 @@ import {
   MakeError,
   MakeLogger,
   Operations,
+  Sleep,
   ToPathSafeName,
   Type,
-  Unpickle,
 } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
 import { exception } from 'console';
@@ -13,7 +13,6 @@ import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
-import { Persistence } from './persist';
 
 const log = MakeLogger('playlists');
 const err = MakeError('playlists-err');
@@ -130,47 +129,15 @@ export async function CheckPlaylists(names: string[]): Promise<void> {
   return;
 }
 
-let keyToPath: null | Map<SongKey, string> = null;
-let pathToKey: null | Map<string, SongKey> = null;
-
-async function loadHash(): Promise<void> {
-  const songHash = await Persistence.getItemAsync('songHashIndex');
-  if (!songHash) {
-    throw Error('Oh poop'); // This shouldn't ever be possible...
-  }
-  const path2key = Unpickle(songHash);
-  if (Type.isMapOfStrings(path2key)) {
-    pathToKey = path2key;
-    keyToPath = new Map();
-    pathToKey.forEach((val, key) => keyToPath!.set(val, key));
-  } else {
-    throw Error('Invalid songHashIndex');
-  }
-}
-
-async function getKeyToPath(): Promise<Map<SongKey, string>> {
-  while (keyToPath === null) {
-    await loadHash();
-  }
-  return keyToPath;
-}
-
-async function getPathToKey(): Promise<Map<string, SongKey>> {
-  while (pathToKey === null) {
-    await loadHash();
-  }
-  return pathToKey;
-}
-
 async function toDiskFormat(keys: SongKey[]): Promise<string> {
-  const k2p = await getKeyToPath();
+  const db = await GetAudioDB();
   const res = ['#EXTM3U'];
   for (const key of keys) {
-    const songpath = k2p.get(key);
-    if (!songpath) {
+    const song = db.getSong(key);
+    if (!song) {
       log(`Invalid SongKey ${key} in playlist`);
     } else {
-      res.push(songpath);
+      res.push(song.path);
     }
   }
   return res.join('\n');
@@ -179,12 +146,11 @@ async function toDiskFormat(keys: SongKey[]): Promise<string> {
 async function fromDiskFormat(flat: string): Promise<SongKey[]> {
   const lines = flat.split('\n');
   const db = await GetAudioDB();
-  if (lines.length < 2 || lines[0] !== '#EXTM3U') {
-    // Old format: Just a list of song keys. Filter 'em down
-    return lines.filter((key) => !!db.getSong(key));
+  while (db.getLocations().length === 0) {
+    await Sleep(50);
   }
-  const p2k = await getPathToKey();
   return lines
-    .map((p) => p2k.get(p))
-    .filter((kOrV) => Type.isString(kOrV) && db.getSong(kOrV)) as SongKey[];
+    .slice(1)
+    .map((p) => db.getSongFromPath(p))
+    .filter((kOrV) => db.getSong(kOrV));
 }

@@ -40,7 +40,9 @@ async function tuneProtocolHandler(
   trimmedUrl: string,
 ): Promise<FileResponse> {
   const key: SongKey = trimmedUrl;
+  log(`SongKey: ${key}`);
   const db = await GetAudioDB();
+  log('Got DB');
   const song = db.getSong(key);
   if (song) {
     const thePath = song.path;
@@ -49,6 +51,7 @@ async function tuneProtocolHandler(
       audioMimeTypes.get(path.extname(thePath).toLowerCase()) ?? 'audio/mpeg';
     return { path: thePath, mimeType };
   } else {
+    log('Song not found');
     return e404;
   }
 }
@@ -79,7 +82,7 @@ function registerProtocolHandler<ResponseType>(
     if (!req.url) {
       callback({ error: -324 });
     } else if (req.url.startsWith(type)) {
-      processor(req, req.url.substr(type.length))
+      processor(req, decodeURI(req.url.substr(type.length)))
         .then(callback)
         .catch((reason: any) => {
           log(`${type}:// failure`);
