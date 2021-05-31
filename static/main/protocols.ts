@@ -10,7 +10,7 @@ import { Persistence } from './persist';
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
 
-const log = MakeLogger('conf-protocols');
+const log = MakeLogger('protocols');
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],

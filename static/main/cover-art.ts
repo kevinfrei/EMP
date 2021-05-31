@@ -15,8 +15,8 @@ import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
-import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
 import { Persistence } from './persist';
+import { BufferResponse, getDefaultPicBuffer } from './protocols';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');

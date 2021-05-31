@@ -3,7 +3,6 @@ import { BrowserWindow, dialog, screen } from 'electron';
 import isDev from 'electron-is-dev';
 import { OpenDialogOptions } from 'electron/main';
 import * as path from 'path';
-import { configureListeners, configureProtocols } from './conf-protocols';
 import { OnWindowCreated } from './electronSetup';
 import {
   GetBrowserWindowPos,
@@ -11,6 +10,7 @@ import {
   SaveWindowPos,
   WindowPosition,
 } from './persist';
+import { configureListeners, configureProtocols } from './protocols';
 
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)
