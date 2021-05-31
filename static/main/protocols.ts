@@ -4,7 +4,7 @@ import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
-import { picBufProcessor } from './cover-art';
+import { PicBufProtocolHandler } from './cover-art';
 import { Persistence } from './persist';
 
 export type FileResponse = string | ProtocolResponse;
@@ -23,7 +23,7 @@ const audioMimeTypes = new Map<string, string>([
 const defaultPicPath = path.join(__dirname, '..', 'img-album.svg');
 let defaultPicBuffer: BufferResponse | null = null;
 
-export async function getDefaultPicBuffer(): Promise<BufferResponse> {
+export async function GetDefaultPicBuffer(): Promise<BufferResponse> {
   if (!defaultPicBuffer) {
     defaultPicBuffer = {
       data: await fs.readFile(defaultPicPath),
@@ -93,8 +93,8 @@ function registerProtocolHandler<ResponseType>(
 }
 
 // This sets up all protocol handlers
-export async function configureProtocols(): Promise<void> {
-  const defPicBuffer = await getDefaultPicBuffer();
+export async function RegisterProtocols(): Promise<void> {
+  const defPicBuffer = await GetDefaultPicBuffer();
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
@@ -102,7 +102,7 @@ export async function configureProtocols(): Promise<void> {
     'pic://album/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerBufferProtocol,
-    picBufProcessor,
+    PicBufProtocolHandler,
     defPicBuffer,
   );
   registerProtocolHandler(
@@ -115,6 +115,6 @@ export async function configureProtocols(): Promise<void> {
 
 // This sets up reactive responses to changes, for example:
 // locations change, so music needs to be rescanned
-export function configureListeners(): void {
+export function RegisterListeners(): void {
   Persistence.subscribe('locations', UpdateAudioLocations);
 }

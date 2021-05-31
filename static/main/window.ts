@@ -10,7 +10,7 @@ import {
   SaveWindowPos,
   WindowPosition,
 } from './persist';
-import { configureListeners, configureProtocols } from './protocols';
+import { RegisterListeners, RegisterProtocols } from './protocols';
 
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)
@@ -52,8 +52,8 @@ const windowPosUpdated = DebouncedEvery(() => {
 export async function CreateWindow(
   windowCreated: OnWindowCreated,
 ): Promise<void> {
-  await configureProtocols();
-  configureListeners();
+  await RegisterProtocols();
+  RegisterListeners();
   // Create the window, but don't show it just yet
   mainWindow = new BrowserWindow({
     ...GetBrowserWindowPos(windowPos),
@@ -112,7 +112,7 @@ export async function CreateWindow(
 
 let prevWidth = 0;
 
-export function toggleMiniPlayer(): void {
+export function ToggleMiniPlayer(): void {
   if (
     mainWindow !== null &&
     Type.isNumber(windowPos.bounds.x) &&
@@ -151,7 +151,7 @@ export function toggleMiniPlayer(): void {
   }
 }
 
-export async function showOpenDialog(
+export async function ShowOpenDialog(
   options: OpenDialogOptions,
 ): Promise<string[] | void> {
   if (!mainWindow) {

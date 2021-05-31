@@ -16,7 +16,7 @@ import https from 'https';
 import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
 import { Persistence } from './persist';
-import { BufferResponse, getDefaultPicBuffer } from './protocols';
+import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');
@@ -107,7 +107,7 @@ async function LookForAlbum(
   await Persistence.setItemAsync('noMoreLooking', Pickle(newSkip));
 }
 
-export async function picBufProcessor(
+export async function PicBufProtocolHandler(
   req: ProtocolRequest,
   albumId: string,
 ): Promise<BufferResponse> {
@@ -148,7 +148,7 @@ export async function picBufProcessor(
     log(`Error while trying to get picture for ${albumId}`);
     // log(error);
   }
-  return await getDefaultPicBuffer();
+  return await GetDefaultPicBuffer();
 }
 
 async function SavePicForAlbum(
@@ -212,23 +212,14 @@ export type AlbumCoverData =
     };
 
 export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
-  log('Checking argument type:');
-  log(arg);
-  if (!Type.has(arg, 'nativeImage')) {
-    log('No nativeImage property');
-    return false;
-  }
-  if (!(arg.nativeImage instanceof Uint8Array)) {
-    log('Not a UInt8Array instance');
-    log(typeof arg.nativeImage);
-    return false;
-  }
-  if (Type.hasStr(arg, 'songKey')) {
-    return true;
-  }
-  return Type.hasStr(arg, 'albumKey');
+  return (
+    Type.hasStr(arg, 'songKey') !== Type.hasStr(arg, 'albumKey') &&
+    Type.has(arg, 'nativeImage') &&
+    arg.nativeImage instanceof Uint8Array
+  );
 }
 
+// TODO: Fix this to work properly...
 export async function SaveNativeImageForAlbum(
   arg: AlbumCoverData,
 ): Promise<string> {
@@ -245,7 +236,6 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  // TODO: This is wrong
   await db.setAlbumPicture(albumKey, "this-isn't-a-path");
   //  await SavePicForAlbum(db, album, Buffer.from(arg.nativeImage));
   return '';

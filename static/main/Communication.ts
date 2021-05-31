@@ -6,7 +6,7 @@ import { IpcMainInvokeEvent } from 'electron/main';
 import {
   GetMediaInfoForSong,
   GetPathFromKey,
-  getSimpleMusicDatabase,
+  GetSimpleMusicDatabase,
   RescanAudioDatase,
   SearchSubstring,
   SearchWholeWord,
@@ -31,7 +31,7 @@ import {
   setSongHates,
   setSongLikes,
 } from './SongLikesAndHates';
-import { SendToMain, showOpenDialog } from './window';
+import { SendToMain, ShowOpenDialog } from './window';
 
 const log = MakeLogger('Communication');
 const err = MakeError('Communication-err');
@@ -45,7 +45,7 @@ type Handler<R, T> = (arg: T) => Promise<R | void>;
  * @param {string=} name - the name of the value to read
  * @return {Promise<string>} The raw string contents of the value
  */
-export async function readFromStorage(name?: string): Promise<string> {
+async function readFromStorage(name?: string): Promise<string> {
   if (!name) return '';
   try {
     log(`readFromStorage(${name})`);
@@ -66,10 +66,7 @@ export async function readFromStorage(name?: string): Promise<string> {
  * @async @function
  * @param {string?} keyValuePair - The key:value string to write
  */
-export async function writeToStorage([key, value]: [
-  string,
-  string,
-]): Promise<void> {
+async function writeToStorage([key, value]: [string, string]): Promise<void> {
   try {
     // First, split off the key name:
     log(`writeToStorage(${key} : ${value})`);
@@ -91,7 +88,7 @@ export async function writeToStorage([key, value]: [
  * @param  {(v:any)=>v is T} checker - a Type Check function for type T
  * @returns void
  */
-export function registerChannel<R, T>(
+function registerChannel<R, T>(
   key: string,
   handler: Handler<R, T>,
   checker: (v: any) => v is T,
@@ -139,7 +136,7 @@ async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
  * @param  {unknown} message
  * The (flattenable) message to send.
  */
-export function asyncSend(message: unknown): void {
+export function AsyncSend(message: unknown): void {
   SendToMain('async-data', { message });
 }
 
@@ -183,7 +180,7 @@ export function CommsSetup(): void {
   // "complex" API's (not just save/restore data to the persist cache)
 
   // Migrated to new audio-database module:
-  registerChannel('get-music-database', getSimpleMusicDatabase, isVoid);
+  registerChannel('get-music-database', GetSimpleMusicDatabase, isVoid);
   registerChannel('manual-rescan', RescanAudioDatase, isVoid);
 
   // Migrated, but not yet validated
@@ -218,5 +215,5 @@ export function CommsSetup(): void {
 
   // Reviewed & working properly:
   registerChannel('show-file', showFile, Type.isString);
-  registerChannel('show-open-dialog', showOpenDialog, isOpenDialogOptions);
+  registerChannel('show-open-dialog', ShowOpenDialog, isOpenDialogOptions);
 }

@@ -9,9 +9,9 @@ import {
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
-import { asyncSend } from './Communication';
+import { AsyncSend } from './Communication';
 import { Persistence } from './persist';
-import { toggleMiniPlayer } from './window';
+import { ToggleMiniPlayer } from './window';
 
 const err = MakeError('menu-err'); // eslint-disable-line
 
@@ -34,7 +34,7 @@ function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
     return handler as ClickHandler;
   }
   return () => {
-    void asyncSend({ menuAction: handler });
+    void AsyncSend({ menuAction: handler });
   };
 }
 
@@ -76,7 +76,7 @@ function action(
   }
 }
 
-export function makeMainMenu(): void {
+export function MakeMainMenu(): void {
   const appMenu: MenuItemConstructorOptions = {
     role: 'appMenu',
     label: app.name,
@@ -129,7 +129,7 @@ export function makeMainMenu(): void {
       xaction('&Playlists', '5', { state: 'view', select: 'Playlists' }),
       xaction('Se&ttings', ',', { state: 'view', select: 'Settings' }),
       ___,
-      xaction('M&iniPlayer', '9', toggleMiniPlayer),
+      xaction('M&iniPlayer', '9', ToggleMiniPlayer),
     ],
   };
   const mediaMenu: MenuItemConstructorOptions = {

@@ -1,7 +1,7 @@
 import { MakeError, MakeLogger } from '@freik/core-utils';
 import { app } from 'electron';
 import isDev from 'electron-is-dev';
-import { makeMainMenu } from './menu';
+import { MakeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
 
 app.commandLine.appendSwitch('disable-http-cache');
@@ -53,7 +53,7 @@ async function WhenReady(windowCreated: OnWindowCreated) {
 
 export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
   // Make & attach the application-wide menu
-  makeMainMenu();
+  MakeMainMenu();
 
   // Quit when all windows are closed.
   app

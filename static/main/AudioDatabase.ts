@@ -21,7 +21,7 @@ import {
   SearchResults,
 } from 'audio-database';
 import electronIsDev from 'electron-is-dev';
-import { asyncSend } from './Communication';
+import { AsyncSend } from './Communication';
 import { Persistence } from './persist';
 
 // eslint-disable-next-line
@@ -38,7 +38,7 @@ export async function GetAudioDB(): Promise<AudioDatabase> {
   return theAudioDb;
 }
 
-export async function getSimpleMusicDatabase(): Promise<FlatAudioDatabase> {
+export async function GetSimpleMusicDatabase(): Promise<FlatAudioDatabase> {
   const db = await GetAudioDB();
   return db.getFlatDatabase();
 }
@@ -50,7 +50,7 @@ export async function RescanAudioDatase(): Promise<void> {
   log('Rescanning complete');
   const flat = db.getFlatDatabase();
   log(flat);
-  asyncSend({ 'music-database-update': flat });
+  AsyncSend({ 'music-database-update': flat });
 }
 
 async function UpdateLocations(locs: string): Promise<void> {
