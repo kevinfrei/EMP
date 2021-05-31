@@ -1,9 +1,7 @@
-import { MakeError, MakeLogger } from '@freik/core-utils';
-import electronIsDev from 'electron-is-dev';
+import { MakeError } from '@freik/core-utils';
 import { GetAudioDB } from './AudioDatabase';
 import { CommsSetup } from './Communication';
 
-const log = MakeLogger('Startup', false && electronIsDev);
 const err = MakeError('Startup');
 /**
  * Called to set stuff up before *anything* else has been done.

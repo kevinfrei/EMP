@@ -4,8 +4,6 @@ import path from 'path';
 
 const err = MakeError('MusicFragment-err');
 
-const existingSongKeys = new Map<number, [string, string]>();
-
 const audioTypes = new Set(['.flac', '.mp3', '.aac', '.m4a']);
 const imageTypes = new Set(['.png', '.jpg', '.jpeg']);
 function isOfType(

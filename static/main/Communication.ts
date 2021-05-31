@@ -2,13 +2,16 @@ import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
-import { getSimpleMusicDatabase, RescanAudioDatase } from './AudioDatabase';
+import {
+  GetPathFromKey,
+  getSimpleMusicDatabase,
+  RescanAudioDatase,
+} from './AudioDatabase';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
 import { FlushImageCache } from './ImageCache';
 import { isOnlyMetadata, setMediaInfoForSong } from './metadata';
 import {
   getMediaInfoForSong,
-  getPathFromKey,
   searchSubstring,
   searchWholeWord,
 } from './MusicAccess';
@@ -125,12 +128,11 @@ function showFile(filePath?: string): Promise<void> {
  * Show a file in the shell
  * @param filePath - The path to the file to show
  */
-function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
-  return getPathFromKey(mediaKey).then((filePath) => {
-    if (filePath) {
-      shell.showItemInFolder(filePath);
-    }
-  });
+async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
+  const thePath = await GetPathFromKey(mediaKey);
+  if (thePath) {
+    shell.showItemInFolder(thePath);
+  }
 }
 
 /**
@@ -172,13 +174,18 @@ export function CommsSetup(): void {
   registerChannel('write-to-storage', writeToStorage, isKeyValue);
 
   // "complex" API's (not just save/restore data to the persist cache)
+
+  // Migrated to new audio-database module:
   registerChannel('get-music-database', getSimpleMusicDatabase, isVoid);
-  registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
-  registerChannel('media-info', getMediaInfoForSong, Type.isString);
-  registerChannel('flush-image-cache', FlushImageCache, isVoid);
   registerChannel('manual-rescan', RescanAudioDatase, isVoid);
-  registerChannel('show-file', showFile, Type.isString);
+
+  // Migrated, but not yet validated
   registerChannel('show-location-from-key', showLocFromKey, Type.isString);
+
+  // Need updated/reviewed:
+  registerChannel('media-info', getMediaInfoForSong, Type.isString);
+  registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
+  registerChannel('flush-image-cache', FlushImageCache, isVoid);
   registerChannel('set-media-info', setMediaInfoForSong, isOnlyMetadata);
 
   registerChannel('search', searchWholeWord, isStrOrUndef);
@@ -191,6 +198,8 @@ export function CommsSetup(): void {
   registerChannel('save-playlist', savePlaylist, isPlaylistSaveData);
   registerChannel('delete-playlist', deletePlaylist, Type.isString);
 
+  // These are implementing functionality not currently in
+  // the audio-database module
   registerChannel('get-likes', getSongLikes, isVoid);
   registerChannel('set-likes', setSongLikes, Type.isArrayOfString);
   registerChannel('clear-likes', clearSongLikes, Type.isArrayOfString);
@@ -199,5 +208,7 @@ export function CommsSetup(): void {
   registerChannel('set-hates', setSongHates, Type.isArrayOfString);
   registerChannel('clear-hates', clearSongHates, Type.isArrayOfString);
 
+  // Reviewed & working properly:
+  registerChannel('show-file', showFile, Type.isString);
   registerChannel('show-open-dialog', showOpenDialog, isOpenDialogOptions);
 }
