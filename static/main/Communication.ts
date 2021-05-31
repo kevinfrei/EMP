@@ -144,7 +144,7 @@ export function asyncSend(message: unknown): void {
 }
 
 function isKeyValue(obj: any): obj is [string, string] {
-  return Type.isArray(obj) && obj.length === 2 && Type.isArrayOfString(obj);
+  return Type.is2TupleOf(obj, Type.isString, Type.isString);
 }
 
 // I don't actually care about this type :)
