@@ -157,7 +157,16 @@ function isStrOrUndef(obj: any): obj is string | undefined {
 }
 
 function isOpenDialogOptions(obj: any): obj is OpenDialogOptions {
-  // TODO: Should probably actually check...
+  /* {
+    title?: string;
+    defaultPath?: string;
+    buttonLabel?: string;
+    filters?: FileFilter[];
+    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
+    message?: string;
+    securityScopedBookmarks?: boolean;
+  }*/
+  // TODO: Check that stuff ^^^^
   return true;
 }
 
