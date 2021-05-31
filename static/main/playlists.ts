@@ -12,7 +12,7 @@ import { exception } from 'console';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
-import { getMusicDB } from './MusicAccess';
+import { GetAudioDB } from './AudioDatabase';
 import { Persistence } from './persist';
 
 const log = MakeLogger('playlists');
@@ -178,16 +178,13 @@ async function toDiskFormat(keys: SongKey[]): Promise<string> {
 
 async function fromDiskFormat(flat: string): Promise<SongKey[]> {
   const lines = flat.split('\n');
-  const db = await getMusicDB();
-  if (!db) {
-    return [];
-  }
+  const db = await GetAudioDB();
   if (lines.length < 2 || lines[0] !== '#EXTM3U') {
     // Old format: Just a list of song keys. Filter 'em down
-    return lines.filter((key) => db.songs.has(key));
+    return lines.filter((key) => !!db.getSong(key));
   }
   const p2k = await getPathToKey();
   return lines
     .map((p) => p2k.get(p))
-    .filter((kOrV) => Type.isString(kOrV) && db.songs.has(kOrV)) as SongKey[];
+    .filter((kOrV) => Type.isString(kOrV) && db.getSong(kOrV)) as SongKey[];
 }

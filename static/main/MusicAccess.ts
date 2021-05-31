@@ -1,18 +1,11 @@
 import {
   MakeError,
   MakeLogger,
-  Operations,
   Pickle,
   UnsafelyUnpickle,
 } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, SongKey } from '@freik/media-core';
-import { getMediaInfo } from './metadata';
-import {
-  MusicDB,
-  MusicIndex,
-  SearchResults,
-  ServerSong,
-} from './OldMusicScanner';
+import { MusicDB, MusicIndex, ServerSong } from './OldMusicScanner';
 import { Persistence } from './persist';
 
 const log = MakeLogger('MusicAccess');
@@ -63,91 +56,4 @@ export async function saveMusicDB(musicDB: MusicDB): Promise<void> {
   theMusicDatabase = musicDB;
   log(`Saving DB with ${musicDB.songs.size} songs`);
   await Persistence.setItemAsync('musicDatabase', Pickle(theMusicDatabase));
-}
-
-export async function getMediaInfoForSong(
-  key?: string,
-): Promise<Map<string, string> | void> {
-  if (!key || typeof key !== 'string') {
-    return;
-  }
-  const musicDB = await getMusicDB();
-  if (musicDB) {
-    const song = musicDB.songs.get(key);
-    if (song) {
-      const data: Map<string, string> = await getMediaInfo(song.path);
-      log(`Fetched the media info for ${song.path}:`);
-      log(data);
-      return data;
-    }
-  }
-}
-
-export function setMusicIndex(index: MusicIndex): void {
-  theMusicIndex = index;
-}
-
-/**
- * @param  {boolean} substr - true for mid-word substring searches, false for
- * only 'starts with' search
- * @param  {string} term - The space-separated list of words to search for
- * @returns 3 arrays (songs, albums, artists) that have words that begin with
- * all of the search terms
- */
-function indexSearch(substr: boolean, terms: string): SearchResults {
-  if (!theMusicIndex) {
-    throw Error(
-      "Don't call this function directly without initializing theMusicIndex",
-    );
-  }
-  let first = true;
-  let songs: Set<SongKey> = new Set();
-  let albums: Set<AlbumKey> = new Set();
-  let artists: Set<ArtistKey> = new Set();
-  for (const t of terms.split(' ').map((s) => s.trim())) {
-    if (t.length > 0) {
-      const sng = theMusicIndex.songs(t, substr);
-      const alb = theMusicIndex.albums(t, substr);
-      const art = theMusicIndex.artists(t, substr);
-      songs = first ? new Set(sng) : Operations.SetIntersection(songs, sng);
-      albums = first ? new Set(alb) : Operations.SetIntersection(albums, alb);
-      artists = first ? new Set(art) : Operations.SetIntersection(artists, art);
-      first = false;
-    }
-  }
-  log('songs:');
-  log(songs);
-  log('albums:');
-  log(albums);
-  log('artists:');
-  log(artists);
-  return {
-    songs: [...songs],
-    albums: [...albums],
-    artists: [...artists],
-  };
-}
-
-export function searchWholeWord(term?: string): Promise<SearchResults | void> {
-  return new Promise((resolve) => {
-    if (!theMusicIndex || !term) {
-      log('theMusicIndex:' + (!theMusicIndex ? 'something' : 'empty'));
-      log('term:' + (!term ? 'something' : 'empty'));
-      resolve();
-    } else {
-      resolve(indexSearch(false, term));
-    }
-  });
-}
-
-export function searchSubstring(term?: string): Promise<SearchResults | void> {
-  return new Promise((resolve) => {
-    if (!theMusicIndex || !term) {
-      log('theMusicIndex:' + (!theMusicIndex ? 'something' : 'empty'));
-      log('term:' + (!term ? 'something' : 'empty'));
-      resolve();
-    } else {
-      resolve(indexSearch(true, term));
-    }
-  });
 }

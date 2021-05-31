@@ -6,18 +6,16 @@ import {
   Type,
 } from '@freik/core-utils';
 import { Album, AlbumKey, SongKey } from '@freik/media-core';
-import { Covers } from '@freik/media-utils';
 import { hideFile } from '@freik/node-utils/lib/file';
 import albumArt from 'album-art';
+import { AudioDatabase } from 'audio-database';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
+import { GetAudioDB } from './AudioDatabase';
 import { BufferResponse, getDefaultPicBuffer } from './conf-protocols';
-import { AlbumCoverCache } from './ImageCache';
-import { getMusicDB, saveMusicDB } from './MusicAccess';
-import { MusicDB } from './MusicScanner';
 import { Persistence } from './persist';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
@@ -115,57 +113,33 @@ export async function picBufProcessor(
 ): Promise<BufferResponse> {
   // Check to see if there's a song in the album that has a cover image
   try {
-    const db = await getMusicDB();
-    if (db) {
-      log(`Got a request for ${albumId}`);
-      if (albumId.lastIndexOf('#') !== -1) {
-        albumId = albumId.substr(0, albumId.lastIndexOf('#'));
-      }
-      const maybePath = db.pictures.get(albumId);
-      if (maybePath) {
-        log(`Returning ${maybePath}`);
-        return {
-          data: await fs.readFile(maybePath),
-        };
-      }
-      // This pulls the image from the file metadata
-      const album = db.albums.get(albumId);
-      if (album) {
-        // First, check the image cache
-        const ic = AlbumCoverCache();
-        const cachedData = await ic.get(album);
-        if (cachedData) {
-          log(`Returning from cache:`);
-          log(cachedData);
-          return { data: cachedData };
-        }
-        // Nope, let's look in the files
-        for (const songKey of album.songs) {
-          const song = db.songs.get(songKey);
-          if (song) {
-            log(`Looking for cover in ${song.path}`);
-            const buf = await Covers.ReadFromFile(song.path);
-            if (buf) {
-              log(`Got a buffer ${buf.data.length} bytes long`);
-              const data = Buffer.from(buf.data, 'base64');
-              await SavePicForAlbum(db, album, data);
-              return { data };
-            }
-          }
-        }
-        // Nothing in the files, let's see if we're supposed to download
-        if (await shouldDownloadAlbumArtwork()) {
-          const artist = db.artists.get(album.primaryArtists[0]);
-          if (artist) {
-            const res = await LookForAlbum(artist.name, album.title);
-            log(`${artist.name}: ${album.title}`);
-            if (res) {
-              log(res);
-              const data = await httpsDownloader(res);
-              log('Got data from teh interwebs');
-              await SavePicForAlbum(db, album, data);
-              return { data };
-            }
+    const db = await GetAudioDB();
+
+    log(`Got a request for ${albumId}`);
+    if (albumId.lastIndexOf('#') !== -1) {
+      albumId = albumId.substr(0, albumId.lastIndexOf('#'));
+    }
+    const maybePath = await db.getAlbumPicture(albumId);
+    if (maybePath) {
+      log(`Returning ${maybePath.length} bytes`);
+      return {
+        data: maybePath,
+      };
+    }
+    const album = db.getAlbum(albumId);
+    if (album) {
+      // Nothing in the files, let's see if we're supposed to download
+      if (await shouldDownloadAlbumArtwork()) {
+        const artist = db.getArtist(album.primaryArtists[0]);
+        if (artist) {
+          const res = await LookForAlbum(artist.name, album.title);
+          log(`${artist.name}: ${album.title}`);
+          if (res) {
+            log(res);
+            const data = await httpsDownloader(res);
+            log('Got data from teh interwebs');
+            await SavePicForAlbum(db, album, data);
+            return { data };
           }
         }
       }
@@ -180,13 +154,13 @@ export async function picBufProcessor(
 let dbSaveDebounceTimer: NodeJS.Timeout | null = null;
 
 async function SavePicForAlbum(
-  db: MusicDB,
+  db: AudioDatabase,
   album: Album,
   data: Buffer,
   overridePref?: boolean,
 ) {
   const songKey = album.songs[0];
-  const song = db.songs.get(songKey);
+  const song = db.getSong(songKey);
   if (song) {
     if (overridePref || (await shouldSaveAlbumArtworkWithMusicFiles())) {
       const coverName = await albumCoverName();
@@ -204,9 +178,11 @@ async function SavePicForAlbum(
           await hideFile(albumPath);
         }
         log('And, saved it to disk!');
-        db.pictures.set(album.key, albumPath);
+        await db.setAlbumPicture(album.key, albumPath);
         // Delay saving the Music DB, so that we're not doing it a gazillion
         // times during DB scanning
+        // TODO: Do we need to save?
+        /*
         if (dbSaveDebounceTimer !== null) {
           clearTimeout(dbSaveDebounceTimer);
         }
@@ -214,7 +190,7 @@ async function SavePicForAlbum(
           log('saving the DB to disk');
           saveMusicDB(db).catch((rej) => log('Error saving'));
         }, 1000);
-        return;
+        return;*/
       } catch (e) {
         err('Saving picture failed :(');
         err(e);
@@ -223,7 +199,8 @@ async function SavePicForAlbum(
   }
   // We tried to save it with a song in the album, no such luck
   // Save it in the cache
-  await AlbumCoverCache().put(data, album);
+  // TODO: Check in on this
+  // await AlbumCoverCache().put(data, album);
 }
 
 export type AlbumCoverData =
@@ -236,8 +213,7 @@ export type AlbumCoverData =
       nativeImage: Uint8Array;
     };
 
-// eslint-disable-next-line
-export function isAlbumCoverData(arg: any): arg is AlbumCoverData {
+export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
   log('Checking argument type:');
   log(arg);
   if (!Type.has(arg, 'nativeImage')) {
@@ -258,15 +234,12 @@ export function isAlbumCoverData(arg: any): arg is AlbumCoverData {
 export async function SaveNativeImageForAlbum(
   arg: AlbumCoverData,
 ): Promise<string> {
-  const db = await getMusicDB();
-  if (!db) {
-    return 'failed to get MusicDB';
-  }
+  const db = await GetAudioDB();
   let albumKey;
   if (Type.hasStr(arg, 'albumKey')) {
     albumKey = arg.albumKey;
   } else {
-    const song = db.songs.get(arg.songKey);
+    const song = db.getSong(arg.songKey);
     if (song) {
       albumKey = song.albumId;
     }
@@ -274,10 +247,8 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  const album = db.albums.get(albumKey);
-  if (!album) {
-    return 'Unable to find Album from key';
-  }
-  await SavePicForAlbum(db, album, Buffer.from(arg.nativeImage));
-  return '';
+  // TODO: THis is wrong
+  await db.setAlbumPicture(albumKey, "this-isn't-a-path");
+  //  await SavePicForAlbum(db, album, Buffer.from(arg.nativeImage));
+  //  return '';
 }

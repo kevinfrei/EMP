@@ -15,7 +15,10 @@ import {
 import {
   AudioDatabase,
   FlatAudioDatabase,
+  GetMediaInfo,
   MakeAudioDatabase,
+  MinimumMetadata,
+  SearchResults,
 } from 'audio-database';
 import electronIsDev from 'electron-is-dev';
 import { asyncSend } from './Communication';
@@ -122,4 +125,67 @@ export async function GetPathFromKey(key?: MediaKey): Promise<string | void> {
       return theSong ? theSong.path : undefined;
     }
   }
+}
+
+export async function GetMediaInfoForSong(
+  key?: string,
+): Promise<Map<string, string> | void> {
+  if (!key || typeof key !== 'string') {
+    return;
+  }
+  const db = await GetAudioDB();
+  const song = db.getSong(key);
+  if (song) {
+    const data: Map<string, string> = await GetMediaInfo(song.path);
+    log(`Fetched the media info for ${song.path}:`);
+    log(data);
+    return data;
+  }
+}
+
+/**
+ * @function setMediaInfoForSong
+ * Responds to a request from the Render process with a flattened set of
+ * partial metadata
+ * @param  {string} flattenedData? - The (partial) metadata to be used to
+ * override file name or internal metadata with
+ * @returns Promise
+ */
+export async function SetMediaInfoForSong(
+  metadataToUpdate: MinimumMetadata,
+): Promise<void> {
+  let fullPath: string = metadataToUpdate.originalPath;
+  const db = await GetAudioDB();
+  if (fullPath.startsWith('*')) {
+    // This means we've got a SongKey instead of a path
+    // Get the path from the database
+    const sng = db.getSong(fullPath.substr(1));
+    if (!sng) {
+      err('Unable to get the song for the song key for a metadata update');
+      return;
+    }
+    fullPath = sng.path;
+    metadataToUpdate.originalPath = fullPath;
+  }
+  db.updateMetadata(fullPath, metadataToUpdate);
+}
+
+export async function SearchWholeWord(
+  term?: string,
+): Promise<SearchResults | void> {
+  if (!term) {
+    return;
+  }
+  const db = await GetAudioDB();
+  return db.searchIndex(false, term);
+}
+
+export async function SearchSubstring(
+  term?: string,
+): Promise<SearchResults | void> {
+  if (!term) {
+    return;
+  }
+  const db = await GetAudioDB();
+  return db.searchIndex(true, term);
 }

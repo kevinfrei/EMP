@@ -3,9 +3,8 @@ import { SongKey } from '@freik/media-core';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { UpdateAudioLocations } from './AudioDatabase';
+import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { picBufProcessor } from './cover-art';
-import { getMusicDB } from './MusicAccess';
 import { Persistence } from './persist';
 
 export type FileResponse = string | ProtocolResponse;
@@ -41,11 +40,8 @@ async function tuneProcessor(
   trimmedUrl: string,
 ): Promise<FileResponse> {
   const key: SongKey = trimmedUrl;
-  const db = await getMusicDB();
-  if (!db) {
-    return e404;
-  }
-  const song = db.songs.get(key);
+  const db = await GetAudioDB();
+  const song = db.getSong(key);
   if (song) {
     const thePath = song.path;
     log('Returning file read from ' + thePath);

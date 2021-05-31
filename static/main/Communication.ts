@@ -1,20 +1,18 @@
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
+import { IsOnlyMetadata } from 'audio-database';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import {
+  GetMediaInfoForSong,
   GetPathFromKey,
   getSimpleMusicDatabase,
   RescanAudioDatase,
+  SearchSubstring,
+  SearchWholeWord,
+  SetMediaInfoForSong,
 } from './AudioDatabase';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
-import { FlushImageCache } from './ImageCache';
-import { isOnlyMetadata, setMediaInfoForSong } from './metadata';
-import {
-  getMediaInfoForSong,
-  searchSubstring,
-  searchWholeWord,
-} from './MusicAccess';
 import { Persistence } from './persist';
 import {
   checkPlaylists,
@@ -181,15 +179,16 @@ export function CommsSetup(): void {
 
   // Migrated, but not yet validated
   registerChannel('show-location-from-key', showLocFromKey, Type.isString);
+  registerChannel('set-media-info', SetMediaInfoForSong, IsOnlyMetadata);
+  registerChannel('media-info', GetMediaInfoForSong, Type.isString);
 
   // Need updated/reviewed:
-  registerChannel('media-info', getMediaInfoForSong, Type.isString);
   registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
-  registerChannel('flush-image-cache', FlushImageCache, isVoid);
-  registerChannel('set-media-info', setMediaInfoForSong, isOnlyMetadata);
+  // TODO:
+  // registerChannel('flush-image-cache', FlushImageCache, isVoid);
 
-  registerChannel('search', searchWholeWord, isStrOrUndef);
-  registerChannel('subsearch', searchSubstring, Type.isString);
+  registerChannel('search', SearchWholeWord, isStrOrUndef);
+  registerChannel('subsearch', SearchSubstring, Type.isString);
 
   registerChannel('load-playlist', loadPlaylist, Type.isString);
   registerChannel('get-playlists', getPlaylists, isVoid);
