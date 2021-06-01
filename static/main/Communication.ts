@@ -42,7 +42,7 @@ type Handler<R, T> = (arg: T) => Promise<R | void>;
  * Read a value from persistence by name, returning it's unprocessed contents
  *
  * @async @function
- * @param {string=} name - the name of the value to read
+ * @param {string} name - the name of the value to read
  * @return {Promise<string>} The raw string contents of the value
  */
 async function readFromStorage(name?: string): Promise<string> {

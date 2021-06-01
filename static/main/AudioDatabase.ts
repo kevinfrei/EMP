@@ -24,9 +24,7 @@ import electronIsDev from 'electron-is-dev';
 import { AsyncSend } from './Communication';
 import { Persistence } from './persist';
 
-// eslint-disable-next-line
 const log = MakeLogger('AudioDatabase', true && electronIsDev);
-// eslint-disable-next-line
 const err = MakeError('AudioDatabase-err');
 
 let theAudioDb: AudioDatabase | null;
