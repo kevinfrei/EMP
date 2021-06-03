@@ -53,7 +53,7 @@
     "@freik/media-utils": "^0.11.0",
     "@freik/node-utils": "^0.14.6",
     "album-art": "^2.0.2",
-    "audio-database": "git+https://github.com/kevinfrei/audio-database.git#v0.1.0",
+    "audio-database": "git+https://github.com/kevinfrei/audio-database.git#v0.1.1",
     "electron-is-dev": "^2.0.0",
     "open": "^8.2.0",
     "react": "^17.0.1",
