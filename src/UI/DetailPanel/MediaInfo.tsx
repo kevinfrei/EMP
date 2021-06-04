@@ -81,13 +81,13 @@ function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
           prefix="Duration:"
           readOnly
           value={duration}
-          style={{ width: '80px' }}
+          style={{ width: '75px' }}
         />
         <TextField
           prefix={fileType.toLocaleUpperCase() + ':'}
           readOnly
           value={`${bitrate} (${bps} bit ${sampleRate} ${channels})`}
-          style={{ width: '308px' }}
+          style={{ width: '280px' }}
         />
       </Stack>
     </>

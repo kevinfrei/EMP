@@ -44,6 +44,7 @@ export type MetadataProps = {
   variations?: string;
   moreArtists?: string;
   albumId?: AlbumKey;
+  diskName?: string;
 };
 
 export function MetadataEditor(props: MetadataProps): JSX.Element {
@@ -56,6 +57,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   const [vaType, setVaType] = useState<false | 'ost' | 'va' | ''>(false);
   const [vars, setVars] = useState<false | string>(false);
   const [moreArtists, setMoreArtists] = useState<false | string>(false);
+  const [diskName, setDiskName] = useState<false | string>(false);
   // These are for tooltips in FluentUI
   const priArtistsId = useId('md-priArtists');
   const secArtistsId = useId('md-secArtists');
@@ -77,6 +79,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     setVaType(false);
     setVars(false);
     setMoreArtists(false);
+    setDiskName(false);
   }, [props.forSong]);
 
   // This is a helper to read the overridden value (from state) if it's set
@@ -141,6 +144,9 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       if (disk !== false) {
         md.disk = disk.trim() ? Number.parseInt(disk.trim(), 10) : 0;
         log('Disk Number:' + md.disk.toString());
+      }
+      if (diskName !== false) {
+        md.diskName = diskName.trim();
       }
       if (vars !== false) {
         md.variations = vars.split(';').map((s) => s.trim());
@@ -273,18 +279,20 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           label="Track #"
           value={val(track, trackNum)}
           onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
-          style={{ width: 100 }}
+          style={{ width: 60 }}
         />
-        <Stack horizontal verticalAlign="end">
-          <TextField
-            label="Disk #"
-            value={val(disk, diskNum)}
-            onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
-            style={{ width: 100 }}
-          />
-          &nbsp;
-          <DefaultButton>Clear</DefaultButton>
-        </Stack>
+        <TextField
+          label="Disk #"
+          value={val(disk, diskNum)}
+          onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
+          style={{ width: 60 }}
+        />
+        <TextField
+          label="Disk Name"
+          value={val(diskName, props.diskName)}
+          onChange={(e, nv) => nv && setDiskName(nv)}
+          style={{ width: 220 }}
+        />
         <Stack
           verticalAlign="space-evenly"
           style={{ marginTop: 15, marginRight: 20, width: 85 }}
