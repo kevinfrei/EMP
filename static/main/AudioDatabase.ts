@@ -43,11 +43,7 @@ export async function GetSimpleMusicDatabase(): Promise<FlatAudioDatabase> {
   return db.getFlatDatabase();
 }
 
-export async function RescanAudioDatase(): Promise<void> {
-  const db = await GetAudioDB();
-  log('Rescanning the DB');
-  await db.refresh();
-  log('Rescanning complete');
+export function SendDatabase(db: AudioDatabase): void {
   const flat = db.getFlatDatabase();
   log(
     `${flat.songs.length} songs, ` +
@@ -55,6 +51,14 @@ export async function RescanAudioDatase(): Promise<void> {
       `${flat.artists.length} artists`,
   );
   AsyncSend({ 'music-database-update': flat });
+}
+
+export async function RescanAudioDatase(): Promise<void> {
+  const db = await GetAudioDB();
+  log('Rescanning the DB');
+  await db.refresh();
+  log('Rescanning complete');
+  SendDatabase(db);
 }
 
 export async function UpdateLocations(locs: string): Promise<void> {
@@ -66,17 +70,16 @@ export async function UpdateLocations(locs: string): Promise<void> {
     const db = await GetAudioDB();
     const existingLocations = db.getLocations();
     const add = Operations.SetDifference(new Set(locations), existingLocations);
-    const remove = Operations.SetDifference(
-      new Set(existingLocations),
-      locations,
-    );
+    const del = Operations.SetDifference(new Set(existingLocations), locations);
     log('Adding:');
     log(add);
     log('removing:');
-    log(remove);
-    await Promise.all([...remove].map((loc) => db.removeFileLocation(loc)));
+    log(del);
+    await Promise.all([...del].map((loc) => db.removeFileLocation(loc)));
     await Promise.all([...add].map((loc) => db.addFileLocation(loc)));
-    await RescanAudioDatase();
+    // This shouldn't be needed, as db.add/remove should update the db as needed
+    // await RescanAudioDatase();
+    SendDatabase(db);
   } catch (e) {
     err(e);
   }

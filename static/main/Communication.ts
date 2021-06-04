@@ -183,10 +183,11 @@ export function CommsSetup(): void {
   registerChannel('get-music-database', GetSimpleMusicDatabase, isVoid);
   registerChannel('manual-rescan', RescanAudioDatase, isVoid);
 
-  // Migrated, but not yet validated
   registerChannel('show-location-from-key', showLocFromKey, Type.isString);
-  registerChannel('set-media-info', SetMediaInfoForSong, IsOnlyMetadata);
   registerChannel('media-info', GetMediaInfoForSong, Type.isString);
+
+  // Migrated, but not yet validated
+  registerChannel('set-media-info', SetMediaInfoForSong, IsOnlyMetadata);
 
   // Need updated/reviewed:
   registerChannel('upload-image', SaveNativeImageForAlbum, isAlbumCoverData);
