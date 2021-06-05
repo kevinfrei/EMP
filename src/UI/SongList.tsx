@@ -13,7 +13,7 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeError } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-core';
 import { Dispatch, SetStateAction } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -144,8 +144,22 @@ export function ArtistName({
   return <>{useRecoilValue(getArtistStringFamily(artistIds))}</>;
 }
 
-export function AlbumName({ albumId }: { albumId: AlbumKey }): JSX.Element {
-  return <>{useRecoilValue(getAlbumByKeyFamily(albumId)).title}</>;
+export function AlbumName({ song }: { song: Song }): JSX.Element {
+  const album = useRecoilValue(getAlbumByKeyFamily(song.albumId));
+  const diskNum = Math.floor(song.track / 100);
+  if (
+    diskNum > 0 &&
+    Type.has(album, 'diskNames') &&
+    Type.isArrayOfString(album.diskNames) &&
+    album.diskNames.length >= diskNum
+  ) {
+    return (
+      <>
+        {album.title} [{album.diskNames[diskNum - 1]}]
+      </>
+    );
+  }
+  return <>{album.title}</>;
 }
 
 export function AlbumYear({ albumId }: { albumId: AlbumKey }): JSX.Element {
@@ -158,7 +172,7 @@ export function ArtistsFromSongRender(theSong: Song): JSX.Element {
 }
 
 export function AlbumFromSongRender(song: Song): JSX.Element {
-  return <AlbumName albumId={song.albumId} />;
+  return <AlbumName song={song} />;
 }
 
 export function YearFromSongRender(song: Song): JSX.Element {
