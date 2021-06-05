@@ -1,7 +1,9 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { NormalizedStringCompare } from '@freik/core-utils/lib/Helpers';
 import { AlbumKey, SongKey } from '@freik/media-core';
+import { FlatAudioDatabase } from 'audio-database';
 import { IpcRenderer, NativeImage } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { PathLike } from 'fs';
@@ -25,9 +27,23 @@ interface MyWindow extends Window {
   searchBox?: ISearchBox | null;
   clipboard: Electron.Clipboard | undefined;
   readFile: ReadFile1; // | ReadFile2 | ReadFile3;
+  db: FlatAudioDatabase;
 }
 
 declare let window: MyWindow;
+
+export function SetDB(db: FlatAudioDatabase): void {
+  const albums = db.albums.sort((a, b) =>
+    NormalizedStringCompare(a.title, b.title),
+  );
+  const artists = db.artists.sort((a, b) =>
+    NormalizedStringCompare(a.name, b.name),
+  );
+  const songs = db.songs.sort((a, b) =>
+    NormalizedStringCompare(a.title, b.title),
+  );
+  window.db = { albums, artists, songs };
+}
 
 export async function ShowOpenDialog(
   options: OpenDialogSyncOptions,

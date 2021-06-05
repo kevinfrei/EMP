@@ -11,7 +11,7 @@ import {
 import { FlatAudioDatabase } from 'audio-database';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
-import { CallMain } from '../MyWindow';
+import { CallMain, SetDB } from '../MyWindow';
 import { Catch, Fail } from '../Tools';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import { oneWayFromMainEffect } from './helpers';
@@ -106,6 +106,8 @@ const emptyLibrary = {
 };
 
 function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
+  // For debugging, this is helpful sometimes:
+  SetDB(fad);
   return {
     songs: new Map(fad.songs.map((swp) => [swp.key, swp])),
     albums: new Map(fad.albums.map((alb) => [alb.key, alb])),
@@ -381,6 +383,25 @@ export const getSearchFamily = selectorFamily<ipc.SearchResults, string>({
     },
 });
 
+type SongInfo = {
+  song: Song;
+  artists: string;
+  moreArtists: string;
+  album: Album;
+};
+
+function getDiskNumName(songData: SongInfo): [string | null, string | null] {
+  const diskNo = Math.floor(songData.song.track / 100);
+  if (diskNo > 0) {
+    if (Type.hasType(songData.album, 'diskNames', Type.isArrayOfString)) {
+      return [diskNo.toString(), songData.album.diskNames[diskNo - 1]];
+    }
+    return [diskNo.toString(), null];
+  } else {
+    return [null, null];
+  }
+}
+
 // Given a collection of SongKeys, get all the common metadata info
 // and shove it in the Partial<FullMetadata> object
 // This is used in conjunction with the Metadata Editor
@@ -389,7 +410,7 @@ export const getCommonDataFamily = selectorFamily<MetadataProps, SongKey[]>({
   get:
     (keys: SongKey[]) =>
     ({ get }) => {
-      const theSongsData = keys.map((songKey) => {
+      const theSongsData: SongInfo[] = keys.map((songKey) => {
         const song = get(getSongByKeyFamily(songKey));
         const artists = get(getArtistStringFamily(song.artistIds));
         const moreArtists = get(getArtistStringFamily(song.secondaryIds));
@@ -403,6 +424,8 @@ export const getCommonDataFamily = selectorFamily<MetadataProps, SongKey[]>({
       let moreArtistsList: string | null = null;
       let variations: string | null = null;
       let albumId: string | null = null;
+      let diskNum: string | null = null;
+      let diskName: string | null = null;
       let first = true;
       for (const songData of theSongsData) {
         if (first) {
@@ -417,6 +440,7 @@ export const getCommonDataFamily = selectorFamily<MetadataProps, SongKey[]>({
             : null;
           albumId = songData.album.key;
           first = false;
+          [diskNum, diskName] = getDiskNumName(songData);
         } else {
           if (artist !== songData.artists) artist = null;
           if (albumTitle !== songData.album.title) albumTitle = null;
@@ -426,6 +450,9 @@ export const getCommonDataFamily = selectorFamily<MetadataProps, SongKey[]>({
           if (variations !== songData.song.variations?.join(';'))
             variations = null;
           if (albumId !== songData.album.key) albumId = null;
+          const [thisDiskNum, thisDiskName] = getDiskNumName(songData);
+          if (diskNum !== thisDiskNum) diskNum = null;
+          if (diskName !== thisDiskName) diskName = null;
         }
       }
       const props: MetadataProps = {};
@@ -449,6 +476,9 @@ export const getCommonDataFamily = selectorFamily<MetadataProps, SongKey[]>({
       }
       if (albumId !== null) {
         props.albumId = albumId;
+      }
+      if (diskName !== null) {
+        props.diskName = diskName;
       }
       return props;
     },
