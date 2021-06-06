@@ -1446,6 +1446,17 @@
     "@fluentui/set-version" "^8.1.1"
     tslib "^2.1.0"
 
+"@freik/audiodb@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@freik/audiodb/-/audiodb-0.1.5.tgz#c9f570776bf4e3266e051dca27b6ad22c63d60e3"
+  integrity sha512-2gFLMRT6Vn+33YdnmFVBzzxvPXK8Hj4ItGRQDfG3Q/t4q/eQqZsjiGBBRYE8wXoTpMpAVlxvYx7NAtGf+EdKkw==
+  dependencies:
+    "@freik/core-utils" "^0.25.0"
+    "@freik/media-core" "^0.6.1"
+    "@freik/media-utils" "^0.12.1"
+    "@freik/node-utils" "^0.14.7"
+    xxhashjs "^0.2.2"
+
 "@freik/build-tools@>=2.7.2":
   version "2.7.2"
   resolved "https://registry.yarnpkg.com/@freik/build-tools/-/build-tools-2.7.2.tgz#534018885e3b3a309b2ff9213c51c92d2efc665d"
@@ -3099,16 +3110,6 @@ atob@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
-
-"audio-database@git+https://github.com/kevinfrei/audio-database.git#v0.1.4":
-  version "0.1.4"
-  resolved "git+https://github.com/kevinfrei/audio-database.git#5df03c76cac9121bbba7a931c5dd014605cc2966"
-  dependencies:
-    "@freik/core-utils" "^0.25.0"
-    "@freik/media-core" "^0.6.1"
-    "@freik/media-utils" "^0.12.1"
-    "@freik/node-utils" "^0.14.7"
-    xxhashjs "^0.2.2"
 
 autoprefixer@^9.6.1:
   version "9.8.6"

@@ -1,9 +1,9 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
+import { FlatAudioDatabase } from '@freik/audiodb';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { NormalizedStringCompare } from '@freik/core-utils/lib/Helpers';
 import { AlbumKey, SongKey } from '@freik/media-core';
-import { FlatAudioDatabase } from 'audio-database';
 import { IpcRenderer, NativeImage } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
 import { PathLike } from 'fs';

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { FlatAudioDatabase } from '@freik/audiodb';
 import { MakeLogger, Type } from '@freik/core-utils';
 import {
   Album,
@@ -8,7 +9,6 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
-import { FlatAudioDatabase } from 'audio-database';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 import { CallMain, SetDB } from '../MyWindow';

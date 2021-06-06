@@ -1,3 +1,4 @@
+import { AudioDatabase } from '@freik/audiodb';
 import {
   MakeError,
   MakeLogger,
@@ -8,7 +9,6 @@ import {
 import { Album, AlbumKey, SongKey } from '@freik/media-core';
 import { hideFile } from '@freik/node-utils/lib/file';
 import albumArt from 'album-art';
-import { AudioDatabase } from 'audio-database';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';

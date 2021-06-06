@@ -1,6 +1,6 @@
+import { IsOnlyMetadata } from '@freik/audiodb';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
-import { IsOnlyMetadata } from 'audio-database';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import {

@@ -1,4 +1,12 @@
 import {
+  AudioDatabase,
+  FlatAudioDatabase,
+  GetMediaInfo,
+  MakeAudioDatabase,
+  MinimumMetadata,
+  SearchResults,
+} from '@freik/audiodb';
+import {
   MakeError,
   MakeLogger,
   Operations,
@@ -12,14 +20,6 @@ import {
   MediaKey,
   SongKey,
 } from '@freik/media-core';
-import {
-  AudioDatabase,
-  FlatAudioDatabase,
-  GetMediaInfo,
-  MakeAudioDatabase,
-  MinimumMetadata,
-  SearchResults,
-} from 'audio-database';
 import electronIsDev from 'electron-is-dev';
 import { AsyncSend } from './Communication';
 import { Persistence } from './persist';
