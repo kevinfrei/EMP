@@ -131,7 +131,13 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
     getArtistStringFamily(theSong.secondaryIds),
   );
   const theAlbum = useRecoilValue(getAlbumByKeyFamily(theSong.albumId));
-
+  const diskNum = Math.floor(theSong.track / 100);
+  const diskName =
+    diskNum > 0 &&
+    Type.isArray(theAlbum.diskNames) &&
+    theAlbum.diskNames.length >= diskNum
+      ? theAlbum.diskNames[diskNum - 1]
+      : '';
   return (
     <MetadataEditor
       forSong={songKey}
@@ -141,6 +147,7 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
       title={theSong.title}
       year={theAlbum.year > 0 ? theAlbum.year.toString() : ''}
       va={theAlbum.vatype}
+      diskName={diskName}
       moreArtists={moreArtists}
       variations={theSong.variations ? theSong.variations.join('; ') : ''}
       albumId={theSong.albumId}

@@ -39,16 +39,15 @@ export default function SongDetailPanel(): JSX.Element {
         title: header,
       }}
       modalProps={{
-        isBlocking: true,
+        isBlocking: false,
         dragOptions: {
           moveMenuItemText: 'Move',
           closeMenuItemText: 'Close',
           menu: ContextualMenu,
         },
       }}
-      minWidth={575}
+      minWidth={600}
       onDismiss={dismissClick}
-      isBlocking={false}
       closeButtonAriaLabel="Close"
     >
       <Spinner label="Loading...">{elem}</Spinner>

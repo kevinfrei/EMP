@@ -131,11 +131,12 @@ function AlbumName({ song }: { song: Song }): JSX.Element {
     diskNum > 0 &&
     Type.has(album, 'diskNames') &&
     Type.isArrayOfString(album.diskNames) &&
-    album.diskNames.length >= diskNum
+    album.diskNames.length >= diskNum &&
+    album.diskNames[diskNum - 1].length > 0
   ) {
     return (
       <>
-        {album.title} [{album.diskNames[diskNum - 1]}]
+        {album.title}: {album.diskNames[diskNum - 1]}
       </>
     );
   }
