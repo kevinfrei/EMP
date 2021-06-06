@@ -31,7 +31,7 @@ import {
   minSongCountForArtistListState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
-import { MakeSongComparator, SortItems } from '../../Tools';
+import { MakeSortKey, SortItems } from '../../Sorting';
 import {
   AlbumFromSongRender,
   altRowRenderer,
@@ -143,18 +143,20 @@ const filteredSongsState = selector<ArtistSong[]>({
 });
 
 // For grouping to work properly, the sort order needs to be fully specified
-const sortOrderState = atom({ key: 'artistsSortOrder', default: 'rylnt' });
+const sortOrderState = atom({
+  key: 'artistsSortOrder',
+  default: MakeSortKey(['r', ''], ['r', 'ylnt']),
+});
 const sortedSongsState = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
     const artists = get(allArtistsState);
     return SortItems(
       get(filteredSongsState),
-      MakeSongComparator(
+      get(sortOrderState).makeSongComparator(
         get(allAlbumsState),
         artists,
         get(ignoreArticlesState),
-        get(sortOrderState),
         (s: Song) => {
           if (Type.hasStr(s, 'sortedArtistId')) {
             const a = artists.get(s.sortedArtistId);
@@ -225,7 +227,6 @@ export default function ArtistList(): JSX.Element {
     curExpandedState,
     (s: ArtistSong) => s.sortedArtistId,
     (s: string) => GetArtistStringFromKeys([s], artists),
-    'r',
     'sortedArtistId',
     [
       ['r', 'sortedArtistId', 'Artist', 50, 175, filteredArtistsFromSong],

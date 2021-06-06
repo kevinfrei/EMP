@@ -27,7 +27,7 @@ import {
   getDataForSongListFamily,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
-import { SortSongList } from '../../Tools';
+import { MakeSortKey, SortSongList } from '../../Sorting';
 import {
   AlbumFromSongRender,
   altRowRenderer,
@@ -42,7 +42,10 @@ import './styles/MixedSongs.css';
 
 const err = MakeError('MixedSongs-err'); // eslint-disable-line
 
-const sortOrderState = atom({ key: 'mixedSongSortOrder', default: 'rl' });
+const sortOrderState = atom({
+  key: 'mixedSongSortOrder',
+  default: MakeSortKey([''], ['nrlyt']),
+});
 const sortedSongsState = selector({
   key: 'msSorted',
   get: ({ get }) => {
@@ -110,7 +113,7 @@ export default function MixedSongsList(): JSX.Element {
   const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
-      ['r', 'artistIds', 'Artists(s)', 150, 450, ArtistsFromSongRender],
+      ['r', 'artistIds', 'Artist(s)', 150, 450, ArtistsFromSongRender],
       ['l', 'albumId', 'Album', 150, 450, AlbumFromSongRender],
       ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
       ['t', 'title', 'Title', 150],

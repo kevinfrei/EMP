@@ -30,6 +30,7 @@ import {
   getSearchFamily,
   searchTermState,
 } from '../../Recoil/ReadOnly';
+import { MakeSortKey } from '../../Sorting';
 import {
   SongDetailClick,
   SongListDetailContextMenuClick,
@@ -215,6 +216,8 @@ function SearchResultsGroupHeader(props: {
   );
 }
 
+const noSort = MakeSortKey('rlnt');
+
 export default function SearchResultsView(): JSX.Element {
   const searchTerm = useRecoilValue(searchTermState);
   const searchResults = useRecoilValue(getSearchFamily(searchTerm));
@@ -318,8 +321,8 @@ export default function SearchResultsView(): JSX.Element {
       ['n', 'track', '#', 30, 30],
       ['t', 'title', 'Title', 150, 450],
     ],
-    () => '',
-    (srt) => '',
+    () => noSort,
+    (srt) => 0,
   );
 
   return (

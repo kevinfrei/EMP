@@ -14,10 +14,11 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { MakeError, Type } from '@freik/core-utils';
-import { Album, AlbumKey, ArtistKey, Song } from '@freik/media-core';
+import { AlbumKey, ArtistKey, Song } from '@freik/media-core';
 import { Dispatch, SetStateAction } from 'react';
 import { useRecoilValue } from 'recoil';
 import { getAlbumByKeyFamily, getArtistStringFamily } from '../Recoil/ReadOnly';
+import { SortKey } from '../Sorting';
 
 const err = MakeError('SongList-err');
 
@@ -50,28 +51,24 @@ export function MakeColumns<T>(
     maxWidth?: number,
     render?: (song: T, index?: number) => JSX.Element,
   ][],
-  getSort: () => string,
-  performSort: (sort: string) => void,
+  getSort: () => SortKey,
+  performSort: (sort: SortKey) => void,
   groupField?: string,
   sorters?: {
-    isSorted: (sort: string, key: string) => boolean;
-    isSortedDescending: (sort: string, key: string) => boolean;
-    setSortOrder: (key: string) => string;
+    isSorted: (sort: SortKey, key: string) => boolean;
+    isSortedDescending: (sort: SortKey, key: string) => boolean;
+    setSortOrder: (key: string) => SortKey;
   },
 ): IColumn[] {
   const onColumnClick = sorters
     ? sorters.setSortOrder
-    : (which: string) => {
-        const curSort = getSort();
-        // This rearranges the sort order string
-        return NewSortOrder(which, curSort);
-      };
+    : (which: string) => getSort().newSortOrder(which);
   const isSorted = sorters
     ? sorters.isSorted
-    : (sort: string, key: string) => sort.toLowerCase().startsWith(key);
+    : (sort: SortKey, key: string) => sort.isSorted(key);
   const isSortedDescending = sorters
     ? sorters.isSortedDescending
-    : (sort: string, key: string) => sort.startsWith(key.toUpperCase());
+    : (sort: SortKey, key: string) => sort.isSortedDescending(key);
   return renderers.map(
     ([key, fieldName, name, minWidth, maxWidth, onRender], index) =>
       fieldName !== ''
@@ -119,23 +116,6 @@ export function altRowRenderer(
   };
 }
 
-/**
- * @function NewSortOrder
- * Updates the sorting string to be arranged & capitalized properly give a
- * 'click' on the new key
- *
- * @param {string} which - the lowercase letter for the header clicked on
- * @param {string} curSort - the string representing the current sort order
- * @returns {string} the updated sort order string
- */
-function NewSortOrder(which: string, curSort: string): string {
-  // Handle clicking twice to invert the order
-  const sort = curSort.startsWith(which) ? which.toUpperCase() : which;
-  return (
-    sort + curSort.replaceAll(which, '').replaceAll(which.toUpperCase(), '')
-  );
-}
-
 export function ArtistName({
   artistIds,
 }: {
@@ -144,7 +124,7 @@ export function ArtistName({
   return <>{useRecoilValue(getArtistStringFamily(artistIds))}</>;
 }
 
-export function AlbumName({ song }: { song: Song }): JSX.Element {
+function AlbumName({ song }: { song: Song }): JSX.Element {
   const album = useRecoilValue(getAlbumByKeyFamily(song.albumId));
   const diskNum = Math.floor(song.track / 100);
   if (
@@ -162,7 +142,7 @@ export function AlbumName({ song }: { song: Song }): JSX.Element {
   return <>{album.title}</>;
 }
 
-export function AlbumYear({ albumId }: { albumId: AlbumKey }): JSX.Element {
+function AlbumYear({ albumId }: { albumId: AlbumKey }): JSX.Element {
   const album = useRecoilValue(getAlbumByKeyFamily(albumId));
   return <>{album.year !== 0 ? album.year : ''}</>;
 }
@@ -177,10 +157,6 @@ export function AlbumFromSongRender(song: Song): JSX.Element {
 
 export function YearFromSongRender(song: Song): JSX.Element {
   return <AlbumYear albumId={song.albumId} />;
-}
-
-export function ArtistsFromAlbumRender(album: Album): JSX.Element {
-  return <ArtistName artistIds={album.primaryArtists} />;
 }
 
 /**
@@ -218,7 +194,6 @@ export function GetSongGroupData<T>(
   ],
   getGroupId: (obj: T) => string,
   getGroupName: (groupId: string) => string,
-  groupKey: string,
   groupFieldName: string,
   renderers: [
     key: string,
@@ -228,15 +203,13 @@ export function GetSongGroupData<T>(
     maxWidth?: number,
     render?: (song: T) => JSX.Element,
   ][],
-  getSort: () => string,
-  performSort: (sort: string) => void,
-  keyLength?: number,
+  getSort: () => SortKey,
+  performSort: (sort: SortKey) => void,
 ): [IColumn[], IGroup[], IDetailsGroupRenderProps] {
   const groups: IGroup[] = [];
   let startGroup = 0;
   let lastGroupId: string | null = null;
   const allGroupIds = new Set<string>();
-  const keyLen = keyLength ? keyLength : 1;
 
   // Walk the sorted list of songs, creating groups when the groupId changes
   // This has the down-side of making multiple groups with the same key if the
@@ -277,45 +250,12 @@ export function GetSongGroupData<T>(
       },
     },
   };
-  const columns = MakeColumns(renderers, getSort, performSort, groupFieldName, {
-    isSorted: (sort: string, key: string): boolean => {
-      if (key === groupKey) {
-        return sort.toLowerCase().startsWith(groupKey);
-      } else {
-        return sort.length > 1 && sort.substr(keyLen, 1).toLowerCase() === key;
-      }
-    },
-    isSortedDescending: (sort: string, key: string): boolean => {
-      if (key === groupKey) {
-        return sort.startsWith(groupKey.toUpperCase());
-      } else {
-        return sort.length > 1 && sort.substr(keyLen, 1) === key.toUpperCase();
-      }
-    },
-    setSortOrder: (which: string): string => {
-      // If they clicked the grouped header, swap the front
-      const curSort = getSort();
-      if (which === groupKey) {
-        if (curSort.startsWith(groupKey)) {
-          return (
-            curSort.substr(0, keyLen).toUpperCase() + curSort.substr(keyLen)
-          );
-        } else {
-          return (
-            curSort.substr(0, keyLen).toLowerCase() + curSort.substr(keyLen)
-          );
-        }
-      }
-      return (
-        curSort.substr(0, keyLen) + NewSortOrder(which, curSort.substr(keyLen))
-      );
-    },
-  });
+  const columns = MakeColumns(renderers, getSort, performSort, groupFieldName);
   return [columns, groups, renderProps];
 }
 
 /**
- * Throw this on a DetailsList that's locationed inside a ScrollablePane and it
+ * Throw this on a DetailsList that's located inside a ScrollablePane and it
  * will make the header of the DetailsList stay at the top of the pane
  */
 export function StickyRenderDetailsHeader(
@@ -337,6 +277,10 @@ export function StickyRenderDetailsHeader(
   );
 }
 
+/**
+ * Use this for a group expander thing: It will save & restore which ones are
+ * curently expanded automagically
+ */
 export function HeaderExpanderClick(
   props: IDetailsGroupDividerProps,
   [theSet, setTheSet]: [Set<string>, Dispatch<SetStateAction<Set<string>>>],

@@ -1,5 +1,6 @@
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { MakeSortKey } from '../Sorting';
 import { RandomInt } from '../Tools';
 import { repeatState } from './ReadWrite';
 
@@ -75,9 +76,9 @@ export const hasAnySongsState = selector<boolean>({
 });
 
 // This is the sort for the current playlist
-export const nowPlayingSortState = atom<string>({
+export const nowPlayingSortState = atom({
   key: 'nowPlayingSort',
-  default: '',
+  default: MakeSortKey([''], ['lyrnt']),
 });
 
 // The currently selected song(s) to display details for

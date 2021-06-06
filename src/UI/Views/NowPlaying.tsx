@@ -52,7 +52,8 @@ import {
   curSongsState,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
-import { isPlaylist, SortSongList } from '../../Tools';
+import { SortKey, SortSongList } from '../../Sorting';
+import { isPlaylist } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
   AlbumFromSongRender,
@@ -233,9 +234,9 @@ export default function NowPlaying(): JSX.Element {
     />
   );
 
-  const performSort = (srt: string) => {
+  const performSort = (srt: SortKey) => {
     setSortBy(srt);
-    if (srt !== '') {
+    if (srt.hasSort()) {
       const sortedSongs = SortSongList(
         curSongs,
         albums,

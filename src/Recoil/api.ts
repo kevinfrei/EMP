@@ -281,7 +281,7 @@ export async function ShufflePlaying({
   const release = snapshot.retain();
   try {
     const curIndex = await snapshot.getPromise(currentIndexState);
-    set(nowPlayingSortState, '');
+    reset(nowPlayingSortState);
     if (curIndex < 0) {
       set(songListState, (prevSongList: string[]) =>
         ShuffleArray(prevSongList),
