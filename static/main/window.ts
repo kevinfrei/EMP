@@ -122,7 +122,7 @@ export function ToggleMiniPlayer(): void {
       windowPos.bounds as Electron.Rectangle,
     );
     // TODO: Make this thing stick to the sides of the screen
-    const atEdge =
+    const atRightEdge =
       Math.abs(
         display.bounds.x +
           display.bounds.width -
@@ -130,23 +130,22 @@ export function ToggleMiniPlayer(): void {
           windowPos.bounds.width,
       ) < 20;
     if (prevWidth > 450 || windowPos.bounds.width < 450) {
-      mainWindow.setSize(Math.max(prevWidth, 550), windowPos.bounds.height);
-      if (atEdge) {
+      const newWidth = Math.max(prevWidth, 570);
+      if (atRightEdge) {
         mainWindow.setPosition(
-          display.bounds.x + display.bounds.width - prevWidth,
+          display.bounds.x + display.bounds.width - newWidth,
           windowPos.bounds.y,
         );
       }
+      mainWindow.setSize(newWidth, windowPos.bounds.height);
       prevWidth = 0;
     } else {
       prevWidth = windowPos.bounds.width;
-      mainWindow.setSize(270, windowPos.bounds.height);
-      if (atEdge) {
-        mainWindow.setPosition(
-          display.bounds.x + display.bounds.width - 270,
-          windowPos.bounds.y,
-        );
+      if (atRightEdge) {
+        const x = display.bounds.x + display.bounds.width - 270;
+        mainWindow.setPosition(x, windowPos.bounds.y);
       }
+      mainWindow.setSize(270, windowPos.bounds.height);
     }
   }
 }
