@@ -273,11 +273,9 @@ export default function NowPlaying(): JSX.Element {
   );
   const miniColumns = MakeColumns(
     [
-      ['X', '', '', 18, 18, drawDeleter],
-      ['n', 'track', '#', 10, 20],
-      ['t', 'title', 'Title', 70, 150],
-      ['l', 'albumId', 'Album', 40, 150, AlbumFromSongRender],
-      ['r', 'artistIds', 'Artist(s)', 40, 150, ArtistsFromSongRender],
+      ['X', '', '', 12, 12, drawDeleter],
+      ['t', 'title', 'Title', 60, 100],
+      ['l', 'albumId', 'Album', 60, 100, AlbumFromSongRender],
     ],
     () => sortBy,
     performSort,
