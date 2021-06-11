@@ -71,6 +71,9 @@ export async function CreateWindow(
     autoHideMenuBar: true,
     minWidth: 270,
     minHeight: 308,
+    roundedCorners: false, // Square corners? Not sure...
+    fullscreenable: false,
+    acceptFirstMouse: true, // Gets 'activating' clicks
   })
     .on('closed', () => {
       // Clear the reference to the window object.
@@ -129,7 +132,7 @@ export function ToggleMiniPlayer(): void {
           windowPos.bounds.x -
           windowPos.bounds.width,
       ) < 20;
-    if (prevWidth > 450 || windowPos.bounds.width < 450) {
+    if (windowPos.bounds.width < 450) {
       const newWidth = Math.max(prevWidth, 570);
       if (atRightEdge) {
         mainWindow.setPosition(

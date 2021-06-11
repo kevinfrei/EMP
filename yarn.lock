@@ -1446,15 +1446,15 @@
     "@fluentui/set-version" "^8.1.1"
     tslib "^2.1.0"
 
-"@freik/audiodb@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@freik/audiodb/-/audiodb-0.1.5.tgz#c9f570776bf4e3266e051dca27b6ad22c63d60e3"
-  integrity sha512-2gFLMRT6Vn+33YdnmFVBzzxvPXK8Hj4ItGRQDfG3Q/t4q/eQqZsjiGBBRYE8wXoTpMpAVlxvYx7NAtGf+EdKkw==
+"@freik/audiodb@^0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@freik/audiodb/-/audiodb-0.1.7.tgz#6b4d94f920e03f3e8848f7d8bec739493d36383a"
+  integrity sha512-UkiDgGHi+X/9PQX25wNitAH1ChvS5yB/oUnfVo+y2nlKMbTeszPkjZGQOTobbII37CtE6cgbBkTxl8OuNi4Wdg==
   dependencies:
-    "@freik/core-utils" "^0.25.0"
+    "@freik/core-utils" "^0.27.0"
     "@freik/media-core" "^0.6.1"
-    "@freik/media-utils" "^0.12.1"
-    "@freik/node-utils" "^0.14.7"
+    "@freik/media-utils" "^0.12.2"
+    "@freik/node-utils" "^0.15.0"
     xxhashjs "^0.2.2"
 
 "@freik/build-tools@>=2.7.2":
@@ -1491,6 +1491,11 @@
   resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.25.0.tgz#5b0385b72bf281f824f389d1cdf70da7bb20f9e6"
   integrity sha512-+tv0/CJjtRlWPQ1FtQLJiXd9DWny7ALV3JHkeJYypMcuBGEziGOsjUerc/Q717TQT9Ldkn/VnfwG6V2+U4SysQ==
 
+"@freik/core-utils@^0.27.0":
+  version "0.27.1"
+  resolved "https://registry.yarnpkg.com/@freik/core-utils/-/core-utils-0.27.1.tgz#d6c4c551095982d9b107e4ad808af9d3365effa3"
+  integrity sha512-LqjFudU+gEv9BBRS+UCT1b+xutYGoO0N1pMY1KXlnJmH8445XSQs8DuGrPg4pgwWyMnQuJhzyzR08eMHE6W9UA==
+
 "@freik/media-core@0.x", "@freik/media-core@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@freik/media-core/-/media-core-0.6.1.tgz#ea3cdd756cdc56868505b8b8b8c53f7fa7b8ab68"
@@ -1498,7 +1503,7 @@
   dependencies:
     "@freik/core-utils" "^0.25.0"
 
-"@freik/media-utils@0.x", "@freik/media-utils@^0.12.1":
+"@freik/media-utils@0.x":
   version "0.12.1"
   resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.12.1.tgz#64acaae9f2b9f9b8c48c4cf431b40e0f80546566"
   integrity sha512-N23NuFxd+DUdfvD4p5nmlxGWx77fW1cEce6uxTRI6fhEKe5+8ulTm1AHtC39vwRNeUe8oHQDzUtid0fheUuSCw==
@@ -1508,10 +1513,27 @@
     "@freik/node-utils" "^0.14.7"
     music-metadata "^7.8.6"
 
+"@freik/media-utils@^0.12.2":
+  version "0.12.2"
+  resolved "https://registry.yarnpkg.com/@freik/media-utils/-/media-utils-0.12.2.tgz#9ce27d6afa597a6e682fc71434835a396ed70012"
+  integrity sha512-sp6OeWXgz1/GM/r/Mei4ljuM8zITDiSgDNzSwnnUapP92RAujlR2t98Fwn1CmweflIlUNVvOk05xB9K0gBpjlg==
+  dependencies:
+    "@freik/core-utils" "^0.25.0"
+    "@freik/media-core" "^0.6.1"
+    "@freik/node-utils" "^0.15.0"
+    music-metadata "^7.8.6"
+
 "@freik/node-utils@0.x", "@freik/node-utils@^0.14.7":
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.14.7.tgz#8edffcb746d5aa623fdc1e624c2ca418e6cc80c0"
   integrity sha512-oWX/frD8zlDFJl2RbwDJhXyP3Z4E2ttx3SsIdGKQ1PESmasPFZwDOlGugCR9npuEVpTPw0JHCinKF2kTAfyKrA==
+  dependencies:
+    "@freik/core-utils" "^0.25.0"
+
+"@freik/node-utils@^0.15.0":
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/@freik/node-utils/-/node-utils-0.15.0.tgz#57d9d27fa2f4cc3d6b626f72007e52f8c2e16857"
+  integrity sha512-dV4rKJL6rUHDEF5uu6lSNDym/M9U1/W/ayvS7KRdV+8viH9MmHdb7AOWL/5Qx5fCLnofza+7v0rwb19hlA4QeQ==
   dependencies:
     "@freik/core-utils" "^0.25.0"
 

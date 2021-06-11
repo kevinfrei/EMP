@@ -48,7 +48,7 @@
     "@fluentui/font-icons-mdl2": ">=8.1.1",
     "@fluentui/react": ">=8.17.0",
     "@fluentui/react-hooks": ">=8.2.1",
-    "@freik/audiodb": "^0.1.5",
+    "@freik/audiodb": "^0.1.7",
     "@freik/core-utils": "0.x",
     "@freik/media-core": "0.x",
     "@freik/media-utils": "0.x",
