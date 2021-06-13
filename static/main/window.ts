@@ -98,8 +98,7 @@ export async function CreateWindow(
     })
     // Save the window position when it's changed:
     .on('resize', windowPosUpdated)
-    .on('move', windowPosUpdated)
-    .on('close', windowPosUpdated);
+    .on('move', windowPosUpdated);
 
   // Load the base URL
   await mainWindow.loadURL(

@@ -66,7 +66,7 @@ function action(
     return {
       label,
       id: getId(label),
-      accelerator: accOrHdlr,
+      accelerator: `CmdOrCtrl+${accOrHdlr}`,
       click: getClick(handler),
     };
   } else if (!accOrHdlr) {
@@ -98,7 +98,7 @@ const fileMenu: MenuItemConstructorOptions = {
   submenu: [
     xaction('Add F&ile Location', 'O', { state: 'addLocation' }),
     ___,
-    isMac ? { role: 'close' } : { role: 'quit' },
+    { role: isMac ? 'close' : 'quit' },
   ],
 };
 

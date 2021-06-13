@@ -11,21 +11,21 @@ export type OnWindowCreated = () => Promise<void>;
 const log = MakeLogger('electronSetup');
 const err = MakeError('electronSetup-err');
 
+/*
+
 function registerGlobalShortcuts() {
-  /*
   globalShortcut.register('MediaNextTrack', () => {});
   globalShortcut.register('MediaPreviousTrack', () => {});
   globalShortcut.register('MediaPlayPause', () => {});
-  */
 }
 
 function unregisterGlobalShortcuts() {
-  /*
   globalShortcut.unregister('MediaNextTrack');
   globalShortcut.unregister('MediaPreviousTrack');
   globalShortcut.unregister('MediaPlayPause');
-  */
 }
+
+*/
 
 async function WhenReady(windowCreated: OnWindowCreated) {
   await app.whenReady();
@@ -68,9 +68,9 @@ export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
       if (!HasWindow()) {
         CreateWindow(windowCreated).catch(err);
       }
-    })
-    .on('will-quit', unregisterGlobalShortcuts);
+    });
+  //    .on('will-quit', unregisterGlobalShortcuts);
 
   await WhenReady(windowCreated);
-  registerGlobalShortcuts();
+  //  registerGlobalShortcuts();
 }
