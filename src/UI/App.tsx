@@ -11,8 +11,9 @@ import VolumeControl from './VolumeControl';
 export default function App(): JSX.Element {
   return (
     <RecoilRoot>
-      <Utilities />
-      <span id="grabber"></span>
+      <span id="grabber">
+        <Utilities />
+      </span>
       <span id="left-column"></span>
       <span id="top-row"></span>
       <Spinner label="Intializing...">

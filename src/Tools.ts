@@ -1,6 +1,5 @@
 // This is for getting at "global" stuff from the window object
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { stringCompare } from './Sorting';
 
 const log = MakeLogger('Tools');
 const err = MakeError('Tools-err');
@@ -9,24 +8,35 @@ const err = MakeError('Tools-err');
  * Searching
  */
 
-export function GetIndexOf<T>(
-  sortedValues: T[],
-  searchString: string,
-  selector: (s: T) => string,
+/**
+ * Binary search a sorted set of items, finding either the value, or it's
+ * closest relative
+ *
+ * @param  {T[]} sortedItems
+ * @param  {E} searchValue
+ * @param  {(v:T)=>E} selector
+ * @param  {(a:E,b:E)=>number} comparator
+ * @returns number
+ */
+export function GetIndexOf<T, E>(
+  sortedItems: T[],
+  searchValue: E,
+  selector: (v: T) => E,
+  comparator: (a: E, b: E) => number,
 ): number {
-  // Binary search, assuming the songs are sorted in either ascending or
+  // Binary search, assuming the items are sorted in either ascending or
   // descending value of the selector
   const ascending =
-    stringCompare(
-      selector(sortedValues[0]),
-      selector(sortedValues[sortedValues.length - 1]),
+    comparator(
+      selector(sortedItems[0]),
+      selector(sortedItems[sortedItems.length - 1]),
     ) > 0;
   const before = (a: number): boolean => {
-    const sort = stringCompare(selector(sortedValues[a]), searchString) < 0;
+    const sort = comparator(selector(sortedItems[a]), searchValue) < 0;
     return ascending ? sort : !sort;
   };
   let lo = 0;
-  let hi = sortedValues.length - 1;
+  let hi = sortedItems.length - 1;
   while (lo < hi) {
     const mid = Math.floor((lo + hi) / 2);
     if (before(mid)) {

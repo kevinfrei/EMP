@@ -120,3 +120,6 @@ export const albumCoverUrlFamily = selectorFamily<string, AlbumKey>({
       return `pic://album/${key}#${get(picCacheAvoiderFamily(key))}`;
     },
 });
+
+// This is the currently 'typed' set of characters (for scrolling lists)
+export const keyBufferState = atom<string>({ key: 'KeyBuffer', default: '' });

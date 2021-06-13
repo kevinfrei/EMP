@@ -2,6 +2,8 @@ import {
   DetailsList,
   IconButton,
   IDetailsGroupRenderProps,
+  IDetailsList,
+  IGroup,
   Image,
   ImageFit,
   ScrollablePane,
@@ -22,15 +24,25 @@ import {
   useRecoilValue,
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
-import { albumCoverUrlFamily } from '../../Recoil/Local';
+import { albumCoverUrlFamily, keyBufferState } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
   getDataForAlbumFamily,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState } from '../../Recoil/ReadWrite';
-import { MakeSortKey, SortSongList } from '../../Sorting';
+import {
+  CurrentView,
+  curViewState,
+  ignoreArticlesState,
+} from '../../Recoil/ReadWrite';
+import {
+  articlesCmp,
+  MakeSortKey,
+  noArticlesCmp,
+  SortSongList,
+} from '../../Sorting';
+import { GetIndexOf } from '../../Tools';
 import {
   AlbumFromSongRender,
   altRowRenderer,
@@ -107,10 +119,16 @@ const sortedSongsState = selector({
 });
 
 export default function AlbumList(): JSX.Element {
-  const [albumContext, setAlbumContext] = useRecoilState(albumContextState);
+  const curExpandedState = useState(new Set<AlbumKey>());
+  const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
+
   const albums = useRecoilValue(allAlbumsState);
+  const curView = useRecoilValue(curViewState);
+  const ignoreArticles = useRecoilValue(ignoreArticlesState);
+  const keyBuffer = useRecoilValue(keyBufferState);
   const sortedSongs = useRecoilValue(sortedSongsState);
 
+  const [albumContext, setAlbumContext] = useRecoilState(albumContextState);
   const [curSort, setSort] = useRecoilState(sortOrderState);
 
   const onAddSongClick = useRecoilCallback(
@@ -130,8 +148,6 @@ export default function AlbumList(): JSX.Element {
         }
       },
   );
-
-  const curExpandedState = useState(new Set<AlbumKey>());
 
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
@@ -174,10 +190,25 @@ export default function AlbumList(): JSX.Element {
   );
   groupProps.onRenderHeader = renderAlbumHeader;
 
+  // This doesn't quite work.
+  // It looks like DetailsList doesn't do the math quite right, unfortunately.
+  // I should check it out on Songs to see if it's related to groups...
+  if (curView === CurrentView.album && detailRef && keyBuffer.length > 0) {
+    const index = GetIndexOf(
+      groups,
+      keyBuffer,
+      (s: IGroup) => (s ? s.name || '' : ''),
+      ignoreArticles ? noArticlesCmp : articlesCmp,
+    );
+    detailRef.focusIndex(index);
+    log(`Filter: '${keyBuffer}' index: ${index} name: ${groups[index].name}`);
+  }
+
   return (
     <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
+          componentRef={(ref) => setDetailRef(ref)}
           items={sortedSongs}
           selectionMode={SelectionMode.none}
           groups={groups}

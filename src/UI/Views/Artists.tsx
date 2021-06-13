@@ -2,6 +2,8 @@ import {
   DetailsList,
   IconButton,
   IDetailsGroupRenderProps,
+  IDetailsList,
+  IGroup,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -21,17 +23,26 @@ import {
 } from 'recoil';
 import { GetArtistStringFromKeys } from '../../DataSchema';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import { keyBufferState } from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
 } from '../../Recoil/ReadOnly';
 import {
+  CurrentView,
+  curViewState,
   ignoreArticlesState,
   minSongCountForArtistListState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
-import { MakeSortKey, SortItems } from '../../Sorting';
+import {
+  articlesCmp,
+  MakeSortKey,
+  noArticlesCmp,
+  SortItems,
+} from '../../Sorting';
+import { GetIndexOf } from '../../Tools';
 import {
   AlbumFromSongRender,
   altRowRenderer,
@@ -147,6 +158,7 @@ const sortOrderState = atom({
   key: 'artistsSortOrder',
   default: MakeSortKey(['r', ''], ['r', 'ylnt']),
 });
+
 const sortedSongsState = selector({
   key: 'artistsSorted',
   get: ({ get }) => {
@@ -172,9 +184,18 @@ const sortedSongsState = selector({
 });
 
 export default function ArtistList(): JSX.Element {
-  const [artistContext, setArtistContext] = useRecoilState(artistContextState);
+  const curExpandedState = useState(new Set<ArtistKey>());
+  const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
+  const curView = useRecoilValue(curViewState);
   const filteredArtistList = useRecoilValue(filteredArtistsState);
+  const ignoreArticles = useRecoilValue(ignoreArticlesState);
+  const keyBuffer = useRecoilValue(keyBufferState);
+  const sortedSongs = useRecoilValue(sortedSongsState);
+
+  const [artistContext, setArtistContext] = useRecoilState(artistContextState);
+  const [curSort, setSort] = useRecoilState(sortOrderState);
+
   const artists = new Map(filteredArtistList.map((r) => [r.key, r]));
   const onRightClick = useRecoilCallback(
     ({ set }) =>
@@ -193,11 +214,6 @@ export default function ArtistList(): JSX.Element {
       await AddSongs(cbInterface, [item.key]);
     },
   );
-
-  const [curSort, setSort] = useRecoilState(sortOrderState);
-  const curExpandedState = useState(new Set<ArtistKey>());
-
-  const sortedSongs = useRecoilValue(sortedSongsState);
 
   const filteredArtistsFromSong = (theSong: ArtistSong): JSX.Element => (
     <ArtistName artistIds={[theSong.sortedArtistId]} />
@@ -239,11 +255,29 @@ export default function ArtistList(): JSX.Element {
     setSort,
   );
   groupProps.onRenderHeader = renderArtistHeader;
+
+  // This doesn't quite work.
+  // It looks like DetailsList doesn't do the math quite right, unfortunately.
+  // I should check it out on Songs to see if it's related to groups...
+  if (curView === CurrentView.artist && detailRef && keyBuffer.length > 0) {
+    const index = GetIndexOf(
+      artistGroups,
+      keyBuffer,
+      (s: IGroup) => (s ? s.name || '' : ''),
+      ignoreArticles ? noArticlesCmp : articlesCmp,
+    );
+    detailRef.focusIndex(index);
+    log(
+      `Filter: '${keyBuffer}' index: ${index} name: ${artistGroups[index].name}`,
+    );
+  }
+
   return (
     <div className="artistView" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
           compact
+          componentRef={(ref) => setDetailRef(ref)}
           onRenderRow={altRowRenderer()}
           selectionMode={SelectionMode.none}
           items={sortedSongs}

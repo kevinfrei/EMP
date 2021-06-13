@@ -43,10 +43,10 @@ export function noArticles(phrase: string): string {
 export const stringCompare = (a: string, b: string): number =>
   (a > b ? 1 : 0) - (a < b ? 1 : 0);
 
-const articlesCmp = (a: string, b: string): number =>
+export const articlesCmp = (a: string, b: string): number =>
   stringCompare(a.toLocaleUpperCase(), b.toLocaleUpperCase());
 
-const noArticlesCmp = (a: string, b: string): number =>
+export const noArticlesCmp = (a: string, b: string): number =>
   stringCompare(noArticles(a), noArticles(b));
 
 export function MakeSortKey(initial: string): SortKey;
