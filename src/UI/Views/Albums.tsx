@@ -148,6 +148,11 @@ export default function AlbumList(): JSX.Element {
         }
       },
   );
+  const onClearKeyBuffer = useRecoilCallback(
+    ({ reset }) =>
+      () =>
+        reset(keyBufferState),
+  );
 
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
@@ -201,6 +206,7 @@ export default function AlbumList(): JSX.Element {
       ignoreArticles ? noArticlesCmp : articlesCmp,
     );
     detailRef.focusIndex(index);
+    setTimeout(onClearKeyBuffer, 1);
     log(`Filter: '${keyBuffer}' index: ${index} name: ${groups[index].name}`);
   }
 
