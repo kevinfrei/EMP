@@ -13,9 +13,9 @@ import {
   Text,
   Toggle,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
+import { DebouncedDelay, MakeError } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
-import { CallbackInterface, useRecoilCallback } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { useListener } from '../Hooks';
 import {
   InitialWireUp,
@@ -28,11 +28,14 @@ import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
 import './styles/Utilities.css';
 
-const log = MakeError('Utilities');
-const err = MakeError('Utilities-err');
+const err = MakeError('Utilities-err'); // eslint-disable-line
 
 // Used by the key buffer to know when to reset the keys
-let lastHeard = performance.now();
+let lastHeard = () => {};
+
+// In order to allow scrolling to work, we need to clear out the key buffer
+// once it's been "consumed"
+const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
@@ -42,14 +45,6 @@ export default function Utilities(): JSX.Element {
     (cbInterface) => (data: unknown) => MenuHandler(cbInterface, data),
   );
   useListener('menuAction', callback);
-  useListener('main-process-status', (val: unknown) => {
-    if (Type.isString(val)) {
-      log(`Main status: ${val}`);
-    } else {
-      err('Invalid value in main-process-status:');
-      err(val);
-    }
-  });
   const handleWidthChange = useRecoilCallback(
     ({ set }) =>
       (ev: MediaQueryList | MediaQueryListEvent) => {
@@ -61,32 +56,20 @@ export default function Utilities(): JSX.Element {
     return () => UnsubscribeMediaMatcher(handleWidthChange);
   });
   /* This is for a global search typing thingamajig */
-  const listener = useRecoilCallback(
-    ({ set }: CallbackInterface) =>
-      (ev: KeyboardEvent) => {
-        if (!isSearchBox(ev.target)) {
-          // TODO: use the keyFilter to navigate the current view?
-          const time = performance.now();
-          if (
-            ev.key === 'Escape' ||
-            ev.key === 'Meta' ||
-            ev.key === 'Control' ||
-            ev.key === 'Alt' ||
-            ev.altKey ||
-            ev.ctrlKey ||
-            ev.metaKey
-          ) {
-            set(keyBufferState, '');
-            return;
-          }
-          if (ev.key.length > 1) {
-            return;
-          }
-          const clear: boolean = time - lastHeard > 750;
-          lastHeard = time;
-          set(keyBufferState, (curVal) => (clear ? ev.key : curVal + ev.key));
-        }
-      },
+  const listener = useRecoilCallback(({ set }) => (ev: KeyboardEvent) => {
+    if (!isSearchBox(ev.target)) {
+      if (ev.key.length > 1 || ev.altKey || ev.ctrlKey || ev.metaKey) {
+        set(keyBufferState, '');
+      } else {
+        ResetTheKeyBufferTimer();
+        set(keyBufferState, (curVal) => curVal + ev.key);
+      }
+    }
+  });
+  lastHeard = useRecoilCallback(
+    ({ reset }) =>
+      () =>
+        reset(keyBufferState),
   );
   useEffect(() => {
     window.addEventListener('keydown', listener);

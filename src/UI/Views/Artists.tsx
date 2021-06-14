@@ -214,11 +214,6 @@ export default function ArtistList(): JSX.Element {
       await AddSongs(cbInterface, [item.key]);
     },
   );
-  const onClearKeyBuffer = useRecoilCallback(
-    ({ reset }) =>
-      () =>
-        reset(keyBufferState),
-  );
 
   const filteredArtistsFromSong = (theSong: ArtistSong): JSX.Element => (
     <ArtistName artistIds={[theSong.sortedArtistId]} />
@@ -272,10 +267,7 @@ export default function ArtistList(): JSX.Element {
       ignoreArticles ? noArticlesCmp : articlesCmp,
     );
     detailRef.focusIndex(index);
-    setTimeout(onClearKeyBuffer, 1);
-    log(
-      `Filter: '${keyBuffer}' index: ${index} name: ${artistGroups[index].name}`,
-    );
+    log(`"${keyBuffer}" index: ${index} name: ${artistGroups[index].name}`);
   }
 
   return (
