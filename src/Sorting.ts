@@ -260,8 +260,17 @@ export function MakeSortKey(
 export function SortItems<TItem>(
   items: TItem[],
   comparator: (a: TItem, b: TItem) => number,
+  sliceStart?: number,
+  sliceEnd?: number,
 ): TItem[] {
-  return [...items].sort(comparator);
+  const start = Type.isNumber(sliceStart) ? sliceStart : 0;
+  const end = Type.isNumber(sliceEnd) ? sliceEnd : items.length;
+  if (start === 0 && end === items.length) {
+    return [...items].sort(comparator);
+  } else {
+    const middle = items.slice(start, end).sort(comparator);
+    return [...items.slice(0, start), ...middle, ...items.slice(end)];
+  }
 }
 
 /**
