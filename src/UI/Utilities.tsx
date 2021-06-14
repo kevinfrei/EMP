@@ -16,13 +16,12 @@ import {
 import { DebouncedDelay, MakeError } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
-import { useListener } from '../Hooks';
 import {
   InitialWireUp,
   SubscribeMediaMatcher,
   UnsubscribeMediaMatcher,
 } from '../MyWindow';
-import { BoolState } from '../Recoil/helpers';
+import { BoolState, useListener } from '../Recoil/helpers';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
@@ -31,10 +30,12 @@ import './styles/Utilities.css';
 const err = MakeError('Utilities-err'); // eslint-disable-line
 
 // Used by the key buffer to know when to reset the keys
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 let lastHeard = () => {};
 
 // In order to allow scrolling to work, we need to clear out the key buffer
 // once it's been "consumed"
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 // This is a react component to enable the IPC subsystem to talk to the store,
@@ -66,6 +67,7 @@ export default function Utilities(): JSX.Element {
       }
     }
   });
+  // Connect the reset callback properly
   lastHeard = useRecoilCallback(
     ({ reset }) =>
       () =>

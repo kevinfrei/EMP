@@ -6,7 +6,7 @@ import {
   Type,
   Unpickle,
 } from '@freik/core-utils';
-import { useState } from 'react'; // eslint-disable-line @typescript-eslint/no-use-before-define
+import { useEffect, useState } from 'react';
 import {
   AtomEffect,
   CallbackInterface,
@@ -54,6 +54,16 @@ export function useBoolRecoilState(atom: RecoilState<boolean>): BoolState {
 export function useDialogState(): DialogState {
   const [isHidden, setHidden] = useState(true);
   return [() => setHidden(false), [isHidden, () => setHidden(true)]];
+}
+
+export function useListener(
+  message: string,
+  listener: (args: unknown) => void,
+): void {
+  useEffect(() => {
+    const subKey = Subscribe(message, listener);
+    return () => Unsubscribe(subKey);
+  });
 }
 
 export type AtomEffectParams<T> = {
