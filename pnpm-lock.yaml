@@ -2,11 +2,12 @@ lockfileVersion: 5.3
 
 specifiers:
   '@babel/core': ^7.14.5
+  '@babel/eslint-parser': ^7.14.5
   '@babel/plugin-transform-react-jsx': ^7.14.5
   '@fluentui/font-icons-mdl2': ^8.1.2
   '@fluentui/react': ^8.18.0
   '@fluentui/react-hooks': ^8.2.2
-  '@freik/audiodb': ^0.1.8
+  '@freik/audiodb': ^0.1.9
   '@freik/build-tools': ^2.7.2
   '@freik/core-utils': ~0.27.3
   '@freik/media-core': ~0.6.2
@@ -24,7 +25,6 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^4.26.1
   '@typescript-eslint/parser': ^4.26.1
   album-art: ^2.0.2
-  babel-eslint: ^10.1.0
   cross-env: ^7.0.3
   electron: ^13.1.2
   electron-builder: ^22.11.7
@@ -62,7 +62,7 @@ dependencies:
   '@fluentui/font-icons-mdl2': 8.1.2_189cc19b8edfe5959338b863f6e5c247
   '@fluentui/react': 8.18.0_e60b8d3b74a0e945b3fde5cbdb551bba
   '@fluentui/react-hooks': 8.2.2_189cc19b8edfe5959338b863f6e5c247
-  '@freik/audiodb': 0.1.8
+  '@freik/audiodb': 0.1.9
   '@freik/core-utils': 0.27.3
   '@freik/media-core': 0.6.2
   '@freik/media-utils': 0.12.2
@@ -77,6 +77,7 @@ dependencies:
 
 devDependencies:
   '@babel/core': 7.14.5
+  '@babel/eslint-parser': 7.14.5_@babel+core@7.14.5+eslint@7.28.0
   '@babel/plugin-transform-react-jsx': 7.14.5_@babel+core@7.14.5
   '@freik/build-tools': 2.7.2_1c8eb2ddc495965e72a15220cc6d9ec5
   '@testing-library/jest-dom': 5.14.1
@@ -90,7 +91,6 @@ devDependencies:
   '@types/xxhashjs': 0.2.2
   '@typescript-eslint/eslint-plugin': 4.26.1_c8cbd5e7f5f92609ec78d991aced454b
   '@typescript-eslint/parser': 4.26.1_eslint@7.28.0+typescript@4.3.2
-  babel-eslint: 10.1.0_eslint@7.28.0
   cross-env: 7.0.3
   electron: 13.1.2
   electron-builder: 22.11.7
@@ -98,7 +98,7 @@ devDependencies:
   electron-react-devtools: 0.5.3
   eslint: 7.28.0
   eslint-config-prettier: 8.3.0_eslint@7.28.0
-  eslint-config-react-app: 6.0.0_51bf9357e57cc30421660bf8e3880950
+  eslint-config-react-app: 6.0.0_38de7ef64ae33a1ece0708634fcc8633
   eslint-plugin-flowtype: 5.7.2_eslint@7.28.0
   eslint-plugin-import: 2.23.4_eslint@7.28.0
   eslint-plugin-jsx-a11y: 6.4.1_eslint@7.28.0
@@ -213,6 +213,20 @@ packages:
       source-map: 0.5.7
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@babel/eslint-parser/7.14.5_@babel+core@7.14.5+eslint@7.28.0:
+    resolution: {integrity: sha512-20BlOHuGf3UXS7z1QPyllM9Gz8SEgcp/UcKeUmdHIFZO6HF1n+3KaLpeyfwWvjY/Os/ynPX3k8qXE/nZ5dw/0g==}
+    engines: {node: ^10.13.0 || ^12.13.0 || >=14.0.0}
+    peerDependencies:
+      '@babel/core': '>=7.11.0'
+      eslint: '>=7.5.0'
+    dependencies:
+      '@babel/core': 7.14.5
+      eslint: 7.28.0
+      eslint-scope: 5.1.1
+      eslint-visitor-keys: 2.1.0
+      semver: 6.3.0
     dev: true
 
   /@babel/generator/7.14.5:
@@ -2620,8 +2634,8 @@ packages:
       tslib: 2.3.0
     dev: false
 
-  /@freik/audiodb/0.1.8:
-    resolution: {integrity: sha512-1NAbxlwBqiIMw9kYMfJmo3wZ3HV8lDA5ukWAVRnA4FKE8cBetE5zHNcDEd3H9PpDa6ExJC7mQWo3UCgQRMFvdg==}
+  /@freik/audiodb/0.1.9:
+    resolution: {integrity: sha512-rAJ0i5PSJqmLZvJiP4W4PYj6cEm38lwiyS2UdtdnfPCF4zu5p+UnsDC3XPlBeyhTt/m5tZ/PMiLYdp6QkHr87Q==}
     dependencies:
       '@freik/core-utils': 0.27.3
       '@freik/media-core': 0.6.2
@@ -4370,7 +4384,7 @@ packages:
   /axios/0.21.1:
     resolution: {integrity: sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==}
     dependencies:
-      follow-redirects: 1.14.1_debug@4.3.1
+      follow-redirects: 1.14.1
     transitivePeerDependencies:
       - debug
     dev: true
@@ -6775,7 +6789,7 @@ packages:
       eslint: 7.28.0
     dev: true
 
-  /eslint-config-react-app/6.0.0_51bf9357e57cc30421660bf8e3880950:
+  /eslint-config-react-app/6.0.0_38de7ef64ae33a1ece0708634fcc8633:
     resolution: {integrity: sha512-bpoAAC+YRfzq0dsTk+6v9aHm/uqnDwayNAXleMypGl6CpxI9oXXscVHo4fk3eJPIn+rsbtNetB4r/ZIidFIE8A==}
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
@@ -6798,7 +6812,6 @@ packages:
     dependencies:
       '@typescript-eslint/eslint-plugin': 4.26.1_c8cbd5e7f5f92609ec78d991aced454b
       '@typescript-eslint/parser': 4.26.1_eslint@7.28.0+typescript@4.3.2
-      babel-eslint: 10.1.0_eslint@7.28.0
       confusing-browser-globals: 1.0.10
       eslint: 7.28.0
       eslint-plugin-flowtype: 5.7.2_eslint@7.28.0
@@ -7534,6 +7547,16 @@ packages:
     dependencies:
       inherits: 2.0.4
       readable-stream: 2.3.7
+    dev: true
+
+  /follow-redirects/1.14.1:
+    resolution: {integrity: sha512-HWqDgT7ZEkqRzBvc2s64vSZ/hfOceEol3ac/7tKwzuvEyWx3/4UegXh5oBOIotkGsObyk3xznnSRVADBgWSQVg==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
     dev: true
 
   /follow-redirects/1.14.1_debug@4.3.1:
