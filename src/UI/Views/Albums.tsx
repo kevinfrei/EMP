@@ -12,7 +12,7 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeError, MakeLogger } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Album, AlbumKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
@@ -40,7 +40,9 @@ import {
   articlesCmp,
   MakeSortKey,
   noArticlesCmp,
+  SortAlbumList,
   SortSongList,
+  SortSongsFromAlbums,
 } from '../../Sorting';
 import { GetIndexOf } from '../../Tools';
 import {
@@ -49,10 +51,12 @@ import {
   ArtistsFromSongRender,
   GetSongGroupData,
   HeaderExpanderClick,
+  MakeColumns,
   StickyRenderDetailsHeader,
   YearFromSongRender,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+import { LikeOrHate } from './MixedSongs';
 import './styles/Albums.css';
 
 const err = MakeError('Albums-err'); // eslint-disable-line
@@ -151,14 +155,14 @@ export default function AlbumList(): JSX.Element {
 
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
-  ): JSX.Element | null => {
-    if (!props || !props.group) return null;
+  ) => {
+    if (Type.isUndefined(props) || Type.isUndefined(props.group)) return null;
     const albumId = props.group.key;
     return (
       <Stack horizontal verticalAlign="center">
         <IconButton
           iconProps={{
-            iconName: props.group?.isCollapsed ? 'ChevronRight' : 'ChevronDown',
+            iconName: props.group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
           }}
           onClick={() => HeaderExpanderClick(props, curExpandedState)}
         />
@@ -228,6 +232,73 @@ export default function AlbumList(): JSX.Element {
           onGetSongList={(cbInterface: CallbackInterface, data: string) =>
             SongListFromKey(cbInterface, data)
           }
+        />
+      </ScrollablePane>
+    </div>
+  );
+}
+
+const newAlbumSortState = atom({
+  key: 'newAlbumSort',
+  default: MakeSortKey(['lry', 'n'], ['lry', 'tnr']),
+});
+
+const sortedAlbumState = selector({
+  key: 'sortedAlbums',
+  get: ({ get }) => {
+    return SortAlbumList(
+      [...get(allAlbumsState).values()],
+      get(allArtistsState),
+      get(ignoreArticlesState),
+      get(newAlbumSortState),
+    );
+  },
+});
+
+const sortedSongsFromAlbumsState = selector({
+  key: 'songsFromAlbums',
+  get: ({ get }) => {
+    return SortSongsFromAlbums(
+      get(sortedAlbumState),
+      get(allSongsState),
+      get(allArtistsState),
+      get(ignoreArticlesState),
+      get(newAlbumSortState),
+    );
+  },
+});
+
+export function GroupedAlbumList(): JSX.Element {
+  //  const curExpandedState = useState(new Set<AlbumKey>());
+
+  const { songs: sortedSongs, groups } = useRecoilValue(
+    sortedSongsFromAlbumsState,
+  );
+  const [sortOrder, setSortOrder] = useRecoilState(newAlbumSortState);
+
+  const columns = MakeColumns(
+    [
+      ['n', 'track', '#', 30, 30],
+      ['r', 'artistIds', 'Artist(s)', 150, 450, ArtistsFromSongRender],
+      ['l', 'albumId', 'Album', 150, 450, AlbumFromSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
+      ['t', 'title', 'Title', 150],
+      ['', '', '👎/👍', 35, 35, LikeOrHate],
+    ],
+    () => sortOrder,
+    setSortOrder,
+  );
+  return (
+    <div className="newSongListForAlbum" data-is-scrollable="true">
+      <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
+        <DetailsList
+          items={sortedSongs}
+          selectionMode={SelectionMode.none}
+          groups={groups}
+          columns={columns}
+          compact
+          onRenderRow={altRowRenderer()}
+          onRenderDetailsHeader={StickyRenderDetailsHeader}
         />
       </ScrollablePane>
     </div>

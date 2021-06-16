@@ -1,9 +1,11 @@
 // This is a descriptor of what our current sort looks like
 // You can sort groupings & subelems independently, but group *always*
 
+import { IGroup } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-core';
-import { GetArtistStringFromSong } from './DataSchema';
+import { SongKey } from '@freik/media-utils/lib/metadata';
+import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
 import { Fail } from './Tools';
 
 // supercedes subelems, allowing groups to function properly
@@ -17,6 +19,14 @@ export type SortKey = {
     artists: Map<ArtistKey, Artist>,
     ignoreArticles: boolean,
     artistStringMaker?: (s: Song) => string,
+  ) => (a: Song, b: Song) => number;
+  makeAlbumComparator: (
+    artists: Map<ArtistKey, Artist>,
+    ignoreArticles: boolean,
+  ) => (a: Album, b: Album) => number;
+  makeSongAlbumComparator: (
+    artists: Map<ArtistKey, Artist>,
+    ignoreArticles: boolean,
   ) => (a: Song, b: Song) => number;
   hasSort: () => boolean;
 };
@@ -247,12 +257,149 @@ export function MakeSortKey(
       return 0;
     };
   }
+  function makeAlbumComparator(
+    artists: Map<ArtistKey, Artist>,
+    ignoreArticles: boolean,
+  ): (a: Album, b: Album) => number {
+    const strComp = ignoreArticles ? noArticlesCmp : articlesCmp;
+    /* 
+    const getArtistString =
+      artistStringMaker ?? ((l: Album) => GetArtistStringFromKeys(l.primaryArtists, artists));
+    */
+    const sortString = grouping[0];
+    return (a: Album, b: Album): number => {
+      for (const c of sortString) {
+        const inverse = c === c.toLocaleUpperCase() ? -1 : 1;
+        let failReason = '';
+        switch (c.toLocaleUpperCase()) {
+          case 'L':
+            // Album title
+            const ld = strComp(a.title, b.title);
+            if (ld === 0) {
+              continue;
+            } else {
+              return inverse * ld;
+            }
+            break;
+          case 'R':
+            const r1 = GetArtistStringFromKeys(a.primaryArtists, artists);
+            const r2 = GetArtistStringFromKeys(b.primaryArtists, artists);
+            if (r1.length === 0) {
+              failReason = `Invalid artistIDs [${a.primaryArtists.join(', ')}]`;
+            } else if (r2.length === 0) {
+              failReason = `Invalid artistIDs [${b.primaryArtists.join(', ')}]`;
+            } else {
+              const rd = strComp(r1, r2);
+              if (rd === 0) {
+                continue;
+              } else {
+                return inverse * rd;
+              }
+            }
+            break;
+          case 'T':
+            // Track Quantity
+            const td = a.songs.length - b.songs.length;
+            if (td === 0) {
+              continue;
+            } else {
+              return inverse * td;
+            }
+          case 'D':
+            // Disk Count
+            const and = a.diskNames ? a.diskNames.length : 1;
+            const bnd = b.diskNames ? b.diskNames.length : 1;
+            const nd = and - bnd;
+            if (nd === 0) {
+              continue;
+            } else {
+              return inverse * nd;
+            }
+          case 'Y':
+            // Album year
+            const yd = a.year - b.year;
+            if (yd === 0) {
+              continue;
+            } else {
+              return inverse * yd;
+            }
+            break;
+          case 'V':
+            // VA type
+            const vd = stringCompare(a.vatype, b.vatype);
+            if (vd === 0) {
+              continue;
+            } else {
+              return inverse * vd;
+            }
+          default:
+            failReason = 'Invalid sort order: ' + c;
+        }
+        Fail('Sorting', failReason);
+      }
+      return 0;
+    };
+  }
+  function makeSongAlbumComparator(
+    artists: Map<ArtistKey, Artist>,
+    ignoreArticles: boolean,
+  ): (a: Song, b: Song) => number {
+    const strComp = ignoreArticles ? noArticlesCmp : articlesCmp;
+    const sortString = grouping[1];
+    return (a: Song, b: Song): number => {
+      for (const c of sortString) {
+        const inverse = c === c.toLocaleUpperCase() ? -1 : 1;
+        let failReason = '';
+        switch (c.toLocaleUpperCase()) {
+          case 'R':
+            const r1 = GetArtistStringFromSong(a, artists);
+            const r2 = GetArtistStringFromSong(b, artists);
+            if (r1.length === 0) {
+              failReason = `Invalid artist IDs [${a.artistIds.join(', ')}]`;
+            } else if (r2.length === 0) {
+              failReason = `Invalid artist IDs [${b.artistIds.join(', ')}]`;
+            } else {
+              const rd = strComp(r1, r2);
+              if (rd === 0) {
+                continue;
+              } else {
+                return inverse * rd;
+              }
+            }
+            break;
+          case 'T':
+            // Track title
+            const td = strComp(a.title, b.title);
+            if (td === 0) {
+              continue;
+            } else {
+              return inverse * td;
+            }
+          case 'N':
+            // Track number
+            const nd = a.track - b.track;
+            if (nd === 0) {
+              continue;
+            } else {
+              return inverse * nd;
+            }
+          default:
+            failReason = 'Invalid sort order: ' + c;
+        }
+        Fail('Sorting', failReason);
+      }
+      return 0;
+    };
+  }
+
   return {
     newSortOrder,
     isSorted,
     isSortedAscending: (w: string) => isSpecificSort(w.toLocaleLowerCase()),
     isSortedDescending: (w: string) => isSpecificSort(w.toLocaleUpperCase()),
     makeSongComparator,
+    makeAlbumComparator,
+    makeSongAlbumComparator,
     hasSort: () => grouping.join('').length > 0,
   };
 }
@@ -260,17 +407,8 @@ export function MakeSortKey(
 export function SortItems<TItem>(
   items: TItem[],
   comparator: (a: TItem, b: TItem) => number,
-  sliceStart?: number,
-  sliceEnd?: number,
 ): TItem[] {
-  const start = Type.isNumber(sliceStart) ? sliceStart : 0;
-  const end = Type.isNumber(sliceEnd) ? sliceEnd : items.length;
-  if (start === 0 && end === items.length) {
-    return [...items].sort(comparator);
-  } else {
-    const middle = items.slice(start, end).sort(comparator);
-    return [...items.slice(0, start), ...middle, ...items.slice(end)];
-  }
+  return [...items].sort(comparator);
 }
 
 /**
@@ -294,4 +432,55 @@ export function SortSongList(
     songs,
     sortOrder.makeSongComparator(albums, artists, articles),
   );
+}
+
+export function SortAlbumList(
+  albums: Album[],
+  artists: Map<ArtistKey, Artist>,
+  articles: boolean,
+  sortOrder: SortKey,
+): Album[] {
+  return SortItems(albums, sortOrder.makeAlbumComparator(artists, articles));
+}
+
+export function SortSongsFromAlbums(
+  albums: Album[],
+  songMap: Map<SongKey, Song>,
+  artists: Map<ArtistKey, Artist>,
+  articles: boolean,
+  sortOrder: SortKey,
+): { songs: Song[]; groups: IGroup[] } {
+  const comparator = sortOrder.makeSongAlbumComparator(artists, articles);
+  // Count the # of songs
+  const total = albums.reduce(
+    (prv: number, curAlb: Album) => prv + curAlb.songs.length,
+    0,
+  );
+  const songs: Song[] = new Array<Song>(total);
+  let groups: IGroup[] = albums.map((lbm) => ({
+    key: lbm.key,
+    name: lbm.title,
+    startIndex: -1,
+    count: -1,
+    isCollapsed: true,
+  }));
+  let songIndex = 0;
+  let groupIndex = 0;
+  // Sort each group
+  for (const album of albums) {
+    const songSortTmp = SortItems(
+      album.songs
+        .map((sk) => songMap.get(sk) as Song)
+        .filter((s) => !Type.isUndefined(s)),
+      comparator,
+    );
+    groups[groupIndex].startIndex = songIndex;
+    groups[groupIndex].count = songSortTmp.length;
+    for (const s of songSortTmp) {
+      songs[songIndex++] = s;
+    }
+    groupIndex++;
+  }
+  // TODO: Make this return an IGroup thing too, while we're at it, right?
+  return { songs, groups };
 }
