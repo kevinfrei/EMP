@@ -13,7 +13,7 @@ import {
   Text,
   Toggle,
 } from '@fluentui/react';
-import { DebouncedDelay, MakeError } from '@freik/core-utils';
+import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import {
@@ -63,7 +63,7 @@ export default function Utilities(): JSX.Element {
         set(keyBufferState, '');
       } else {
         ResetTheKeyBufferTimer();
-        set(keyBufferState, (curVal) => curVal + ev.key);
+        set(keyBufferState, (curVal: string) => curVal + ev.key);
       }
     }
   });
@@ -144,7 +144,7 @@ export function Expandable({
   variant,
 }: {
   children: JSX.Element | JSX.Element[];
-  label: string;
+  label: string | JSX.Element;
   defaultShow?: boolean;
   separator?: boolean;
   variant?: keyof IFontStyles;
@@ -167,7 +167,7 @@ export function Expandable({
     theHeader = (
       <Separator alignContent="start" styles={customStyle}>
         {button}
-        <Text variant={v}>&nbsp;{label}</Text>
+        {Type.isString(label) ? <Text variant={v}>&nbsp;{label}</Text> : label}
       </Separator>
     );
   } else {
@@ -175,7 +175,7 @@ export function Expandable({
     theHeader = (
       <Stack horizontal verticalAlign="center" style={{ marginTop: 10 }}>
         {button}
-        <Text variant={v}>{label}</Text>
+        {Type.isString(label) ? <Text variant={v}>{label}</Text> : label}
       </Stack>
     );
   }
