@@ -56,12 +56,11 @@ import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
-  AlbumFromSongRender,
-  altRowRenderer,
-  ArtistsFromSongRender,
-  MakeColumns,
-  YearFromSongRender,
-} from '../SongList';
+  AlbumForSongRender,
+  ArtistsForSongRender,
+  YearForSongRender,
+} from '../SimpleTags';
+import { altRowRenderer, MakeColumns } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
@@ -261,9 +260,9 @@ export default function NowPlaying(): JSX.Element {
   const normalColumns = MakeColumns(
     [
       ['X', '', '', 18, 18, drawDeleter],
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
-      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsFromSongRender],
-      ['y', 'albumId', 'Year', 45, 25, YearFromSongRender],
+      ['l', 'albumId', 'Album', 50, 175, AlbumForSongRender],
+      ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsForSongRender],
+      ['y', 'albumId', 'Year', 45, 25, YearForSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
       ['', '', '👎/👍', 35, 35, LikeOrHate],
@@ -275,7 +274,7 @@ export default function NowPlaying(): JSX.Element {
     [
       ['X', '', '', 12, 12, drawDeleter],
       ['t', 'title', 'Title', 60, 100],
-      ['l', 'albumId', 'Album', 60, 100, AlbumFromSongRender],
+      ['l', 'albumId', 'Album', 60, 100, AlbumForSongRender],
     ],
     () => sortBy,
     performSort,

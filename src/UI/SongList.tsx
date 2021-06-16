@@ -14,13 +14,21 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { MakeError, Type } from '@freik/core-utils';
-import { AlbumKey, ArtistKey, Song } from '@freik/media-core';
+import { ArtistKey } from '@freik/media-core';
 import { Dispatch, SetStateAction } from 'react';
-import { useRecoilValue } from 'recoil';
-import { getAlbumByKeyFamily, getArtistStringFamily } from '../Recoil/ReadOnly';
+import { CallbackInterface, RecoilState } from 'recoil';
 import { SortKey } from '../Sorting';
 
 const err = MakeError('SongList-err');
+
+export type ColumnRenderTuple<T> = [
+  string, // key
+  string, // fieldName
+  string, // "title"/name
+  number, // minWidth
+  number?, // maxWidth
+  ((item: T) => JSX.Element)?, // render func
+];
 
 /**
  * Make a set of IColumns for a DetailsLists
@@ -43,14 +51,7 @@ const err = MakeError('SongList-err');
  * @returns
  */
 export function MakeColumns<T>(
-  renderers: [
-    key: string,
-    fieldName: string,
-    name: string,
-    minWidth: number,
-    maxWidth?: number,
-    render?: (song: T, index?: number) => JSX.Element,
-  ][],
+  renderers: ColumnRenderTuple<T>[],
   getSort: () => SortKey,
   performSort: (sort: SortKey) => void,
   groupField?: string,
@@ -69,31 +70,30 @@ export function MakeColumns<T>(
   const isSortedDescending = sorters
     ? sorters.isSortedDescending
     : (sort: SortKey, key: string) => sort.isSortedDescending(key);
-  return renderers.map(
-    ([key, fieldName, name, minWidth, maxWidth, onRender], index) =>
-      fieldName !== ''
-        ? {
-            key,
-            name,
-            fieldName,
-            minWidth,
-            maxWidth,
-            onRender,
-            isGrouped: fieldName === groupField,
-            isResizable: true,
-            isSorted: isSorted(getSort(), key),
-            isSortedDescending: isSortedDescending(getSort(), key),
-            onColumnClick: () => performSort(onColumnClick(key)),
-          }
-        : {
-            key,
-            name,
-            minWidth,
-            maxWidth,
-            onRender,
-            isGrouped: fieldName === groupField,
-            isResizable: true,
-          },
+  return renderers.map(([key, fieldName, name, minWidth, maxWidth, onRender]) =>
+    fieldName !== ''
+      ? {
+          key,
+          name,
+          fieldName,
+          minWidth,
+          maxWidth,
+          onRender,
+          isGrouped: fieldName === groupField,
+          isResizable: true,
+          isSorted: isSorted(getSort(), key),
+          isSortedDescending: isSortedDescending(getSort(), key),
+          onColumnClick: () => performSort(onColumnClick(key)),
+        }
+      : {
+          key,
+          name,
+          minWidth,
+          maxWidth,
+          onRender,
+          isGrouped: fieldName === groupField,
+          isResizable: true,
+        },
   );
 }
 
@@ -114,50 +114,6 @@ export function altRowRenderer(
     };
     return <DetailsRow {...props} styles={customStyles} />;
   };
-}
-
-export function ArtistName({
-  artistIds,
-}: {
-  artistIds: ArtistKey[];
-}): JSX.Element {
-  return <>{useRecoilValue(getArtistStringFamily(artistIds))}</>;
-}
-
-function AlbumName({ song }: { song: Song }): JSX.Element {
-  const album = useRecoilValue(getAlbumByKeyFamily(song.albumId));
-  const diskNum = Math.floor(song.track / 100);
-  if (
-    diskNum > 0 &&
-    Type.has(album, 'diskNames') &&
-    Type.isArrayOfString(album.diskNames) &&
-    album.diskNames.length >= diskNum &&
-    album.diskNames[diskNum - 1].length > 0
-  ) {
-    return (
-      <>
-        {album.title}: {album.diskNames[diskNum - 1]}
-      </>
-    );
-  }
-  return <>{album.title}</>;
-}
-
-function AlbumYear({ albumId }: { albumId: AlbumKey }): JSX.Element {
-  const album = useRecoilValue(getAlbumByKeyFamily(albumId));
-  return <>{album.year !== 0 ? album.year : ''}</>;
-}
-
-export function ArtistsFromSongRender(theSong: Song): JSX.Element {
-  return <ArtistName artistIds={theSong.artistIds} />;
-}
-
-export function AlbumFromSongRender(song: Song): JSX.Element {
-  return <AlbumName song={song} />;
-}
-
-export function YearFromSongRender(song: Song): JSX.Element {
-  return <AlbumYear albumId={song.albumId} />;
 }
 
 /**
@@ -295,5 +251,25 @@ export function HeaderExpanderClick(
     }
     setTheSet(newSet);
     props.onToggleCollapse!(props.group);
+  }
+}
+
+export function NewHeaderExpanderClick(
+  cbInterface: CallbackInterface,
+  props: IDetailsGroupDividerProps,
+  isExpandedState: (p: string) => RecoilState<boolean>,
+): void {
+  if (!Type.isUndefined(props.group)) {
+    cbInterface.set(
+      isExpandedState(props.group.key),
+      Type.isUndefined(props.group.isCollapsed)
+        ? true
+        : props.group.isCollapsed,
+    );
+    /*
+    if (!Type.isUndefined(props.onToggleCollapse)) {
+      props.onToggleCollapse(props.group);
+    }
+    */
   }
 }

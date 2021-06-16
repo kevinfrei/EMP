@@ -44,13 +44,15 @@ import {
 } from '../../Sorting';
 import { GetIndexOf } from '../../Tools';
 import {
-  AlbumFromSongRender,
+  AlbumForSongRender,
+  ArtistNameFromArtistIds,
+  YearForSongRender,
+} from '../SimpleTags';
+import {
   altRowRenderer,
-  ArtistName,
   GetSongGroupData,
   HeaderExpanderClick,
   StickyRenderDetailsHeader,
-  YearFromSongRender,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Artists.css';
@@ -215,8 +217,10 @@ export default function ArtistList(): JSX.Element {
     },
   );
 
-  const filteredArtistsFromSong = (theSong: ArtistSong): JSX.Element => (
-    <ArtistName artistIds={[theSong.sortedArtistId]} />
+  const filteredArtistsFromSongRenderer = (
+    theSong: ArtistSong,
+  ): JSX.Element => (
+    <ArtistNameFromArtistIds artistIds={[theSong.sortedArtistId]} />
   );
   const renderArtistHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
@@ -245,9 +249,16 @@ export default function ArtistList(): JSX.Element {
     (s: string) => GetArtistStringFromKeys([s], artists),
     'sortedArtistId',
     [
-      ['r', 'sortedArtistId', 'Artist', 50, 175, filteredArtistsFromSong],
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
-      ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
+      [
+        'r',
+        'sortedArtistId',
+        'Artist',
+        50,
+        175,
+        filteredArtistsFromSongRenderer,
+      ],
+      ['l', 'albumId', 'Album', 50, 175, AlbumForSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],

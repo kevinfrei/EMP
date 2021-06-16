@@ -19,6 +19,7 @@ import {
   atom,
   CallbackInterface,
   selector,
+  selectorFamily,
   useRecoilCallback,
   useRecoilState,
   useRecoilValue,
@@ -46,14 +47,16 @@ import {
 } from '../../Sorting';
 import { GetIndexOf } from '../../Tools';
 import {
-  AlbumFromSongRender,
+  AlbumForSongRender,
+  ArtistsForSongRender,
+  YearForSongRender,
+} from '../SimpleTags';
+import {
   altRowRenderer,
-  ArtistsFromSongRender,
   GetSongGroupData,
   HeaderExpanderClick,
   MakeColumns,
   StickyRenderDetailsHeader,
-  YearFromSongRender,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { LikeOrHate } from './MixedSongs';
@@ -183,9 +186,9 @@ export default function AlbumList(): JSX.Element {
     },
     'albumId',
     [
-      ['l', 'albumId', 'Album', 50, 175, AlbumFromSongRender],
-      ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsFromSongRender],
-      ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
+      ['l', 'albumId', 'Album', 50, 175, AlbumForSongRender],
+      ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsForSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
@@ -255,39 +258,89 @@ const sortedAlbumState = selector({
   },
 });
 
+const albumExpandedState = atom({
+  key: 'albumExpanded',
+  default: new Set<AlbumKey>(),
+});
+
+const albumIsExpandedState = selectorFamily<boolean, AlbumKey>({
+  key: 'albIsExp',
+  get:
+    (albKey: AlbumKey) =>
+    ({ get }) => {
+      const st = get(albumExpandedState);
+      return st.has(albKey);
+    },
+  set:
+    (albKey: AlbumKey) =>
+    ({ get, set }, newValue) => {
+      const st = get(albumExpandedState);
+      const newSet = new Set<AlbumKey>(st);
+      if (newValue) {
+        newSet.delete(albKey);
+      } else {
+        newSet.add(albKey);
+      }
+    },
+});
+
 const sortedSongsFromAlbumsState = selector({
   key: 'songsFromAlbums',
   get: ({ get }) => {
-    return SortSongsFromAlbums(
+    const res = SortSongsFromAlbums(
       get(sortedAlbumState),
       get(allSongsState),
       get(allArtistsState),
       get(ignoreArticlesState),
       get(newAlbumSortState),
     );
+    const exp = get(albumExpandedState);
+    res.groups.forEach((grp) => {
+      grp.isCollapsed = !exp.has(grp.key);
+    });
+    return res;
   },
 });
 
 export function GroupedAlbumList(): JSX.Element {
-  //  const curExpandedState = useState(new Set<AlbumKey>());
-
+  const albums = useRecoilValue(allAlbumsState);
   const { songs: sortedSongs, groups } = useRecoilValue(
     sortedSongsFromAlbumsState,
   );
   const [sortOrder, setSortOrder] = useRecoilState(newAlbumSortState);
-
+  const [, setExpandedSet] = useRecoilState(albumExpandedState);
   const columns = MakeColumns(
     [
       ['n', 'track', '#', 30, 30],
-      ['r', 'artistIds', 'Artist(s)', 150, 450, ArtistsFromSongRender],
-      ['l', 'albumId', 'Album', 150, 450, AlbumFromSongRender],
-      ['y', 'albumId', 'Year', 45, 45, YearFromSongRender],
+      ['r', 'artistIds', 'Artist(s)', 150, 450, ArtistsForSongRender],
+      ['l', 'albumId', 'Album', 150, 450, AlbumForSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
       ['t', 'title', 'Title', 150],
       ['', '', '👎/👍', 35, 35, LikeOrHate],
     ],
     () => sortOrder,
     setSortOrder,
   );
+
+  const groupProps: IDetailsGroupRenderProps = {
+    onToggleCollapseAll: (isAllCollapsed: boolean) => {
+      setExpandedSet(new Set<string>(isAllCollapsed ? [] : albums.keys()));
+    },
+
+    headerProps: {
+      onToggleCollapse: (group: IGroup) => {
+        err('Collapsing');
+        /*
+        const newSet = new Set<AlbumKey>(curExpandedSet);
+        if (newSet.has(group.key)) {
+          newSet.delete(group.key);
+        } else {
+          newSet.add(group.key);
+        }
+        setExpandedSet(newSet);*/
+      },
+    },
+  };
   return (
     <div className="newSongListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
@@ -299,6 +352,7 @@ export function GroupedAlbumList(): JSX.Element {
           compact
           onRenderRow={altRowRenderer()}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
+          groupProps={groupProps}
         />
       </ScrollablePane>
     </div>

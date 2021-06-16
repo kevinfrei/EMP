@@ -457,12 +457,11 @@ export function SortSongsFromAlbums(
     0,
   );
   const songs: Song[] = new Array<Song>(total);
-  let groups: IGroup[] = albums.map((lbm) => ({
+  const groups: IGroup[] = albums.map((lbm) => ({
     key: lbm.key,
     name: lbm.title,
     startIndex: -1,
     count: -1,
-    isCollapsed: true,
   }));
   let songIndex = 0;
   let groupIndex = 0;
