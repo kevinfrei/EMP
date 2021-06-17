@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 import { useRecoilValue } from 'recoil';
 import { CurrentView, curViewState } from '../../Recoil/ReadWrite';
-import AlbumView, { GroupedAlbumList } from './Albums';
+import AlbumView from './Albums';
 import ArtistView from './Artists';
 import MixedSongView from './MixedSongs';
 import NowPlayingView from './NowPlaying';
@@ -18,14 +18,11 @@ export default function ViewSelector(): JSX.Element {
     which === v ? {} : { visibility: 'hidden' };
   return (
     <>
-      <div className="current-view" style={sl(CurrentView.recent)}>
+      <div className="current-view" style={sl(CurrentView.disabled)}>
         <NuAlbumView />
       </div>
       <div className="current-view" style={sl(CurrentView.album)}>
         <AlbumView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.recent)}>
-        <GroupedAlbumList />
       </div>
       <div className="current-view" style={sl(CurrentView.artist)}>
         <ArtistView />

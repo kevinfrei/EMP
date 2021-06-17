@@ -13,10 +13,9 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
+import { MakeError } from '@freik/core-utils';
 import { ArtistKey } from '@freik/media-core';
 import { Dispatch, SetStateAction } from 'react';
-import { CallbackInterface, RecoilState } from 'recoil';
 import { SortKey } from '../Sorting';
 
 const err = MakeError('SongList-err');
@@ -251,25 +250,5 @@ export function HeaderExpanderClick(
     }
     setTheSet(newSet);
     props.onToggleCollapse!(props.group);
-  }
-}
-
-export function NewHeaderExpanderClick(
-  cbInterface: CallbackInterface,
-  props: IDetailsGroupDividerProps,
-  isExpandedState: (p: string) => RecoilState<boolean>,
-): void {
-  if (!Type.isUndefined(props.group)) {
-    cbInterface.set(
-      isExpandedState(props.group.key),
-      Type.isUndefined(props.group.isCollapsed)
-        ? true
-        : props.group.isCollapsed,
-    );
-    /*
-    if (!Type.isUndefined(props.onToggleCollapse)) {
-      props.onToggleCollapse(props.group);
-    }
-    */
   }
 }

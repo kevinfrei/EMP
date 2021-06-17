@@ -8,10 +8,13 @@ import {
 } from '@freik/core-utils';
 import { useEffect, useState } from 'react';
 import {
+  atom,
   AtomEffect,
   CallbackInterface,
   DefaultValue,
   RecoilState,
+  selectorFamily,
+  SerializableParam,
   SetterOrUpdater,
   useRecoilState,
 } from 'recoil';
@@ -36,6 +39,38 @@ export type DialogState = [() => void, DialogData];
 const log = MakeLogger('helpers');
 const err = MakeError('helpers-err');
 
+export function MakeSetSelector<T extends SerializableParam>(
+  setOfObjsState: RecoilState<Set<T>>,
+  key: string,
+): (param: T) => RecoilState<boolean> {
+  return selectorFamily<boolean, T>({
+    key,
+    get:
+      (item: T) =>
+      ({ get }) =>
+        get(setOfObjsState).has(item),
+    set:
+      (item: T) =>
+      ({ set }, newValue) =>
+        set(setOfObjsState, (prevVal: Set<T>) => {
+          const newSet = new Set<T>(prevVal);
+          if (newValue) {
+            newSet.delete(item);
+          } else {
+            newSet.add(item);
+          }
+          return newSet;
+        }),
+  });
+}
+
+export function MakeSetState<T extends SerializableParam>(
+  key: string,
+): [RecoilState<Set<T>>, (param: T) => RecoilState<boolean>] {
+  const theAtom = atom({ key, default: new Set<T>() });
+  return [theAtom, MakeSetSelector(theAtom, key + ':sel')];
+}
+
 /**
  * A short cut for on/off states to make some things (like dialogs) cleaner
  *
@@ -46,8 +81,8 @@ export function useBoolState(initial: boolean): BoolState {
   return [state, () => setState(false), () => setState(true)];
 }
 
-export function useBoolRecoilState(atom: RecoilState<boolean>): BoolState {
-  const [state, setState] = useRecoilState(atom);
+export function useBoolRecoilState(theAtom: RecoilState<boolean>): BoolState {
+  const [state, setState] = useRecoilState(theAtom);
   return [state, () => setState(false), () => setState(true)];
 }
 

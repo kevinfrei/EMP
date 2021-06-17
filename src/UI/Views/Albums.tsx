@@ -1,6 +1,7 @@
 import {
   DetailsList,
   IconButton,
+  IDetailsGroupDividerProps,
   IDetailsGroupRenderProps,
   IDetailsList,
   IGroup,
@@ -19,12 +20,12 @@ import {
   atom,
   CallbackInterface,
   selector,
-  selectorFamily,
   useRecoilCallback,
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import { MakeSetState } from '../../Recoil/helpers';
 import { albumCoverUrlFamily, keyBufferState } from '../../Recoil/Local';
 import {
   allAlbumsState,
@@ -54,7 +55,6 @@ import {
 import {
   altRowRenderer,
   GetSongGroupData,
-  HeaderExpanderClick,
   MakeColumns,
   StickyRenderDetailsHeader,
 } from '../SongList';
@@ -70,20 +70,20 @@ const albumContextState = atom<SongListMenuData>({
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
-  const albumData = useRecoilValue(getDataForAlbumFamily(props.album.key));
+export function AlbumHeaderDisplay({ album }: { album: Album }): JSX.Element {
+  const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
-    await AddSongs(cbInterface, props.album.songs);
+    await AddSongs(cbInterface, album.songs);
   });
   const onRightClick = useRecoilCallback(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
         set(albumContextState, {
-          data: props.album.key,
+          data: album.key,
           spot: { left: event.clientX + 14, top: event.clientY },
         }),
   );
-  const picurl = useRecoilValue(albumCoverUrlFamily(props.album.key));
+  const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
   return (
     <Stack
       horizontal
@@ -98,9 +98,11 @@ export function AlbumHeaderDisplay(props: { album: Album }): JSX.Element {
         width={50}
         imageFit={ImageFit.centerContain}
       />
-      <Text
-        style={{ margin: '4px' }}
-      >{`${albumData.album} - ${albumData.year} [${albumData.artist}]`}</Text>
+      <Text style={{ margin: '4px' }}>
+        {`${albumData.album}: ${albumData.artist} ` +
+          (album.year > 0 ? `[${albumData.year}] ` : '') +
+          (album.songs.length === 1 ? '1 song' : `${album.songs.length} songs`)}
+      </Text>
     </Stack>
   );
 }
@@ -112,6 +114,7 @@ const sortOrderState = atom({
   key: 'albumSortOrder',
   default: MakeSortKey(['lyv', 'r', 'nt'], ['lyv', 'r', 'nt']),
 });
+
 const sortedSongsState = selector({
   key: 'albumsSorted',
   get: ({ get }) => {
@@ -125,8 +128,10 @@ const sortedSongsState = selector({
   },
 });
 
+const [albumExpandedState, albumIsExpandedState] =
+  MakeSetState<AlbumKey>('albumExpanded');
+
 export default function AlbumList(): JSX.Element {
-  const curExpandedState = useState(new Set<AlbumKey>());
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums = useRecoilValue(allAlbumsState);
@@ -135,6 +140,7 @@ export default function AlbumList(): JSX.Element {
   const keyBuffer = useRecoilValue(keyBufferState);
   const sortedSongs = useRecoilValue(sortedSongsState);
 
+  const curExpandedState = useRecoilState(albumExpandedState);
   const [albumContext, setAlbumContext] = useRecoilState(albumContextState);
   const [curSort, setSort] = useRecoilState(sortOrderState);
 
@@ -155,6 +161,17 @@ export default function AlbumList(): JSX.Element {
         }
       },
   );
+  const onHeaderExpanderClick = useRecoilCallback(
+    ({ set }) =>
+      ({ group, onToggleCollapse }: IDetailsGroupDividerProps) => {
+        if (!Type.isUndefined(group)) {
+          set(albumIsExpandedState(group.key), !group.key);
+          if (!Type.isUndefined(onToggleCollapse)) {
+            onToggleCollapse(group);
+          }
+        }
+      },
+  );
 
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
@@ -167,7 +184,7 @@ export default function AlbumList(): JSX.Element {
           iconProps={{
             iconName: props.group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
           }}
-          onClick={() => HeaderExpanderClick(props, curExpandedState)}
+          onClick={() => onHeaderExpanderClick(props)}
         />
         <AlbumHeaderDisplay album={albums.get(albumId)!} />
       </Stack>
@@ -258,32 +275,6 @@ const sortedAlbumState = selector({
   },
 });
 
-const albumExpandedState = atom({
-  key: 'albumExpanded',
-  default: new Set<AlbumKey>(),
-});
-
-const albumIsExpandedState = selectorFamily<boolean, AlbumKey>({
-  key: 'albIsExp',
-  get:
-    (albKey: AlbumKey) =>
-    ({ get }) => {
-      const st = get(albumExpandedState);
-      return st.has(albKey);
-    },
-  set:
-    (albKey: AlbumKey) =>
-    ({ get, set }, newValue) => {
-      const st = get(albumExpandedState);
-      const newSet = new Set<AlbumKey>(st);
-      if (newValue) {
-        newSet.delete(albKey);
-      } else {
-        newSet.add(albKey);
-      }
-    },
-});
-
 const sortedSongsFromAlbumsState = selector({
   key: 'songsFromAlbums',
   get: ({ get }) => {
@@ -294,9 +285,8 @@ const sortedSongsFromAlbumsState = selector({
       get(ignoreArticlesState),
       get(newAlbumSortState),
     );
-    const exp = get(albumExpandedState);
     res.groups.forEach((grp) => {
-      grp.isCollapsed = !exp.has(grp.key);
+      grp.isCollapsed = !get(albumIsExpandedState(grp.key));
     });
     return res;
   },
@@ -328,17 +318,10 @@ export function GroupedAlbumList(): JSX.Element {
     },
 
     headerProps: {
-      onToggleCollapse: (group: IGroup) => {
+      onToggleCollapse: useRecoilCallback(({ set }) => (group: IGroup) => {
         err('Collapsing');
-        /*
-        const newSet = new Set<AlbumKey>(curExpandedSet);
-        if (newSet.has(group.key)) {
-          newSet.delete(group.key);
-        } else {
-          newSet.add(group.key);
-        }
-        setExpandedSet(newSet);*/
-      },
+        set(albumIsExpandedState(group.key), (curVal) => !curVal);
+      }),
     },
   };
   return (

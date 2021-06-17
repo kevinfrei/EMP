@@ -14,6 +14,7 @@ import {
 // vvv That's a bug, pretty clearly :/
 // eslint-disable-next-line no-shadow
 export enum CurrentView {
+  disabled = -1,
   none = 0,
   recent = 1,
   album = 2,
