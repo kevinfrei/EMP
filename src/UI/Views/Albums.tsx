@@ -1,7 +1,6 @@
 import {
   DetailsList,
   IconButton,
-  IDetailsGroupDividerProps,
   IDetailsGroupRenderProps,
   IDetailsList,
   IGroup,
@@ -19,10 +18,10 @@ import { useState } from 'react';
 import {
   atom,
   CallbackInterface,
-  selector,
   useRecoilCallback,
   useRecoilState,
   useRecoilValue,
+  useResetRecoilState,
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
@@ -62,13 +61,35 @@ import './styles/Albums.css';
 const err = MakeError('Albums-err'); // eslint-disable-line
 const log = MakeLogger('Albums'); // eslint-disable-line
 
+// This is used to trigger the popup menu in the list view
 const albumContextState = atom<SongListMenuData>({
   key: 'albumContext',
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-export function AlbumHeaderDisplay({ album }: { album: Album }): JSX.Element {
+// For grouping to work properly, the sort order needs to be fully specified
+// Also, the album year, VA type, and artist have to "stick" with the album name
+// as a single group, or you get duplicate group IDs
+const [albumExpandedState, albumIsExpandedState] =
+  MakeSetState<AlbumKey>('albumExpanded');
+
+// TODO: Fix this; It doesn't quite work properly
+// Artist can sort both the album list and track list. The current abstraction
+// doesn't support that concept very well...
+const newAlbumSortState = atom({
+  key: 'newAlbumSort',
+  default: MakeSortKey(['l', '', 'n'], ['ly', 'r', 'tn']),
+});
+
+export function AlbumHeaderDisplay({
+  album,
+  group,
+}: {
+  album: Album;
+  group: IGroup;
+}): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
+  const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
     await AddSongs(cbInterface, album.songs);
   });
@@ -80,69 +101,41 @@ export function AlbumHeaderDisplay({ album }: { album: Album }): JSX.Element {
           spot: { left: event.clientX + 14, top: event.clientY },
         }),
   );
-  const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
+  const onHeaderExpanderClick = useRecoilCallback(({ set }) => () => {
+    set(albumIsExpandedState(group.key), !group.isCollapsed);
+  });
   return (
-    <Stack
-      horizontal
-      verticalAlign="center"
-      onDoubleClick={onAddSongsClick}
-      onContextMenu={onRightClick}
-      style={{ padding: '2px 0px', cursor: 'pointer' }}
-    >
-      <Image
-        src={picurl}
-        height={50}
-        width={50}
-        imageFit={ImageFit.centerContain}
+    <Stack horizontal verticalAlign="center">
+      <IconButton
+        iconProps={{
+          iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
+        }}
+        onClick={() => onHeaderExpanderClick()}
       />
-      <Text style={{ margin: '4px' }}>
-        {`${albumData.album}: ${albumData.artist} ` +
-          (album.year > 0 ? `[${albumData.year}] ` : '') +
-          (album.songs.length === 1 ? '1 song' : `${album.songs.length} songs`)}
-      </Text>
+      <Stack
+        horizontal
+        verticalAlign="center"
+        onDoubleClick={onAddSongsClick}
+        onContextMenu={onRightClick}
+        style={{ padding: '2px 0px', cursor: 'pointer' }}
+      >
+        <Image
+          imageFit={ImageFit.centerContain}
+          height={50}
+          width={50}
+          src={picurl}
+        />
+        <Text style={{ margin: '4px' }}>
+          {`${albumData.album}: ${albumData.artist} ` +
+            (album.year > 0 ? `[${albumData.year}] ` : '') +
+            (album.songs.length === 1
+              ? '1 song'
+              : `${album.songs.length} songs`)}
+        </Text>
+      </Stack>
     </Stack>
   );
 }
-
-// For grouping to work properly, the sort order needs to be fully specified
-// Also, the album year, VA type, and artist have to "stick" with the album name
-// as a single group, or you get duplicate group IDs
-const [albumExpandedState, albumIsExpandedState] =
-  MakeSetState<AlbumKey>('albumExpanded');
-
-const newAlbumSortState = atom({
-  key: 'newAlbumSort',
-  default: MakeSortKey(['lry', 'n'], ['lry', 'tnr']),
-});
-
-const sortedAlbumState = selector({
-  key: 'sortedAlbums',
-  get: ({ get }) => {
-    return SortAlbumList(
-      [...get(allAlbumsState).values()],
-      get(allArtistsState),
-      get(ignoreArticlesState),
-      get(newAlbumSortState),
-    );
-  },
-});
-
-const sortedSongsFromAlbumsState = selector({
-  key: 'songsFromAlbums',
-  get: ({ get }) => {
-    const res = SortSongsFromAlbums(
-      get(sortedAlbumState),
-      get(allSongsState),
-      get(allArtistsState),
-      get(ignoreArticlesState),
-      get(newAlbumSortState),
-    );
-    res.groups.forEach((grp) => {
-      grp.isCollapsed = !get(albumIsExpandedState(grp.key));
-    });
-    return res;
-  },
-});
 
 export function GroupedAlbumList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
@@ -151,14 +144,14 @@ export function GroupedAlbumList(): JSX.Element {
   const curView = useRecoilValue(curViewState);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
   const keyBuffer = useRecoilValue(keyBufferState);
-  const { songs: sortedSongs, groups: roGroups } = useRecoilValue(
-    sortedSongsFromAlbumsState,
-  );
-  const groups = [...roGroups.map((val) => ({ ...val }))];
+  const allSongs = useRecoilValue(allSongsState);
+  const allArtists = useRecoilValue(allArtistsState);
+  const newAlbumSort = useRecoilValue(newAlbumSortState);
+  const albumContext = useRecoilValue(albumContextState);
 
   const curExpandedState = useRecoilState(albumExpandedState);
-  const [albumContext, setAlbumContext] = useRecoilState(albumContextState);
   const [curSort, setSort] = useRecoilState(newAlbumSortState);
+  const resetAlbumContext = useResetRecoilState(albumContextState);
 
   const onAddSongClick = useRecoilCallback(
     (cbInterface) => async (item: Song) => {
@@ -167,24 +160,16 @@ export function GroupedAlbumList(): JSX.Element {
   );
   const onRightClick = useRecoilCallback(
     ({ set }) =>
-      (item: Song, index?: number, ev?: Event) => {
-        if (ev) {
-          const event = ev as any as MouseEvent;
+      (item: Song, _index?: number, ev?: Event) => {
+        if (
+          !Type.isUndefined(ev) &&
+          Type.hasType(ev, 'clientX', Type.isNumber) &&
+          Type.hasType(ev, 'clientY', Type.isNumber)
+        ) {
           set(albumContextState, {
             data: item.key,
-            spot: { left: event.clientX + 14, top: event.clientY },
+            spot: { left: ev.clientX + 14, top: ev.clientY },
           });
-        }
-      },
-  );
-  const onHeaderExpanderClick = useRecoilCallback(
-    ({ set }) =>
-      ({ group, onToggleCollapse }: IDetailsGroupDividerProps) => {
-        if (!Type.isUndefined(group)) {
-          set(albumIsExpandedState(group.key), !group.key);
-          if (!Type.isUndefined(onToggleCollapse)) {
-            onToggleCollapse(group);
-          }
         }
       },
   );
@@ -192,20 +177,26 @@ export function GroupedAlbumList(): JSX.Element {
   const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
     props,
   ) => {
-    if (Type.isUndefined(props) || Type.isUndefined(props.group)) return null;
-    const albumId = props.group.key;
-    return (
-      <Stack horizontal verticalAlign="center">
-        <IconButton
-          iconProps={{
-            iconName: props.group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
-          }}
-          onClick={() => onHeaderExpanderClick(props)}
-        />
-        <AlbumHeaderDisplay album={albums.get(albumId)!} />
-      </Stack>
+    return Type.isUndefined(props) || Type.isUndefined(props.group) ? null : (
+      <AlbumHeaderDisplay
+        album={albums.get(props.group.key)!}
+        group={props.group}
+      />
     );
   };
+  const sortedAlbums = SortAlbumList(
+    [...albums.values()],
+    allArtists,
+    ignoreArticles,
+    newAlbumSort,
+  );
+  const { songs: sortedSongs, groups } = SortSongsFromAlbums(
+    sortedAlbums,
+    allSongs,
+    allArtists,
+    ignoreArticles,
+    newAlbumSort,
+  );
   const [columns, groupProps] = ProcessSongGroupData(
     groups,
     curExpandedState,
@@ -222,7 +213,7 @@ export function GroupedAlbumList(): JSX.Element {
   );
   groupProps.onRenderHeader = renderAlbumHeader;
 
-  // This doesn't quite work.
+  // This doesn't quite work: It's sometimes off by a few rows.
   // It looks like DetailsList doesn't do the math quite right, unfortunately.
   // I should check it out on Songs to see if it's related to groups...
   if (curView === CurrentView.album && detailRef && keyBuffer.length > 0) {
@@ -254,9 +245,7 @@ export function GroupedAlbumList(): JSX.Element {
         />
         <SongListMenu
           context={albumContext}
-          onClearContext={() =>
-            setAlbumContext({ data: '', spot: { left: 0, top: 0 } })
-          }
+          onClearContext={() => resetAlbumContext()}
           onGetSongList={(cbInterface: CallbackInterface, data: string) =>
             SongListFromKey(cbInterface, data)
           }
