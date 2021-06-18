@@ -96,10 +96,10 @@ export function MakeSortKey(
   // Some validation, just in case...
   elems.forEach((val: number, key: string) => {
     if (val >= grouping.length || val < 0) {
-      throw Error(`Index ${val} is out of range for key ${key}`);
+      Fail(`Index ${val} is out of range for key ${key}`);
     }
     if (key.toLocaleLowerCase() !== key) {
-      throw Error(`${key} must be lowercase`);
+      Fail(`${key} must be lowercase`);
     }
   });
   function flipChar(char: string, listChar: string): string {
@@ -127,7 +127,7 @@ export function MakeSortKey(
     // Handle clicking twice to invert the order
     const groupNum = elems.get(which.toLocaleLowerCase());
     if (!Type.isNumber(groupNum)) {
-      throw Error('Unexpected');
+      Fail('Unexpected');
     }
     const newGroups = grouping.map((theGroup, index) =>
       index !== groupNum

@@ -13,6 +13,7 @@ import {
 } from '../Recoil/Local';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleState } from '../Recoil/ReadWrite';
+import { onRejected } from '../Tools';
 import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
 
@@ -30,7 +31,7 @@ export function onClickPlayPause({ set }: CallbackInterface): void {
       ae.pause();
       return false;
     } else if (ae.readyState === 4) {
-      ae.play().catch((e) => '');
+      ae.play().catch(onRejected('Audio Element play failed'));
       return true;
     } else {
       log(`We're not playing, but also not state 4: ${ae.readyState}`);

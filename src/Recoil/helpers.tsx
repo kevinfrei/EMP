@@ -25,7 +25,7 @@ import {
   Unsubscribe,
   WriteToStorage,
 } from '../ipc';
-import { onRejected } from '../Tools';
+import { Fail, onRejected } from '../Tools';
 
 export type StatePair<T> = [T, SetterOrUpdater<T>];
 
@@ -203,7 +203,7 @@ export function oneWayFromMainEffect<T>(
       if (newVal instanceof DefaultValue) {
         return;
       }
-      throw Error(`Invalid assignment to server-side-only atom ${node.key}`);
+      Fail(`Invalid assignment to server-side-only atom ${node.key}`);
     });
     if (asyncKey) {
       return () => {
