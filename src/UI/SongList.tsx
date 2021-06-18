@@ -209,6 +209,74 @@ export function GetSongGroupData<T>(
   const columns = MakeColumns(renderers, getSort, performSort, groupFieldName);
   return [columns, groups, renderProps];
 }
+/**
+ * Build out the song list, group list, and group header properties for a
+ * grouped hierarchy of songs
+ *
+ * @function ProcessSongGroupData<T>
+ * @param {IGroup[]} sortedGroups - the sorted list of groups
+ * @param {[Set<string>, (Set<string>)=>void]} expandedState - A React state
+ *                        pair for a set of keys used to keep track of which
+ *                        containers are currently expanded
+ * @param groupFieldName - the name of the grouped field
+ * @param {[key:string,
+ *          fieldName: string,
+ *          name: string,
+ *          minWidth: number,
+ *          maxWidth?: number,
+ *          render?:(s:Song) => JSX.Element][]} renderers - data for the columns
+ * @param {() => string} getSort - a function to get the sorting string
+ * @param {(sort: string) => void} performSort - the function to actually sort
+ *                                               the song list
+ * @returns {[IColumn[], IDetailsGroupRenderProps]} - returns a tuple
+ *    of the list of IColumns and the GroupRenderProps
+ */
+export function ProcessSongGroupData<T>(
+  sortedGroups: IGroup[],
+  [curExpandedSet, setExpandedSet]: [
+    curExpandedSet: Set<string>,
+    setExpandedSet: (set: Set<string>) => void,
+  ],
+  groupFieldName: string,
+  renderers: [
+    key: string,
+    fieldName: string,
+    name: string,
+    minWidth: number,
+    maxWidth?: number,
+    render?: (song: T) => JSX.Element,
+  ][],
+  getSort: () => SortKey,
+  performSort: (sort: SortKey) => void,
+): [IColumn[], IDetailsGroupRenderProps] {
+  const allGroupIds = new Set<string>(sortedGroups.map((val) => val.key));
+
+  // Walk the sorted list of songs, creating groups when the groupId changes
+  // This has the down-side of making multiple groups with the same key if the
+  // list isn't primarily sorted by the groupId, so you'd better make sure it's
+  // sorted
+  sortedGroups.forEach((val) => {
+    val.isCollapsed = !curExpandedSet.has(val.key);
+  });
+  const renderProps: IDetailsGroupRenderProps = {
+    onToggleCollapseAll: (isAllCollapsed: boolean) => {
+      setExpandedSet(new Set<string>(isAllCollapsed ? [] : allGroupIds.keys()));
+    },
+    headerProps: {
+      onToggleCollapse: (group: IGroup) => {
+        const newSet = new Set<ArtistKey>(curExpandedSet);
+        if (newSet.has(group.key)) {
+          newSet.delete(group.key);
+        } else {
+          newSet.add(group.key);
+        }
+        setExpandedSet(newSet);
+      },
+    },
+  };
+  const columns = MakeColumns(renderers, getSort, performSort, groupFieldName);
+  return [columns, renderProps];
+}
 
 /**
  * Throw this on a DetailsList that's located inside a ScrollablePane and it

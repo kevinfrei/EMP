@@ -67,12 +67,13 @@ export function ShuffleArray<T>(array: T[]): T[] {
   const values = new Uint32Array(array.length);
   window.crypto.getRandomValues(values);
   const rand = (max: number) => values[max - 1] % max;
-  const res: T[] = [];
-  const remove: T[] = [...array];
-  while (remove.length > 0) {
-    const i = rand(remove.length);
-    res.push(remove[i]);
-    remove.splice(i, 1);
+  const res = [...array];
+  // To shuffle an array a of n elements (indices 0..n-1):
+  for (let i = res.length - 1; i > 0; i--) {
+    const j = rand(i + 1);
+    const t = res[i];
+    res[i] = res[j];
+    res[j] = t;
   }
   return res;
 }
