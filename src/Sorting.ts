@@ -29,6 +29,7 @@ export type SortKey = {
     ignoreArticles: boolean,
   ) => (a: Song, b: Song) => number;
   hasSort: () => boolean;
+  getGrouping: () => string[];
 };
 
 /*
@@ -80,7 +81,22 @@ export function MakeSortKeyMultiMap(
   }
 }
 
-export function MakeSortKey(initial: string): SortKey;
+// This helper prepends 'char' to 'listOfChars', and flips the case (if it was)
+// already in 'listOfChars'
+function flipChar(char: string, listOfChars: string): string {
+  const loc = listOfChars.toLocaleLowerCase().indexOf(char);
+  if (loc > 0) {
+    return char + listOfChars.substr(0, loc) + listOfChars.substr(loc + 1);
+  } else if (loc === 0) {
+    return (
+      (listOfChars[0] !== char ? char : char.toLocaleUpperCase()) +
+      listOfChars.substr(1)
+    );
+  }
+  return char + listOfChars;
+}
+
+export function MakeSortKey(initial: string | string[]): SortKey;
 export function MakeSortKey(
   initial: string[],
   groups:
@@ -96,8 +112,10 @@ export function MakeSortKey(
     | Iterable<[string, Iterable<number>]>
     | MultiMap<string, number>,
 ): SortKey {
-  const grouping = Type.isString(initial) ? [initial] : [...initial];
-  const elems = MakeSortKeyMultiMap(initial, groups);
+  // grouping is the list of currently specified sorting strings.
+  const grouping: string[] = Type.isString(initial) ? [initial] : [...initial];
+  const elems: MultiMap<string, number> = MakeSortKeyMultiMap(initial, groups);
+
   // Some validation, just in case...
   elems.forEach((vals: Set<number>, key: string) => {
     for (const val of vals) {
@@ -109,18 +127,7 @@ export function MakeSortKey(
       }
     }
   });
-  function flipChar(char: string, listChar: string): string {
-    const loc = listChar.toLocaleLowerCase().indexOf(char);
-    if (loc > 0) {
-      return char + listChar.substr(0, loc) + listChar.substr(loc + 1);
-    } else if (loc === 0) {
-      return (
-        (listChar[0] !== char ? char : char.toLocaleUpperCase()) +
-        listChar.substr(1)
-      );
-    }
-    return char + listChar;
-  }
+
   /**
    * @function NewSortOrder
    * Updates the sorting string to be arranged & capitalized properly give a
@@ -138,11 +145,12 @@ export function MakeSortKey(
     }
     const newGroups = grouping.map((theGroup, index) =>
       groupNum.has(index)
-        ? theGroup
-        : flipChar(which.toLocaleLowerCase(), theGroup),
+        ? flipChar(which.toLocaleLowerCase(), theGroup)
+        : theGroup,
     );
     return MakeSortKey(newGroups, elems);
   }
+
   function isSorted(which: string): boolean {
     for (const i of grouping) {
       for (const j of i) {
@@ -151,6 +159,7 @@ export function MakeSortKey(
     }
     return false;
   }
+
   function isSpecificSort(which: string): boolean {
     for (const i of grouping) {
       for (const j of i) {
@@ -159,6 +168,7 @@ export function MakeSortKey(
     }
     return false;
   }
+
   function makeSongComparator(
     albums: Map<AlbumKey, Album>,
     artists: Map<ArtistKey, Artist>,
@@ -408,6 +418,7 @@ export function MakeSortKey(
     makeAlbumComparator,
     makeSongAlbumComparator,
     hasSort: () => grouping.join('').length > 0,
+    getGrouping: () => [...grouping],
   };
 }
 

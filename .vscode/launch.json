@@ -10,10 +10,11 @@
         "${workspaceFolder}/node_modules/.bin/jest",
         "--runInBand",
         "--config",
-        "${workspaceFolder}/jest.jsdom.config.js"
+        "${workspaceFolder}/config/jest.jsdom.js"
       ],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "openOnSessionStart"
+      "internalConsoleOptions": "openOnSessionStart",
+      "port": 9229
     },
     {
       "name": "Electron: Main",
@@ -21,15 +22,8 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-      "windows": {
-        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
-      },
       "program": "${workspaceFolder}/public/electron.js",
-      "runtimeArgs": [
-        ".",
-        "--enable-logging",
-        "--remote-debugging-port=9223"
-      ],
+      "runtimeArgs": [".", "--enable-logging", "--remote-debugging-port=9223"],
       "outputCapture": "std",
       "preLaunchTask": "npm: prepare"
     },
@@ -55,10 +49,7 @@
   "compounds": [
     {
       "name": "Electron: All",
-      "configurations": [
-        "Electron: Main",
-        "Electron: Render"
-      ]
+      "configurations": ["Electron: Main", "Electron: Render"]
     }
   ]
 }

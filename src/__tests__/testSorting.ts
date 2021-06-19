@@ -1,4 +1,4 @@
-import { MultiMap } from '@freik/core-utils';
+import { MakeMultiMap, MultiMap } from '@freik/core-utils';
 import { MakeSortKey, MakeSortKeyMultiMap } from '../Sorting';
 
 it('Basic Sort testing', () => {
@@ -34,14 +34,33 @@ it('SortKey map tests', () => {
 
   const groupSpec1 = MakeSortKeyMultiMap('', ['abc', 'cde']);
   expect(dupeMap.toJSON()).toEqual(groupSpec1.toJSON());
-  const groupSpec2 = MakeSortKeyMultiMap('', [
-    ['a', [0]],
-    ['b', [0]],
-    ['c', [0, 1]],
-  ]);
+  const groupSpec2 = MakeSortKeyMultiMap(
+    '',
+    MakeMultiMap([
+      ['a', [0]],
+      ['b', [0]],
+      ['c', [0, 1]],
+    ]),
+  );
   expect(groupSpec2).toBeDefined();
   expect(addMultiMapKeys(groupSpec2)).toEqual(1);
   const groupSpec3 = MakeSortKeyMultiMap('', ['abc', 'bcd']);
   expect([...groupSpec3.keys()].length).toEqual(4);
   expect(addMultiMapKeys(groupSpec3)).toEqual(3);
+});
+
+it('Sort Grouping manipulation Tests', () => {
+  const testKey = MakeSortKey(['abc', 'bcd']);
+  expect(testKey.hasSort()).toBeTruthy();
+  const sa = testKey.isSortedAscending('a');
+  const newKey = testKey.newSortOrder('a');
+  const sA = newKey.isSortedAscending('a');
+  expect(sa !== sA).toBeTruthy();
+  const before = newKey.getGrouping();
+  const dblKey = newKey.newSortOrder('c');
+  const after = dblKey.getGrouping();
+  expect(JSON.stringify(after) !== JSON.stringify(before)).toBeTruthy();
+  const dblKey2 = dblKey.newSortOrder('c');
+  const final = dblKey2.getGrouping();
+  expect(JSON.stringify(final) !== JSON.stringify(after)).toBeTruthy();
 });
