@@ -13,7 +13,7 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeError } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { ArtistKey } from '@freik/media-core';
 import { Dispatch, SetStateAction } from 'react';
 import { SortKey } from '../Sorting';
@@ -246,6 +246,7 @@ export function ProcessSongGroupData<T>(
     maxWidth?: number,
     render?: (song: T) => JSX.Element,
   ][],
+  headerRenderer: (group: IGroup) => JSX.Element,
   getSort: () => SortKey,
   performSort: (sort: SortKey) => void,
 ): [IColumn[], IDetailsGroupRenderProps] {
@@ -272,6 +273,11 @@ export function ProcessSongGroupData<T>(
         }
         setExpandedSet(newSet);
       },
+    },
+    onRenderHeader: (props?: IDetailsGroupDividerProps) => {
+      return Type.isUndefined(props) || Type.isUndefined(props.group)
+        ? null
+        : headerRenderer(props.group);
     },
   };
   const columns = MakeColumns(renderers, getSort, performSort, groupFieldName);

@@ -1,7 +1,6 @@
 import {
   DetailsList,
   IconButton,
-  IDetailsGroupRenderProps,
   IDetailsList,
   IGroup,
   Image,
@@ -169,24 +168,14 @@ export function GroupedAlbumList(): JSX.Element {
       },
   );
 
-  const renderAlbumHeader: IDetailsGroupRenderProps['onRenderHeader'] = (
-    props,
-  ) => {
-    return Type.isUndefined(props) || Type.isUndefined(props.group) ? null : (
-      <AlbumHeaderDisplay
-        album={albums.get(props.group.key)!}
-        group={props.group}
-      />
-    );
-  };
-  const sortedAlbums = SortAlbumList(
-    [...albums.values()],
-    allArtists,
-    ignoreArticles,
-    newAlbumSort,
-  );
+  // Get the sorted song & group lists
   const { songs: sortedSongs, groups } = SortSongsFromAlbums(
-    sortedAlbums,
+    SortAlbumList(
+      [...albums.values()],
+      allArtists,
+      ignoreArticles,
+      newAlbumSort,
+    ),
     allSongs,
     allArtists,
     ignoreArticles,
@@ -203,10 +192,12 @@ export function GroupedAlbumList(): JSX.Element {
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
+    (group: IGroup) => (
+      <AlbumHeaderDisplay album={albums.get(group.key)!} group={group} />
+    ),
     () => curSort,
     setSort,
   );
-  groupProps.onRenderHeader = renderAlbumHeader;
 
   // This doesn't quite work: It's sometimes off by a few rows.
   // It looks like DetailsList doesn't do the math quite right, unfortunately.
