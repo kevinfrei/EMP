@@ -2,7 +2,7 @@
 // You can sort groupings & subelems independently, but group *always*
 
 import { IGroup } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
+import { MakeMultiMap, MultiMap, Type } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-core';
 import { SongKey } from '@freik/media-utils/lib/metadata';
 import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
@@ -59,47 +59,54 @@ export const articlesCmp = (a: string, b: string): number =>
 export const noArticlesCmp = (a: string, b: string): number =>
   stringCompare(noArticles(a), noArticles(b));
 
+function MakeSortKeyMultiMap(
+  initial: string | string[],
+  groups?:
+    | string[]
+    | Iterable<[string, Iterable<number>]>
+    | MultiMap<string, number>,
+): MultiMap<string, number> {
+  if (Type.isUndefined(groups) || Type.isArrayOfString(groups)) {
+    const res = MakeMultiMap<string, number>();
+    const list = groups || (Type.isString(initial) ? [initial] : initial);
+    list.forEach((str, index) => {
+      str.split('').forEach((val) => res.set(val, index));
+    });
+    return res;
+  } else if (Type.isMultiMapOf(groups, Type.isString, Type.isNumber)) {
+    return groups;
+  } else {
+    return MakeMultiMap([...groups]);
+  }
+}
+
 export function MakeSortKey(initial: string): SortKey;
 export function MakeSortKey(
   initial: string[],
-  groups: string[] | Iterable<[string, number]> | Map<string, number>,
+  groups:
+    | string[]
+    | Iterable<[string, Iterable<number>]>
+    | MultiMap<string, number>,
 ): SortKey;
 // initial: The list of initial sorting
 export function MakeSortKey(
   initial: string[] | string,
-  groups?: string[] | Iterable<[string, number]> | Map<string, number>,
+  groups?:
+    | string[]
+    | Iterable<[string, Iterable<number>]>
+    | MultiMap<string, number>,
 ): SortKey {
   const grouping = Type.isString(initial) ? [initial] : [...initial];
-  const elems = Type.isUndefined(groups)
-    ? // Create the map of everything to element 0
-      new Map(
-        Array.from(initial).map((val): [string, number] => [
-          val.toLocaleLowerCase(),
-          0,
-        ]),
-      )
-    : // Create the map of each chracter to its corresponding grouping element
-    Type.isMap(groups)
-    ? groups
-    : new Map<string, number>(
-        Type.isArrayOfString(groups)
-          ? groups
-              .map((val, index): [string, number][] =>
-                Array.from(val).map((chr): [string, number] => [
-                  chr.toLocaleLowerCase(),
-                  index,
-                ]),
-              )
-              .flat()
-          : groups,
-      );
+  const elems = MakeSortKeyMultiMap(initial, groups);
   // Some validation, just in case...
-  elems.forEach((val: number, key: string) => {
-    if (val >= grouping.length || val < 0) {
-      Fail(`Index ${val} is out of range for key ${key}`);
-    }
-    if (key.toLocaleLowerCase() !== key) {
-      Fail(`${key} must be lowercase`);
+  elems.forEach((vals: Set<number>, key: string) => {
+    for (const val of vals) {
+      if (val >= grouping.length || val < 0) {
+        Fail(`Index ${val} is out of range for key ${key}`);
+      }
+      if (key.toLocaleLowerCase() !== key) {
+        Fail(`${key} must be lowercase`);
+      }
     }
   });
   function flipChar(char: string, listChar: string): string {
@@ -126,11 +133,11 @@ export function MakeSortKey(
   function newSortOrder(which: string) {
     // Handle clicking twice to invert the order
     const groupNum = elems.get(which.toLocaleLowerCase());
-    if (!Type.isNumber(groupNum)) {
+    if (Type.isUndefined(groupNum)) {
       Fail('Unexpected');
     }
     const newGroups = grouping.map((theGroup, index) =>
-      index !== groupNum
+      groupNum.has(index)
         ? theGroup
         : flipChar(which.toLocaleLowerCase(), theGroup),
     );

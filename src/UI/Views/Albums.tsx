@@ -76,18 +76,13 @@ const [albumExpandedState, albumIsExpandedState] =
 // TODO: Fix this; It doesn't quite work properly
 // Artist can sort both the album list and track list. The current abstraction
 // doesn't support that concept very well...
-const newAlbumSortState = atom({
+const albumSortState = atom({
   key: 'newAlbumSort',
-  default: MakeSortKey(['l', '', 'n'], ['ly', 'r', 'tn']),
+  default: MakeSortKey(['l', 'n'], ['lry', 'nrt']),
 });
 
-export function AlbumHeaderDisplay({
-  album,
-  group,
-}: {
-  album: Album;
-  group: IGroup;
-}): JSX.Element {
+type AHDProps = { album: Album; group: IGroup };
+export function AlbumHeaderDisplay({ album, group }: AHDProps): JSX.Element {
   const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
   const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
@@ -146,11 +141,11 @@ export function GroupedAlbumList(): JSX.Element {
   const keyBuffer = useRecoilValue(keyBufferState);
   const allSongs = useRecoilValue(allSongsState);
   const allArtists = useRecoilValue(allArtistsState);
-  const newAlbumSort = useRecoilValue(newAlbumSortState);
+  const newAlbumSort = useRecoilValue(albumSortState);
   const albumContext = useRecoilValue(albumContextState);
 
   const curExpandedState = useRecoilState(albumExpandedState);
-  const [curSort, setSort] = useRecoilState(newAlbumSortState);
+  const [curSort, setSort] = useRecoilState(albumSortState);
   const resetAlbumContext = useResetRecoilState(albumContextState);
 
   const onAddSongClick = useRecoilCallback(

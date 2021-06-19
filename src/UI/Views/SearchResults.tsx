@@ -31,7 +31,6 @@ import {
   searchTermState,
 } from '../../Recoil/ReadOnly';
 import { MakeSortKey } from '../../Sorting';
-import { Fail } from '../../Tools';
 import {
   SongDetailClick,
   SongListDetailContextMenuClick,
@@ -112,7 +111,7 @@ function AggregateSearchResults(
           MakeArtistGroupKey(artist.key, song.albumId),
         );
       }
-      Fail('oops');
+      throw Error('oops');
     });
   }
   const groups: IGroup[] = [];
