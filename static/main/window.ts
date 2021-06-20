@@ -71,7 +71,10 @@ export async function CreateWindow(
     autoHideMenuBar: true,
     minWidth: 270,
     minHeight: 308,
+    /*
+    This exposes a bug in Electron where it won't quit/close. I should report it
     roundedCorners: false, // Square corners? Not sure...
+    */
     fullscreenable: false,
     acceptFirstMouse: true, // Gets 'activating' clicks
   })
