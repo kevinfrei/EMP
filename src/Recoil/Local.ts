@@ -2,7 +2,7 @@ import { AlbumKey, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { MakeSortKey } from '../Sorting';
 import { RandomInt } from '../Tools';
-import { repeatState } from './ReadWrite';
+import { CurrentView, curViewState, repeatState } from './ReadWrite';
 
 export type PlaylistName = string;
 
@@ -113,7 +113,7 @@ export const picCacheAvoiderFamily = atomFamily<number, AlbumKey>({
 });
 
 export const albumCoverUrlFamily = selectorFamily<string, AlbumKey>({
-  key: 'albuCoverUrl',
+  key: 'albumCoverUrl',
   get:
     (key: AlbumKey) =>
     ({ get }) => {
@@ -123,3 +123,12 @@ export const albumCoverUrlFamily = selectorFamily<string, AlbumKey>({
 
 // This is the currently 'typed' set of characters (for scrolling lists)
 export const keyBufferState = atom<string>({ key: 'KeyBuffer', default: '' });
+
+export const focusedKeysStateFamily = selectorFamily<string, CurrentView>({
+  key: 'focusedKeys',
+  get:
+    (view: CurrentView) =>
+    ({ get }) => {
+      return get(curViewState) === view ? get(keyBufferState) : '';
+    },
+});

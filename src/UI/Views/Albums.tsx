@@ -11,8 +11,8 @@ import {
   Stack,
   Text,
 } from '@fluentui/react';
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { Album, AlbumKey, Song } from '@freik/media-core';
+import { MakeError, Type } from '@freik/core-utils';
+import { AlbumKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
@@ -24,23 +24,22 @@ import {
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
-import { albumCoverUrlFamily, keyBufferState } from '../../Recoil/Local';
+import {
+  albumCoverUrlFamily,
+  focusedKeysStateFamily,
+} from '../../Recoil/Local';
 import {
   allAlbumsState,
   allArtistsState,
   allSongsState,
+  getAlbumByKeyFamily,
   getDataForAlbumFamily,
 } from '../../Recoil/ReadOnly';
-import {
-  CurrentView,
-  curViewState,
-  ignoreArticlesState,
-} from '../../Recoil/ReadWrite';
+import { CurrentView, ignoreArticlesState } from '../../Recoil/ReadWrite';
 import {
   articlesCmp,
   MakeSortKey,
   noArticlesCmp,
-  SortAlbumList,
   SortSongsFromAlbums,
 } from '../../Sorting';
 import { GetIndexOf } from '../../Tools';
@@ -58,7 +57,6 @@ import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Albums.css';
 
 const err = MakeError('Albums-err'); // eslint-disable-line
-const log = MakeLogger('Albums'); // eslint-disable-line
 
 // This is used to trigger the popup menu in the list view
 const albumContextState = atom<SongListMenuData>({
@@ -66,45 +64,44 @@ const albumContextState = atom<SongListMenuData>({
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-// For grouping to work properly, the sort order needs to be fully specified
-// Also, the album year, VA type, and artist have to "stick" with the album name
-// as a single group, or you get duplicate group IDs
 const [albumExpandedState, albumIsExpandedState] =
   MakeSetState<AlbumKey>('albumExpanded');
 
-// TODO: Fix this; It doesn't quite work properly
-// Artist can sort both the album list and track list. The current abstraction
-// doesn't support that concept very well...
+// For grouping to work properly, the sort order needs to be fully specified
+// Also, the album year, VA type, and artist have to "stick" with the album name
+// as a single group, or you get duplicate group IDs
 const albumSortState = atom({
   key: 'newAlbumSort',
   default: MakeSortKey(['l', 'n'], ['lry', 'nrt']),
 });
 
-type AHDProps = { album: Album; group: IGroup };
-export function AlbumHeaderDisplay({ album, group }: AHDProps): JSX.Element {
-  const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
-  const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
+type AHDProps = { group: IGroup };
+function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
+  const album = useRecoilValue(getAlbumByKeyFamily(group.key));
+  const albumData = useRecoilValue(getDataForAlbumFamily(group.key));
+  const picurl = useRecoilValue(albumCoverUrlFamily(group.key));
   const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
     await AddSongs(cbInterface, album.songs);
+  });
+  const onHeaderExpanderClick = useRecoilCallback(({ set }) => () => {
+    set(albumIsExpandedState(group.key), !group.isCollapsed);
   });
   const onRightClick = useRecoilCallback(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
         set(albumContextState, {
-          data: album.key,
+          data: group.key,
           spot: { left: event.clientX + 14, top: event.clientY },
         }),
   );
-  const onHeaderExpanderClick = useRecoilCallback(({ set }) => () => {
-    set(albumIsExpandedState(group.key), !group.isCollapsed);
-  });
+
   return (
     <Stack horizontal verticalAlign="center">
       <IconButton
         iconProps={{
           iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
         }}
-        onClick={() => onHeaderExpanderClick()}
+        onClick={onHeaderExpanderClick}
       />
       <Stack
         horizontal
@@ -135,9 +132,8 @@ export function GroupedAlbumList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums = useRecoilValue(allAlbumsState);
-  const curView = useRecoilValue(curViewState);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
-  const keyBuffer = useRecoilValue(keyBufferState);
+  const keyBuffer = useRecoilValue(focusedKeysStateFamily(CurrentView.album));
   const allSongs = useRecoilValue(allSongsState);
   const allArtists = useRecoilValue(allArtistsState);
   const newAlbumSort = useRecoilValue(albumSortState);
@@ -170,12 +166,7 @@ export function GroupedAlbumList(): JSX.Element {
 
   // Get the sorted song & group lists
   const { songs: sortedSongs, groups } = SortSongsFromAlbums(
-    SortAlbumList(
-      [...albums.values()],
-      allArtists,
-      ignoreArticles,
-      newAlbumSort,
-    ),
+    albums.values(),
     allSongs,
     allArtists,
     ignoreArticles,
@@ -192,9 +183,7 @@ export function GroupedAlbumList(): JSX.Element {
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],
-    (group: IGroup) => (
-      <AlbumHeaderDisplay album={albums.get(group.key)!} group={group} />
-    ),
+    (group: IGroup) => <AlbumHeaderDisplay group={group} />,
     () => curSort,
     setSort,
   );
@@ -202,15 +191,14 @@ export function GroupedAlbumList(): JSX.Element {
   // This doesn't quite work: It's sometimes off by a few rows.
   // It looks like DetailsList doesn't do the math quite right, unfortunately.
   // I should check it out on Songs to see if it's related to groups...
-  if (curView === CurrentView.album && detailRef && keyBuffer.length > 0) {
+  if (detailRef && keyBuffer.length > 0) {
     const index = GetIndexOf(
       groups,
       keyBuffer,
-      (s: IGroup) => (s ? s.name || '' : ''),
+      (s: IGroup) => s.name,
       ignoreArticles ? noArticlesCmp : articlesCmp,
     );
     detailRef.focusIndex(index);
-    log(`"${keyBuffer}" index: ${index} name: ${groups[index].name}`);
   }
 
   return (
@@ -231,7 +219,7 @@ export function GroupedAlbumList(): JSX.Element {
         />
         <SongListMenu
           context={albumContext}
-          onClearContext={() => resetAlbumContext()}
+          onClearContext={resetAlbumContext}
           onGetSongList={(cbInterface: CallbackInterface, data: string) =>
             SongListFromKey(cbInterface, data)
           }
