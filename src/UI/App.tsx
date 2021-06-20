@@ -1,3 +1,4 @@
+import { SpinnerSize } from '@fluentui/react';
 import { RecoilRoot } from 'recoil';
 import SongDetailPanel from './DetailPanel/SongDetailPanel';
 import PlaybackControls from './PlaybackControls';
@@ -22,7 +23,7 @@ export default function App(): JSX.Element {
         <VolumeControl />
         <Sidebar />
       </Spinner>
-      <Spinner label="Please wait...">
+      <Spinner label="Please wait..." size={SpinnerSize.large}>
         <ViewSelector />
       </Spinner>
       <SongDetailPanel />

@@ -106,18 +106,19 @@ export function Spinner({
   return <Suspense fallback={theSpinner}>{children}</Suspense>;
 }
 
+type StateToggleProps = {
+  label: string;
+  state: BoolState;
+  disabled?: boolean;
+  style?: IStyle;
+};
 // A helper for a toggle that uses a BoolState variable
 export function StateToggle({
   label,
   state,
   disabled,
   style,
-}: {
-  label: string;
-  state: BoolState;
-  disabled?: boolean;
-  style?: IStyle;
-}): JSX.Element {
+}: StateToggleProps): JSX.Element {
   const customStyle: Partial<IToggleStyles> = {};
   if (style) {
     customStyle.root = style;
@@ -129,7 +130,7 @@ export function StateToggle({
       label={label}
       checked={state[0]}
       styles={customStyle}
-      onChange={(ev, checked?: boolean) => state[checked ? 2 : 1]()}
+      onChange={(_ev, checked?: boolean) => state[checked ? 2 : 1]()}
     />
   );
 }
