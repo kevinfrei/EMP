@@ -19,7 +19,7 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { useState } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilTransaction_UNSTABLE, useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
 import { AddSongs } from '../../Recoil/api';
@@ -194,11 +194,11 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useRecoilCallback((cbInterface) => async () => {
-    await AddSongs(cbInterface, props.keys);
+  const onAddSongListClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+    AddSongs(xact, props.keys);
   });
-  const onRightClick = useRecoilCallback((cbInterface) =>
-    SongListDetailContextMenuClick(cbInterface, props.keys),
+  const onRightClick = useRecoilTransaction_UNSTABLE((xact) =>
+    SongListDetailContextMenuClick(xact, props.keys),
   );
   const theStyle = { marginLeft: props.depth * 20 };
   return (
@@ -226,17 +226,17 @@ export default function SearchResultsView(): JSX.Element {
   const albums = useRecoilValue(allAlbumsState);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
-  const onSongDetailClick = useRecoilCallback(
-    (cbInterface) => (item: SearchSongData, index?: number, ev?: Event) =>
+  const onSongDetailClick = useRecoilTransaction_UNSTABLE(
+    (xact) => (item: SearchSongData, index?: number, ev?: Event) =>
       SongDetailClick(
-        cbInterface,
+        xact,
         item.song,
         Type.has(ev, 'shiftKey') && ev.shiftKey === true,
       ),
   );
-  const onAddSongClick = useRecoilCallback(
-    (cbInterface) => async (item: SearchSongData) => {
-      await AddSongs(cbInterface, [item.song.key]);
+  const onAddSongClick = useRecoilTransaction_UNSTABLE(
+    (xact) => (item: SearchSongData) => {
+      AddSongs(xact, [item.song.key]);
     },
   );
 

@@ -1,9 +1,9 @@
 import { Song, SongKey } from '@freik/media-core';
-import { CallbackInterface } from 'recoil';
+import { TransactionInterface_UNSTABLE } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
 
 export function SongDetailClick(
-  { set }: CallbackInterface,
+  { set }: TransactionInterface_UNSTABLE,
   song: Song,
   shift?: boolean,
 ): void {
@@ -29,7 +29,7 @@ function SetInvert<T>(theSet: Set<T>, toToggle: Iterable<T>): void {
 }
 
 export function SongListDetailClick(
-  { set }: CallbackInterface,
+  { set }: TransactionInterface_UNSTABLE,
   songs: SongKey[],
   shift?: boolean,
 ): void {
@@ -45,11 +45,11 @@ export function SongListDetailClick(
 
 // This is a helper to shift-click for song details
 export function SongListDetailContextMenuClick(
-  cbInterface: CallbackInterface,
+  xact: TransactionInterface_UNSTABLE,
   items: SongKey[],
 ) {
   return (event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     const shift = event.shiftKey === true;
-    SongListDetailClick(cbInterface, items, shift);
+    SongListDetailClick(xact, items, shift);
   };
 }

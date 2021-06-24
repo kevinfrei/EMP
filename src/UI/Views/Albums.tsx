@@ -16,9 +16,9 @@ import { AlbumKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
-  CallbackInterface,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
@@ -80,13 +80,15 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const album = useRecoilValue(getAlbumByKeyFamily(group.key));
   const albumData = useRecoilValue(getDataForAlbumFamily(group.key));
   const picurl = useRecoilValue(albumCoverUrlFamily(group.key));
-  const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
-    await AddSongs(cbInterface, album.songs);
+  const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+    AddSongs(xact, album.songs);
   });
-  const onHeaderExpanderClick = useRecoilCallback(({ set }) => () => {
-    set(albumIsExpandedState(group.key), !group.isCollapsed);
-  });
-  const onRightClick = useRecoilCallback(
+  const onHeaderExpanderClick = useRecoilTransaction_UNSTABLE(
+    ({ set }) =>
+      () =>
+        set(albumIsExpandedState(group.key), !group.isCollapsed),
+  );
+  const onRightClick = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
         set(albumContextState, {
@@ -143,12 +145,10 @@ export function GroupedAlbumList(): JSX.Element {
   const [curSort, setSort] = useRecoilState(albumSortState);
   const resetAlbumContext = useResetRecoilState(albumContextState);
 
-  const onAddSongClick = useRecoilCallback(
-    (cbInterface) => async (item: Song) => {
-      await AddSongs(cbInterface, [item.key]);
-    },
+  const onAddSongClick = useRecoilTransaction_UNSTABLE(
+    (xact) => (item: Song) => AddSongs(xact, [item.key]),
   );
-  const onRightClick = useRecoilCallback(
+  const onRightClick = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
       (item: Song, _index?: number, ev?: Event) => {
         if (
@@ -220,8 +220,8 @@ export function GroupedAlbumList(): JSX.Element {
         <SongListMenu
           context={albumContext}
           onClearContext={resetAlbumContext}
-          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
-            SongListFromKey(cbInterface, data)
+          onGetSongList={(xact: TransactionInterface_UNSTABLE, data: string) =>
+            SongListFromKey(xact, data)
           }
         />
       </ScrollablePane>

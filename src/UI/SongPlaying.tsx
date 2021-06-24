@@ -1,7 +1,12 @@
 import { Slider, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import { SyntheticEvent } from 'react';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilTransaction_UNSTABLE,
+  useRecoilValue,
+} from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
   albumCoverUrlFamily,
@@ -145,28 +150,22 @@ export default function SongPlayback(): JSX.Element {
       () =>
         set(playingState, false),
   );
-  const onEnded = useRecoilCallback((cbInterface) => async () => {
-    const { snapshot, set } = cbInterface;
+  const onEnded = useRecoilTransaction_UNSTABLE((xact) => () => {
     log('Heading to the next song!!!');
-    const release = snapshot.retain();
-    try {
-      const songList = await snapshot.getPromise(songListState);
-      const rep = await snapshot.getPromise(repeatState);
-      if (rep && songList.length === 1) {
-        // Because we rely on auto-play, if we just try to play the same song
-        // again, it won't start playing
-        const ae = GetAudioElem();
-        if (ae) {
-          await ae.play();
-        }
+    const songList = xact.get(songListState);
+    const rep = xact.get(repeatState);
+    if (rep && songList.length === 1) {
+      // Because we rely on auto-play, if we just try to play the same song
+      // again, it won't start playing
+      const ae = GetAudioElem();
+      if (ae) {
+        void ae.play();
       }
-      const isPlaying = await MaybePlayNext(cbInterface);
-      set(playingState, isPlaying);
-    } finally {
-      release();
     }
+    const isPlaying = MaybePlayNext(xact);
+    xact.set(playingState, isPlaying);
   });
-  const onTimeUpdate = useRecoilCallback(
+  const onTimeUpdate = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
       (ev: SyntheticEvent<HTMLMediaElement>) => {
         const ae = ev.currentTarget;
@@ -196,19 +195,14 @@ export default function SongPlayback(): JSX.Element {
       onTimeUpdate={onTimeUpdate}
     />
   );
-  const showDetail = useRecoilCallback(
-    (cbInterface) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+  const showDetail = useRecoilTransaction_UNSTABLE(
+    (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       if (songKey !== '') {
-        const release = cbInterface.snapshot.retain();
-        cbInterface.snapshot
-          .getPromise(allSongsState)
-          .then((songs) => {
-            const song = songs.get(songKey);
-            if (song) {
-              SongDetailClick(cbInterface, song, event.shiftKey);
-            }
-          })
-          .finally(release);
+        const songs = xact.get(allSongsState);
+        const song = songs.get(songKey);
+        if (song) {
+          SongDetailClick(xact, song, event.shiftKey);
+        }
       }
     },
   );

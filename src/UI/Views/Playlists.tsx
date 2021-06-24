@@ -10,9 +10,9 @@ import { SongKey } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
-  CallbackInterface,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
 } from 'recoil';
 import { DeletePlaylist, PlaySongs, RenamePlaylist } from '../../Recoil/api';
@@ -49,27 +49,18 @@ export default function PlaylistView(): JSX.Element {
   const [playlistContext, setPlaylistContext] =
     useRecoilState(playlistContextState);
 
-  const onPlaylistInvoked = useRecoilCallback(
-    (cbInterface) => async (playlistName: PlaylistName) => {
-      const release = cbInterface.snapshot.retain();
-      try {
-        const songs = await cbInterface.snapshot.getPromise(
-          getPlaylistFamily(playlistName),
-        );
-        await PlaySongs(cbInterface, songs, playlistName);
-      } finally {
-        release();
-      }
+  const onPlaylistInvoked = useRecoilTransaction_UNSTABLE(
+    (xact) => (playlistName: PlaylistName) => {
+      const songs = xact.get(getPlaylistFamily(playlistName));
+      PlaySongs(xact, songs, playlistName);
     },
   );
 
-  const onRemoveDupes = useRecoilCallback(({ set, snapshot }) => async () => {
+  const onRemoveDupes = useRecoilTransaction_UNSTABLE(({ get, set }) => () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = await snapshot.getPromise(
-      getPlaylistFamily(playlistContext.data),
-    );
+    const songs = get(getPlaylistFamily(playlistContext.data));
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
     for (const song of songs) {
@@ -81,13 +72,13 @@ export default function PlaylistView(): JSX.Element {
     set(getPlaylistFamily(playlistContext.data), newList);
   });
 
-  const deleteConfirmed = useRecoilCallback((cbInterface) => async () => {
-    await DeletePlaylist(cbInterface, selected);
+  const deleteConfirmed = useRecoilTransaction_UNSTABLE((xact) => () => {
+    DeletePlaylist(xact, selected);
   });
 
-  const renameConfirmed = useRecoilCallback(
-    (cbInterface) => async (newName: string) => {
-      await RenamePlaylist(cbInterface, selected, newName);
+  const renameConfirmed = useRecoilTransaction_UNSTABLE(
+    (xact) => (newName: string) => {
+      RenamePlaylist(xact, selected, newName);
     },
   );
 
@@ -173,9 +164,10 @@ export default function PlaylistView(): JSX.Element {
           onClearContext={() =>
             setPlaylistContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
-            cbInterface.snapshot.getPromise(getPlaylistFamily(data))
-          }
+          onGetSongList={(
+            { get }: TransactionInterface_UNSTABLE,
+            data: string,
+          ) => get(getPlaylistFamily(data))}
           items={[
             'add',
             'rep',

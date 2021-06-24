@@ -1,5 +1,5 @@
 import { MakeError, Type } from '@freik/core-utils';
-import { CallbackInterface } from 'recoil';
+import { TransactionInterface_UNSTABLE } from 'recoil';
 import { FocusSearch } from '../MyWindow';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
@@ -18,7 +18,7 @@ import { addLocation } from './Views/Settings';
 const log = MakeError('MenuHandler'); // eslint-disable-line
 const err = MakeError('MenuHandler-err'); // eslint-disable-line
 
-function updateTime({ set }: CallbackInterface, offset: number) {
+function updateTime({ set }: TransactionInterface_UNSTABLE, offset: number) {
   const ae = GetAudioElem();
   if (!ae) {
     return;
@@ -35,24 +35,23 @@ function updateTime({ set }: CallbackInterface, offset: number) {
 }
 
 export function MenuHandler(
-  callbackInterface: CallbackInterface,
+  xact: TransactionInterface_UNSTABLE,
   message: unknown,
 ): void {
   log('Menu command:');
   log(message);
-  const { set } = callbackInterface;
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
   if (Type.hasStr(message, 'state')) {
     switch (message.state) {
       case 'shuffle':
-        set(shuffleState, (cur) => !cur);
+        xact.set(shuffleState, (cur) => !cur);
         break;
       case 'repeat':
-        set(repeatState, (cur) => !cur);
+        xact.set(repeatState, (cur) => !cur);
         break;
 
       case 'addLocation':
-        void addLocation(callbackInterface);
+        void addLocation(xact);
         break;
 
       case 'find':
@@ -61,31 +60,31 @@ export function MenuHandler(
 
       // Playback control:
       case 'playback':
-        onClickPlayPause(callbackInterface);
+        onClickPlayPause(xact);
         break;
       case 'nextTrack':
-        void MaybePlayNext(callbackInterface);
+        void MaybePlayNext(xact);
         break;
       case 'prevTrack':
-        void MaybePlayPrev(callbackInterface);
+        void MaybePlayPrev(xact);
         break;
 
       // Time control
       case 'fwd':
-        updateTime(callbackInterface, 10);
+        updateTime(xact, 10);
         break;
       case 'back':
-        updateTime(callbackInterface, -10);
+        updateTime(xact, -10);
         break;
 
       case 'mute':
-        set(mutedState, (cur) => !cur);
+        xact.set(mutedState, (cur) => !cur);
         break;
       case 'louder':
-        set(volumeState, (val) => Math.min(1.0, val + 0.1));
+        xact.set(volumeState, (val) => Math.min(1.0, val + 0.1));
         break;
       case 'quieter':
-        set(volumeState, (val) => Math.max(0, val - 0.1));
+        xact.set(volumeState, (val) => Math.max(0, val - 0.1));
         break;
       case 'view':
         if (Type.hasStr(message, 'select')) {
@@ -114,7 +113,7 @@ export function MenuHandler(
               break;
           }
           if (theView !== CurrentView.none) {
-            set(curViewState, theView);
+            xact.set(curViewState, theView);
           }
         } else {
           err('Invalid view menu message:');

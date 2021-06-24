@@ -14,9 +14,9 @@ import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
-  CallbackInterface,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
@@ -75,13 +75,15 @@ const sortOrderState = atom({
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useRecoilValue(getArtistByKeyFamily(group.key));
-  const onAddSongsClick = useRecoilCallback((cbInterface) => async () => {
-    await AddSongs(cbInterface, artist.songs);
+  const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+    AddSongs(xact, artist.songs);
   });
-  const onHeaderExpanderClick = useRecoilCallback(({ set }) => () => {
-    set(artistIsExpandedState(group.key), !group.isCollapsed);
-  });
-  const onRightClick = useRecoilCallback(
+  const onHeaderExpanderClick = useRecoilTransaction_UNSTABLE(
+    ({ set }) =>
+      () =>
+        set(artistIsExpandedState(group.key), !group.isCollapsed),
+  );
+  const onRightClick = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
         set(artistContextState, {
@@ -151,7 +153,7 @@ export function GroupedAristList(): JSX.Element {
   const curExpandedState = useRecoilState(artistExpandedState);
   const resetArtistContext = useResetRecoilState(artistContextState);
 
-  const onRightClick = useRecoilCallback(
+  const onRightClick = useRecoilTransaction_UNSTABLE(
     ({ set }) =>
       (item: ArtistSong, _index?: number, ev?: Event) => {
         if (ev) {
@@ -163,10 +165,8 @@ export function GroupedAristList(): JSX.Element {
         }
       },
   );
-  const onAddSongClick = useRecoilCallback(
-    (cbInterface) => async (item: ArtistSong) => {
-      await AddSongs(cbInterface, [item.key]);
-    },
+  const onAddSongClick = useRecoilTransaction_UNSTABLE(
+    (xact) => (item: ArtistSong) => AddSongs(xact, [item.key]),
   );
 
   const filteredArtistsFromSongRenderer = (
@@ -237,8 +237,8 @@ export function GroupedAristList(): JSX.Element {
         <SongListMenu
           context={artistContext}
           onClearContext={resetArtistContext}
-          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
-            SongListFromKey(cbInterface, data)
+          onGetSongList={(xact: TransactionInterface_UNSTABLE, data: string) =>
+            SongListFromKey(xact, data)
           }
         />
       </ScrollablePane>

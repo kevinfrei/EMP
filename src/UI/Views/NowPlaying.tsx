@@ -26,9 +26,9 @@ import {
 } from '@freik/media-core';
 import {
   atom,
-  CallbackInterface,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
@@ -80,25 +80,28 @@ function TopLine(): JSX.Element {
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useRecoilCallback(({ set }) => (inputName: string) => {
-    if (playlists.has(inputName)) {
-      window.alert("Sorry: You can't overwrite an existing playlist.");
-    } else {
-      set(getPlaylistFamily(inputName), [...songList]);
-      set(activePlaylistState, inputName);
-    }
+  const saveListAs = useRecoilTransaction_UNSTABLE(
+    ({ set }) =>
+      (inputName: string) => {
+        if (playlists.has(inputName)) {
+          window.alert("Sorry: You can't overwrite an existing playlist.");
+        } else {
+          set(getPlaylistFamily(inputName), [...songList]);
+          set(activePlaylistState, inputName);
+        }
+      },
+  );
+  const stopAndClear = useRecoilTransaction_UNSTABLE((xact) => () => {
+    StopAndClear(xact);
   });
-  const stopAndClear = useRecoilCallback((cbInterface) => () => {
-    StopAndClear(cbInterface);
-  });
-  const clickClearQueue = useRecoilCallback((cbInterface) => () => {
+  const clickClearQueue = useRecoilTransaction_UNSTABLE((xact) => () => {
     if (isPlaylist(nowPlaying)) {
-      StopAndClear(cbInterface);
+      StopAndClear(xact);
     } else {
       showConfirm();
     }
   });
-  const save = useRecoilCallback(({ set }) => () => {
+  const save = useRecoilTransaction_UNSTABLE(({ set }) => () => {
     set(getPlaylistFamily(nowPlaying), songList);
   });
 
@@ -308,8 +311,8 @@ export default function NowPlaying(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
-            new Promise((resolve) => resolve(data.length > 0 ? [data] : []))
+          onGetSongList={(_xact: TransactionInterface_UNSTABLE, data: string) =>
+            data.length > 0 ? [data] : []
           }
           items={['prop', 'show', '-', 'like', 'hate']}
         />

@@ -7,14 +7,14 @@ import {
   PlaylistName,
   SongKey,
 } from '@freik/media-core';
-import { CallbackInterface, RecoilState, Snapshot } from 'recoil';
+import { TransactionInterface_UNSTABLE } from 'recoil';
 import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
+  isSongHated,
+  isSongLiked,
   neverPlayHatesState,
   onlyPlayLikesState,
-  songHateFamily,
-  songLikeFamily,
 } from './Likes';
 import {
   activePlaylistState,
@@ -32,11 +32,6 @@ import { repeatState, shuffleState } from './ReadWrite';
 const log = MakeLogger('api'); // eslint-disable-line
 const err = MakeError('ReadWrite-err'); // eslint-disable-line
 
-// A helper for snapshot value loading
-function getVal<T>(snapshot: Snapshot, atomOrSel: RecoilState<T>): T {
-  return snapshot.getLoadable(atomOrSel).valueOrThrow();
-}
-
 /**
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)
@@ -46,31 +41,26 @@ function getVal<T>(snapshot: Snapshot, atomOrSel: RecoilState<T>): T {
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
  */
-export async function MaybePlayNext({
-  snapshot,
+export function MaybePlayNext({
+  get,
   set,
-}: CallbackInterface): Promise<boolean> {
-  const release = snapshot.retain();
-  try {
-    const curIndex = await snapshot.getPromise(currentIndexState);
-    const songList = await snapshot.getPromise(songListState);
-    if (curIndex + 1 < songList.length) {
-      set(currentIndexState, curIndex + 1);
-      return true;
-    }
-    const repeat = await snapshot.getPromise(repeatState);
-    if (!repeat) {
-      return false;
-    }
-    const shuffle = await snapshot.getPromise(shuffleState);
-    if (shuffle) {
-      set(songListState, ShuffleArray(songList));
-    }
-    set(currentIndexState, 0);
+}: TransactionInterface_UNSTABLE): boolean {
+  const curIndex = get(currentIndexState);
+  const songList = get(songListState);
+  if (curIndex + 1 < songList.length) {
+    set(currentIndexState, curIndex + 1);
     return true;
-  } finally {
-    release();
   }
+  const repeat = get(repeatState);
+  if (!repeat) {
+    return false;
+  }
+  const shuffle = get(shuffleState);
+  if (shuffle) {
+    set(songListState, ShuffleArray(songList));
+  }
+  set(currentIndexState, 0);
+  return true;
 }
 
 /**
@@ -80,23 +70,18 @@ export async function MaybePlayNext({
  *
  * @returns Promise<void>
  */
-export async function MaybePlayPrev({
-  snapshot,
+export function MaybePlayPrev({
+  get,
   set,
-}: CallbackInterface): Promise<void> {
-  const release = snapshot.retain();
-  try {
-    const songList = await snapshot.getPromise(songListState);
-    if (songList.length > 0) {
-      const curIndex = await snapshot.getPromise(currentIndexState);
-      if (curIndex > 0) {
-        set(currentIndexState, curIndex - 1);
-      } else if (await snapshot.getPromise(repeatState)) {
-        set(currentIndexState, songList.length - 1);
-      }
+}: TransactionInterface_UNSTABLE): void {
+  const songList = get(songListState);
+  if (songList.length > 0) {
+    const curIndex = get(currentIndexState);
+    if (curIndex > 0) {
+      set(currentIndexState, curIndex - 1);
+    } else if (get(repeatState)) {
+      set(currentIndexState, songList.length - 1);
     }
-  } finally {
-    release();
   }
 }
 
@@ -108,44 +93,22 @@ export async function MaybePlayPrev({
  *
  * @returns {SongKey[]} The filtered list of songs
  */
-function GetFilteredSongsSync( // Deprecated
-  snapshot: Snapshot,
+function GetFilteredSongs(
+  xact: TransactionInterface_UNSTABLE,
   listToFilter: Iterable<SongKey>,
 ): SongKey[] {
-  const onlyLikes = getVal(snapshot, onlyPlayLikesState);
-  const neverHates = getVal(snapshot, neverPlayHatesState);
+  const onlyLikes = xact.get(onlyPlayLikesState);
+  const neverHates = xact.get(neverPlayHatesState);
   const playList = [...listToFilter];
   const filtered = playList.filter((songKey: SongKey) => {
     if (onlyLikes) {
-      return getVal(snapshot, songLikeFamily(songKey));
+      return isSongLiked(xact, songKey);
     }
     if (neverHates) {
-      return !getVal(snapshot, songHateFamily(songKey));
+      return !isSongHated(xact, songKey);
     }
     return true;
   });
-  return filtered.length === 0 ? playList : filtered;
-}
-
-// The snapshot needs to already be retained!
-async function GetFilteredSongs(
-  snapshot: Snapshot,
-  listToFilter: Iterable<SongKey>,
-): Promise<SongKey[]> {
-  const onlyLikes = await snapshot.getPromise(onlyPlayLikesState);
-  const neverHates = await snapshot.getPromise(neverPlayHatesState);
-  const playList = [...listToFilter];
-  const filtered = await Promise.all(
-    playList.filter((songKey: SongKey) => {
-      if (onlyLikes) {
-        return snapshot.getPromise(songLikeFamily(songKey));
-      }
-      if (neverHates) {
-        return snapshot.getPromise(songHateFamily(songKey)).then((val) => !val);
-      }
-      return true;
-    }),
-  );
   return filtered.length === 0 ? playList : filtered;
 }
 
@@ -157,12 +120,14 @@ async function GetFilteredSongs(
  *
  * @returns void
  */
-export function AddSongsSync( // Deprecate this: It's only for tests now :/
-  { snapshot, set }: CallbackInterface,
+export function AddSongs( // Deprecate this: It's only for tests now :/
+  xact: TransactionInterface_UNSTABLE,
   listToAdd: Iterable<SongKey>,
 ): void {
-  const shuffle = getVal(snapshot, shuffleState);
-  const playList = GetFilteredSongsSync(snapshot, listToAdd);
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { get, set } = xact;
+  const shuffle = get(shuffleState);
+  const playList = GetFilteredSongs(xact, listToAdd);
   if (!shuffle) {
     set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
     set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
@@ -174,31 +139,6 @@ export function AddSongsSync( // Deprecate this: It's only for tests now :/
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
 }
-export async function AddSongs(
-  { snapshot, set }: CallbackInterface,
-  listToAdd: Iterable<SongKey>,
-): Promise<void> {
-  const release = snapshot.retain();
-  try {
-    const shuffle = await snapshot.getPromise(shuffleState);
-    const playList = await GetFilteredSongs(snapshot, listToAdd);
-    if (!shuffle) {
-      set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
-      set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
-    } else {
-      const shuffledList = ShuffleArray(playList);
-      set(songListState, (songList: string[]) => [
-        ...songList,
-        ...shuffledList,
-      ]);
-      set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
-    }
-    set(recentlyQueuedState, playList.length);
-    set(displayMessageState, true);
-  } finally {
-    release();
-  }
-}
 
 /**
  * Adds a list of songs to the end of the current song list
@@ -208,13 +148,15 @@ export async function AddSongs(
  *
  * @returns void
  */
-export function PlaySongsSync( // Deprecate this: It's only for tests now :/
-  { set, snapshot }: CallbackInterface,
+export function PlaySongs( // Deprecate this: It's only for tests now :/
+  xact: TransactionInterface_UNSTABLE,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
-  let playList = GetFilteredSongsSync(snapshot, listToPlay);
-  const shuffle = getVal(snapshot, shuffleState);
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { get, set } = xact;
+  let playList = GetFilteredSongs(xact, listToPlay);
+  const shuffle = get(shuffleState);
   if (shuffle) {
     playList = ShuffleArray(playList);
   }
@@ -227,30 +169,6 @@ export function PlaySongsSync( // Deprecate this: It's only for tests now :/
   set(displayMessageState, true);
 }
 
-export async function PlaySongs(
-  { set, snapshot }: CallbackInterface,
-  listToPlay: Iterable<SongKey>,
-  playlistName?: PlaylistName,
-): Promise<void> {
-  const release = snapshot.retain();
-  try {
-    let playList = await GetFilteredSongs(snapshot, listToPlay);
-    const shuffle = await snapshot.getPromise(shuffleState);
-    if (shuffle) {
-      playList = ShuffleArray(playList);
-    }
-    if (isPlaylist(playlistName) && Type.isString(playlistName)) {
-      set(activePlaylistState, playlistName);
-    }
-    set(songListState, playList);
-    set(currentIndexState, playList.length >= 0 ? 0 : -1);
-    set(recentlyQueuedState, playList.length);
-    set(displayMessageState, true);
-  } finally {
-    release();
-  }
-}
-
 /**
  * Stop playback and clears the active playlist
  * It's pretty dumb in that it just calls a bunch of resetter's :/
@@ -259,7 +177,7 @@ export async function PlaySongs(
  *
  * @returns void
  */
-export function StopAndClear({ reset }: CallbackInterface): void {
+export function StopAndClear({ reset }: TransactionInterface_UNSTABLE): void {
   reset(songListState);
   reset(currentIndexState);
   reset(activePlaylistState);
@@ -273,103 +191,81 @@ export function StopAndClear({ reset }: CallbackInterface): void {
  *
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  */
-export async function ShufflePlaying({
-  snapshot,
+export function ShufflePlaying({
+  get,
   reset,
   set,
-}: CallbackInterface): Promise<void> {
-  const release = snapshot.retain();
-  try {
-    const curIndex = await snapshot.getPromise(currentIndexState);
+}: TransactionInterface_UNSTABLE): void {
+  const curIndex = get(currentIndexState);
+  reset(nowPlayingSortState);
+  if (curIndex < 0) {
+    set(songListState, (prevSongList: string[]) => ShuffleArray(prevSongList));
+  } else {
+    const curSongList = get(songListState);
+    const curKey = curSongList[curIndex];
+    let newSongs = [...curSongList];
+    // Remove curKey from the array
+    newSongs.splice(curIndex, 1);
+    // Shuffle the array (without curKey)
+    newSongs = ShuffleArray(newSongs);
+    // Re-insert curKey back where it was
+    newSongs.splice(curIndex, 0, curKey);
     reset(nowPlayingSortState);
-    if (curIndex < 0) {
-      set(songListState, (prevSongList: string[]) =>
-        ShuffleArray(prevSongList),
-      );
-    } else {
-      const curSongList = await snapshot.getPromise(songListState);
-      const curKey = curSongList[curIndex];
-      let newSongs = [...curSongList];
-      // Remove curKey from the array
-      newSongs.splice(curIndex, 1);
-      // Shuffle the array (without curKey)
-      newSongs = ShuffleArray(newSongs);
-      // Re-insert curKey back where it was
-      newSongs.splice(curIndex, 0, curKey);
-      reset(nowPlayingSortState);
-      set(songListState, newSongs);
-    }
-  } finally {
-    release();
+    set(songListState, newSongs);
   }
 }
 
 /**
  * Rename a playlist (make sure you've got the name right)
  **/
-export async function RenamePlaylist(
-  { set, snapshot }: CallbackInterface,
+export function RenamePlaylist(
+  { set, get }: TransactionInterface_UNSTABLE,
   curName: PlaylistName,
   newName: PlaylistName,
-): Promise<void> {
-  const release = snapshot.retain();
-  try {
-    const curNames = await snapshot.getPromise(playlistNamesState);
-    const curSongs = await snapshot.getPromise(getPlaylistFamily(curName));
-    curNames.delete(curName);
-    curNames.add(newName);
-    await PostMain('rename-playlist', [curName, newName]);
-    set(getPlaylistFamily(newName), curSongs);
-    set(playlistNamesState, new Set(curNames));
-  } finally {
-    release();
-  }
+): void {
+  const curNames = get(playlistNamesState);
+  const curSongs = get(getPlaylistFamily(curName));
+  curNames.delete(curName);
+  curNames.add(newName);
+  set(getPlaylistFamily(newName), curSongs);
+  set(playlistNamesState, new Set(curNames));
+  void PostMain('rename-playlist', [curName, newName]);
 }
 
 /**
  * Delete a playlist (make sure you've got the name right)
  **/
-export async function DeletePlaylist(
-  { set, snapshot }: CallbackInterface,
+export function DeletePlaylist(
+  { set, get }: TransactionInterface_UNSTABLE,
   toDelete: PlaylistName,
-): Promise<void> {
-  const release = snapshot.retain();
-  try {
-    const curNames = await snapshot.getPromise(playlistNamesState);
-    const activePlaylist = await snapshot.getPromise(activePlaylistState);
-    curNames.delete(toDelete);
-    await PostMain('delete-playlist', toDelete);
-    set(playlistNamesState, new Set(curNames));
-    if (activePlaylist === toDelete) {
-      set(activePlaylistState, '');
-    }
-  } finally {
-    release();
+): void {
+  const curNames = get(playlistNamesState);
+  const activePlaylist = get(activePlaylistState);
+  curNames.delete(toDelete);
+  set(playlistNamesState, new Set(curNames));
+  if (activePlaylist === toDelete) {
+    set(activePlaylistState, '');
   }
+  void PostMain('delete-playlist', toDelete);
 }
 
-export async function SongListFromKey(
-  { snapshot }: CallbackInterface,
+export function SongListFromKey(
+  { get }: TransactionInterface_UNSTABLE,
   data: MediaKey,
-): Promise<SongKey[]> {
+): SongKey[] {
   if (data.length === 0) {
     return [];
   }
   if (isSongKey(data)) {
     return [data];
   }
-  const release = snapshot.retain();
-  try {
-    if (isAlbumKey(data)) {
-      const alb = await snapshot.getPromise(getAlbumByKeyFamily(data));
-      return alb ? alb.songs : [];
-    }
-    if (isArtistKey(data)) {
-      const art = await snapshot.getPromise(getArtistByKeyFamily(data));
-      return art ? art.songs : [];
-    }
-  } finally {
-    release();
+  if (isAlbumKey(data)) {
+    const alb = get(getAlbumByKeyFamily(data));
+    return alb ? alb.songs : [];
+  }
+  if (isArtistKey(data)) {
+    const art = get(getArtistByKeyFamily(data));
+    return art ? art.songs : [];
   }
   return [];
 }

@@ -14,7 +14,11 @@ import { useId } from '@fluentui/react-hooks';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { useEffect, useState } from 'react';
-import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
+import {
+  TransactionInterface_UNSTABLE,
+  useRecoilTransaction_UNSTABLE,
+  useRecoilValue,
+} from 'recoil';
 import { SetMediaInfo } from '../../ipc';
 import {
   ImageFromClipboard,
@@ -27,7 +31,7 @@ import {
 } from '../../MyWindow';
 import { albumCoverUrlFamily, picCacheAvoiderFamily } from '../../Recoil/Local';
 import { getAlbumKeyForSongKeyFamily } from '../../Recoil/ReadOnly';
-import { onRejected } from '../../Tools';
+import { Catch, onRejected } from '../../Tools';
 
 const log = MakeLogger('MetadataEditor', false && IsDev());
 const err = MakeError('MetadataEditor-err'); // eslint-disable-line
@@ -160,70 +164,62 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   };
 
   const uploadImage = async (
-    cbInterface: CallbackInterface,
+    { get, set }: TransactionInterface_UNSTABLE,
     uploadSong: (sk: SongKey) => Promise<void>,
     uploadAlbum: (ak: AlbumKey) => Promise<void>,
   ) => {
-    const release = cbInterface.snapshot.retain();
-    try {
-      // Easy: one song:
-      if (props.forSong !== undefined) {
-        await uploadSong(props.forSong);
-        const albumKey = await cbInterface.snapshot.getPromise(
-          getAlbumKeyForSongKeyFamily(props.forSong),
-        );
+    // Easy: one song:
+    if (props.forSong !== undefined) {
+      await uploadSong(props.forSong);
+      const albumKey = get(getAlbumKeyForSongKeyFamily(props.forSong));
+      setTimeout(() => set(picCacheAvoiderFamily(albumKey), (p) => p + 1), 250);
+    } else {
+      // Messy: Multiple songs
+      const albumsSet: Set<AlbumKey> = new Set();
+      for (const song of props.forSongs!) {
+        const albumKey = get(getAlbumKeyForSongKeyFamily(song));
+        if (albumsSet.has(albumKey)) {
+          continue;
+        }
+        albumsSet.add(albumKey);
+        await uploadAlbum(albumKey);
+        // This bonks the URL so it will be reloaded after we've uploaded the image
         setTimeout(
-          () => cbInterface.set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
+          () => set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
           250,
         );
-      } else {
-        // Messy: Multiple songs
-        const albumsSet: Set<AlbumKey> = new Set();
-        for (const song of props.forSongs!) {
-          const albumKey = await cbInterface.snapshot.getPromise(
-            getAlbumKeyForSongKeyFamily(song),
-          );
-          if (albumsSet.has(albumKey)) {
-            continue;
-          }
-          albumsSet.add(albumKey);
-          await uploadAlbum(albumKey);
-          // This bonks the URL so it will be reloaded after we've uploaded the image
-          setTimeout(
-            () =>
-              cbInterface.set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
-            250,
-          );
-        }
       }
-    } finally {
-      release();
     }
   };
 
-  const onImageFromClipboard = useRecoilCallback((cbInterface) => async () => {
+  const onImageFromClipboard = useRecoilTransaction_UNSTABLE((xact) => () => {
     const img = ImageFromClipboard();
     if (img !== undefined) {
-      await uploadImage(
-        cbInterface,
+      uploadImage(
+        xact,
         async (sk: SongKey) => await UploadImageForSong(sk, img),
         async (ak: AlbumKey) => await UploadImageForAlbum(ak, img),
-      );
+      ).catch((e) => Catch(e));
     }
   });
-  const onSelectFile = useRecoilCallback((cbInterface) => async () => {
-    const selected = await ShowOpenDialog({
+  const onSelectFile = useRecoilTransaction_UNSTABLE((xact) => () => {
+    ShowOpenDialog({
       title: 'Select Cover Art image',
       properties: ['openFile'],
       filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],
-    });
-    if (selected !== undefined) {
-      await uploadImage(
-        cbInterface,
-        async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
-        async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
-      );
-    }
+    })
+      .then((selected) => {
+        return selected !== undefined
+          ? uploadImage(
+              xact,
+              async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
+              async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
+            )
+          : new Promise(() => {
+              return;
+            });
+      })
+      .catch((e) => Catch(e));
   });
   const coverUrl = useRecoilValue(albumCoverUrlFamily(props.albumId || '___'));
   // Nothing selected: EMPTY!

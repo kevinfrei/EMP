@@ -7,7 +7,11 @@ import {
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
-import { CallbackInterface, useRecoilCallback, useRecoilValue } from 'recoil';
+import {
+  TransactionInterface_UNSTABLE,
+  useRecoilTransaction_UNSTABLE,
+  useRecoilValue,
+} from 'recoil';
 import { InvokeMain } from '../MyWindow';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
@@ -15,6 +19,7 @@ import {
   songLikeFamily,
   songLikeNumFromStringFamily,
 } from '../Recoil/Likes';
+import { Catch } from '../Tools';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 
 export type SongListMenuData = { data: string; spot: Point };
@@ -24,9 +29,9 @@ type SongListMenuArgs = {
   context: SongListMenuData;
   onClearContext: () => void;
   onGetSongList: (
-    cbInterface: CallbackInterface,
+    xact: TransactionInterface_UNSTABLE,
     data: string,
-  ) => Promise<SongKey[]>;
+  ) => SongKey[];
   items?: (IContextualMenuItem | string)[];
 };
 
@@ -43,7 +48,7 @@ export function SongListMenu({
   const i = (
     name: string,
     iconName: string,
-    click: () => Promise<void>,
+    click: () => void,
     key?: string,
   ): IContextualMenuItem => ({
     name,
@@ -59,57 +64,37 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
 
-  const onAdd = useRecoilCallback(
-    (cbInterface) => async () =>
-      AddSongs(cbInterface, await onGetSongList(cbInterface, context.data)),
+  const onAdd = useRecoilTransaction_UNSTABLE(
+    (xact) => () => AddSongs(xact, onGetSongList(xact, context.data)),
   );
-  const onReplace = useRecoilCallback(
-    (cbInterface) => async () =>
-      PlaySongs(cbInterface, await onGetSongList(cbInterface, context.data)),
+  const onReplace = useRecoilTransaction_UNSTABLE(
+    (xact) => () => PlaySongs(xact, onGetSongList(xact, context.data)),
   );
-  const onProps = useRecoilCallback(
-    (cbInterface) => async () =>
-      SongListDetailClick(
-        cbInterface,
-        await onGetSongList(cbInterface, context.data),
-        false,
-      ),
+  const onProps = useRecoilTransaction_UNSTABLE(
+    (xact) => () =>
+      SongListDetailClick(xact, onGetSongList(xact, context.data), false),
   );
-  const onLove = useRecoilCallback((cbInterface) => async () => {
-    const release = cbInterface.snapshot.retain();
-    try {
-      const songs = await onGetSongList(cbInterface, context.data);
-      const likeVal = await cbInterface.snapshot.getPromise(
-        songLikeNumFromStringFamily(context.data),
-      );
-      for (const song of songs) {
-        // Set it to true if there's any song that *isn't* liked
-        cbInterface.set(songLikeFamily(song), likeVal !== 1);
-      }
-    } finally {
-      release();
+  const onLove = useRecoilTransaction_UNSTABLE((xact) => () => {
+    const songs = onGetSongList(xact, context.data);
+    const likeVal = xact.get(songLikeNumFromStringFamily(context.data));
+    for (const song of songs) {
+      // Set it to true if there's any song that *isn't* liked
+      xact.set(songLikeFamily(song), likeVal !== 1);
     }
   });
 
-  const onHate = useRecoilCallback((cbInterface) => async () => {
-    const release = cbInterface.snapshot.retain();
-    try {
-      const songs = await onGetSongList(cbInterface, context.data);
-      const hateVal = await cbInterface.snapshot.getPromise(
-        songLikeNumFromStringFamily(context.data),
-      );
-      for (const song of songs) {
-        // Set it to true if there's any song that *isn't* hated
-        cbInterface.set(songHateFamily(song), hateVal !== 2);
-      }
-    } finally {
-      release();
+  const onHate = useRecoilTransaction_UNSTABLE((xact) => () => {
+    const songs = onGetSongList(xact, context.data);
+    const hateVal = xact.get(songLikeNumFromStringFamily(context.data));
+    for (const song of songs) {
+      // Set it to true if there's any song that *isn't* hated
+      xact.set(songHateFamily(song), hateVal !== 2);
     }
   });
 
-  const onShow = () =>
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    InvokeMain('show-location-from-key', context.data).then(() => {});
+  const onShow = () => {
+    InvokeMain('show-location-from-key', context.data).catch(Catch);
+  };
   const likeNum = useRecoilValue(songLikeNumFromStringFamily(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
@@ -160,7 +145,7 @@ export function SongListMenu({
           realItems.push(d());
           break;
         default:
-          realItems.push(i(itm, 'Unknown', () => new Promise(() => 0)));
+          realItems.push(i(itm, 'Unknown', () => 0));
       }
     } else {
       realItems.push(itm);

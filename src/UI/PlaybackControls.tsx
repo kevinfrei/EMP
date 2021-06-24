@@ -1,8 +1,8 @@
 import { MakeLogger } from '@freik/core-utils';
 import {
-  CallbackInterface,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
 } from 'recoil';
 import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
@@ -20,7 +20,7 @@ import './styles/PlaybackControls.css';
 const log = MakeLogger('SongControls');
 const err = MakeLogger('SongControls-err');
 
-export function onClickPlayPause({ set }: CallbackInterface): void {
+export function onClickPlayPause({ set }: TransactionInterface_UNSTABLE): void {
   const ae = GetAudioElem();
   if (!ae) {
     err('Clicking but no audio element');
@@ -59,30 +59,25 @@ export default function SongControls(): JSX.Element {
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useRecoilCallback((cbInterface) => async () => {
-    const release = cbInterface.snapshot.retain();
-    try {
-      if (!(await cbInterface.snapshot.getPromise(shuffleState))) {
-        await ShufflePlaying(cbInterface);
-      }
-      cbInterface.set(shuffleState, (prevShuf) => !prevShuf);
-    } finally {
-      release();
+  const clickShuffle = useRecoilTransaction_UNSTABLE((xact) => () => {
+    if (!xact.get(shuffleState)) {
+      ShufflePlaying(xact);
     }
+    xact.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
-  const clickPlayPause = useRecoilCallback(
-    (cbInterface) => () => onClickPlayPause(cbInterface),
+  const clickPlayPause = useRecoilTransaction_UNSTABLE(
+    (xact) => () => onClickPlayPause(xact),
   );
 
-  const clickPrev = useRecoilCallback((cbInterface) => async () => {
+  const clickPrev = useRecoilTransaction_UNSTABLE((xact) => () => {
     if (hasPrevSong) {
-      await MaybePlayPrev(cbInterface);
+      MaybePlayPrev(xact);
     }
   });
-  const clickNext = useRecoilCallback((cbInterface) => async () => {
+  const clickNext = useRecoilTransaction_UNSTABLE((xact) => () => {
     if (hasNextSong) {
-      await MaybePlayNext(cbInterface);
+      MaybePlayNext(xact);
     }
   });
   return (

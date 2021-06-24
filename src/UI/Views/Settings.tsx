@@ -9,9 +9,9 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import {
-  CallbackInterface,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
 } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
@@ -33,6 +33,7 @@ import {
   saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
+import { Catch } from '../../Tools';
 import { Expandable, StateToggle } from '../Utilities';
 import './styles/Settings.css';
 
@@ -48,7 +49,7 @@ async function GetDirs(): Promise<string[] | void> {
 
 export async function addLocation({
   set,
-}: CallbackInterface): Promise<boolean> {
+}: TransactionInterface_UNSTABLE): Promise<boolean> {
   const locs = await GetDirs();
   if (locs) {
     set(locationsState, (curLocs) => [...locs, ...curLocs]);
@@ -60,8 +61,8 @@ export async function addLocation({
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
-  const onAddLocation = useRecoilCallback((cbInterface) => async () => {
-    await addLocation(cbInterface);
+  const onAddLocation = useRecoilTransaction_UNSTABLE((xact) => () => {
+    addLocation(xact).catch(Catch);
   });
   const songs = useRecoilValue(allSongsState);
   const albums = useRecoilValue(allAlbumsState);

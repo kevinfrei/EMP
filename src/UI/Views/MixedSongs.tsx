@@ -8,10 +8,10 @@ import { MakeError } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
 import {
   atom,
-  CallbackInterface,
   selector,
-  useRecoilCallback,
+  TransactionInterface_UNSTABLE,
   useRecoilState,
+  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
@@ -68,7 +68,7 @@ const songContextState = atom<SongListMenuData>({
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
   const likeNum = useRecoilValue(songLikeNumFromStringFamily(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
-  const onClick = useRecoilCallback(({ set }) => () => {
+  const onClick = useRecoilTransaction_UNSTABLE(({ set }) => () => {
     switch (likeNum) {
       case 0: // neutral
         set(songLikeFamily(songId), true);
@@ -97,9 +97,9 @@ export function LikeOrHate(song: Song): JSX.Element {
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onAddSongClick = useRecoilCallback(
-    (cbInterface) => async (item: Song) => {
-      await AddSongs(cbInterface, [item.key]);
+  const onAddSongClick = useRecoilTransaction_UNSTABLE(
+    (xact) => (item: Song) => {
+      AddSongs(xact, [item.key]);
     },
   );
   const [songContext, setSongContext] = useRecoilState(songContextState);
@@ -142,8 +142,8 @@ export default function MixedSongsList(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(cbInterface: CallbackInterface, data: string) =>
-            new Promise((resolve) => resolve(data.length > 0 ? [data] : []))
+          onGetSongList={(xact: TransactionInterface_UNSTABLE, data: string) =>
+            data.length > 0 ? [data] : []
           }
         />
       </ScrollablePane>
