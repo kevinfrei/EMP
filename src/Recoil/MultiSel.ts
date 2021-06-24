@@ -1,9 +1,9 @@
 import { SongKey } from '@freik/media-core';
 import { selectorFamily } from 'recoil';
-import { getMediaInfoFamily } from './ReadOnly';
+import { mediaInfoFuncFam } from './ReadOnly';
 
 // This is needed for multi-metadata editing
-export const getMediaInfoForListFamily = selectorFamily<
+export const mediaInfoForListFuncFam = selectorFamily<
   Map<string, string>[],
   SongKey[]
 >({
@@ -11,6 +11,6 @@ export const getMediaInfoForListFamily = selectorFamily<
   get:
     (skl: SongKey[]) =>
     ({ get }): Map<string, string>[] => {
-      return skl.map((val) => get(getMediaInfoFamily(val)));
+      return skl.map((val) => get(mediaInfoFuncFam(val)));
     },
 });

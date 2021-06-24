@@ -7,9 +7,9 @@ import {
 } from 'recoil';
 import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
-  hasAnySongsState,
-  hasNextSongState,
-  hasPrevSongState,
+  hasAnySongsFunc,
+  hasNextSongFunc,
+  hasPrevSongFunc,
 } from '../Recoil/Local';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleState } from '../Recoil/ReadWrite';
@@ -43,11 +43,11 @@ export function onClickPlayPause({ set }: TransactionInterface_UNSTABLE): void {
 export default function SongControls(): JSX.Element {
   const isPlaying = useRecoilValue(playingState);
 
-  const hasAnySong = useRecoilValue(hasAnySongsState);
+  const hasAnySong = useRecoilValue(hasAnySongsFunc);
   const shuf = useRecoilValue(shuffleState);
   const [rep, repSet] = useRecoilState(repeatState);
-  const hasNextSong = useRecoilValue(hasNextSongState);
-  const hasPrevSong = useRecoilValue(hasPrevSongState);
+  const hasNextSong = useRecoilValue(hasNextSongFunc);
+  const hasPrevSong = useRecoilValue(hasPrevSongFunc);
 
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';

@@ -24,16 +24,13 @@ import {
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
+import { albumCoverUrlFuncFam, focusedKeysFuncFam } from '../../Recoil/Local';
 import {
-  albumCoverUrlFamily,
-  focusedKeysStateFamily,
-} from '../../Recoil/Local';
-import {
-  allAlbumsState,
-  allArtistsState,
-  allSongsState,
-  getAlbumByKeyFamily,
-  getDataForAlbumFamily,
+  albumByKeyFuncFam,
+  allAlbumsFunc,
+  allArtistsFunc,
+  allSongsFunc,
+  dataForAlbumFuncFam,
 } from '../../Recoil/ReadOnly';
 import { CurrentView, ignoreArticlesState } from '../../Recoil/ReadWrite';
 import {
@@ -77,9 +74,9 @@ const albumSortState = atom({
 
 type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
-  const album = useRecoilValue(getAlbumByKeyFamily(group.key));
-  const albumData = useRecoilValue(getDataForAlbumFamily(group.key));
-  const picurl = useRecoilValue(albumCoverUrlFamily(group.key));
+  const album = useRecoilValue(albumByKeyFuncFam(group.key));
+  const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
+  const picurl = useRecoilValue(albumCoverUrlFuncFam(group.key));
   const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
     AddSongs(xact, album.songs);
   });
@@ -133,11 +130,11 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
 export function GroupedAlbumList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const albums = useRecoilValue(allAlbumsState);
+  const albums = useRecoilValue(allAlbumsFunc);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
-  const keyBuffer = useRecoilValue(focusedKeysStateFamily(CurrentView.album));
-  const allSongs = useRecoilValue(allSongsState);
-  const allArtists = useRecoilValue(allArtistsState);
+  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.album));
+  const allSongs = useRecoilValue(allSongsFunc);
+  const allArtists = useRecoilValue(allArtistsFunc);
   const newAlbumSort = useRecoilValue(albumSortState);
   const albumContext = useRecoilValue(albumContextState);
 

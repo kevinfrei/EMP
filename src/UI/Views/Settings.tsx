@@ -18,9 +18,9 @@ import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { useBoolRecoilState } from '../../Recoil/helpers';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
-  allAlbumsState,
-  allArtistsState,
-  allSongsState,
+  allAlbumsFunc,
+  allArtistsFunc,
+  allSongsFunc,
 } from '../../Recoil/ReadOnly';
 import {
   albumCoverNameState,
@@ -64,9 +64,9 @@ function MusicLocations(): JSX.Element {
   const onAddLocation = useRecoilTransaction_UNSTABLE((xact) => () => {
     addLocation(xact).catch(Catch);
   });
-  const songs = useRecoilValue(allSongsState);
-  const albums = useRecoilValue(allAlbumsState);
-  const artists = useRecoilValue(allArtistsState);
+  const songs = useRecoilValue(allSongsFunc);
+  const albums = useRecoilValue(allAlbumsFunc);
+  const artists = useRecoilValue(allArtistsFunc);
   const setSaveStyle = {
     textContainer: { fontSize: 11 },
     root: { height: 22, padding: 5, minWidth: 45 },

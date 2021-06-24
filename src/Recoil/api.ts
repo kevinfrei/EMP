@@ -25,8 +25,8 @@ import {
   songListState,
 } from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
-import { getPlaylistFamily, playlistNamesState } from './PlaylistsState';
-import { getAlbumByKeyFamily, getArtistByKeyFamily } from './ReadOnly';
+import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
+import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
 import { repeatState, shuffleState } from './ReadWrite';
 
 const log = MakeLogger('api'); // eslint-disable-line
@@ -36,7 +36,7 @@ const err = MakeError('ReadWrite-err'); // eslint-disable-line
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)
  *
- * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
+ * @param {TransactionInterface} {get, set} - the Recoil Transaction interface
  *
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
@@ -66,7 +66,7 @@ export function MaybePlayNext({
 /**
  * Try to play the 'previous' song, considering repeat possibilities
  *
- * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
+ * @param {TransactionInterface} {get, set} - the Recoil Transaction interface
  *
  * @returns Promise<void>
  */
@@ -88,8 +88,8 @@ export function MaybePlayPrev({
 /**
  * Filters down the list of songs to play according to filter preferences
  *
+ * @param {TransactionInterface} xact - the Recoil Transaction interface
  * @param {Iterable<SongKey>} listToFilter - The list of songs to add
- * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  *
  * @returns {SongKey[]} The filtered list of songs
  */
@@ -115,8 +115,8 @@ function GetFilteredSongs(
 /**
  * Adds a list of songs to the end of the current song list
  *
+ * @param {TransactionInterface} xact - the Recoil Transaction interface
  * @param {Iterable<SongKey>} listToAdd - The list of songs to add
- * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  *
  * @returns void
  */
@@ -223,12 +223,12 @@ export function RenamePlaylist(
   curName: PlaylistName,
   newName: PlaylistName,
 ): void {
-  const curNames = get(playlistNamesState);
-  const curSongs = get(getPlaylistFamily(curName));
+  const curNames = get(playlistNamesFunc);
+  const curSongs = get(playlistFuncFam(curName));
   curNames.delete(curName);
   curNames.add(newName);
-  set(getPlaylistFamily(newName), curSongs);
-  set(playlistNamesState, new Set(curNames));
+  set(playlistFuncFam(newName), curSongs);
+  set(playlistNamesFunc, new Set(curNames));
   void PostMain('rename-playlist', [curName, newName]);
 }
 
@@ -239,10 +239,10 @@ export function DeletePlaylist(
   { set, get }: TransactionInterface_UNSTABLE,
   toDelete: PlaylistName,
 ): void {
-  const curNames = get(playlistNamesState);
+  const curNames = get(playlistNamesFunc);
   const activePlaylist = get(activePlaylistState);
   curNames.delete(toDelete);
-  set(playlistNamesState, new Set(curNames));
+  set(playlistNamesFunc, new Set(curNames));
   if (activePlaylist === toDelete) {
     set(activePlaylistState, '');
   }
@@ -260,11 +260,11 @@ export function SongListFromKey(
     return [data];
   }
   if (isAlbumKey(data)) {
-    const alb = get(getAlbumByKeyFamily(data));
+    const alb = get(albumByKeyFuncFam(data));
     return alb ? alb.songs : [];
   }
   if (isArtistKey(data)) {
-    const art = get(getArtistByKeyFamily(data));
+    const art = get(artistByKeyFuncFam(data));
     return art ? art.songs : [];
   }
   return [];

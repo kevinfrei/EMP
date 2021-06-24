@@ -24,10 +24,10 @@ import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
 import { AddSongs } from '../../Recoil/api';
 import {
-  allAlbumsState,
-  allArtistsState,
-  allSongsState,
-  getSearchFamily,
+  allAlbumsFunc,
+  allArtistsFunc,
+  allSongsFunc,
+  searchFuncFam,
   searchTermState,
 } from '../../Recoil/ReadOnly';
 import { MakeSortKey } from '../../Sorting';
@@ -220,10 +220,10 @@ const noSort = MakeSortKey('rlnt');
 
 export default function SearchResultsView(): JSX.Element {
   const searchTerm = useRecoilValue(searchTermState);
-  const searchResults = useRecoilValue(getSearchFamily(searchTerm));
-  const songs = useRecoilValue(allSongsState);
-  const artists = useRecoilValue(allArtistsState);
-  const albums = useRecoilValue(allAlbumsState);
+  const searchResults = useRecoilValue(searchFuncFam(searchTerm));
+  const songs = useRecoilValue(allSongsFunc);
+  const artists = useRecoilValue(allArtistsFunc);
+  const albums = useRecoilValue(allAlbumsFunc);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
   const onSongDetailClick = useRecoilTransaction_UNSTABLE(

@@ -3,10 +3,7 @@ import { SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
 import { syncWithMainEffect } from './helpers';
 import { isMiniplayerState } from './Local';
-import {
-  getMaybeAlbumByKeyFamily,
-  getMaybeArtistByKeyFamily,
-} from './ReadOnly';
+import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
@@ -115,7 +112,7 @@ const curViewBackerState = atom<CurrentView>({
 });
 
 // This makes the miniplayer view always select the current view
-export const curViewState = selector<CurrentView>({
+export const curViewFunc = selector<CurrentView>({
   key: 'CurViewWithMiniplayerAwareness',
   get: ({ get }) =>
     get(isMiniplayerState) ? CurrentView.current : get(curViewBackerState),
@@ -143,7 +140,7 @@ export const songListSortState = atom<string>({
   default: 'rl',
 });
 
-export const songListFromKeyFamily = selectorFamily<SongKey[] | null, string>({
+export const songListFromKeyFuncFam = selectorFamily<SongKey[] | null, string>({
   key: 'songsFromKey',
   get:
     (arg: string) =>
@@ -152,14 +149,14 @@ export const songListFromKeyFamily = selectorFamily<SongKey[] | null, string>({
         return [arg];
       }
       if (arg.startsWith('L')) {
-        const alb = get(getMaybeAlbumByKeyFamily(arg));
+        const alb = get(maybeAlbumByKeyFuncFam(arg));
         if (!alb) {
           return null;
         }
         return alb.songs;
       }
       if (arg.startsWith('R')) {
-        const art = get(getMaybeArtistByKeyFamily(arg));
+        const art = get(maybeArtistByKeyFuncFam(arg));
         if (!art) {
           return null;
         }

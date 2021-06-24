@@ -42,14 +42,14 @@ import {
   songListState,
 } from '../../Recoil/Local';
 import {
-  getPlaylistFamily,
-  playlistNamesState,
-  saveableState,
+  playlistFuncFam,
+  playlistNamesFunc,
+  saveableFunc,
 } from '../../Recoil/PlaylistsState';
 import {
-  allAlbumsState,
-  allArtistsState,
-  curSongsState,
+  allAlbumsFunc,
+  allArtistsFunc,
+  curSongsFunc,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
 import { SortKey, SortSongList } from '../../Sorting';
@@ -72,10 +72,10 @@ const nowPlayingContextState = atom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useRecoilValue(playlistNamesState);
+  const playlists = useRecoilValue(playlistNamesFunc);
   const nowPlaying = useRecoilValue(activePlaylistState);
   const songList = useRecoilValue(songListState);
-  const saveEnabled = useRecoilValue(saveableState);
+  const saveEnabled = useRecoilValue(saveableFunc);
 
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
@@ -86,7 +86,7 @@ function TopLine(): JSX.Element {
         if (playlists.has(inputName)) {
           window.alert("Sorry: You can't overwrite an existing playlist.");
         } else {
-          set(getPlaylistFamily(inputName), [...songList]);
+          set(playlistFuncFam(inputName), [...songList]);
           set(activePlaylistState, inputName);
         }
       },
@@ -102,7 +102,7 @@ function TopLine(): JSX.Element {
     }
   });
   const save = useRecoilTransaction_UNSTABLE(({ set }) => () => {
-    set(getPlaylistFamily(nowPlaying), songList);
+    set(playlistFuncFam(nowPlaying), songList);
   });
 
   const emptyQueue = songList.length === 0;
@@ -193,14 +193,14 @@ function StickyDetailsHeader(
 
 // The Now Playing (Current playlist) view
 export default function NowPlaying(): JSX.Element {
-  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsState);
-  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsState);
+  const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsFunc);
+  const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsFunc);
   const articles = useRecoilValue(ignoreArticlesState);
   const [curIndex, setCurIndex] = useRecoilState(currentIndexState);
   const [songList, setSongList] = useRecoilState(songListState);
   const resetShuffle = useResetRecoilState(shuffleState);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
-  const curSongs = useRecoilValue(curSongsState);
+  const curSongs = useRecoilValue(curSongsFunc);
   const isMini = useRecoilValue(isMiniplayerState);
   const [songContext, setSongContext] = useRecoilState(nowPlayingContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {

@@ -16,15 +16,15 @@ import {
 } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
 import {
-  songHateFamily,
-  songLikeFamily,
-  songLikeNumFromStringFamily,
+  songHateFuncFam,
+  songLikeFuncFam,
+  songLikeNumFromStringFuncFam,
 } from '../../Recoil/Likes';
 import {
-  allAlbumsState,
-  allArtistsState,
-  allSongsState,
-  getDataForSongListFamily,
+  allAlbumsFunc,
+  allArtistsFunc,
+  allSongsFunc,
+  dataForSongListFuncFam,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { MakeSortKey, SortSongList } from '../../Sorting';
@@ -52,9 +52,9 @@ const sortedSongsState = selector({
   key: 'msSorted',
   get: ({ get }) => {
     return SortSongList(
-      [...get(allSongsState).values()],
-      get(allAlbumsState),
-      get(allArtistsState),
+      [...get(allSongsFunc).values()],
+      get(allAlbumsFunc),
+      get(allArtistsFunc),
       get(ignoreArticlesState),
       get(sortOrderState),
     );
@@ -66,22 +66,22 @@ const songContextState = atom<SongListMenuData>({
 });
 
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
-  const likeNum = useRecoilValue(songLikeNumFromStringFamily(songId));
+  const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
   const onClick = useRecoilTransaction_UNSTABLE(({ set }) => () => {
     switch (likeNum) {
       case 0: // neutral
-        set(songLikeFamily(songId), true);
+        set(songLikeFuncFam(songId), true);
         break;
       case 1: // like
-        set(songHateFamily(songId), true);
+        set(songHateFuncFam(songId), true);
         break;
       case 2: // hate
-        set(songHateFamily(songId), false);
+        set(songHateFuncFam(songId), false);
         break;
       case 3: // mixed
-        set(songLikeFamily(songId), false);
-        set(songHateFamily(songId), false);
+        set(songLikeFuncFam(songId), false);
+        set(songHateFuncFam(songId), false);
         break;
     }
   });
@@ -156,7 +156,7 @@ export function SimpleSongsList({
 }: {
   forSongs: SongKey[];
 }): JSX.Element {
-  const songList = useRecoilValue(getDataForSongListFamily(forSongs));
+  const songList = useRecoilValue(dataForSongListFuncFam(forSongs));
   if (!songList) {
     return <></>;
   }

@@ -6,7 +6,7 @@ import {
   bidirectionalSyncWithTranslateEffect,
   syncWithMainEffect,
 } from './helpers';
-import { songListFromKeyFamily } from './ReadWrite';
+import { songListFromKeyFuncFam } from './ReadWrite';
 
 // const log = MakeLogger('Likes');
 // const err = MakeError('Likes-err');
@@ -43,7 +43,7 @@ export function isSongLiked(
   return get(songLikeBackerState).has(key);
 }
 
-export const songLikeFamily = selectorFamily<boolean, SongKey>({
+export const songLikeFuncFam = selectorFamily<boolean, SongKey>({
   key: 'songLikeState',
   get:
     (arg: SongKey) =>
@@ -93,7 +93,7 @@ export function isSongHated(
   return get(songHateBackerState).has(key);
 }
 
-export const songHateFamily = selectorFamily<boolean, SongKey>({
+export const songHateFuncFam = selectorFamily<boolean, SongKey>({
   key: 'songHateState',
   get:
     (arg: SongKey) =>
@@ -124,22 +124,22 @@ export const songHateFamily = selectorFamily<boolean, SongKey>({
 });
 
 // 0 = neutral, 1 == like, 2 = hate, 3 = mixed
-export const songLikeNumFromStringFamily = selectorFamily<number, string>({
+export const songLikeNumFromStringFuncFam = selectorFamily<number, string>({
   key: 'songLikeNumFromKey',
   get:
     (arg: string) =>
     ({ get }) => {
-      const songs = get(songListFromKeyFamily(arg));
+      const songs = get(songListFromKeyFuncFam(arg));
       if (!songs) {
         return 0;
       }
       let likes = false;
       let hates = false;
       songs.forEach((songKey) => {
-        if (get(songLikeFamily(songKey))) {
+        if (get(songLikeFuncFam(songKey))) {
           likes = true;
         }
-        if (get(songHateFamily(songKey))) {
+        if (get(songHateFuncFam(songKey))) {
           hates = true;
         }
       });

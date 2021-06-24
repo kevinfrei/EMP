@@ -9,22 +9,22 @@ import {
 } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
-  albumCoverUrlFamily,
-  currentSongKeyState,
+  albumCoverUrlFuncFam,
+  currentSongKeyFunc,
   songListState,
 } from '../Recoil/Local';
 import {
   MediaTime,
-  mediaTimePercentState,
-  mediaTimePositionState,
-  mediaTimeRemainingState,
+  mediaTimePercentFunc,
+  mediaTimePositionFunc,
+  mediaTimeRemainingFunc,
   mediaTimeState,
   playingState,
 } from '../Recoil/MediaPlaying';
 import {
-  allSongsState,
-  getAlbumKeyForSongKeyFamily,
-  getDataForSongFamily,
+  albumKeyForSongKeyFuncFam,
+  allSongsFunc,
+  dataForSongFuncFam,
   SongData,
 } from '../Recoil/ReadOnly';
 import { repeatState } from '../Recoil/ReadWrite';
@@ -39,9 +39,9 @@ export function GetAudioElem(): HTMLMediaElement | void {
 }
 
 function CoverArt(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyState);
-  const albumKey = useRecoilValue(getAlbumKeyForSongKeyFamily(songKey));
-  const picurl = useRecoilValue(albumCoverUrlFamily(albumKey));
+  const songKey = useRecoilValue(currentSongKeyFunc);
+  const albumKey = useRecoilValue(albumKeyForSongKeyFuncFam(songKey));
+  const picurl = useRecoilValue(albumCoverUrlFuncFam(albumKey));
   return (
     <span id="song-cover-art">
       <img id="img-current-cover-art" src={picurl} alt="album cover" />
@@ -50,7 +50,7 @@ function CoverArt(): JSX.Element {
 }
 
 function MediaTimePosition(): JSX.Element {
-  const mediaTimePosition = useRecoilValue(mediaTimePositionState);
+  const mediaTimePosition = useRecoilValue(mediaTimePositionFunc);
   return (
     <Text
       id="now-playing-current-time"
@@ -64,7 +64,7 @@ function MediaTimePosition(): JSX.Element {
 }
 
 function MediaTimeRemaining(): JSX.Element {
-  const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingState);
+  const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingFunc);
   return (
     <Text
       id="now-playing-remaining-time"
@@ -78,10 +78,9 @@ function MediaTimeRemaining(): JSX.Element {
 }
 
 function MediaTimeSlider(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyState);
-  const [mediaTimePercent, setMediaTimePercent] = useRecoilState(
-    mediaTimePercentState,
-  );
+  const songKey = useRecoilValue(currentSongKeyFunc);
+  const [mediaTimePercent, setMediaTimePercent] =
+    useRecoilState(mediaTimePercentFunc);
   return (
     <Slider
       className="song-slider" /* Can't put an ID on a slider :( */
@@ -109,8 +108,8 @@ function MediaTimeSlider(): JSX.Element {
 }
 
 function SongName(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyState);
-  const { title }: SongData = useRecoilValue(getDataForSongFamily(songKey));
+  const songKey = useRecoilValue(currentSongKeyFunc);
+  const { title }: SongData = useRecoilValue(dataForSongFuncFam(songKey));
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
       {title}
@@ -119,9 +118,9 @@ function SongName(): JSX.Element {
 }
 
 function ArtistAlbum(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyState);
+  const songKey = useRecoilValue(currentSongKeyFunc);
   const { artist, album }: SongData = useRecoilValue(
-    getDataForSongFamily(songKey),
+    dataForSongFuncFam(songKey),
   );
   if (songKey) {
     const split = artist.length && album.length ? ': ' : '';
@@ -139,7 +138,7 @@ function ArtistAlbum(): JSX.Element {
 }
 
 export default function SongPlayback(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyState);
+  const songKey = useRecoilValue(currentSongKeyFunc);
   const onPlay = useRecoilCallback(
     ({ set }) =>
       () =>
@@ -198,7 +197,7 @@ export default function SongPlayback(): JSX.Element {
   const showDetail = useRecoilTransaction_UNSTABLE(
     (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       if (songKey !== '') {
-        const songs = xact.get(allSongsState);
+        const songs = xact.get(allSongsFunc);
         const song = songs.get(songKey);
         if (song) {
           SongDetailClick(xact, song, event.shiftKey);

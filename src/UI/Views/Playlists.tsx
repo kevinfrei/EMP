@@ -19,8 +19,8 @@ import { DeletePlaylist, PlaySongs, RenamePlaylist } from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
-  getPlaylistFamily,
-  playlistNamesState,
+  playlistFuncFam,
+  playlistNamesFunc,
 } from '../../Recoil/PlaylistsState';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import { altRowRenderer, StickyRenderDetailsHeader } from '../SongList';
@@ -31,7 +31,7 @@ import './styles/Playlists.css';
 type ItemType = PlaylistName;
 
 export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
-  const playlist = useRecoilValue(getPlaylistFamily(id));
+  const playlist = useRecoilValue(playlistFuncFam(id));
   return <>{playlist.length}</>;
 }
 
@@ -41,7 +41,7 @@ const playlistContextState = atom<SongListMenuData>({
 });
 
 export default function PlaylistView(): JSX.Element {
-  const playlistNames = useRecoilValue(playlistNamesState);
+  const playlistNames = useRecoilValue(playlistNamesFunc);
   const [selected, setSelected] = useState('');
   const [showDelete, deleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
@@ -51,7 +51,7 @@ export default function PlaylistView(): JSX.Element {
 
   const onPlaylistInvoked = useRecoilTransaction_UNSTABLE(
     (xact) => (playlistName: PlaylistName) => {
-      const songs = xact.get(getPlaylistFamily(playlistName));
+      const songs = xact.get(playlistFuncFam(playlistName));
       PlaySongs(xact, songs, playlistName);
     },
   );
@@ -60,7 +60,7 @@ export default function PlaylistView(): JSX.Element {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = get(getPlaylistFamily(playlistContext.data));
+    const songs = get(playlistFuncFam(playlistContext.data));
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
     for (const song of songs) {
@@ -69,7 +69,7 @@ export default function PlaylistView(): JSX.Element {
       }
       seen.add(song);
     }
-    set(getPlaylistFamily(playlistContext.data), newList);
+    set(playlistFuncFam(playlistContext.data), newList);
   });
 
   const deleteConfirmed = useRecoilTransaction_UNSTABLE((xact) => () => {
@@ -167,7 +167,7 @@ export default function PlaylistView(): JSX.Element {
           onGetSongList={(
             { get }: TransactionInterface_UNSTABLE,
             data: string,
-          ) => get(getPlaylistFamily(data))}
+          ) => get(playlistFuncFam(data))}
           items={[
             'add',
             'rep',

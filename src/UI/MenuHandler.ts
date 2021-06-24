@@ -5,7 +5,7 @@ import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
 import {
   CurrentView,
-  curViewState,
+  curViewFunc,
   mutedState,
   repeatState,
   shuffleState,
@@ -113,7 +113,7 @@ export function MenuHandler(
               break;
           }
           if (theView !== CurrentView.none) {
-            xact.set(curViewState, theView);
+            xact.set(curViewFunc, theView);
           }
         } else {
           err('Invalid view menu message:');

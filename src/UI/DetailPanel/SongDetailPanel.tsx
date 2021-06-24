@@ -2,7 +2,7 @@ import { ContextualMenu, Dialog, DialogType } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
-import { maybeGetDataForSongState } from '../../Recoil/ReadOnly';
+import { maybeDataForSongFunc } from '../../Recoil/ReadOnly';
 import { Spinner } from './../Utilities';
 import MediaInfoTable from './MediaInfo';
 
@@ -10,7 +10,7 @@ const err = MakeError('SongDetailPanel-err'); // eslint-disable-line
 
 export default function SongDetailPanel(): JSX.Element {
   const detailSongs = useRecoilValue(songDetailState);
-  const songInfo = useRecoilValue(maybeGetDataForSongState([...detailSongs]));
+  const songInfo = useRecoilValue(maybeDataForSongFunc([...detailSongs]));
   const dismissClick = useRecoilCallback(
     ({ reset }) =>
       () =>

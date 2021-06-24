@@ -9,8 +9,8 @@ import { Album } from '@freik/media-core';
 import { useCallback, useRef } from 'react';
 import { useRecoilTransaction_UNSTABLE, useRecoilValue } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { albumCoverUrlFamily } from '../../Recoil/Local';
-import { allAlbumsState, getDataForAlbumFamily } from '../../Recoil/ReadOnly';
+import { albumCoverUrlFuncFam } from '../../Recoil/Local';
+import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
 
@@ -77,8 +77,8 @@ function AlbumCoverView({
   album: Album;
   cols: number;
 }): JSX.Element {
-  const picurl = useRecoilValue(albumCoverUrlFamily(album.key));
-  const albumData = useRecoilValue(getDataForAlbumFamily(album.key));
+  const picurl = useRecoilValue(albumCoverUrlFuncFam(album.key));
+  const albumData = useRecoilValue(dataForAlbumFuncFam(album.key));
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
@@ -137,7 +137,7 @@ export default function NuAlbums(): JSX.Element {
       <></>
     );
   };
-  const albums = useRecoilValue(allAlbumsState);
+  const albums = useRecoilValue(allAlbumsFunc);
   const getPageHeight = useCallback((): number => {
     const res = rowHeight.current * ROWS_PER_PAGE;
     return Number.isNaN(res) ? ROWS_PER_PAGE : res;

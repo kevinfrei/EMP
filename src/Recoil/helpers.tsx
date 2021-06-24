@@ -160,6 +160,7 @@ export function oneWayFromMainEffect<T>(
   asyncKey: string,
   asyncHandler: (data: any) => T | undefined,
 ): AtomEffect<T>;
+
 export function oneWayFromMainEffect<T>(
   get: () => T | Promise<T>,
 ): AtomEffect<T>;

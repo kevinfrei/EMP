@@ -2,7 +2,7 @@ import { AlbumKey, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { MakeSortKey } from '../Sorting';
 import { RandomInt } from '../Tools';
-import { CurrentView, curViewState, repeatState } from './ReadWrite';
+import { CurrentView, curViewFunc, repeatState } from './ReadWrite';
 
 export type PlaylistName = string;
 
@@ -26,7 +26,7 @@ export const currentIndexState = atom<number>({
 });
 
 // Selector to get the current song key based on the rest of this nonsense
-export const currentSongKeyState = selector<SongKey>({
+export const currentSongKeyFunc = selector<SongKey>({
   key: 'currentSongKey',
   get: ({ get }) => {
     const curIndex = get(currentIndexState);
@@ -41,7 +41,7 @@ export const currentSongKeyState = selector<SongKey>({
 });
 
 // Is there a 'next song' to play?
-export const hasNextSongState = selector<boolean>({
+export const hasNextSongFunc = selector<boolean>({
   key: 'hasNextSong',
   get: ({ get }) => {
     const songList = get(songListState);
@@ -57,7 +57,7 @@ export const hasNextSongState = selector<boolean>({
 });
 
 // Is there a 'previous song' to play?
-export const hasPrevSongState = selector<boolean>({
+export const hasPrevSongFunc = selector<boolean>({
   key: 'hasPrevSong',
   get: ({ get }) => {
     const songList = get(songListState);
@@ -70,7 +70,7 @@ export const hasPrevSongState = selector<boolean>({
 });
 
 // Do we have any songs at all?
-export const hasAnySongsState = selector<boolean>({
+export const hasAnySongsFunc = selector<boolean>({
   key: 'hasAnySongs',
   get: ({ get }) => get(songListState).length > 0,
 });
@@ -107,28 +107,28 @@ export const isMiniplayerState = atom<boolean>({
  * the "picCacheAvoider" for a particularly album cover
  * It's efficacy is not guaranteed, but it's a best effort, i guess
  */
-export const picCacheAvoiderFamily = atomFamily<number, AlbumKey>({
+export const picCacheAvoiderStateFam = atomFamily<number, AlbumKey>({
   key: 'picCacheAvoider',
   default: RandomInt(0xfffff),
 });
 
-export const albumCoverUrlFamily = selectorFamily<string, AlbumKey>({
+export const albumCoverUrlFuncFam = selectorFamily<string, AlbumKey>({
   key: 'albumCoverUrl',
   get:
     (key: AlbumKey) =>
     ({ get }) => {
-      return `pic://album/${key}#${get(picCacheAvoiderFamily(key))}`;
+      return `pic://album/${key}#${get(picCacheAvoiderStateFam(key))}`;
     },
 });
 
 // This is the currently 'typed' set of characters (for scrolling lists)
 export const keyBufferState = atom<string>({ key: 'KeyBuffer', default: '' });
 
-export const focusedKeysStateFamily = selectorFamily<string, CurrentView>({
+export const focusedKeysFuncFam = selectorFamily<string, CurrentView>({
   key: 'focusedKeys',
   get:
     (view: CurrentView) =>
     ({ get }) => {
-      return get(curViewState) === view ? get(keyBufferState) : '';
+      return get(curViewFunc) === view ? get(keyBufferState) : '';
     },
 });

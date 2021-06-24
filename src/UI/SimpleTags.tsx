@@ -1,18 +1,18 @@
 import { Type } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, Song } from '@freik/media-core';
 import { useRecoilValue } from 'recoil';
-import { getAlbumByKeyFamily, getArtistStringFamily } from '../Recoil/ReadOnly';
+import { albumByKeyFuncFam, artistStringFuncFam } from '../Recoil/ReadOnly';
 
 export function ArtistNameFromArtistIds({
   artistIds,
 }: {
   artistIds: ArtistKey[];
 }): JSX.Element {
-  return <>{useRecoilValue(getArtistStringFamily(artistIds))}</>;
+  return <>{useRecoilValue(artistStringFuncFam(artistIds))}</>;
 }
 
 function AlbumNameForSong({ song }: { song: Song }): JSX.Element {
-  const album = useRecoilValue(getAlbumByKeyFamily(song.albumId));
+  const album = useRecoilValue(albumByKeyFuncFam(song.albumId));
   const diskNum = Math.floor(song.track / 100);
   if (
     diskNum > 0 &&
@@ -31,7 +31,7 @@ function AlbumNameForSong({ song }: { song: Song }): JSX.Element {
 }
 
 function YearForAlbum({ albumId }: { albumId: AlbumKey }): JSX.Element {
-  const album = useRecoilValue(getAlbumByKeyFamily(albumId));
+  const album = useRecoilValue(albumByKeyFuncFam(albumId));
   return <>{album.year !== 0 ? album.year : ''}</>;
 }
 

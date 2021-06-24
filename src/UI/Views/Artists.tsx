@@ -22,12 +22,12 @@ import {
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
-import { focusedKeysStateFamily } from '../../Recoil/Local';
+import { focusedKeysFuncFam } from '../../Recoil/Local';
 import {
-  allAlbumsState,
-  allArtistsState,
-  allSongsState,
-  getArtistByKeyFamily,
+  allAlbumsFunc,
+  allArtistsFunc,
+  allSongsFunc,
+  artistByKeyFuncFam,
 } from '../../Recoil/ReadOnly';
 import {
   CurrentView,
@@ -74,7 +74,7 @@ const sortOrderState = atom({
 });
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
-  const artist = useRecoilValue(getArtistByKeyFamily(group.key));
+  const artist = useRecoilValue(artistByKeyFuncFam(group.key));
   const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
     AddSongs(xact, artist.songs);
   });
@@ -140,13 +140,13 @@ function getFilteredArtists(
 export function GroupedAristList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const artists = useRecoilValue(allArtistsState);
-  const albums = useRecoilValue(allAlbumsState);
-  const songs = useRecoilValue(allSongsState);
+  const artists = useRecoilValue(allArtistsFunc);
+  const albums = useRecoilValue(allAlbumsFunc);
+  const songs = useRecoilValue(allSongsFunc);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
   const fullAlbums = useRecoilValue(showArtistsWithFullAlbumsState);
   const minSongCount = useRecoilValue(minSongCountForArtistListState);
-  const keyBuffer = useRecoilValue(focusedKeysStateFamily(CurrentView.artist));
+  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.artist));
   const artistContext = useRecoilValue(artistContextState);
 
   const [curSort, setSort] = useRecoilState(sortOrderState);

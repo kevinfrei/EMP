@@ -20,7 +20,7 @@ export const mediaTimeState = atom<MediaTime>({
 });
 
 // Current position, in a 'time' string format
-export const mediaTimePositionState = selector<string>({
+export const mediaTimePositionFunc = selector<string>({
   key: 'mediaTimePosition',
   get: ({ get }): string => {
     const { position } = get(mediaTimeState);
@@ -29,7 +29,7 @@ export const mediaTimePositionState = selector<string>({
 });
 
 // Current time remaining in a 'time' string format
-export const mediaTimeRemainingState = selector<string>({
+export const mediaTimeRemainingFunc = selector<string>({
   key: 'mediaTimeRemaining',
   get: ({ get }): string => {
     const { position, duration } = get(mediaTimeState);
@@ -38,7 +38,7 @@ export const mediaTimeRemainingState = selector<string>({
 });
 
 // Percent interpolation of current position
-export const mediaTimePercentState = selector<number>({
+export const mediaTimePercentFunc = selector<number>({
   key: 'mediaTimePercent',
   get: ({ get }): number => {
     const { position, duration } = get(mediaTimeState);

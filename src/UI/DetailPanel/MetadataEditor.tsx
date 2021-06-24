@@ -29,8 +29,11 @@ import {
   UploadImageForAlbum,
   UploadImageForSong,
 } from '../../MyWindow';
-import { albumCoverUrlFamily, picCacheAvoiderFamily } from '../../Recoil/Local';
-import { getAlbumKeyForSongKeyFamily } from '../../Recoil/ReadOnly';
+import {
+  albumCoverUrlFuncFam,
+  picCacheAvoiderStateFam,
+} from '../../Recoil/Local';
+import { albumKeyForSongKeyFuncFam } from '../../Recoil/ReadOnly';
 import { Catch, onRejected } from '../../Tools';
 
 const log = MakeLogger('MetadataEditor', false && IsDev());
@@ -171,13 +174,16 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     // Easy: one song:
     if (props.forSong !== undefined) {
       await uploadSong(props.forSong);
-      const albumKey = get(getAlbumKeyForSongKeyFamily(props.forSong));
-      setTimeout(() => set(picCacheAvoiderFamily(albumKey), (p) => p + 1), 250);
+      const albumKey = get(albumKeyForSongKeyFuncFam(props.forSong));
+      setTimeout(
+        () => set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
+        250,
+      );
     } else {
       // Messy: Multiple songs
       const albumsSet: Set<AlbumKey> = new Set();
       for (const song of props.forSongs!) {
-        const albumKey = get(getAlbumKeyForSongKeyFamily(song));
+        const albumKey = get(albumKeyForSongKeyFuncFam(song));
         if (albumsSet.has(albumKey)) {
           continue;
         }
@@ -185,7 +191,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         await uploadAlbum(albumKey);
         // This bonks the URL so it will be reloaded after we've uploaded the image
         setTimeout(
-          () => set(picCacheAvoiderFamily(albumKey), (p) => p + 1),
+          () => set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
           250,
         );
       }
@@ -221,7 +227,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       })
       .catch((e) => Catch(e));
   });
-  const coverUrl = useRecoilValue(albumCoverUrlFamily(props.albumId || '___'));
+  const coverUrl = useRecoilValue(albumCoverUrlFuncFam(props.albumId || '___'));
   // Nothing selected: EMPTY!
   if (!isSingle && !isMultiple) {
     return <Text>Not Single and not Multiple (This is a bug!)</Text>;

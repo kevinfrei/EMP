@@ -15,9 +15,9 @@ import {
 import { InvokeMain } from '../MyWindow';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
-  songHateFamily,
-  songLikeFamily,
-  songLikeNumFromStringFamily,
+  songHateFuncFam,
+  songLikeFuncFam,
+  songLikeNumFromStringFuncFam,
 } from '../Recoil/Likes';
 import { Catch } from '../Tools';
 import { SongListDetailClick } from './DetailPanel/Clickers';
@@ -76,26 +76,26 @@ export function SongListMenu({
   );
   const onLove = useRecoilTransaction_UNSTABLE((xact) => () => {
     const songs = onGetSongList(xact, context.data);
-    const likeVal = xact.get(songLikeNumFromStringFamily(context.data));
+    const likeVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* liked
-      xact.set(songLikeFamily(song), likeVal !== 1);
+      xact.set(songLikeFuncFam(song), likeVal !== 1);
     }
   });
 
   const onHate = useRecoilTransaction_UNSTABLE((xact) => () => {
     const songs = onGetSongList(xact, context.data);
-    const hateVal = xact.get(songLikeNumFromStringFamily(context.data));
+    const hateVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* hated
-      xact.set(songHateFamily(song), hateVal !== 2);
+      xact.set(songHateFuncFam(song), hateVal !== 2);
     }
   });
 
   const onShow = () => {
     InvokeMain('show-location-from-key', context.data).catch(Catch);
   };
-  const likeNum = useRecoilValue(songLikeNumFromStringFamily(context.data));
+  const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
 

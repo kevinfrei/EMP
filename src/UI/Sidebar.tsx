@@ -3,7 +3,7 @@ import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { SetSearch } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
-import { CurrentView, curViewState } from '../Recoil/ReadWrite';
+import { CurrentView, curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
 
@@ -70,13 +70,13 @@ export function isSearchBox(target: EventTarget | null): boolean {
 }
 
 export default function Sidebar(): JSX.Element {
-  const [curView, setCurView] = useRecoilState(curViewState);
+  const [curView, setCurView] = useRecoilState(curViewFunc);
   const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
-    set(curViewState, CurrentView.search);
+    set(curViewFunc, CurrentView.search);
     set(searchTermState, newValue);
   });
   const onFocus = useRecoilCallback(({ set }) => () => {
-    set(curViewState, CurrentView.search);
+    set(curViewFunc, CurrentView.search);
   });
   return (
     <div id="sidebar">
