@@ -3,6 +3,7 @@ import {
   DetailsList,
   FontIcon,
   IDetailsHeaderProps,
+  IDetailsList,
   ISeparatorStyles,
   IStackItemStyles,
   ScrollablePane,
@@ -24,6 +25,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { useState } from 'react';
 import {
   atom,
   useRecoilState,
@@ -192,6 +194,8 @@ function StickyDetailsHeader(
 
 // The Now Playing (Current playlist) view
 export default function NowPlaying(): JSX.Element {
+  const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
+
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsFunc);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsFunc);
   const articles = useRecoilValue(ignoreArticlesState);
@@ -281,11 +285,14 @@ export default function NowPlaying(): JSX.Element {
     () => sortBy,
     performSort,
   );
-
+  if (detailRef && curIndex >= 0 && curIndex < curSongs.length) {
+    detailRef.focusIndex(curIndex);
+  }
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <DetailsList
+          componentRef={(ref) => setDetailRef(ref)}
           compact={true}
           items={curSongs}
           cellStyleProps={{
