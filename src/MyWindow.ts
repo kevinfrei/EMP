@@ -138,7 +138,7 @@ export async function CallMain<R, T>(
   typecheck: (val: any) => val is R,
 ): Promise<R | void> {
   let result: any;
-  if (key) {
+  if (!Type.isUndefined(key)) {
     log(`CallMain("${channel}", "...")`);
     // eslint-disable-next-line
     result = await window.ipc!.invoke(channel, key);

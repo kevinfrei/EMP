@@ -98,6 +98,9 @@ const fileMenu: MenuItemConstructorOptions = {
   submenu: [
     xaction('Add F&ile Location', 'O', { state: 'addLocation' }),
     ___,
+    xaction('&Save Playlist', 'S', { state: 'savePlaylist' }),
+    // xaction('Save Playlist &As', 'Shift+S', { state: 'savePlaylistAs' }),
+    ___,
     { role: isMac ? 'close' : 'quit' },
   ],
 };
@@ -142,7 +145,7 @@ const mediaMenu: MenuItemConstructorOptions = {
     xaction('Skip &Back 10s', '[', { state: 'back' }),
     ___,
     {
-      ...xaction('&Shuffle', 'S', { state: 'shuffle' }),
+      ...xaction('&Shuffle', 'R', { state: 'shuffle' }),
       type: 'checkbox',
     },
     {

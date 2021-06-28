@@ -13,7 +13,9 @@ export default function App(): JSX.Element {
   return (
     <RecoilRoot>
       <span id="grabber">
-        <Utilities />
+        <Spinner label="Brief Communication. Please standby...">
+          <Utilities />
+        </Spinner>
       </span>
       <span id="left-column"></span>
       <span id="top-row"></span>

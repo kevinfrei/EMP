@@ -2,7 +2,7 @@ import { IsOnlyMetadata } from '@freik/audiodb';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
-import { IpcMainInvokeEvent } from 'electron/main';
+import { IpcMainInvokeEvent, Menu } from 'electron/main';
 import {
   GetMediaInfoForSong,
   GetPathFromKey,
@@ -95,8 +95,9 @@ function registerChannel<R, T>(
 ): void {
   ipcMain.handle(
     key,
-    async (event: IpcMainInvokeEvent, arg: any): Promise<R | void> => {
+    async (_event: IpcMainInvokeEvent, arg: any): Promise<R | void> => {
       if (checker(arg)) {
+        log(`Received ${key} message: handling`);
         return await handler(arg);
       } else {
         err(`Invalid argument type to ${key} handler`);
@@ -128,6 +129,20 @@ async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
   if (thePath) {
     shell.showItemInFolder(thePath);
   }
+}
+
+async function setSaveMenu(enabled: boolean): Promise<void> {
+  const menu = Menu.getApplicationMenu();
+  if (menu) {
+    const item = menu.getMenuItemById('save playlist');
+    if (item) {
+      item.enabled = enabled;
+    } else {
+      await Persistence.getItemAsync('nothing');
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  return;
 }
 
 /**
@@ -217,4 +232,7 @@ export function CommsSetup(): void {
   // Reviewed & working properly:
   registerChannel('show-file', showFile, Type.isString);
   registerChannel('show-open-dialog', ShowOpenDialog, isOpenDialogOptions);
+
+  // Save-Playlist-as disabling
+  registerChannel('set-save-menu', setSaveMenu, Type.isBoolean);
 }

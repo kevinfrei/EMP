@@ -5,7 +5,9 @@ import {
   MaybePlayPrev,
   MyTransactionInterface,
 } from '../Recoil/api';
+import { activePlaylistState, songListState } from '../Recoil/Local';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
+import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import {
   CurrentView,
   curViewFunc,
@@ -46,6 +48,12 @@ export function MenuHandler(
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
   if (Type.hasStr(message, 'state')) {
     switch (message.state) {
+      case 'savePlaylist': {
+        const nowPlaying = xact.get(activePlaylistState);
+        const songList = xact.get(songListState);
+        xact.set(playlistFuncFam(nowPlaying), songList);
+        break;
+      }
       case 'shuffle':
         xact.set(shuffleState, (cur) => !cur);
         break;

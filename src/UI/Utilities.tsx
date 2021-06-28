@@ -15,14 +15,17 @@ import {
 } from '@fluentui/react';
 import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   InitialWireUp,
+  PostMain,
   SubscribeMediaMatcher,
   UnsubscribeMediaMatcher,
 } from '../MyWindow';
 import { useMyTransaction } from '../Recoil/api';
 import { BoolState, useListener } from '../Recoil/helpers';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
+import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
 import './styles/Utilities.css';
@@ -41,6 +44,7 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
+  const saveable = useRecoilValue(saveableFunc);
   useEffect(InitialWireUp);
   const callback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),
@@ -56,6 +60,9 @@ export default function Utilities(): JSX.Element {
     SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);
     return () => UnsubscribeMediaMatcher(handleWidthChange);
   });
+  useEffect(() => {
+    void PostMain('set-save-menu', saveable);
+  }, [saveable]);
   /* This is for a global search typing thingamajig */
   const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {
     if (!isSearchBox(ev.target)) {
