@@ -7,8 +7,8 @@ import {
 } from '@fluentui/react';
 import { Album } from '@freik/media-core';
 import { useCallback, useRef } from 'react';
-import { useRecoilTransaction_UNSTABLE, useRecoilValue } from 'recoil';
-import { AddSongs } from '../../Recoil/api';
+import { useRecoilValue } from 'recoil';
+import { AddSongs, useMyTransaction } from '../../Recoil/api';
 import { albumCoverUrlFuncFam } from '../../Recoil/Local';
 import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
@@ -81,11 +81,11 @@ function AlbumCoverView({
   const albumData = useRecoilValue(dataForAlbumFuncFam(album.key));
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, album.songs);
   });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRightClick = useRecoilTransaction_UNSTABLE((xact) =>
+  const onRightClick = useMyTransaction((xact) =>
     SongListDetailContextMenuClick(xact, album.songs),
   );
   if (!album) {

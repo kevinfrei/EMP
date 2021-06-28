@@ -7,13 +7,14 @@ import {
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
-import {
-  TransactionInterface_UNSTABLE,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../MyWindow';
-import { AddSongs, PlaySongs } from '../Recoil/api';
+import {
+  AddSongs,
+  MyTransactionInterface,
+  PlaySongs,
+  useMyTransaction,
+} from '../Recoil/api';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -28,10 +29,7 @@ type SongListMenuArgs = {
   title?: string;
   context: SongListMenuData;
   onClearContext: () => void;
-  onGetSongList: (
-    xact: TransactionInterface_UNSTABLE,
-    data: string,
-  ) => SongKey[];
+  onGetSongList: (xact: MyTransactionInterface, data: string) => SongKey[];
   items?: (IContextualMenuItem | string)[];
 };
 
@@ -64,17 +62,17 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
 
-  const onAdd = useRecoilTransaction_UNSTABLE(
+  const onAdd = useMyTransaction(
     (xact) => () => AddSongs(xact, onGetSongList(xact, context.data)),
   );
-  const onReplace = useRecoilTransaction_UNSTABLE(
+  const onReplace = useMyTransaction(
     (xact) => () => PlaySongs(xact, onGetSongList(xact, context.data)),
   );
-  const onProps = useRecoilTransaction_UNSTABLE(
+  const onProps = useMyTransaction(
     (xact) => () =>
       SongListDetailClick(xact, onGetSongList(xact, context.data), false),
   );
-  const onLove = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onLove = useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);
     const likeVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
@@ -83,7 +81,7 @@ export function SongListMenu({
     }
   });
 
-  const onHate = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onHate = useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);
     const hateVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {

@@ -6,15 +6,12 @@ import {
 } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
+import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
 import {
-  atom,
-  selector,
-  TransactionInterface_UNSTABLE,
-  useRecoilState,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
-import { AddSongs } from '../../Recoil/api';
+  AddSongs,
+  MyTransactionInterface,
+  useMyTransaction,
+} from '../../Recoil/api';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -68,7 +65,7 @@ const songContextState = atom<SongListMenuData>({
 export function Liker({ songId }: { songId: SongKey }): JSX.Element {
   const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
-  const onClick = useRecoilTransaction_UNSTABLE(({ set }) => () => {
+  const onClick = useMyTransaction(({ set }) => () => {
     switch (likeNum) {
       case 0: // neutral
         set(songLikeFuncFam(songId), true);
@@ -97,11 +94,9 @@ export function LikeOrHate(song: Song): JSX.Element {
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onAddSongClick = useRecoilTransaction_UNSTABLE(
-    (xact) => (item: Song) => {
-      AddSongs(xact, [item.key]);
-    },
-  );
+  const onAddSongClick = useMyTransaction((xact) => (item: Song) => {
+    AddSongs(xact, [item.key]);
+  });
   const [songContext, setSongContext] = useRecoilState(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
     const event = ev as any as MouseEvent;
@@ -142,7 +137,7 @@ export default function MixedSongsList(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(xact: TransactionInterface_UNSTABLE, data: string) =>
+          onGetSongList={(xact: MyTransactionInterface, data: string) =>
             data.length > 0 ? [data] : []
           }
         />

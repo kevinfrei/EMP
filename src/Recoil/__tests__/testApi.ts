@@ -17,7 +17,8 @@ it('Adding empty songs does nothing', () => {
 */
 import { MakeError } from '@freik/core-utils';
 import { act } from 'react-test-renderer';
-import { RecoilState, TransactionInterface_UNSTABLE } from 'recoil';
+import { RecoilState, RecoilValueReadOnly } from 'recoil';
+import { MyTransactionInterface } from '../api';
 
 const err = MakeError('api.test');
 
@@ -40,12 +41,12 @@ type RecoilSetter = <T>(
   rv: RecoilState<T>,
   valOrUpdate: ((curVal: T) => T) | T,
 ) => void;
-type RecoilGetter = <T>(rv: RecoilState<T>) => T;
+type RecoilGetter = <T>(rv: RecoilState<T> | RecoilValueReadOnly<T>) => T;
 
 function makeCallbackIfc(
   set: RecoilSetter,
   get: RecoilGetter,
-): TransactionInterface_UNSTABLE {
+): MyTransactionInterface {
   return {
     set,
     get,

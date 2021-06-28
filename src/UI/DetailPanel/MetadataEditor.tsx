@@ -14,11 +14,7 @@ import { useId } from '@fluentui/react-hooks';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { useEffect, useState } from 'react';
-import {
-  TransactionInterface_UNSTABLE,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
 import {
   ImageFromClipboard,
@@ -29,6 +25,7 @@ import {
   UploadImageForAlbum,
   UploadImageForSong,
 } from '../../MyWindow';
+import { MyTransactionInterface, useMyTransaction } from '../../Recoil/api';
 import {
   albumCoverUrlFuncFam,
   picCacheAvoiderStateFam,
@@ -167,7 +164,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   };
 
   const uploadImage = async (
-    { get, set }: TransactionInterface_UNSTABLE,
+    { get, set }: MyTransactionInterface,
     uploadSong: (sk: SongKey) => Promise<void>,
     uploadAlbum: (ak: AlbumKey) => Promise<void>,
   ) => {
@@ -198,7 +195,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     }
   };
 
-  const onImageFromClipboard = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onImageFromClipboard = useMyTransaction((xact) => () => {
     const img = ImageFromClipboard();
     if (img !== undefined) {
       uploadImage(
@@ -208,7 +205,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       ).catch((e) => Catch(e));
     }
   });
-  const onSelectFile = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onSelectFile = useMyTransaction((xact) => () => {
     ShowOpenDialog({
       title: 'Select Cover Art image',
       properties: ['openFile'],

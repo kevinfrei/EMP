@@ -8,14 +8,14 @@ import {
 } from '@fluentui/react';
 import { SongKey } from '@freik/media-core';
 import { useState } from 'react';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
-  atom,
-  TransactionInterface_UNSTABLE,
-  useRecoilState,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
-import { DeletePlaylist, PlaySongs, RenamePlaylist } from '../../Recoil/api';
+  DeletePlaylist,
+  MyTransactionInterface,
+  PlaySongs,
+  RenamePlaylist,
+  useMyTransaction,
+} from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
@@ -49,14 +49,14 @@ export default function PlaylistView(): JSX.Element {
   const [playlistContext, setPlaylistContext] =
     useRecoilState(playlistContextState);
 
-  const onPlaylistInvoked = useRecoilTransaction_UNSTABLE(
+  const onPlaylistInvoked = useMyTransaction(
     (xact) => (playlistName: PlaylistName) => {
       const songs = xact.get(playlistFuncFam(playlistName));
       PlaySongs(xact, songs, playlistName);
     },
   );
 
-  const onRemoveDupes = useRecoilTransaction_UNSTABLE(({ get, set }) => () => {
+  const onRemoveDupes = useMyTransaction(({ get, set }) => () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
@@ -72,15 +72,13 @@ export default function PlaylistView(): JSX.Element {
     set(playlistFuncFam(playlistContext.data), newList);
   });
 
-  const deleteConfirmed = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });
 
-  const renameConfirmed = useRecoilTransaction_UNSTABLE(
-    (xact) => (newName: string) => {
-      RenamePlaylist(xact, selected, newName);
-    },
-  );
+  const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
+    RenamePlaylist(xact, selected, newName);
+  });
 
   const columns: IColumn[] = [
     {
@@ -164,10 +162,9 @@ export default function PlaylistView(): JSX.Element {
           onClearContext={() =>
             setPlaylistContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(
-            { get }: TransactionInterface_UNSTABLE,
-            data: string,
-          ) => get(playlistFuncFam(data))}
+          onGetSongList={({ get }: MyTransactionInterface, data: string) =>
+            get(playlistFuncFam(data))
+          }
           items={[
             'add',
             'rep',

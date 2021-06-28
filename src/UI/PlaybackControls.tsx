@@ -1,11 +1,12 @@
 import { MakeLogger } from '@freik/core-utils';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
-  TransactionInterface_UNSTABLE,
-  useRecoilState,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
-import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
+  MaybePlayNext,
+  MaybePlayPrev,
+  MyTransactionInterface,
+  ShufflePlaying,
+  useMyTransaction,
+} from '../Recoil/api';
 import {
   hasAnySongsFunc,
   hasNextSongFunc,
@@ -20,7 +21,7 @@ import './styles/PlaybackControls.css';
 const log = MakeLogger('SongControls');
 const err = MakeLogger('SongControls-err');
 
-export function onClickPlayPause({ set }: TransactionInterface_UNSTABLE): void {
+export function onClickPlayPause({ set }: MyTransactionInterface): void {
   const ae = GetAudioElem();
   if (!ae) {
     err('Clicking but no audio element');
@@ -59,23 +60,23 @@ export default function SongControls(): JSX.Element {
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const clickShuffle = useMyTransaction((xact) => () => {
     if (!xact.get(shuffleState)) {
       ShufflePlaying(xact);
     }
     xact.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
-  const clickPlayPause = useRecoilTransaction_UNSTABLE(
+  const clickPlayPause = useMyTransaction(
     (xact) => () => onClickPlayPause(xact),
   );
 
-  const clickPrev = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const clickPrev = useMyTransaction((xact) => () => {
     if (hasPrevSong) {
       MaybePlayPrev(xact);
     }
   });
-  const clickNext = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const clickNext = useMyTransaction((xact) => () => {
     if (hasNextSong) {
       MaybePlayNext(xact);
     }

@@ -1,9 +1,9 @@
 import { Song, SongKey } from '@freik/media-core';
-import { TransactionInterface_UNSTABLE } from 'recoil';
+import { MyTransactionInterface } from '../../Recoil/api';
 import { songDetailState } from '../../Recoil/Local';
 
 export function SongDetailClick(
-  { set }: TransactionInterface_UNSTABLE,
+  { set }: MyTransactionInterface,
   song: Song,
   shift?: boolean,
 ): void {
@@ -29,7 +29,7 @@ function SetInvert<T>(theSet: Set<T>, toToggle: Iterable<T>): void {
 }
 
 export function SongListDetailClick(
-  { set }: TransactionInterface_UNSTABLE,
+  { set }: MyTransactionInterface,
   songs: SongKey[],
   shift?: boolean,
 ): void {
@@ -45,7 +45,7 @@ export function SongListDetailClick(
 
 // This is a helper to shift-click for song details
 export function SongListDetailContextMenuClick(
-  xact: TransactionInterface_UNSTABLE,
+  xact: MyTransactionInterface,
   items: SongKey[],
 ) {
   return (event: React.MouseEvent<HTMLElement, MouseEvent>): void => {

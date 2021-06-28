@@ -7,7 +7,7 @@ import {
   PlaylistName,
   SongKey,
 } from '@freik/media-core';
-import { TransactionInterface_UNSTABLE } from 'recoil';
+import { RecoilState, RecoilValueReadOnly, useRecoilCallback } from 'recoil';
 import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
@@ -32,6 +32,31 @@ import { repeatState, shuffleState } from './ReadWrite';
 const log = MakeLogger('api'); // eslint-disable-line
 const err = MakeError('ReadWrite-err'); // eslint-disable-line
 
+export type MyTransactionInterface = {
+  get: <T>(recoilVal: RecoilState<T> | RecoilValueReadOnly<T>) => T;
+  set: <T>(
+    recoilVal: RecoilState<T>,
+    valOrUpdater: ((currVal: T) => T) | T,
+  ) => void;
+  reset: <T>(recoilVal: RecoilState<T>) => void;
+};
+
+type FnType<Args extends readonly unknown[], Return> = (
+  ...args: Args
+) => Return;
+
+// I'm making my own hook to use instead of the currently-too-constrained
+// useRecoilTransaction hook
+export function useMyTransaction<Args extends readonly unknown[], Return>(
+  fn: (ntrface: MyTransactionInterface) => FnType<Args, Return>,
+): FnType<Args, Return> {
+  return useRecoilCallback(({ set, reset, snapshot }) => {
+    const get = <T>(recoilVal: RecoilState<T> | RecoilValueReadOnly<T>) =>
+      snapshot.getLoadable(recoilVal).getValue();
+    return fn({ set, reset, get });
+  });
+}
+
 /**
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)
@@ -41,10 +66,7 @@ const err = MakeError('ReadWrite-err'); // eslint-disable-line
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
  */
-export function MaybePlayNext({
-  get,
-  set,
-}: TransactionInterface_UNSTABLE): boolean {
+export function MaybePlayNext({ get, set }: MyTransactionInterface): boolean {
   const curIndex = get(currentIndexState);
   const songList = get(songListState);
   if (curIndex + 1 < songList.length) {
@@ -70,10 +92,7 @@ export function MaybePlayNext({
  *
  * @returns Promise<void>
  */
-export function MaybePlayPrev({
-  get,
-  set,
-}: TransactionInterface_UNSTABLE): void {
+export function MaybePlayPrev({ get, set }: MyTransactionInterface): void {
   const songList = get(songListState);
   if (songList.length > 0) {
     const curIndex = get(currentIndexState);
@@ -94,7 +113,7 @@ export function MaybePlayPrev({
  * @returns {SongKey[]} The filtered list of songs
  */
 function GetFilteredSongs(
-  xact: TransactionInterface_UNSTABLE,
+  xact: MyTransactionInterface,
   listToFilter: Iterable<SongKey>,
 ): SongKey[] {
   const onlyLikes = xact.get(onlyPlayLikesState);
@@ -121,7 +140,7 @@ function GetFilteredSongs(
  * @returns void
  */
 export function AddSongs( // Deprecate this: It's only for tests now :/
-  xact: TransactionInterface_UNSTABLE,
+  xact: MyTransactionInterface,
   listToAdd: Iterable<SongKey>,
 ): void {
   // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -149,7 +168,7 @@ export function AddSongs( // Deprecate this: It's only for tests now :/
  * @returns void
  */
 export function PlaySongs( // Deprecate this: It's only for tests now :/
-  xact: TransactionInterface_UNSTABLE,
+  xact: MyTransactionInterface,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
@@ -177,7 +196,7 @@ export function PlaySongs( // Deprecate this: It's only for tests now :/
  *
  * @returns void
  */
-export function StopAndClear({ reset }: TransactionInterface_UNSTABLE): void {
+export function StopAndClear({ reset }: MyTransactionInterface): void {
   reset(songListState);
   reset(currentIndexState);
   reset(activePlaylistState);
@@ -195,7 +214,7 @@ export function ShufflePlaying({
   get,
   reset,
   set,
-}: TransactionInterface_UNSTABLE): void {
+}: MyTransactionInterface): void {
   const curIndex = get(currentIndexState);
   reset(nowPlayingSortState);
   if (curIndex < 0) {
@@ -219,7 +238,7 @@ export function ShufflePlaying({
  * Rename a playlist (make sure you've got the name right)
  **/
 export function RenamePlaylist(
-  { set, get }: TransactionInterface_UNSTABLE,
+  { set, get }: MyTransactionInterface,
   curName: PlaylistName,
   newName: PlaylistName,
 ): void {
@@ -236,7 +255,7 @@ export function RenamePlaylist(
  * Delete a playlist (make sure you've got the name right)
  **/
 export function DeletePlaylist(
-  { set, get }: TransactionInterface_UNSTABLE,
+  { set, get }: MyTransactionInterface,
   toDelete: PlaylistName,
 ): void {
   const curNames = get(playlistNamesFunc);
@@ -250,7 +269,7 @@ export function DeletePlaylist(
 }
 
 export function SongListFromKey(
-  { get }: TransactionInterface_UNSTABLE,
+  { get }: MyTransactionInterface,
   data: MediaKey,
 ): SongKey[] {
   if (data.length === 0) {

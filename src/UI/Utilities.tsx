@@ -15,12 +15,12 @@ import {
 } from '@fluentui/react';
 import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
 import { Suspense, useEffect, useState } from 'react';
-import { useRecoilTransaction_UNSTABLE } from 'recoil';
 import {
   InitialWireUp,
   SubscribeMediaMatcher,
   UnsubscribeMediaMatcher,
 } from '../MyWindow';
+import { useMyTransaction } from '../Recoil/api';
 import { BoolState, useListener } from '../Recoil/helpers';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
 import { MenuHandler } from './MenuHandler';
@@ -42,11 +42,11 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 // keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
   useEffect(InitialWireUp);
-  const callback = useRecoilTransaction_UNSTABLE(
+  const callback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),
   );
   useListener('menuAction', callback);
-  const handleWidthChange = useRecoilTransaction_UNSTABLE(
+  const handleWidthChange = useMyTransaction(
     ({ set }) =>
       (ev: MediaQueryList | MediaQueryListEvent) => {
         set(isMiniplayerState, ev.matches);
@@ -57,21 +57,18 @@ export default function Utilities(): JSX.Element {
     return () => UnsubscribeMediaMatcher(handleWidthChange);
   });
   /* This is for a global search typing thingamajig */
-  const listener = useRecoilTransaction_UNSTABLE(
-    ({ set }) =>
-      (ev: KeyboardEvent) => {
-        if (!isSearchBox(ev.target)) {
-          if (ev.key.length > 1 || ev.altKey || ev.ctrlKey || ev.metaKey) {
-            set(keyBufferState, '');
-          } else {
-            ResetTheKeyBufferTimer();
-            set(keyBufferState, (curVal: string) => curVal + ev.key);
-          }
-        }
-      },
-  );
+  const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {
+    if (!isSearchBox(ev.target)) {
+      if (ev.key.length > 1 || ev.altKey || ev.ctrlKey || ev.metaKey) {
+        set(keyBufferState, '');
+      } else {
+        ResetTheKeyBufferTimer();
+        set(keyBufferState, (curVal: string) => curVal + ev.key);
+      }
+    }
+  });
   // Connect the reset callback properly
-  lastHeard = useRecoilTransaction_UNSTABLE(
+  lastHeard = useMyTransaction(
     ({ reset }) =>
       () =>
         reset(keyBufferState),

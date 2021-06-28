@@ -1,13 +1,8 @@
 import { Slider, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import { SyntheticEvent } from 'react';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
-import { MaybePlayNext } from '../Recoil/api';
+import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { MaybePlayNext, useMyTransaction } from '../Recoil/api';
 import {
   albumCoverUrlFuncFam,
   currentSongKeyFunc,
@@ -149,7 +144,7 @@ export default function SongPlayback(): JSX.Element {
       () =>
         set(playingState, false),
   );
-  const onEnded = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onEnded = useMyTransaction((xact) => () => {
     log('Heading to the next song!!!');
     const songList = xact.get(songListState);
     const rep = xact.get(repeatState);
@@ -164,7 +159,7 @@ export default function SongPlayback(): JSX.Element {
     const isPlaying = MaybePlayNext(xact);
     xact.set(playingState, isPlaying);
   });
-  const onTimeUpdate = useRecoilTransaction_UNSTABLE(
+  const onTimeUpdate = useMyTransaction(
     ({ set }) =>
       (ev: SyntheticEvent<HTMLMediaElement>) => {
         const ae = ev.currentTarget;
@@ -194,7 +189,7 @@ export default function SongPlayback(): JSX.Element {
       onTimeUpdate={onTimeUpdate}
     />
   );
-  const showDetail = useRecoilTransaction_UNSTABLE(
+  const showDetail = useMyTransaction(
     (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       if (songKey !== '') {
         const songs = xact.get(allSongsFunc);

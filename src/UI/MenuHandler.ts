@@ -1,7 +1,10 @@
 import { MakeError, Type } from '@freik/core-utils';
-import { TransactionInterface_UNSTABLE } from 'recoil';
 import { FocusSearch } from '../MyWindow';
-import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
+import {
+  MaybePlayNext,
+  MaybePlayPrev,
+  MyTransactionInterface,
+} from '../Recoil/api';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
 import {
   CurrentView,
@@ -18,7 +21,7 @@ import { addLocation } from './Views/Settings';
 const log = MakeError('MenuHandler'); // eslint-disable-line
 const err = MakeError('MenuHandler-err'); // eslint-disable-line
 
-function updateTime({ set }: TransactionInterface_UNSTABLE, offset: number) {
+function updateTime({ set }: MyTransactionInterface, offset: number) {
   const ae = GetAudioElem();
   if (!ae) {
     return;
@@ -35,7 +38,7 @@ function updateTime({ set }: TransactionInterface_UNSTABLE, offset: number) {
 }
 
 export function MenuHandler(
-  xact: TransactionInterface_UNSTABLE,
+  xact: MyTransactionInterface,
   message: unknown,
 ): void {
   log('Menu command:');

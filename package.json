@@ -58,7 +58,7 @@
     "open": "^8.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "recoil": "github:facebookexperimental/recoil#nightly",
+    "recoil": "^0.3.1",
     "xxhashjs": "^0.2.2"
   },
   "browserslist": {

@@ -26,13 +26,15 @@ import {
 } from '@freik/media-core';
 import {
   atom,
-  TransactionInterface_UNSTABLE,
   useRecoilState,
-  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { StopAndClear } from '../../Recoil/api';
+import {
+  MyTransactionInterface,
+  StopAndClear,
+  useMyTransaction,
+} from '../../Recoil/api';
 import { useDialogState } from '../../Recoil/helpers';
 import {
   activePlaylistState,
@@ -80,28 +82,25 @@ function TopLine(): JSX.Element {
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useRecoilTransaction_UNSTABLE(
-    ({ set }) =>
-      (inputName: string) => {
-        if (playlists.has(inputName)) {
-          window.alert("Sorry: You can't overwrite an existing playlist.");
-        } else {
-          set(playlistFuncFam(inputName), [...songList]);
-          set(activePlaylistState, inputName);
-        }
-      },
-  );
-  const stopAndClear = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const saveListAs = useMyTransaction(({ set }) => (inputName: string) => {
+    if (playlists.has(inputName)) {
+      window.alert("Sorry: You can't overwrite an existing playlist.");
+    } else {
+      set(playlistFuncFam(inputName), [...songList]);
+      set(activePlaylistState, inputName);
+    }
+  });
+  const stopAndClear = useMyTransaction((xact) => () => {
     StopAndClear(xact);
   });
-  const clickClearQueue = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const clickClearQueue = useMyTransaction((xact) => () => {
     if (isPlaylist(nowPlaying)) {
       StopAndClear(xact);
     } else {
       showConfirm();
     }
   });
-  const save = useRecoilTransaction_UNSTABLE(({ set }) => () => {
+  const save = useMyTransaction(({ set }) => () => {
     set(playlistFuncFam(nowPlaying), songList);
   });
 
@@ -311,7 +310,7 @@ export default function NowPlaying(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(_xact: TransactionInterface_UNSTABLE, data: string) =>
+          onGetSongList={(_xact: MyTransactionInterface, data: string) =>
             data.length > 0 ? [data] : []
           }
           items={['prop', 'show', '-', 'like', 'hate']}

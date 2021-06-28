@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
-import { atom, selectorFamily, TransactionInterface_UNSTABLE } from 'recoil';
+import { atom, selectorFamily } from 'recoil';
+import { MyTransactionInterface } from './api';
 import {
   bidirectionalSyncWithTranslateEffect,
   syncWithMainEffect,
@@ -37,7 +38,7 @@ const songLikeBackerState = atom<Set<SongKey>>({
 });
 
 export function isSongLiked(
-  { get }: TransactionInterface_UNSTABLE,
+  { get }: MyTransactionInterface,
   key: SongKey,
 ): boolean {
   return get(songLikeBackerState).has(key);
@@ -87,7 +88,7 @@ const songHateBackerState = atom<Set<SongKey>>({
 });
 
 export function isSongHated(
-  { get }: TransactionInterface_UNSTABLE,
+  { get }: MyTransactionInterface,
   key: SongKey,
 ): boolean {
   return get(songHateBackerState).has(key);

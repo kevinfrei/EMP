@@ -14,13 +14,16 @@ import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
-  TransactionInterface_UNSTABLE,
   useRecoilState,
-  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import {
+  AddSongs,
+  MyTransactionInterface,
+  SongListFromKey,
+  useMyTransaction,
+} from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
 import { focusedKeysFuncFam } from '../../Recoil/Local';
 import {
@@ -75,15 +78,15 @@ const sortOrderState = atom({
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
-  const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, artist.songs);
   });
-  const onHeaderExpanderClick = useRecoilTransaction_UNSTABLE(
+  const onHeaderExpanderClick = useMyTransaction(
     ({ set }) =>
       () =>
         set(artistIsExpandedState(group.key), !group.isCollapsed),
   );
-  const onRightClick = useRecoilTransaction_UNSTABLE(
+  const onRightClick = useMyTransaction(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
         set(artistContextState, {
@@ -153,7 +156,7 @@ export function GroupedAristList(): JSX.Element {
   const curExpandedState = useRecoilState(artistExpandedState);
   const resetArtistContext = useResetRecoilState(artistContextState);
 
-  const onRightClick = useRecoilTransaction_UNSTABLE(
+  const onRightClick = useMyTransaction(
     ({ set }) =>
       (item: ArtistSong, _index?: number, ev?: Event) => {
         if (ev) {
@@ -165,7 +168,7 @@ export function GroupedAristList(): JSX.Element {
         }
       },
   );
-  const onAddSongClick = useRecoilTransaction_UNSTABLE(
+  const onAddSongClick = useMyTransaction(
     (xact) => (item: ArtistSong) => AddSongs(xact, [item.key]),
   );
 
@@ -237,7 +240,7 @@ export function GroupedAristList(): JSX.Element {
         <SongListMenu
           context={artistContext}
           onClearContext={resetArtistContext}
-          onGetSongList={(xact: TransactionInterface_UNSTABLE, data: string) =>
+          onGetSongList={(xact: MyTransactionInterface, data: string) =>
             SongListFromKey(xact, data)
           }
         />

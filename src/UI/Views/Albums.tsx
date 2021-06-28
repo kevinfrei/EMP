@@ -16,13 +16,16 @@ import { AlbumKey, Song } from '@freik/media-core';
 import { useState } from 'react';
 import {
   atom,
-  TransactionInterface_UNSTABLE,
   useRecoilState,
-  useRecoilTransaction_UNSTABLE,
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import {
+  AddSongs,
+  MyTransactionInterface,
+  SongListFromKey,
+  useMyTransaction,
+} from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
 import { albumCoverUrlFuncFam, focusedKeysFuncFam } from '../../Recoil/Local';
 import {
@@ -77,15 +80,15 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const album = useRecoilValue(albumByKeyFuncFam(group.key));
   const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
   const picurl = useRecoilValue(albumCoverUrlFuncFam(group.key));
-  const onAddSongsClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, album.songs);
   });
-  const onHeaderExpanderClick = useRecoilTransaction_UNSTABLE(
+  const onHeaderExpanderClick = useMyTransaction(
     ({ set }) =>
       () =>
         set(albumIsExpandedState(group.key), !group.isCollapsed),
   );
-  const onRightClick = useRecoilTransaction_UNSTABLE(
+  const onRightClick = useMyTransaction(
     ({ set }) =>
       (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
         set(albumContextState, {
@@ -142,10 +145,10 @@ export function GroupedAlbumList(): JSX.Element {
   const [curSort, setSort] = useRecoilState(albumSortState);
   const resetAlbumContext = useResetRecoilState(albumContextState);
 
-  const onAddSongClick = useRecoilTransaction_UNSTABLE(
+  const onAddSongClick = useMyTransaction(
     (xact) => (item: Song) => AddSongs(xact, [item.key]),
   );
-  const onRightClick = useRecoilTransaction_UNSTABLE(
+  const onRightClick = useMyTransaction(
     ({ set }) =>
       (item: Song, _index?: number, ev?: Event) => {
         if (
@@ -217,7 +220,7 @@ export function GroupedAlbumList(): JSX.Element {
         <SongListMenu
           context={albumContext}
           onClearContext={resetAlbumContext}
-          onGetSongList={(xact: TransactionInterface_UNSTABLE, data: string) =>
+          onGetSongList={(xact: MyTransactionInterface, data: string) =>
             SongListFromKey(xact, data)
           }
         />

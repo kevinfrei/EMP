@@ -8,13 +8,9 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import {
-  TransactionInterface_UNSTABLE,
-  useRecoilState,
-  useRecoilTransaction_UNSTABLE,
-  useRecoilValue,
-} from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
+import { MyTransactionInterface, useMyTransaction } from '../../Recoil/api';
 import { useBoolRecoilState } from '../../Recoil/helpers';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
@@ -49,7 +45,7 @@ async function GetDirs(): Promise<string[] | void> {
 
 export async function addLocation({
   set,
-}: TransactionInterface_UNSTABLE): Promise<boolean> {
+}: MyTransactionInterface): Promise<boolean> {
   const locs = await GetDirs();
   if (locs) {
     set(locationsState, (curLocs) => [...locs, ...curLocs]);
@@ -61,7 +57,7 @@ export async function addLocation({
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
-  const onAddLocation = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });
   const songs = useRecoilValue(allSongsFunc);

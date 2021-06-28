@@ -19,10 +19,10 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { useState } from 'react';
-import { useRecoilTransaction_UNSTABLE, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
-import { AddSongs } from '../../Recoil/api';
+import { AddSongs, useMyTransaction } from '../../Recoil/api';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -194,10 +194,10 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useRecoilTransaction_UNSTABLE((xact) => () => {
+  const onAddSongListClick = useMyTransaction((xact) => () => {
     AddSongs(xact, props.keys);
   });
-  const onRightClick = useRecoilTransaction_UNSTABLE((xact) =>
+  const onRightClick = useMyTransaction((xact) =>
     SongListDetailContextMenuClick(xact, props.keys),
   );
   const theStyle = { marginLeft: props.depth * 20 };
@@ -226,7 +226,7 @@ export default function SearchResultsView(): JSX.Element {
   const albums = useRecoilValue(allAlbumsFunc);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
-  const onSongDetailClick = useRecoilTransaction_UNSTABLE(
+  const onSongDetailClick = useMyTransaction(
     (xact) => (item: SearchSongData, index?: number, ev?: Event) =>
       SongDetailClick(
         xact,
@@ -234,11 +234,9 @@ export default function SearchResultsView(): JSX.Element {
         Type.has(ev, 'shiftKey') && ev.shiftKey === true,
       ),
   );
-  const onAddSongClick = useRecoilTransaction_UNSTABLE(
-    (xact) => (item: SearchSongData) => {
-      AddSongs(xact, [item.song.key]);
-    },
-  );
+  const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {
+    AddSongs(xact, [item.song.key]);
+  });
 
   if (
     !searchResults.albums.length &&

@@ -50,7 +50,7 @@ specifiers:
   react-dom: ^17.0.2
   react-scripts: ^4.0.3
   react-test-renderer: ^17.0.2
-  recoil: github:facebookexperimental/recoil#nightly
+  recoil: ^0.3.1
   rimraf: ^3.0.2
   svg-react-loader: ^0.4.6
   ts-jest: 26.5.6
@@ -72,7 +72,7 @@ dependencies:
   open: 8.2.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
-  recoil: github.com/facebookexperimental/recoil/1ae6498d9be43c3628a90d4005158f7bdcfbd041_react-dom@17.0.2+react@17.0.2
+  recoil: 0.3.1_react-dom@17.0.2+react@17.0.2
   xxhashjs: 0.2.2
 
 devDependencies:
@@ -12372,6 +12372,23 @@ packages:
       resolve: 1.20.0
     dev: true
 
+  /recoil/0.3.1_react-dom@17.0.2+react@17.0.2:
+    resolution: {integrity: sha512-KNA3DRqgxX4rRC8E7fc6uIw7BACmMPuraIYy+ejhE8tsw7w32CetMm8w7AMZa34wzanKKkev3vl3H7Z4s0QSiA==}
+    peerDependencies:
+      react: '>=16.13.1'
+      react-dom: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      hamt_plus: 1.0.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+    dev: false
+
   /recursive-readdir/2.2.2:
     resolution: {integrity: sha512-nRCcW9Sj7NuZwa2XvH9co8NPeXUBhZP7CRKJtU+cS6PW9FpCIFoI5ib0NT1ZrbNuPoRy0ylyCaUL8Gih4LSyFg==}
     engines: {node: '>=0.10.0'}
@@ -15053,25 +15070,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  github.com/facebookexperimental/recoil/1ae6498d9be43c3628a90d4005158f7bdcfbd041_react-dom@17.0.2+react@17.0.2:
-    resolution: {tarball: https://codeload.github.com/facebookexperimental/recoil/tar.gz/1ae6498d9be43c3628a90d4005158f7bdcfbd041}
-    id: github.com/facebookexperimental/recoil/1ae6498d9be43c3628a90d4005158f7bdcfbd041
-    name: recoil
-    version: 0.3.1
-    prepare: true
-    requiresBuild: true
-    peerDependencies:
-      react: '>=16.13.1'
-      react-dom: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      hamt_plus: 1.0.2
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    dev: false
