@@ -170,3 +170,15 @@ export async function CallMain(
       return await MockWrite(key);
   }
 }
+
+export async function PostMain(
+  channel: string,
+  key?: string,
+): Promise<string | void> {
+  switch (channel) {
+    case 'read-from-storage':
+      return await MockRead(key);
+    case 'write-to-storage':
+      return await MockWrite(key);
+  }
+}
