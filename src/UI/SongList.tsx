@@ -18,6 +18,7 @@ import { ArtistKey } from '@freik/media-core';
 import { Dispatch, SetStateAction } from 'react';
 import { SortKey } from '../Sorting';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const err = MakeError('SongList-err');
 
 export type ColumnRenderTuple<T> = [
@@ -115,100 +116,6 @@ export function altRowRenderer(
   };
 }
 
-/**
- * Build out the song list, group list, and group header properties for a
- * grouped hierarchy of songs
- *
- * @function GetSongGroupData<T>
- * @param {Song[]} sortedSongs - the sorted list of songs
- * @param {[Set<string>, (Set<string>)=>void]} expandedState - A React state
- *                        pair for a set of keys used to keep track of which
- *                        containers are currently expanded
- * @param getGroupId - a lambda to get the container key from a song
- * @param getGroupName - a labmda to get the group title from a song
- * @param groupKey - the lowercase character for the grouped field's sort order
- * @param groupFieldName - the name of the grouped field
- * @param {[key:string,
- *          fieldName: string,
- *          name: string,
- *          minWidth: number,
- *          maxWidth?: number,
- *          render?:(s:Song) => JSX.Element][]} renderers - data for the columns
- * @param {() => string} getSort - a function to get the sorting string
- * @param {(sort: string) => void} performSort - the function to actually sort
- *                                               the song list
- * @param {?number} keyLength - The number of characters in the group sort order
- *
- * @returns {[IColumn[], IGroup[], IDetailsGroupRenderProps]} - returns a tuple
- *    of the list of IColumns, IGroups, and the GroupRenderProps
- */
-export function GetSongGroupData<T>(
-  sortedSongs: T[],
-  [curExpandedSet, setExpandedSet]: [
-    curExpandedSet: Set<string>,
-    setExpandedSet: (set: Set<string>) => void,
-  ],
-  getGroupId: (obj: T) => string,
-  getGroupName: (groupId: string) => string,
-  groupFieldName: string,
-  renderers: [
-    key: string,
-    fieldName: string,
-    name: string,
-    minWidth: number,
-    maxWidth?: number,
-    render?: (song: T) => JSX.Element,
-  ][],
-  getSort: () => SortKey,
-  performSort: (sort: SortKey) => void,
-): [IColumn[], IGroup[], IDetailsGroupRenderProps] {
-  const groups: IGroup[] = [];
-  let startGroup = 0;
-  let lastGroupId: string | null = null;
-  const allGroupIds = new Set<string>();
-
-  // Walk the sorted list of songs, creating groups when the groupId changes
-  // This has the down-side of making multiple groups with the same key if the
-  // list isn't primarily sorted by the groupId, so you'd better make sure it's
-  // sorted
-  for (let i = 0; i <= sortedSongs.length; i++) {
-    const thisId = i === sortedSongs.length ? null : getGroupId(sortedSongs[i]);
-    if (lastGroupId !== null && thisId !== lastGroupId) {
-      groups.push({
-        startIndex: startGroup,
-        count: i - startGroup,
-        key: lastGroupId,
-        name: getGroupName(lastGroupId),
-        isCollapsed: !curExpandedSet.has(lastGroupId),
-      });
-      startGroup = i;
-      const gidCount = allGroupIds.size;
-      allGroupIds.add(lastGroupId);
-      if (gidCount === allGroupIds.size) {
-        err(`Found a duplicate groupId: ${lastGroupId}`);
-      }
-    }
-    lastGroupId = thisId;
-  }
-  const renderProps: IDetailsGroupRenderProps = {
-    onToggleCollapseAll: (isAllCollapsed: boolean) => {
-      setExpandedSet(new Set<string>(isAllCollapsed ? [] : allGroupIds.keys()));
-    },
-    headerProps: {
-      onToggleCollapse: (group: IGroup) => {
-        const newSet = new Set<ArtistKey>(curExpandedSet);
-        if (newSet.has(group.key)) {
-          newSet.delete(group.key);
-        } else {
-          newSet.add(group.key);
-        }
-        setExpandedSet(newSet);
-      },
-    },
-  };
-  const columns = MakeColumns(renderers, getSort, performSort, groupFieldName);
-  return [columns, groups, renderProps];
-}
 /**
  * Build out the song list, group list, and group header properties for a
  * grouped hierarchy of songs

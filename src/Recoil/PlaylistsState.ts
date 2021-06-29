@@ -101,6 +101,17 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
     },
 });
 
+export const allPlaylistsFunc = selector<Map<PlaylistName, SongKey[]>>({
+  key: 'AllPlaylists',
+  get: ({ get }) => {
+    const res = new Map<PlaylistName, SongKey[]>();
+    for (const plName of get(playlistNamesFunc)) {
+      res.set(plName, get(playlistFuncFam(plName)));
+    }
+    return res;
+  },
+});
+
 export function saveableGetter(get: <T>(a: RecoilValue<T>) => T): boolean {
   const curPlaylist = get(activePlaylistState);
   if (isPlaylist(curPlaylist)) {
