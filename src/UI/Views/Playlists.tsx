@@ -1,6 +1,5 @@
 import {
   DetailsList,
-  IColumn,
   IconButton,
   IGroup,
   ScrollablePane,
@@ -14,6 +13,7 @@ import { Song, SongKey } from '@freik/media-core';
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
+  AddSongs,
   DeletePlaylist,
   MyTransactionInterface,
   PlaySongs,
@@ -31,16 +31,20 @@ import { allSongsFunc } from '../../Recoil/ReadOnly';
 import { MakeSortKey } from '../../Sorting';
 import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
+  AlbumForSongRender,
+  ArtistsForSongRender,
+  YearForSongRender,
+} from '../SimpleTags';
+import {
   altRowRenderer,
   ProcessSongGroupData,
   StickyRenderDetailsHeader,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
-import { Spinner } from '../Utilities';
 import './styles/Playlists.css';
 
-type ItemType = PlaylistName;
 type PlaylistSong = Song & { playlist: PlaylistName };
+type ItemType = PlaylistSong;
 export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
   const playlist = useRecoilValue(playlistFuncFam(id));
   return <>{playlist.length}</>;
@@ -54,64 +58,67 @@ const playlistContextState = atom<SongListMenuData>({
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-const playlistSortState = atom({
-  key: 'playlistSort',
-  default: MakeSortKey(['l', 'n'], ['lry', 'nrt']),
+const songContextState = atom<SongListMenuData>({
+  key: 'playlistSongContext',
+  default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-function PlaylistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
+const playlistSortState = atom({
+  key: 'playlistSort',
+  default: MakeSortKey(''),
+});
+
+function PlaylistHeaderDisplay({
+  group,
+  onDelete,
+}: {
+  group: IGroup;
+  onDelete: (key: string) => void;
+}): JSX.Element {
   const onHeaderExpanderClick = useMyTransaction(
     ({ set }) =>
       () =>
         set(playlistIsExpandedState(group.key), !group.isCollapsed),
   );
   const onAddSongsClick = useMyTransaction((xact) => () => {
-    // TODO
-    // AddSongs(xact, album.songs);
+    AddSongs(xact, xact.get(playlistFuncFam(group.key)));
   });
   const onRightClick = useMyTransaction(
     ({ set }) =>
-      (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        /*
-        TODO
-        set(albumContextState, {
+      (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        set(playlistContextState, {
           data: group.key,
-          spot: { left: event.clientX + 14, top: event.clientY },
-        }),
-        */
+          spot: { left: ev.clientX + 14, top: ev.clientY },
+        });
+        return false;
       },
   );
   return (
-    <Stack horizontal verticalAlign="center">
-      <IconButton
-        iconProps={{
-          iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
-        }}
-        onClick={onHeaderExpanderClick}
-      />
-      <Stack
-        horizontal
-        verticalAlign="center"
-        onDoubleClick={onAddSongsClick}
-        onContextMenu={onRightClick}
-        style={{ padding: '2px 0px', cursor: 'pointer' }}
-      >
-        <Text>
-          {group.name}: {group.count} Song{group.count !== 1 ? 's' : ''}
-        </Text>
+    <div onAuxClick={onRightClick}>
+      <Stack horizontal verticalAlign="center">
         <IconButton
-          style={{ height: '20px', alignSelf: 'flex-end' }}
-          iconProps={{ iconName: 'Delete' }}
-          onClick={() => {
-            /*
-            TODO
-            setSelected(item);
-            showDelete();
-            */
+          iconProps={{
+            iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
           }}
+          onClick={onHeaderExpanderClick}
         />
+        <Stack
+          onDoubleClick={onAddSongsClick}
+          horizontal
+          verticalAlign="center"
+          style={{ padding: '2px 0px', cursor: 'pointer' }}
+        >
+          <Text>
+            {group.name}: {group.count} Song{group.count !== 1 ? 's' : ''}
+          </Text>
+          <IconButton
+            style={{ height: '20px', alignSelf: 'flex-end' }}
+            iconProps={{ iconName: 'Delete' }}
+            onClick={() => onDelete(group.key)}
+          />
+        </Stack>
       </Stack>
-    </Stack>
+    </div>
   );
 }
 
@@ -126,9 +133,19 @@ export default function PlaylistView(): JSX.Element {
   const [curSort, setSort] = useRecoilState(playlistSortState);
 
   const playlistExpanded = useRecoilState(playlistExpandedState);
-  const [playlistContext, setPlaylistContext] =
-    useRecoilState(playlistContextState);
+  const playlistContext = useRecoilValue(playlistContextState);
+  const [songContext, setSongContext] = useRecoilState(songContextState);
 
+  const clearSongContext = useMyTransaction(
+    ({ reset }) =>
+      () =>
+        reset(songContextState),
+  );
+  const onClearPlaylist = useMyTransaction(
+    ({ reset }) =>
+      () =>
+        reset(playlistContextState),
+  );
   const onPlaylistInvoked = useMyTransaction(
     (xact) => (playlistName: PlaylistName) => {
       const songs = xact.get(playlistFuncFam(playlistName));
@@ -150,6 +167,11 @@ export default function PlaylistView(): JSX.Element {
       seen.add(song);
     }
     set(playlistFuncFam(playlistContext.data), newList);
+  });
+
+  const onPlaylistDelete = useMyTransaction((xact) => (key: string) => {
+    setSelected(key);
+    showDelete();
   });
 
   const deleteConfirmed = useMyTransaction((xact) => () => {
@@ -184,15 +206,24 @@ export default function PlaylistView(): JSX.Element {
         .filter((val) => !Type.isUndefined(val)) as PlaylistSong[]),
     );
   }
+
   const [expColumns, detailGroupRenderer] = ProcessSongGroupData(
     groups,
     playlistExpanded,
     'playlist',
-    [['p', 'playlist', 'Playlist', 50, 100]],
-    (group: IGroup) => <PlaylistHeaderDisplay group={group} />,
+    [
+      ['t', 'title', 'Title', 100, 150],
+      ['r', 'artistIds', 'Artist', 100, 150, ArtistsForSongRender],
+      ['l', 'albumId', 'Album', 100, 150, AlbumForSongRender],
+      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
+    ],
+    (group: IGroup) => (
+      <PlaylistHeaderDisplay group={group} onDelete={onPlaylistDelete} />
+    ),
     () => curSort,
     setSort,
   );
+  /*
   const columns: IColumn[] = [
     {
       key: 'del',
@@ -227,6 +258,7 @@ export default function PlaylistView(): JSX.Element {
       ),
     },
   ];
+  */
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
@@ -257,15 +289,16 @@ export default function PlaylistView(): JSX.Element {
           onItemInvoked={onPlaylistInvoked}
           groupProps={detailGroupRenderer}
           onRenderDetailsHeader={StickyRenderDetailsHeader}
-          onItemContextMenu={(item?: ItemType, index?: number, ev?: Event) => {
-            if (ev && item) {
-              const mev = ev as unknown as React.MouseEvent<
-                HTMLElement,
-                MouseEvent
-              >;
-              setPlaylistContext({
-                data: item,
-                spot: { left: mev.clientX + 14, top: mev.clientY },
+          onItemContextMenu={(item?: ItemType, _index?: number, ev?: Event) => {
+            if (
+              ev &&
+              item &&
+              Type.hasType(ev, 'clientX', Type.isNumber) &&
+              Type.hasType(ev, 'clientY', Type.isNumber)
+            ) {
+              setSongContext({
+                data: item.key,
+                spot: { left: ev.clientX + 14, top: ev.clientY },
               });
             }
             return false;
@@ -273,9 +306,7 @@ export default function PlaylistView(): JSX.Element {
         />
         <SongListMenu
           context={playlistContext}
-          onClearContext={() =>
-            setPlaylistContext({ data: '', spot: { left: 0, top: 0 } })
-          }
+          onClearContext={onClearPlaylist}
           onGetSongList={({ get }: MyTransactionInterface, data: string) =>
             get(playlistFuncFam(data))
           }
@@ -308,6 +339,11 @@ export default function PlaylistView(): JSX.Element {
               onClick: onRemoveDupes,
             },
           ]}
+        />
+        <SongListMenu
+          context={songContext}
+          onClearContext={clearSongContext}
+          onGetSongList={(_xact, data) => [data]}
         />
       </ScrollablePane>
     </div>

@@ -7,11 +7,7 @@ import {
 import { MakeError } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
-import {
-  AddSongs,
-  MyTransactionInterface,
-  useMyTransaction,
-} from '../../Recoil/api';
+import { AddSongs, useMyTransaction } from '../../Recoil/api';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -58,7 +54,7 @@ const sortedSongsState = selector({
   },
 });
 const songContextState = atom<SongListMenuData>({
-  key: 'songContext',
+  key: 'mixedSongContext',
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
@@ -137,9 +133,7 @@ export default function MixedSongsList(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(xact: MyTransactionInterface, data: string) =>
-            data.length > 0 ? [data] : []
-          }
+          onGetSongList={(_xact, data) => (data.length > 0 ? [data] : [])}
         />
       </ScrollablePane>
     </div>
