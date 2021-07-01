@@ -111,6 +111,10 @@ export function altRowRenderer(
           props.itemIndex % 2 === 0 ? theme.palette.themeLighterAlt : '',
         fontWeight: isBold && isBold(props) ? 'bold' : 'normal',
       },
+      // This lets me render over the top of the "indent" area of grouped stuff
+      cell: {
+        overflow: 'visible',
+      },
     };
     return <DetailsRow {...props} styles={customStyles} />;
   };
@@ -151,7 +155,7 @@ export function ProcessSongGroupData<T>(
     name: string,
     minWidth: number,
     maxWidth?: number,
-    render?: (song: T) => JSX.Element,
+    render?: (song: T, index?: number) => JSX.Element,
   ][],
   headerRenderer: (group: IGroup) => JSX.Element,
   getSort: () => SortKey,

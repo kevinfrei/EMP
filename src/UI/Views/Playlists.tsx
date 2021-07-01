@@ -45,10 +45,6 @@ import './styles/Playlists.css';
 
 type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
-export function PlaylistSongCount({ id }: { id: PlaylistName }): JSX.Element {
-  const playlist = useRecoilValue(playlistFuncFam(id));
-  return <>{playlist.length}</>;
-}
 
 const [playlistExpandedState, playlistIsExpandedState] =
   MakeSetState<PlaylistName>('albumExpanded');
@@ -124,18 +120,21 @@ function PlaylistHeaderDisplay({
 
 export default function PlaylistView(): JSX.Element {
   const [selected, setSelected] = useState('');
-  const [showDelete, deleteData] = useDialogState();
+  const [songPlaylistToRemove, setSongPlaylistToRemove] = useState<
+    [string, string, number]
+  >(['', '', -1]);
+  const [showPlaylistDelete, playlistDeleteData] = useDialogState();
   const [showRename, renameData] = useDialogState();
+  const [showRemoveSong, removeSongData] = useDialogState();
 
   const playlistNames = useRecoilValue(playlistNamesFunc);
   const playlistContents = useRecoilValue(allPlaylistsFunc);
   const allSongs = useRecoilValue(allSongsFunc);
-  const [curSort, setSort] = useRecoilState(playlistSortState);
+  const playlistContext = useRecoilValue(playlistContextState);
 
   const playlistExpanded = useRecoilState(playlistExpandedState);
-  const playlistContext = useRecoilValue(playlistContextState);
+  const [curSort, setSort] = useRecoilState(playlistSortState);
   const [songContext, setSongContext] = useRecoilState(songContextState);
-
   const clearSongContext = useMyTransaction(
     ({ reset }) =>
       () =>
@@ -152,7 +151,6 @@ export default function PlaylistView(): JSX.Element {
       PlaySongs(xact, songs, playlistName);
     },
   );
-
   const onRemoveDupes = useMyTransaction(({ get, set }) => () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
@@ -168,19 +166,66 @@ export default function PlaylistView(): JSX.Element {
     }
     set(playlistFuncFam(playlistContext.data), newList);
   });
-
   const onPlaylistDelete = useMyTransaction((xact) => (key: string) => {
     setSelected(key);
-    showDelete();
+    showPlaylistDelete();
   });
-
   const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });
-
   const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
     RenamePlaylist(xact, selected, newName);
   });
+  const removeSongConfirmed = useMyTransaction((xact) => () => {
+    console.log('here we are1');
+    console.log(songPlaylistToRemove);
+    if (
+      songPlaylistToRemove[0].length > 0 &&
+      songPlaylistToRemove[1].length > 0
+    ) {
+      console.log('here we are2');
+      const playlistName = songPlaylistToRemove[0];
+      const songList = xact.get(playlistFuncFam(playlistName));
+      const songKey = songPlaylistToRemove[1];
+      const index = songPlaylistToRemove[2];
+      const listLocation = index >= 0 ? index : songList.indexOf(songKey);
+      console.log(listLocation);
+      xact.set(
+        playlistFuncFam(songPlaylistToRemove[0]),
+        (curList: SongKey[]) => {
+          if (curList[listLocation] === songKey) {
+            return curList.filter((_v, i) => i !== listLocation);
+          } else {
+            return curList;
+          }
+        },
+      );
+    }
+  });
+
+  // TODO: make delete work
+  const onTitleRenderer = (ttl: PlaylistSong, index?: number): JSX.Element => (
+    <Stack horizontal style={{ marginLeft: -44 }}>
+      <IconButton
+        style={{ height: '20px' }}
+        iconProps={{ iconName: 'Delete' }}
+        onClick={(ev) => {
+          setSongPlaylistToRemove([
+            ttl.playlist,
+            ttl.key,
+            Type.isUndefined(index) ? -1 : index,
+          ]);
+          if (ev.shiftKey) {
+            console.log('here we are');
+            removeSongConfirmed();
+          } else {
+            showRemoveSong();
+          }
+        }}
+      />
+      {ttl.title}
+    </Stack>
+  );
 
   const groups: IGroup[] = [];
   const expItems: PlaylistSong[] = [];
@@ -212,7 +257,7 @@ export default function PlaylistView(): JSX.Element {
     playlistExpanded,
     'playlist',
     [
-      ['t', 'title', 'Title', 100, 150],
+      ['t', 'title', 'Title', 100, 150, onTitleRenderer],
       ['r', 'artistIds', 'Artist', 100, 150, ArtistsForSongRender],
       ['l', 'albumId', 'Album', 100, 150, AlbumForSongRender],
       ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
@@ -223,51 +268,23 @@ export default function PlaylistView(): JSX.Element {
     () => curSort,
     setSort,
   );
-  /*
-  const columns: IColumn[] = [
-    {
-      key: 'del',
-      name: ' ',
-      minWidth: 25,
-      maxWidth: 25,
-      onRender: (item: ItemType) => (
-        <IconButton
-          style={{ height: '20px' }}
-          iconProps={{ iconName: 'Delete' }}
-          onClick={() => {
-            setSelected(item);
-            showDelete();
-          }}
-        />
-      ),
-    },
-    {
-      key: 'title',
-      name: 'Playlist Title',
-      minWidth: 100,
-      onRender: (item: ItemType) => item,
-    },
-    {
-      key: 'count',
-      name: '# of songs',
-      minWidth: 75,
-      onRender: (item: ItemType) => (
-        <Spinner>
-          <PlaylistSongCount id={item} />
-        </Spinner>
-      ),
-    },
-  ];
-  */
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <ConfirmationDialog
-          data={deleteData}
+          data={playlistDeleteData}
           confirmFunc={deleteConfirmed}
           title="Are you sure?"
           text={`Do you really want to delete the playlist ${selected}?`}
           yesText="Delete"
+          noText="Cancel"
+        />
+        <ConfirmationDialog
+          data={removeSongData}
+          confirmFunc={removeSongConfirmed}
+          title="Are you sure?"
+          text="Do you really want to remove the song from the playlist?"
+          yesText="Remove"
           noText="Cancel"
         />
         <TextInputDialog
@@ -329,7 +346,7 @@ export default function PlaylistView(): JSX.Element {
               iconProps: { iconName: 'Delete' },
               onClick: () => {
                 setSelected(playlistContext.data);
-                showDelete();
+                showPlaylistDelete();
               },
             },
             {
