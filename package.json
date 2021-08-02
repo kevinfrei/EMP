@@ -7,6 +7,22 @@
   "author": "Kevin Frei <kevinfrei@hotmail.com>",
   "main": "public/electron.js",
   "homepage": "./",
+  "build": {
+    "appId": "com.music-player.freik",
+    "productName": "Electron Music Player",
+    "directories": {
+      "buildResources": "build"
+    },
+    "mac": {
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "icon": "build/icon.png"
+    }
+  },
   "scripts": {
     "analyze": "er-analyze",
     "release": "pnpm prep-release && pnpm opt-release && electron-builder --publish=always",
@@ -27,22 +43,6 @@
     "chk": "er-check",
     "linecount": "git ls-files|grep \"\\.\\(css\\|ts\\|tsx\\)$\"|grep -v \"__\\|\\.d\\.ts\"|xargs wc -l",
     "postinstall": "husky install"
-  },
-  "build": {
-    "appId": "com.music-player.freik",
-    "productName": "Electron Music Player",
-    "directories": {
-      "buildResources": "build"
-    },
-    "mac": {
-      "icon": "build/icon.png"
-    },
-    "linux": {
-      "icon": "build/icon.png"
-    },
-    "win": {
-      "icon": "build/icon.png"
-    }
   },
   "dependencies": {
     "@fluentui/font-icons-mdl2": "^8.1.7",
