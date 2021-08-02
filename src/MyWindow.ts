@@ -77,7 +77,7 @@ export function InitialWireUp(): void {
 
     // Set up listeners for any messages that we might want to asynchronously
     // send from the main process
-    window.ipc?.on('async-data', (event: IpcRendererEvent, data: unknown) => {
+    window.ipc?.on('async-data', (_event: IpcRendererEvent, data: unknown) => {
       if (
         Type.isArray(data) &&
         Type.isObject(data[0]) &&

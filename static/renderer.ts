@@ -4,7 +4,7 @@
 
 import { MakeError } from '@freik/core-utils';
 import { clipboard, IpcRenderer, ipcRenderer } from 'electron';
-import { BaseEncodingOptions, OpenMode, PathLike, promises as fsp } from 'fs';
+import { ObjectEncodingOptions, OpenMode, PathLike, promises as fsp } from 'fs';
 import { FileHandle } from 'fs/promises';
 
 // import isDev from 'electron-is-dev';
@@ -24,7 +24,10 @@ type ReadFile2 = (
 
 type ReadFile3 = (
   path: PathLike | FileHandle,
-  options?: (BaseEncodingOptions & { flag?: OpenMode }) | BufferEncoding | null,
+  options?:
+    | (ObjectEncodingOptions & { flag?: OpenMode })
+    | BufferEncoding
+    | null,
 ) => Promise<string | Buffer>;
 
 interface MyWindow extends Window {
