@@ -8,7 +8,6 @@ import {
   Type,
 } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
-import { exception } from 'console';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
@@ -48,7 +47,7 @@ export async function RenamePlaylist([curName, newName]: [
 export async function DeletePlaylist(data: string): Promise<void> {
   log('deletePlaylist');
   try {
-    if (!data) throw exception('no data');
+    if (!data) throw Error('no data');
     await fsp.unlink(playlistPath(data));
     log('Deleted successfully:');
     log(data);
