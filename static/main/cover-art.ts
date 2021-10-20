@@ -7,7 +7,7 @@ import {
   Type,
 } from '@freik/core-utils';
 import { Album, AlbumKey, SongKey } from '@freik/media-core';
-import { hideFile } from '@freik/node-utils/lib/file';
+import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
@@ -173,7 +173,7 @@ async function SavePicForAlbum(
         log('Saving to path: ' + albumPath);
         await fs.writeFile(albumPath, data);
         if (coverName.startsWith('.')) {
-          await hideFile(albumPath);
+          await FileUtil.hideFile(albumPath);
         }
       } catch (e) {
         err('Saving picture failed :(');

@@ -339,7 +339,7 @@ type KeyboardHookType<T extends KeyEventType> = (
   cbIntfc: CallbackInterface,
 ) => (ev: T) => void;
 
-let lastHeard = performance.now();
+let lastHeard = new Date().getTime();
 
 export function keyboardHook<T extends KeyEventType>(
   filterState: RecoilState<string>,
@@ -351,7 +351,7 @@ export function keyboardHook<T extends KeyEventType>(
         set(filterState, '');
         return;
       }
-      const time = performance.now();
+      const time = new Date().getTime();
       const clear: boolean = time - lastHeard > 750;
       lastHeard = time;
       set(filterState, (curVal) => (clear ? ev.key : curVal + ev.key));
@@ -370,7 +370,7 @@ export function kbHook<T extends KeyEventType>(
         set(filterState, '');
         return;
       }
-      const time = performance.now();
+      const time = new Date().getTime();
       const clear: boolean = time - lastHeard > 750;
       lastHeard = time;
       // const newFilter = clear ? ev.key : keyFilter + ev.key;
