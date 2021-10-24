@@ -1,116 +1,116 @@
 {
-    "license": "CC0-1.0",
-    "name": "emp",
-    "version": "0.5.0",
-    "private": true,
-    "description": "Electron Music Player",
-    "author": "Kevin Frei <kevinfrei@hotmail.com>",
-    "main": "public/electron.js",
-    "homepage": "./",
-    "build": {
-        "appId": "com.music-player.freik",
-        "productName": "Electron Music Player",
-        "directories": {
-            "buildResources": "build"
-        },
-        "mac": {
-            "icon": "build/icon.png"
-        },
-        "linux": {
-            "icon": "build/icon.png"
-        },
-        "win": {
-            "icon": "build/icon.png"
-        }
+  "license": "CC0-1.0",
+  "name": "emp",
+  "version": "0.5.0",
+  "private": true,
+  "description": "Electron Music Player",
+  "author": "Kevin Frei <kevinfrei@hotmail.com>",
+  "main": "public/electron.js",
+  "homepage": "./",
+  "build": {
+    "appId": "com.music-player.freik",
+    "productName": "Electron Music Player",
+    "directories": {
+      "buildResources": "build"
     },
-    "scripts": {
-        "analyze": "er analyze",
-        "release": "yarn prep-release && yarn opt-release && electron-builder --publish=always",
-        "tryrel": "yarn prep-release && yarn opt-release && electron-builder --publish=never",
-        "opt-release": "minify -i -r build",
-        "prep-release": "yarn clean && yarn release-build && rimraf build/main/__tests__",
-        "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo build dist",
-        "release-build": "er prepare -r && er build",
-        "build": "er prepare && er build",
-        "start": "er start",
-        "prepare": "er prepare",
-        "types": "er types",
-        "test": "er test",
-        "testui": "jest --config config/jest.jsdom.js --watch",
-        "testnode": "jest --config config/jest.node.js --watch",
-        "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"config/*.js\" \"config/*.json\" \"*.json\" \"*.md\" \"src/**/*.css\" .prettierrc",
-        "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
-        "chk": "er check",
-        "linecount": "git ls-files|grep \"\\.\\(css\\|ts\\|tsx\\)$\"|grep -v \"__\\|\\.d\\.ts\"|xargs wc -l",
-        "postinstall": "husky install"
+    "mac": {
+      "icon": "build/icon.png"
     },
-    "dependencies": {
-        "@fluentui/font-icons-mdl2": "^8.1.14",
-        "@fluentui/react": "^8.37.1",
-        "@fluentui/react-hooks": "^8.3.4",
-        "@freik/audiodb": "^0.2.2",
-        "@freik/core-utils": "~0.31.0",
-        "@freik/media-core": "~0.10.0",
-        "@freik/media-utils": "~0.13.1",
-        "@freik/node-utils": "~0.20.1",
-        "album-art": "^2.0.2",
-        "electron-is-dev": "^2.0.0",
-        "open": "^8.4.0",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
-        "recoil": "^0.4.1",
-        "xxhashjs": "^0.2.2"
+    "linux": {
+      "icon": "build/icon.png"
     },
-    "browserslist": {
-        "production": [
-            "last 1 chrome version"
-        ],
-        "development": [
-            "last 1 chrome version"
-        ]
-    },
-    "devDependencies": {
-        "@babel/core": "^7.15.8",
-        "@babel/eslint-parser": "^7.15.8",
-        "@babel/plugin-transform-react-jsx": "^7.14.9",
-        "@freik/build-tools": "3.1.4",
-        "@testing-library/jest-dom": "^5.14.1",
-        "@testing-library/react": "^12.1.2",
-        "@types/electron-devtools-installer": "^2.2.0",
-        "@types/jest": "^27.0.2",
-        "@types/node": "^16.11.4",
-        "@types/react": "^17.0.32",
-        "@types/react-dom": "^17.0.10",
-        "@types/react-test-renderer": "^17.0.1",
-        "@types/xxhashjs": "^0.2.2",
-        "@typescript-eslint/eslint-plugin": "^5.1.0",
-        "@typescript-eslint/parser": "^5.1.0",
-        "cross-env": "^7.0.3",
-        "electron": "^15.3.0",
-        "electron-builder": "^22.13.1",
-        "electron-devtools-installer": "^3.2.0",
-        "electron-react-devtools": "^0.5.3",
-        "eslint": "^7.32.0",
-        "eslint-config-prettier": "^8.3.0",
-        "eslint-config-react-app": "^6.0.0",
-        "eslint-plugin-flowtype": "^6.1.1",
-        "eslint-plugin-import": "^2.25.2",
-        "eslint-plugin-jsx-a11y": "^6.4.1",
-        "eslint-plugin-prettier": "^4.0.0",
-        "eslint-plugin-react": "^7.26.1",
-        "eslint-plugin-react-hooks": "^4.2.0",
-        "husky": "^7.0.4",
-        "jest": "27.3.1",
-        "jest-transform-css": "^2.1.0",
-        "postcss": "8.3.11",
-        "prettier": "^2.4.1",
-        "react-scripts": "^4.0.3",
-        "react-test-renderer": "^17.0.2",
-        "rimraf": "^3.0.2",
-        "svg-react-loader": "^0.4.6",
-        "ts-jest": "27.0.7",
-        "typescript": "^4.4.4",
-        "wait-on": "^6.0.0"
-    },
-    "packageManager": "yarn@3.0.2"
+    "win": {
+      "icon": "build/icon.png"
+    }
+  },
+  "scripts": {
+    "analyze": "er analyze",
+    "release": "yarn prep-release && yarn opt-release && electron-builder --publish=always",
+    "tryrel": "yarn prep-release && yarn opt-release && electron-builder --publish=never",
+    "opt-release": "minify -i -r build",
+    "prep-release": "yarn clean && yarn release-build && rimraf build/main/__tests__",
+    "clean": "rimraf public/main public/*.js public/*.js.map .ts*.tsbuildinfo build dist",
+    "release-build": "er prepare -r && er build",
+    "build": "er prepare && er build",
+    "start": "er start",
+    "prepare": "er prepare",
+    "types": "er types",
+    "test": "er test",
+    "testui": "jest --config config/jest.jsdom.js --watch",
+    "testnode": "jest --config config/jest.node.js --watch",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"config/*.js\" \"config/*.json\" \"*.json\" \"*.md\" \"src/**/*.css\" .prettierrc",
+    "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
+    "chk": "er check",
+    "linecount": "git ls-files|grep \"\\.\\(css\\|ts\\|tsx\\)$\"|grep -v \"__\\|\\.d\\.ts\"|xargs wc -l",
+    "postinstall": "husky install"
+  },
+  "dependencies": {
+    "@fluentui/font-icons-mdl2": "^8.1.14",
+    "@fluentui/react": "^8.37.1",
+    "@fluentui/react-hooks": "^8.3.4",
+    "@freik/audiodb": "^0.2.2",
+    "@freik/core-utils": "~0.31.0",
+    "@freik/media-core": "~0.10.0",
+    "@freik/media-utils": "~0.13.1",
+    "@freik/node-utils": "~0.20.1",
+    "album-art": "^2.0.2",
+    "electron-is-dev": "^2.0.0",
+    "open": "^8.4.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "recoil": "^0.4.1",
+    "xxhashjs": "^0.2.2"
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/eslint-parser": "^7.15.8",
+    "@babel/plugin-transform-react-jsx": "^7.14.9",
+    "@freik/build-tools": "3.1.4",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.1.2",
+    "@types/electron-devtools-installer": "^2.2.0",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.4",
+    "@types/react": "^17.0.32",
+    "@types/react-dom": "^17.0.10",
+    "@types/react-test-renderer": "^17.0.1",
+    "@types/xxhashjs": "^0.2.2",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^15.3.0",
+    "electron-builder": "^22.13.1",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-react-devtools": "^0.5.3",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-plugin-flowtype": "^6.1.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "husky": "^7.0.4",
+    "jest": "27.3.1",
+    "jest-transform-css": "^2.1.0",
+    "postcss": "8.3.11",
+    "prettier": "^2.4.1",
+    "react-scripts": "^4.0.3",
+    "react-test-renderer": "^17.0.2",
+    "rimraf": "^3.0.2",
+    "svg-react-loader": "^0.4.6",
+    "ts-jest": "27.0.7",
+    "typescript": "^4.4.4",
+    "wait-on": "^6.0.0"
+  },
+  "packageManager": "yarn@3.0.2"
 }
