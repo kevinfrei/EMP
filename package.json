@@ -17,7 +17,8 @@
       "icon": "build/icon.png"
     },
     "linux": {
-      "icon": "build/icon.png"
+      "icon": "build/icon.png",
+      "category": "Audio"
     },
     "win": {
       "icon": "build/icon.png"
