@@ -97,6 +97,10 @@ export async function CreateWindow(
         }
         // Call the user specified "ready to go" function
         windowCreated().catch(err);
+        // open the devtools
+        if (isDev) {
+          mainWindow.webContents.openDevTools();
+        }
       }
     })
     // Save the window position when it's changed:
