@@ -3,8 +3,14 @@
 
 import { IGroup } from '@fluentui/react';
 import { MakeMultiMap, MultiMap, Type } from '@freik/core-utils';
-import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-core';
-import { SongKey } from '@freik/media-utils/lib/metadata';
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  Song,
+  SongKey,
+} from '@freik/media-core';
 import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
 import { Fail } from './Tools';
 

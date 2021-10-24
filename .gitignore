@@ -3,6 +3,13 @@
 /node_modules
 /.pnp
 .pnp.js
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 .eslintcache
 **/*.tsbuildinfo
 
@@ -13,8 +20,8 @@
 /build
 /dist
 /public/main
-/public/*.js
-/public/*.js.map
+/public/**/*.js
+/**/*.js.map
 
 # misc
 .DS_Store

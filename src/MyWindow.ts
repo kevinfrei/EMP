@@ -1,8 +1,7 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { NormalizedStringCompare } from '@freik/core-utils/lib/Helpers';
+import { Helpers, MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { IpcRenderer, NativeImage } from 'electron';
 import { IpcRendererEvent, OpenDialogSyncOptions } from 'electron/main';
@@ -34,13 +33,13 @@ declare let window: MyWindow;
 
 export function SetDB(db: FlatAudioDatabase): void {
   const albums = db.albums.sort((a, b) =>
-    NormalizedStringCompare(a.title, b.title),
+    Helpers.NormalizedStringCompare(a.title, b.title),
   );
   const artists = db.artists.sort((a, b) =>
-    NormalizedStringCompare(a.name, b.name),
+    Helpers.NormalizedStringCompare(a.name, b.name),
   );
   const songs = db.songs.sort((a, b) =>
-    NormalizedStringCompare(a.title, b.title),
+    Helpers.NormalizedStringCompare(a.title, b.title),
   );
   window.db = { albums, artists, songs };
 }

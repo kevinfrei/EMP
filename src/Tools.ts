@@ -58,9 +58,7 @@ export function isPlaylist(playlist?: string): boolean {
 }
 
 export function RandomInt(max: number): number {
-  const values = new Uint32Array(4);
-  window.crypto.getRandomValues(values);
-  return values[0] % max;
+  return Math.floor(Math.random() * max);
 }
 
 export function ShuffleArray<T>(array: T[]): T[] {
