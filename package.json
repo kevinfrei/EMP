@@ -13,12 +13,29 @@
     "directories": {
       "buildResources": "build"
     },
+    "fileAssociations": {
+      "ext": [
+        "mp3",
+        "m4a",
+        "aac",
+        "flac",
+        "wma"
+      ],
+      "description": "Audio files",
+      "role": "Viewer"
+    },
     "mac": {
       "icon": "build/icon.png"
     },
     "linux": {
       "icon": "build/icon.png",
-      "category": "Audio"
+      "category": "Audio",
+      "mimeTypes": [
+        "audio/mpeg",
+        "audio/m4a",
+        "audio/aac",
+        "audio/x-flac"
+      ]
     },
     "win": {
       "icon": "build/icon.png"
