@@ -8,7 +8,7 @@ import Settings from '../Views/Settings';
 
 jest.mock('../../MyWindow');
 
-it('Render Settings without crashing', async () => {
+it('Render Settings without crashing', () => {
   initializeIcons();
   /*
   await act(async () => {
@@ -26,7 +26,7 @@ it('Render Settings without crashing', async () => {
   */
 });
 
-it('Render SearchResults without crashing', async () => {
+it('Render SearchResults without crashing', () => {
   /*
   initializeIcons();
   await act(async () => {

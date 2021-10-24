@@ -25,7 +25,7 @@ const err = MakeError('api.test');
 jest.useFakeTimers();
 jest.mock('../../MyWindow');
 
-function flushPromisesAndTimers(): Promise<void> {
+export function flushPromisesAndTimers(): Promise<void> {
   // Wrap flush with act() to avoid warning that only shows up in OSS environment
   return act(
     () =>
@@ -43,7 +43,7 @@ type RecoilSetter = <T>(
 ) => void;
 type RecoilGetter = <T>(rv: RecoilState<T> | RecoilValueReadOnly<T>) => T;
 
-function makeCallbackIfc(
+export function makeCallbackIfc(
   set: RecoilSetter,
   get: RecoilGetter,
 ): MyTransactionInterface {

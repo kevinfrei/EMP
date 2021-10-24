@@ -8,7 +8,7 @@ import VolumeControl from '../VolumeControl';
 
 jest.mock('../../MyWindow');
 
-it('renders without crashing', async () => {
+it('renders without crashing', () => {
   initializeIcons();
   /*
   await act(async () => {
