@@ -112,9 +112,12 @@ export function altRowRenderer(
         fontWeight: isBold && isBold(props) ? 'bold' : 'normal',
       },
       // This lets me render over the top of the "indent" area of grouped stuff
+      /*    
+      Note to self: This is a very bad idea. Don't do it.
       cell: {
         overflow: 'visible',
       },
+      */
     };
     return <DetailsRow {...props} styles={customStyles} />;
   };

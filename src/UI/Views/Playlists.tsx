@@ -201,7 +201,7 @@ export default function PlaylistView(): JSX.Element {
 
   // TODO: make delete work
   const onTitleRenderer = (ttl: PlaylistSong, index?: number): JSX.Element => (
-    <Stack horizontal style={{ marginLeft: -44 }}>
+    <Stack horizontal style={{ marginLeft: -21 }}>
       <IconButton
         style={{ height: '20px' }}
         iconProps={{ iconName: 'Delete' }}
