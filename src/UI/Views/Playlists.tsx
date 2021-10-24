@@ -177,19 +177,15 @@ export default function PlaylistView(): JSX.Element {
     RenamePlaylist(xact, selected, newName);
   });
   const removeSongConfirmed = useMyTransaction((xact) => () => {
-    console.log('here we are1');
-    console.log(songPlaylistToRemove);
     if (
       songPlaylistToRemove[0].length > 0 &&
       songPlaylistToRemove[1].length > 0
     ) {
-      console.log('here we are2');
       const playlistName = songPlaylistToRemove[0];
       const songList = xact.get(playlistFuncFam(playlistName));
       const songKey = songPlaylistToRemove[1];
       const index = songPlaylistToRemove[2];
       const listLocation = index >= 0 ? index : songList.indexOf(songKey);
-      console.log(listLocation);
       xact.set(
         playlistFuncFam(songPlaylistToRemove[0]),
         (curList: SongKey[]) => {
@@ -216,7 +212,6 @@ export default function PlaylistView(): JSX.Element {
             Type.isUndefined(index) ? -1 : index,
           ]);
           if (ev.shiftKey) {
-            console.log('here we are');
             removeSongConfirmed();
           } else {
             showRemoveSong();
