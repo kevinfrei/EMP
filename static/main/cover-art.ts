@@ -6,7 +6,15 @@ import {
   SafelyUnpickle,
   Type,
 } from '@freik/core-utils';
-import { Album, AlbumKey, SongKey } from '@freik/media-core';
+import {
+  Album,
+  AlbumKey,
+  Artist,
+  ArtistKey,
+  isAlbumKey,
+  isArtistKey,
+  SongKey,
+} from '@freik/media-core';
 import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
@@ -25,12 +33,9 @@ async function shouldDownloadAlbumArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadAlbumArtwork')) === 'true';
 }
 
-// TODO: This isn't used anywhere... yet...
-/*
 async function shouldDownloadArtistArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadArtistArtwork')) === 'true';
 }
-*/
 
 async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
   return (
@@ -58,6 +63,11 @@ async function getArt(album: string, artist: string): Promise<string | void> {
   if (!attempt.startsWith('Error: No results found')) return attempt;
 }
 
+async function getArtistImage(artist: string): Promise<string | void> {
+  const attempt = await albumArt(artist);
+  if (!attempt.startsWith('Error: No results found')) return attempt;
+}
+
 // Try to find an album title match, trimming off ending junk of the album title
 async function LookForAlbum(
   artist: string,
@@ -68,11 +78,10 @@ async function LookForAlbum(
   let lastAlbum: string;
 
   // Let's see if we should stop looking for this album
-  const bailData =
-    (await Persistence.getItemAsync('noMoreLooking')) ||
-    '{"@dataType":"Set","@dataValue":[]}';
-  const skip = SafelyUnpickle(bailData, Type.isSetOfString);
-  if (Type.isSetOfString(skip) && skip.has(albTrim)) {
+  const bailData = await Persistence.getItemAsync('noMoreLooking');
+  const skip =
+    SafelyUnpickle(bailData || '', Type.isSetOfString) || new Set<string>();
+  if (skip.has(albTrim)) {
     return;
   }
   do {
@@ -102,50 +111,124 @@ async function LookForAlbum(
   } while (lastAlbum !== albTrim);
 
   // Record the failure, so we stop looking...
-  const newSkip: Set<string> = Type.isSetOfString(skip) ? skip : new Set();
-  newSkip.add(albTrim);
-  await Persistence.setItemAsync('noMoreLooking', Pickle(newSkip));
+  skip.add(albTrim);
+  await Persistence.setItemAsync('noMoreLooking', Pickle(skip));
+}
+
+// Try to find an artist match
+async function LookForArtist(artist: string): Promise<string | void> {
+  log(`Finding art for ${artist}`);
+
+  // Let's see if we should stop looking for this artist
+  const bailData = await Persistence.getItemAsync('noMoreLookingArtist');
+  const skip =
+    SafelyUnpickle(bailData || '', Type.isSetOfString) || new Set<string>();
+  if (skip.has(artist)) {
+    return;
+  }
+  try {
+    const attempt = await getArtistImage(artist);
+    if (attempt) {
+      log(`Got art for ${artist}`);
+      return attempt;
+    }
+  } catch (e) {
+    log(`Failed attempt ${artist}`);
+  }
+
+  // Record the failure, so we stop looking...
+  skip.add(artist);
+  await Persistence.setItemAsync('noMoreLookingArtist', Pickle(skip));
+}
+
+async function getPictureFromDB(
+  db: AudioDatabase,
+  id: string,
+): Promise<void | Buffer> {
+  if (isAlbumKey(id)) {
+    return await db.getAlbumPicture(id);
+  } else if (isArtistKey(id)) {
+    return await db.getArtistPicture(id);
+  }
+}
+
+async function tryToDownloadAlbumCover(
+  db: AudioDatabase,
+  id: AlbumKey,
+): Promise<Buffer | void> {
+  const album = db.getAlbum(id);
+  if (album) {
+    // Nothing in the files, let's see if we're supposed to download
+    if (await shouldDownloadAlbumArtwork()) {
+      const artist = db.getArtist(album.primaryArtists[0]);
+      if (artist) {
+        const res = await LookForAlbum(artist.name, album.title);
+        log(`${artist.name}: ${album.title}`);
+        if (res) {
+          log(res);
+          const data = await httpsDownloader(res);
+          log('Got data from teh interwebs');
+          await SavePicForAlbum(db, album, data);
+          return data;
+        }
+      }
+    }
+  }
+}
+
+async function tryToDownloadArtistImage(
+  db: AudioDatabase,
+  id: ArtistKey,
+): Promise<Buffer | void> {
+  const artist = db.getArtist(id);
+  if (artist) {
+    // Nothing in the files, let's see if we're supposed to download
+    if (await shouldDownloadArtistArtwork()) {
+      const res = await LookForArtist(artist.name);
+      log(`${artist.name}:`);
+      if (res) {
+        log(res);
+        const data = await httpsDownloader(res);
+        log('Got data from teh interwebs');
+        await SavePicForArtist(db, artist, data);
+        return data;
+      }
+    }
+  }
 }
 
 export async function PicBufProtocolHandler(
   req: ProtocolRequest,
-  albumId: string,
+  id: string,
 ): Promise<BufferResponse> {
   // Check to see if there's a song in the album that has a cover image
   try {
     const db = await GetAudioDB();
 
-    log(`Got a request for ${albumId}`);
-    if (albumId.lastIndexOf('#') !== -1) {
-      albumId = albumId.substr(0, albumId.lastIndexOf('#'));
+    log(`Got a request for ${id}`);
+    if (id.lastIndexOf('#') !== -1) {
+      id = id.substr(0, id.lastIndexOf('#'));
     }
-    const maybePath = await db.getAlbumPicture(albumId);
+    const maybePath = await getPictureFromDB(db, id);
     if (maybePath) {
       log(`Returning ${maybePath.length} bytes`);
       return {
         data: maybePath,
       };
     }
-    const album = db.getAlbum(albumId);
-    if (album) {
-      // Nothing in the files, let's see if we're supposed to download
-      if (await shouldDownloadAlbumArtwork()) {
-        const artist = db.getArtist(album.primaryArtists[0]);
-        if (artist) {
-          const res = await LookForAlbum(artist.name, album.title);
-          log(`${artist.name}: ${album.title}`);
-          if (res) {
-            log(res);
-            const data = await httpsDownloader(res);
-            log('Got data from teh interwebs');
-            await SavePicForAlbum(db, album, data);
-            return { data };
-          }
-        }
+    if (isAlbumKey(id)) {
+      const data = await tryToDownloadAlbumCover(db, id);
+      if (data) {
+        return { data };
+      }
+    } else if (isArtistKey(id)) {
+      const data = await tryToDownloadArtistImage(db, id);
+      if (data) {
+        return { data };
       }
     }
   } catch (error) {
-    log(`Error while trying to get picture for ${albumId}`);
+    log(`Error while trying to get picture for ${id}`);
     // log(error);
   }
   return await GetDefaultPicBuffer();
@@ -183,6 +266,15 @@ async function SavePicForAlbum(
   }
   log('Saving to blob store');
   await db.setAlbumPicture(album.key, data);
+}
+
+async function SavePicForArtist(
+  db: AudioDatabase,
+  artist: Artist,
+  data: Buffer,
+) {
+  log('Saving to blob store');
+  await db.setArtistPicture(artist.key, data);
 }
 
 export type AlbumCoverData =

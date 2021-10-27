@@ -176,14 +176,10 @@ function ArtworkSettings(): JSX.Element {
           disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
           description="Filename to save the artwork as"
           value={coverArtName}
-          onChange={(ev, nv) => nv && setCoverArtName(nv)}
+          onChange={(_ev, nv) => nv && setCoverArtName(nv)}
         />
       </Stack>
-      <StateToggle
-        label="NYI: Download Artist Artwork"
-        state={dlArtistArtwork}
-        disabled
-      />
+      <StateToggle label="Download Artist Artwork" state={dlArtistArtwork} />
       <DefaultButton
         text="Flush Image Cache"
         style={{ width: '185px', gridRow: 4 }}
