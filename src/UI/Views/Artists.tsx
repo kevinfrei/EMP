@@ -3,6 +3,8 @@ import {
   IconButton,
   IDetailsList,
   IGroup,
+  Image,
+  ImageFit,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
@@ -25,7 +27,7 @@ import {
   useMyTransaction,
 } from '../../Recoil/api';
 import { MakeSetState } from '../../Recoil/helpers';
-import { focusedKeysFuncFam } from '../../Recoil/Local';
+import { artistImageUrlFuncFam, focusedKeysFuncFam } from '../../Recoil/Local';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -78,6 +80,7 @@ const sortOrderState = atom({
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
+  const picurl = useRecoilValue(artistImageUrlFuncFam(group.key));
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, artist.songs);
   });
@@ -103,13 +106,23 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
         }}
         onClick={onHeaderExpanderClick}
       />
-      <Text
+      <Stack
+        horizontal
+        verticalAlign="center"
         onDoubleClick={onAddSongsClick}
         onContextMenu={onRightClick}
-        style={{ cursor: 'pointer' }}
+        style={{ padding: '2px 0px', cursor: 'pointer' }}
       >
-        {`${artist.name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
-      </Text>
+        <Image
+          imageFit={ImageFit.centerContain}
+          height={50}
+          width={50}
+          src={picurl}
+        />
+        <Text style={{ margin: '4px' }}>
+          {`${artist.name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
+        </Text>
+      </Stack>
     </Stack>
   );
 }

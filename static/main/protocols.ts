@@ -4,7 +4,7 @@ import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
-import { PicBufProtocolHandler } from './cover-art';
+import { PictureHandler } from './cover-art';
 import { Persistence } from './persist';
 
 export type FileResponse = string | ProtocolResponse;
@@ -102,10 +102,10 @@ export async function RegisterProtocols(): Promise<void> {
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
   registerProtocolHandler(
-    'pic://album/',
+    'pic://key/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerBufferProtocol,
-    PicBufProtocolHandler,
+    PictureHandler,
     defPicBuffer,
   );
   registerProtocolHandler(

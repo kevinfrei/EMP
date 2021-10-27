@@ -13,6 +13,7 @@ import {
   ArtistKey,
   isAlbumKey,
   isArtistKey,
+  MediaKey,
   SongKey,
 } from '@freik/media-core';
 import { FileUtil } from '@freik/node-utils';
@@ -26,7 +27,7 @@ import { GetAudioDB } from './AudioDatabase';
 import { Persistence } from './persist';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
-const log = MakeLogger('cover-art', false && electronIsDev);
+const log = MakeLogger('cover-art', true && electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
@@ -73,14 +74,14 @@ async function LookForAlbum(
   artist: string,
   album: string,
 ): Promise<string | void> {
-  log(`Finding art for ${artist}: ${album}`);
+  log(`Finding album art for ${artist}: ${album}`);
   let albTrim = album.trim();
   let lastAlbum: string;
 
   // Let's see if we should stop looking for this album
   const bailData = await Persistence.getItemAsync('noMoreLooking');
   const skip =
-    SafelyUnpickle(bailData || '', Type.isSetOfString) || new Set<string>();
+    SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
   if (skip.has(albTrim)) {
     return;
   }
@@ -88,11 +89,11 @@ async function LookForAlbum(
     try {
       const attempt = await getArt(artist, albTrim);
       if (attempt) {
-        log(`Got art for ${artist}: ${album} [${albTrim}]`);
+        log(`Got album art for ${artist}: ${album} [${albTrim}]`);
         return attempt;
       }
     } catch (e) {
-      log(`Failed attempt ${albTrim}`);
+      log(`Failed album attempt ${albTrim}`);
     }
     lastAlbum = albTrim;
     for (const pair of ['()', '[]', '{}']) {
@@ -117,23 +118,23 @@ async function LookForAlbum(
 
 // Try to find an artist match
 async function LookForArtist(artist: string): Promise<string | void> {
-  log(`Finding art for ${artist}`);
+  log(`Finding artist art for ${artist}`);
 
   // Let's see if we should stop looking for this artist
   const bailData = await Persistence.getItemAsync('noMoreLookingArtist');
   const skip =
-    SafelyUnpickle(bailData || '', Type.isSetOfString) || new Set<string>();
+    SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
   if (skip.has(artist)) {
     return;
   }
   try {
     const attempt = await getArtistImage(artist);
     if (attempt) {
-      log(`Got art for ${artist}`);
+      log(`Got artist art for ${artist}`);
       return attempt;
     }
   } catch (e) {
-    log(`Failed attempt ${artist}`);
+    log(`Failed artist attempt ${artist}`);
   }
 
   // Record the failure, so we stop looking...
@@ -143,11 +144,13 @@ async function LookForArtist(artist: string): Promise<string | void> {
 
 async function getPictureFromDB(
   db: AudioDatabase,
-  id: string,
+  id: MediaKey,
 ): Promise<void | Buffer> {
   if (isAlbumKey(id)) {
+    log(`Found album art for ${id}`);
     return await db.getAlbumPicture(id);
   } else if (isArtistKey(id)) {
+    log(`Found artist art for ${id}`);
     return await db.getArtistPicture(id);
   }
 }
@@ -167,7 +170,7 @@ async function tryToDownloadAlbumCover(
         if (res) {
           log(res);
           const data = await httpsDownloader(res);
-          log('Got data from teh interwebs');
+          log('Got album data from teh interwebs');
           await SavePicForAlbum(db, album, data);
           return data;
         }
@@ -189,7 +192,7 @@ async function tryToDownloadArtistImage(
       if (res) {
         log(res);
         const data = await httpsDownloader(res);
-        log('Got data from teh interwebs');
+        log('Got artist data from teh interwebs');
         await SavePicForArtist(db, artist, data);
         return data;
       }
@@ -197,15 +200,15 @@ async function tryToDownloadArtistImage(
   }
 }
 
-export async function PicBufProtocolHandler(
+export async function PictureHandler(
   req: ProtocolRequest,
-  id: string,
+  id: MediaKey,
 ): Promise<BufferResponse> {
   // Check to see if there's a song in the album that has a cover image
   try {
     const db = await GetAudioDB();
 
-    log(`Got a request for ${id}`);
+    // log(`Got a request for ${id}`);
     if (id.lastIndexOf('#') !== -1) {
       id = id.substr(0, id.lastIndexOf('#'));
     }
@@ -229,7 +232,7 @@ export async function PicBufProtocolHandler(
     }
   } catch (error) {
     log(`Error while trying to get picture for ${id}`);
-    // log(error);
+    log(error);
   }
   return await GetDefaultPicBuffer();
 }

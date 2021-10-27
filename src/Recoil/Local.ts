@@ -1,4 +1,4 @@
-import { AlbumKey, SongKey } from '@freik/media-core';
+import { AlbumKey, ArtistKey, MediaKey, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { MakeSortKey } from '../Sorting';
 import { RandomInt } from '../Tools';
@@ -107,9 +107,9 @@ export const isMiniplayerState = atom<boolean>({
  * the "picCacheAvoider" for a particularly album cover
  * It's efficacy is not guaranteed, but it's a best effort, i guess
  */
-export const picCacheAvoiderStateFam = atomFamily<number, AlbumKey>({
+export const picCacheAvoiderStateFam = atomFamily<number, MediaKey>({
   key: 'picCacheAvoider',
-  default: RandomInt(0xfffff),
+  default: RandomInt(0x3fffffff),
 });
 
 export const albumCoverUrlFuncFam = selectorFamily<string, AlbumKey>({
@@ -117,7 +117,16 @@ export const albumCoverUrlFuncFam = selectorFamily<string, AlbumKey>({
   get:
     (key: AlbumKey) =>
     ({ get }) => {
-      return `pic://album/${key}#${get(picCacheAvoiderStateFam(key))}`;
+      return `pic://key/${key}`;
+    },
+});
+
+export const artistImageUrlFuncFam = selectorFamily<string, ArtistKey>({
+  key: 'artistImageUrl',
+  get:
+    (key: ArtistKey) =>
+    ({ get }) => {
+      return `pic://key/${key}`;
     },
 });
 
