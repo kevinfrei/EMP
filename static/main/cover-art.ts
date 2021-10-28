@@ -2,6 +2,7 @@ import { AudioDatabase } from '@freik/audiodb';
 import {
   MakeError,
   MakeLogger,
+  MakeWaitingQueue,
   Pickle,
   SafelyUnpickle,
   Type,
@@ -69,6 +70,30 @@ async function getArtistImage(artist: string): Promise<string | void> {
   if (!attempt.startsWith('Error: No results found')) return attempt;
 }
 
+async function checkSet(name: string, key: string): Promise<boolean> {
+  const bailData = await Persistence.getItemAsync(name);
+  const skip =
+    SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
+  return skip.has(key);
+}
+
+const setWriterWaiter = MakeWaitingQueue(1);
+
+async function addToSet(name: string, key: string): Promise<void> {
+  if (await setWriterWaiter.wait()) {
+    try {
+      const bailData = await Persistence.getItemAsync(name);
+      const skip =
+        SafelyUnpickle(bailData || '""', Type.isSetOfString) ||
+        new Set<string>();
+      skip.add(key);
+      await Persistence.setItemAsync(name, Pickle(skip));
+    } finally {
+      setWriterWaiter.leave();
+    }
+  }
+}
+
 // Try to find an album title match, trimming off ending junk of the album title
 async function LookForAlbum(
   artist: string,
@@ -79,10 +104,9 @@ async function LookForAlbum(
   let lastAlbum: string;
 
   // Let's see if we should stop looking for this album
-  const bailData = await Persistence.getItemAsync('noMoreLooking');
-  const skip =
-    SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
-  if (skip.has(albTrim)) {
+  if (
+    await checkSet('noMoreLooking', `${artist}/${albTrim}`.toLocaleLowerCase())
+  ) {
     return;
   }
   do {
@@ -112,8 +136,11 @@ async function LookForAlbum(
   } while (lastAlbum !== albTrim);
 
   // Record the failure, so we stop looking...
-  skip.add(albTrim);
-  await Persistence.setItemAsync('noMoreLooking', Pickle(skip));
+
+  await addToSet(
+    'noMoreLooking',
+    `${artist}/${album.trim()}`.toLocaleLowerCase(),
+  );
 }
 
 // Try to find an artist match
@@ -124,7 +151,7 @@ async function LookForArtist(artist: string): Promise<string | void> {
   const bailData = await Persistence.getItemAsync('noMoreLookingArtist');
   const skip =
     SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
-  if (skip.has(artist)) {
+  if (skip.has(artist.toLocaleLowerCase())) {
     return;
   }
   try {
@@ -138,7 +165,7 @@ async function LookForArtist(artist: string): Promise<string | void> {
   }
 
   // Record the failure, so we stop looking...
-  skip.add(artist);
+  skip.add(artist.toLocaleLowerCase());
   await Persistence.setItemAsync('noMoreLookingArtist', Pickle(skip));
 }
 

@@ -6,20 +6,20 @@
       "script": "lint",
       "problemMatcher": "$eslint-compact",
       "label": "npm: lint",
-      "detail": "pnpm lint"
+      "detail": "yarn lint"
     },
     {
       "type": "npm",
       "script": "prepare",
       "problemMatcher": "$tsc",
       "label": "npm: prepare",
-      "detail": "pnpm prepare"
+      "detail": "yarn prepare"
     },
     {
       "type": "npm",
-      "script": "react-start",
+      "script": "debugstart",
       "label": "npm: react-start",
-      "detail": "pnpm react-start"
+      "detail": "yarn react-scripts start"
     }
   ]
 }

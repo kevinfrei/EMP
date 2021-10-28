@@ -54,6 +54,7 @@
     "prepare": "er prepare",
     "types": "er types",
     "test": "er test",
+    "debugstart": "cross-env BROWSER=none react-scripts start",
     "testui": "jest --config config/jest.jsdom.js --watch",
     "testnode": "jest --config config/jest.node.js --watch",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.tsx\" \"static/**/*.ts\" \"config/*.js\" \"config/*.json\" \"*.json\" \"*.md\" \"src/**/*.css\" .prettierrc",
