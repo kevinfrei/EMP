@@ -2148,16 +2148,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@freik/audiodb@npm:0.2.2"
+"@freik/audiodb@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@freik/audiodb@npm:0.2.3"
   dependencies:
-    "@freik/core-utils": ^0.27.3
-    "@freik/media-core": ^0.6.2
-    "@freik/media-utils": ^0.12.2
-    "@freik/node-utils": ^0.15.1
+    "@freik/core-utils": ^0.32.0
+    "@freik/media-core": ^0.10.0
+    "@freik/media-utils": ^0.13.1
+    "@freik/node-utils": ^0.20.2
     xxhashjs: ^0.2.2
-  checksum: c7ad7f4c8f05c6cb96fa2595aff3b48fa29bbdd67dd7360bb1b98c8c29a12d32ac82b95a1213bace255f86627e393c37eaa37904336c09cabc67a39d7c53afde
+  checksum: dd8b240cf6390bc08761c31fb03c69b3c92e26acf7d8dbfd2b7c3a1d3a83f2bd8abe159a9325762bf622817c9f3beb06eff8d6584fdc420bbaa1abbf5e68f03d
   languageName: node
   linkType: hard
 
@@ -2212,24 +2212,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/core-utils@npm:^0.25.0":
-  version: 0.25.0
-  resolution: "@freik/core-utils@npm:0.25.0"
-  checksum: 583d1955011cfd78ccf03ad19ec008d37ceb27c89ea9c9fed530d3dd7e47ccd3e901631f3b832b1b5df12dfc23624a313494c13d5e7cc5e41edb39b7684d881f
-  languageName: node
-  linkType: hard
-
-"@freik/core-utils@npm:^0.27.3":
-  version: 0.27.3
-  resolution: "@freik/core-utils@npm:0.27.3"
-  checksum: 47ea7919c8dc96b97722e1fb6a8d724c626290edc011d2770998037794fad144a5db29eb803dafee26da0f017dc58a56bf4740316f637c64c3bcd85390a63b59
-  languageName: node
-  linkType: hard
-
-"@freik/core-utils@npm:^0.31.0, @freik/core-utils@npm:~0.31.0":
+"@freik/core-utils@npm:^0.31.0":
   version: 0.31.0
   resolution: "@freik/core-utils@npm:0.31.0"
   checksum: 2d71105d5153adfb4f73a085b4ba6a74578cd7f3cd623681851a0e79665acf52024eb1183fb5e71095be751a1b230cad0597c5ec296f31821f7a966c1c1cbcf2
+  languageName: node
+  linkType: hard
+
+"@freik/core-utils@npm:^0.32.0, @freik/core-utils@npm:~0.32.0":
+  version: 0.32.0
+  resolution: "@freik/core-utils@npm:0.32.0"
+  checksum: 7ad144b35425a4887392429948fbd4baff3ef19d1fab4a86949e361fb933d903a9e306277bb86606b5af4ae812f49b5ee4770c80dceae1ae68b2068951171973
   languageName: node
   linkType: hard
 
@@ -2242,28 +2235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-core@npm:^0.6.1, @freik/media-core@npm:^0.6.2":
-  version: 0.6.2
-  resolution: "@freik/media-core@npm:0.6.2"
-  dependencies:
-    "@freik/core-utils": ^0.27.3
-  checksum: 6e325fd954afcf4f7659a3026d8dbf08b55c128f05c691d75b871a6c1d907e3d385e202caad463028ba76824419bffdfcadde728650a8554c4950ffa47582939
-  languageName: node
-  linkType: hard
-
-"@freik/media-utils@npm:^0.12.2":
-  version: 0.12.2
-  resolution: "@freik/media-utils@npm:0.12.2"
-  dependencies:
-    "@freik/core-utils": ^0.25.0
-    "@freik/media-core": ^0.6.1
-    "@freik/node-utils": ^0.15.0
-    music-metadata: ^7.8.6
-  checksum: 38733c6b15f36c652b1470d5c54c6bb5fcf11638fadefd4c58928f20eb59b71392d2a05c6c71688bbca53e9c8dc3e6800a6afe5977ee79c5135ef17bfc307476
-  languageName: node
-  linkType: hard
-
-"@freik/media-utils@npm:~0.13.1":
+"@freik/media-utils@npm:^0.13.1, @freik/media-utils@npm:~0.13.1":
   version: 0.13.1
   resolution: "@freik/media-utils@npm:0.13.1"
   dependencies:
@@ -2272,15 +2244,6 @@ __metadata:
     "@freik/node-utils": ^0.18.0
     music-metadata: ^7.11.4
   checksum: f19adb91886a9849bae21ed98d4c10886394dd1fa23af08848730e395b515906442bb8440a76a7322d7393e4117fc4cfcc39e991a4177fb78eaf8f3618c7a1b6
-  languageName: node
-  linkType: hard
-
-"@freik/node-utils@npm:^0.15.0, @freik/node-utils@npm:^0.15.1":
-  version: 0.15.1
-  resolution: "@freik/node-utils@npm:0.15.1"
-  dependencies:
-    "@freik/core-utils": ^0.27.3
-  checksum: 75300da5afa46dae49d17a6e16293e685b29bbae73c9185d5d7c439f8752bb7b0b297536147cafd0a5da9ff26e2f87f666f1ce13e93d71a1d8d2823ce985a1d4
   languageName: node
   linkType: hard
 
@@ -2293,12 +2256,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/node-utils@npm:~0.20.1":
-  version: 0.20.1
-  resolution: "@freik/node-utils@npm:0.20.1"
+"@freik/node-utils@npm:^0.20.2, @freik/node-utils@npm:~0.20.2":
+  version: 0.20.2
+  resolution: "@freik/node-utils@npm:0.20.2"
   dependencies:
-    "@freik/core-utils": ^0.31.0
-  checksum: 39584cf13437bab53055b7a8827062a2510283a7e2f5101f57b3f957cfdb83a1d4138634c7e6fb76fc8d132d9760b5d2d1b07c9f9d54e4c3bac1a97034985dc3
+    "@freik/core-utils": ^0.32.0
+  checksum: 5955f7d601bee6a952074e910b14a1ba5d40d1b94b016b19f46a6959d84e6c7b0566249f5440491be7b1673c77b7271aa332717a9fd914bb06490c44f657d7a7
   languageName: node
   linkType: hard
 
@@ -6741,13 +6704,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crossenv@npm:^0.0.2-security":
-  version: 0.0.2-security
-  resolution: "crossenv@npm:0.0.2-security"
-  checksum: 6a42ae681701edc32043a3ac18c51ec26a234ef67a5185e20f584cfe9f4bea94923c44790221c22759bc0fdfb416c16df2c9763fd0c6ca9b7fd66079ae154dfe
-  languageName: node
-  linkType: hard
-
 "crypto-browserify@npm:^3.11.0":
   version: 3.12.0
   resolution: "crypto-browserify@npm:3.12.0"
@@ -7746,7 +7702,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:^22.13.1":
+"electron-builder@npm:^22.14.5":
   version: 22.14.5
   resolution: "electron-builder@npm:22.14.5"
   dependencies:
@@ -7921,12 +7877,12 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.1.14
     "@fluentui/react": ^8.37.4
     "@fluentui/react-hooks": ^8.3.4
-    "@freik/audiodb": ^0.2.2
+    "@freik/audiodb": ^0.2.3
     "@freik/build-tools": 3.1.6
-    "@freik/core-utils": ~0.31.0
+    "@freik/core-utils": ~0.32.0
     "@freik/media-core": ~0.10.0
     "@freik/media-utils": ~0.13.1
-    "@freik/node-utils": ~0.20.1
+    "@freik/node-utils": ~0.20.2
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.2
     "@types/electron-devtools-installer": ^2.2.0
@@ -7940,9 +7896,8 @@ __metadata:
     "@typescript-eslint/parser": ^5.2.0
     album-art: ^2.0.2
     cross-env: ^7.0.3
-    crossenv: ^0.0.2-security
     electron: ^15.3.0
-    electron-builder: ^22.13.1
+    electron-builder: ^22.14.5
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
     electron-react-devtools: ^0.5.3
@@ -13377,7 +13332,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^7.11.4, music-metadata@npm:^7.8.6":
+"music-metadata@npm:^7.11.4":
   version: 7.11.4
   resolution: "music-metadata@npm:7.11.4"
   dependencies:
