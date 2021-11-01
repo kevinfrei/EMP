@@ -20,6 +20,7 @@ import {
 import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
+import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
@@ -27,7 +28,7 @@ import { GetAudioDB } from './AudioDatabase';
 import { Persistence } from './persist';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
-const log = MakeLogger('cover-art', true); // && electronIsDev);
+const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
@@ -178,7 +179,8 @@ async function getPictureFromDB(
       log(`Found album art for ${id}`);
     }
     return albumPic;
-  } else if (isArtistKey(id)) {
+  }
+  if (isArtistKey(id)) {
     const artistPic = await db.getArtistPicture(id);
     if (artistPic) {
       log(`Found artist art for ${id}`);
@@ -201,10 +203,15 @@ async function tryToDownloadAlbumCover(
         log(`${artist.name}: ${album.title}`);
         if (res) {
           log(res);
-          const data = await httpsDownloader(res);
-          log('Got album data from teh interwebs');
-          await SavePicForAlbum(db, album, data);
-          return data;
+          try {
+            /*
+            const data = await httpsDownloader(res);
+            log('Got album data from teh interwebs');
+            await SavePicForAlbum(db, album, data);
+            return data;*/
+          } catch (e) {
+            err(e);
+          }
         }
       }
     }
@@ -223,10 +230,15 @@ async function tryToDownloadArtistImage(
       log(`${artist.name}:`);
       if (res) {
         log(res);
-        const data = await httpsDownloader(res);
-        log('Got artist data from teh interwebs');
-        await SavePicForArtist(db, artist, data);
-        return data;
+        try {
+          /*
+          const data = await httpsDownloader(res);
+          log('Got artist data from teh interwebs');
+          await SavePicForArtist(db, artist, data);
+          return data;*/
+        } catch (e) {
+          err(e);
+        }
       }
     }
   }

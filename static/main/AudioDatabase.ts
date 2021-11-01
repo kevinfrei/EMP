@@ -24,7 +24,7 @@ import electronIsDev from 'electron-is-dev';
 import { AsyncSend } from './Communication';
 import { Persistence } from './persist';
 
-const log = MakeLogger('AudioDatabase', true && electronIsDev);
+const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
 
 let theAudioDb: AudioDatabase | null;
