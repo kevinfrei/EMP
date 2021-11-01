@@ -2418,16 +2418,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.2.5":
-  version: 0.2.5
-  resolution: "@freik/audiodb@npm:0.2.5"
+"@freik/audiodb@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "@freik/audiodb@npm:0.2.6"
   dependencies:
     "@freik/core-utils": ^0.33.0
     "@freik/media-core": ^0.10.1
     "@freik/media-utils": ^0.13.2
-    "@freik/node-utils": ^0.20.5
+    "@freik/node-utils": ^0.20.6
     xxhashjs: ^0.2.2
-  checksum: 10f7a9c838a56d9dd07a08a558890f75db0e508b44e1b205f5979280e4c111aee7af905db445f918d09a166c81b76e62c37c4f0740dcde89b277edd1edbc35d8
+  checksum: b5761b349a77c3ef8a1100e0480788b28a29aac76de4c3569eb6a3177f28e0d81ef3fab69fe16774431222c446eb4274cf0a7e57e8e93cbf7763bb9a6e7a7517
   languageName: node
   linkType: hard
 
@@ -2510,12 +2510,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/node-utils@npm:^0.20.5, @freik/node-utils@npm:~0.20.5":
+"@freik/node-utils@npm:^0.20.5":
   version: 0.20.5
   resolution: "@freik/node-utils@npm:0.20.5"
   dependencies:
     "@freik/core-utils": ^0.33.0
   checksum: 8eeff6ba3ab0154b46ac6cdd92fd705126b8f6798483299fff07514eead1cc6e5c358af1bf284f38eb659d5348228d699e86da5a0c8b16edd506b788511b0116
+  languageName: node
+  linkType: hard
+
+"@freik/node-utils@npm:^0.20.6, @freik/node-utils@npm:~0.20.6":
+  version: 0.20.6
+  resolution: "@freik/node-utils@npm:0.20.6"
+  dependencies:
+    "@freik/core-utils": ^0.33.0
+  checksum: e647d6b099218497b762d3bb2a796e25ba5a227b1b69ad4df25b48d51191d6e6dfe15c1ffcddc57cd15d39ffc9e6a58f758d2a404a8337e80f8a2e54d927c01a
   languageName: node
   linkType: hard
 
@@ -7956,7 +7965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:^22.13.1":
+"electron-builder@npm:^22.14.5":
   version: 22.14.5
   resolution: "electron-builder@npm:22.14.5"
   dependencies:
@@ -8131,12 +8140,12 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.1.14
     "@fluentui/react": ^8.37.6
     "@fluentui/react-hooks": ^8.3.4
-    "@freik/audiodb": ^0.2.5
+    "@freik/audiodb": ^0.2.6
     "@freik/build-tools": 3.1.6
     "@freik/core-utils": ~0.33.0
     "@freik/media-core": ~0.10.1
     "@freik/media-utils": ~0.13.2
-    "@freik/node-utils": ~0.20.5
+    "@freik/node-utils": ~0.20.6
     "@testing-library/jest-dom": ^5.14.1
     "@testing-library/react": ^12.1.2
     "@types/electron-devtools-installer": ^2.2.0
@@ -8151,7 +8160,7 @@ __metadata:
     album-art: ^2.0.2
     cross-env: ^7.0.3
     electron: ^15.3.0
-    electron-builder: ^22.13.1
+    electron-builder: ^22.14.5
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
     electron-react-devtools: ^0.5.3

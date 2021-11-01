@@ -20,7 +20,6 @@ import {
 import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
-import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
@@ -28,7 +27,7 @@ import { GetAudioDB } from './AudioDatabase';
 import { Persistence } from './persist';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
-const log = MakeLogger('cover-art', true && electronIsDev);
+const log = MakeLogger('cover-art', true); // && electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
@@ -77,7 +76,7 @@ async function checkSet(name: string, key: string): Promise<boolean> {
   return skip.has(key);
 }
 
-const setWriterWaiter = MakeWaitingQueue(1);
+const setWriterWaiter = MakeWaitingQueue(0);
 
 async function addToSet(name: string, key: string): Promise<void> {
   if (await setWriterWaiter.wait()) {
@@ -174,11 +173,17 @@ async function getPictureFromDB(
   id: MediaKey,
 ): Promise<void | Buffer> {
   if (isAlbumKey(id)) {
-    log(`Found album art for ${id}`);
-    return await db.getAlbumPicture(id);
+    const albumPic = await db.getAlbumPicture(id);
+    if (albumPic) {
+      log(`Found album art for ${id}`);
+    }
+    return albumPic;
   } else if (isArtistKey(id)) {
-    log(`Found artist art for ${id}`);
-    return await db.getArtistPicture(id);
+    const artistPic = await db.getArtistPicture(id);
+    if (artistPic) {
+      log(`Found artist art for ${id}`);
+    }
+    return artistPic;
   }
 }
 
@@ -241,7 +246,6 @@ export async function PictureHandler(
     }
     const maybePath = await getPictureFromDB(db, id);
     if (maybePath) {
-      log(`Returning ${maybePath.length} bytes`);
       return {
         data: maybePath,
       };
@@ -273,6 +277,7 @@ async function SavePicForAlbum(
   const songKey = album.songs[0];
   const song = db.getSong(songKey);
   if (song) {
+    log('Found a song');
     if (overridePref || (await shouldSaveAlbumArtworkWithMusicFiles())) {
       const coverName = await albumCoverName();
       // This is pretty dumb, but it works for PNG's and assumes all else is JPG
@@ -293,6 +298,8 @@ async function SavePicForAlbum(
         err(e);
       }
     }
+  } else {
+    log("didn't find a song");
   }
   log('Saving to blob store');
   await db.setAlbumPicture(album.key, data);
@@ -303,7 +310,7 @@ async function SavePicForArtist(
   artist: Artist,
   data: Buffer,
 ) {
-  log('Saving to blob store');
+  log('Saving artist pic to blob store');
   await db.setArtistPicture(artist.key, data);
 }
 
