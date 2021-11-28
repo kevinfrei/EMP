@@ -173,7 +173,7 @@ function StickyDetailsHeader(
   theProps?: IDetailsHeaderProps,
   defaultRender?: (p?: IDetailsHeaderProps) => JSX.Element | null,
 ): JSX.Element | null {
-  if (!theProps) {
+  if (!theProps || !defaultRender) {
     return null;
   }
   // This makes the header not have a bunch of extra whitespace above the header
@@ -183,7 +183,7 @@ function StickyDetailsHeader(
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
       <Stack id="nowPlayingSticky" styles={stackStyles}>
         <TopLine />
-        {defaultRender!({
+        {defaultRender({
           ...theProps,
           onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
         })}
