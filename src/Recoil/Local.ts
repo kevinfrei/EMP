@@ -19,7 +19,15 @@ export const songListState = atom<SongKey[]>({
   default: [],
 });
 
+// The order of the playlist to play
+export const songPlaybackOrderState = atom<'ordered' | number[]>({
+  key: 'playbackOrder',
+  default: 'ordered',
+});
+
 // The position in the active playlist of the current song
+// For 'ordered' playback, it's the index in the songList
+// otherwise it's an index into the songPlaybackOrderState
 export const currentIndexState = atom<number>({
   key: 'currentIndex',
   default: -1,
@@ -32,8 +40,11 @@ export const currentSongKeyFunc = selector<SongKey>({
     const curIndex = get(currentIndexState);
     if (curIndex >= 0) {
       const songList = get(songListState);
+      const playbackOrder = get(songPlaybackOrderState);
       if (curIndex >= 0 && curIndex < songList.length) {
-        return songList[curIndex];
+        return playbackOrder === 'ordered'
+          ? songList[curIndex]
+          : songList[playbackOrder[curIndex]];
       }
     }
     return '';

@@ -150,9 +150,9 @@ export default function SongPlayback(): JSX.Element {
       if (ae) {
         void ae.play();
       }
+    } else {
+      xact.set(playingState, MaybePlayNext(xact));
     }
-    const isPlaying = MaybePlayNext(xact);
-    xact.set(playingState, isPlaying);
   });
   const onTimeUpdate = useMyTransaction(
     ({ set }) => (ev: SyntheticEvent<HTMLMediaElement>) => {

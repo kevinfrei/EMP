@@ -23,6 +23,7 @@ import {
   nowPlayingSortState,
   recentlyQueuedState,
   songListState,
+  songPlaybackOrderState,
 } from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
@@ -57,6 +58,20 @@ export function useMyTransaction<Args extends readonly unknown[], Return>(
   });
 }
 
+function ShufflePlayback(
+  { get, set }: MyTransactionInterface,
+  songList: SongKey[],
+): void {
+  const shuffle = get(shuffleState);
+  if (shuffle) {
+    // The [...Array(XXX).keys()] creates an arry from 0 to XXX :)
+    set(
+      songPlaybackOrderState,
+      ShuffleArray([...Array(songList.length).keys()]),
+    );
+  }
+}
+
 /**
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)
@@ -66,7 +81,8 @@ export function useMyTransaction<Args extends readonly unknown[], Return>(
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
  */
-export function MaybePlayNext({ get, set }: MyTransactionInterface): boolean {
+export function MaybePlayNext(xact: MyTransactionInterface): boolean {
+  const { get, set } = xact;
   const curIndex = get(currentIndexState);
   const songList = get(songListState);
   if (curIndex + 1 < songList.length) {
@@ -77,10 +93,7 @@ export function MaybePlayNext({ get, set }: MyTransactionInterface): boolean {
   if (!repeat) {
     return false;
   }
-  const shuffle = get(shuffleState);
-  if (shuffle) {
-    set(songListState, ShuffleArray(songList));
-  }
+  ShufflePlayback(xact, songList);
   set(currentIndexState, 0);
   return true;
 }
@@ -158,7 +171,6 @@ export function AddSongs( // Deprecate this: It's only for tests now :/
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
 }
-
 /**
  * Adds a list of songs to the end of the current song list
  *
@@ -167,18 +179,15 @@ export function AddSongs( // Deprecate this: It's only for tests now :/
  *
  * @returns void
  */
-export function PlaySongs( // Deprecate this: It's only for tests now :/
+export function PlaySongs(
   xact: MyTransactionInterface,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { get, set } = xact;
-  let playList = GetFilteredSongs(xact, listToPlay);
-  const shuffle = get(shuffleState);
-  if (shuffle) {
-    playList = ShuffleArray(playList);
-  }
+  const { set } = xact;
+  const playList = GetFilteredSongs(xact, listToPlay);
+  ShufflePlayback(xact, playList);
   if (isPlaylist(playlistName) && Type.isString(playlistName)) {
     set(activePlaylistState, playlistName);
   }
@@ -202,6 +211,7 @@ export function StopAndClear({ reset }: MyTransactionInterface): void {
   reset(activePlaylistState);
   reset(mediaTimeState);
   reset(playingState);
+  reset(songPlaybackOrderState);
 }
 
 /**
@@ -217,20 +227,17 @@ export function ShufflePlaying({
 }: MyTransactionInterface): void {
   const curIndex = get(currentIndexState);
   reset(nowPlayingSortState);
+  const curSongList = get(songListState);
   if (curIndex < 0) {
-    set(songListState, (prevSongList: string[]) => ShuffleArray(prevSongList));
+    ShufflePlayback({ get, set, reset }, curSongList);
   } else {
-    const curSongList = get(songListState);
-    const curKey = curSongList[curIndex];
-    let newSongs = [...curSongList];
-    // Remove curKey from the array
-    newSongs.splice(curIndex, 1);
-    // Shuffle the array (without curKey)
-    newSongs = ShuffleArray(newSongs);
-    // Re-insert curKey back where it was
-    newSongs.splice(curIndex, 0, curKey);
+    const notNowPlaying = [
+      ...(Array(curSongList.length - 1) as unknown[]),
+    ].map((_, idx) => (idx >= curIndex ? idx + 1 : idx));
+    const newSongs = ShuffleArray(notNowPlaying);
+    // Re-insert curIndex back at the beginning of the array
+    set(songPlaybackOrderState, [curIndex, ...newSongs]);
     reset(nowPlayingSortState);
-    set(songListState, newSongs);
   }
 }
 
