@@ -10,15 +10,11 @@ import './styles/Notifier.css';
 export function Notifier(): JSX.Element {
   const addedSongs = useRecoilValue(recentlyQueuedState);
   const displayed = useRecoilValue(displayMessageState);
-  const clearIt = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(recentlyQueuedState, 0),
+  const clearIt = useRecoilCallback(({ set }) => () =>
+    set(recentlyQueuedState, 0),
   );
-  const startFade = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(displayMessageState, false),
+  const startFade = useRecoilCallback(({ set }) => () =>
+    set(displayMessageState, false),
   );
   useEffect(() => {
     const clr = setTimeout(clearIt, 5000);

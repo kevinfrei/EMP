@@ -150,6 +150,6 @@ async function fromDiskFormat(flat: string): Promise<SongKey[]> {
   }
   return lines
     .slice(1)
-    .map((p) => db.getSongFromPath(p))
-    .filter((kOrV) => db.getSong(kOrV));
+    .map(p => db.getSongFromPath(p))
+    .filter(kOrV => db.getSong(kOrV));
 }

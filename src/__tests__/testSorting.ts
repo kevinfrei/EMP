@@ -8,8 +8,8 @@ it('Basic Sort testing', () => {
 
 function addMultiMapKeys(mm: MultiMap<string, number>): number {
   let totals = 0;
-  mm.forEach((vals) =>
-    vals.forEach((val) => {
+  mm.forEach(vals =>
+    vals.forEach(val => {
       totals += val;
       if (val < 0) throw Error('index less than zero');
     }),

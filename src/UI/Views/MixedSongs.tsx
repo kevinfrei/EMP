@@ -90,12 +90,12 @@ export function LikeOrHate(song: Song): JSX.Element {
 export default function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onAddSongClick = useMyTransaction((xact) => (item: Song) => {
+  const onAddSongClick = useMyTransaction(xact => (item: Song) => {
     AddSongs(xact, [item.key]);
   });
   const [songContext, setSongContext] = useRecoilState(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
-    const event = ev as any as MouseEvent;
+    const event = (ev as any) as MouseEvent;
     if (ev && item) {
       setSongContext({
         data: item.key,
@@ -150,16 +150,16 @@ export function SimpleSongsList({
     return <></>;
   }
   const rl = songList
-    .map((val) => val.artist.length)
+    .map(val => val.artist.length)
     .reduce((pv, cv) => Math.max(pv, cv));
   const ll = songList
-    .map((val) => val.album.length)
+    .map(val => val.album.length)
     .reduce((pv, cv) => Math.max(pv, cv));
   const nl = songList
-    .map((val) => val.track.toString().length)
+    .map(val => val.track.toString().length)
     .reduce((pv, cv) => Math.max(pv, cv));
   const tl = songList
-    .map((val) => val.title.length)
+    .map(val => val.title.length)
     .reduce((pv, cv) => Math.max(pv, cv));
   const tot = rl + ll + nl + tl;
   return (

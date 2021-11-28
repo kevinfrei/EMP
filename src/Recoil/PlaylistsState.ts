@@ -69,36 +69,32 @@ export function playlistGetter(
 
 export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
-  get:
-    (arg: PlaylistName) =>
-    async ({ get }) => {
-      const backed = get(playlistBackerFam(arg));
-      if (backed === false) {
-        const listStr = await CallMain(
-          'load-playlist',
-          arg,
-          Type.isArrayOfString,
-        );
-        if (!listStr) {
-          return [];
-        }
-        return listStr;
-      } else {
-        return backed;
+  get: (arg: PlaylistName) => async ({ get }) => {
+    const backed = get(playlistBackerFam(arg));
+    if (backed === false) {
+      const listStr = await CallMain(
+        'load-playlist',
+        arg,
+        Type.isArrayOfString,
+      );
+      if (!listStr) {
+        return [];
       }
-    },
-  set:
-    (name: PlaylistName) =>
-    ({ set, get }, newValue) => {
-      const names = get(playlistNamesFunc);
-      if (!names.has(name)) {
-        names.add(name);
-        set(playlistNamesFunc, new Set(names));
-      }
-      const songs = Type.isArray(newValue) ? newValue : [];
-      set(playlistBackerFam(name), songs);
-      void PostMain('save-playlist', { name, songs });
-    },
+      return listStr;
+    } else {
+      return backed;
+    }
+  },
+  set: (name: PlaylistName) => ({ set, get }, newValue) => {
+    const names = get(playlistNamesFunc);
+    if (!names.has(name)) {
+      names.add(name);
+      set(playlistNamesFunc, new Set(names));
+    }
+    const songs = Type.isArray(newValue) ? newValue : [];
+    set(playlistBackerFam(name), songs);
+    void PostMain('save-playlist', { name, songs });
+  },
 });
 
 export const allPlaylistsFunc = selector<Map<PlaylistName, SongKey[]>>({

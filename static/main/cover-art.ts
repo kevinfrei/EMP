@@ -52,8 +52,8 @@ async function albumCoverName(): Promise<string> {
 
 function httpsDownloader(url: string): Promise<Buffer> {
   const buf: Uint8Array[] = [];
-  return new Promise((resolve) => {
-    https.get(new URL(url), (res) => {
+  return new Promise(resolve => {
+    https.get(new URL(url), res => {
       res.on('data', (d: Uint8Array) => buf.push(d));
       res.on('end', () => resolve(Buffer.concat(buf)));
     });

@@ -87,7 +87,7 @@ export function MakeSortKeyMultiMap(
     const res = MakeMultiMap<string, number>();
     const list = groups || (Type.isString(initial) ? [initial] : initial);
     list.forEach((str, index) => {
-      str.split('').forEach((val) => res.set(val, index));
+      str.split('').forEach(val => res.set(val, index));
     });
     return res;
   } else if (Type.isMultiMapOf(groups, Type.isString, Type.isNumber)) {
@@ -281,7 +281,7 @@ export function MakeSortKey(
           cmpFail(
             a,
             b,
-            (l) => GetArtistStringFromKeys(l.primaryArtists, artists),
+            l => GetArtistStringFromKeys(l.primaryArtists, artists),
             strComp,
           ),
       ],
@@ -314,7 +314,7 @@ export function MakeSortKey(
       [
         'R', // Artist
         (a, b) =>
-          cmpFail(a, b, (s) => GetArtistStringFromSong(s, artists), strComp),
+          cmpFail(a, b, s => GetArtistStringFromSong(s, artists), strComp),
       ],
       [
         'T', // Track title
@@ -366,7 +366,7 @@ export function MakeSortKey(
           cmpFail(
             a,
             b,
-            (s) => albums.get(s.albumId),
+            s => albums.get(s.albumId),
             (i, j) => strComp(i.title, j.title),
           ),
       ],
@@ -376,7 +376,7 @@ export function MakeSortKey(
           cmpFail(
             a,
             b,
-            (s) => albums.get(s.albumId),
+            s => albums.get(s.albumId),
             (i, j) => i.year - j.year,
           ),
       ],
@@ -446,7 +446,7 @@ export function SortSongsFromAlbums(
     0,
   );
   const songs: Song[] = new Array<Song>(total);
-  const groups: IGroup[] = albums.map((lbm) => ({
+  const groups: IGroup[] = albums.map(lbm => ({
     key: lbm.key,
     name: lbm.title,
     startIndex: -1,
@@ -458,8 +458,8 @@ export function SortSongsFromAlbums(
   for (const album of albums) {
     const songSortTmp = SortItems(
       album.songs
-        .map((sk) => songMap.get(sk) as Song)
-        .filter((s) => !Type.isUndefined(s)),
+        .map(sk => songMap.get(sk) as Song)
+        .filter(s => !Type.isUndefined(s)),
       comparator,
     );
     groups[groupIndex].startIndex = songIndex;
@@ -495,7 +495,7 @@ export function SortSongsFromArtists(
     0,
   );
   const songs = new Array<ArtistSong>(total);
-  const groups: IGroup[] = artists.map((artist) => ({
+  const groups: IGroup[] = artists.map(artist => ({
     key: artist.key,
     name: artist.name,
     startIndex: -1,
@@ -507,8 +507,8 @@ export function SortSongsFromArtists(
   for (const artist of artists) {
     const songSortTmp = SortItems(
       artist.songs
-        .map((sk) => songMap.get(sk) as Song)
-        .filter((s) => !Type.isUndefined(s)),
+        .map(sk => songMap.get(sk) as Song)
+        .filter(s => !Type.isUndefined(s)),
       comparator,
     );
     groups[groupIndex].startIndex = songIndex;

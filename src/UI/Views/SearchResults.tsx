@@ -131,7 +131,7 @@ function AggregateSearchResults(
   const albumStart = results.length;
   const albumGroups: IGroup[] = [];
   let lastStart = albumStart;
-  searchResults.albums.forEach((l) => {
+  searchResults.albums.forEach(l => {
     results.push(...MakeAlbumSongEntries(l));
     if (lastStart !== results.length) {
       albumGroups.push({
@@ -159,7 +159,7 @@ function AggregateSearchResults(
   const artistStart = results.length;
   const artistGroups: IGroup[] = [];
   lastStart = artistStart;
-  searchResults.artists.forEach((r) => {
+  searchResults.artists.forEach(r => {
     results.push(...MakeArtistSongEntries(r));
     if (lastStart !== results.length) {
       artistGroups.push({
@@ -194,10 +194,10 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useMyTransaction((xact) => () => {
+  const onAddSongListClick = useMyTransaction(xact => () => {
     AddSongs(xact, props.keys);
   });
-  const onRightClick = useMyTransaction((xact) =>
+  const onRightClick = useMyTransaction(xact =>
     SongListDetailContextMenuClick(xact, props.keys),
   );
   const theStyle = { marginLeft: props.depth * 20 };
@@ -227,14 +227,14 @@ export default function SearchResultsView(): JSX.Element {
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
   const onSongDetailClick = useMyTransaction(
-    (xact) => (item: SearchSongData, index?: number, ev?: Event) =>
+    xact => (item: SearchSongData, index?: number, ev?: Event) =>
       SongDetailClick(
         xact,
         item.song,
         Type.has(ev, 'shiftKey') && ev.shiftKey === true,
       ),
   );
-  const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {
+  const onAddSongClick = useMyTransaction(xact => (item: SearchSongData) => {
     AddSongs(xact, [item.song.key]);
   });
 
@@ -258,7 +258,7 @@ export default function SearchResultsView(): JSX.Element {
   const renderProps: IDetailsGroupRenderProps = {
     onToggleCollapseAll: (isAllCollapsed: boolean) => {
       setExpandedSet(
-        new Set<string>(isAllCollapsed ? [] : groups.map((g) => g.key)),
+        new Set<string>(isAllCollapsed ? [] : groups.map(g => g.key)),
       );
     },
     headerProps: {
@@ -278,7 +278,7 @@ export default function SearchResultsView(): JSX.Element {
       const groupKey = groupProps.key;
       const songKeys = resultEntries
         .slice(groupProps.startIndex, groupProps.startIndex + groupProps.count)
-        .map((entry) => entry.song.key);
+        .map(entry => entry.song.key);
       return (
         <SearchResultsGroupHeader
           depth={IsTopGroup(groupKey) ? 0 : 1}
@@ -320,7 +320,7 @@ export default function SearchResultsView(): JSX.Element {
       ['t', 'title', 'Title', 150, 450],
     ],
     () => noSort,
-    (srt) => 0,
+    srt => 0,
   );
 
   return (

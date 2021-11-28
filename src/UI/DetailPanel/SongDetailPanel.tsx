@@ -11,10 +11,8 @@ const err = MakeError('SongDetailPanel-err'); // eslint-disable-line
 export default function SongDetailPanel(): JSX.Element {
   const detailSongs = useRecoilValue(songDetailState);
   const songInfo = useRecoilValue(maybeDataForSongFunc([...detailSongs]));
-  const dismissClick = useRecoilCallback(
-    ({ reset }) =>
-      () =>
-        reset(songDetailState),
+  const dismissClick = useRecoilCallback(({ reset }) => () =>
+    reset(songDetailState),
   );
   let elem;
   let header = '';

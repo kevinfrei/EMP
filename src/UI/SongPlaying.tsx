@@ -74,8 +74,9 @@ function MediaTimeRemaining(): JSX.Element {
 
 function MediaTimeSlider(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const [mediaTimePercent, setMediaTimePercent] =
-    useRecoilState(mediaTimePercentFunc);
+  const [mediaTimePercent, setMediaTimePercent] = useRecoilState(
+    mediaTimePercentFunc,
+  );
   return (
     <Slider
       className="song-slider" /* Can't put an ID on a slider :( */
@@ -134,17 +135,11 @@ function ArtistAlbum(): JSX.Element {
 
 export default function SongPlayback(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const onPlay = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(playingState, true),
+  const onPlay = useRecoilCallback(({ set }) => () => set(playingState, true));
+  const onPause = useRecoilCallback(({ set }) => () =>
+    set(playingState, false),
   );
-  const onPause = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(playingState, false),
-  );
-  const onEnded = useMyTransaction((xact) => () => {
+  const onEnded = useMyTransaction(xact => () => {
     log('Heading to the next song!!!');
     const songList = xact.get(songListState);
     const rep = xact.get(repeatState);
@@ -160,23 +155,22 @@ export default function SongPlayback(): JSX.Element {
     xact.set(playingState, isPlaying);
   });
   const onTimeUpdate = useMyTransaction(
-    ({ set }) =>
-      (ev: SyntheticEvent<HTMLMediaElement>) => {
-        const ae = ev.currentTarget;
-        // eslint-disable-next-line id-blacklist
-        if (!Number.isNaN(ae.duration)) {
-          set(mediaTimeState, (prevTime: MediaTime) => {
-            if (
-              Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
-              Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
-            ) {
-              return { position: ae.currentTime, duration: ae.duration };
-            } else {
-              return prevTime;
-            }
-          });
-        }
-      },
+    ({ set }) => (ev: SyntheticEvent<HTMLMediaElement>) => {
+      const ae = ev.currentTarget;
+      // eslint-disable-next-line id-blacklist
+      if (!Number.isNaN(ae.duration)) {
+        set(mediaTimeState, (prevTime: MediaTime) => {
+          if (
+            Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
+            Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
+          ) {
+            return { position: ae.currentTime, duration: ae.duration };
+          } else {
+            return prevTime;
+          }
+        });
+      }
+    },
   );
   const audio = (
     <audio
@@ -190,7 +184,7 @@ export default function SongPlayback(): JSX.Element {
     />
   );
   const showDetail = useMyTransaction(
-    (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    xact => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
       if (songKey !== '') {
         const songs = xact.get(allSongsFunc);
         const song = songs.get(songKey);

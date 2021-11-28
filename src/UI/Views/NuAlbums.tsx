@@ -81,11 +81,11 @@ function AlbumCoverView({
   const albumData = useRecoilValue(dataForAlbumFuncFam(album.key));
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onAddSongsClick = useMyTransaction((xact) => () => {
+  const onAddSongsClick = useMyTransaction(xact => () => {
     AddSongs(xact, album.songs);
   });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRightClick = useMyTransaction((xact) =>
+  const onRightClick = useMyTransaction(xact =>
     SongListDetailContextMenuClick(xact, album.songs),
   );
   if (!album) {

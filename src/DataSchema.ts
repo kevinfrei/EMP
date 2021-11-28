@@ -16,7 +16,7 @@ export function GetArtistString(artistList: Artist[]): string {
   if (artistList.length === 1) return artistList[0].name;
   const artists = artistList;
   const lastPart = ' & ' + (artists.pop()?.name || 'OOPS!');
-  return artists.map((a) => a.name).join(', ') + lastPart;
+  return artists.map(a => a.name).join(', ') + lastPart;
 }
 
 export function GetArtistStringFromSong(
@@ -31,7 +31,7 @@ export function GetArtistStringFromKeys(
   allArtists: Map<ArtistKey, Artist>,
 ): string {
   const artists: string[] = artistList
-    .map((ak) => {
+    .map(ak => {
       const art: Artist | undefined = allArtists.get(ak);
       return art ? art.name : '';
     })

@@ -112,7 +112,7 @@ function registerChannel<R, T>(
  * @param filePath - The path to the file to show
  */
 function showFile(filePath?: string): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (filePath) {
       shell.showItemInFolder(filePath);
     }

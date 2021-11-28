@@ -46,15 +46,14 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 export default function Utilities(): JSX.Element {
   const saveable = useRecoilValue(saveableFunc);
   useEffect(InitialWireUp);
-  const callback = useMyTransaction(
-    (xact) => (data: unknown) => MenuHandler(xact, data),
+  const callback = useMyTransaction(xact => (data: unknown) =>
+    MenuHandler(xact, data),
   );
   useListener('menuAction', callback);
   const handleWidthChange = useMyTransaction(
-    ({ set }) =>
-      (ev: MediaQueryList | MediaQueryListEvent) => {
-        set(isMiniplayerState, ev.matches);
-      },
+    ({ set }) => (ev: MediaQueryList | MediaQueryListEvent) => {
+      set(isMiniplayerState, ev.matches);
+    },
   );
   useEffect(() => {
     SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);
@@ -75,11 +74,7 @@ export default function Utilities(): JSX.Element {
     }
   });
   // Connect the reset callback properly
-  lastHeard = useMyTransaction(
-    ({ reset }) =>
-      () =>
-        reset(keyBufferState),
-  );
+  lastHeard = useMyTransaction(({ reset }) => () => reset(keyBufferState));
   useEffect(() => {
     window.addEventListener('keydown', listener);
     return () => {

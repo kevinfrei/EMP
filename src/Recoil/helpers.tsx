@@ -45,22 +45,17 @@ export function MakeSetSelector<T extends SerializableParam>(
 ): (param: T) => RecoilState<boolean> {
   return selectorFamily<boolean, T>({
     key,
-    get:
-      (item: T) =>
-      ({ get }) =>
-        get(setOfObjsState).has(item),
-    set:
-      (item: T) =>
-      ({ set }, newValue) =>
-        set(setOfObjsState, (prevVal: Set<T>) => {
-          const newSet = new Set<T>(prevVal);
-          if (newValue) {
-            newSet.delete(item);
-          } else {
-            newSet.add(item);
-          }
-          return newSet;
-        }),
+    get: (item: T) => ({ get }) => get(setOfObjsState).has(item),
+    set: (item: T) => ({ set }, newValue) =>
+      set(setOfObjsState, (prevVal: Set<T>) => {
+        const newSet = new Set<T>(prevVal);
+        if (newValue) {
+          newSet.delete(item);
+        } else {
+          newSet.add(item);
+        }
+        return newSet;
+      }),
   });
 }
 
@@ -131,7 +126,7 @@ export function translateToMainEffect<T>(
   return ({ node, trigger, setSelf, onSet }: AtomEffectParams<T>): void => {
     if (trigger === 'get') {
       ReadFromStorage(node.key)
-        .then((value) => {
+        .then(value => {
           if (value) {
             const data = fromString(value);
             if (data) {
@@ -240,7 +235,7 @@ export function bidirectionalSyncWithTranslateEffect<T>(
     if (trigger === 'get') {
       log(`Get trigger for ${node.key}`);
       ReadFromStorage(node.key)
-        .then((value) => {
+        .then(value => {
           log(`Got a value from the server for ${node.key}`);
           if (value) {
             log(value);
@@ -298,8 +293,8 @@ export function bidirectionalSyncWithTranslateEffect<T>(
 
 export function syncWithMainEffect<T>(asyncUpdates?: boolean): AtomEffect<T> {
   return bidirectionalSyncWithTranslateEffect<T>(
-    (a) => a as unknown,
-    (a) => a as T,
+    a => a as unknown,
+    a => a as T,
     asyncUpdates,
   );
 }
@@ -344,18 +339,17 @@ let lastHeard = new Date().getTime();
 export function keyboardHook<T extends KeyEventType>(
   filterState: RecoilState<string>,
 ): KeyboardHookType<T> {
-  return ({ set }: CallbackInterface) =>
-    (ev: T) => {
-      err(ev.key);
-      if (ev.key.length > 1 || ev.key === ' ') {
-        set(filterState, '');
-        return;
-      }
-      const time = new Date().getTime();
-      const clear: boolean = time - lastHeard > 750;
-      lastHeard = time;
-      set(filterState, (curVal) => (clear ? ev.key : curVal + ev.key));
-    };
+  return ({ set }: CallbackInterface) => (ev: T) => {
+    err(ev.key);
+    if (ev.key.length > 1 || ev.key === ' ') {
+      set(filterState, '');
+      return;
+    }
+    const time = new Date().getTime();
+    const clear: boolean = time - lastHeard > 750;
+    lastHeard = time;
+    set(filterState, curVal => (clear ? ev.key : curVal + ev.key));
+  };
 }
 
 export function kbHook<T extends KeyEventType>(
@@ -364,23 +358,22 @@ export function kbHook<T extends KeyEventType>(
   shouldFocus: () => boolean,
   getIndex: (srch: string) => number,
 ) {
-  return ({ set }: CallbackInterface) =>
-    (ev: T): void => {
-      if (ev.key.length > 1 || ev.key === ' ') {
-        set(filterState, '');
-        return;
+  return ({ set }: CallbackInterface) => (ev: T): void => {
+    if (ev.key.length > 1 || ev.key === ' ') {
+      set(filterState, '');
+      return;
+    }
+    const time = new Date().getTime();
+    const clear: boolean = time - lastHeard > 750;
+    lastHeard = time;
+    // const newFilter = clear ? ev.key : keyFilter + ev.key;
+    set(filterState, (oldVal): string => {
+      const srchString = clear ? ev.key : oldVal + ev.key;
+      if (shouldFocus() && listRef !== null && srchString.length > 0) {
+        const index = getIndex(srchString);
+        listRef.focusIndex(index);
       }
-      const time = new Date().getTime();
-      const clear: boolean = time - lastHeard > 750;
-      lastHeard = time;
-      // const newFilter = clear ? ev.key : keyFilter + ev.key;
-      set(filterState, (oldVal): string => {
-        const srchString = clear ? ev.key : oldVal + ev.key;
-        if (shouldFocus() && listRef !== null && srchString.length > 0) {
-          const index = getIndex(srchString);
-          listRef.focusIndex(index);
-        }
-        return srchString;
-      });
-    };
+      return srchString;
+    });
+  };
 }

@@ -149,11 +149,11 @@ export function AddSongs( // Deprecate this: It's only for tests now :/
   const playList = GetFilteredSongs(xact, listToAdd);
   if (!shuffle) {
     set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
-    set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+    set(currentIndexState, curIndex => (curIndex < 0 ? 0 : curIndex));
   } else {
     const shuffledList = ShuffleArray(playList);
     set(songListState, (songList: string[]) => [...songList, ...shuffledList]);
-    set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+    set(currentIndexState, curIndex => (curIndex < 0 ? 0 : curIndex));
   }
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);

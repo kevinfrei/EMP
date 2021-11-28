@@ -29,7 +29,7 @@ export function flushPromisesAndTimers(): Promise<void> {
   // Wrap flush with act() to avoid warning that only shows up in OSS environment
   return act(
     () =>
-      new Promise((resolve) => {
+      new Promise(resolve => {
         // eslint-disable-next-line no-restricted-globals
         setTimeout(resolve, 100);
         jest.runAllTimers();
