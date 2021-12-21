@@ -48,7 +48,7 @@ export async function addLocation({
 }: MyTransactionInterface): Promise<boolean> {
   const locs = await GetDirs();
   if (locs) {
-    set(locationsState, curLocs => [...locs, ...curLocs]);
+    set(locationsState, (curLocs) => [...locs, ...curLocs]);
     return true;
   }
   return false;
@@ -57,7 +57,7 @@ export async function addLocation({
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
-  const onAddLocation = useMyTransaction(xact => () => {
+  const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });
   const songs = useRecoilValue(allSongsFunc);
@@ -74,7 +74,7 @@ function MusicLocations(): JSX.Element {
   };
   return (
     <>
-      {(newLoc || []).map(elem => (
+      {(newLoc || []).map((elem) => (
         <Stack horizontal key={elem} verticalAlign="center">
           <IconButton
             onClick={() => setNewLoc(removeFromSet(newLoc, elem))}

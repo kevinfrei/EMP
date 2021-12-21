@@ -85,7 +85,7 @@ export default function Sidebar(): JSX.Element {
         onSearch={onSearch}
         onFocus={onFocus}
         onChange={(e, nv) => nv && onSearch(nv)}
-        componentRef={ref => SetSearch(ref)}
+        componentRef={(ref) => SetSearch(ref)}
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}

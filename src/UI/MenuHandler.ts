@@ -55,10 +55,10 @@ export function MenuHandler(
         break;
       }
       case 'shuffle':
-        xact.set(shuffleState, cur => !cur);
+        xact.set(shuffleState, (cur) => !cur);
         break;
       case 'repeat':
-        xact.set(repeatState, cur => !cur);
+        xact.set(repeatState, (cur) => !cur);
         break;
 
       case 'addLocation':
@@ -89,13 +89,13 @@ export function MenuHandler(
         break;
 
       case 'mute':
-        xact.set(mutedState, cur => !cur);
+        xact.set(mutedState, (cur) => !cur);
         break;
       case 'louder':
-        xact.set(volumeState, val => Math.min(1.0, val + 0.1));
+        xact.set(volumeState, (val) => Math.min(1.0, val + 0.1));
         break;
       case 'quieter':
-        xact.set(volumeState, val => Math.max(0, val - 0.1));
+        xact.set(volumeState, (val) => Math.max(0, val - 0.1));
         break;
       case 'view':
         if (Type.hasStr(message, 'select')) {

@@ -46,9 +46,8 @@ import './styles/Playlists.css';
 type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
 
-const [playlistExpandedState, playlistIsExpandedState] = MakeSetState<
-  PlaylistName
->('albumExpanded');
+const [playlistExpandedState, playlistIsExpandedState] =
+  MakeSetState<PlaylistName>('albumExpanded');
 
 const playlistContextState = atom<SongListMenuData>({
   key: 'playlistContext',
@@ -72,20 +71,23 @@ function PlaylistHeaderDisplay({
   group: IGroup;
   onDelete: (key: string) => void;
 }): JSX.Element {
-  const onHeaderExpanderClick = useMyTransaction(({ set }) => () =>
-    set(playlistIsExpandedState(group.key), !group.isCollapsed),
+  const onHeaderExpanderClick = useMyTransaction(
+    ({ set }) =>
+      () =>
+        set(playlistIsExpandedState(group.key), !group.isCollapsed),
   );
-  const onAddSongsClick = useMyTransaction(xact => () => {
+  const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, xact.get(playlistFuncFam(group.key)));
   });
   const onRightClick = useMyTransaction(
-    ({ set }) => (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      set(playlistContextState, {
-        data: group.key,
-        spot: { left: ev.clientX + 14, top: ev.clientY },
-      });
-      return false;
-    },
+    ({ set }) =>
+      (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        set(playlistContextState, {
+          data: group.key,
+          spot: { left: ev.clientX + 14, top: ev.clientY },
+        });
+        return false;
+      },
   );
   return (
     <div onAuxClick={onRightClick}>
@@ -133,14 +135,18 @@ export default function PlaylistView(): JSX.Element {
   const playlistExpanded = useRecoilState(playlistExpandedState);
   const [curSort, setSort] = useRecoilState(playlistSortState);
   const [songContext, setSongContext] = useRecoilState(songContextState);
-  const clearSongContext = useMyTransaction(({ reset }) => () =>
-    reset(songContextState),
+  const clearSongContext = useMyTransaction(
+    ({ reset }) =>
+      () =>
+        reset(songContextState),
   );
-  const onClearPlaylist = useMyTransaction(({ reset }) => () =>
-    reset(playlistContextState),
+  const onClearPlaylist = useMyTransaction(
+    ({ reset }) =>
+      () =>
+        reset(playlistContextState),
   );
   const onPlaylistInvoked = useMyTransaction(
-    xact => (playlistName: PlaylistName) => {
+    (xact) => (playlistName: PlaylistName) => {
       const songs = xact.get(playlistFuncFam(playlistName));
       PlaySongs(xact, songs, playlistName);
     },
@@ -160,17 +166,17 @@ export default function PlaylistView(): JSX.Element {
     }
     set(playlistFuncFam(playlistContext.data), newList);
   });
-  const onPlaylistDelete = useMyTransaction(xact => (key: string) => {
+  const onPlaylistDelete = useMyTransaction((xact) => (key: string) => {
     setSelected(key);
     showPlaylistDelete();
   });
-  const deleteConfirmed = useMyTransaction(xact => () => {
+  const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });
-  const renameConfirmed = useMyTransaction(xact => (newName: string) => {
+  const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
     RenamePlaylist(xact, selected, newName);
   });
-  const removeSongConfirmed = useMyTransaction(xact => () => {
+  const removeSongConfirmed = useMyTransaction((xact) => () => {
     if (
       songPlaylistToRemove[0].length > 0 &&
       songPlaylistToRemove[1].length > 0
@@ -199,7 +205,7 @@ export default function PlaylistView(): JSX.Element {
       <IconButton
         style={{ height: '20px' }}
         iconProps={{ iconName: 'Delete' }}
-        onClick={ev => {
+        onClick={(ev) => {
           setSongPlaylistToRemove([
             ttl.playlist,
             ttl.key,
@@ -231,13 +237,13 @@ export default function PlaylistView(): JSX.Element {
     currCount += songs.length;
     expItems.push(
       ...(songs
-        .map(key => {
+        .map((key) => {
           const song = allSongs.get(key);
           return Type.isUndefined(song)
             ? undefined
             : { playlist: plName, ...song };
         })
-        .filter(val => !Type.isUndefined(val)) as PlaylistSong[]),
+        .filter((val) => !Type.isUndefined(val)) as PlaylistSong[]),
     );
   }
 

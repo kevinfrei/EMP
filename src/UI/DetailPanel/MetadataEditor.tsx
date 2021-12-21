@@ -153,7 +153,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         md.diskName = diskName.trim();
       }
       if (vars !== false) {
-        md.variations = vars.split(';').map(s => s.trim());
+        md.variations = vars.split(';').map((s) => s.trim());
       }
       if (moreArtists !== false) {
         md.moreArtists = Metadata.SplitArtistString(moreArtists);
@@ -172,7 +172,10 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     if (props.forSong !== undefined) {
       await uploadSong(props.forSong);
       const albumKey = get(albumKeyForSongKeyFuncFam(props.forSong));
-      setTimeout(() => set(picCacheAvoiderStateFam(albumKey), p => p + 1), 250);
+      setTimeout(
+        () => set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
+        250,
+      );
     } else {
       // Messy: Multiple songs
       const albumsSet: Set<AlbumKey> = new Set();
@@ -185,30 +188,30 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         await uploadAlbum(albumKey);
         // This bonks the URL so it will be reloaded after we've uploaded the image
         setTimeout(
-          () => set(picCacheAvoiderStateFam(albumKey), p => p + 1),
+          () => set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
           250,
         );
       }
     }
   };
 
-  const onImageFromClipboard = useMyTransaction(xact => () => {
+  const onImageFromClipboard = useMyTransaction((xact) => () => {
     const img = ImageFromClipboard();
     if (img !== undefined) {
       uploadImage(
         xact,
         async (sk: SongKey) => await UploadImageForSong(sk, img),
         async (ak: AlbumKey) => await UploadImageForAlbum(ak, img),
-      ).catch(e => Catch(e));
+      ).catch((e) => Catch(e));
     }
   });
-  const onSelectFile = useMyTransaction(xact => () => {
+  const onSelectFile = useMyTransaction((xact) => () => {
     ShowOpenDialog({
       title: 'Select Cover Art image',
       properties: ['openFile'],
       filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],
     })
-      .then(selected => {
+      .then((selected) => {
         return selected !== undefined
           ? uploadImage(
               xact,
@@ -219,7 +222,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
               return;
             });
       })
-      .catch(e => Catch(e));
+      .catch((e) => Catch(e));
   });
   const coverUrl = useRecoilValue(albumCoverUrlFuncFam(props.albumId || '___'));
   // Nothing selected: EMPTY!

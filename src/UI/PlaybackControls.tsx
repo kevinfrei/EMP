@@ -27,7 +27,7 @@ export function onClickPlayPause({ set }: MyTransactionInterface): void {
     err('Clicking but no audio element');
     return;
   }
-  set(playingState, isPlaying => {
+  set(playingState, (isPlaying) => {
     if (isPlaying) {
       ae.pause();
       return false;
@@ -60,21 +60,23 @@ export default function SongControls(): JSX.Element {
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useMyTransaction(xact => () => {
+  const clickShuffle = useMyTransaction((xact) => () => {
     if (!xact.get(shuffleState)) {
       ShufflePlaying(xact);
     }
-    xact.set(shuffleState, prevShuf => !prevShuf);
+    xact.set(shuffleState, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
-  const clickPlayPause = useMyTransaction(xact => () => onClickPlayPause(xact));
+  const clickPlayPause = useMyTransaction(
+    (xact) => () => onClickPlayPause(xact),
+  );
 
-  const clickPrev = useMyTransaction(xact => () => {
+  const clickPrev = useMyTransaction((xact) => () => {
     if (hasPrevSong) {
       MaybePlayPrev(xact);
     }
   });
-  const clickNext = useMyTransaction(xact => () => {
+  const clickNext = useMyTransaction((xact) => () => {
     if (hasNextSong) {
       MaybePlayNext(xact);
     }

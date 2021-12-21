@@ -92,10 +92,10 @@ function TopLine(): JSX.Element {
       set(activePlaylistState, inputName);
     }
   });
-  const stopAndClear = useMyTransaction(xact => () => {
+  const stopAndClear = useMyTransaction((xact) => () => {
     StopAndClear(xact);
   });
-  const clickClearQueue = useMyTransaction(xact => () => {
+  const clickClearQueue = useMyTransaction((xact) => () => {
     if (isPlaylist(nowPlaying)) {
       StopAndClear(xact);
     } else {
@@ -185,7 +185,7 @@ function StickyDetailsHeader(
         <TopLine />
         {defaultRender({
           ...theProps,
-          onRenderColumnHeaderTooltip: props => <TooltipHost {...props} />,
+          onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
         })}
       </Stack>
     </Sticky>
@@ -207,7 +207,7 @@ export default function NowPlaying(): JSX.Element {
   const isMini = useRecoilValue(isMiniplayerState);
   const [songContext, setSongContext] = useRecoilState(nowPlayingContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
-    const event = (ev as any) as MouseEvent;
+    const event = ev as any as MouseEvent;
     if (ev && item) {
       setSongContext({
         data: item.key,
@@ -292,7 +292,7 @@ export default function NowPlaying(): JSX.Element {
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.auto}>
         <DetailsList
-          componentRef={ref => setDetailRef(ref)}
+          componentRef={(ref) => setDetailRef(ref)}
           compact={true}
           items={curSongs}
           cellStyleProps={{
@@ -306,7 +306,7 @@ export default function NowPlaying(): JSX.Element {
             return `${sng.key}:${idx}`;
           }}
           selectionMode={SelectionMode.none}
-          onRenderRow={altRowRenderer(props => props.itemIndex === curIndex)}
+          onRenderRow={altRowRenderer((props) => props.itemIndex === curIndex)}
           columns={isMini ? miniColumns : normalColumns}
           onItemContextMenu={onRightClick}
           onItemInvoked={(item, index) => setCurIndex(index ?? -1)}

@@ -62,16 +62,17 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
 
-  const onAdd = useMyTransaction(xact => () =>
-    AddSongs(xact, onGetSongList(xact, context.data)),
+  const onAdd = useMyTransaction(
+    (xact) => () => AddSongs(xact, onGetSongList(xact, context.data)),
   );
-  const onReplace = useMyTransaction(xact => () =>
-    PlaySongs(xact, onGetSongList(xact, context.data)),
+  const onReplace = useMyTransaction(
+    (xact) => () => PlaySongs(xact, onGetSongList(xact, context.data)),
   );
-  const onProps = useMyTransaction(xact => () =>
-    SongListDetailClick(xact, onGetSongList(xact, context.data), false),
+  const onProps = useMyTransaction(
+    (xact) => () =>
+      SongListDetailClick(xact, onGetSongList(xact, context.data), false),
   );
-  const onLove = useMyTransaction(xact => () => {
+  const onLove = useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);
     const likeVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
@@ -80,7 +81,7 @@ export function SongListMenu({
     }
   });
 
-  const onHate = useMyTransaction(xact => () => {
+  const onHate = useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);
     const hateVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
@@ -156,7 +157,7 @@ export function SongListMenu({
       hidden={context.data === ''}
       items={realItems}
       target={context.spot}
-      onDismiss={ev => {
+      onDismiss={(ev) => {
         // The DetailsList panel wiggles. A lot.
         // So I had to turn off dismissal for scroll events, cuz otherwise it
         // would disappear almost immediately.

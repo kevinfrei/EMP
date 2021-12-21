@@ -103,7 +103,7 @@ const theme = getTheme();
 export function altRowRenderer(
   isBold?: (props: IDetailsRowProps) => boolean,
 ): IRenderFunction<IDetailsRowProps> {
-  return props => {
+  return (props) => {
     if (!props) return null;
     const customStyles: Partial<IDetailsRowStyles> = {
       root: {
@@ -162,13 +162,13 @@ export function ProcessSongGroupData<T>(
   getSort: () => SortKey,
   performSort: (sort: SortKey) => void,
 ): [IColumn[], IDetailsGroupRenderProps] {
-  const allGroupIds = new Set<string>(sortedGroups.map(val => val.key));
+  const allGroupIds = new Set<string>(sortedGroups.map((val) => val.key));
 
   // Walk the sorted list of songs, creating groups when the groupId changes
   // This has the down-side of making multiple groups with the same key if the
   // list isn't primarily sorted by the groupId, so you'd better make sure it's
   // sorted
-  sortedGroups.forEach(val => {
+  sortedGroups.forEach((val) => {
     val.isCollapsed = !curExpandedSet.has(val.key);
   });
   const renderProps: IDetailsGroupRenderProps = {
@@ -213,7 +213,7 @@ export function StickyRenderDetailsHeader(
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
       {defaultRender({
         ...theProps,
-        onRenderColumnHeaderTooltip: props => <TooltipHost {...props} />,
+        onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
       })}
     </Sticky>
   );

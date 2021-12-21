@@ -10,4 +10,4 @@ import { InitBeforeAnythingElse, WindowStartup } from './main/Startup';
 InitBeforeAnythingElse();
 
 // eslint-disable-next-line no-console
-StartApp(WindowStartup).catch(e => console.error(e));
+StartApp(WindowStartup).catch((e) => console.error(e));

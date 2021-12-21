@@ -7,7 +7,7 @@ export function SongDetailClick(
   song: Song,
   shift?: boolean,
 ): void {
-  set(songDetailState, prev => {
+  set(songDetailState, (prev) => {
     const vals = new Set(shift ? prev : []);
     if (shift && prev.has(song.key)) {
       vals.delete(song.key);
@@ -33,7 +33,7 @@ export function SongListDetailClick(
   songs: SongKey[],
   shift?: boolean,
 ): void {
-  set(songDetailState, prev => {
+  set(songDetailState, (prev) => {
     if (shift) {
       const vals = new Set(prev);
       SetInvert(vals, songs);

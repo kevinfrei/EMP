@@ -162,11 +162,11 @@ export function AddSongs( // Deprecate this: It's only for tests now :/
   const playList = GetFilteredSongs(xact, listToAdd);
   if (!shuffle) {
     set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
-    set(currentIndexState, curIndex => (curIndex < 0 ? 0 : curIndex));
+    set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   } else {
     const shuffledList = ShuffleArray(playList);
     set(songListState, (songList: string[]) => [...songList, ...shuffledList]);
-    set(currentIndexState, curIndex => (curIndex < 0 ? 0 : curIndex));
+    set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
   }
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
@@ -231,9 +231,9 @@ export function ShufflePlaying({
   if (curIndex < 0) {
     ShufflePlayback({ get, set, reset }, curSongList);
   } else {
-    const notNowPlaying = [
-      ...(Array(curSongList.length - 1) as unknown[]),
-    ].map((_, idx) => (idx >= curIndex ? idx + 1 : idx));
+    const notNowPlaying = [...(Array(curSongList.length - 1) as unknown[])].map(
+      (_, idx) => (idx >= curIndex ? idx + 1 : idx),
+    );
     const newSongs = ShuffleArray(notNowPlaying);
     // Re-insert curIndex back at the beginning of the array
     set(songPlaybackOrderState, [curIndex, ...newSongs]);

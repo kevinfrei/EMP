@@ -64,9 +64,8 @@ const albumContextState = atom<SongListMenuData>({
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-const [albumExpandedState, albumIsExpandedState] = MakeSetState<AlbumKey>(
-  'albumExpanded',
-);
+const [albumExpandedState, albumIsExpandedState] =
+  MakeSetState<AlbumKey>('albumExpanded');
 
 // For grouping to work properly, the sort order needs to be fully specified
 // Also, the album year, VA type, and artist have to "stick" with the album name
@@ -81,18 +80,21 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const album = useRecoilValue(albumByKeyFuncFam(group.key));
   const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
   const picurl = useRecoilValue(albumCoverUrlFuncFam(group.key));
-  const onAddSongsClick = useMyTransaction(xact => () => {
+  const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, album.songs);
   });
-  const onHeaderExpanderClick = useMyTransaction(({ set }) => () =>
-    set(albumIsExpandedState(group.key), !group.isCollapsed),
+  const onHeaderExpanderClick = useMyTransaction(
+    ({ set }) =>
+      () =>
+        set(albumIsExpandedState(group.key), !group.isCollapsed),
   );
   const onRightClick = useMyTransaction(
-    ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-      set(albumContextState, {
-        data: group.key,
-        spot: { left: event.clientX + 14, top: event.clientY },
-      }),
+    ({ set }) =>
+      (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+        set(albumContextState, {
+          data: group.key,
+          spot: { left: event.clientX + 14, top: event.clientY },
+        }),
   );
 
   return (
@@ -143,22 +145,23 @@ export function GroupedAlbumList(): JSX.Element {
   const [curSort, setSort] = useRecoilState(albumSortState);
   const resetAlbumContext = useResetRecoilState(albumContextState);
 
-  const onAddSongClick = useMyTransaction(xact => (item: Song) =>
-    AddSongs(xact, [item.key]),
+  const onAddSongClick = useMyTransaction(
+    (xact) => (item: Song) => AddSongs(xact, [item.key]),
   );
   const onRightClick = useMyTransaction(
-    ({ set }) => (item: Song, _index?: number, ev?: Event) => {
-      if (
-        !Type.isUndefined(ev) &&
-        Type.hasType(ev, 'clientX', Type.isNumber) &&
-        Type.hasType(ev, 'clientY', Type.isNumber)
-      ) {
-        set(albumContextState, {
-          data: item.key,
-          spot: { left: ev.clientX + 14, top: ev.clientY },
-        });
-      }
-    },
+    ({ set }) =>
+      (item: Song, _index?: number, ev?: Event) => {
+        if (
+          !Type.isUndefined(ev) &&
+          Type.hasType(ev, 'clientX', Type.isNumber) &&
+          Type.hasType(ev, 'clientY', Type.isNumber)
+        ) {
+          set(albumContextState, {
+            data: item.key,
+            spot: { left: ev.clientX + 14, top: ev.clientY },
+          });
+        }
+      },
   );
 
   // Get the sorted song & group lists
@@ -202,7 +205,7 @@ export function GroupedAlbumList(): JSX.Element {
     <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
         <DetailsList
-          componentRef={ref => setDetailRef(ref)}
+          componentRef={(ref) => setDetailRef(ref)}
           items={sortedSongs}
           selectionMode={SelectionMode.none}
           groups={groups}

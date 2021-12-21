@@ -125,16 +125,20 @@ export const picCacheAvoiderStateFam = atomFamily<number, MediaKey>({
 
 export const albumCoverUrlFuncFam = selectorFamily<string, AlbumKey>({
   key: 'albumCoverUrl',
-  get: (key: AlbumKey) => ({ get }) => {
-    return `pic://key/${key}`;
-  },
+  get:
+    (key: AlbumKey) =>
+    ({ get }) => {
+      return `pic://key/${key}`;
+    },
 });
 
 export const artistImageUrlFuncFam = selectorFamily<string, ArtistKey>({
   key: 'artistImageUrl',
-  get: (key: ArtistKey) => ({ get }) => {
-    return `pic://key/${key}`;
-  },
+  get:
+    (key: ArtistKey) =>
+    ({ get }) => {
+      return `pic://key/${key}`;
+    },
 });
 
 // This is the currently 'typed' set of characters (for scrolling lists)
@@ -142,7 +146,9 @@ export const keyBufferState = atom<string>({ key: 'KeyBuffer', default: '' });
 
 export const focusedKeysFuncFam = selectorFamily<string, CurrentView>({
   key: 'focusedKeys',
-  get: (view: CurrentView) => ({ get }) => {
-    return get(curViewFunc) === view ? get(keyBufferState) : '';
-  },
+  get:
+    (view: CurrentView) =>
+    ({ get }) => {
+      return get(curViewFunc) === view ? get(keyBufferState) : '';
+    },
 });

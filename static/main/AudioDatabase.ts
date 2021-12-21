@@ -73,8 +73,8 @@ export async function UpdateLocations(locs: string): Promise<void> {
     log(add);
     log('removing:');
     log(del);
-    await Promise.all([...del].map(loc => db.removeFileLocation(loc)));
-    await Promise.all([...add].map(loc => db.addFileLocation(loc)));
+    await Promise.all([...del].map((loc) => db.removeFileLocation(loc)));
+    await Promise.all([...add].map((loc) => db.addFileLocation(loc)));
     // This shouldn't be needed, as db.add/remove should update the db as needed
     // await RescanAudioDatase();
     SendDatabase(db);
@@ -92,11 +92,11 @@ function getCommonPrefix(
   songKeys: SongKey[],
 ): string | void {
   const paths: string[] = songKeys
-    .map(sk => {
+    .map((sk) => {
       const song = db.getSong(sk);
       return song ? song.path : undefined;
     })
-    .filter(s => s !== undefined) as string[];
+    .filter((s) => s !== undefined) as string[];
   let prefix = '';
   if (paths.length === 0) {
     return prefix;

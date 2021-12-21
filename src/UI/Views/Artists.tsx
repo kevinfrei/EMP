@@ -69,9 +69,8 @@ const artistContextState = atom<SongListMenuData>({
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-const [artistExpandedState, artistIsExpandedState] = MakeSetState<ArtistKey>(
-  'artistExpanded',
-);
+const [artistExpandedState, artistIsExpandedState] =
+  MakeSetState<ArtistKey>('artistExpanded');
 
 // For grouping to work properly, the sort order needs to be fully specified
 const sortOrderState = atom({
@@ -82,18 +81,21 @@ const sortOrderState = atom({
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
   const picurl = useRecoilValue(artistImageUrlFuncFam(group.key));
-  const onAddSongsClick = useMyTransaction(xact => () => {
+  const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, artist.songs);
   });
-  const onHeaderExpanderClick = useMyTransaction(({ set }) => () =>
-    set(artistIsExpandedState(group.key), !group.isCollapsed),
+  const onHeaderExpanderClick = useMyTransaction(
+    ({ set }) =>
+      () =>
+        set(artistIsExpandedState(group.key), !group.isCollapsed),
   );
   const onRightClick = useMyTransaction(
-    ({ set }) => (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-      set(artistContextState, {
-        data: artist.key,
-        spot: { left: event.clientX + 14, top: event.clientY },
-      }),
+    ({ set }) =>
+      (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+        set(artistContextState, {
+          data: artist.key,
+          spot: { left: event.clientX + 14, top: event.clientY },
+        }),
   );
   const songCount = artist.songs.length;
   return (
@@ -135,7 +137,7 @@ function getFilteredArtists(
   if (fullAlbums) {
     // Filter down to artists that have at least one album where
     // they are the primary artist
-    return result.filter(artist => {
+    return result.filter((artist) => {
       for (const lKey of artist.albums) {
         const album = albums.get(lKey);
         if (album && album.primaryArtists.indexOf(artist.key) >= 0) {
@@ -146,7 +148,7 @@ function getFilteredArtists(
     });
   } else if (minSongCount > 1) {
     // Filter down to artists than have a minimum number of songs
-    return result.filter(artist => artist.songs.length >= minSongCount);
+    return result.filter((artist) => artist.songs.length >= minSongCount);
   }
   return result;
 }
@@ -168,18 +170,19 @@ export function GroupedAristList(): JSX.Element {
   const resetArtistContext = useResetRecoilState(artistContextState);
 
   const onRightClick = useMyTransaction(
-    ({ set }) => (item: ArtistSong, _index?: number, ev?: Event) => {
-      if (ev) {
-        const event = (ev as any) as MouseEvent;
-        set(artistContextState, {
-          data: item.key,
-          spot: { left: event.clientX + 14, top: event.clientY },
-        });
-      }
-    },
+    ({ set }) =>
+      (item: ArtistSong, _index?: number, ev?: Event) => {
+        if (ev) {
+          const event = ev as any as MouseEvent;
+          set(artistContextState, {
+            data: item.key,
+            spot: { left: event.clientX + 14, top: event.clientY },
+          });
+        }
+      },
   );
-  const onAddSongClick = useMyTransaction(xact => (item: ArtistSong) =>
-    AddSongs(xact, [item.key]),
+  const onAddSongClick = useMyTransaction(
+    (xact) => (item: ArtistSong) => AddSongs(xact, [item.key]),
   );
 
   const filteredArtistsFromSongRenderer = (
@@ -237,7 +240,7 @@ export function GroupedAristList(): JSX.Element {
         <DetailsList
           columns={columns}
           compact
-          componentRef={ref => setDetailRef(ref)}
+          componentRef={(ref) => setDetailRef(ref)}
           selectionMode={SelectionMode.none}
           items={sortedSongs}
           groups={groups}
