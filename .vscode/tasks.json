@@ -19,7 +19,7 @@
       "type": "npm",
       "script": "debugstart",
       "label": "npm: react-start",
-      "detail": "yarn react-scripts start"
+      "detail": "yarn react-start"
     }
   ]
 }
