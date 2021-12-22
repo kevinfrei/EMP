@@ -1,5 +1,5 @@
 import { MakeLogger } from '@freik/core-utils';
-import { Persistence } from '@freik/elect-main-utils';
+import { Comms, Persistence } from '@freik/elect-main-utils';
 import { SongKey } from '@freik/media-core';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
@@ -56,59 +56,20 @@ async function tuneProtocolHandler(
   }
 }
 
-type Registerer<T> = (
-  scheme: string,
-  handler: (
-    request: ProtocolRequest,
-    callback: (response: T | ProtocolResponse) => void,
-  ) => void,
-) => boolean;
-
-// Helper to check URL's & transition to async functions
-function registerProtocolHandler<ResponseType>(
-  type: string,
-  registerer: Registerer<ResponseType>,
-  processor: (
-    req: ProtocolRequest,
-    trimmedUrl: string,
-  ) => Promise<ProtocolResponse | ResponseType>,
-  defaultValue: ProtocolResponse | ResponseType = e404,
-) {
-  const protName = type.substr(0, type.indexOf(':'));
-  log(`Protocol ${type} (${protName})`);
-  registerer(protName, (req, callback) => {
-    log(`${type} URL request:`);
-    log(req);
-    if (!req.url) {
-      callback({ error: -324 });
-    } else if (req.url.startsWith(type)) {
-      processor(req, decodeURI(req.url.substr(type.length)))
-        .then(callback)
-        .catch((reason: any) => {
-          log(`${type}:// failure`);
-          log(reason);
-          callback(defaultValue);
-        });
-    } else {
-      callback(defaultValue);
-    }
-  });
-}
-
 // This sets up all protocol handlers
 export async function RegisterProtocols(): Promise<void> {
   const defPicBuffer = await GetDefaultPicBuffer();
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
-  registerProtocolHandler(
+  Comms.registerProtocolHandler(
     'pic://key/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerBufferProtocol,
     PictureHandler,
     defPicBuffer,
   );
-  registerProtocolHandler(
+  Comms.registerProtocolHandler(
     'tune://song/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerFileProtocol,

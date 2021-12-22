@@ -1,8 +1,8 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { Persistence } from '@freik/elect-main-utils';
+import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
-import { ipcMain, OpenDialogOptions, shell } from 'electron';
+import { ipcMain } from 'electron';
 import { IpcMainInvokeEvent, Menu } from 'electron/main';
 import {
   GetMediaInfoForSong,
@@ -31,53 +31,12 @@ import {
   setSongHates,
   setSongLikes,
 } from './SongLikesAndHates';
-import { SendToMain, ShowOpenDialog } from './window';
+import { SendToMain } from './window';
 
 const log = MakeLogger('Communication');
 const err = MakeError('Communication-err');
 
 type Handler<R, T> = (arg: T) => Promise<R | void>;
-
-/**
- * Read a value from persistence by name, returning it's unprocessed contents
- *
- * @async @function
- * @param {string} name - the name of the value to read
- * @return {Promise<string>} The raw string contents of the value
- */
-async function readFromStorage(name?: string): Promise<string> {
-  if (!name) return '';
-  try {
-    log(`readFromStorage(${name})`);
-    const value = await Persistence.getItemAsync(name);
-    log(`Sending ${name} response:`);
-    log(value);
-    return value || '';
-  } catch (e) {
-    err(`error from readFromStorage(${name})`);
-    err(e);
-  }
-  return '';
-}
-
-/**
- * Write a value to persistence by name.
- *
- * @async @function
- * @param {string?} keyValuePair - The key:value string to write
- */
-async function writeToStorage([key, value]: [string, string]): Promise<void> {
-  try {
-    // First, split off the key name:
-    log(`writeToStorage(${key} : ${value})`);
-    // Push the data into the persistence system
-    await Persistence.setItemAsync(key, value);
-    log(`writeToStorage(${key}...) completed`);
-  } catch (e) {
-    err(`error from writeToStorage([${key}, ${value}])`);
-    err(e);
-  }
-}
 
 /**
  * Registers with `ipcMain.handle` a function that takes a mandatory parameter
@@ -111,23 +70,10 @@ function registerChannel<R, T>(
  * Show a file in the shell
  * @param filePath - The path to the file to show
  */
-function showFile(filePath?: string): Promise<void> {
-  return new Promise((resolve) => {
-    if (filePath) {
-      shell.showItemInFolder(filePath);
-    }
-    resolve();
-  });
-}
-
-/**
- * Show a file in the shell
- * @param filePath - The path to the file to show
- */
 async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
   const thePath = await GetPathFromKey(mediaKey);
   if (thePath) {
-    shell.showItemInFolder(thePath);
+    return Shell.showFile(thePath);
   }
 }
 
@@ -168,20 +114,6 @@ function isStrOrUndef(obj: any): obj is string | undefined {
   return Type.isString(obj) || obj === undefined;
 }
 
-function isOpenDialogOptions(obj: any): obj is OpenDialogOptions {
-  /* {
-    title?: string;
-    defaultPath?: string;
-    buttonLabel?: string;
-    filters?: FileFilter[];
-    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory' | 'dontAddToRecent'>;
-    message?: string;
-    securityScopedBookmarks?: boolean;
-  }*/
-  // TODO: Check that stuff ^^^^
-  return true;
-}
-
 /**
  * Setup any async listeners, plus register all the "invoke" handlers
  */
@@ -189,8 +121,7 @@ export function CommsSetup(): void {
   // These are the general "just asking for something to read/written to disk"
   // functions. Media Info, Search, and MusicDB stuff needs a different handler
   // because they don't just read/write to disk.
-  registerChannel('read-from-storage', readFromStorage, Type.isString);
-  registerChannel('write-to-storage', writeToStorage, isKeyValue);
+  Comms.SetupDefault();
 
   // "complex" API's (not just save/restore data to the persist cache)
 
@@ -229,10 +160,7 @@ export function CommsSetup(): void {
   registerChannel('set-hates', setSongHates, Type.isArrayOfString);
   registerChannel('clear-hates', clearSongHates, Type.isArrayOfString);
 
-  // Reviewed & working properly:
-  registerChannel('show-file', showFile, Type.isString);
-  registerChannel('show-open-dialog', ShowOpenDialog, isOpenDialogOptions);
-
+  registerChannel('show-file', Shell.showFile, Type.isString);
   // Save-Playlist-as disabling
   registerChannel('set-save-menu', setSaveMenu, Type.isBoolean);
 }
