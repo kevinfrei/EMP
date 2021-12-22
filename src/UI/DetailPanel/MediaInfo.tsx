@@ -7,6 +7,7 @@ import {
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
+import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
 import { InvokeMain } from '../../MyWindow';
 import {
@@ -18,7 +19,6 @@ import {
 } from '../../Recoil/ReadOnly';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
 import { altRowRenderer } from './../SongList';
-import { Expandable } from './../Utilities';
 import { SimpleSongsList } from './../Views/MixedSongs';
 import { MetadataEditor } from './MetadataEditor';
 import './styles/MediaInfo.css';

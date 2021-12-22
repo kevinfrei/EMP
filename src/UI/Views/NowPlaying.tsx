@@ -25,7 +25,12 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
-import { Dialogs, useDialogState } from '@freik/web-utils';
+import {
+  Dialogs,
+  MyTransactionInterface,
+  useDialogState,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useState } from 'react';
 import {
   atom,
@@ -33,11 +38,7 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import {
-  MyTransactionInterface,
-  StopAndClear,
-  useMyTransaction,
-} from '../../Recoil/api';
+import { StopAndClear } from '../../Recoil/api';
 import {
   activePlaylistState,
   currentIndexState,

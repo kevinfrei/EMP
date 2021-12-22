@@ -13,6 +13,7 @@ import {
 import { useId } from '@fluentui/react-hooks';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
+import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
@@ -25,7 +26,6 @@ import {
   UploadImageForAlbum,
   UploadImageForSong,
 } from '../../MyWindow';
-import { MyTransactionInterface, useMyTransaction } from '../../Recoil/api';
 import {
   albumCoverUrlFuncFam,
   picCacheAvoiderStateFam,

@@ -16,9 +16,9 @@ it('Adding empty songs does nothing', () => {
 
 */
 import { MakeError } from '@freik/core-utils';
+import { MyTransactionInterface } from '@freik/web-utils';
 import { act } from 'react-test-renderer';
 import { RecoilState, RecoilValueReadOnly } from 'recoil';
-import { MyTransactionInterface } from '../api';
 
 const err = MakeError('api.test');
 

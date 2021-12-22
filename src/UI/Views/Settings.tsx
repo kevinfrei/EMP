@@ -8,10 +8,15 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
+import {
+  Expandable,
+  MyTransactionInterface,
+  StateToggle,
+  useBoolRecoilState,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
-import { MyTransactionInterface, useMyTransaction } from '../../Recoil/api';
-import { useBoolRecoilState } from '../../Recoil/helpers';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
@@ -30,7 +35,6 @@ import {
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { Catch } from '../../Tools';
-import { Expandable, StateToggle } from '../Utilities';
 import './styles/Settings.css';
 
 const removeFromSet = (set: string[], val: string): string[] => {

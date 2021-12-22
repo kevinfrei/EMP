@@ -6,9 +6,10 @@ import {
   mergeStyleSets,
 } from '@fluentui/react';
 import { Album } from '@freik/media-core';
+import { useMyTransaction } from '@freik/web-utils';
 import { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
-import { AddSongs, useMyTransaction } from '../../Recoil/api';
+import { AddSongs } from '../../Recoil/api';
 import { albumCoverUrlFuncFam } from '../../Recoil/Local';
 import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';

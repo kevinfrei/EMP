@@ -1,9 +1,9 @@
 import { ContextualMenu, Dialog, DialogType } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
+import { Spinner } from '@freik/web-utils';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
 import { maybeDataForSongFunc } from '../../Recoil/ReadOnly';
-import { Spinner } from './../Utilities';
 import MediaInfoTable from './MediaInfo';
 
 const err = MakeError('SongDetailPanel-err'); // eslint-disable-line

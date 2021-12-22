@@ -18,11 +18,12 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { useMyTransaction } from '@freik/web-utils';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
-import { AddSongs, useMyTransaction } from '../../Recoil/api';
+import { AddSongs } from '../../Recoil/api';
 import {
   allAlbumsFunc,
   allArtistsFunc,

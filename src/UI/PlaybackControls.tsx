@@ -1,12 +1,7 @@
 import { MakeLogger } from '@freik/core-utils';
+import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  MaybePlayNext,
-  MaybePlayPrev,
-  MyTransactionInterface,
-  ShufflePlaying,
-  useMyTransaction,
-} from '../Recoil/api';
+import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
   hasAnySongsFunc,
   hasNextSongFunc,

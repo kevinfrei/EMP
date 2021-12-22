@@ -10,18 +10,21 @@ import {
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
-import { Dialogs, useDialogState } from '@freik/web-utils';
+import {
+  Dialogs,
+  MakeSetState,
+  MyTransactionInterface,
+  useDialogState,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
   AddSongs,
   DeletePlaylist,
-  MyTransactionInterface,
   PlaySongs,
   RenamePlaylist,
-  useMyTransaction,
 } from '../../Recoil/api';
-import { MakeSetState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
   allPlaylistsFunc,
@@ -47,7 +50,7 @@ type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
 
 const [playlistExpandedState, playlistIsExpandedState] =
-  MakeSetState<PlaylistName>('albumExpanded');
+  MakeSetState<PlaylistName>('playlistExpanded');
 
 const playlistContextState = atom<SongListMenuData>({
   key: 'playlistContext',

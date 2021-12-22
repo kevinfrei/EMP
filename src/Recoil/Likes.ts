@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
+import { MyTransactionInterface } from '@freik/web-utils';
 import { atom, selectorFamily } from 'recoil';
-import { MyTransactionInterface } from './api';
 import {
   bidirectionalSyncWithTranslateEffect,
   syncWithMainEffect,

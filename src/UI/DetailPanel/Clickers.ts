@@ -1,5 +1,5 @@
 import { Song, SongKey } from '@freik/media-core';
-import { MyTransactionInterface } from '../../Recoil/api';
+import { MyTransactionInterface } from '@freik/web-utils';
 import { songDetailState } from '../../Recoil/Local';
 
 export function SongDetailClick(
