@@ -9,6 +9,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import {
+  Catch,
   Expandable,
   MyTransactionInterface,
   StateToggle,
@@ -34,7 +35,6 @@ import {
   saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
-import { Catch } from '../../Tools';
 import './styles/Settings.css';
 
 const removeFromSet = (set: string[], val: string): string[] => {

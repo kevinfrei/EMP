@@ -9,10 +9,10 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { Catch, Fail } from '@freik/web-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 import { CallMain, SetDB } from '../MyWindow';
-import { Catch, Fail } from '../Tools';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import { oneWayFromMainEffect } from './helpers';
 import { songListState } from './Local';

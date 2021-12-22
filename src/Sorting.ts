@@ -11,8 +11,8 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { Fail } from '@freik/web-utils';
 import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
-import { Fail } from './Tools';
 
 export type ArtistSong = Song & { sortedArtistId: ArtistKey; comboKey: string };
 

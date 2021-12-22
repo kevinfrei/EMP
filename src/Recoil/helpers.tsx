@@ -6,13 +6,13 @@ import {
   Type,
   Unpickle,
 } from '@freik/core-utils';
+import { Fail, onRejected } from '@freik/web-utils';
 import { useEffect } from 'react';
 import {
   AtomEffect,
   CallbackInterface,
   DefaultValue,
   RecoilState,
-  SetterOrUpdater,
 } from 'recoil';
 import {
   ListenKey,
@@ -21,9 +21,6 @@ import {
   Unsubscribe,
   WriteToStorage,
 } from '../ipc';
-import { Fail, onRejected } from '../Tools';
-
-export type StatePair<T> = [T, SetterOrUpdater<T>];
 
 const log = MakeLogger('helpers');
 const err = MakeError('helpers-err');
