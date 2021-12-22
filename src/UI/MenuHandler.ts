@@ -1,10 +1,7 @@
 import { MakeError, Type } from '@freik/core-utils';
+import { MyTransactionInterface } from '@freik/web-utils';
 import { FocusSearch } from '../MyWindow';
-import {
-  MaybePlayNext,
-  MaybePlayPrev,
-  MyTransactionInterface,
-} from '../Recoil/api';
+import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { activePlaylistState, songListState } from '../Recoil/Local';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';

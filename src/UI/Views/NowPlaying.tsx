@@ -25,6 +25,12 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import {
+  Dialogs,
+  MyTransactionInterface,
+  useDialogState,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useState } from 'react';
 import {
   atom,
@@ -32,12 +38,7 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import {
-  MyTransactionInterface,
-  StopAndClear,
-  useMyTransaction,
-} from '../../Recoil/api';
-import { useDialogState } from '../../Recoil/helpers';
+import { StopAndClear } from '../../Recoil/api';
 import {
   activePlaylistState,
   currentIndexState,
@@ -58,7 +59,6 @@ import {
 import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
-import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
   AlbumForSongRender,
   ArtistsForSongRender,
@@ -116,7 +116,7 @@ function TopLine(): JSX.Element {
   return (
     <div id="current-header">
       <div className="now-playing-header">
-        <TextInputDialog
+        <Dialogs.TextInput
           data={saveAsData}
           onConfirm={saveListAs}
           title="Save Playlist as..."
@@ -125,7 +125,7 @@ function TopLine(): JSX.Element {
           yesText="Save"
           noText="Cancel"
         />
-        <ConfirmationDialog
+        <Dialogs.Confirmation
           data={confirmData}
           confirmFunc={stopAndClear}
           title="Please Confirm"

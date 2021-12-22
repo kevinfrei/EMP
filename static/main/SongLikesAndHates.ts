@@ -1,6 +1,6 @@
 import { MakeLogger, Type } from '@freik/core-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import { SongKey } from '@freik/media-core';
-import { Persistence } from './persist';
 
 const log = MakeLogger('SongLikesAndHates'); // eslint-disable-line
 

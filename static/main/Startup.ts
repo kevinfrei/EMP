@@ -1,6 +1,6 @@
+import { Persistence } from '@freik/elect-main-utils';
 import { UpdateLocations } from './AudioDatabase';
 import { CommsSetup } from './Communication';
-import { Persistence } from './persist';
 
 /**
  * Called to set stuff up before *anything* else has been done.

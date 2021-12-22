@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { MakeLogger, Type } from '@freik/core-utils';
+import { Effects, Ipc } from '@freik/elect-render-utils';
 import {
   Album,
   AlbumKey,
@@ -11,10 +12,9 @@ import {
 } from '@freik/media-core';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
-import { CallMain, SetDB } from '../MyWindow';
+import { SetDB } from '../MyWindow';
 import { Catch, Fail } from '../Tools';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
-import { oneWayFromMainEffect } from './helpers';
 import { songListState } from './Local';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
@@ -119,9 +119,9 @@ const musicLibraryState = atom<MusicLibrary>({
   key: 'musicDatabase',
   default: emptyLibrary,
   effects_UNSTABLE: [
-    oneWayFromMainEffect(
+    Effects.oneWayFromMain(
       async (): Promise<MusicLibrary> => {
-        const fad = await CallMain(
+        const fad = await Ipc.CallMain(
           'get-music-database',
           undefined,
           IsFlatAudioDatabase,

@@ -1,11 +1,11 @@
 import { initializeIcons } from '@fluentui/font-icons-mdl2';
+import { Util } from '@freik/elect-render-utils';
 import ReactDOM from 'react-dom';
-import { SetInit } from './MyWindow';
 import * as serviceWorker from './serviceWorker';
 import App from './UI/App';
 import './UI/styles/index.css';
 
-SetInit(() => {
+Util.SetInit(() => {
   initializeIcons();
   const root = document.getElementById('root');
   if (root) {

@@ -1,15 +1,13 @@
-import { DebouncedEvery, MakeError, Type } from '@freik/core-utils';
-import { BrowserWindow, dialog, screen } from 'electron';
-import isDev from 'electron-is-dev';
-import { OpenDialogOptions } from 'electron/main';
-import * as path from 'path';
-import { OnWindowCreated } from './electronSetup';
+import { MakeError, Type } from '@freik/core-utils';
 import {
   GetBrowserWindowPos,
+  getMainWindow,
   LoadWindowPos,
-  SaveWindowPos,
-  WindowPosition,
-} from './persist';
+} from '@freik/elect-main-utils';
+import { BrowserWindow, screen } from 'electron';
+import isDev from 'electron-is-dev';
+import * as path from 'path';
+import { OnWindowCreated } from './electronSetup';
 import { RegisterListeners, RegisterProtocols } from './protocols';
 
 // This should control access to the main window
@@ -18,36 +16,9 @@ import { RegisterListeners, RegisterProtocols } from './protocols';
 
 const err = MakeError('window-err');
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let mainWindow: BrowserWindow | null = null;
-
 export function HasWindow(): boolean {
-  return mainWindow !== null;
+  return getMainWindow() !== null;
 }
-
-export function SendToMain(channel: string, ...data: any[]): void {
-  if (mainWindow && mainWindow.webContents) {
-    mainWindow.webContents.send(channel, data);
-  }
-}
-
-const windowPos: WindowPosition = LoadWindowPos();
-
-// This will get called after a 1 second delay (and subsequent callers will
-// not be registered if one is waiting) to not be so aggressive about saving
-// the window position to disk
-const windowPosUpdated = DebouncedEvery(() => {
-  // Get the window state & save it
-  if (mainWindow) {
-    windowPos.isMaximized = mainWindow.isMaximized();
-    if (!windowPos.isMaximized) {
-      // only update bounds if the window isn’t currently maximized
-      windowPos.bounds = mainWindow.getBounds();
-    }
-    SaveWindowPos(windowPos);
-  }
-}, 1000);
 
 export async function CreateWindow(
   windowCreated: OnWindowCreated,
@@ -55,7 +26,8 @@ export async function CreateWindow(
   await RegisterProtocols();
   RegisterListeners();
   // Create the window, but don't show it just yet
-  mainWindow = new BrowserWindow({
+  const windowPos = LoadWindowPos();
+  const theWin = new BrowserWindow({
     ...GetBrowserWindowPos(windowPos),
     title: 'EMP: Electron Music Player',
     // backgroundColor: '#282c34', // Unnecessary if you're not showing :)
@@ -77,43 +49,33 @@ export async function CreateWindow(
     */
     fullscreenable: false,
     acceptFirstMouse: true, // Gets 'activating' clicks
-  })
-    .on('closed', () => {
-      // Clear the reference to the window object.
-      // Usually you would store windows in an array.
-      // If your app supports multiple windows, this is the time when you should
-      // delete the corresponding element.
-      mainWindow = null;
-    })
-    .on('ready-to-show', () => {
-      // Wait to show the main window until it's actually ready...
-      if (mainWindow) {
-        mainWindow.show();
-        mainWindow.focus();
-        // TODO: On Mac, there's 'full screen max' and then 'just big'
-        // This code makes full screen max turn into just big
-        if (windowPos.isMaximized) {
-          mainWindow.maximize();
-        }
-        // Call the user specified "ready to go" function
-        windowCreated().catch(err);
-        // open the devtools
-        if (isDev) {
-          mainWindow.webContents.openDevTools();
-        }
+  }).on('ready-to-show', () => {
+    // Wait to show the main window until it's actually ready...
+    const aWindow = getMainWindow();
+    if (aWindow) {
+      aWindow.show();
+      aWindow.focus();
+      // TODO: On Mac, there's 'full screen max' and then 'just big'
+      // This code makes full screen max turn into just big
+      if (windowPos.isMaximized) {
+        aWindow.maximize();
       }
-    })
-    // Save the window position when it's changed:
-    .on('resize', windowPosUpdated)
-    .on('move', windowPosUpdated);
-
-  // Load the base URL
-  await mainWindow.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : // If this file moves, you have to fix this to make it work for release
-        `file://${path.join(__dirname, '../index.html')}`,
-  );
+      // Call the user specified "ready to go" function
+      windowCreated().catch(err);
+      // open the devtools
+      if (isDev) {
+        aWindow.webContents.openDevTools();
+      }
+    }
+  });
+  theWin
+    .loadURL(
+      isDev
+        ? 'http://localhost:3000'
+        : // If this file moves, you have to fix this to make it work for release
+          `file://${path.join(__dirname, '../index.html')}`,
+    )
+    .catch(err);
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -122,6 +84,8 @@ export async function CreateWindow(
 let prevWidth = 0;
 
 export function ToggleMiniPlayer(): void {
+  const mainWindow = getMainWindow();
+  const windowPos = LoadWindowPos();
   if (
     mainWindow !== null &&
     Type.isNumber(windowPos.bounds.x) &&
@@ -157,17 +121,4 @@ export function ToggleMiniPlayer(): void {
       mainWindow.setSize(270, windowPos.bounds.height);
     }
   }
-}
-
-export async function ShowOpenDialog(
-  options: OpenDialogOptions,
-): Promise<string[] | void> {
-  if (!mainWindow) {
-    return;
-  }
-  const res = await dialog.showOpenDialog(mainWindow, options);
-  if (res.canceled) {
-    return;
-  }
-  return res.filePaths;
 }

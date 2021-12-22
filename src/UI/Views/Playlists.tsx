@@ -10,17 +10,21 @@ import {
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
+import {
+  Dialogs,
+  MyTransactionInterface,
+  useDialogState,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import {
   AddSongs,
   DeletePlaylist,
-  MyTransactionInterface,
   PlaySongs,
   RenamePlaylist,
-  useMyTransaction,
 } from '../../Recoil/api';
-import { MakeSetState, useDialogState } from '../../Recoil/helpers';
+import { MakeSetState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
   allPlaylistsFunc,
@@ -29,7 +33,6 @@ import {
 } from '../../Recoil/PlaylistsState';
 import { allSongsFunc } from '../../Recoil/ReadOnly';
 import { MakeSortKey } from '../../Sorting';
-import { ConfirmationDialog, TextInputDialog } from '../Dialogs';
 import {
   AlbumForSongRender,
   ArtistsForSongRender,
@@ -266,7 +269,7 @@ export default function PlaylistView(): JSX.Element {
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
-        <ConfirmationDialog
+        <Dialogs.Confirmation
           data={playlistDeleteData}
           confirmFunc={deleteConfirmed}
           title="Are you sure?"
@@ -274,7 +277,7 @@ export default function PlaylistView(): JSX.Element {
           yesText="Delete"
           noText="Cancel"
         />
-        <ConfirmationDialog
+        <Dialogs.Confirmation
           data={removeSongData}
           confirmFunc={removeSongConfirmed}
           title="Are you sure?"
@@ -282,7 +285,7 @@ export default function PlaylistView(): JSX.Element {
           yesText="Remove"
           noText="Cancel"
         />
-        <TextInputDialog
+        <Dialogs.TextInput
           data={renameData}
           onConfirm={renameConfirmed}
           title={`Rename ${selected}...`}

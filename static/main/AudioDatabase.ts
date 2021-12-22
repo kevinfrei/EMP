@@ -13,6 +13,7 @@ import {
   SafelyUnpickle,
   Type,
 } from '@freik/core-utils';
+import { Comms, Persistence } from '@freik/elect-main-utils';
 import {
   isAlbumKey,
   isArtistKey,
@@ -21,8 +22,6 @@ import {
   SongKey,
 } from '@freik/media-core';
 import electronIsDev from 'electron-is-dev';
-import { AsyncSend } from './Communication';
-import { Persistence } from './persist';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
@@ -48,7 +47,7 @@ export function SendDatabase(db: AudioDatabase): void {
       `${flat.albums.length} albums,` +
       `${flat.artists.length} artists`,
   );
-  AsyncSend({ 'music-database-update': flat });
+  Comms.AsyncSend({ 'music-database-update': flat });
 }
 
 export async function RescanAudioDatase(): Promise<void> {

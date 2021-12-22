@@ -6,15 +6,11 @@ import {
   Point,
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
+import { Ipc } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
+import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
-import { InvokeMain } from '../MyWindow';
-import {
-  AddSongs,
-  MyTransactionInterface,
-  PlaySongs,
-  useMyTransaction,
-} from '../Recoil/api';
+import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -91,7 +87,7 @@ export function SongListMenu({
   });
 
   const onShow = () => {
-    InvokeMain('show-location-from-key', context.data).catch(Catch);
+    Ipc.InvokeMain('show-location-from-key', context.data).catch(Catch);
   };
   const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];

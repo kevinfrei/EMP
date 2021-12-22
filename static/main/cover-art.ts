@@ -7,6 +7,7 @@ import {
   SafelyUnpickle,
   Type,
 } from '@freik/core-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import {
   Album,
   AlbumKey,
@@ -25,7 +26,6 @@ import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
-import { Persistence } from './persist';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
@@ -334,13 +334,25 @@ export type AlbumCoverData =
   | {
       albumKey: AlbumKey;
       nativeImage: Uint8Array;
+    }
+  | {
+      songKey: SongKey;
+      path: string;
+    }
+  | {
+      albumKey: AlbumKey;
+      path: string;
     };
 
 export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
+  // use of the !== means we get one or the other of songKey albumKey and nativeImage path
   return (
     Type.hasStr(arg, 'songKey') !== Type.hasStr(arg, 'albumKey') &&
-    Type.has(arg, 'nativeImage') &&
-    arg.nativeImage instanceof Uint8Array
+    Type.hasType(
+      arg,
+      'nativeImage',
+      (o): o is Uint8Array => o instanceof Uint8Array,
+    ) !== Type.hasStr(arg, 'path')
   );
 }
 
@@ -360,6 +372,10 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
+  if (Type.has(arg, 'path')) {
+    await db.setAlbumPicture(albumKey, await fs.readFile(arg.path));
+  } else {
+    await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
+  }
   return '';
 }

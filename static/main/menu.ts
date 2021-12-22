@@ -1,4 +1,5 @@
 import { MakeError, Type } from '@freik/core-utils';
+import { Comms, Persistence } from '@freik/elect-main-utils';
 import {
   app,
   BrowserWindow,
@@ -9,8 +10,6 @@ import {
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
-import { AsyncSend } from './Communication';
-import { Persistence } from './persist';
 import { ToggleMiniPlayer } from './window';
 
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -34,7 +33,7 @@ function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
     return handler as ClickHandler;
   }
   return () => {
-    void AsyncSend({ menuAction: handler });
+    void Comms.AsyncSend({ menuAction: handler });
   };
 }
 

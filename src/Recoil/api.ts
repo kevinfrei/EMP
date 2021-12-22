@@ -1,4 +1,5 @@
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { Ipc } from '@freik/elect-render-utils';
 import {
   isAlbumKey,
   isArtistKey,
@@ -7,8 +8,7 @@ import {
   PlaylistName,
   SongKey,
 } from '@freik/media-core';
-import { RecoilState, RecoilValueReadOnly, useRecoilCallback } from 'recoil';
-import { PostMain } from '../MyWindow';
+import { MyTransactionInterface } from '@freik/web-utils';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,
@@ -32,31 +32,6 @@ import { repeatState, shuffleState } from './ReadWrite';
 
 const log = MakeLogger('api'); // eslint-disable-line
 const err = MakeError('ReadWrite-err'); // eslint-disable-line
-
-export type MyTransactionInterface = {
-  get: <T>(recoilVal: RecoilState<T> | RecoilValueReadOnly<T>) => T;
-  set: <T>(
-    recoilVal: RecoilState<T>,
-    valOrUpdater: ((currVal: T) => T) | T,
-  ) => void;
-  reset: <T>(recoilVal: RecoilState<T>) => void;
-};
-
-type FnType<Args extends readonly unknown[], Return> = (
-  ...args: Args
-) => Return;
-
-// I'm making my own hook to use instead of the currently-too-constrained
-// useRecoilTransaction hook
-export function useMyTransaction<Args extends readonly unknown[], Return>(
-  fn: (ntrface: MyTransactionInterface) => FnType<Args, Return>,
-): FnType<Args, Return> {
-  return useRecoilCallback(({ set, reset, snapshot }) => {
-    const get = <T>(recoilVal: RecoilState<T> | RecoilValueReadOnly<T>) =>
-      snapshot.getLoadable(recoilVal).getValue();
-    return fn({ set, reset, get });
-  });
-}
 
 function ShufflePlayback(
   { get, set }: MyTransactionInterface,
@@ -255,7 +230,7 @@ export function RenamePlaylist(
   curNames.add(newName);
   set(playlistFuncFam(newName), curSongs);
   set(playlistNamesFunc, new Set(curNames));
-  void PostMain('rename-playlist', [curName, newName]);
+  void Ipc.PostMain('rename-playlist', [curName, newName]);
 }
 
 /**
@@ -272,7 +247,7 @@ export function DeletePlaylist(
   if (activePlaylist === toDelete) {
     set(activePlaylistState, '');
   }
-  void PostMain('delete-playlist', toDelete);
+  void Ipc.PostMain('delete-playlist', toDelete);
 }
 
 export function SongListFromKey(

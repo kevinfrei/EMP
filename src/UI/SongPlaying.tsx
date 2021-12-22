@@ -1,8 +1,9 @@
 import { Slider, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
+import { useMyTransaction } from '@freik/web-utils';
 import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { MaybePlayNext, useMyTransaction } from '../Recoil/api';
+import { MaybePlayNext } from '../Recoil/api';
 import {
   albumCoverUrlFuncFam,
   currentSongKeyFunc,
