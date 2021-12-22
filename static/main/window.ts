@@ -24,12 +24,6 @@ export function HasWindow(): boolean {
   return mainWindow !== null;
 }
 
-export function SendToMain(channel: string, ...data: any[]): void {
-  if (mainWindow && mainWindow.webContents) {
-    mainWindow.webContents.send(channel, data);
-  }
-}
-
 export async function CreateWindow(
   windowCreated: OnWindowCreated,
 ): Promise<void> {
