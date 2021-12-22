@@ -7,6 +7,7 @@ import {
   SafelyUnpickle,
   Type,
 } from '@freik/core-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import {
   Album,
   AlbumKey,
@@ -25,7 +26,6 @@ import { promises as fs } from 'fs';
 import https from 'https';
 import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
-import { Persistence } from './persist';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
 const log = MakeLogger('cover-art', false && electronIsDev);

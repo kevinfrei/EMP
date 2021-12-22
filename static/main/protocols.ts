@@ -1,11 +1,11 @@
 import { MakeLogger } from '@freik/core-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import { SongKey } from '@freik/media-core';
 import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
-import { Persistence } from './persist';
 
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;

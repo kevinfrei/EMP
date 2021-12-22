@@ -13,6 +13,7 @@ import {
   SafelyUnpickle,
   Type,
 } from '@freik/core-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import {
   isAlbumKey,
   isArtistKey,
@@ -22,7 +23,6 @@ import {
 } from '@freik/media-core';
 import electronIsDev from 'electron-is-dev';
 import { AsyncSend } from './Communication';
-import { Persistence } from './persist';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');

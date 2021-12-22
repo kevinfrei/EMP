@@ -1,15 +1,15 @@
 import { DebouncedEvery, MakeError, Type } from '@freik/core-utils';
-import { BrowserWindow, dialog, screen } from 'electron';
-import isDev from 'electron-is-dev';
-import { OpenDialogOptions } from 'electron/main';
-import * as path from 'path';
-import { OnWindowCreated } from './electronSetup';
 import {
   GetBrowserWindowPos,
   LoadWindowPos,
   SaveWindowPos,
   WindowPosition,
-} from './persist';
+} from '@freik/elect-main-utils';
+import { BrowserWindow, dialog, screen } from 'electron';
+import isDev from 'electron-is-dev';
+import { OpenDialogOptions } from 'electron/main';
+import * as path from 'path';
+import { OnWindowCreated } from './electronSetup';
 import { RegisterListeners, RegisterProtocols } from './protocols';
 
 // This should control access to the main window

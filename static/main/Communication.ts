@@ -1,5 +1,6 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
 import { ipcMain, OpenDialogOptions, shell } from 'electron';
 import { IpcMainInvokeEvent, Menu } from 'electron/main';
@@ -13,7 +14,6 @@ import {
   SetMediaInfoForSong,
 } from './AudioDatabase';
 import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
-import { Persistence } from './persist';
 import {
   CheckPlaylists,
   DeletePlaylist,
