@@ -19,16 +19,16 @@ import { songListState } from './Local';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
-export type AlbumData = {
+export type AlbumDescription = {
   artist: string;
   album: string;
   year: string;
 };
 
-export type SongData = {
+export type SongDescription = {
   title: string;
   track: number;
-} & AlbumData;
+} & AlbumDescription;
 
 const log = MakeLogger('ReadOnly'); // eslint-disable-line
 const err = MakeLogger('ReadOnly-err'); // eslint-disable-line
@@ -288,11 +288,11 @@ export const curSongsFunc = selector<Song[]>({
   },
 });
 
-export const dataForSongFuncFam = selectorFamily<SongData, SongKey>({
+export const dataForSongFuncFam = selectorFamily<SongDescription, SongKey>({
   key: 'DataForSong',
   get:
     (sk: SongKey) =>
-    ({ get }): SongData => {
+    ({ get }): SongDescription => {
       const res = { title: '', track: 0, artist: '', album: '', year: '' };
 
       if (sk.length === 0) {
@@ -309,19 +309,25 @@ export const dataForSongFuncFam = selectorFamily<SongData, SongKey>({
     },
 });
 
-export const dataForSongListFuncFam = selectorFamily<SongData[], SongKey[]>({
+export const dataForSongListFuncFam = selectorFamily<
+  SongDescription[],
+  SongKey[]
+>({
   key: 'DataForSongs',
   get:
     (sks: SongKey[]) =>
-    ({ get }): SongData[] =>
+    ({ get }): SongDescription[] =>
       sks.map((sk: SongKey) => get(dataForSongFuncFam(sk))),
 });
 
-export const maybeDataForSongFunc = selectorFamily<SongData | null, SongKey[]>({
+export const maybeDataForSongFunc = selectorFamily<
+  SongDescription | null,
+  SongKey[]
+>({
   key: 'DataForSong',
   get:
     (ssk) =>
-    ({ get }): SongData | null => {
+    ({ get }): SongDescription | null => {
       if (ssk.length !== 1) {
         return null;
       }
@@ -329,11 +335,11 @@ export const maybeDataForSongFunc = selectorFamily<SongData | null, SongKey[]>({
     },
 });
 
-export const dataForAlbumFuncFam = selectorFamily<AlbumData, AlbumKey>({
+export const dataForAlbumFuncFam = selectorFamily<AlbumDescription, AlbumKey>({
   key: 'DataForAlbum',
   get:
     (ak: AlbumKey) =>
-    ({ get }): AlbumData => {
+    ({ get }): AlbumDescription => {
       const res = { artist: '', album: '', year: '' };
       if (!ak) {
         return res;
