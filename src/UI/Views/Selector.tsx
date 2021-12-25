@@ -12,7 +12,7 @@ import { SearchResultsView } from './SearchResults';
 import { SettingsView } from './Settings';
 import './styles/Selector.css';
 
-export default function ViewSelector(): JSX.Element {
+export function ViewSelector(): JSX.Element {
   const which = useRecoilValue(curViewFunc);
   const sl = (v: CurrentView): CSSProperties =>
     which === v ? {} : { visibility: 'hidden' };

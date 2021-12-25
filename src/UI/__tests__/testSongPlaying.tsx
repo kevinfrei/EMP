@@ -1,7 +1,7 @@
 /*
 import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
-import SongPlaying from '../SongPlaying';
+import { SongPlaying } from '../SongPlaying';
 */
 
 jest.mock('../../MyWindow');

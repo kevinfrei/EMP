@@ -4,11 +4,11 @@ import { Spinner } from '@freik/web-utils';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { songDetailState } from '../../Recoil/Local';
 import { maybeDataForSongFunc } from '../../Recoil/ReadOnly';
-import MediaInfoTable from './MediaInfo';
+import { MediaInfoTable } from './MediaInfo';
 
 const err = MakeError('SongDetailPanel-err'); // eslint-disable-line
 
-export default function SongDetailPanel(): JSX.Element {
+export function SongDetailPanel(): JSX.Element {
   const detailSongs = useRecoilValue(songDetailState);
   const songInfo = useRecoilValue(maybeDataForSongFunc([...detailSongs]));
   const dismissClick = useRecoilCallback(

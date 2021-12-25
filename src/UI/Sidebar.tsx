@@ -69,7 +69,7 @@ export function isSearchBox(target: EventTarget | null): boolean {
   return false;
 }
 
-export default function Sidebar(): JSX.Element {
+export function Sidebar(): JSX.Element {
   const [curView, setCurView] = useRecoilState(curViewFunc);
   const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
     set(curViewFunc, CurrentView.search);

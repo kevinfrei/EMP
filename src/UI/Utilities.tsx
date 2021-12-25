@@ -22,7 +22,7 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
-export default function Utilities(): JSX.Element {
+export function Utilities(): JSX.Element {
   const saveable = useRecoilValue(saveableFunc);
   const callback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),

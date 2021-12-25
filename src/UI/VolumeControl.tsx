@@ -5,7 +5,7 @@ import { GetAudioElem } from './SongPlaying';
 import './styles/VolumeControl.css';
 import { mySliderStyles } from './Utilities';
 
-export default function VolumeControl(): JSX.Element {
+export function VolumeControl(): JSX.Element {
   const [muted, setMuted] = useRecoilState(mutedState);
   const [volume, setVolume] = useRecoilState(volumeState);
 

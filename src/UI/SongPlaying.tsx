@@ -135,7 +135,7 @@ function ArtistAlbum(): JSX.Element {
   }
 }
 
-export default function SongPlayback(): JSX.Element {
+export function SongPlaying(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
   const onPlay = useRecoilCallback(
     ({ set }) =>

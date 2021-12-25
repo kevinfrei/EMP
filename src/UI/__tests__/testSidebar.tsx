@@ -4,7 +4,7 @@ import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { Suspense } from 'react';
 import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
-import Sidebar from '../Sidebar';
+import { Sidebar } from '../Sidebar';
 */
 jest.mock('../../MyWindow');
 
