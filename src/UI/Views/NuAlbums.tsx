@@ -116,7 +116,7 @@ function AlbumCoverView({
   );
 }
 
-export default function NuAlbums(): JSX.Element {
+export function NuAlbumView(): JSX.Element {
   const columnCount = useRef(0);
   const rowHeight = useRef(0);
 
@@ -131,7 +131,7 @@ export default function NuAlbums(): JSX.Element {
     [],
   );
 
-  const onRenderCell = (item?: Album, index?: number) => {
+  const onRenderCell = (item?: Album) => {
     return item !== undefined ? (
       <AlbumCoverView album={item} cols={columnCount.current} />
     ) : (

@@ -39,7 +39,7 @@ export function onClickPlayPause({ set }: MyTransactionInterface): void {
   });
 }
 
-export default function SongControls(): JSX.Element {
+export function PlaybackControls(): JSX.Element {
   const isPlaying = useRecoilValue(playingState);
 
   const hasAnySong = useRecoilValue(hasAnySongsFunc);

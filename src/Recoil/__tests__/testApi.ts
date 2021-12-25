@@ -50,7 +50,7 @@ export function makeCallbackIfc(
   return {
     set,
     get,
-    reset: (rv: RecoilState<any>) => {
+    reset: (/* rv: RecoilState<any> */) => {
       err("Reset doesn't work in here :(");
       return;
     },

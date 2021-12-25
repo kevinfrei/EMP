@@ -203,7 +203,7 @@ function MetadataDatabase(): JSX.Element {
   );
 }
 
-export default function Settings(): JSX.Element {
+export function SettingsView(): JSX.Element {
   return (
     <Stack className="settings-view">
       <Expandable separator label="Music Locations" defaultShow={true}>

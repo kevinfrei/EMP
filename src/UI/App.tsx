@@ -3,7 +3,7 @@ import { FreikElem } from '@freik/elect-render-utils';
 import { Spinner } from '@freik/web-utils';
 import { RecoilRoot } from 'recoil';
 import SongDetailPanel from './DetailPanel/SongDetailPanel';
-import PlaybackControls from './PlaybackControls';
+import { PlaybackControls } from './PlaybackControls';
 import Sidebar from './Sidebar';
 import SongPlaying from './SongPlaying';
 import './styles/App.css';

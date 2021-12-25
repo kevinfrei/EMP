@@ -121,7 +121,7 @@ function PlaylistHeaderDisplay({
   );
 }
 
-export default function PlaylistView(): JSX.Element {
+export function PlaylistView(): JSX.Element {
   const [selected, setSelected] = useState('');
   const [songPlaylistToRemove, setSongPlaylistToRemove] = useState<
     [string, string, number]

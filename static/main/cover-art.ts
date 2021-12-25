@@ -9,22 +9,17 @@ import {
 } from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
 import {
-  Album,
   AlbumKey,
-  Artist,
   ArtistKey,
   isAlbumKey,
   isArtistKey,
   MediaKey,
   SongKey,
 } from '@freik/media-core';
-import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';
-import https from 'https';
-import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
@@ -39,6 +34,7 @@ async function shouldDownloadArtistArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadArtistArtwork')) === 'true';
 }
 
+/*
 async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
   return (
     (await Persistence.getItemAsync('saveAlbumArtworkWithMusic')) === 'true'
@@ -59,6 +55,7 @@ function httpsDownloader(url: string): Promise<Buffer> {
     });
   });
 }
+*/
 
 async function getArt(album: string, artist: string): Promise<string | void> {
   const attempt = await albumArt(artist, { album, size: 'large' });
@@ -280,6 +277,7 @@ export async function PictureHandler(
   return await GetDefaultPicBuffer();
 }
 
+/*
 async function SavePicForAlbum(
   db: AudioDatabase,
   album: Album,
@@ -325,6 +323,7 @@ async function SavePicForArtist(
   log('Saving artist pic to blob store');
   await db.setArtistPicture(artist.key, data);
 }
+*/
 
 type CoverKey = { songKey: SongKey } | { albumKey: AlbumKey };
 type ImageData = { nativeImage: Uint8Array } | { imagePath: string };

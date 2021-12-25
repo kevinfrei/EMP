@@ -76,7 +76,7 @@ export const articlesCmp = (a: string, b: string): number =>
 export const noArticlesCmp = (a: string, b: string): number =>
   stringCompare(noArticles(a), noArticles(b));
 
-export function MakeSortKeyMultiMap(
+function MakeSortKeyMultiMap(
   initial: string | string[],
   groups?:
     | string[]

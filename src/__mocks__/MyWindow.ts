@@ -1,17 +1,15 @@
 // This is for getting at "global" stuff from the window object
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { OpenDialogSyncOptions } from 'electron/main';
 
 const log = MakeLogger('MyWindow-mock');
 const err = MakeError('MyWindow-mock-err');
 
-export async function ShowOpenDialog(
-  options: OpenDialogSyncOptions,
-): Promise<string[] | void> {
+export async function ShowOpenDialog(): Promise<string[] | void> {
+  /* options: OpenDialogSyncOptions, */
   return Promise.resolve([]);
 }
 
-export function SetInit(func: () => void): void {
+export function SetInit(/* func: () => void */): void {
   //  realSetInit(func);
 }
 
@@ -24,16 +22,16 @@ export function SetSearch(srch: any): void {
   // Do nothing
 }
 
-export function SubscribeMediaMatcher(
+export function SubscribeMediaMatcher(): void {
+  /*
   mq: string,
   handler: (ev: MediaQueryList | MediaQueryListEvent) => void,
-): void {
+  */
   /* Don't do anything for now */
 }
 
-export function UnsubscribeMediaMatcher(
-  handler: (ev: MediaQueryList | MediaQueryListEvent) => void,
-): void {
+export function UnsubscribeMediaMatcher(): void {
+  // handler: (ev: MediaQueryList | MediaQueryListEvent) => void,
   /* Still don't do anything */
 }
 /*

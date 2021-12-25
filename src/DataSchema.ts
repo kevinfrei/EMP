@@ -44,11 +44,11 @@ export function GetArtistStringFromKeys(
   }
 }
 
-export type DataForSongGetter = (
-  song: Song,
-  allAlbums: Map<AlbumKey, Album>,
-  allArtist: Map<ArtistKey, Artist>,
-) => SongData;
+//  type DataForSongGetter = (
+//   song: Song,
+//   allAlbums: Map<AlbumKey, Album>,
+//   allArtist: Map<ArtistKey, Artist>,
+// ) => SongData;
 
 /**
  * Fill in the 'display' information for a song. Useful for both presenting to
@@ -90,29 +90,29 @@ export function GetDataForSong(
   return res;
 }
 
-export function GetArtistForAlbum(
-  album: Album,
-  artists: Map<ArtistKey, Artist>,
-): string {
-  if (album.vatype === 'ost') {
-    return 'Soundtrack';
-  }
-  if (album.vatype !== 'va') {
-    const maybeArtistName = GetArtistStringFromKeys(
-      album.primaryArtists,
-      artists,
-    );
-    if (maybeArtistName) {
-      return maybeArtistName;
-    }
-  }
-  return 'Various Artists';
-}
+// function GetArtistNameForAlbum(
+//   album: Album,
+//   artists: Map<ArtistKey, Artist>,
+// ): string {
+//   if (album.vatype === 'ost') {
+//     return 'Soundtrack';
+//   }
+//   if (album.vatype !== 'va') {
+//     const maybeArtistName = GetArtistStringFromKeys(
+//       album.primaryArtists,
+//       artists,
+//     );
+//     if (maybeArtistName) {
+//       return maybeArtistName;
+//     }
+//   }
+//   return 'Various Artists';
+// }
 
-export function GetDataForAlbum(
-  album: Album,
-  artists: Map<ArtistKey, Artist>,
-): AlbumData {
-  const artist = GetArtistForAlbum(album, artists);
-  return { title: album.title, year: album.year, artist };
-}
+// function GetDataForAlbum(
+//   album: Album,
+//   artists: Map<ArtistKey, Artist>,
+// ): AlbumData {
+//   const artist = GetArtistNameForAlbum(album, artists);
+//   return { title: album.title, year: album.year, artist };
+// }

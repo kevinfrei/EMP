@@ -193,7 +193,7 @@ function StickyDetailsHeader(
 }
 
 // The Now Playing (Current playlist) view
-export default function NowPlaying(): JSX.Element {
+export function NowPlayingView(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsFunc);

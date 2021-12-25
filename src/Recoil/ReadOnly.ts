@@ -11,13 +11,13 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { Catch, Fail } from '@freik/web-utils';
-import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
+import { atom, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import { songListState } from './Local';
 
-export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
+// type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
 export type AlbumDescription = {
   artist: string;
@@ -192,15 +192,15 @@ export const maybeAlbumByKeyFuncFam = selectorFamily<Album | null, AlbumKey>({
     },
 });
 
-export const allAlbumKeysFunc = selector<AlbumKey[]>({
-  key: 'AllAlbumKeys',
-  get: ({ get }) => {
-    // Get the locations to make sure that if they change,
-    // we get the new song list
-    const albums = get(allAlbumsFunc);
-    return [...albums.keys()];
-  },
-});
+// const allAlbumKeysFunc = selector<AlbumKey[]>({
+//   key: 'AllAlbumKeys',
+//   get: ({ get }) => {
+//     // Get the locations to make sure that if they change,
+//     // we get the new song list
+//     const albums = get(allAlbumsFunc);
+//     return [...albums.keys()];
+//   },
+// });
 
 export const allArtistsFunc = selector<ArtistMap>({
   key: 'AllArtists',
