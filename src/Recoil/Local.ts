@@ -114,20 +114,16 @@ export const picCacheAvoiderStateFam = atomFamily<number, MediaKey>({
 
 export const albumCoverUrlFuncFam = selectorFamily<string, AlbumKey>({
   key: 'albumCoverUrl',
-  get:
-    (key: AlbumKey) =>
-    ({ get }) => {
-      return `pic://key/${key}`;
-    },
+  get: (key: AlbumKey) => () => {
+    return `pic://key/${key}`;
+  },
 });
 
 export const artistImageUrlFuncFam = selectorFamily<string, ArtistKey>({
   key: 'artistImageUrl',
-  get:
-    (key: ArtistKey) =>
-    ({ get }) => {
-      return `pic://key/${key}`;
-    },
+  get: (key: ArtistKey) => () => {
+    return `pic://key/${key}`;
+  },
 });
 
 // This is the currently 'typed' set of characters (for scrolling lists)

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { MakeLogger, Type } from '@freik/core-utils';
+import { Effects, Ipc } from '@freik/elect-render-utils';
 import {
   Album,
   AlbumKey,
@@ -12,9 +13,8 @@ import {
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, RecoilValue, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
-import { CallMain, SetDB } from '../MyWindow';
+import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
-import { oneWayFromMainEffect } from './helpers';
 import { songListState } from './Local';
 
 export type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
@@ -119,9 +119,9 @@ const musicLibraryState = atom<MusicLibrary>({
   key: 'musicDatabase',
   default: emptyLibrary,
   effects_UNSTABLE: [
-    oneWayFromMainEffect(
+    Effects.oneWayFromMain(
       async (): Promise<MusicLibrary> => {
-        const fad = await CallMain(
+        const fad = await Ipc.CallMain(
           'get-music-database',
           undefined,
           IsFlatAudioDatabase,
@@ -363,18 +363,16 @@ export const searchTermState = atom<string>({ key: 'searchTerm', default: '' });
 
 export const searchFuncFam = selectorFamily<ipc.SearchResults, string>({
   key: 'search',
-  get:
-    (searchTerm: string) =>
-    async ({ get }): Promise<ipc.SearchResults> => {
-      const res = await ipc.SearchWhole(searchTerm);
-      if (res) {
-        log('results:');
-        log(res);
-      } else {
-        log('no results');
-      }
-      return res || { songs: [], albums: [], artists: [] };
-    },
+  get: (searchTerm: string) => async (): Promise<ipc.SearchResults> => {
+    const res = await ipc.SearchWhole(searchTerm);
+    if (res) {
+      log('results:');
+      log(res);
+    } else {
+      log('no results');
+    }
+    return res || { songs: [], albums: [], artists: [] };
+  },
 });
 
 type SongInfo = {

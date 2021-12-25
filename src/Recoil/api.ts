@@ -1,4 +1,5 @@
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { Ipc } from '@freik/elect-render-utils';
 import {
   isAlbumKey,
   isArtistKey,
@@ -8,7 +9,6 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { MyTransactionInterface } from '@freik/web-utils';
-import { PostMain } from '../MyWindow';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,
@@ -223,7 +223,7 @@ export function RenamePlaylist(
   curNames.add(newName);
   set(playlistFuncFam(newName), curSongs);
   set(playlistNamesFunc, new Set(curNames));
-  void PostMain('rename-playlist', [curName, newName]);
+  void Ipc.PostMain('rename-playlist', [curName, newName]);
 }
 
 /**
@@ -240,7 +240,7 @@ export function DeletePlaylist(
   if (activePlaylist === toDelete) {
     set(activePlaylistState, '');
   }
-  void PostMain('delete-playlist', toDelete);
+  void Ipc.PostMain('delete-playlist', toDelete);
 }
 
 export function SongListFromKey(

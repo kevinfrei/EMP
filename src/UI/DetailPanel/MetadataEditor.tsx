@@ -12,6 +12,7 @@ import {
 } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { Util } from '@freik/elect-render-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import {
   Catch,
@@ -23,9 +24,6 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
 import {
-  ImageFromClipboard,
-  IsDev,
-  ShowOpenDialog,
   UploadFileForAlbum,
   UploadFileForSong,
   UploadImageForAlbum,
@@ -37,7 +35,7 @@ import {
 } from '../../Recoil/Local';
 import { albumKeyForSongKeyFuncFam } from '../../Recoil/ReadOnly';
 
-const log = MakeLogger('MetadataEditor', false && IsDev());
+const log = MakeLogger('MetadataEditor');
 const err = MakeError('MetadataEditor-err'); // eslint-disable-line
 
 export type MetadataProps = {
@@ -200,7 +198,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   };
 
   const onImageFromClipboard = useMyTransaction((xact) => () => {
-    const img = ImageFromClipboard();
+    const img = Util.ImageFromClipboard();
     if (img !== undefined) {
       uploadImage(
         xact,
@@ -210,7 +208,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     }
   });
   const onSelectFile = useMyTransaction((xact) => () => {
-    ShowOpenDialog({
+    Util.ShowOpenDialog({
       title: 'Select Cover Art image',
       properties: ['openFile'],
       filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],

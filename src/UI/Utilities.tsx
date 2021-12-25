@@ -1,15 +1,9 @@
 import { ISliderStyles } from '@fluentui/react';
 import { DebouncedDelay, MakeError } from '@freik/core-utils';
-import { useMyTransaction } from '@freik/web-utils';
+import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
+import { Catch, useMyTransaction } from '@freik/web-utils';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  InitialWireUp,
-  PostMain,
-  SubscribeMediaMatcher,
-  UnsubscribeMediaMatcher,
-} from '../MyWindow';
-import { useListener } from '../Recoil/helpers';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
@@ -30,7 +24,6 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 // keep track of which mode we're in, and generally deal with "global" silliness
 export default function Utilities(): JSX.Element {
   const saveable = useRecoilValue(saveableFunc);
-  useEffect(InitialWireUp);
   const callback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),
   );
@@ -42,11 +35,11 @@ export default function Utilities(): JSX.Element {
       },
   );
   useEffect(() => {
-    SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);
-    return () => UnsubscribeMediaMatcher(handleWidthChange);
+    MediaQuery.SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);
+    return () => MediaQuery.UnsubscribeMediaMatcher(handleWidthChange);
   });
   useEffect(() => {
-    void PostMain('set-save-menu', saveable);
+    void Ipc.PostMain('set-save-menu', saveable).catch(Catch);
   }, [saveable]);
   /* This is for a global search typing thingamajig */
   const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {

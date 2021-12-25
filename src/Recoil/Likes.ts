@@ -1,12 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Type } from '@freik/core-utils';
+import { Effects } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { atom, selectorFamily } from 'recoil';
-import {
-  bidirectionalSyncWithTranslateEffect,
-  syncWithMainEffect,
-} from './helpers';
 import { songListFromKeyFuncFam } from './ReadWrite';
 
 // const log = MakeLogger('Likes');
@@ -15,20 +12,20 @@ import { songListFromKeyFuncFam } from './ReadWrite';
 export const neverPlayHatesState = atom<boolean>({
   key: 'neverPlayHates',
   default: true,
-  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
 });
 
 export const onlyPlayLikesState = atom<boolean>({
   key: 'onlyPlayLikes',
   default: false,
-  effects_UNSTABLE: [syncWithMainEffect<boolean>()],
+  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
 });
 
 const songLikeBackerState = atom<Set<SongKey>>({
   key: 'likedSongs',
   default: new Set<SongKey>(),
   effects_UNSTABLE: [
-    bidirectionalSyncWithTranslateEffect<Set<SongKey>>(
+    Effects.bidirectionalSyncWithTranslate<Set<SongKey>>(
       (val: Set<string>) => [...val],
       (val: unknown) =>
         Type.isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
@@ -78,7 +75,7 @@ const songHateBackerState = atom<Set<SongKey>>({
   key: 'hatedSongs',
   default: new Set<SongKey>(),
   effects_UNSTABLE: [
-    bidirectionalSyncWithTranslateEffect<Set<SongKey>>(
+    Effects.bidirectionalSyncWithTranslate<Set<SongKey>>(
       (val: Set<string>) => [...val],
       (val: unknown) =>
         Type.isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),

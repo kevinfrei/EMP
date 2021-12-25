@@ -94,13 +94,12 @@ export function CommsSetup(): void {
   // Migrated, but not yet validated
   Comms.registerChannel('set-media-info', SetMediaInfoForSong, IsOnlyMetadata);
 
-  // Need updated/reviewed:
   Comms.registerChannel(
     'upload-image',
     SaveNativeImageForAlbum,
     isAlbumCoverData,
   );
-  // TODO:
+
   // Comms.registerChannel('flush-image-cache', FlushImageCache, isVoid);
 
   Comms.registerChannel('search', SearchWholeWord, isStrOrUndef);

@@ -169,10 +169,10 @@ export default function PlaylistView(): JSX.Element {
     }
     set(playlistFuncFam(playlistContext.data), newList);
   });
-  const onPlaylistDelete = useMyTransaction((xact) => (key: string) => {
+  const onPlaylistDelete = (key: string) => {
     setSelected(key);
     showPlaylistDelete();
-  });
+  };
   const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });

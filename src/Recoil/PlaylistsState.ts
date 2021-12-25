@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Operations, Type } from '@freik/core-utils';
+import { Ipc } from '@freik/elect-render-utils';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import {
   atom,
@@ -8,7 +9,6 @@ import {
   selector,
   selectorFamily,
 } from 'recoil';
-import { CallMain, PostMain } from '../MyWindow';
 import { isPlaylist } from '../Tools';
 import { activePlaylistState, songListState } from './Local';
 
@@ -34,7 +34,7 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
   get: async ({ get }) => {
     const backed = get(playlistNamesBackerState);
     if (backed === false) {
-      const playlistsString = await CallMain<string[], void>(
+      const playlistsString = await Ipc.CallMain<string[], void>(
         'get-playlists',
         undefined,
         Type.isArrayOfString,
@@ -50,7 +50,7 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
   set: ({ set }, newValue) => {
     const data = Type.isSetOfString(newValue) ? [...newValue] : [];
     set(playlistNamesBackerState, data);
-    void PostMain('set-playlists', data);
+    void Ipc.PostMain('set-playlists', data);
   },
 });
 
@@ -74,7 +74,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
     async ({ get }) => {
       const backed = get(playlistBackerFam(arg));
       if (backed === false) {
-        const listStr = await CallMain(
+        const listStr = await Ipc.CallMain(
           'load-playlist',
           arg,
           Type.isArrayOfString,
@@ -97,7 +97,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
       }
       const songs = Type.isArray(newValue) ? newValue : [];
       set(playlistBackerFam(name), songs);
-      void PostMain('save-playlist', { name, songs });
+      void Ipc.PostMain('save-playlist', { name, songs });
     },
 });
 

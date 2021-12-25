@@ -8,6 +8,7 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
+import { Ipc, Util } from '@freik/elect-render-utils';
 import {
   Catch,
   Expandable,
@@ -17,7 +18,6 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { InvokeMain, ShowOpenDialog } from '../../MyWindow';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
@@ -44,7 +44,7 @@ const removeFromSet = (set: string[], val: string): string[] => {
 };
 
 async function GetDirs(): Promise<string[] | void> {
-  return await ShowOpenDialog({ properties: ['openDirectory'] });
+  return await Util.ShowOpenDialog({ properties: ['openDirectory'] });
 }
 
 export async function addLocation({
@@ -110,7 +110,7 @@ function MusicLocations(): JSX.Element {
         >
           <DefaultButton
             text="Rescan Locations"
-            onClick={() => InvokeMain('manual-rescan')}
+            onClick={() => Ipc.InvokeMain('manual-rescan')}
           />
         </TooltipHost>
       </Stack>
@@ -187,7 +187,7 @@ function ArtworkSettings(): JSX.Element {
       <DefaultButton
         text="Flush Image Cache"
         style={{ width: '185px', gridRow: 4 }}
-        onClick={() => InvokeMain('flush-image-cache')}
+        onClick={() => Ipc.InvokeMain('flush-image-cache')}
       />
     </>
   );

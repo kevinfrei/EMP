@@ -326,21 +326,16 @@ async function SavePicForArtist(
   await db.setArtistPicture(artist.key, data);
 }
 
-export type AlbumCoverData =
-  | {
-      songKey: SongKey;
-      nativeImage: Uint8Array;
-    }
-  | {
-      albumKey: AlbumKey;
-      nativeImage: Uint8Array;
-    };
+type CoverKey = { songKey: SongKey } | { albumKey: AlbumKey };
+type ImageData = { nativeImage: Uint8Array } | { imagePath: string };
+
+export type AlbumCoverData = CoverKey & ImageData;
 
 export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
   return (
     Type.hasStr(arg, 'songKey') !== Type.hasStr(arg, 'albumKey') &&
-    Type.has(arg, 'nativeImage') &&
-    arg.nativeImage instanceof Uint8Array
+    (Type.has(arg, 'nativeImage') && arg.nativeImage instanceof Uint8Array) !==
+      Type.hasStr(arg, 'imagePath')
   );
 }
 
@@ -360,6 +355,11 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
-  return '';
+  if (Type.has(arg, 'nativeImage')) {
+    await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
+    return '';
+  } else {
+    await db.setAlbumPicture(albumKey, await fs.readFile(arg.imagePath));
+    return '';
+  }
 }

@@ -1,4 +1,5 @@
 import { SpinnerSize } from '@fluentui/react';
+import { FreikElem } from '@freik/elect-render-utils';
 import { Spinner } from '@freik/web-utils';
 import { RecoilRoot } from 'recoil';
 import SongDetailPanel from './DetailPanel/SongDetailPanel';
@@ -15,6 +16,7 @@ export default function App(): JSX.Element {
     <RecoilRoot>
       <span id="grabber">
         <Spinner label="Brief Communication. Please standby...">
+          <FreikElem />
           <Utilities />
         </Spinner>
       </span>
