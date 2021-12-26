@@ -10,6 +10,7 @@ import {
 } from '@fluentui/react';
 import { Ipc, Util } from '@freik/elect-render-utils';
 import {
+  Catch,
   Expandable,
   MyTransactionInterface,
   StateToggle,
@@ -34,7 +35,6 @@ import {
   saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
-import { Catch } from '../../Tools';
 import './styles/Settings.css';
 
 const removeFromSet = (set: string[], val: string): string[] => {
@@ -203,7 +203,7 @@ function MetadataDatabase(): JSX.Element {
   );
 }
 
-export default function Settings(): JSX.Element {
+export function SettingsView(): JSX.Element {
   return (
     <Stack className="settings-view">
       <Expandable separator label="Music Locations" defaultShow={true}>

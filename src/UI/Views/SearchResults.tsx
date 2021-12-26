@@ -219,7 +219,7 @@ function SearchResultsGroupHeader(props: {
 
 const noSort = MakeSortKey('rlnt');
 
-export default function SearchResultsView(): JSX.Element {
+export function SearchResultsView(): JSX.Element {
   const searchTerm = useRecoilValue(searchTermState);
   const searchResults = useRecoilValue(searchFuncFam(searchTerm));
   const songs = useRecoilValue(allSongsFunc);
@@ -321,7 +321,7 @@ export default function SearchResultsView(): JSX.Element {
       ['t', 'title', 'Title', 150, 450],
     ],
     () => noSort,
-    (srt) => 0,
+    () => 0,
   );
 
   return (

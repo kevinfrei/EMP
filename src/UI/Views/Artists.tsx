@@ -13,7 +13,11 @@ import {
 } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
-import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
+import {
+  MakeSetState,
+  MyTransactionInterface,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useState } from 'react';
 import {
   atom,
@@ -22,7 +26,6 @@ import {
   useResetRecoilState,
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
-import { MakeSetState } from '../../Recoil/helpers';
 import { artistImageUrlFuncFam, focusedKeysFuncFam } from '../../Recoil/Local';
 import {
   allAlbumsFunc,

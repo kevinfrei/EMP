@@ -58,7 +58,7 @@ const songContextState = atom<SongListMenuData>({
   default: { data: '', spot: { left: 0, top: 0 } },
 });
 
-export function Liker({ songId }: { songId: SongKey }): JSX.Element {
+function Liker({ songId }: { songId: SongKey }): JSX.Element {
   const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
   const onClick = useMyTransaction(({ set }) => () => {
@@ -87,7 +87,7 @@ export function LikeOrHate(song: Song): JSX.Element {
   return <Liker songId={song.key} />;
 }
 
-export default function MixedSongsList(): JSX.Element {
+export function MixedSongsList(): JSX.Element {
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
   const onAddSongClick = useMyTransaction((xact) => (item: Song) => {

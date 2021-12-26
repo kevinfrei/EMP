@@ -33,20 +33,6 @@ import { repeatState, shuffleState } from './ReadWrite';
 const log = MakeLogger('api'); // eslint-disable-line
 const err = MakeError('ReadWrite-err'); // eslint-disable-line
 
-function ShufflePlayback(
-  { get, set }: MyTransactionInterface,
-  songList: SongKey[],
-): void {
-  const shuffle = get(shuffleState);
-  if (shuffle) {
-    // The [...Array(XXX).keys()] creates an arry from 0 to XXX :)
-    set(
-      songPlaybackOrderState,
-      ShuffleArray([...Array(songList.length).keys()]),
-    );
-  }
-}
-
 /**
  * Try to play the next song in the playlist
  * This function handles repeat & shuffle (thus they're required parameters...)

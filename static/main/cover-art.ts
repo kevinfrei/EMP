@@ -9,22 +9,17 @@ import {
 } from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
 import {
-  Album,
   AlbumKey,
-  Artist,
   ArtistKey,
   isAlbumKey,
   isArtistKey,
   MediaKey,
   SongKey,
 } from '@freik/media-core';
-import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'fs';
-import https from 'https';
-import path from 'path';
 import { GetAudioDB } from './AudioDatabase';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
@@ -39,6 +34,7 @@ async function shouldDownloadArtistArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadArtistArtwork')) === 'true';
 }
 
+/*
 async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
   return (
     (await Persistence.getItemAsync('saveAlbumArtworkWithMusic')) === 'true'
@@ -59,6 +55,7 @@ function httpsDownloader(url: string): Promise<Buffer> {
     });
   });
 }
+*/
 
 async function getArt(album: string, artist: string): Promise<string | void> {
   const attempt = await albumArt(artist, { album, size: 'large' });
@@ -280,6 +277,7 @@ export async function PictureHandler(
   return await GetDefaultPicBuffer();
 }
 
+/*
 async function SavePicForAlbum(
   db: AudioDatabase,
   album: Album,
@@ -325,34 +323,19 @@ async function SavePicForArtist(
   log('Saving artist pic to blob store');
   await db.setArtistPicture(artist.key, data);
 }
+*/
 
-export type AlbumCoverData =
-  | {
-      songKey: SongKey;
-      nativeImage: Uint8Array;
-    }
-  | {
-      albumKey: AlbumKey;
-      nativeImage: Uint8Array;
-    }
-  | {
-      songKey: SongKey;
-      path: string;
-    }
-  | {
-      albumKey: AlbumKey;
-      path: string;
-    };
+type CoverKey = { songKey: SongKey } | { albumKey: AlbumKey };
+type ImageData = { nativeImage: Uint8Array } | { imagePath: string };
+
+export type AlbumCoverData = CoverKey & ImageData;
 
 export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
   // use of the !== means we get one or the other of songKey albumKey and nativeImage path
   return (
     Type.hasStr(arg, 'songKey') !== Type.hasStr(arg, 'albumKey') &&
-    Type.hasType(
-      arg,
-      'nativeImage',
-      (o): o is Uint8Array => o instanceof Uint8Array,
-    ) !== Type.hasStr(arg, 'path')
+    (Type.has(arg, 'nativeImage') && arg.nativeImage instanceof Uint8Array) !==
+      Type.hasStr(arg, 'imagePath')
   );
 }
 
@@ -372,10 +355,11 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  if (Type.has(arg, 'path')) {
-    await db.setAlbumPicture(albumKey, await fs.readFile(arg.path));
-  } else {
+  if (Type.has(arg, 'nativeImage')) {
     await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
+    return '';
+  } else {
+    await db.setAlbumPicture(albumKey, await fs.readFile(arg.imagePath));
+    return '';
   }
-  return '';
 }

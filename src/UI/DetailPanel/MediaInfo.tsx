@@ -158,7 +158,7 @@ function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
   return <MetadataEditor forSongs={songKeys} {...allTheInfos} />;
 }
 
-export default function MediaInfoTable({
+export function MediaInfoTable({
   keyOrKeys,
 }: {
   keyOrKeys: SongKey | SongKey[];

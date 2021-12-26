@@ -21,7 +21,7 @@ import {
   albumKeyForSongKeyFuncFam,
   allSongsFunc,
   dataForSongFuncFam,
-  SongData,
+  SongDescription,
 } from '../Recoil/ReadOnly';
 import { repeatState } from '../Recoil/ReadWrite';
 import { SongDetailClick } from './DetailPanel/Clickers';
@@ -105,7 +105,9 @@ function MediaTimeSlider(): JSX.Element {
 
 function SongName(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const { title }: SongData = useRecoilValue(dataForSongFuncFam(songKey));
+  const { title }: SongDescription = useRecoilValue(
+    dataForSongFuncFam(songKey),
+  );
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
       {title}
@@ -115,7 +117,7 @@ function SongName(): JSX.Element {
 
 function ArtistAlbum(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const { artist, album }: SongData = useRecoilValue(
+  const { artist, album }: SongDescription = useRecoilValue(
     dataForSongFuncFam(songKey),
   );
   if (songKey) {
@@ -133,7 +135,7 @@ function ArtistAlbum(): JSX.Element {
   }
 }
 
-export default function SongPlayback(): JSX.Element {
+export function SongPlaying(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
   const onPlay = useRecoilCallback(
     ({ set }) =>

@@ -11,8 +11,8 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { Fail } from '@freik/web-utils';
 import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
-import { Fail } from './Tools';
 
 export type ArtistSong = Song & { sortedArtistId: ArtistKey; comboKey: string };
 
@@ -76,7 +76,7 @@ export const articlesCmp = (a: string, b: string): number =>
 export const noArticlesCmp = (a: string, b: string): number =>
   stringCompare(noArticles(a), noArticles(b));
 
-export function MakeSortKeyMultiMap(
+function MakeSortKeyMultiMap(
   initial: string | string[],
   groups?:
     | string[]

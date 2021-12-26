@@ -1,9 +1,8 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeLogger, Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { AlbumKey, ArtistKey, FullMetadata, SongKey } from '@freik/media-core';
 
 const log = MakeLogger('ipc');
-const err = MakeError('ipc-err');
 
 export type SearchResults = {
   songs: SongKey[];
@@ -22,17 +21,8 @@ export async function GetMediaInfo(
 }
 
 export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {
-  await Ipc.PostMain('set-media-info', md);
+  return Ipc.PostMain('set-media-info', md);
 }
-/*
-export async function ReadFromStorage(key: string): Promise<string | void> {
-  return Ipc.CallMain('read-from-storage', key, Type.isString);
-}
-
-export async function WriteToStorage(key: string, data: string): Promise<void> {
-  await Ipc.InvokeMain('write-to-storage', [key, data]);
-}
-*/
 
 function isSearchResults(arg: any): arg is SearchResults | undefined {
   if (

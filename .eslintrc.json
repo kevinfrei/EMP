@@ -5,7 +5,6 @@
     "node": true
   },
   "extends": [
-    "react-app",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier"
@@ -15,7 +14,7 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint", "react", "react-hooks"],
+  "plugins": ["@typescript-eslint/eslint-plugin", "react", "react-hooks"],
   "overrides": [
     {
       "files": ["static/renderer.ts"],

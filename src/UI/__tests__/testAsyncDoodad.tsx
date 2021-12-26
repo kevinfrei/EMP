@@ -1,7 +1,7 @@
 /*
 import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
-import Utilities, { Spinner } from '../Utilities';
+import { Spinner, Utilities } from '../Utilities';
 */
 export {};
 

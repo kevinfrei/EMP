@@ -21,7 +21,7 @@ import { SortKey } from '../Sorting';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const err = MakeError('SongList-err');
 
-export type ColumnRenderTuple<T> = [
+type ColumnRenderTuple<T> = [
   string, // key
   string, // fieldName
   string, // "title"/name

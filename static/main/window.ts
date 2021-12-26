@@ -3,6 +3,7 @@ import {
   GetBrowserWindowPos,
   getMainWindow,
   LoadWindowPos,
+  setMainWindow,
 } from '@freik/elect-main-utils';
 import { BrowserWindow, screen } from 'electron';
 import isDev from 'electron-is-dev';
@@ -26,9 +27,8 @@ export async function CreateWindow(
   await RegisterProtocols();
   RegisterListeners();
   // Create the window, but don't show it just yet
-  const windowPos = LoadWindowPos();
-  const theWin = new BrowserWindow({
-    ...GetBrowserWindowPos(windowPos),
+  mainWindow = new BrowserWindow({
+    ...GetBrowserWindowPos(LoadWindowPos()),
     title: 'EMP: Electron Music Player',
     // backgroundColor: '#282c34', // Unnecessary if you're not showing :)
     webPreferences: {
@@ -51,31 +51,32 @@ export async function CreateWindow(
     acceptFirstMouse: true, // Gets 'activating' clicks
   }).on('ready-to-show', () => {
     // Wait to show the main window until it's actually ready...
-    const aWindow = getMainWindow();
-    if (aWindow) {
-      aWindow.show();
-      aWindow.focus();
+    if (mainWindow) {
+      mainWindow.show();
+      mainWindow.focus();
       // TODO: On Mac, there's 'full screen max' and then 'just big'
       // This code makes full screen max turn into just big
+      const windowPos = LoadWindowPos();
       if (windowPos.isMaximized) {
-        aWindow.maximize();
+        mainWindow.maximize();
       }
       // Call the user specified "ready to go" function
       windowCreated().catch(err);
       // open the devtools
       if (isDev) {
-        aWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools();
       }
     }
   });
-  theWin
-    .loadURL(
-      isDev
-        ? 'http://localhost:3000'
-        : // If this file moves, you have to fix this to make it work for release
-          `file://${path.join(__dirname, '../index.html')}`,
-    )
-    .catch(err);
+
+  setMainWindow(mainWindow);
+  // Load the base URL
+  await mainWindow.loadURL(
+    isDev
+      ? 'http://localhost:3000'
+      : // If this file moves, you have to fix this to make it work for release
+        `file://${path.join(__dirname, '../index.html')}`,
+  );
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -84,7 +85,6 @@ export async function CreateWindow(
 let prevWidth = 0;
 
 export function ToggleMiniPlayer(): void {
-  const mainWindow = getMainWindow();
   const windowPos = LoadWindowPos();
   if (
     mainWindow !== null &&

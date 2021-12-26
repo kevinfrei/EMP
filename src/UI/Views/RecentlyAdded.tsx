@@ -1,4 +1,4 @@
-export default function RecentlyAdded(): JSX.Element {
+export function RecentlyAddedView(): JSX.Element {
   return (
     <>
       <div>Not</div>

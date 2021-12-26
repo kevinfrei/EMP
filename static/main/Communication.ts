@@ -38,7 +38,7 @@ import {
 async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
   const thePath = await GetPathFromKey(mediaKey);
   if (thePath) {
-    await Shell.showFile(thePath);
+    return Shell.showFile(thePath);
   }
 }
 
@@ -73,7 +73,12 @@ function isStrOrUndef(obj: any): obj is string | undefined {
  * Setup any async listeners, plus register all the "invoke" handlers
  */
 export function CommsSetup(): void {
+  // These are the general "just asking for something to read/written to disk"
+  // functions. Media Info, Search, and MusicDB stuff needs a different handler
+  // because they don't just read/write to disk.
   Comms.SetupDefault();
+
+  // "complex" API's (not just save/restore data to the persist cache)
 
   // Migrated to new audio-database module:
   Comms.registerChannel('get-music-database', GetSimpleMusicDatabase, isVoid);
@@ -85,19 +90,17 @@ export function CommsSetup(): void {
     Type.isString,
   );
   Comms.registerChannel('media-info', GetMediaInfoForSong, Type.isString);
+
+  // Migrated, but not yet validated
   Comms.registerChannel('set-media-info', SetMediaInfoForSong, IsOnlyMetadata);
+
   Comms.registerChannel(
     'upload-image',
     SaveNativeImageForAlbum,
     isAlbumCoverData,
   );
-  Comms.registerChannel(
-    'upload-image-path',
-    SaveNativeImageForAlbum,
-    isAlbumCoverData,
-  );
-  // TODO:
-  // registerChannel('flush-image-cache', FlushImageCache, isVoid);
+
+  // Comms.registerChannel('flush-image-cache', FlushImageCache, isVoid);
 
   Comms.registerChannel('search', SearchWholeWord, isStrOrUndef);
   Comms.registerChannel('subsearch', SearchSubstring, Type.isString);
@@ -119,9 +122,7 @@ export function CommsSetup(): void {
   Comms.registerChannel('set-hates', setSongHates, Type.isArrayOfString);
   Comms.registerChannel('clear-hates', clearSongHates, Type.isArrayOfString);
 
-  // Reviewed & working properly:
   Comms.registerChannel('show-file', Shell.showFile, Type.isString);
-
   // Save-Playlist-as disabling
   Comms.registerChannel('set-save-menu', setSaveMenu, Type.isBoolean);
 }

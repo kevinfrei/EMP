@@ -1,5 +1,9 @@
 import { MakeLogger } from '@freik/core-utils';
-import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
+import {
+  MyTransactionInterface,
+  onRejected,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
 import {
@@ -9,7 +13,6 @@ import {
 } from '../Recoil/Local';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleState } from '../Recoil/ReadWrite';
-import { onRejected } from '../Tools';
 import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
 
@@ -36,7 +39,7 @@ export function onClickPlayPause({ set }: MyTransactionInterface): void {
   });
 }
 
-export default function SongControls(): JSX.Element {
+export function PlaybackControls(): JSX.Element {
   const isPlaying = useRecoilValue(playingState);
 
   const hasAnySong = useRecoilValue(hasAnySongsFunc);

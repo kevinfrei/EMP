@@ -19,15 +19,15 @@ const playlistNamesBackerState = atom<string[] | false>({
   default: false,
 });
 
-export function playlistNamesGetter(
-  get: <T>(a: RecoilValue<T>) => T,
-): Set<PlaylistName> | undefined {
-  const backed = get(playlistNamesBackerState);
-  if (backed === false) {
-    return;
-  }
-  return new Set(backed);
-}
+// function playlistNamesGetter(
+//   get: <T>(a: RecoilValue<T>) => T,
+// ): Set<PlaylistName> | undefined {
+//   const backed = get(playlistNamesBackerState);
+//   if (backed === false) {
+//     return;
+//   }
+//   return new Set(backed);
+// }
 
 export const playlistNamesFunc = selector<Set<PlaylistName>>({
   key: 'PlaylistNames',
@@ -59,13 +59,13 @@ const playlistBackerFam = atomFamily<SongKey[] | false, PlaylistName>({
   default: false,
 });
 
-export function playlistGetter(
-  get: <T>(a: RecoilValue<T>) => T,
-  name: PlaylistName,
-): SongKey[] | undefined {
-  const backed = get(playlistBackerFam(name));
-  return !backed ? undefined : backed;
-}
+// function playlistGetter(
+//   get: <T>(a: RecoilValue<T>) => T,
+//   name: PlaylistName,
+// ): SongKey[] | undefined {
+//   const backed = get(playlistBackerFam(name));
+//   return !backed ? undefined : backed;
+// }
 
 export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
   key: 'PlaylistContents',
@@ -112,7 +112,7 @@ export const allPlaylistsFunc = selector<Map<PlaylistName, SongKey[]>>({
   },
 });
 
-export function saveableGetter(get: <T>(a: RecoilValue<T>) => T): boolean {
+function saveableGetter(get: <T>(a: RecoilValue<T>) => T): boolean {
   const curPlaylist = get(activePlaylistState);
   if (isPlaylist(curPlaylist)) {
     const theSongList = get(playlistFuncFam(curPlaylist));

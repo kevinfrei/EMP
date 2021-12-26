@@ -1,20 +1,16 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { Helpers, MakeError, MakeLogger } from '@freik/core-utils';
+import { Helpers } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { NativeImage } from 'electron';
-
-const log = MakeLogger('MyWindow');
-const err = MakeError('MyWindow-err');
 
 /*
  * "Window" stuff goes here
  */
 
 interface MyWindow extends Window {
-  isDev: boolean;
   searchBox?: ISearchBox | null;
   db: FlatAudioDatabase;
 }
@@ -67,14 +63,14 @@ export async function UploadImageForAlbum(
 // Move this shit to the main process
 export async function UploadFileForSong(
   songKey: SongKey,
-  path: string,
+  imagePath: string,
 ): Promise<void> {
-  await Ipc.InvokeMain('upload-image-path', { songKey, path });
+  await Ipc.InvokeMain('upload-image', { songKey, imagePath });
 }
 
 export async function UploadFileForAlbum(
   albumKey: AlbumKey,
-  path: string,
+  imagePath: string,
 ): Promise<void> {
-  await Ipc.InvokeMain('upload-image-path', { albumKey, path });
+  await Ipc.InvokeMain('upload-image', { albumKey, imagePath });
 }

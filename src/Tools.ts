@@ -1,8 +1,7 @@
 // This is for getting at "global" stuff from the window object
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeLogger, Type } from '@freik/core-utils';
 
 const log = MakeLogger('Tools');
-const err = MakeError('Tools-err');
 
 /*
  * Searching
@@ -102,37 +101,4 @@ export function divGrand(val: string): string {
   flt = flt.replace(/0+$/g, '');
   flt = flt.replace(/\.$/, '');
   return flt;
-}
-
-export function Fail(name?: string, message?: string): never {
-  const e = new Error();
-  if (Type.isString(name)) {
-    e.name = name;
-  }
-  if (Type.isString(message)) {
-    e.message = message;
-  }
-  throw e;
-}
-
-// eslint-disable-next-line
-export function Catch(e: any, msg?: string): void {
-  if (msg) {
-    err(msg);
-  }
-  if (e instanceof Error) {
-    err(e);
-  } else if (Type.has(e, 'toString') && Type.isFunction(e.toString)) {
-    err(e.toString());
-  }
-}
-
-// eslint-disable-next-line
-export function onRejected(msg?: string): (reason: any) => void {
-  return (reason: any) => {
-    if (Type.isString(msg)) {
-      err(msg);
-    }
-    err(reason);
-  };
 }

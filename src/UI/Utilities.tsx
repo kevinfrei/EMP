@@ -1,14 +1,13 @@
 import { ISliderStyles } from '@fluentui/react';
 import { DebouncedDelay, MakeError } from '@freik/core-utils';
 import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
-import { useMyTransaction } from '@freik/web-utils';
+import { Catch, useMyTransaction } from '@freik/web-utils';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
-import './styles/Utilities.css';
 
 const err = MakeError('Utilities-err'); // eslint-disable-line
 
@@ -23,7 +22,7 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
-export default function Utilities(): JSX.Element {
+export function Utilities(): JSX.Element {
   const saveable = useRecoilValue(saveableFunc);
   const callback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),
@@ -40,7 +39,7 @@ export default function Utilities(): JSX.Element {
     return () => MediaQuery.UnsubscribeMediaMatcher(handleWidthChange);
   });
   useEffect(() => {
-    void Ipc.PostMain('set-save-menu', saveable);
+    Ipc.PostMain('set-save-menu', saveable).catch(Catch);
   }, [saveable]);
   /* This is for a global search typing thingamajig */
   const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {

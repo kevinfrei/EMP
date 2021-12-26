@@ -14,7 +14,12 @@ import { useId } from '@fluentui/react-hooks';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
-import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
+import {
+  Catch,
+  MyTransactionInterface,
+  onRejected,
+  useMyTransaction,
+} from '@freik/web-utils';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { SetMediaInfo } from '../../ipc';
@@ -29,9 +34,8 @@ import {
   picCacheAvoiderStateFam,
 } from '../../Recoil/Local';
 import { albumKeyForSongKeyFuncFam } from '../../Recoil/ReadOnly';
-import { Catch, onRejected } from '../../Tools';
 
-const log = MakeLogger('MetadataEditor', false);
+const log = MakeLogger('MetadataEditor');
 const err = MakeError('MetadataEditor-err'); // eslint-disable-line
 
 export type MetadataProps = {

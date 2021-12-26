@@ -1,7 +1,7 @@
 /*
 import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
-import PlaybackControls from '../PlaybackControls';
+import { PlaybackControls } from '../PlaybackControls';
 */
 export {};
 

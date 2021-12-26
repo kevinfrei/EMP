@@ -125,15 +125,14 @@ export const curViewFunc = selector<CurrentView>({
 // For album & artist sorting, q= total # (Quantity!) of tracks
 // For artist sorting, s= # of Songs
 
-export const albumListSortState = atom<string>({
-  key: 'rAlbumListSort',
-  default: 'ry',
-});
-
-export const artistListSortState = atom<string>({
-  key: 'rArtistListSort',
-  default: 'rl',
-});
+// const albumListSortState = atom<string>({
+//   key: 'rAlbumListSort',
+//   default: 'ry',
+// });
+// const artistListSortState = atom<string>({
+//   key: 'rArtistListSort',
+//   default: 'rl',
+// });
 
 export const songListSortState = atom<string>({
   key: 'rSongListSort',

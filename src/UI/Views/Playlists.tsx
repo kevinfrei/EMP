@@ -12,6 +12,7 @@ import { Type } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
 import {
   Dialogs,
+  MakeSetState,
   MyTransactionInterface,
   useDialogState,
   useMyTransaction,
@@ -24,7 +25,6 @@ import {
   PlaySongs,
   RenamePlaylist,
 } from '../../Recoil/api';
-import { MakeSetState } from '../../Recoil/helpers';
 import { PlaylistName } from '../../Recoil/Local';
 import {
   allPlaylistsFunc,
@@ -50,7 +50,7 @@ type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
 
 const [playlistExpandedState, playlistIsExpandedState] =
-  MakeSetState<PlaylistName>('albumExpanded');
+  MakeSetState<PlaylistName>('playlistExpanded');
 
 const playlistContextState = atom<SongListMenuData>({
   key: 'playlistContext',
@@ -121,7 +121,7 @@ function PlaylistHeaderDisplay({
   );
 }
 
-export default function PlaylistView(): JSX.Element {
+export function PlaylistView(): JSX.Element {
   const [selected, setSelected] = useState('');
   const [songPlaylistToRemove, setSongPlaylistToRemove] = useState<
     [string, string, number]
@@ -169,10 +169,10 @@ export default function PlaylistView(): JSX.Element {
     }
     set(playlistFuncFam(playlistContext.data), newList);
   });
-  const onPlaylistDelete = useMyTransaction((xact) => (key: string) => {
+  const onPlaylistDelete = (key: string) => {
     setSelected(key);
     showPlaylistDelete();
-  });
+  };
   const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });

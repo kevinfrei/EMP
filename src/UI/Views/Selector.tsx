@@ -3,16 +3,16 @@ import { useRecoilValue } from 'recoil';
 import { CurrentView, curViewFunc } from '../../Recoil/ReadWrite';
 import { GroupedAlbumList } from './Albums';
 import { GroupedAristList } from './Artists';
-import MixedSongView from './MixedSongs';
-import NowPlayingView from './NowPlaying';
-import NuAlbumView from './NuAlbums';
-import PlaylistsView from './Playlists';
-import RecentlyAddedView from './RecentlyAdded';
-import SearchResultsView from './SearchResults';
-import SettingsView from './Settings';
+import { MixedSongsList } from './MixedSongs';
+import { NowPlayingView } from './NowPlaying';
+import { NuAlbumView } from './NuAlbums';
+import { PlaylistView } from './Playlists';
+import { RecentlyAddedView } from './RecentlyAdded';
+import { SearchResultsView } from './SearchResults';
+import { SettingsView } from './Settings';
 import './styles/Selector.css';
 
-export default function ViewSelector(): JSX.Element {
+export function ViewSelector(): JSX.Element {
   const which = useRecoilValue(curViewFunc);
   const sl = (v: CurrentView): CSSProperties =>
     which === v ? {} : { visibility: 'hidden' };
@@ -28,10 +28,10 @@ export default function ViewSelector(): JSX.Element {
         <GroupedAristList />
       </div>
       <div className="current-view" style={sl(CurrentView.song)}>
-        <MixedSongView />
+        <MixedSongsList />
       </div>
       <div className="current-view" style={sl(CurrentView.playlist)}>
-        <PlaylistsView />
+        <PlaylistView />
       </div>
       <div className="current-view" style={sl(CurrentView.current)}>
         <NowPlayingView />
