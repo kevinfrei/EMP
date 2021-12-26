@@ -60,7 +60,6 @@ export async function UploadImageForAlbum(
   await Ipc.InvokeMain('upload-image', { albumKey, nativeImage });
 }
 
-// Move this shit to the main process
 export async function UploadFileForSong(
   songKey: SongKey,
   imagePath: string,

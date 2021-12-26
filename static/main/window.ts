@@ -1,7 +1,6 @@
 import { MakeError, Type } from '@freik/core-utils';
 import {
   GetBrowserWindowPos,
-  getMainWindow,
   LoadWindowPos,
   setMainWindow,
 } from '@freik/elect-main-utils';
@@ -17,8 +16,12 @@ import { RegisterListeners, RegisterProtocols } from './protocols';
 
 const err = MakeError('window-err');
 
+// Keep a global reference of the window object, if you don't, the window will
+// be closed automatically when the JavaScript object is garbage collected.
+let mainWindow: BrowserWindow | null = null;
+
 export function HasWindow(): boolean {
-  return getMainWindow() !== null;
+  return mainWindow !== null;
 }
 
 export async function CreateWindow(
