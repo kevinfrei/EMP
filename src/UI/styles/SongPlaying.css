@@ -135,4 +135,7 @@
     margin: -12px 2px;
     padding: 0px;
   }
+  #showPlayOrder {
+    visibility: collapse;
+  }
 }
