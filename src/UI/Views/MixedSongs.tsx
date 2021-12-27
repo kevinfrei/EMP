@@ -1,12 +1,13 @@
 import {
   DetailsList,
+  IDetailsRowProps,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
-import { Expandable, useMyTransaction } from '@freik/web-utils';
+import { useMyTransaction } from '@freik/web-utils';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
 import {
@@ -142,8 +143,10 @@ export function MixedSongsList(): JSX.Element {
 
 export function SimpleSongsList({
   forSongs,
+  bold,
 }: {
   forSongs: SongKey[];
+  bold?: (props: IDetailsRowProps) => boolean;
 }): JSX.Element {
   const songList = useRecoilValue(dataForSongListFuncFam(forSongs));
   if (!songList) {
@@ -151,61 +154,59 @@ export function SimpleSongsList({
   }
   const rl = songList
     .map((val) => val.artist.length)
-    .reduce((pv, cv) => Math.max(pv, cv));
+    .reduce((pv, cv) => Math.max(pv, cv), 1);
   const ll = songList
     .map((val) => val.album.length)
-    .reduce((pv, cv) => Math.max(pv, cv));
+    .reduce((pv, cv) => Math.max(pv, cv), 1);
   const nl = songList
     .map((val) => val.track.toString().length)
-    .reduce((pv, cv) => Math.max(pv, cv));
+    .reduce((pv, cv) => Math.max(pv, cv), 1);
   const tl = songList
     .map((val) => val.title.length)
-    .reduce((pv, cv) => Math.max(pv, cv));
+    .reduce((pv, cv) => Math.max(pv, cv), 1);
   const tot = rl + ll + nl + tl;
   return (
-    <Expandable label="Files Selected">
-      <div>
-        <DetailsList
-          items={songList}
-          columns={[
-            {
-              key: 'r',
-              fieldName: 'artist',
-              name: 'Artist',
-              minWidth: (100 * rl) / tot,
-              maxWidth: (400 * rl) / tot,
-              isResizable: true,
-            },
-            {
-              key: 'l',
-              fieldName: 'album',
-              name: 'Album',
-              minWidth: (100 * ll) / tot,
-              maxWidth: (400 * ll) / tot,
-              isResizable: true,
-            },
-            {
-              key: 'n',
-              fieldName: 'track',
-              name: '#',
-              minWidth: (100 * nl) / tot,
-              maxWidth: (400 * nl) / tot,
-              isResizable: true,
-            },
-            {
-              key: 't',
-              fieldName: 'title',
-              name: 'Title',
-              minWidth: (100 * tl) / tot,
-              maxWidth: (400 * tl) / tot,
-              isResizable: true,
-            },
-          ]}
-          compact={true}
-          selectionMode={SelectionMode.none}
-          onRenderRow={altRowRenderer()}
-        />
-      </div>
-    </Expandable>
+    <div>
+      <DetailsList
+        items={songList}
+        columns={[
+          {
+            key: 'r',
+            fieldName: 'artist',
+            name: 'Artist',
+            minWidth: (100 * rl) / tot,
+            maxWidth: (400 * rl) / tot,
+            isResizable: true,
+          },
+          {
+            key: 'l',
+            fieldName: 'album',
+            name: 'Album',
+            minWidth: (100 * ll) / tot,
+            maxWidth: (400 * ll) / tot,
+            isResizable: true,
+          },
+          {
+            key: 'n',
+            fieldName: 'track',
+            name: '#',
+            minWidth: (50 * nl) / tot,
+            maxWidth: (50 * nl) / tot,
+            isResizable: true,
+          },
+          {
+            key: 't',
+            fieldName: 'title',
+            name: 'Title',
+            minWidth: (100 * tl) / tot,
+            maxWidth: (400 * tl) / tot,
+            isResizable: true,
+          },
+        ]}
+        compact={true}
+        selectionMode={SelectionMode.none}
+        onRenderRow={altRowRenderer(bold ? bold : () => false)}
+      />
+    </div>
   );
 }

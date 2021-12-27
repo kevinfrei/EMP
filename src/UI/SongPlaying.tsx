@@ -1,4 +1,4 @@
-import { Slider, Text } from '@fluentui/react';
+import { FontIcon, Slider, Text } from '@fluentui/react';
 import { MakeLogger } from '@freik/core-utils';
 import { useMyTransaction } from '@freik/web-utils';
 import { SyntheticEvent } from 'react';
@@ -6,9 +6,10 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
 import {
   albumCoverUrlFuncFam,
-  currentSongKeyFunc,
+  playOrderDisplayingState,
   songListState,
 } from '../Recoil/Local';
+import { currentSongKeyFunc } from '../Recoil/LocalFuncs';
 import {
   MediaTime,
   mediaTimePercentFunc,
@@ -203,6 +204,11 @@ export function SongPlaying(): JSX.Element {
       }
     },
   );
+  const flipDisplay = useRecoilCallback(
+    ({ set }) =>
+      () =>
+        set(playOrderDisplayingState, (prv) => !prv),
+  );
   return (
     <span id="song-container" onAuxClick={showDetail}>
       <CoverArt />
@@ -212,6 +218,7 @@ export function SongPlaying(): JSX.Element {
       <MediaTimeSlider />
       <MediaTimeRemaining />
       {audio}
+      <FontIcon id="showPlayOrder" iconName="List" onClick={flipDisplay} />
     </span>
   );
 }

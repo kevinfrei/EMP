@@ -1,29 +1,20 @@
-/*
-import { snapshot_UNSTABLE } from 'recoil';
-import { currentIndexState, songListState } from '../Local';
+jest.mock('@freik/elect-render-utils');
 
-jest.mock('../../MyWindow');
-
-it('Adding empty songs does nothing', () => {
-  const initialSnapshot = snapshot_UNSTABLE();
-  expect(
-    initialSnapshot.getLoadable(songListState).valueOrThrow(),
-  ).toStrictEqual([]);
-  expect(
-    initialSnapshot.getLoadable(currentIndexState).valueOrThrow(),
-  ).toStrictEqual(-1);
-});
-
-*/
 import { MakeError } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { act } from 'react-test-renderer';
-import { RecoilState, RecoilValueReadOnly } from 'recoil';
-
-const err = MakeError('api.test');
+import {
+  RecoilState,
+  RecoilValueReadOnly,
+  Snapshot,
+  snapshot_UNSTABLE,
+} from 'recoil';
+import { currentIndexState, songListState } from '../Local';
 
 jest.useFakeTimers();
 jest.mock('../../MyWindow');
+
+const err = MakeError('api.test');
 
 export function flushPromisesAndTimers(): Promise<void> {
   // Wrap flush with act() to avoid warning that only shows up in OSS environment
@@ -45,11 +36,11 @@ type RecoilGetter = <T>(rv: RecoilState<T> | RecoilValueReadOnly<T>) => T;
 
 export function makeCallbackIfc(
   set: RecoilSetter,
-  get: RecoilGetter,
+  snap: Snapshot,
 ): MyTransactionInterface {
   return {
     set,
-    get,
+    get: (rv) => snap.getLoadable(rv).valueOrThrow(),
     reset: (/* rv: RecoilState<any> */) => {
       err("Reset doesn't work in here :(");
       return;
@@ -57,11 +48,20 @@ export function makeCallbackIfc(
   };
 }
 
+it('Adding empty songs does nothing', () => {
+  const initialSnapshot = snapshot_UNSTABLE();
+  expect(
+    initialSnapshot.getLoadable(songListState).valueOrThrow(),
+  ).toStrictEqual([]);
+  expect(
+    initialSnapshot.getLoadable(currentIndexState).valueOrThrow(),
+  ).toStrictEqual(-1);
+});
+
+/*
 it('Need to update this to use the transaction api', () =>
   expect(true).toBeTruthy());
-/* 
-
-it('Adding empty songs does nothing', async () => {
+it('Adding empty songs does nothing, really', async () => {
   const initialSnapshot = snapshot_UNSTABLE();
   expect(
     initialSnapshot.getLoadable(songListState).valueOrThrow(),
@@ -121,5 +121,4 @@ it('Playing songs works properly', () => {
     'e',
   ]);
 });
-
 */

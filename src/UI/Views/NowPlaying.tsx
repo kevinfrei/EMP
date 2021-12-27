@@ -41,11 +41,11 @@ import {
 import { StopAndClear } from '../../Recoil/api';
 import {
   activePlaylistState,
-  currentIndexState,
   isMiniplayerState,
   nowPlayingSortState,
   songListState,
 } from '../../Recoil/Local';
+import { currentSongIndexFunc } from '../../Recoil/LocalFuncs';
 import {
   playlistFuncFam,
   playlistNamesFunc,
@@ -56,7 +56,7 @@ import {
   allArtistsFunc,
   curSongsFunc,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState, shuffleState } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState, shuffleFunc } from '../../Recoil/ReadWrite';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {
@@ -199,9 +199,9 @@ export function NowPlayingView(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsFunc);
   const artists: Map<ArtistKey, Artist> = useRecoilValue(allArtistsFunc);
   const articles = useRecoilValue(ignoreArticlesState);
-  const [curIndex, setCurIndex] = useRecoilState(currentIndexState);
+  const [curIndex, setCurIndex] = useRecoilState(currentSongIndexFunc);
   const [songList, setSongList] = useRecoilState(songListState);
-  const resetShuffle = useResetRecoilState(shuffleState);
+  const resetShuffle = useResetRecoilState(shuffleFunc);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
   const curSongs = useRecoilValue(curSongsFunc);
   const isMini = useRecoilValue(isMiniplayerState);

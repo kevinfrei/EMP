@@ -7,7 +7,7 @@
     margin-left: 20px;
     margin-right: 20px;
     display: inline-grid;
-    grid-template-columns: 36px 36px auto 36px;
+    grid-template-columns: 36px 36px auto 36px 14px;
     grid-template-rows: 15px 15px 6px;
     font-size: x-small;
     text-align: center;
@@ -65,6 +65,12 @@
     margin: -12px 0px;
     border: 0px;
     padding: 0px;
+  }
+  #showPlayOrder {
+    grid-row: 2;
+    grid-column: 5;
+    border: 1px;
+    border-color: black;
   }
 }
 

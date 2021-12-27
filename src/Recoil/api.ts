@@ -8,7 +8,7 @@ import {
   PlaylistName,
   SongKey,
 } from '@freik/media-core';
-import { MyTransactionInterface } from '@freik/web-utils';
+import type { MyTransactionInterface } from '@freik/web-utils';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,
@@ -28,7 +28,7 @@ import {
 import { mediaTimeState, playingState } from './MediaPlaying';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
-import { repeatState, shuffleState } from './ReadWrite';
+import { repeatState, shuffleFunc } from './ReadWrite';
 
 const log = MakeLogger('api'); // eslint-disable-line
 const err = MakeError('ReadWrite-err'); // eslint-disable-line
@@ -54,7 +54,7 @@ export function MaybePlayNext(xact: MyTransactionInterface): boolean {
   if (!repeat) {
     return false;
   }
-  ShufflePlayback(xact, songList);
+  ShufflePlaying(xact);
   set(currentIndexState, 0);
   return true;
 }
@@ -113,32 +113,53 @@ function GetFilteredSongs(
  *
  * @returns void
  */
-export function AddSongs( // Deprecate this: It's only for tests now :/
+export function AddSongs(
   xact: MyTransactionInterface,
   listToAdd: Iterable<SongKey>,
 ): void {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { get, set } = xact;
-  const shuffle = get(shuffleState);
+  const shuffle = get(shuffleFunc);
   const playList = GetFilteredSongs(xact, listToAdd);
-  if (!shuffle) {
-    set(songListState, (songList: string[]) => [...songList, ...listToAdd]);
-    set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
-  } else {
-    const shuffledList = ShuffleArray(playList);
-    set(songListState, (songList: string[]) => [...songList, ...shuffledList]);
-    set(currentIndexState, (curIndex) => (curIndex < 0 ? 0 : curIndex));
+  const songList = get(songListState);
+  const fullList = [...songList, ...playList];
+  set(songListState, fullList);
+  if (shuffle) {
+    // If we're shuffled, shuffle in to the "rest" of the current play order
+    const playOrder = get(songPlaybackOrderState);
+    const curIdx = get(currentIndexState);
+    if (
+      playOrder === 'ordered' || // We can wind up here if the shuffle was true at start :/
+      curIdx < 0
+    ) {
+      // No current song playing: Just shuffle & be done
+      set(
+        songPlaybackOrderState,
+        ShuffleArray(Array.from(fullList, (_, idx) => idx)),
+      );
+    } else {
+      // Get the first clump (to *not* shuffle)
+      const alreadyPlayed = playOrder.slice(0, curIdx);
+      // The second clump (the stuff to mix in)
+      const leftToPlay = [
+        ...playOrder.slice(curIdx + 1),
+        ...Array.from(playList, (_, idx) => songList.length + idx),
+      ];
+      set(songPlaybackOrderState, [
+        ...alreadyPlayed,
+        ...ShuffleArray(leftToPlay),
+      ]);
+    }
   }
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
 }
+
 /**
- * Adds a list of songs to the end of the current song list
+ * Sets a list of songs as the current song list
  *
- * @param  {Iterable<SongKey>} listToPlay - The list of songs to start playing
- * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
- *
- * @returns void
+ * @param xact - The transaction interface
+ * @param listToPlay - The list of songkeys to play (in the order desired)
+ * @param playlistName - The playlist name
  */
 export function PlaySongs(
   xact: MyTransactionInterface,
@@ -146,13 +167,21 @@ export function PlaySongs(
   playlistName?: PlaylistName,
 ): void {
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { set } = xact;
+  const { reset, set, get } = xact;
   const playList = GetFilteredSongs(xact, listToPlay);
-  ShufflePlayback(xact, playList);
   if (isPlaylist(playlistName) && Type.isString(playlistName)) {
     set(activePlaylistState, playlistName);
+  } else {
+    reset(activePlaylistState);
   }
-  set(songListState, playList);
+  const shuffle = get(shuffleFunc);
+  if (shuffle) {
+    set(
+      songPlaybackOrderState,
+      ShuffleArray(Array.from(playList, (_, idx) => idx)),
+    );
+  }
+  set(songListState, [...playList]);
   set(currentIndexState, playList.length >= 0 ? 0 : -1);
   set(recentlyQueuedState, playList.length);
   set(displayMessageState, true);
@@ -187,19 +216,20 @@ export function ShufflePlaying({
   set,
 }: MyTransactionInterface): void {
   const curIndex = get(currentIndexState);
-  reset(nowPlayingSortState);
   const curSongList = get(songListState);
   if (curIndex < 0) {
-    ShufflePlayback({ get, set, reset }, curSongList);
+    const nums = Array.from(curSongList, (_item, idx) => idx);
+    set(songPlaybackOrderState, ShuffleArray(nums));
   } else {
-    const notNowPlaying = [...(Array(curSongList.length - 1) as unknown[])].map(
-      (_, idx) => (idx >= curIndex ? idx + 1 : idx),
+    const notNowPlaying = Array.from(curSongList, (_, idx) =>
+      idx >= curIndex ? idx + 1 : idx,
     );
+    notNowPlaying.pop();
     const newSongs = ShuffleArray(notNowPlaying);
     // Re-insert curIndex back at the beginning of the array
     set(songPlaybackOrderState, [curIndex, ...newSongs]);
-    reset(nowPlayingSortState);
   }
+  reset(nowPlayingSortState);
 }
 
 /**

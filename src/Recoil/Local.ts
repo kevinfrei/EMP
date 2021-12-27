@@ -1,8 +1,7 @@
 import { AlbumKey, ArtistKey, MediaKey, SongKey } from '@freik/media-core';
-import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { atom, atomFamily, selectorFamily } from 'recoil';
 import { MakeSortKey } from '../Sorting';
 import { RandomInt } from '../Tools';
-import { CurrentView, curViewFunc, repeatState } from './ReadWrite';
 
 export type PlaylistName = string;
 
@@ -31,59 +30,6 @@ export const songPlaybackOrderState = atom<'ordered' | number[]>({
 export const currentIndexState = atom<number>({
   key: 'currentIndex',
   default: -1,
-});
-
-// Selector to get the current song key based on the rest of this nonsense
-export const currentSongKeyFunc = selector<SongKey>({
-  key: 'currentSongKey',
-  get: ({ get }) => {
-    const curIndex = get(currentIndexState);
-    if (curIndex >= 0) {
-      const songList = get(songListState);
-      const playbackOrder = get(songPlaybackOrderState);
-      if (curIndex >= 0 && curIndex < songList.length) {
-        return playbackOrder === 'ordered'
-          ? songList[curIndex]
-          : songList[playbackOrder[curIndex]];
-      }
-    }
-    return '';
-  },
-});
-
-// Is there a 'next song' to play?
-export const hasNextSongFunc = selector<boolean>({
-  key: 'hasNextSong',
-  get: ({ get }) => {
-    const songList = get(songListState);
-    if (songList.length === 0) {
-      return false;
-    }
-    const curIndex = get(currentIndexState);
-    if (curIndex >= 0 && curIndex < songList.length - 1) {
-      return true;
-    }
-    return get(repeatState);
-  },
-});
-
-// Is there a 'previous song' to play?
-export const hasPrevSongFunc = selector<boolean>({
-  key: 'hasPrevSong',
-  get: ({ get }) => {
-    const songList = get(songListState);
-    if (songList.length === 0) {
-      return false;
-    }
-    const curIndex = get(currentIndexState);
-    return curIndex > 0 || get(repeatState);
-  },
-});
-
-// Do we have any songs at all?
-export const hasAnySongsFunc = selector<boolean>({
-  key: 'hasAnySongs',
-  get: ({ get }) => get(songListState).length > 0,
 });
 
 // This is the sort for the current playlist
@@ -137,14 +83,10 @@ export const artistImageUrlFuncFam = selectorFamily<string, ArtistKey>({
   },
 });
 
+export const playOrderDisplayingState = atom<boolean>({
+  key: 'playOrderShowing',
+  default: false,
+});
+
 // This is the currently 'typed' set of characters (for scrolling lists)
 export const keyBufferState = atom<string>({ key: 'KeyBuffer', default: '' });
-
-export const focusedKeysFuncFam = selectorFamily<string, CurrentView>({
-  key: 'focusedKeys',
-  get:
-    (view: CurrentView) =>
-    ({ get }) => {
-      return get(curViewFunc) === view ? get(keyBufferState) : '';
-    },
-});

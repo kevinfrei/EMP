@@ -2,7 +2,14 @@
 import { Effects } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
-import { isMiniplayerState } from './Local';
+import { ShuffleArray } from '../Tools';
+import {
+  currentIndexState,
+  isMiniplayerState,
+  songListState,
+  songPlaybackOrderState,
+} from './Local';
+import { currentSongIndexFunc } from './LocalFuncs';
 import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
 
 // const log = MakeLogger('ReadWrite');
@@ -35,10 +42,57 @@ export const volumeState = atom<number>({
   effects_UNSTABLE: [Effects.syncWithMain<number>()],
 });
 
-export const shuffleState = atom<boolean>({
+const shuffleState = atom<boolean>({
   key: 'shuffle',
   default: false,
   effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+});
+
+export const shuffleFunc = selector<boolean>({
+  key: 'shuffleFunc',
+  get: ({ get }) => get(shuffleState),
+  set: ({ get, set }, newVal) => {
+    set(shuffleState, newVal === true);
+    if (newVal !== true) {
+      // update the currentIndex to the 'right' value when we clear the playback order
+      const realIndex = get(currentSongIndexFunc);
+      set(songPlaybackOrderState, 'ordered');
+      set(currentIndexState, realIndex);
+    } else {
+      const curList = get(songListState);
+      if (curList.length === 0) {
+        set(songPlaybackOrderState, []);
+      } else {
+        // Even if we're setting it to true against an already
+        // true state, go ahead & shuffle...
+        let curIdx = get(currentIndexState);
+        if (curIdx < 0) {
+          // Nothing is currently playing: just shuffle the array and be done
+          set(
+            songPlaybackOrderState,
+            ShuffleArray(Array.from(curList, (_, idx) => idx)),
+          );
+        } else {
+          // We've got a "now playing"
+          // Pull it out, and put it at the beginning
+          const curOrd = get(songPlaybackOrderState);
+          if (curOrd !== 'ordered') {
+            curIdx = curOrd[curIdx];
+          }
+          // Make an array of 0 => length, minux curIdx
+          const newOrder = Array.from(curList, (_, idx) =>
+            idx >= curIdx ? idx + 1 : idx,
+          );
+          // Pop the back (length is 1 too high anyway!)
+          newOrder.pop();
+          // Push the current index at the beginning
+          set(songPlaybackOrderState, [curIdx, ...ShuffleArray(newOrder)]);
+          // And now set the playback to the first of the playback order
+          set(currentIndexState, 0);
+        }
+      }
+    }
+  },
 });
 
 export const repeatState = atom<boolean>({

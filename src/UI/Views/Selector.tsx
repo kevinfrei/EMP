@@ -6,6 +6,7 @@ import { GroupedAristList } from './Artists';
 import { MixedSongsList } from './MixedSongs';
 import { NowPlayingView } from './NowPlaying';
 import { NuAlbumView } from './NuAlbums';
+import { PlaybackOrder } from './PlaybackOrder';
 import { PlaylistView } from './Playlists';
 import { RecentlyAddedView } from './RecentlyAdded';
 import { SearchResultsView } from './SearchResults';
@@ -18,6 +19,7 @@ export function ViewSelector(): JSX.Element {
     which === v ? {} : { visibility: 'hidden' };
   return (
     <>
+      <PlaybackOrder />
       <div className="current-view" style={sl(CurrentView.disabled)}>
         <NuAlbumView />
       </div>

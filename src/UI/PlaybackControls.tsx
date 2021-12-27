@@ -5,14 +5,14 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { MaybePlayNext, MaybePlayPrev, ShufflePlaying } from '../Recoil/api';
+import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import {
   hasAnySongsFunc,
   hasNextSongFunc,
   hasPrevSongFunc,
-} from '../Recoil/Local';
+} from '../Recoil/LocalFuncs';
 import { playingState } from '../Recoil/MediaPlaying';
-import { repeatState, shuffleState } from '../Recoil/ReadWrite';
+import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
 
@@ -43,7 +43,7 @@ export function PlaybackControls(): JSX.Element {
   const isPlaying = useRecoilValue(playingState);
 
   const hasAnySong = useRecoilValue(hasAnySongsFunc);
-  const shuf = useRecoilValue(shuffleState);
+  const shuf = useRecoilValue(shuffleFunc);
   const [rep, repSet] = useRecoilState(repeatState);
   const hasNextSong = useRecoilValue(hasNextSongFunc);
   const hasPrevSong = useRecoilValue(hasPrevSongFunc);
@@ -59,10 +59,7 @@ export function PlaybackControls(): JSX.Element {
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
   const clickShuffle = useMyTransaction((xact) => () => {
-    if (!xact.get(shuffleState)) {
-      ShufflePlaying(xact);
-    }
-    xact.set(shuffleState, (prevShuf) => !prevShuf);
+    xact.set(shuffleFunc, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = useMyTransaction(

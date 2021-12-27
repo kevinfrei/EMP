@@ -170,7 +170,9 @@ export function MediaInfoTable({
   const theHeader = Type.isString(keyOrKeys) ? (
     <MediaFormatDetails forSong={keyOrKeys} />
   ) : (
-    <SimpleSongsList forSongs={keyOrKeys} />
+    <Expandable label="Files Selected">
+      <SimpleSongsList forSongs={keyOrKeys} />
+    </Expandable>
   );
 
   // For single-song, the raw metadata in a table

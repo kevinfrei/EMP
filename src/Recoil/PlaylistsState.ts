@@ -2,13 +2,7 @@
 import { Operations, Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { PlaylistName, SongKey } from '@freik/media-core';
-import {
-  atom,
-  atomFamily,
-  RecoilValue,
-  selector,
-  selectorFamily,
-} from 'recoil';
+import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { isPlaylist } from '../Tools';
 import { activePlaylistState, songListState } from './Local';
 
@@ -112,21 +106,19 @@ export const allPlaylistsFunc = selector<Map<PlaylistName, SongKey[]>>({
   },
 });
 
-function saveableGetter(get: <T>(a: RecoilValue<T>) => T): boolean {
-  const curPlaylist = get(activePlaylistState);
-  if (isPlaylist(curPlaylist)) {
-    const theSongList = get(playlistFuncFam(curPlaylist));
-    const songList = get(songListState);
-    return !Operations.ArraySetEqual(theSongList, songList);
-  } else {
-    // If it's not a playlist, you can't save it
-    return false;
-  }
-}
-
 // This decides if the current playlist is something that can be 'saved'
 // (Is it a playlist, and has it been modified)
 export const saveableFunc = selector<boolean>({
   key: 'shouldSaveBeDisabled',
-  get: ({ get }): boolean => saveableGetter(get),
+  get: ({ get }) => {
+    const curPlaylist = get(activePlaylistState);
+    if (isPlaylist(curPlaylist)) {
+      const theSongList = get(playlistFuncFam(curPlaylist));
+      const songList = get(songListState);
+      return !Operations.ArraySetEqual(theSongList, songList);
+    } else {
+      // If it's not a playlist, you can't save it
+      return false;
+    }
+  },
 });

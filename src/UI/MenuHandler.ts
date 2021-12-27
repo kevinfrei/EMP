@@ -10,7 +10,7 @@ import {
   curViewFunc,
   mutedState,
   repeatState,
-  shuffleState,
+  shuffleFunc,
   volumeState,
 } from '../Recoil/ReadWrite';
 import { onClickPlayPause } from './PlaybackControls';
@@ -52,7 +52,7 @@ export function MenuHandler(
         break;
       }
       case 'shuffle':
-        xact.set(shuffleState, (cur) => !cur);
+        xact.set(shuffleFunc, (cur) => !cur);
         break;
       case 'repeat':
         xact.set(repeatState, (cur) => !cur);

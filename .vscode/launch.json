@@ -5,6 +5,15 @@
       "type": "node",
       "request": "launch",
       "name": "Jest testui",
+      "windows": {
+        "runtimeArgs": [
+          "--inspect-brk",
+          "${workspaceFolder}/node_modules/jest-cli/bin/jest.js",
+          "--runInBand",
+          "--config",
+          "${workspaceFolder}/config/jest.jsdom.js"
+        ]
+      },
       "runtimeArgs": [
         "--inspect-brk",
         "${workspaceFolder}/node_modules/.bin/jest",

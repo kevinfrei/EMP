@@ -26,7 +26,8 @@ import {
   useResetRecoilState,
 } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
-import { artistImageUrlFuncFam, focusedKeysFuncFam } from '../../Recoil/Local';
+import { artistImageUrlFuncFam } from '../../Recoil/Local';
+import { focusedKeysFuncFam } from '../../Recoil/LocalFuncs';
 import {
   allAlbumsFunc,
   allArtistsFunc,
