@@ -54,7 +54,9 @@ export function MaybePlayNext(xact: MyTransactionInterface): boolean {
   if (!repeat) {
     return false;
   }
-  ShufflePlaying(xact);
+  if (get(shuffleFunc)) {
+    ShufflePlaying(xact, true);
+  }
   set(currentIndexState, 0);
   return true;
 }
@@ -210,16 +212,19 @@ export function StopAndClear({ reset }: MyTransactionInterface): void {
  *
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  */
-export function ShufflePlaying({
-  get,
-  reset,
-  set,
-}: MyTransactionInterface): void {
+export function ShufflePlaying(
+  { get, reset, set }: MyTransactionInterface,
+  ignoreCur?: boolean,
+): void {
+  ignoreCur = ignoreCur === true;
   const curIndex = get(currentIndexState);
   const curSongList = get(songListState);
-  if (curIndex < 0) {
+  if (curIndex < 0 || ignoreCur) {
     const nums = Array.from(curSongList, (_item, idx) => idx);
     set(songPlaybackOrderState, ShuffleArray(nums));
+    if (curSongList.length > 0) {
+      set(currentIndexState, 0);
+    }
   } else {
     const notNowPlaying = Array.from(curSongList, (_, idx) =>
       idx >= curIndex ? idx + 1 : idx,
