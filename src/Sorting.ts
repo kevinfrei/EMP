@@ -15,6 +15,7 @@ import { Fail } from '@freik/web-utils';
 import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
 
 export type ArtistSong = Song & { sortedArtistId: ArtistKey; comboKey: string };
+export type SongWithIndex = Song & { index: number };
 
 // supercedes subelems, allowing groups to function properly
 export type SortKey = {
@@ -421,9 +422,9 @@ export function SortSongList(
   artists: Map<ArtistKey, Artist>,
   articles: boolean,
   sortOrder: SortKey,
-): Song[] {
+): SongWithIndex[] {
   return SortItems(
-    songs,
+    songs.map((song, index) => ({ ...song, index })),
     sortOrder.makeSongComparator(albums, artists, articles),
   );
 }

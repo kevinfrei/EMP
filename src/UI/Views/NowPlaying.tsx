@@ -32,18 +32,14 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useState } from 'react';
-import {
-  atom,
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-} from 'recoil';
+import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { StopAndClear } from '../../Recoil/api';
 import {
   activePlaylistState,
   isMiniplayerState,
   nowPlayingSortState,
   songListState,
+  songPlaybackOrderState,
 } from '../../Recoil/Local';
 import { currentSongIndexFunc } from '../../Recoil/LocalFuncs';
 import {
@@ -56,7 +52,7 @@ import {
   allArtistsFunc,
   curSongsFunc,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState, shuffleFunc } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {
@@ -201,11 +197,13 @@ export function NowPlayingView(): JSX.Element {
   const articles = useRecoilValue(ignoreArticlesState);
   const [curIndex, setCurIndex] = useRecoilState(currentSongIndexFunc);
   const [songList, setSongList] = useRecoilState(songListState);
-  const resetShuffle = useResetRecoilState(shuffleFunc);
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
   const curSongs = useRecoilValue(curSongsFunc);
   const isMini = useRecoilValue(isMiniplayerState);
   const [songContext, setSongContext] = useRecoilState(nowPlayingContextState);
+  const [playbackOrder, setPlaybackOrder] = useRecoilState(
+    songPlaybackOrderState,
+  );
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
     const event = ev as any as MouseEvent;
     if (ev && item) {
@@ -257,9 +255,18 @@ export function NowPlayingView(): JSX.Element {
         }
         return song.key;
       });
-      setSongList(newSongList);
-      setCurIndex(newKey);
-      resetShuffle();
+      if (playbackOrder !== 'ordered') {
+        // Remap the shuffled order to the new sort, so we don't reshuffle constantly
+        const indexMap = new Map(
+          sortedSongs.map((old, index) => [old.index, index]),
+        );
+        const newOrder = playbackOrder.map((val) => indexMap.get(val) || 0);
+        setPlaybackOrder(newOrder);
+        setSongList(newSongList);
+      } else {
+        setSongList(newSongList);
+        setCurIndex(newKey);
+      }
     }
   };
 
