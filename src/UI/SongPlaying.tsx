@@ -223,7 +223,11 @@ export function SongPlaying(): JSX.Element {
         id="showPlayOrder"
         iconName="List"
         onClick={flipDisplay}
-        style={{ width: '12px', display: isShuffle ? 'block' : 'none' }}
+        style={{
+          width: '12px',
+          display: isShuffle ? 'block' : 'none',
+          cursor: 'pointer',
+        }}
       />
     </span>
   );

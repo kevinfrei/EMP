@@ -62,6 +62,7 @@ import {
 } from '../SimpleTags';
 import { altRowRenderer, MakeColumns } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+import { accPrefix } from '../Utilities';
 import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
 
@@ -156,6 +157,7 @@ function TopLine(): JSX.Element {
           className="save-playlist"
           disabled={!saveEnabled}
           style={{ width: 120 }}
+          title={accPrefix + 'S'}
         >
           Save
         </DefaultButton>

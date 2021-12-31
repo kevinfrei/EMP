@@ -35,6 +35,7 @@ import {
   saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
+import { accPrefix } from '../Utilities';
 import './styles/Settings.css';
 
 const removeFromSet = (set: string[], val: string): string[] => {
@@ -102,6 +103,7 @@ function MusicLocations(): JSX.Element {
           text="Add Location"
           onClick={onAddLocation}
           iconProps={{ iconName: 'Add' }}
+          title={accPrefix + 'O'}
         />
         &nbsp;
         <TooltipHost

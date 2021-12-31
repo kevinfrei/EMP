@@ -6,23 +6,25 @@ import { searchTermState } from '../Recoil/ReadOnly';
 import { CurrentView, curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
+import { accPrefix } from './Utilities';
 
-type ViewEntry = { name: CurrentView; title: string };
-const mkEntry = (name: CurrentView, title: string) => ({
+type ViewEntry = { name: CurrentView; title: string; accelerator: string };
+const mkEntry = (name: CurrentView, title: string, accelerator: string) => ({
   name,
   title,
+  accelerator,
 });
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', ),
-  mkEntry(CurrentView.current, 'Now Playing'),
+  mkEntry(CurrentView.current, 'Now Playing', '1'),
   null,
-  mkEntry(CurrentView.album, 'Albums'),
-  mkEntry(CurrentView.artist, 'Artists'),
-  mkEntry(CurrentView.song, 'All Songs'),
-  mkEntry(CurrentView.playlist, 'Playlists'),
+  mkEntry(CurrentView.album, 'Albums', '2'),
+  mkEntry(CurrentView.artist, 'Artists', '3'),
+  mkEntry(CurrentView.song, 'All Songs', '4'),
+  mkEntry(CurrentView.playlist, 'Playlists', '5'),
   null,
-  mkEntry(CurrentView.settings, 'Settings'),
+  mkEntry(CurrentView.settings, 'Settings', ','),
 ];
 
 function getEntry(
@@ -40,6 +42,7 @@ function getEntry(
       key={index}
       className={`sidebar-container${extra}`}
       onClick={() => setCurView(view.name)}
+      title={accPrefix + view.accelerator}
     >
       <span className="sidebar-icon" id={(view.title || '').replace(/ /g, '-')}>
         &nbsp;
@@ -86,6 +89,7 @@ export function Sidebar(): JSX.Element {
         onFocus={onFocus}
         onChange={(e, nv) => nv && onSearch(nv)}
         componentRef={(ref) => SetSearch(ref)}
+        title={accPrefix + 'F'}
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}

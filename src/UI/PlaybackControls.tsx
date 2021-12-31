@@ -15,6 +15,7 @@ import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
+import { accPrefix } from './Utilities';
 
 const log = MakeLogger('SongControls');
 const err = MakeLogger('SongControls-err');
@@ -78,19 +79,44 @@ export function PlaybackControls(): JSX.Element {
   });
   return (
     <span id="control-container">
-      <span id="shuffle" className={shufClass} onClick={clickShuffle}>
+      <span
+        id="shuffle"
+        className={shufClass}
+        onClick={clickShuffle}
+        title={accPrefix + 'R'}
+      >
         &nbsp;
       </span>
-      <span id="prev" className={prevClass} onClick={clickPrev}>
+      <span
+        id="prev"
+        className={prevClass}
+        onClick={clickPrev}
+        title={accPrefix + '←'}
+      >
         &nbsp;
       </span>
-      <span id="play-pause" className={playPauseClass} onClick={clickPlayPause}>
+      <span
+        id="play-pause"
+        className={playPauseClass}
+        onClick={clickPlayPause}
+        title={accPrefix + 'P'}
+      >
         &nbsp;
       </span>
-      <span id="next" className={nextClass} onClick={clickNext}>
+      <span
+        id="next"
+        className={nextClass}
+        onClick={clickNext}
+        title={accPrefix + '→'}
+      >
         &nbsp;
       </span>
-      <span id="repeat" className={repClass} onClick={clickRepeat}>
+      <span
+        id="repeat"
+        className={repClass}
+        onClick={clickRepeat}
+        title={accPrefix + 'T'}
+      >
         &nbsp;
       </span>
       &nbsp;
