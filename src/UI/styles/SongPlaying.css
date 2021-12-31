@@ -108,12 +108,16 @@
     max-height: 100%;
   }
   #now-playing-current-time {
-    visibility: hidden;
-    display: none;
+    grid-row: 3 / 5;
+    grid-column: 1;
+    margin-top: 8px;
+    margin-right: 36px;
   }
   #now-playing-remaining-time {
-    visibility: hidden;
-    display: none;
+    grid-row: 3 / 5;
+    grid-column: 3;
+    margin-top: 8px;
+    margin-left: 36px;
   }
   #song-name {
     font-weight: bold;
@@ -121,6 +125,7 @@
     grid-column: 2;
     overflow: hidden;
     white-space: nowrap;
+    margin: -1px -8px;
   }
   #artist-album {
     font-weight: bold;
@@ -128,11 +133,12 @@
     grid-column: 2;
     overflow: hidden;
     white-space: nowrap;
+    margin: -2px -8px;
   }
   .song-slider {
     grid-row: 4;
     grid-column: 1 / 4;
-    margin: -12px 2px;
+    margin: -12px 36px;
     padding: 0px;
   }
   #showPlayOrder {
