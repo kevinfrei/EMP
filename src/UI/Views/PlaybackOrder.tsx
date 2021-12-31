@@ -2,10 +2,12 @@ import { IDetailsRowProps, Panel, PanelType } from '@fluentui/react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
   currentIndexState,
+  isMiniplayerState,
   playOrderDisplayingState,
   songListState,
   songPlaybackOrderState,
 } from '../../Recoil/Local';
+import { shuffleFunc } from '../../Recoil/ReadWrite';
 import { SimpleSongsList } from './MixedSongs';
 
 export function PlaybackOrder(): JSX.Element {
@@ -22,10 +24,12 @@ export function PlaybackOrder(): JSX.Element {
   }
   const curIndex = useRecoilValue(currentIndexState);
   const isBold = (props: IDetailsRowProps) => props.itemIndex === curIndex;
+  const isShuffle = useRecoilValue(shuffleFunc);
+  const isMiniplayer = useRecoilValue(isMiniplayerState);
   return (
     <Panel
       isLightDismiss
-      isOpen={isOpen}
+      isOpen={isOpen && isShuffle && !isMiniplayer}
       onDismiss={close}
       closeButtonAriaLabel="Close"
       headerText="Playback Order"

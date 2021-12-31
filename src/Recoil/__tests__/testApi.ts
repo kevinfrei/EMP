@@ -3,12 +3,7 @@ jest.mock('@freik/elect-render-utils');
 import { MakeError } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { act } from 'react-test-renderer';
-import {
-  RecoilState,
-  RecoilValueReadOnly,
-  Snapshot,
-  snapshot_UNSTABLE,
-} from 'recoil';
+import { RecoilState, Snapshot, snapshot_UNSTABLE } from 'recoil';
 import { currentIndexState, songListState } from '../Local';
 
 jest.useFakeTimers();
@@ -32,7 +27,7 @@ type RecoilSetter = <T>(
   rv: RecoilState<T>,
   valOrUpdate: ((curVal: T) => T) | T,
 ) => void;
-type RecoilGetter = <T>(rv: RecoilState<T> | RecoilValueReadOnly<T>) => T;
+// type RecoilGetter = <T>(rv: RecoilState<T> | RecoilValueReadOnly<T>) => T;
 
 export function makeCallbackIfc(
   set: RecoilSetter,

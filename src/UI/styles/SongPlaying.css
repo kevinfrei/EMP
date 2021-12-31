@@ -4,10 +4,9 @@
     grid-column: 3;
     justify-self: stretch;
     align-self: center;
-    margin-left: 20px;
-    margin-right: 20px;
+    margin: 0px 8px;
     display: inline-grid;
-    grid-template-columns: 36px 36px auto 36px 14px;
+    grid-template-columns: 36px 36px 1fr 36px auto;
     grid-template-rows: 15px 15px 6px;
     font-size: x-small;
     text-align: center;
@@ -138,7 +137,7 @@
   .song-slider {
     grid-row: 4;
     grid-column: 1 / 4;
-    margin: -12px 36px;
+    margin: -13px 36px;
     padding: 0px;
   }
   #showPlayOrder {
