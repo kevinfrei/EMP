@@ -14,7 +14,7 @@
     "project": "tsconfig.json",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint/eslint-plugin", "react", "react-hooks"],
+  "plugins": ["@typescript-eslint/eslint-plugin", "react-hooks"],
   "overrides": [
     {
       "files": ["static/renderer.ts"],
