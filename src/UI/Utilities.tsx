@@ -79,3 +79,6 @@ export const mySliderStyles: Partial<ISliderStyles> = {
     zIndex: 100,
   },
 };
+
+export const accPrefix =
+  window.navigator.userAgent.indexOf('Mac') >= 0 ? 'Cmd-' : 'Ctrl-';

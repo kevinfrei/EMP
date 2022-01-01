@@ -80,7 +80,7 @@ function PlaylistHeaderDisplay({
         set(playlistIsExpandedState(group.key), !group.isCollapsed),
   );
   const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, xact.get(playlistFuncFam(group.key)));
+    AddSongs(xact, xact.get(playlistFuncFam(group.key)), group.key);
   });
   const onRightClick = useMyTransaction(
     ({ set }) =>
@@ -325,6 +325,7 @@ export function PlaylistView(): JSX.Element {
           onGetSongList={({ get }: MyTransactionInterface, data: string) =>
             get(playlistFuncFam(data))
           }
+          onGetPlaylistName={(data: string) => data}
           items={[
             'add',
             'rep',

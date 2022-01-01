@@ -1,4 +1,4 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import {
   isAlbumKey,
@@ -30,8 +30,8 @@ import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
 import { repeatState, shuffleFunc } from './ReadWrite';
 
-const log = MakeLogger('api'); // eslint-disable-line
-const err = MakeError('ReadWrite-err'); // eslint-disable-line
+const log = MakeLogger('api', true); // eslint-disable-line
+const err = MakeError('api-err'); // eslint-disable-line
 
 /**
  * Try to play the next song in the playlist
@@ -118,11 +118,17 @@ function GetFilteredSongs(
 export function AddSongs(
   xact: MyTransactionInterface,
   listToAdd: Iterable<SongKey>,
+  playlistName?: string,
 ): void {
   const { get, set } = xact;
+  const songList = get(songListState);
+  if (songList.length === 0) {
+    // This makes it so that if you add, it will still register as
+    // the playlist you added, if the current playlist is empty
+    PlaySongs(xact, listToAdd, playlistName);
+  }
   const shuffle = get(shuffleFunc);
   const playList = GetFilteredSongs(xact, listToAdd);
-  const songList = get(songListState);
   const fullList = [...songList, ...playList];
   set(songListState, fullList);
   if (shuffle) {
@@ -171,7 +177,7 @@ export function PlaySongs(
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { reset, set, get } = xact;
   const playList = GetFilteredSongs(xact, listToPlay);
-  if (isPlaylist(playlistName) && Type.isString(playlistName)) {
+  if (isPlaylist(playlistName)) {
     set(activePlaylistState, playlistName);
   } else {
     reset(activePlaylistState);

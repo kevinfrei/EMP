@@ -24,7 +24,7 @@ import {
   dataForSongFuncFam,
   SongDescription,
 } from '../Recoil/ReadOnly';
-import { repeatState } from '../Recoil/ReadWrite';
+import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import './styles/SongPlaying.css';
 import { mySliderStyles } from './Utilities';
@@ -138,6 +138,7 @@ function ArtistAlbum(): JSX.Element {
 
 export function SongPlaying(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
+  const isShuffle = useRecoilValue(shuffleFunc);
   const onPlay = useRecoilCallback(
     ({ set }) =>
       () =>
@@ -218,7 +219,16 @@ export function SongPlaying(): JSX.Element {
       <MediaTimeSlider />
       <MediaTimeRemaining />
       {audio}
-      <FontIcon id="showPlayOrder" iconName="List" onClick={flipDisplay} />
+      <FontIcon
+        id="showPlayOrder"
+        iconName="List"
+        onClick={flipDisplay}
+        style={{
+          width: '12px',
+          display: isShuffle ? 'block' : 'none',
+          cursor: 'pointer',
+        }}
+      />
     </span>
   );
 }

@@ -23,10 +23,10 @@ here you go:
 
 <img src="doc/miniplayer.jpg" width="270" alt="Miniplayer">
 
-Releases are [here](https://github.com/kevinfrei/EMP/releases).
-I pretty reliably get Mac & Windows releases up. Linux releases seem messier.
-Snapcraft something something. I have a Raspi and a couple Ubuntu x86 machines
-but getting everything working reliably just hasn't happened :/
+Releases are [here](https://github.com/kevinfrei/EMP/releases). I pretty
+reliably get Mac & Windows releases up. Linux releases seem messier. Snapcraft
+something something. I have a Raspi and a couple Ubuntu x86 machines but getting
+everything working reliably just hasn't happened :/
 
 ## What's the current state?
 

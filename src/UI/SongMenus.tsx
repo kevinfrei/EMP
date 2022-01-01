@@ -29,6 +29,7 @@ type SongListMenuArgs = {
   context: SongListMenuData;
   onClearContext: () => void;
   onGetSongList: (xact: MyTransactionInterface, data: string) => SongKey[];
+  onGetPlaylistName?: (data: string) => string;
   items?: (IContextualMenuItem | string)[];
 };
 
@@ -40,6 +41,7 @@ export function SongListMenu({
   context,
   onClearContext,
   onGetSongList,
+  onGetPlaylistName,
   items,
 }: SongListMenuArgs): JSX.Element {
   const i = (
@@ -62,10 +64,20 @@ export function SongListMenu({
   });
 
   const onAdd = useMyTransaction(
-    (xact) => () => AddSongs(xact, onGetSongList(xact, context.data)),
+    (xact) => () =>
+      AddSongs(
+        xact,
+        onGetSongList(xact, context.data),
+        onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
+      ),
   );
   const onReplace = useMyTransaction(
-    (xact) => () => PlaySongs(xact, onGetSongList(xact, context.data)),
+    (xact) => () =>
+      PlaySongs(
+        xact,
+        onGetSongList(xact, context.data),
+        onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
+      ),
   );
   const onProps = useMyTransaction(
     (xact) => () =>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Operations, Type } from '@freik/core-utils';
+import { Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
@@ -115,10 +115,16 @@ export const saveableFunc = selector<boolean>({
     if (isPlaylist(curPlaylist)) {
       const theSongList = get(playlistFuncFam(curPlaylist));
       const songList = get(songListState);
-      return !Operations.ArraySetEqual(theSongList, songList);
-    } else {
-      // If it's not a playlist, you can't save it
-      return false;
+      if (songList.length !== theSongList.length) {
+        return true;
+      }
+      for (let i = 0; i < songList.length; i++) {
+        if (songList[i] !== theSongList[i]) {
+          return true;
+        }
+      }
     }
+    // If it's not a playlist, you can't save it
+    return false;
   },
 });

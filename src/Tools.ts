@@ -52,7 +52,7 @@ export function GetIndexOf<T, E>(
  * Miscellaney
  */
 
-export function isPlaylist(playlist?: string): boolean {
+export function isPlaylist(playlist?: string): playlist is string {
   return Type.isString(playlist) && playlist.length > 0;
 }
 
