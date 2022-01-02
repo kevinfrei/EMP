@@ -18,7 +18,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Keys } from 'shared';
+import { IpcId, Keys } from 'shared';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
@@ -113,7 +113,7 @@ function MusicLocations(): JSX.Element {
         >
           <DefaultButton
             text="Rescan Locations"
-            onClick={() => Ipc.InvokeMain('manual-rescan')}
+            onClick={() => Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>
       </Stack>
@@ -190,7 +190,7 @@ function ArtworkSettings(): JSX.Element {
       <DefaultButton
         text="Flush Image Cache"
         style={{ width: '185px', gridRow: 4 }}
-        onClick={() => Ipc.InvokeMain('flush-image-cache')}
+        onClick={() => Ipc.InvokeMain(IpcId.FlushImageCache)}
       />
     </>
   );

@@ -4,7 +4,7 @@ import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
 import { Catch, useMyTransaction } from '@freik/web-utils';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { Keys } from 'shared';
+import { IpcId, Keys } from 'shared';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
@@ -40,7 +40,7 @@ export function Utilities(): JSX.Element {
     return () => MediaQuery.UnsubscribeMediaMatcher(handleWidthChange);
   });
   useEffect(() => {
-    Ipc.PostMain('set-save-menu', saveable).catch(Catch);
+    Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
   }, [saveable]);
   /* This is for a global search typing thingamajig */
   const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {
