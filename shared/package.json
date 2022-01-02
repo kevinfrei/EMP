@@ -1,0 +1,18 @@
+{
+  "name": "shared",
+  "version": "0.0.1",
+  "description": "A place to share code between Main and Render processes",
+  "main": "./build/shared.js",
+  "types": "./build/shared.d.ts",
+  "scripts": {
+    "build": "rimraf build && tsc"
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "typescript": "^4.5.4"
+  },
+  "files": [
+    "./build/**/*"
+  ],
+  "packageManager": "yarn@3.1.1"
+}

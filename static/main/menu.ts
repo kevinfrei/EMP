@@ -10,6 +10,7 @@ import {
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
+import { Keys } from 'shared';
 import { ToggleMiniPlayer } from './window';
 
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -95,9 +96,11 @@ const fileMenu: MenuItemConstructorOptions = {
   role: 'fileMenu',
   label: '&File',
   submenu: [
-    xaction('Add F&ile Location', 'O', { state: 'addLocation' }),
+    xaction('Add F&ile Location', Keys.AddFileLocation, {
+      state: 'addLocation',
+    }),
     ___,
-    xaction('&Save Playlist', 'S', { state: 'savePlaylist' }),
+    xaction('&Save Playlist', Keys.SavePlaylist, { state: 'savePlaylist' }),
     // xaction('Save Playlist &As', 'Shift+S', { state: 'savePlaylistAs' }),
     ___,
     { role: isMac ? 'close' : 'quit' },
@@ -116,39 +119,45 @@ const editMenu: MenuItemConstructorOptions = {
     { role: 'paste' },
     { role: 'selectAll' },
     ___,
-    xaction('F&ind', 'F', { state: 'find' }),
+    xaction('F&ind', Keys.Find, { state: 'find' }),
   ],
 };
 const viewMenu: MenuItemConstructorOptions = {
   label: '&View',
   submenu: [
-    xaction('&Now Playing', '1', { state: 'view', select: 'NowPlaying' }),
+    xaction('&Now Playing', Keys.NowPlaying, {
+      state: 'view',
+      select: 'NowPlaying',
+    }),
     ___,
-    xaction('A&lbums', '2', { state: 'view', select: 'Albums' }),
-    xaction('A&rtists', '3', { state: 'view', select: 'Artists' }),
-    xaction('&Songs', '4', { state: 'view', select: 'Songs' }),
-    xaction('&Playlists', '5', { state: 'view', select: 'Playlists' }),
-    xaction('Se&ttings', ',', { state: 'view', select: 'Settings' }),
+    xaction('A&lbums', Keys.Albums, { state: 'view', select: 'Albums' }),
+    xaction('A&rtists', Keys.Artists, { state: 'view', select: 'Artists' }),
+    xaction('&Songs', Keys.Songs, { state: 'view', select: 'Songs' }),
+    xaction('&Playlists', Keys.Playlists, {
+      state: 'view',
+      select: 'Playlists',
+    }),
+    xaction('Se&ttings', Keys.Settings, { state: 'view', select: 'Settings' }),
     ___,
-    xaction('M&iniPlayer', '9', ToggleMiniPlayer),
+    xaction('M&iniPlayer', Keys.ToggleMiniPlayer, ToggleMiniPlayer),
   ],
 };
 const mediaMenu: MenuItemConstructorOptions = {
   label: '&Media',
   submenu: [
-    xaction('Pla&y', 'P', { state: 'playback' }),
-    xaction('Pre&vious Track', 'Left', { state: 'prevTrack' }),
-    xaction('Ne&xt Track', 'Right', { state: 'nextTrack' }),
+    xaction('Pla&y', Keys.Play, { state: 'playback' }),
+    xaction('Pre&vious Track', Keys.PreviousTrack, { state: 'prevTrack' }),
+    xaction('Ne&xt Track', Keys.NextTrack, { state: 'nextTrack' }),
     ___,
-    xaction('Skip &Forward 10s', ']', { state: 'fwd' }),
-    xaction('Skip &Back 10s', '[', { state: 'back' }),
+    xaction('Skip &Forward 10s', Keys.Forward10s, { state: 'fwd' }),
+    xaction('Skip &Back 10s', Keys.Backward10s, { state: 'back' }),
     ___,
     {
-      ...xaction('&Shuffle', 'R', { state: 'shuffle' }),
+      ...xaction('&Shuffle', Keys.Shuffle, { state: 'shuffle' }),
       type: 'checkbox',
     },
     {
-      ...xaction('&Repeat', 'T', { state: 'repeat' }),
+      ...xaction('&Repeat', Keys.Repeat, { state: 'repeat' }),
       type: 'checkbox',
     },
     ___,

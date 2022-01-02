@@ -18,6 +18,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Keys } from 'shared';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
@@ -35,7 +36,7 @@ import {
   saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
-import { accPrefix } from '../Utilities';
+import { GetHelperText } from '../Utilities';
 import './styles/Settings.css';
 
 const removeFromSet = (set: string[], val: string): string[] => {
@@ -103,7 +104,7 @@ function MusicLocations(): JSX.Element {
           text="Add Location"
           onClick={onAddLocation}
           iconProps={{ iconName: 'Add' }}
-          title={accPrefix + 'O'}
+          title={GetHelperText(Keys.AddFileLocation)}
         />
         &nbsp;
         <TooltipHost

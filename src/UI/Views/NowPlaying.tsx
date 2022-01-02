@@ -33,6 +33,7 @@ import {
 } from '@freik/web-utils';
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { Keys } from 'shared';
 import { StopAndClear } from '../../Recoil/api';
 import {
   activePlaylistState,
@@ -62,7 +63,7 @@ import {
 } from '../SimpleTags';
 import { altRowRenderer, MakeColumns } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
-import { accPrefix } from '../Utilities';
+import { GetHelperText } from '../Utilities';
 import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
 
@@ -157,7 +158,7 @@ function TopLine(): JSX.Element {
           className="save-playlist"
           disabled={!saveEnabled}
           style={{ width: 120 }}
-          title={accPrefix + 'S'}
+          title={GetHelperText(Keys.SavePlaylist)}
         >
           Save
         </DefaultButton>

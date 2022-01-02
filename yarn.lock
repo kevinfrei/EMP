@@ -2099,16 +2099,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "@freik/audiodb@npm:0.2.6"
+"@freik/audiodb@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "@freik/audiodb@npm:0.3.0"
   dependencies:
-    "@freik/core-utils": ^0.33.0
-    "@freik/media-core": ^0.10.1
-    "@freik/media-utils": ^0.13.2
-    "@freik/node-utils": ^0.20.6
+    "@freik/core-utils": ^0.34.0
+    "@freik/media-core": ^0.10.3
+    "@freik/media-utils": ^0.13.4
+    "@freik/node-utils": ^0.21.0
     xxhashjs: ^0.2.2
-  checksum: b5761b349a77c3ef8a1100e0480788b28a29aac76de4c3569eb6a3177f28e0d81ef3fab69fe16774431222c446eb4274cf0a7e57e8e93cbf7763bb9a6e7a7517
+  checksum: 7fe9599f95226db97b7e5a2688b1f4bea14e442df944714642f18e6da714916874719155f9eab3ddd08a1fdead1bb10c0cd9c7be2924132491f5ba5f33ee5154
   languageName: node
   linkType: hard
 
@@ -2220,7 +2220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-core@npm:^0.10.1, @freik/media-core@npm:^0.10.3, @freik/media-core@npm:~0.10.3":
+"@freik/media-core@npm:^0.10.3, @freik/media-core@npm:~0.10.3":
   version: 0.10.3
   resolution: "@freik/media-core@npm:0.10.3"
   dependencies:
@@ -2229,7 +2229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-utils@npm:^0.13.2, @freik/media-utils@npm:~0.13.4":
+"@freik/media-utils@npm:^0.13.4, @freik/media-utils@npm:~0.13.4":
   version: 0.13.4
   resolution: "@freik/media-utils@npm:0.13.4"
   dependencies:
@@ -2241,12 +2241,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/node-utils@npm:^0.20.6, @freik/node-utils@npm:~0.20.7":
+"@freik/node-utils@npm:^0.20.6":
   version: 0.20.7
   resolution: "@freik/node-utils@npm:0.20.7"
   dependencies:
     "@freik/core-utils": ^0.33.0
   checksum: fbfe7cdd6104d998f2212bbaf3cb1ac6c4d0f1baac7488b413e87d3279d0cf716825deb9f28dc3aac7b9ba077322cffba5b19f6f9802b95913abb29c7020c219
+  languageName: node
+  linkType: hard
+
+"@freik/node-utils@npm:^0.21.0, @freik/node-utils@npm:~0.21.0":
+  version: 0.21.0
+  resolution: "@freik/node-utils@npm:0.21.0"
+  dependencies:
+    "@freik/core-utils": ^0.34.0
+    is-hidden-file: ^1.1.2
+  checksum: 2dd99eb131dd2f45d4eb707f2e15acca61381763a64ce6163aca5e14c92244e00a3d3f33c24a00d6e0c4bc9c36bed468e94c4c814b79701fcd50b122b64e648b
   languageName: node
   linkType: hard
 
@@ -3331,10 +3341,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^17.0.5":
-  version: 17.0.5
-  resolution: "@types/node@npm:17.0.5"
-  checksum: 105535e78722515c26cfdc1b0cbf1b19f55fe53b814e2e90d8b1e653bc63136d4760c7efc102eca111c6d124a291e37d60d761d569a3f4afb3fba05bad5d9ade
+"@types/node@npm:^17.0.6":
+  version: 17.0.6
+  resolution: "@types/node@npm:17.0.6"
+  checksum: 36fda5555ec759132886721f59fa74333947f7148b7dcce3de0a78c36f37f57ec86a3d09fd38c835ba65c8de77905de6c01523ec99864d8cead83f404118a44a
   languageName: node
   linkType: hard
 
@@ -6830,7 +6840,7 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.1.19
     "@fluentui/react": ^8.48.1
     "@fluentui/react-hooks": ^8.3.8
-    "@freik/audiodb": ^0.2.6
+    "@freik/audiodb": ^0.3.0
     "@freik/build-tools": 3.2.0
     "@freik/core-utils": ~0.34.0
     "@freik/elect-main-utils": ^0.1.2
@@ -6838,13 +6848,13 @@ __metadata:
     "@freik/electron-renderer": ^0.1.2
     "@freik/media-core": ~0.10.3
     "@freik/media-utils": ~0.13.4
-    "@freik/node-utils": ~0.20.7
+    "@freik/node-utils": ~0.21.0
     "@freik/web-utils": ^0.1.0
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@types/electron-devtools-installer": ^2.2.1
     "@types/jest": ^27.4.0
-    "@types/node": ^17.0.5
+    "@types/node": ^17.0.6
     "@types/react": ^17.0.38
     "@types/react-dom": ^17.0.11
     "@types/react-test-renderer": ^17.0.1
@@ -6877,6 +6887,7 @@ __metadata:
     react-test-renderer: ^17.0.2
     recoil: ^0.5.2
     rimraf: ^3.0.2
+    shared: "file:./shared"
     svg-react-loader: ^0.4.6
     ts-jest: 27.1.2
     typescript: ^4.5.4
@@ -9053,6 +9064,17 @@ __metadata:
   dependencies:
     is-extglob: ^2.1.1
   checksum: d381c1319fcb69d341cc6e6c7cd588e17cd94722d9a32dbd60660b993c4fb7d0f19438674e68dfec686d09b7c73139c9166b47597f846af387450224a8101ab4
+  languageName: node
+  linkType: hard
+
+"is-hidden-file@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "is-hidden-file@npm:1.1.2"
+  dependencies:
+    cross-spawn: ^7.0.3
+    node-gyp: latest
+  checksum: 7ea8d264f7377e91f524df54c14de24f1151afe1b56e6d72acd84eaefac28da32c90419e61555408a02397d5c0947810f0e0311bb9324a86a2c59f3fc8bf8ca3
+  conditions: (os=darwin | os=linux | os=win32)
   languageName: node
   linkType: hard
 
@@ -13945,6 +13967,13 @@ __metadata:
   version: 1.2.0
   resolution: "setprototypeof@npm:1.2.0"
   checksum: be18cbbf70e7d8097c97f713a2e76edf84e87299b40d085c6bf8b65314e994cc15e2e317727342fa6996e38e1f52c59720b53fe621e2eb593a6847bf0356db89
+  languageName: node
+  linkType: hard
+
+"shared@file:./shared::locator=emp%40workspace%3A.":
+  version: 0.0.1
+  resolution: "shared@file:./shared#./shared::hash=f60e7f&locator=emp%40workspace%3A."
+  checksum: 6679f8c6dcdb34907dcb1fe8a601aceedc9b35e2ea053c36b6ad90c1fcbd6971e61694f8941a5f4053a14bb1dbdc2da00c5570421b9527fd469d2c19b951c593
   languageName: node
   linkType: hard
 

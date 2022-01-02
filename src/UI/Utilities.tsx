@@ -4,6 +4,7 @@ import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
 import { Catch, useMyTransaction } from '@freik/web-utils';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
+import { Keys } from 'shared';
 import { isMiniplayerState, keyBufferState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
@@ -81,4 +82,16 @@ export const mySliderStyles: Partial<ISliderStyles> = {
 };
 
 export const accPrefix =
-  window.navigator.userAgent.indexOf('Mac') >= 0 ? 'Cmd-' : 'Ctrl-';
+  window.navigator.userAgent.indexOf('Mac') >= 0 ? 'Cmd' : 'Ctrl';
+
+export function GetHelperText(key: Keys) {
+  if (key.length === 1) {
+    return `${accPrefix}-${key}`;
+  }
+  if (key === 'Left') {
+    return accPrefix + '-←';
+  }
+  if (key === 'Right') {
+    return accPrefix + '-→';
+  }
+}

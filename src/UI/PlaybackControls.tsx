@@ -5,6 +5,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Keys } from 'shared';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import {
   hasAnySongsFunc,
@@ -15,7 +16,7 @@ import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
-import { accPrefix } from './Utilities';
+import { GetHelperText } from './Utilities';
 
 const log = MakeLogger('SongControls');
 const err = MakeLogger('SongControls-err');
@@ -83,7 +84,7 @@ export function PlaybackControls(): JSX.Element {
         id="shuffle"
         className={shufClass}
         onClick={clickShuffle}
-        title={accPrefix + 'R'}
+        title={GetHelperText(Keys.Shuffle)}
       >
         &nbsp;
       </span>
@@ -91,7 +92,7 @@ export function PlaybackControls(): JSX.Element {
         id="prev"
         className={prevClass}
         onClick={clickPrev}
-        title={accPrefix + '←'}
+        title={GetHelperText(Keys.PreviousTrack)}
       >
         &nbsp;
       </span>
@@ -99,7 +100,7 @@ export function PlaybackControls(): JSX.Element {
         id="play-pause"
         className={playPauseClass}
         onClick={clickPlayPause}
-        title={accPrefix + 'P'}
+        title={GetHelperText(Keys.Play)}
       >
         &nbsp;
       </span>
@@ -107,7 +108,7 @@ export function PlaybackControls(): JSX.Element {
         id="next"
         className={nextClass}
         onClick={clickNext}
-        title={accPrefix + '→'}
+        title={GetHelperText(Keys.NextTrack)}
       >
         &nbsp;
       </span>
@@ -115,7 +116,7 @@ export function PlaybackControls(): JSX.Element {
         id="repeat"
         className={repClass}
         onClick={clickRepeat}
-        title={accPrefix + 'T'}
+        title={GetHelperText(Keys.Repeat)}
       >
         &nbsp;
       </span>

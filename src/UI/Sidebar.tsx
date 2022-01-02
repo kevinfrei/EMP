@@ -1,15 +1,16 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
+import { Keys } from 'shared';
 import { SetSearch } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { CurrentView, curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
-import { accPrefix } from './Utilities';
+import { accPrefix, GetHelperText } from './Utilities';
 
-type ViewEntry = { name: CurrentView; title: string; accelerator: string };
-const mkEntry = (name: CurrentView, title: string, accelerator: string) => ({
+type ViewEntry = { name: CurrentView; title: string; accelerator: Keys };
+const mkEntry = (name: CurrentView, title: string, accelerator: Keys) => ({
   name,
   title,
   accelerator,
@@ -17,14 +18,14 @@ const mkEntry = (name: CurrentView, title: string, accelerator: string) => ({
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', ),
-  mkEntry(CurrentView.current, 'Now Playing', '1'),
+  mkEntry(CurrentView.current, 'Now Playing', Keys.NowPlaying),
   null,
-  mkEntry(CurrentView.album, 'Albums', '2'),
-  mkEntry(CurrentView.artist, 'Artists', '3'),
-  mkEntry(CurrentView.song, 'All Songs', '4'),
-  mkEntry(CurrentView.playlist, 'Playlists', '5'),
+  mkEntry(CurrentView.album, 'Albums', Keys.Albums),
+  mkEntry(CurrentView.artist, 'Artists', Keys.Artists),
+  mkEntry(CurrentView.song, 'All Songs', Keys.Songs),
+  mkEntry(CurrentView.playlist, 'Playlists', Keys.Playlists),
   null,
-  mkEntry(CurrentView.settings, 'Settings', ','),
+  mkEntry(CurrentView.settings, 'Settings', Keys.Settings),
 ];
 
 function getEntry(
@@ -89,7 +90,7 @@ export function Sidebar(): JSX.Element {
         onFocus={onFocus}
         onChange={(e, nv) => nv && onSearch(nv)}
         componentRef={(ref) => SetSearch(ref)}
-        title={accPrefix + 'F'}
+        title={GetHelperText(Keys.Find)}
       />
       <br />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}

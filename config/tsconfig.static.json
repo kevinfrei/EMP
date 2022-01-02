@@ -18,6 +18,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["../static/**/*.ts", "../static/main.d.ts"],
+  "include": ["../static/**/*.ts"],
   "exclude": ["../static/renderer.*"]
 }
