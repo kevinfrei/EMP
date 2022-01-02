@@ -3,6 +3,7 @@ import { Type } from '@freik/core-utils';
 import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
 import { Menu } from 'electron/main';
+import { IpcId } from 'shared';
 import {
   GetMediaInfoForSong,
   GetPathFromKey,
@@ -81,48 +82,52 @@ export function CommsSetup(): void {
   // "complex" API's (not just save/restore data to the persist cache)
 
   // Migrated to new audio-database module:
-  Comms.registerChannel('get-music-database', GetSimpleMusicDatabase, isVoid);
-  Comms.registerChannel('manual-rescan', RescanAudioDatase, isVoid);
+  Comms.registerChannel(IpcId.GetMusicDatabase, GetSimpleMusicDatabase, isVoid);
+  Comms.registerChannel(IpcId.ManualRescan, RescanAudioDatase, isVoid);
 
-  Comms.registerChannel(
-    'show-location-from-key',
-    showLocFromKey,
-    Type.isString,
-  );
-  Comms.registerChannel('media-info', GetMediaInfoForSong, Type.isString);
+  Comms.registerChannel(IpcId.ShowLocFromKey, showLocFromKey, Type.isString);
+  Comms.registerChannel(IpcId.GetMediaInfo, GetMediaInfoForSong, Type.isString);
 
   // Migrated, but not yet validated
-  Comms.registerChannel('set-media-info', SetMediaInfoForSong, IsOnlyMetadata);
+  Comms.registerChannel(
+    IpcId.SetMediaInfo,
+    SetMediaInfoForSong,
+    IsOnlyMetadata,
+  );
 
   Comms.registerChannel(
-    'upload-image',
+    IpcId.UploadImage,
     SaveNativeImageForAlbum,
     isAlbumCoverData,
   );
 
   // Comms.registerChannel('flush-image-cache', FlushImageCache, isVoid);
 
-  Comms.registerChannel('search', SearchWholeWord, isStrOrUndef);
-  Comms.registerChannel('subsearch', SearchSubstring, Type.isString);
+  Comms.registerChannel(IpcId.Search, SearchWholeWord, isStrOrUndef);
+  Comms.registerChannel(IpcId.SubstrSearch, SearchSubstring, Type.isString);
 
-  Comms.registerChannel('load-playlist', LoadPlaylist, Type.isString);
-  Comms.registerChannel('get-playlists', GetPlaylists, isVoid);
-  Comms.registerChannel('set-playlists', CheckPlaylists, Type.isArrayOfString);
-  Comms.registerChannel('rename-playlist', RenamePlaylist, isKeyValue);
-  Comms.registerChannel('save-playlist', SavePlaylist, isPlaylistSaveData);
-  Comms.registerChannel('delete-playlist', DeletePlaylist, Type.isString);
+  Comms.registerChannel(IpcId.LoadPlaylists, LoadPlaylist, Type.isString);
+  Comms.registerChannel(IpcId.GetPlaylists, GetPlaylists, isVoid);
+  Comms.registerChannel(
+    IpcId.SetPlaylists,
+    CheckPlaylists,
+    Type.isArrayOfString,
+  );
+  Comms.registerChannel(IpcId.RenamePlaylist, RenamePlaylist, isKeyValue);
+  Comms.registerChannel(IpcId.SavePlaylist, SavePlaylist, isPlaylistSaveData);
+  Comms.registerChannel(IpcId.DeletePlaylist, DeletePlaylist, Type.isString);
 
   // These are implementing functionality not currently in
   // the audio-database module
-  Comms.registerChannel('get-likes', getSongLikes, isVoid);
-  Comms.registerChannel('set-likes', setSongLikes, Type.isArrayOfString);
-  Comms.registerChannel('clear-likes', clearSongLikes, Type.isArrayOfString);
+  Comms.registerChannel(IpcId.GetLikes, getSongLikes, isVoid);
+  Comms.registerChannel(IpcId.SetLikes, setSongLikes, Type.isArrayOfString);
+  Comms.registerChannel(IpcId.ClearLikes, clearSongLikes, Type.isArrayOfString);
 
-  Comms.registerChannel('get-hates', getSongHates, isVoid);
-  Comms.registerChannel('set-hates', setSongHates, Type.isArrayOfString);
-  Comms.registerChannel('clear-hates', clearSongHates, Type.isArrayOfString);
+  Comms.registerChannel(IpcId.GetHates, getSongHates, isVoid);
+  Comms.registerChannel(IpcId.SetHates, setSongHates, Type.isArrayOfString);
+  Comms.registerChannel(IpcId.ClearHates, clearSongHates, Type.isArrayOfString);
 
-  Comms.registerChannel('show-file', Shell.showFile, Type.isString);
+  Comms.registerChannel(IpcId.ShowFile, Shell.showFile, Type.isString);
   // Save-Playlist-as disabling
-  Comms.registerChannel('set-save-menu', setSaveMenu, Type.isBoolean);
+  Comms.registerChannel(IpcId.SetSaveMenu, setSaveMenu, Type.isBoolean);
 }

@@ -22,6 +22,7 @@ import {
   SongKey,
 } from '@freik/media-core';
 import electronIsDev from 'electron-is-dev';
+import { IpcId } from 'shared';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
@@ -47,7 +48,9 @@ export function SendDatabase(db: AudioDatabase): void {
       `${flat.albums.length} albums,` +
       `${flat.artists.length} artists`,
   );
-  Comms.AsyncSend({ 'music-database-update': flat });
+  const obj: { [key: string]: unknown } = {};
+  obj[IpcId.MusicDBUpdate.toString()] = flat;
+  Comms.AsyncSend(obj);
 }
 
 export async function RescanAudioDatase(): Promise<void> {

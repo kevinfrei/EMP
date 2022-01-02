@@ -9,6 +9,7 @@ import {
   SongKey,
 } from '@freik/media-core';
 import type { MyTransactionInterface } from '@freik/web-utils';
+import { IpcId } from 'shared';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,
@@ -257,7 +258,7 @@ export function RenamePlaylist(
   curNames.add(newName);
   set(playlistFuncFam(newName), curSongs);
   set(playlistNamesFunc, new Set(curNames));
-  void Ipc.PostMain('rename-playlist', [curName, newName]);
+  void Ipc.PostMain(IpcId.RenamePlaylist, [curName, newName]);
 }
 
 /**
@@ -274,7 +275,7 @@ export function DeletePlaylist(
   if (activePlaylist === toDelete) {
     set(activePlaylistState, '');
   }
-  void Ipc.PostMain('delete-playlist', toDelete);
+  void Ipc.PostMain(IpcId.DeletePlaylist, toDelete);
 }
 
 export function SongListFromKey(

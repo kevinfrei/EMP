@@ -3,6 +3,7 @@ import { Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
+import { IpcId } from 'shared';
 import { isPlaylist } from '../Tools';
 import { activePlaylistState, songListState } from './Local';
 
@@ -29,7 +30,7 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
     const backed = get(playlistNamesBackerState);
     if (backed === false) {
       const playlistsString = await Ipc.CallMain<string[], void>(
-        'get-playlists',
+        IpcId.GetPlaylists,
         undefined,
         Type.isArrayOfString,
       );
@@ -44,7 +45,7 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
   set: ({ set }, newValue) => {
     const data = Type.isSetOfString(newValue) ? [...newValue] : [];
     set(playlistNamesBackerState, data);
-    void Ipc.PostMain('set-playlists', data);
+    void Ipc.PostMain(IpcId.SetPlaylists, data);
   },
 });
 
@@ -69,7 +70,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
       const backed = get(playlistBackerFam(arg));
       if (backed === false) {
         const listStr = await Ipc.CallMain(
-          'load-playlist',
+          IpcId.LoadPlaylists,
           arg,
           Type.isArrayOfString,
         );
@@ -91,7 +92,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
       }
       const songs = Type.isArray(newValue) ? newValue : [];
       set(playlistBackerFam(name), songs);
-      void Ipc.PostMain('save-playlist', { name, songs });
+      void Ipc.PostMain(IpcId.SavePlaylist, { name, songs });
     },
 });
 

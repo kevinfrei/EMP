@@ -10,6 +10,7 @@ import { Ipc } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
 import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
+import { IpcId } from 'shared';
 import {
   albumByKeyFuncFam,
   artistStringFuncFam,
@@ -73,7 +74,7 @@ function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
         prefix="File Path"
         value={thePath}
         styles={{ field: { direction: 'rtl' } }}
-        onDoubleClick={() => Ipc.InvokeMain('show-file', thePath)}
+        onDoubleClick={() => Ipc.InvokeMain(IpcId.ShowFile, thePath)}
       />
       <br />
       <Stack horizontal horizontalAlign="space-between">

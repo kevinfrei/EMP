@@ -5,6 +5,7 @@ import { Helpers } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { NativeImage } from 'electron';
+import { IpcId } from 'shared';
 
 /*
  * "Window" stuff goes here
@@ -48,7 +49,7 @@ export async function UploadImageForSong(
 ): Promise<void> {
   // Have to turn a nativeImage into something that can be cloned
   const nativeImage = theNativeImage.toJPEG(90);
-  await Ipc.InvokeMain('upload-image', { songKey, nativeImage });
+  await Ipc.InvokeMain(IpcId.UploadImage, { songKey, nativeImage });
 }
 
 export async function UploadImageForAlbum(
@@ -57,19 +58,19 @@ export async function UploadImageForAlbum(
 ): Promise<void> {
   // Have to turn a nativeImage into something that can be cloned
   const nativeImage = theNativeImage.toJPEG(90);
-  await Ipc.InvokeMain('upload-image', { albumKey, nativeImage });
+  await Ipc.InvokeMain(IpcId.UploadImage, { albumKey, nativeImage });
 }
 
 export async function UploadFileForSong(
   songKey: SongKey,
   imagePath: string,
 ): Promise<void> {
-  await Ipc.InvokeMain('upload-image', { songKey, imagePath });
+  await Ipc.InvokeMain(IpcId.UploadImage, { songKey, imagePath });
 }
 
 export async function UploadFileForAlbum(
   albumKey: AlbumKey,
   imagePath: string,
 ): Promise<void> {
-  await Ipc.InvokeMain('upload-image', { albumKey, imagePath });
+  await Ipc.InvokeMain(IpcId.UploadImage, { albumKey, imagePath });
 }

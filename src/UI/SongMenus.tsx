@@ -14,6 +14,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
+import { IpcId } from 'shared';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
   songHateFuncFam,
@@ -102,7 +103,7 @@ export function SongListMenu({
   });
 
   const onShow = () => {
-    Ipc.InvokeMain('show-location-from-key', context.data).catch(Catch);
+    Ipc.InvokeMain(IpcId.ShowLocFromKey, context.data).catch(Catch);
   };
   const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
