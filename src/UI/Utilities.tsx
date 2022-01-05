@@ -82,7 +82,7 @@ export const mySliderStyles: Partial<ISliderStyles> = {
 };
 
 export const accPrefix =
-  window.navigator.userAgent.indexOf('Mac') >= 0 ? 'Cmd' : 'Ctrl';
+  window.navigator.userAgent.indexOf('Mac') >= 0 ? '⌘' : 'Ctrl';
 
 export function GetHelperText(key: Keys) {
   if (key.length === 1) {
