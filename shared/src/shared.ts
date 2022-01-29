@@ -44,3 +44,44 @@ export enum Keys {
   Songs = '4',
   ToggleMiniPlayer = '9',
 }
+
+// TODO: This stuff let's me localize my strings eventually
+export enum StrId {
+  // MediaInfo.tsx strings
+  Mono = 'mono',
+  Stereo = 'stereo',
+  Quadrophonic = 'quadrophonic',
+  Channels = ' channels',
+  BitDepth = 'bit',
+  FilePath = 'File Path',
+  Duration = 'Duration:',
+  MDHeaderField = 'Field',
+  MDHeaderValue = 'Value',
+  FilesSelected = 'Files Selected',
+  RawMetadata = 'Raw Metadata',
+  // Metadata Editor
+  ChooseCoverArt = 'Select Cover Art Image',
+  ImageName = 'Images',
+  ErrNotSingleAndNotMultiple = 'Not Single and not Multiple (This is a bug!)',
+  ErrSingleAndMultiple = 'Both Single and Multiple (This is a bug!)',
+  Title = 'Title',
+  ArtistTooltip = "Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'",
+  Artists = 'Artist(s)',
+  Album = 'Album',
+  Year = 'Year',
+  TrackNum = 'Track #',
+  DiskNum = 'Disk #',
+  DiskName = 'Disk Name',
+  Compilation = 'Compilation',
+  Soundtrack = 'Soundtrack',
+  AdditionalArtists = 'Additional Artist(s)',
+  VariationsTooltip = 'Separate vartiations with a semicolon',
+  Variations = 'Variation(s)',
+  AlbumCover = 'Album Cover',
+  ChooseFile = 'Choose File...',
+  FromClipboard = 'From Clipboard',
+}
+
+export function st(id: StrId): string {
+  return id;
+}

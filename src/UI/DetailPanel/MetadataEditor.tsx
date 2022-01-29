@@ -22,6 +22,7 @@ import {
 } from '@freik/web-utils';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { st, StrId } from 'shared';
 import { SetMediaInfo } from '../../ipc';
 import {
   UploadFileForAlbum,
@@ -209,9 +210,11 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   });
   const onSelectFile = useMyTransaction((xact) => () => {
     Util.ShowOpenDialog({
-      title: 'Select Cover Art image',
+      title: st(StrId.ChooseCoverArt),
       properties: ['openFile'],
-      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png'] }],
+      filters: [
+        { name: st(StrId.ImageName), extensions: ['jpg', 'jpeg', 'png'] },
+      ],
     })
       .then((selected) => {
         return selected !== undefined
@@ -240,12 +243,12 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     <>
       <TextField
         disabled={isMultiple}
-        label="Title"
+        label={st(StrId.Title)}
         value={val(title, props.title)}
         onChange={(e, nv) => nv && setTitle(nv)}
       />
       <TooltipHost
-        content="Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'"
+        content={st(StrId.ArtistTooltip)}
         // This id is used on the tooltip itself, not the host
         // (so an element with this id only exists when the tooltip is shown)
         id={priArtistsId}
@@ -254,7 +257,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         directionalHint={DirectionalHint.bottomAutoEdge}
       >
         <TextField
-          label="Artist(s)"
+          label={st(StrId.Artists)}
           value={val(artist, props.artist)}
           onChange={(e, nv) => nv && setArtist(nv)}
           aria-describedby={priArtistsId}
@@ -262,13 +265,13 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       </TooltipHost>
       <Stack horizontal horizontalAlign="space-between">
         <TextField
-          label="Album"
+          label={st(StrId.Album)}
           value={val(album, props.album)}
           onChange={(e, nv) => nv && setAlbum(nv)}
           style={{ width: 400 }}
         />
         <TextField
-          label="Year"
+          label={st(StrId.Year)}
           value={val(year, props.year)}
           onChange={(e, nv) => (nv === '' || isNumber(nv)) && setYear(nv!)}
           style={{ width: 80 }}
@@ -277,19 +280,19 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       <Stack horizontal horizontalAlign="space-between">
         <TextField
           disabled={isMultiple}
-          label="Track #"
+          label={st(StrId.TrackNum)}
           value={val(track, trackNum)}
           onChange={(e, nv) => nv && isNumber(nv) && setTrack(nv)}
           style={{ width: 60 }}
         />
         <TextField
-          label="Disk #"
+          label={st(StrId.DiskNum)}
           value={val(disk, diskNum)}
           onChange={(e, nv) => (nv === '' || isNumber(nv)) && setDisk(nv!)}
           style={{ width: 60 }}
         />
         <TextField
-          label="Disk Name"
+          label={st(StrId.DiskName)}
           value={val(diskName, props.diskName)}
           onChange={(e, nv) => nv && setDiskName(nv)}
           style={{ width: 220 }}
@@ -298,13 +301,21 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           verticalAlign="space-evenly"
           style={{ marginTop: 15, marginRight: 20, width: 85 }}
         >
-          <Checkbox label="Compilation" checked={isVa} onChange={setVa} />
-          <Checkbox label="Soundtrack" checked={isOST} onChange={setOST} />
+          <Checkbox
+            label={st(StrId.Compilation)}
+            checked={isVa}
+            onChange={setVa}
+          />
+          <Checkbox
+            label={st(StrId.Soundtrack)}
+            checked={isOST}
+            onChange={setOST}
+          />
         </Stack>
       </Stack>
       <Stack horizontal verticalAlign="end" horizontalAlign="space-between">
         <TooltipHost
-          content="Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'"
+          content={st(StrId.ArtistTooltip)}
           // This id is used on the tooltip itself, not the host
           // (so an element with this id only exists when the tooltip is shown)
           id={secArtistsId}
@@ -314,7 +325,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         >
           <TextField
             style={{ width: 400 }}
-            label="Additional Artist(s)"
+            label={st(StrId.AdditionalArtists)}
             aria-describedby={secArtistsId}
             value={val(moreArtists, props.moreArtists)}
             onChange={(e, nv) => nv && setMoreArtists(nv)}
@@ -324,7 +335,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       </Stack>
       <Stack horizontal verticalAlign="end" horizontalAlign="space-between">
         <TooltipHost
-          content="Separate vartiations with a semicolon"
+          content={st(StrId.VariationsTooltip)}
           // This id is used on the tooltip itself, not the host
           // (so an element with this id only exists when the tooltip is shown)
           id={variationsId}
@@ -334,7 +345,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         >
           <TextField
             style={{ width: 400 }}
-            label="Variation(s)"
+            label={st(StrId.VariationsTooltip)}
             aria-describedby={variationsId}
             value={val(vars, props.variations)}
             onChange={(e, nv) => nv && setVars(nv)}
@@ -347,16 +358,19 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         <PrimaryButton onClick={onSubmit}>Save</PrimaryButton>
       </Stack>
       <Image
-        alt="Album Cover"
+        alt={st(StrId.AlbumCover)}
         src={coverUrl}
         imageFit={ImageFit.centerContain}
         height={350}
       />
       <br />
       <Stack horizontal horizontalAlign="center">
-        <DefaultButton text="Choose File..." onClick={onSelectFile} />
+        <DefaultButton text={st(StrId.ChooseFile)} onClick={onSelectFile} />
         &nbsp;
-        <DefaultButton text="From Clipboard" onClick={onImageFromClipboard} />
+        <DefaultButton
+          text={st(StrId.FromClipboard)}
+          onClick={onImageFromClipboard}
+        />
       </Stack>
     </>
   );
