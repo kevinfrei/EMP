@@ -2225,9 +2225,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/elect-main-utils@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "@freik/elect-main-utils@npm:0.1.4"
+"@freik/elect-main-utils@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@freik/elect-main-utils@npm:0.1.5"
   dependencies:
     electron-is-dev: ^2.0.0
   peerDependencies:
@@ -2235,36 +2235,36 @@ __metadata:
     "@freik/elect-render-utils": ^0.1.2
     "@freik/electron-renderer": ^0.1.2
     "@freik/node-utils": ^0.21.0
-    electron: ^16.0.5
-  checksum: 4c8f28de52bfc095ed44cccf0a22c6bdeb85980548bc4d66cc96a7e092c1d8bf47f8ce0c8a3973b7475498b14683f8b9e8a7cbe8958165cbb9171d56e3d27710
+    electron: ^16.0.8
+  checksum: efd37662b48942806d86493107065c7f0227b0f302ed6b2eb123dcbfa5a0071acb6a997e664d7d2ef53a6b8a835f9968261e0a3b681e3ebf66dd1eacd7d06671
   languageName: node
   linkType: hard
 
-"@freik/elect-render-utils@npm:^0.1.3":
-  version: 0.1.3
-  resolution: "@freik/elect-render-utils@npm:0.1.3"
+"@freik/elect-render-utils@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@freik/elect-render-utils@npm:0.1.4"
   peerDependencies:
     "@freik/core-utils": ^0.34.0
     "@freik/elect-main-utils": ^0.1.2
     "@freik/electron-renderer": ^0.1.2
     "@freik/web-utils": ^0.1.0
-    electron: ^16.0.5
+    electron: ^16.0.8
     react: ^17.0.2
     react-dom: ^17.0.2
-    recoil: ^0.5.2
-  checksum: caa0c05f7889ac3041d0f88a2856cf5763230541f62dd7c244d0f140462ab075e94eaeb63db8c909b1194551e8bb01578c188a1123451975f444b51a3edb26e8
+    recoil: ^0.6.1
+  checksum: 3bb03bf93494a5f5e3ac99a61501e62c704692738cb0fe5135955df39d315a0c4be1a2efee6b3f356051576d25831acb631f4af72019b26a0c3cb9a431c56fad
   languageName: node
   linkType: hard
 
-"@freik/electron-renderer@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@freik/electron-renderer@npm:0.1.2"
+"@freik/electron-renderer@npm:^0.1.3":
+  version: 0.1.3
+  resolution: "@freik/electron-renderer@npm:0.1.3"
   peerDependencies:
     "@freik/core-utils": ^0.34.0
     "@freik/elect-main-utils": ^0.1.2
     "@freik/elect-render-utils": ^0.1.2
     "@freik/web-utils": ^0.1.0
-  checksum: cb7cfb9e9b81fab22424840b56dabc577ceefea4b97fb045ae651bbbca016037209c421571281bc58d91604537cc7a914ca18a015eed6922585a23dcec688de0
+  checksum: 547e3782e8e6d7f4132cf6f30df5fa134d3311051f2844e5b3b7f5662a512188f42c0ad6dd514c62c959d4a332f8c5ae471c202488ce4004c3d95e36dc0e4636
   languageName: node
   linkType: hard
 
@@ -2308,17 +2308,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/web-utils@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@freik/web-utils@npm:0.1.0"
+"@freik/web-utils@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@freik/web-utils@npm:0.1.2"
   peerDependencies:
     "@fluentui/react": ^8.48.0
     "@fluentui/react-hooks": ^8.3.8
     "@freik/core-utils": ^0.34.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    recoil: ^0.5.2
-  checksum: 19eb33a3d605c7d6921b751c41b99fcae2444f969c503a00390f3fba30f39bf8aae18982aecbb18b4d4fe11a56cefc9d6c5c80069bc18265bff3a467bd3c79d5
+    recoil: ^0.6.1
+  checksum: 6218c1f360ae70fc50c4a4f307fb28661fe90120423fe951d33c79f2890e24f861723d2d21f95f8a53af2662dd0e0b31e300b24b0afa63f81186ca80ab1c39ea
   languageName: node
   linkType: hard
 
@@ -7103,13 +7103,13 @@ __metadata:
     "@freik/audiodb": ^0.3.0
     "@freik/build-tools": 3.2.0
     "@freik/core-utils": ~0.34.0
-    "@freik/elect-main-utils": ^0.1.4
-    "@freik/elect-render-utils": ^0.1.3
-    "@freik/electron-renderer": ^0.1.2
+    "@freik/elect-main-utils": ^0.1.5
+    "@freik/elect-render-utils": ^0.1.4
+    "@freik/electron-renderer": ^0.1.3
     "@freik/media-core": ~0.10.3
     "@freik/media-utils": ~0.13.4
     "@freik/node-utils": ~0.21.0
-    "@freik/web-utils": ^0.1.0
+    "@freik/web-utils": ^0.1.2
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@types/electron-devtools-installer": ^2.2.1
@@ -14727,8 +14727,8 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.3
-  resolution: "shared@file:./shared#./shared::hash=baab0e&locator=emp%40workspace%3A."
-  checksum: c6ef34cab22931b73630b082c4193dce2f1f9293d996a6cdb96ea6d6d083bfbcd1ab5631c6d7b2864e8a63f3fdce36e5560164cc2edcccac05ffdb89fc307eda
+  resolution: "shared@file:./shared#./shared::hash=5aac83&locator=emp%40workspace%3A."
+  checksum: 15417c4df389079b8be9de3b4a5cc63b8027bac1027f192123dff1f941810f493649c4f942243ffe33f01465d2aa333fcedfbe4175307635b966fb751ec4df96
   languageName: node
   linkType: hard
 
