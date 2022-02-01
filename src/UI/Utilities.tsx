@@ -81,8 +81,19 @@ export const mySliderStyles: Partial<ISliderStyles> = {
   },
 };
 
-export const accPrefix =
-  window.navigator.userAgent.indexOf('Mac') >= 0 ? '⌘' : 'Ctrl';
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const HostOs: 'mac' | 'windows' | 'linux' = (() => {
+  const ua = window.navigator.userAgent;
+  if (ua.indexOf('Mac') >= 0) {
+    return 'mac';
+  }
+  if (ua.indexOf('Windows') >= 0) {
+    return 'windows';
+  }
+  return 'linux';
+})();
+
+const accPrefix = HostOs === 'mac' ? '⌘' : 'Ctrl';
 
 export function GetHelperText(key: Keys) {
   if (key.length === 1) {

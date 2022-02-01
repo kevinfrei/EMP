@@ -7,7 +7,7 @@ import { searchTermState } from '../Recoil/ReadOnly';
 import { CurrentView, curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
-import { accPrefix, GetHelperText } from './Utilities';
+import { GetHelperText } from './Utilities';
 
 type ViewEntry = { name: CurrentView; title: string; accelerator: Keys };
 const mkEntry = (name: CurrentView, title: string, accelerator: Keys) => ({
@@ -43,7 +43,7 @@ function getEntry(
       key={index}
       className={`sidebar-container${extra}`}
       onClick={() => setCurView(view.name)}
-      title={accPrefix + view.accelerator}
+      title={GetHelperText(view.accelerator)}
     >
       <span className="sidebar-icon" id={(view.title || '').replace(/ /g, '-')}>
         &nbsp;
