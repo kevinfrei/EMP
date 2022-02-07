@@ -39,7 +39,7 @@ import {
 async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
   const thePath = await GetPathFromKey(mediaKey);
   if (thePath) {
-    return Shell.showFile(thePath);
+    return Shell.ShowFile(thePath);
   }
 }
 
@@ -127,7 +127,7 @@ export function CommsSetup(): void {
   Comms.registerChannel(IpcId.SetHates, setSongHates, Type.isArrayOfString);
   Comms.registerChannel(IpcId.ClearHates, clearSongHates, Type.isArrayOfString);
 
-  Comms.registerChannel(IpcId.ShowFile, Shell.showFile, Type.isString);
+  Comms.registerChannel(IpcId.ShowFile, Shell.ShowFile, Type.isString);
   // Save-Playlist-as disabling
   Comms.registerChannel(IpcId.SetSaveMenu, setSaveMenu, Type.isBoolean);
 }

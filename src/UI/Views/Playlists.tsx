@@ -269,7 +269,7 @@ export function PlaylistView(): JSX.Element {
   return (
     <div data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
-        <Dialogs.Confirmation
+        <Dialogs.ConfirmationDialog
           data={playlistDeleteData}
           confirmFunc={deleteConfirmed}
           title="Are you sure?"
@@ -277,7 +277,7 @@ export function PlaylistView(): JSX.Element {
           yesText="Delete"
           noText="Cancel"
         />
-        <Dialogs.Confirmation
+        <Dialogs.ConfirmationDialog
           data={removeSongData}
           confirmFunc={removeSongConfirmed}
           title="Are you sure?"

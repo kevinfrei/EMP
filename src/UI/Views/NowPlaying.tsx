@@ -123,7 +123,7 @@ function TopLine(): JSX.Element {
           yesText="Save"
           noText="Cancel"
         />
-        <Dialogs.Confirmation
+        <Dialogs.ConfirmationDialog
           data={confirmData}
           confirmFunc={stopAndClear}
           title="Please Confirm"
