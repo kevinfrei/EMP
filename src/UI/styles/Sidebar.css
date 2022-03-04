@@ -82,6 +82,11 @@ hr {
   background-size: cover;
 }
 
+#Tools {
+  background: url('../img/tools.svg');
+  background-size: cover;
+}
+
 .sidebar-selected {
   font-weight: 600;
 }

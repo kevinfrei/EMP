@@ -28,6 +28,7 @@ export enum CurrentView {
   current = 6,
   settings = 7,
   search = 8,
+  tools = 9,
 }
 
 export const mutedState = atom<boolean>({

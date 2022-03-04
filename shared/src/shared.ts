@@ -43,6 +43,7 @@ export enum Keys {
   Shuffle = 'R',
   Songs = '4',
   ToggleMiniPlayer = '9',
+  Tools = 'L',
 }
 
 // TODO: This stuff let's me localize my strings eventually
@@ -80,6 +81,13 @@ export enum StrId {
   AlbumCover = 'Album Cover',
   ChooseFile = 'Choose File...',
   FromClipboard = 'From Clipboard',
+  ViewNowPlaying = 'Now Playing',
+  ViewAlbums = 'Albums',
+  ViewArtists = 'Artists',
+  ViewSongs = 'All Songs',
+  ViewPlaylists = 'Playlists',
+  ViewSettings = 'Settings',
+  ViewTools = 'Tools',
 }
 
 export function st(id: StrId): string {

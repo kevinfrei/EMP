@@ -12,6 +12,7 @@ import { RecentlyAddedView } from './RecentlyAdded';
 import { SearchResultsView } from './SearchResults';
 import { SettingsView } from './Settings';
 import './styles/Selector.css';
+import { ToolsView } from './Tools';
 
 export function ViewSelector(): JSX.Element {
   const which = useRecoilValue(curViewFunc);
@@ -46,6 +47,9 @@ export function ViewSelector(): JSX.Element {
       </div>
       <div className="current-view" style={sl(CurrentView.search)}>
         <SearchResultsView />
+      </div>
+      <div className="current-view" style={sl(CurrentView.tools)}>
+        <ToolsView />
       </div>
     </>
   );

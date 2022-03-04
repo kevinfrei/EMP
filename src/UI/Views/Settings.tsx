@@ -113,7 +113,7 @@ function MusicLocations(): JSX.Element {
         >
           <DefaultButton
             text="Rescan Locations"
-            onClick={() => Ipc.InvokeMain(IpcId.ManualRescan)}
+            onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>
       </Stack>
@@ -190,7 +190,7 @@ function ArtworkSettings(): JSX.Element {
       <DefaultButton
         text="Flush Image Cache"
         style={{ width: '185px', gridRow: 4 }}
-        onClick={() => Ipc.InvokeMain(IpcId.FlushImageCache)}
+        onClick={() => void Ipc.InvokeMain(IpcId.FlushImageCache)}
       />
     </>
   );

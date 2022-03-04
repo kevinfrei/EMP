@@ -1,7 +1,7 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
-import { Keys } from 'shared';
+import { Keys, st, StrId } from 'shared';
 import { SetSearch } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { CurrentView, curViewFunc } from '../Recoil/ReadWrite';
@@ -9,8 +9,8 @@ import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
 import { GetHelperText } from './Utilities';
 
-type ViewEntry = { name: CurrentView; title: string; accelerator: Keys };
-const mkEntry = (name: CurrentView, title: string, accelerator: Keys) => ({
+type ViewEntry = { name: CurrentView; title: StrId; accelerator: Keys };
+const mkEntry = (name: CurrentView, title: StrId, accelerator: Keys) => ({
   name,
   title,
   accelerator,
@@ -18,14 +18,15 @@ const mkEntry = (name: CurrentView, title: string, accelerator: Keys) => ({
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', ),
-  mkEntry(CurrentView.current, 'Now Playing', Keys.NowPlaying),
+  mkEntry(CurrentView.current, StrId.ViewNowPlaying, Keys.NowPlaying),
   null,
-  mkEntry(CurrentView.album, 'Albums', Keys.Albums),
-  mkEntry(CurrentView.artist, 'Artists', Keys.Artists),
-  mkEntry(CurrentView.song, 'All Songs', Keys.Songs),
-  mkEntry(CurrentView.playlist, 'Playlists', Keys.Playlists),
+  mkEntry(CurrentView.album, StrId.ViewAlbums, Keys.Albums),
+  mkEntry(CurrentView.artist, StrId.ViewArtists, Keys.Artists),
+  mkEntry(CurrentView.song, StrId.ViewSongs, Keys.Songs),
+  mkEntry(CurrentView.playlist, StrId.ViewPlaylists, Keys.Playlists),
   null,
-  mkEntry(CurrentView.settings, 'Settings', Keys.Settings),
+  mkEntry(CurrentView.settings, StrId.ViewSettings, Keys.Settings),
+  mkEntry(CurrentView.tools, StrId.ViewTools, Keys.Tools),
 ];
 
 function getEntry(
@@ -45,11 +46,11 @@ function getEntry(
       onClick={() => setCurView(view.name)}
       title={GetHelperText(view.accelerator)}
     >
-      <span className="sidebar-icon" id={(view.title || '').replace(/ /g, '-')}>
+      <span className="sidebar-icon" id={st(view.title).replace(/ /g, '-')}>
         &nbsp;
       </span>
       <Text variant="mediumPlus" className={`sidebar-text${extra}`}>
-        {view.title}
+        {st(view.title)}
       </Text>
     </div>
   );

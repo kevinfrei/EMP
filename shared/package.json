@@ -1,6 +1,6 @@
 {
   "name": "shared",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A place to share code between Main and Render processes",
   "main": "./build/shared.js",
   "types": "./build/shared.d.ts",

@@ -74,7 +74,7 @@ function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
         prefix="File Path"
         value={thePath}
         styles={{ field: { direction: 'rtl' } }}
-        onDoubleClick={() => Ipc.InvokeMain(IpcId.ShowFile, thePath)}
+        onDoubleClick={() => void Ipc.InvokeMain(IpcId.ShowFile, thePath)}
       />
       <br />
       <Stack horizontal horizontalAlign="space-between">
