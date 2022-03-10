@@ -10,6 +10,7 @@ import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { Expandable, StateToggle, useBoolState } from '@freik/web-utils';
 import React, { useState } from 'react';
+import { SetterOrUpdater } from 'recoil';
 import './styles/Tools.css';
 
 const targetFormats: IDropdownOption[] = [
@@ -28,7 +29,7 @@ export function ToolsView(): JSX.Element {
     targetFormats[0],
   );
   const xcodeStatus = 'Nothing to see here...';
-  const getDir = (setter: React.Dispatch<React.SetStateAction<string>>) => {
+  const getDir = (setter: SetterOrUpdater<string>) => {
     Util.ShowOpenDialog({ properties: ['openDirectory'] })
       .then((val) => {
         if (Type.isArrayOfString(val) && val.length === 1) {
@@ -82,7 +83,17 @@ export function ToolsView(): JSX.Element {
             }
             options={targetFormats}
           />
-          <DefaultButton text="Transcode" />
+          <DefaultButton
+            text="Transcode"
+            disabled={srcLoc.length === 0 || dstLoc.length === 0}
+            onClick={() =>
+              alert(
+                `${srcLoc} => ${dstLoc} as ${targetFormat.key} ${
+                  copyArtworkState[0] ? 'copy artwork' : ''
+                } ${mirrorState[0] ? 'mirror' : ''}`,
+              )
+            }
+          />
         </Stack>
         <Expandable label="Transcoding status">
           <Stack>
