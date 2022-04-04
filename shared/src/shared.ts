@@ -22,6 +22,7 @@ export enum IpcId {
   ShowFile = 'show-file',
   ShowLocFromKey = 'show-location-from-key',
   SubstrSearch = 'subsearch',
+  TranscodingUpdate = 'get-xcode-update',
   UploadImage = 'upload-image',
 }
 
@@ -93,3 +94,11 @@ export enum StrId {
 export function st(id: StrId): string {
   return id;
 }
+
+export type TranscodeState = {
+  completed: number;
+  failed: number;
+  pending: number;
+  status: string[];
+  errors: string[];
+};

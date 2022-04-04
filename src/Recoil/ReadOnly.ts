@@ -12,6 +12,7 @@ import {
 } from '@freik/media-core';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
+import { IpcId } from 'shared';
 import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
@@ -122,13 +123,13 @@ const musicLibraryState = atom<MusicLibrary>({
     Effects.oneWayFromMain(
       async (): Promise<MusicLibrary> => {
         const fad = await Ipc.CallMain(
-          'get-music-database',
+          IpcId.GetMusicDatabase,
           undefined,
           IsFlatAudioDatabase,
         );
         return fad ? MakeMusicLibraryFromFlatAudioDatabase(fad) : emptyLibrary;
       },
-      'music-database-update',
+      IpcId.MusicDBUpdate,
       (fad: unknown) => {
         if (IsFlatAudioDatabase(fad)) {
           return MakeMusicLibraryFromFlatAudioDatabase(fad);

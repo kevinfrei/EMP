@@ -89,8 +89,8 @@ export function ToolsView(): JSX.Element {
             onClick={() =>
               alert(
                 `${srcLoc} => ${dstLoc} as ${targetFormat.key} ${
-                  copyArtworkState[0] ? 'copy artwork' : ''
-                } ${mirrorState[0] ? 'mirror' : ''}`,
+                  copyArtworkState[0] ? '[copy artwork]' : ''
+                } ${mirrorState[0] ? '[mirror]' : ''}`,
               )
             }
           />
