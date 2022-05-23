@@ -9,8 +9,9 @@ import {
 import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { Expandable, StateToggle, useBoolState } from '@freik/web-utils';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { SetterOrUpdater } from 'recoil';
+import { TranscodeStatus } from '../TranscodeStatus';
 import './styles/Tools.css';
 
 const targetFormats: IDropdownOption[] = [
@@ -28,7 +29,7 @@ export function ToolsView(): JSX.Element {
   const [targetFormat, setTargetFormat] = useState<IDropdownOption>(
     targetFormats[0],
   );
-  const xcodeStatus = 'Nothing to see here...';
+  // const xcodeStatus = <TranscodeSummary />;
   const getDir = (setter: SetterOrUpdater<string>) => {
     Util.ShowOpenDialog({ properties: ['openDirectory'] })
       .then((val) => {
@@ -40,6 +41,8 @@ export function ToolsView(): JSX.Element {
         setError('Failed to find a dir');
       });
   };
+  // To get cover-art, see this page:
+  // https://stackoverflow.com/questions/17798709/ffmpeg-how-to-embed-cover-art-image-to-m4a
   return (
     <Stack className="tools-view">
       <Expandable separator label="Transcoder: NYI" defaultShow>
@@ -51,9 +54,8 @@ export function ToolsView(): JSX.Element {
         <br />
         <Stack horizontal>
           <StateToggle label="Copy artwork" state={copyArtworkState} />
-          <span style={{ width: 15 }} />
           <StateToggle
-            label="Mirror Source. WARNING! This will delete files from the mirror target!"
+            label="Mirror Source: WARNING- This may delete files!"
             state={mirrorState}
           />
         </Stack>
@@ -86,37 +88,18 @@ export function ToolsView(): JSX.Element {
           <DefaultButton
             text="Transcode"
             disabled={srcLoc.length === 0 || dstLoc.length === 0}
-            onClick={() =>
+            onClick={() => {
               alert(
                 `${srcLoc} => ${dstLoc} as ${targetFormat.key} ${
                   copyArtworkState[0] ? '[copy artwork]' : ''
                 } ${mirrorState[0] ? '[mirror]' : ''}`,
-              )
-            }
+              );
+            }}
           />
         </Stack>
-        <Expandable label="Transcoding status">
-          <Stack>
-            <Text>{xcodeStatus}</Text>
-            <Text>
-              X Directories scanned, Y Directories waiting to be scanned
-            </Text>
-            <Text>X Files removed from dest</Text>
-            <Text>Z Folders removed from dest</Text>
-            <Text>X Files pending from transcoding</Text>
-            <Text>X Files completed</Text>
-            <Text>N Files untouched</Text>
-            <Text>Transcoding status: incomplete</Text>
-            <Expandable label="transcoding errors">
-              <Stack>
-                <Text>File name 1</Text>
-                <Text>File name 2</Text>
-              </Stack>
-            </Expandable>
-          </Stack>
-        </Expandable>
+        <Stack>{err}</Stack>
+        <TranscodeStatus />
       </Expandable>
-      <Stack>{err}</Stack>
     </Stack>
   );
 }

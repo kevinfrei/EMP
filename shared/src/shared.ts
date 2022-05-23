@@ -96,9 +96,12 @@ export function st(id: StrId): string {
 }
 
 export type TranscodeState = {
-  completed: number;
-  failed: number;
-  pending: number;
-  status: string[];
-  errors: string[];
+  curStatus: string;
+  dirsScanned: string[];
+  dirsPending: string[];
+  filesTranscoded: string[];
+  filesPending: number;
+  filesUntouched: number;
+  itemsRemoved?: string[];
+  filesFailed?: { file: string; error: string }[];
 };

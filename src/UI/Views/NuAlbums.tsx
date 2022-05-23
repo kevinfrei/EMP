@@ -28,6 +28,7 @@ const classNames = mergeStyleSets({
     float: 'left',
     // background: palette.neutralLighter,
     selectors: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       'focus:after': {
         content: '',
         position: 'absolute',
