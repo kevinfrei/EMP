@@ -5,47 +5,36 @@ import { IpcId, TranscodeState } from 'shared';
 
 const err = MakeError('transcoding-recoil');
 
-function isFailType(obj: unknown): obj is { file: string; error: string } {
-  return Type.isSpecificType(
-    obj,
-    [
-      ['file', Type.isString],
-      ['error', Type.isString],
-    ],
-    ['file', 'error'],
-  );
-  return true;
-}
+type FailType = { file: string; error: string };
 
-function checkArrayOf<T>(
-  checker: (obj: unknown) => obj is T,
-): (obj: unknown) => obj is T[] {
-  return (o: unknown): o is T[] => Type.isArrayOf(o, checker);
-}
+const isFailType = Type.isSpecificTypeFn<FailType>(
+  [
+    ['file', Type.isString],
+    ['error', Type.isString],
+  ],
+  ['file', 'error'],
+);
 
-function IsTranscodeState(val: unknown): val is TranscodeState {
-  return Type.isSpecificType(
-    val,
-    [
-      ['curStatus', Type.isString],
-      ['dirsScanned', Type.isArrayOfString],
-      ['dirsPending', Type.isArrayOfString],
-      ['itemsRemoved', Type.isArrayOfString],
-      ['filesTranscoded', Type.isArrayOfString],
-      ['filesPending', Type.isNumber],
-      ['filesUntouched', Type.isNumber],
-      ['filesFailed', checkArrayOf(isFailType)],
-    ],
-    [
-      'curStatus',
-      'dirsScanned',
-      'dirsPending',
-      'filesTranscode',
-      'filesPending',
-      'filesUntouched',
-    ],
-  );
-}
+const isTranscodeState = Type.isSpecificTypeFn<TranscodeState>(
+  [
+    ['curStatus', Type.isString],
+    ['dirsScanned', Type.isArrayOfString],
+    ['dirsPending', Type.isArrayOfString],
+    ['itemsRemoved', Type.isArrayOfString],
+    ['filesTranscoded', Type.isArrayOfString],
+    ['filesPending', Type.isNumber],
+    ['filesUntouched', Type.isNumber],
+    ['filesFailed', Type.isArrayOfFn(isFailType)],
+  ],
+  [
+    'curStatus',
+    'dirsScanned',
+    'dirsPending',
+    'filesTranscode',
+    'filesPending',
+    'filesUntouched',
+  ],
+);
 
 const emptyXcodeInfo: TranscodeState = {
   curStatus: '',
@@ -69,7 +58,7 @@ export const transcodeStatusState = atom<TranscodeState>({
       }),
       IpcId.TranscodingUpdate,
       (mxu: unknown) => {
-        if (IsTranscodeState(mxu)) {
+        if (isTranscodeState(mxu)) {
           return mxu;
         } else {
           err('Invalid transcode state received:');

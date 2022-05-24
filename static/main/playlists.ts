@@ -81,8 +81,7 @@ export type PlaylistSaveData = {
 export function isPlaylistSaveData(data: any): data is PlaylistSaveData {
   return (
     Type.hasStr(data, 'name') &&
-    Type.has(data, 'songs') &&
-    Type.isArrayOfString(data.songs)
+    Type.hasType(data, 'songs', Type.isArrayOfString)
   );
 }
 

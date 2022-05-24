@@ -25,21 +25,17 @@ export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {
   return Ipc.PostMain(IpcId.SetMediaInfo, md);
 }
 
-function isSearchResults(arg: any): arg is SearchResults | undefined {
-  if (
-    Type.isObjectNonNull(arg) &&
-    Type.has(arg, 'songs') &&
-    Type.has(arg, 'albums') &&
-    Type.has(arg, 'artists')
-  ) {
-    return (
-      Type.isArrayOfString(arg.albums) &&
-      Type.isArrayOfString(arg.artists) &&
-      Type.isArrayOfString(arg.songs)
-    );
-  }
-  return arg === undefined;
-}
+const isSearchResults = Type.isOneOfFn(
+  Type.isUndefined,
+  Type.isSpecificTypeFn<SearchResults>(
+    [
+      ['songs', Type.isArrayOfString],
+      ['albums', Type.isArrayOfString],
+      ['artists', Type.isArrayOfString],
+    ],
+    ['songs', 'albums', 'artists'],
+  ),
+);
 
 export async function SearchWhole(
   searchTerm: string,

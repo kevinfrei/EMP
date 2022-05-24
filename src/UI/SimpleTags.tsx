@@ -16,8 +16,7 @@ function AlbumNameForSong({ song }: { song: Song }): JSX.Element {
   const diskNum = Math.floor(song.track / 100);
   if (
     diskNum > 0 &&
-    Type.has(album, 'diskNames') &&
-    Type.isArrayOfString(album.diskNames) &&
+    Type.hasType(album, 'diskNames', Type.isArrayOfString) &&
     album.diskNames.length >= diskNum &&
     album.diskNames[diskNum - 1].length > 0
   ) {

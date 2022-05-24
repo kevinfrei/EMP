@@ -53,52 +53,52 @@ type AlbumMap = Map<AlbumKey, Album>;
 type ArtistMap = Map<ArtistKey, Artist>;
 type MusicLibrary = { songs: SongMap; albums: AlbumMap; artists: ArtistMap };
 
-function isSong(sng: unknown): sng is Song {
-  return (
-    Type.hasStr(sng, 'key') &&
-    Type.hasType(sng, 'track', Type.isNumber) &&
-    Type.hasStr(sng, 'title') &&
-    Type.hasStr(sng, 'albumId') &&
-    Type.hasType(sng, 'artistIds', Type.isArrayOfString) &&
-    (!Type.has(sng, 'secondaryIds') ||
-      Type.isArrayOfString(sng.secondaryIds)) &&
-    (!Type.has(sng, 'variations') || Type.isArrayOfString(sng.variations))
-  );
-}
+const isSong = Type.isSpecificTypeFn<Song>(
+  [
+    ['key', Type.isString],
+    ['track', Type.isNumber],
+    ['title', Type.isString],
+    ['albumId', Type.isString],
+    ['artistIds', Type.isArrayOfString],
+    ['path', Type.isString],
+    ['secondaryIds', Type.isArrayOfString],
+    ['variations', Type.isArrayOfString],
+  ],
+  ['key', 'track', 'title', 'albumId', 'artistIds'],
+);
 
-function isAlbum(alb: unknown): alb is Album {
-  return (
-    Type.hasStr(alb, 'key') &&
-    Type.hasType(alb, 'year', Type.isNumber) &&
-    Type.hasStr(alb, 'title') &&
-    (!Type.hasStr(alb, 'vatype') ||
-      alb.vatype === '' ||
-      alb.vatype === 'ost' ||
-      alb.vatype === 'va') &&
-    Type.hasType(alb, 'primaryArtists', Type.isArrayOfString) &&
-    Type.hasType(alb, 'songs', Type.isArrayOfString)
-  );
-}
+const isAlbum = Type.isSpecificTypeFn<Album>(
+  [
+    ['key', Type.isString],
+    ['year', Type.isNumber],
+    ['title', Type.isString],
+    [
+      'vatype',
+      (o: unknown): o is '' | 'ost' | 'va' =>
+        o === '' || o === 'ost' || o === 'va',
+    ],
+    ['primaryArtists', Type.isArrayOfString],
+    ['songs', Type.isArrayOfString],
+    ['diskNames', Type.isArrayOfString],
+  ],
+  ['key', 'title', 'year', 'primaryArtists', 'songs'],
+);
 
-function isArtist(art: unknown): art is Artist {
-  return (
-    Type.hasStr(art, 'key') &&
-    Type.hasStr(art, 'name') &&
-    Type.hasType(art, 'albums', Type.isArrayOfString) &&
-    Type.hasType(art, 'songs', Type.isArrayOfString)
-  );
-}
+const isArtist = Type.isSpecificTypeFn<Artist>(
+  [
+    ['key', Type.isString],
+    ['name', Type.isString],
+    ['albums', Type.isArrayOfString],
+    ['songs', Type.isArrayOfString],
+  ],
+  ['key', 'name', 'albums', 'songs'],
+);
 
-function IsFlatAudioDatabase(val: unknown): val is FlatAudioDatabase {
-  return (
-    Type.has(val, 'songs') &&
-    Type.isArrayOf(val.songs, isSong) &&
-    Type.has(val, 'albums') &&
-    Type.isArrayOf(val.albums, isAlbum) &&
-    Type.has(val, 'artists') &&
-    Type.isArrayOf(val.artists, isArtist)
-  );
-}
+const isFlatAudioDatabase = Type.isSpecificTypeFn<FlatAudioDatabase>([
+  ['songs', Type.isArrayOfFn(isSong)],
+  ['albums', Type.isArrayOfFn(isAlbum)],
+  ['artists', Type.isArrayOfFn(isArtist)],
+]);
 
 const emptyLibrary = {
   songs: new Map<SongKey, Song>(),
@@ -125,13 +125,13 @@ const musicLibraryState = atom<MusicLibrary>({
         const fad = await Ipc.CallMain(
           IpcId.GetMusicDatabase,
           undefined,
-          IsFlatAudioDatabase,
+          isFlatAudioDatabase,
         );
         return fad ? MakeMusicLibraryFromFlatAudioDatabase(fad) : emptyLibrary;
       },
       IpcId.MusicDBUpdate,
       (fad: unknown) => {
-        if (IsFlatAudioDatabase(fad)) {
+        if (isFlatAudioDatabase(fad)) {
           return MakeMusicLibraryFromFlatAudioDatabase(fad);
         }
         err('Invalid result from music-database-update:');

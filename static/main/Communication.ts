@@ -57,18 +57,14 @@ async function setSaveMenu(enabled: boolean): Promise<void> {
   return;
 }
 
-function isKeyValue(obj: any): obj is [string, string] {
-  return Type.is2TupleOf(obj, Type.isString, Type.isString);
-}
+const isKeyValue = Type.is2TypeOfFn(Type.isString, Type.isString);
 
 // I don't actually care about this type :)
 function isVoid(obj: any): obj is void {
   return true;
 }
 
-function isStrOrUndef(obj: any): obj is string | undefined {
-  return Type.isString(obj) || obj === undefined;
-}
+const isStrOrUndef = Type.isOneOfFn(Type.isUndefined, Type.isString);
 
 /**
  * Setup any async listeners, plus register all the "invoke" handlers

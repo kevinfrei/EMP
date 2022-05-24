@@ -84,7 +84,7 @@ function MakeSortKeyMultiMap(
     | Iterable<[string, Iterable<number>]>
     | MultiMap<string, number>,
 ): MultiMap<string, number> {
-  if (Type.isUndefined(groups) || Type.isArrayOfString(groups)) {
+  if (Type.isOneOf(groups, Type.isUndefined, Type.isArrayOfString)) {
     const res = MakeMultiMap<string, number>();
     const list = groups || (Type.isString(initial) ? [initial] : initial);
     list.forEach((str, index) => {
