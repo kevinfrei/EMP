@@ -3219,15 +3219,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react-portal-compat-context@npm:^9.0.0-rc.1":
-  version: 9.0.0-rc.1
-  resolution: "@fluentui/react-portal-compat-context@npm:9.0.0-rc.1"
+"@fluentui/react-portal-compat-context@npm:^9.0.0-rc.2":
+  version: 9.0.0-rc.2
+  resolution: "@fluentui/react-portal-compat-context@npm:9.0.0-rc.2"
   dependencies:
     tslib: ^2.1.0
   peerDependencies:
     "@types/react": ">=16.8.0 <18.0.0"
     react: ">=16.8.0 <18.0.0"
-  checksum: 32c9e1521c3b831b682b22f510306e427ab6d89f31c7f681e67762f1b9cde321d257888b8f24c6541635d149caed690e9127e370508165e57306a4e554a77915
+  checksum: 263f1896aaa3b406f928bef1689484dc7c7d18d049dc2f7b6fc8f3a5963baa1822999f61c4d9a37f88e30e6cda93c0a408524ca35149b0282d4bccad1eb7ecde
   languageName: node
   linkType: hard
 
@@ -3244,9 +3244,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react@npm:^8.68.4":
-  version: 8.68.4
-  resolution: "@fluentui/react@npm:8.68.4"
+"@fluentui/react@npm:^8.69.0":
+  version: 8.69.0
+  resolution: "@fluentui/react@npm:8.69.0"
   dependencies:
     "@fluentui/date-time-utilities": ^8.5.1
     "@fluentui/font-icons-mdl2": ^8.4.0
@@ -3254,7 +3254,7 @@ __metadata:
     "@fluentui/merge-styles": ^8.5.2
     "@fluentui/react-focus": ^8.6.0
     "@fluentui/react-hooks": ^8.5.5
-    "@fluentui/react-portal-compat-context": ^9.0.0-rc.1
+    "@fluentui/react-portal-compat-context": ^9.0.0-rc.2
     "@fluentui/react-window-provider": ^2.2.1
     "@fluentui/set-version": ^8.2.1
     "@fluentui/style-utilities": ^8.6.7
@@ -3267,7 +3267,7 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <18.0.0"
     react: ">=16.8.0 <18.0.0"
     react-dom: ">=16.8.0 <18.0.0"
-  checksum: 3731f96ca3c26d054083ffe3f5eef65a9683c8ddce95e45b92d7c024e926e2ba41fdfee4eae6c9480485bbb5dde9d205909c95b8c0958053a05c074b548154c0
+  checksum: 49da495748dab8d9619c3dda0bdc1c9a409dc6e33a1cfbf4d1b1f3caac6aee81ae028225ce94a6d8f62a250e2bee326ee60f94d98d0b9516d3f80a496813cefa
   languageName: node
   linkType: hard
 
@@ -3409,34 +3409,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/elect-main-utils@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "@freik/elect-main-utils@npm:0.2.1"
+"@freik/elect-main-utils@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@freik/elect-main-utils@npm:0.2.3"
   dependencies:
     electron-is-dev: ^2.0.0
   peerDependencies:
-    "@freik/core-utils": ^1.0.0
+    "@freik/core-utils": ^1.1.1
     "@freik/elect-render-utils": ^0.2.0
     "@freik/electron-renderer": ^0.2.0
-    "@freik/node-utils": ^1.0.0
+    "@freik/node-utils": ^1.0.2
     electron: ^17.0.0
-  checksum: ef0a2710d35b4d0410237376c31e7802e34916f84cd9da056f219e47d6673f8d8f30d7e70ac5d9194dc24f7bae6f47906ebc61f2bcbb3ca1ae22bde07cbbfd6f
+  checksum: 1678e786a623c187ff6e1b81d00c4a33b393bdd522c69581d4739d0b9f4ff96d4fa36fafd9928552482af6b0813b23dc9147784498164ebcde37c865c8b48a95
   languageName: node
   linkType: hard
 
-"@freik/elect-render-utils@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@freik/elect-render-utils@npm:0.2.2"
+"@freik/elect-render-utils@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@freik/elect-render-utils@npm:0.2.3"
   peerDependencies:
     "@freik/core-utils": ^1.1.1
-    "@freik/elect-main-utils": ^0.2.0
-    "@freik/electron-renderer": ^0.2.0
-    "@freik/web-utils": ^0.3.1
+    "@freik/elect-main-utils": ^0.2.3
+    "@freik/electron-renderer": ^0.2.2
+    "@freik/web-utils": ^0.3.2
     electron: ^17.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
     recoil: ^0.7.2
-  checksum: 7d8fa499b587868472118cbabe35a11aff35fca3659bde799e9a08f92b5a1debe3acb78ce097ee0a2f4b52c7887b5c77fd9390ed83afde65d0f3c94c45a3168a
+  checksum: 493443c5399d5adae0b2afa6673d973a7fb8c8ef909546c312664f2ed11512b3f99265494547741599ad2fa71a48fa4548b4c7691c465d243c3e14cdb40fd368
   languageName: node
   linkType: hard
 
@@ -3524,17 +3524,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/web-utils@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "@freik/web-utils@npm:0.3.1"
+"@freik/web-utils@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "@freik/web-utils@npm:0.3.2"
   peerDependencies:
-    "@fluentui/react": ^8.68.4
+    "@fluentui/react": ^8.69.0
     "@fluentui/react-hooks": ^8.5.5
     "@freik/core-utils": ^1.1.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    recoil: ^0.6.1
-  checksum: 58f20d391b2e736a22e21360b92270896e3a4636fe4f0811e125e4efe47e9f1c3cb6afe5d73738c478df4152c5624513063cc690f1a5fd9d2fa78c5c136f8ff9
+    recoil: ^0.7.2
+  checksum: 35773d4b608c02f31e2eb1c2835b33e7c953e4c5faf37a199e39d45848d781bcf1994d59c72ccb550227bd84b06501caa204e2351b0b1fed1c7913f220d67a7f
   languageName: node
   linkType: hard
 
@@ -8534,18 +8534,18 @@ __metadata:
     "@babel/eslint-parser": ^7.17.0
     "@babel/plugin-transform-react-jsx": ^7.17.12
     "@fluentui/font-icons-mdl2": ^8.4.0
-    "@fluentui/react": ^8.68.4
+    "@fluentui/react": ^8.69.0
     "@fluentui/react-hooks": ^8.5.5
     "@freik/audiodb": ^0.3.0
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.1.1
-    "@freik/elect-main-utils": ^0.2.1
-    "@freik/elect-render-utils": ^0.2.2
+    "@freik/elect-main-utils": ^0.2.3
+    "@freik/elect-render-utils": ^0.2.3
     "@freik/electron-renderer": ^0.2.2
     "@freik/media-core": ~0.10.5
     "@freik/media-utils": ~0.13.5
     "@freik/node-utils": ~1.0.2
-    "@freik/web-utils": ^0.3.1
+    "@freik/web-utils": ^0.3.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^13.2.0
     "@types/electron-devtools-installer": ^2.2.2
@@ -8586,7 +8586,7 @@ __metadata:
     shared: "file:./shared"
     svg-react-loader: ^0.4.6
     ts-jest: 27.1.5
-    typescript: ^4.6.4
+    typescript: ^4.7.2
     wait-on: ^6.0.1
     xxhashjs: ^0.2.2
   languageName: unknown
@@ -16525,8 +16525,8 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=db7657&locator=emp%40workspace%3A."
-  checksum: 84ed3e946ea1571f578c21396df92f16ea4f860d8e0aabc536bc4c648a498043c0ffc41567e31a6b31dcf0b1a16aab256378230d51b41d7751dc253cd759fee2
+  resolution: "shared@file:./shared#./shared::hash=81cc3c&locator=emp%40workspace%3A."
+  checksum: 5f0c17e603443717f64e3cd033740a5597846c11c2dd58b09283b517946a13318a4392123e3a38e31228d79ec4a1d880723e2dfe258a2e0e3b0a38f87354d5cc
   languageName: node
   linkType: hard
 
@@ -17850,6 +17850,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typescript@npm:^4.7.2":
+  version: 4.7.2
+  resolution: "typescript@npm:4.7.2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 5163585e6b56410f77d5483b698d9489bbee8902c99029eb70cf6d21525a186530ce19a00951af84eefd4a131cc51d0959f5118e25e70ab61f45ac4057dbd1ef
+  languageName: node
+  linkType: hard
+
 "typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
   version: 4.6.4
   resolution: "typescript@patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=493e53"
@@ -17857,6 +17867,16 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 8cff08bf66d9ecfbf9fcc5edde04a5a7923e6cac3b21d99b4e9a06973bf5bd7f9a83ec7eed24129c1b9e13fd861de8c1070110d4b9ce9f18ab57c6999e9c9a6f
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^4.7.2#~builtin<compat/typescript>":
+  version: 4.7.2
+  resolution: "typescript@patch:typescript@npm%3A4.7.2#~builtin<compat/typescript>::version=4.7.2&hash=493e53"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 09d93fc0983d38eadd9b0427f790b49b4437f45002a87d447be3fbe53120880e87a91dd03e1d900498f99205d6e0b7c9784fe41fca11d56f4bbce371f74bb160
   languageName: node
   linkType: hard
 
