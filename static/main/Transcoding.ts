@@ -9,6 +9,21 @@ import os from 'node:os';
 import path from 'node:path';
 import pLimit from 'p-limit';
 
+export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>(
+  [
+    ['source', Type.isString],
+    ['dest', Type.isString],
+    ['artwork', Type.isBoolean],
+    ['mirror', Type.isBoolean],
+    [
+      'format',
+      (o: unknown): o is 'm4a' | 'aac' | 'mp3' =>
+        o === 'm4a' || o === 'aac' || o === 'mp3',
+    ],
+  ],
+  [],
+);
+
 const err = MakeError('downsample-err');
 
 const cp = {

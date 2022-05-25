@@ -126,4 +126,7 @@ export function CommsSetup(): void {
   Comms.registerChannel(IpcId.ShowFile, Shell.ShowFile, Type.isString);
   // Save-Playlist-as disabling
   Comms.registerChannel(IpcId.SetSaveMenu, setSaveMenu, Type.isBoolean);
+  // For transcoding:
+  Comms.registerChannel(IpdId.TranscodingUpdate, getXcodeStatus, isVoid);
+  Comms.registerChannel(IpdId.BeginTranscode, startTranscode, isXcodeInfo);
 }

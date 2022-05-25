@@ -23,6 +23,8 @@ export enum IpcId {
   ShowLocFromKey = 'show-location-from-key',
   SubstrSearch = 'subsearch',
   TranscodingUpdate = 'get-xcode-update',
+  TranscodingBegin = 'start-xcode',
+  TranscodeStatus = 'async-xcode-update',
   UploadImage = 'upload-image',
 }
 
@@ -95,6 +97,22 @@ export function st(id: StrId): string {
   return id;
 }
 
+export enum TranscodeFormatTargets {
+  m4a,
+  mp3,
+  aac,
+}
+// This generates 'm4a' | 'mp3' | 'aac'
+export type TranscodeFormatTargetNames = keyof typeof TranscodeFormatTargets;
+
+export type TranscodeInfo = {
+  source: string;
+  dest: string;
+  artwork: boolean;
+  mirror: boolean;
+  format: TranscodeFormatTargetNames;
+};
+
 export type TranscodeState = {
   curStatus: string;
   dirsScanned: string[];
@@ -105,3 +123,24 @@ export type TranscodeState = {
   itemsRemoved?: string[];
   filesFailed?: { file: string; error: string }[];
 };
+
+export enum Decisions {
+  approve,
+  reject,
+}
+
+export function isDecision(obj: unknown): obj is Decisions {
+  return (obj as any) in Decisions;
+}
+
+export function sillyText(obj: string) {
+  if (isDecision(obj)) {
+    console.log(obj);
+  } else {
+    console.log('Not a decision: ' + obj);
+  }
+}
+
+export function isEnum<T>(obj: unknown): obj is T {
+  return (obj as any) in keyof T;
+}
