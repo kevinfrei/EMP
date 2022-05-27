@@ -31,6 +31,7 @@ import {
   setSongHates,
   setSongLikes,
 } from './SongLikesAndHates';
+import { getXcodeStatus, isXcodeInfo, startTranscode } from './Transcoding';
 
 /**
  * Show a file in the shell
@@ -127,6 +128,6 @@ export function CommsSetup(): void {
   // Save-Playlist-as disabling
   Comms.registerChannel(IpcId.SetSaveMenu, setSaveMenu, Type.isBoolean);
   // For transcoding:
-  Comms.registerChannel(IpdId.TranscodingUpdate, getXcodeStatus, isVoid);
-  Comms.registerChannel(IpdId.BeginTranscode, startTranscode, isXcodeInfo);
+  Comms.registerChannel(IpcId.TranscodingUpdate, getXcodeStatus, isVoid);
+  Comms.registerChannel(IpcId.TranscodingBegin, startTranscode, isXcodeInfo);
 }

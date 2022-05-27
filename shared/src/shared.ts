@@ -124,6 +124,7 @@ export type TranscodeState = {
   filesFailed?: { file: string; error: string }[];
 };
 
+/*
 export enum Decisions {
   approve,
   reject,
@@ -144,3 +145,4 @@ export function sillyText(obj: string) {
 export function isEnum<T>(obj: unknown): obj is T {
   return (obj as any) in keyof T;
 }
+*/

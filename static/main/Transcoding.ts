@@ -8,6 +8,14 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import pLimit from 'p-limit';
+import { TranscodeInfo, TranscodeState } from 'shared';
+
+const err = MakeError('downsample-err');
+
+const cp = {
+  spawnAsync: ProcUtil.spawnAsync,
+  ...ocp,
+};
 
 export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>(
   [
@@ -23,13 +31,6 @@ export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>(
   ],
   [],
 );
-
-const err = MakeError('downsample-err');
-
-const cp = {
-  spawnAsync: ProcUtil.spawnAsync,
-  ...ocp,
-};
 
 let cwd: string = process.cwd();
 
@@ -188,7 +189,7 @@ function Usage(errMsg?: string): void {
 
 // This is only true if this is the main module
 // (not being included by anyone else)
-export default function main(): void {
+export function main(): void {
   if (process.argv.length < 5) {
     return Usage();
   }
@@ -209,4 +210,26 @@ export default function main(): void {
     )
     .flat();
   handleLots(srcDir, targetDir, matches);
+}
+
+export function getXcodeStatus(): Promise<TranscodeState> {
+  return Promise.resolve({
+    curStatus: '',
+    dirsScanned: [],
+    dirsPending: [],
+    filesTranscoded: [],
+    filesPending: 0,
+    filesUntouched: 0,
+    // itemsRemoved?: string[];
+    // filesFailed?: { file: string; error: string }[];
+  });
+}
+
+export function startTranscode(settings: TranscodeInfo): Promise<void> {
+  switch (settings.format) {
+    case 'm4a':
+    case 'aac':
+    case 'mp3':
+      return Promise.resolve();
+  }
 }

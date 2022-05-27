@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@fluentui/font-icons-mdl2": "^8.4.0",
-    "@fluentui/react": "^8.69.0",
+    "@fluentui/react": "^8.70.0",
     "@fluentui/react-hooks": "^8.5.5",
     "@freik/audiodb": "^0.3.0",
     "@freik/core-utils": "~1.1.1",
@@ -94,8 +94,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.18.0",
-    "@babel/eslint-parser": "^7.17.0",
+    "@babel/core": "^7.18.2",
+    "@babel/eslint-parser": "^7.18.2",
     "@babel/plugin-transform-react-jsx": "^7.17.12",
     "@freik/build-tools": "3.2.2",
     "@testing-library/jest-dom": "^5.16.4",
@@ -110,7 +110,7 @@
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "cross-env": "^7.0.3",
-    "electron": "^18.3.0",
+    "electron": "^19.0.1",
     "electron-builder": "^23.0.9",
     "electron-devtools-installer": "^3.2.0",
     "electron-react-devtools": "^0.5.3",
