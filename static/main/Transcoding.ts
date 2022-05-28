@@ -1,14 +1,14 @@
 import { MakeError, Type } from '@freik/core-utils';
+import { AsyncSend } from '@freik/elect-main-utils/lib/comms';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
-import { PathUtil, ProcUtil } from '@freik/node-utils';
-import glob from 'glob';
+import { ForFiles, PathUtil, ProcUtil } from '@freik/node-utils';
 import ocp from 'node:child_process';
-import fs from 'node:fs';
+import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import pLimit from 'p-limit';
-import { TranscodeInfo, TranscodeState } from 'shared';
+import { IpcId, TranscodeInfo, TranscodeState } from 'shared';
 
 const err = MakeError('downsample-err');
 
@@ -47,16 +47,37 @@ function reQuote(str: string): { [key: string]: string } {
   return JSON.parse(res) as { [key: string]: string };
 }
 
+/// vvvv Hurray for a Typescript compiler bug
+// eslint-disable-next-line no-shadow
+enum XcodeResCode {
+  AlreadyExists,
+  MediaInfoFailure,
+  EncodeFailure,
+  UnknownError,
+  AlreadyLowBitRate,
+  Success,
+}
+
+type TranscodeResult = {
+  code: XcodeResCode;
+  message: string;
+};
+
+const tr = (code: XcodeResCode, message: string) => ({ code, message });
+
 export async function toMp4Async(
   originalFile: string,
   newFile: string,
   theCut: number,
-): Promise<string | boolean> {
+): Promise<TranscodeResult> {
   const quality = 1.0;
   try {
     try {
-      await fs.promises.stat(newFile);
-      return `'${newFile}' already appears to exist`;
+      await fsp.stat(newFile);
+      return tr(
+        XcodeResCode.AlreadyExists,
+        `'${newFile}' already appears to exist`,
+      );
     } catch (error) {
       /* The file doesn't exist, so we're happy */
     }
@@ -75,7 +96,10 @@ export async function toMp4Async(
       ) {
         // MediaInfo failed: no continue, sorry
         const resStr = Type.asString(res.error.toString(), 'Unknown error');
-        return `mediainfo returned an error '${resStr}':${res.stderr.toString()}`;
+        return tr(
+          XcodeResCode.MediaInfoFailure,
+          `mediainfo returned an error '${resStr}':${res.stderr.toString()}`,
+        );
       }
       const info: { [key: string]: string | number } = reQuote(
         res.stdout.toString(),
@@ -89,7 +113,7 @@ export async function toMp4Async(
         ) {
           // If it's less that 140kbps, we're fine
           // Unless it's a wma, and then we still have to convert it
-          return false;
+          return tr(XcodeResCode.AlreadyLowBitRate, originalFile);
         }
       }
     }
@@ -108,16 +132,116 @@ export async function toMp4Async(
         metadata as unknown as Attributes,
       )
     ) {
-      return true;
+      return tr(
+        XcodeResCode.Success,
+        `Successfully transcode ${originalFile} to ${newFile}`,
+      );
     } else {
-      return 'Unable to encode the m4a file.';
+      return tr(
+        XcodeResCode.EncodeFailure,
+        `Unable to encode ${originalFile} to ${newFile}`,
+      );
     }
   } catch (e) {
     if (Type.hasType(e, 'toString', Type.isFunction)) {
-      return `${Type.asString(e.toString(), 'unknown error')} occurred.`;
+      return tr(
+        XcodeResCode.UnknownError,
+        `${Type.asString(e, 'unknown error')} occurred.`,
+      );
     } else {
-      return 'unknown error occurred';
+      return tr(XcodeResCode.UnknownError, 'unknown error occurred');
     }
+  }
+}
+
+const transcodeStatusStart: Readonly<TranscodeState> = Object.freeze({
+  curStatus: '',
+  filesTranscoded: [],
+  filesPending: 0,
+  filesUntouched: 0,
+  filesFound: 0,
+  // itemsRemoved?: string[];
+  // filesFailed?: { file: string; error: string }[];
+});
+
+let curStatus: TranscodeState = { ...transcodeStatusStart };
+
+function clearStatus() {
+  curStatus = { ...transcodeStatusStart };
+}
+
+function reportStatus() {
+  const message: { [key: string]: TranscodeState } = {};
+  message[IpcId.TranscodingUpdate.toString()] = curStatus;
+  AsyncSend(message);
+}
+
+let reportEvent: null | ReturnType<typeof setTimeout> = null;
+
+function startStatusReporting() {
+  if (reportEvent !== null) {
+    clearInterval(reportEvent);
+  }
+  reportEvent = setInterval(reportStatus, 500);
+}
+
+function stopStatusReporting() {
+  if (reportEvent !== null) {
+    clearInterval(reportEvent);
+  }
+  reportEvent = null;
+}
+
+function finishStatusReporting() {
+  stopStatusReporting();
+  reportStatus();
+}
+
+// This is the "overall status" message
+function reportStatusMessage(msg: string) {
+  curStatus.curStatus = msg;
+}
+
+// The number of directories we've looked through
+function reportFileFound() {
+  curStatus.filesFound++;
+}
+
+// The files that were actually transcoded
+function reportFileTranscoded(file: string) {
+  curStatus.filesTranscoded.push(file);
+}
+
+// A file is currently being transcoded
+function reportFilePending() {
+  curStatus.filesPending++;
+}
+
+// A file is no longer being transcoded
+function removeFilePending() {
+  curStatus.filesPending--;
+}
+
+// A file was left alone (already present in the destination)
+function reportFileUntouched() {
+  curStatus.filesUntouched++;
+}
+
+// We removed an item from the transcoding destination because it's not in the source
+function reportItemRemoved(item: string) {
+  if (!curStatus.itemsRemoved) {
+    curStatus.itemsRemoved = [item];
+  } else {
+    curStatus.itemsRemoved.push(item);
+  }
+}
+
+// A transcode failed
+function reportFailure(file: string, error: string) {
+  if (!curStatus.filesFailed) {
+    curStatus.filesFailed = [{ file, error }];
+  } else {
+    curStatus.filesFailed.push({ file, error });
   }
 }
 
@@ -126,110 +250,112 @@ async function convert(
   targetDir: string,
   file: string,
 ): Promise<void> {
-  if (!path.normalize(file).startsWith(srcdir)) {
-    err(`${file} doesn't match ${srcdir}`);
-  }
-  const relName = path.join(targetDir, file.substr(srcdir.length));
-  const newName = PathUtil.changeExt(relName, 'm4a');
-  if (!newName) {
-    err(`Name failure: ${file} => ${newName}`);
-  }
+  reportFilePending();
   try {
-    const dr = path.dirname(newName);
-    try {
-      await fs.promises.stat(dr);
-    } catch (e) {
-      await fs.promises.mkdir(dr, { recursive: true });
+    if (!path.normalize(file).startsWith(srcdir)) {
+      reportFailure(file, `${file} doesn't match ${srcdir}`);
+      return;
     }
-  } catch (e) {
-    err(`Unable to find/create the directory for ${newName}`);
-  }
-  const res = await toMp4Async(file, newName, 140000);
-  if (Type.isString(res)) {
-    err(`Transcode failure: ${file} => ${newName}: ${res}`);
-  } else if (res === false) {
-    try {
-      await fs.promises.copyFile(file, relName);
-    } catch (e) {
-      err(`Unable to copy already mid-quality file ${file} to ${relName}`);
+    const relName = path.join(targetDir, file.substring(srcdir.length));
+    const newName = PathUtil.changeExt(relName, 'm4a');
+    if (!newName) {
+      reportFailure(file, `Name failure: ${file} => ${newName}`);
+      return;
     }
+    try {
+      const dr = path.dirname(newName);
+      try {
+        await fsp.stat(dr);
+      } catch (e) {
+        await fsp.mkdir(dr, { recursive: true });
+      }
+    } catch (e) {
+      reportFailure(
+        newName,
+        `Unable to find/create the directory for ${newName}`,
+      );
+      return;
+    }
+    const res = await toMp4Async(file, newName, 140000);
+    switch (res.code) {
+      case XcodeResCode.AlreadyLowBitRate:
+        try {
+          await fsp.copyFile(file, relName);
+        } catch (e) {
+          reportFailure(
+            file,
+            `Unable to copy already mid-quality file ${file} to ${relName}`,
+          );
+        }
+        break;
+      case XcodeResCode.Success:
+        reportFileTranscoded(file);
+        break;
+      case XcodeResCode.AlreadyExists:
+        reportFileUntouched();
+        break;
+      default:
+        reportFailure(
+          file,
+          `Transcode failure ${res.code}: ${res.message} - ${file} => ${newName}`,
+        );
+    }
+  } finally {
+    removeFilePending();
   }
 }
 
-function handleLots(srcdir: string, targetDir: string, files: string[]): void {
-  const limit = pLimit(os.cpus().length);
-  Promise.all(
-    files.map((f) => limit(async () => convert(srcdir, targetDir, f))),
-  ).catch((reason) => {
+async function handleLots(
+  srcdir: string,
+  targetDir: string,
+  files: string[],
+): Promise<void> {
+  const limit = pLimit(Math.max(os.cpus().length - 2, 1));
+  try {
+    await Promise.all(
+      files.map((f) => limit(async () => convert(srcdir, targetDir, f))),
+    );
+  } catch (e) {
     err('Crashy crashy :(');
-    err(reason);
-  });
-}
-
-function getDir(maybeDir: string): string | null {
-  try {
-    const dirStat = fs.statSync(maybeDir);
-    if (dirStat.isDirectory()) {
-      return maybeDir;
-    }
-  } catch (e) {
     err(e);
-    err('(Not a directory) ');
-    err(maybeDir);
+    reportStatusMessage(
+      `And exception occured: ${Type.asString(e, 'unknown')}`,
+    );
   }
-  return null;
-}
-
-function Usage(errMsg?: string): void {
-  if (Type.isString(errMsg)) {
-    err(errMsg);
-  }
-  err(`${process.argv[1]} sourceDir targetDir files...`);
-}
-
-// This is only true if this is the main module
-// (not being included by anyone else)
-export function main(): void {
-  if (process.argv.length < 5) {
-    return Usage();
-  }
-  const srcDir = getDir(process.argv[2]);
-  const targetDir = getDir(process.argv[3]);
-  if (srcDir === null) {
-    return Usage(`Sorry: ${srcDir || '?'} is not a directory`);
-  }
-  if (targetDir === null) {
-    return Usage(`Sorry: ${targetDir || '?'} is not a directory`);
-  }
-  const matches = process.argv
-    .slice(4)
-    .map((v) =>
-      glob.hasMagic(v, { noext: true, nobrace: true })
-        ? glob.sync(v, { noext: true, nobrace: true, nonull: true })
-        : v,
-    )
-    .flat();
-  handleLots(srcDir, targetDir, matches);
 }
 
 export function getXcodeStatus(): Promise<TranscodeState> {
-  return Promise.resolve({
-    curStatus: '',
-    dirsScanned: [],
-    dirsPending: [],
-    filesTranscoded: [],
-    filesPending: 0,
-    filesUntouched: 0,
-    // itemsRemoved?: string[];
-    // filesFailed?: { file: string; error: string }[];
-  });
+  return Promise.resolve(curStatus);
 }
 
-export function startTranscode(settings: TranscodeInfo): Promise<void> {
-  switch (settings.format) {
-    case 'm4a':
-    case 'aac':
-    case 'mp3':
-      return Promise.resolve();
+export async function startTranscode(settings: TranscodeInfo): Promise<void> {
+  clearStatus();
+  startStatusReporting();
+  try {
+    reportStatusMessage(`Scanning source: ${settings.source}`);
+    const workQueue: string[] = [];
+    await ForFiles(
+      settings.source,
+      (fileName) => {
+        workQueue.push(fileName);
+        reportFileFound();
+        return true;
+      },
+      {
+        recurse: true,
+        keepGoing: true,
+        fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
+        order: 'breadth',
+        skipHiddenFiles: true,
+        skipHiddenFolders: true,
+        dontAssumeDotsAreHidden: false,
+        dontFollowSymlinks: false,
+      },
+    );
+    // We've now got our work queue
+    reportStatusMessage('Completed scanning. Transcoding in progress.');
+    await handleLots(settings.source, settings.dest, workQueue);
+  } finally {
+    finishStatusReporting();
   }
 }

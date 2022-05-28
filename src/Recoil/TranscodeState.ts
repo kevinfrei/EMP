@@ -18,19 +18,17 @@ const isFailType = Type.isSpecificTypeFn<FailType>(
 const isTranscodeState = Type.isSpecificTypeFn<TranscodeState>(
   [
     ['curStatus', Type.isString],
-    ['dirsScanned', Type.isArrayOfString],
-    ['dirsPending', Type.isArrayOfString],
-    ['itemsRemoved', Type.isArrayOfString],
-    ['filesTranscoded', Type.isArrayOfString],
+    ['filesFound', Type.isNumber],
     ['filesPending', Type.isNumber],
+    ['filesTranscoded', Type.isArrayOfString],
     ['filesUntouched', Type.isNumber],
     ['filesFailed', Type.isArrayOfFn(isFailType)],
+    ['itemsRemoved', Type.isArrayOfString],
   ],
   [
     'curStatus',
-    'dirsScanned',
-    'dirsPending',
-    'filesTranscode',
+    'filesFound',
+    'filesTranscoded',
     'filesPending',
     'filesUntouched',
   ],
@@ -38,11 +36,10 @@ const isTranscodeState = Type.isSpecificTypeFn<TranscodeState>(
 
 const emptyXcodeInfo: TranscodeState = {
   curStatus: '',
-  dirsScanned: [],
-  dirsPending: [],
-  filesTranscoded: [],
+  filesFound: 0,
   filesPending: 0,
   filesUntouched: 0,
+  filesTranscoded: [],
 };
 
 export const transcodeStatusState = atom<TranscodeState>({

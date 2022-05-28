@@ -24,7 +24,6 @@ export enum IpcId {
   SubstrSearch = 'subsearch',
   TranscodingUpdate = 'get-xcode-update',
   TranscodingBegin = 'start-xcode',
-  TranscodeStatus = 'async-xcode-update',
   UploadImage = 'upload-image',
 }
 
@@ -115,13 +114,12 @@ export type TranscodeInfo = {
 
 export type TranscodeState = {
   curStatus: string;
-  dirsScanned: string[];
-  dirsPending: string[];
   filesTranscoded: string[];
+  filesFound: number;
   filesPending: number;
   filesUntouched: number;
-  itemsRemoved?: string[];
   filesFailed?: { file: string; error: string }[];
+  itemsRemoved?: string[];
 };
 
 /*

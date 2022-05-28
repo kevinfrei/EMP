@@ -8,9 +8,11 @@ import {
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
+import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
 import { Expandable, StateToggle, useBoolState } from '@freik/web-utils';
 import { useState } from 'react';
 import { SetterOrUpdater } from 'recoil';
+import { IpcId } from 'shared';
 import { TranscodeStatus } from '../TranscodeStatus';
 import './styles/Tools.css';
 
@@ -54,6 +56,7 @@ export function ToolsView(): JSX.Element {
         <br />
         <Stack horizontal>
           <StateToggle label="Copy artwork" state={copyArtworkState} />
+          <span style={{ width: 25 }} />
           <StateToggle
             label="Mirror Source: WARNING- This may delete files!"
             state={mirrorState}
@@ -89,11 +92,13 @@ export function ToolsView(): JSX.Element {
             text="Transcode"
             disabled={srcLoc.length === 0 || dstLoc.length === 0}
             onClick={() => {
-              alert(
-                `${srcLoc} => ${dstLoc} as ${targetFormat.key} ${
-                  copyArtworkState[0] ? '[copy artwork]' : ''
-                } ${mirrorState[0] ? '[mirror]' : ''}`,
-              );
+              void PostMain(IpcId.TranscodingBegin.toString(), {
+                source: srcLoc,
+                dest: dstLoc,
+                artwork: copyArtworkState[0],
+                mirror: mirrorState[0],
+                format: targetFormat.key,
+              });
             }}
           />
         </Stack>

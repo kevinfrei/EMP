@@ -2,19 +2,24 @@ import { Stack, Text } from '@fluentui/react';
 import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
 import { TranscodeState } from 'shared';
-import { transcodeStatusState } from '../Recoil/transcoding';
+import { transcodeStatusState } from '../Recoil/TranscodeState';
 
 function completed(xcs: TranscodeState): number {
   return (
-    xcs.dirsScanned.length +
-    xcs.filesTranscoded.length +
-    xcs.filesUntouched +
-    (xcs.filesFailed ? xcs.filesFailed.length : 0)
+    (xcs.filesTranscoded.length +
+      xcs.filesUntouched +
+      (xcs.filesFailed ? xcs.filesFailed.length : 0)) /
+    xcs.filesFound
   );
 }
 
 function remaining(xcs: TranscodeState): number {
-  return xcs.dirsPending.length + xcs.filesPending;
+  return (
+    xcs.filesFound -
+    (xcs.filesTranscoded.length +
+      xcs.filesUntouched +
+      (xcs.filesFailed ? xcs.filesFailed.length : 0))
+  );
 }
 
 type XcodeSum = { complete: number; pending: number; status: string };
@@ -46,7 +51,10 @@ function CountedStringList({
   return list ? (
     <Expandable label={`${list.length} ${header}`} indent={15}>
       {list.map((val, idx) => (
-        <Text key={idx}>{val}</Text>
+        <div key={idx}>
+          <Text>{val}</Text>
+          <br />
+        </div>
       ))}
     </Expandable>
   ) : (
@@ -71,10 +79,12 @@ export function TranscodeStatus(): JSX.Element {
       indent={15}
     >
       {curState.filesFailed.map(({ file, error }, idx) => (
-        <Stack key={idx} horizontal>
-          <Text>{file}:</Text>
-          <Text>{error}</Text>
-        </Stack>
+        <div key={idx} style={{ margin: 10 }}>
+          <Stack horizontal>
+            <Text>{file}:</Text>
+            <Text>{error}</Text>
+          </Stack>
+        </div>
       ))}
     </Expandable>
   ) : (
@@ -83,20 +93,13 @@ export function TranscodeStatus(): JSX.Element {
   return (
     <Expandable label={summary} indent={15}>
       <Stack>
-        <CountedStringList
-          list={curState.dirsScanned}
-          header="folders scanned"
-        />
-        <CountedStringList
-          list={curState.dirsPending}
-          header="folders pending"
-        />
+        <Text>{curState.filesFound} files discovered</Text>
+        <Text>{curState.filesPending} files pending</Text>
+        <Text>{curState.filesUntouched} files already existed</Text>
         <CountedStringList
           list={curState.filesTranscoded}
           header="files transcoded"
         />
-        <Text>{curState.filesPending} files pending</Text>
-        <Text>{curState.filesUntouched} files already existed</Text>
         <CountedStringList
           list={curState.itemsRemoved}
           header="items deleted"
