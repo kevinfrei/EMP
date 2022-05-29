@@ -23,20 +23,13 @@ export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>(
     ['dest', Type.isString],
     ['artwork', Type.isBoolean],
     ['mirror', Type.isBoolean],
-    [
-      'format',
-      (o: unknown): o is 'm4a' | 'aac' | 'mp3' =>
-        o === 'm4a' || o === 'aac' || o === 'mp3',
-    ],
+    ['format', (o: unknown): o is 'm4a' | 'aac' | 'mp3' => o === 'm4a'],
+    ['bitrate', Type.isNumber],
   ],
   [],
 );
 
-let cwd: string = process.cwd();
-
-export function setCwd(pathStr: string): void {
-  cwd = pathStr;
-}
+const cwd = process.cwd();
 
 const deQuote = (str: string): string => str.replace(/\"/g, '~!~');
 
@@ -64,11 +57,11 @@ type TranscodeResult = {
 };
 
 const tr = (code: XcodeResCode, message: string) => ({ code, message });
+let bitrate = 131072;
 
 export async function toMp4Async(
   originalFile: string,
   newFile: string,
-  theCut: number,
 ): Promise<TranscodeResult> {
   const quality = 1.0;
   try {
@@ -109,9 +102,9 @@ export async function toMp4Async(
           Type.isObject(info) &&
           Type.has(info, 'bitrate') &&
           Type.isNumber(info.bitrate) &&
-          info.bitrate < theCut
+          info.bitrate < bitrate * 1.1
         ) {
-          // If it's less that 140kbps, we're fine
+          // If it's less than 10% higher than the target, we're fine
           // Unless it's a wma, and then we still have to convert it
           return tr(XcodeResCode.AlreadyLowBitRate, originalFile);
         }
@@ -276,7 +269,7 @@ async function convert(
       );
       return;
     }
-    const res = await toMp4Async(file, newName, 140000);
+    const res = await toMp4Async(file, newName);
     switch (res.code) {
       case XcodeResCode.AlreadyLowBitRate:
         try {
@@ -330,6 +323,7 @@ export function getXcodeStatus(): Promise<TranscodeState> {
 
 export async function startTranscode(settings: TranscodeInfo): Promise<void> {
   clearStatus();
+  bitrate = settings.bitrate;
   startStatusReporting();
   try {
     reportStatusMessage(`Scanning source: ${settings.source}`);

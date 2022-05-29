@@ -110,6 +110,7 @@ export type TranscodeInfo = {
   artwork: boolean;
   mirror: boolean;
   format: TranscodeFormatTargetNames;
+  bitrate: number;
 };
 
 export type TranscodeState = {

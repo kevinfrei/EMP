@@ -6,20 +6,14 @@ import { transcodeStatusState } from '../Recoil/TranscodeState';
 
 function completed(xcs: TranscodeState): number {
   return (
-    (xcs.filesTranscoded.length +
-      xcs.filesUntouched +
-      (xcs.filesFailed ? xcs.filesFailed.length : 0)) /
-    xcs.filesFound
+    xcs.filesTranscoded.length +
+    xcs.filesUntouched +
+    (xcs.filesFailed ? xcs.filesFailed.length : 0)
   );
 }
 
 function remaining(xcs: TranscodeState): number {
-  return (
-    xcs.filesFound -
-    (xcs.filesTranscoded.length +
-      xcs.filesUntouched +
-      (xcs.filesFailed ? xcs.filesFailed.length : 0))
-  );
+  return xcs.filesFound - completed(xcs);
 }
 
 type XcodeSum = { complete: number; pending: number; status: string };
@@ -34,8 +28,8 @@ export function TranscodeSummary({
   } else {
     return (
       <span>
-        Transcode status: {status}, about{' '}
-        {(complete / (complete + pending)) * 100}% complete
+        {status} About {(100.0 * (complete / (complete + pending))).toFixed(2)}%
+        complete
       </span>
     );
   }
