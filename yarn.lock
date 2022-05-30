@@ -3338,9 +3338,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react@npm:^8.70.0":
-  version: 8.70.0
-  resolution: "@fluentui/react@npm:8.70.0"
+"@fluentui/react@npm:^8.71.0":
+  version: 8.71.0
+  resolution: "@fluentui/react@npm:8.71.0"
   dependencies:
     "@fluentui/date-time-utilities": ^8.5.1
     "@fluentui/font-icons-mdl2": ^8.4.0
@@ -3361,7 +3361,7 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <18.0.0"
     react: ">=16.8.0 <18.0.0"
     react-dom: ">=16.8.0 <18.0.0"
-  checksum: b5e181fc4223d5cee9e58aba2a3536118c85d1920f65bea94bd4918f484cf5bd80531afbbb8a94bcbe876cd0166c8ae8a6bce9454bdd9b9a7c9aab0ced8c0455
+  checksum: 64345e7e951ae32bdc5dc5327dcb466dac3cba509da64d9b22975c5d9b4ff93d58b6e973898980dc87a0785e5a0c8a8102b89083a742f384fa7bb3d8647f8a4b
   languageName: node
   linkType: hard
 
@@ -3518,19 +3518,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/elect-render-utils@npm:^0.2.3":
-  version: 0.2.3
-  resolution: "@freik/elect-render-utils@npm:0.2.3"
+"@freik/elect-render-utils@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "@freik/elect-render-utils@npm:0.2.4"
   peerDependencies:
-    "@freik/core-utils": ^1.1.1
-    "@freik/elect-main-utils": ^0.2.3
-    "@freik/electron-renderer": ^0.2.2
-    "@freik/web-utils": ^0.3.2
-    electron: ^17.4.5
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    recoil: ^0.7.2
-  checksum: 493443c5399d5adae0b2afa6673d973a7fb8c8ef909546c312664f2ed11512b3f99265494547741599ad2fa71a48fa4548b4c7691c465d243c3e14cdb40fd368
+    "@freik/core-utils": ">=1.1.1"
+    "@freik/elect-main-utils": ">=0.2.3"
+    "@freik/electron-renderer": ">=0.2.2"
+    "@freik/web-utils": ">=0.3.2"
+    electron: ">=17.4.5"
+    react: ">=17.0.2"
+    react-dom: ">=17.0.2"
+    recoil: ">=0.6.0"
+  checksum: f132fc5f61a45ae25b0e919c3cd4cdfc3e9a5619b1586333dad9d4f315735a5a164400ee8c2da47e589429b446e30822d4aec43d04d38494c9fb60c75cf07c0e
   languageName: node
   linkType: hard
 
@@ -4599,9 +4599,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.2.0":
-  version: 13.2.0
-  resolution: "@testing-library/react@npm:13.2.0"
+"@testing-library/react@npm:^13.3.0":
+  version: 13.3.0
+  resolution: "@testing-library/react@npm:13.3.0"
   dependencies:
     "@babel/runtime": ^7.12.5
     "@testing-library/dom": ^8.5.0
@@ -4609,7 +4609,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 29f4a97c932a7fd78a55791a0ae0ba8d33c5241acbade98b6714440981e6e3d86a243e0b22161d3323b549ce059c175ae56d6b5053ad44083ab6e40ca211f19e
+  checksum: 98fd8616a7cae0ecfcbe97b5b3c5b91fbafccf449c04875395ccc0e3f0b139e53b3261b9536ec2169a5e2883a1be2098907209064061fe0c2ff21dfbc785dd40
   languageName: node
   linkType: hard
 
@@ -4957,10 +4957,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^17.0.35":
-  version: 17.0.35
-  resolution: "@types/node@npm:17.0.35"
-  checksum: 7a24946ae7fd20267ed92466384f594e448bfb151081158d565cc635d406ecb29ea8fb85fcd2a1f71efccf26fb5bd3c6f509bde56077eb8b832b847a6664bc62
+"@types/node@npm:^17.0.36":
+  version: 17.0.36
+  resolution: "@types/node@npm:17.0.36"
+  checksum: 11055fde0a1e1421113849b5e32c7022911efc0be670729947bf0162970e79962d804b1eb8a9afb291380cac97cf0e684511415d586ae5fe1560322c940fe188
   languageName: node
   linkType: hard
 
@@ -5902,9 +5902,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-builder-lib@npm:23.0.9":
-  version: 23.0.9
-  resolution: "app-builder-lib@npm:23.0.9"
+"app-builder-lib@npm:23.1.0":
+  version: 23.1.0
+  resolution: "app-builder-lib@npm:23.1.0"
   dependencies:
     7zip-bin: ~5.1.1
     "@develar/schema-utils": ~2.6.5
@@ -5932,7 +5932,7 @@ __metadata:
     semver: ^7.3.7
     tar: ^6.1.11
     temp-file: ^3.4.0
-  checksum: 2ac460fc0b9a9f66a88fcb1b3b4fea48aa4cc7a14c86d81359d74222457fd08ad59332f3455be2d58f5cee1b2739b8f9d533da5bf18023b70dbb3b3d351bfa01
+  checksum: f88982d3f9d1f9680371fa6a6f28082dcce8b0501432898ab09e70068586aa7c534512c4fdd1cd8b070981ee6c4bfad2c3ce192efee4ee77d896b3ca2635155a
   languageName: node
   linkType: hard
 
@@ -8224,11 +8224,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dmg-builder@npm:23.0.9":
-  version: 23.0.9
-  resolution: "dmg-builder@npm:23.0.9"
+"dmg-builder@npm:23.1.0":
+  version: 23.1.0
+  resolution: "dmg-builder@npm:23.1.0"
   dependencies:
-    app-builder-lib: 23.0.9
+    app-builder-lib: 23.1.0
     builder-util: 23.0.9
     builder-util-runtime: 9.0.2
     dmg-license: ^1.0.11
@@ -8238,7 +8238,7 @@ __metadata:
   dependenciesMeta:
     dmg-license:
       optional: true
-  checksum: bbece2a2af65ef59056b2773f8f700b6323bb6df49a7ee573f566b88f012ea3d4e7e574184086179110b5f82a4879f3548fb2857983ff60a12b167ce844c6708
+  checksum: e6b2ec5a6feca5b92a8a99c1d2638999b01f82fa86ced9cbf6b18eb223a9cbcfbff861a404d4e2998f04d623061489eacaba7f511891f53f194f5f08fee9d34d
   languageName: node
   linkType: hard
 
@@ -8477,16 +8477,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:^23.0.9":
-  version: 23.0.9
-  resolution: "electron-builder@npm:23.0.9"
+"electron-builder@npm:^23.1.0":
+  version: 23.1.0
+  resolution: "electron-builder@npm:23.1.0"
   dependencies:
     "@types/yargs": ^17.0.1
-    app-builder-lib: 23.0.9
+    app-builder-lib: 23.1.0
     builder-util: 23.0.9
     builder-util-runtime: 9.0.2
     chalk: ^4.1.1
-    dmg-builder: 23.0.9
+    dmg-builder: 23.1.0
     fs-extra: ^10.0.0
     is-ci: ^3.0.0
     lazy-val: ^1.0.5
@@ -8496,7 +8496,7 @@ __metadata:
   bin:
     electron-builder: cli.js
     install-app-deps: install-app-deps.js
-  checksum: 72f78b0578a87239ee29c657eff593ccf7af57a4d1c33ec835944dfa029a5c615ce022772a9fbced373f4420c366fc30ff3a1fc63ff5636c351224fb3280e74c
+  checksum: 189f97152ed903fda43f1e3acb13f6bdc44603ac14fd1cf09b91ae389b08eb3970de833de0f25757eb3f8dfb2c0b93f37bacc37956eae795e8d00346892c5821
   languageName: node
   linkType: hard
 
@@ -8628,23 +8628,23 @@ __metadata:
     "@babel/eslint-parser": ^7.18.2
     "@babel/plugin-transform-react-jsx": ^7.17.12
     "@fluentui/font-icons-mdl2": ^8.4.0
-    "@fluentui/react": ^8.70.0
+    "@fluentui/react": ^8.71.0
     "@fluentui/react-hooks": ^8.5.5
     "@freik/audiodb": ^0.3.0
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.1.1
     "@freik/elect-main-utils": ^0.2.3
-    "@freik/elect-render-utils": ^0.2.3
+    "@freik/elect-render-utils": ^0.2.4
     "@freik/electron-renderer": ^0.2.2
     "@freik/media-core": ~0.10.5
     "@freik/media-utils": ~0.13.5
     "@freik/node-utils": ~1.0.2
     "@freik/web-utils": ^0.3.2
     "@testing-library/jest-dom": ^5.16.4
-    "@testing-library/react": ^13.2.0
+    "@testing-library/react": ^13.3.0
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^27.5.1
-    "@types/node": ^17.0.35
+    "@types/node": ^17.0.36
     "@types/react": ^17.0.45
     "@types/react-dom": ^17.0.17
     "@types/react-test-renderer": ^17.0.2
@@ -8654,7 +8654,7 @@ __metadata:
     album-art: ^2.0.2
     cross-env: ^7.0.3
     electron: ^19.0.1
-    electron-builder: ^23.0.9
+    electron-builder: ^23.1.0
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
     electron-react-devtools: ^0.5.3
@@ -16619,8 +16619,8 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=9d04f4&locator=emp%40workspace%3A."
-  checksum: 1d44163b14d6eeba79cdcc4aa5f5d143124b1c5ff7db689bd8a00c4a035abad6808dd5084fedf37b9b8ac33011efd55f72e27ed025786f45870feed2726572e8
+  resolution: "shared@file:./shared#./shared::hash=6da186&locator=emp%40workspace%3A."
+  checksum: 87d01e1c8537275acc1de788b6f036cb9687dc2aaf4fad157d735c4aad56baf4d288b2f41d6c8cb36c7455e2bdd71c174d4d39eb72f043d5657c381b30d811d0
   languageName: node
   linkType: hard
 

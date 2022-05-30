@@ -121,7 +121,8 @@ export async function toMp4Async(
       await Encode.FfmpegAsync(
         originalFile,
         newFile,
-        { q: quality.toString() },
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        { 'b:a': bitrate.toString(), movflags: '+faststart' },
         metadata as unknown as Attributes,
       )
     ) {

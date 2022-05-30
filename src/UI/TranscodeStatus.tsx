@@ -87,18 +87,21 @@ export function TranscodeStatus(): JSX.Element {
   return (
     <Expandable label={summary} indent={15}>
       <Stack>
-        <Text>{curState.filesFound} files discovered</Text>
-        <Text>{curState.filesPending} files pending</Text>
-        <Text>{curState.filesUntouched} files already existed</Text>
-        <CountedStringList
-          list={curState.filesTranscoded}
-          header="files transcoded"
-        />
-        <CountedStringList
-          list={curState.itemsRemoved}
-          header="items deleted"
-        />
-        {errorList}
+        <Text>{curState.filesFound} total files to process</Text>
+        <Text>{curState.filesPending} files remain to be processed</Text>
+        <Text>{complete} files completed</Text>
+        <Expandable label="Details" indent={30}>
+          <Text>{curState.filesUntouched} files already existed</Text>
+          <CountedStringList
+            list={curState.filesTranscoded}
+            header="files transcoded"
+          />
+          <CountedStringList
+            list={curState.itemsRemoved}
+            header="items deleted"
+          />
+          {errorList}
+        </Expandable>
       </Stack>
     </Expandable>
   );
