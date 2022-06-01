@@ -41,7 +41,6 @@ function reQuote(str: string): { [key: string]: string } {
 }
 
 /// vvvv Hurray for a Typescript compiler bug
-// eslint-disable @typescript-eslint/naming-convention
 // eslint-disable-next-line no-shadow
 enum XcodeResCode {
   AlreadyExists,

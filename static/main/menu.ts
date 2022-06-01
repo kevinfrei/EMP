@@ -138,7 +138,7 @@ const viewMenu: MenuItemConstructorOptions = {
       select: 'Playlists',
     }),
     xaction('T&ools', Keys.Settings, { state: 'view', select: 'Tools' }),
-    xaction('Se&ttings', Keys.Settings, { state: 'view', select: 'Settings' }),
+    xaction('Se&ttings', Keys.Tools, { state: 'view', select: 'Settings' }),
     ___,
     xaction('M&iniPlayer', Keys.ToggleMiniPlayer, ToggleMiniPlayer),
   ],
@@ -249,20 +249,16 @@ export function MakeMainMenu(): void {
     }
   });
   Persistence.subscribe('CurrentView', (val: string) => {
-    [
-      CurrentView.current,
-      CurrentView.album,
-      CurrentView.artist,
-      CurrentView.song,
-      CurrentView.playlist,
-      CurrentView.tools,
-      CurrentView.settings,
-    ].forEach((id: CurrentView) => {
+    // eslint-disable-next-line @typescript-eslint/no-for-in-array, guard-for-in
+    for (const id in Type.enumKeys(CurrentView)) {
       const mnu = menu.getMenuItemById(CurrentView[id]);
       if (mnu) {
+        err(`Setting non null menu from ${CurrentView[id]}/${id} for ${val}`);
         mnu.enabled = `${id}` !== val;
+      } else {
+        err(`Didn't find menu from ${CurrentView[id]}/${id} for ${val}`);
       }
-    });
+    }
   });
 
   // Toggle mute/adjust vol up/dn

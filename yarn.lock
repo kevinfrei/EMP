@@ -3496,10 +3496,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/core-utils@npm:^1.1.1, @freik/core-utils@npm:~1.1.1":
+"@freik/core-utils@npm:^1.1.1":
   version: 1.1.1
   resolution: "@freik/core-utils@npm:1.1.1"
   checksum: 419c8fe9bc712b6ac47eb771487ac7ae65ecceeee2c3afdb633d33588da12c89c34716fb844bb767e23b6f368db98735dccc27bbdd86f6d0e752c94af355cb2e
+  languageName: node
+  linkType: hard
+
+"@freik/core-utils@npm:~1.2.0":
+  version: 1.2.0
+  resolution: "@freik/core-utils@npm:1.2.0"
+  checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
   languageName: node
   linkType: hard
 
@@ -8645,16 +8652,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^19.0.1":
-  version: 19.0.1
-  resolution: "electron@npm:19.0.1"
+"electron@npm:^19.0.2":
+  version: 19.0.2
+  resolution: "electron@npm:19.0.2"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 4f7507a6e2556a42304e981b24e33ab0eab54dd23ef9419ce5f2c6b8eada15a2399af97909804147f7da06ac52a36c7742053f8c9822cbcc3d07db1c80bf278d
+  checksum: 6c5684c68bc27e59fb94f1a7386ca5698a2284e3be348b3b698a3b329cc16a92c27cbec23976e7d3098c32b1c8005d9d7a98facc49724ad2f21d4441e6527a6f
   languageName: node
   linkType: hard
 
@@ -8705,7 +8712,7 @@ __metadata:
     "@fluentui/react-hooks": ^8.5.5
     "@freik/audiodb": ^0.3.0
     "@freik/build-tools": 3.2.2
-    "@freik/core-utils": ~1.1.1
+    "@freik/core-utils": ~1.2.0
     "@freik/elect-main-utils": ^0.2.3
     "@freik/elect-render-utils": ^0.2.4
     "@freik/electron-renderer": ^0.2.2
@@ -8726,7 +8733,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.27.0
     album-art: ^2.0.2
     cross-env: ^7.0.3
-    electron: ^19.0.1
+    electron: ^19.0.2
     electron-builder: ^23.1.0
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
