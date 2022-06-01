@@ -2,6 +2,7 @@
 import { Effects } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
+import { CurrentView } from 'shared';
 import { ShuffleArray } from '../Tools';
 import {
   currentIndexState,
@@ -14,22 +15,6 @@ import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
-
-// vvv That's a bug, pretty clearly :/
-// eslint-disable-next-line no-shadow
-export enum CurrentView {
-  disabled = -1,
-  none = 0,
-  recent = 1,
-  album = 2,
-  artist = 3,
-  song = 4,
-  playlist = 5,
-  current = 6,
-  settings = 7,
-  search = 8,
-  tools = 9,
-}
 
 export const mutedState = atom<boolean>({
   key: 'mute',

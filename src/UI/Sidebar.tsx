@@ -1,10 +1,10 @@
 import { SearchBox, Text } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
-import { Keys, st, StrId } from 'shared';
+import { CurrentView, Keys, st, StrId } from 'shared';
 import { SetSearch } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
-import { CurrentView, curViewFunc } from '../Recoil/ReadWrite';
+import { curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
 import { GetHelperText } from './Utilities';
@@ -25,8 +25,8 @@ const views: (ViewEntry | null)[] = [
   mkEntry(CurrentView.song, StrId.ViewSongs, Keys.Songs),
   mkEntry(CurrentView.playlist, StrId.ViewPlaylists, Keys.Playlists),
   null,
-  mkEntry(CurrentView.settings, StrId.ViewSettings, Keys.Settings),
   mkEntry(CurrentView.tools, StrId.ViewTools, Keys.Tools),
+  mkEntry(CurrentView.settings, StrId.ViewSettings, Keys.Settings),
 ];
 
 function getEntry(

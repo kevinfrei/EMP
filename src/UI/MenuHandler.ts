@@ -1,12 +1,12 @@
 import { MakeError, Type } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
+import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { activePlaylistState, songListState } from '../Recoil/Local';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import {
-  CurrentView,
   curViewFunc,
   mutedState,
   repeatState,
@@ -115,6 +115,9 @@ export function MenuHandler(
               break;
             case 'Settings':
               theView = CurrentView.settings;
+              break;
+            case 'Tools':
+              theView = CurrentView.tools;
               break;
             default:
               err('Invalid view selection: ' + message.select);

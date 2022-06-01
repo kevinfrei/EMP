@@ -1,13 +1,14 @@
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
 import { selector, selectorFamily } from 'recoil';
+import { CurrentView } from 'shared';
 import {
   currentIndexState,
   keyBufferState,
   songListState,
   songPlaybackOrderState,
 } from './Local';
-import { CurrentView, curViewFunc, repeatState } from './ReadWrite';
+import { curViewFunc, repeatState } from './ReadWrite';
 
 // This is the current index into the nowPlayist (sorted, never shuffled) list
 export const currentSongIndexFunc = selector<number>({

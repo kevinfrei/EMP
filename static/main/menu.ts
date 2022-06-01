@@ -10,7 +10,7 @@ import {
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
-import { Keys } from 'shared';
+import { CurrentView, Keys } from 'shared';
 import { ToggleMiniPlayer } from './window';
 
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -137,6 +137,7 @@ const viewMenu: MenuItemConstructorOptions = {
       state: 'view',
       select: 'Playlists',
     }),
+    xaction('T&ools', Keys.Settings, { state: 'view', select: 'Tools' }),
     xaction('Se&ttings', Keys.Settings, { state: 'view', select: 'Settings' }),
     ___,
     xaction('M&iniPlayer', Keys.ToggleMiniPlayer, ToggleMiniPlayer),
@@ -249,22 +250,19 @@ export function MakeMainMenu(): void {
   });
   Persistence.subscribe('CurrentView', (val: string) => {
     [
-      ['now playing', '6'],
-      ['albums', '2'],
-      ['artists', '3'],
-      ['songs', '4'],
-      ['playlists', '5'],
-      ['settings', '7'],
-    ]
-      .map(([id, idx]): [MenuItem | null, string] => [
-        menu.getMenuItemById(id),
-        idx,
-      ])
-      .forEach(([mnu, idx]) => {
-        if (mnu) {
-          mnu.enabled = idx !== val;
-        }
-      });
+      CurrentView.current,
+      CurrentView.album,
+      CurrentView.artist,
+      CurrentView.song,
+      CurrentView.playlist,
+      CurrentView.tools,
+      CurrentView.settings,
+    ].forEach((id: CurrentView) => {
+      const mnu = menu.getMenuItemById(CurrentView[id]);
+      if (mnu) {
+        mnu.enabled = `${id}` !== val;
+      }
+    });
   });
 
   // Toggle mute/adjust vol up/dn

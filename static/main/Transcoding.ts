@@ -41,6 +41,7 @@ function reQuote(str: string): { [key: string]: string } {
 }
 
 /// vvvv Hurray for a Typescript compiler bug
+// eslint-disable @typescript-eslint/naming-convention
 // eslint-disable-next-line no-shadow
 enum XcodeResCode {
   AlreadyExists,
@@ -337,7 +338,15 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
         return true;
       },
       {
-        recurse: true,
+        recurse: async (dirName: string): Promise<boolean> => {
+          const toSkip = PathUtil.join(dirName, '.notranscode');
+          try {
+            await fsp.access(toSkip);
+          } catch (e) {
+            return false;
+          }
+          return true;
+        },
         keepGoing: true,
         fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
         order: 'breadth',

@@ -92,6 +92,20 @@ export enum StrId {
   ViewTools = 'Tools',
 }
 
+export enum CurrentView {
+  disabled = -1,
+  none = 0,
+  recent = 1,
+  album = 2,
+  artist = 3,
+  song = 4,
+  playlist = 5,
+  current = 6,
+  settings = 7,
+  search = 8,
+  tools = 9,
+}
+
 export function st(id: StrId): string {
   return id;
 }

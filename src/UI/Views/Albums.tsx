@@ -25,6 +25,7 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
+import { CurrentView } from 'shared';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { albumCoverUrlFuncFam } from '../../Recoil/Local';
 import { focusedKeysFuncFam } from '../../Recoil/LocalFuncs';
@@ -35,7 +36,7 @@ import {
   allSongsFunc,
   dataForAlbumFuncFam,
 } from '../../Recoil/ReadOnly';
-import { CurrentView, ignoreArticlesState } from '../../Recoil/ReadWrite';
+import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import {
   articlesCmp,
   MakeSortKey,
