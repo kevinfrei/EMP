@@ -21,6 +21,7 @@ export enum IpcId {
   SetSaveMenu = 'set-save-menu',
   ShowFile = 'show-file',
   ShowLocFromKey = 'show-location-from-key',
+  ShowMenu = 'show-menu',
   SubstrSearch = 'subsearch',
   TranscodingUpdate = 'get-xcode-update',
   TranscodingBegin = 'start-xcode',

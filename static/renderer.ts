@@ -4,6 +4,7 @@
 import { InitRender } from '@freik/electron-renderer';
 
 InitRender();
+
 // This will expose the ipcRenderer (and isDev) interfaces for use by the
 // React components, then, assuming the index.js has already be invoked, it
 // calls the function to start the app, thus ensuring that the app has access

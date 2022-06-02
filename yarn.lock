@@ -3510,18 +3510,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/elect-main-utils@npm:^0.2.3":
-  version: 0.2.3
-  resolution: "@freik/elect-main-utils@npm:0.2.3"
+"@freik/elect-main-utils@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "@freik/elect-main-utils@npm:0.2.4"
   dependencies:
     electron-is-dev: ^2.0.0
   peerDependencies:
-    "@freik/core-utils": ^1.1.1
-    "@freik/elect-render-utils": ^0.2.0
-    "@freik/electron-renderer": ^0.2.0
-    "@freik/node-utils": ^1.0.2
-    electron: ^17.0.0
-  checksum: 1678e786a623c187ff6e1b81d00c4a33b393bdd522c69581d4739d0b9f4ff96d4fa36fafd9928552482af6b0813b23dc9147784498164ebcde37c865c8b48a95
+    "@freik/core-utils": ">=1.1.0"
+    "@freik/elect-render-utils": ">=0.2.0"
+    "@freik/electron-renderer": "> 0.2.0"
+    "@freik/node-utils": ">=1.0.2"
+    electron: ">=17.0.0"
+  checksum: 6ca47d4d21daff6395045dcd8d1f625aa92558f37b0f5ccd499ff4f017623cf9890635ef28a3d6e8b75d2478fd8cf27e28b173edcf23984167f9d55184b99bca
   languageName: node
   linkType: hard
 
@@ -3541,15 +3541,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/electron-renderer@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@freik/electron-renderer@npm:0.2.2"
+"@freik/electron-renderer@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@freik/electron-renderer@npm:0.2.3"
   peerDependencies:
-    "@freik/core-utils": ^1.1.1
-    "@freik/elect-main-utils": ^0.2.0
-    "@freik/elect-render-utils": ^0.2.0
-    "@freik/web-utils": ^0.3.1
-  checksum: f2436c58efc4b358e2b326773dbda89a517a4d66506167266cae0a8d62fde92c9847841ba31acfa5ddb7190215342431a142243c090c9141463dc41ec8eb79a4
+    "@freik/core-utils": ">=1.1.1"
+    "@freik/elect-main-utils": ">=0.2.0"
+    "@freik/elect-render-utils": ">=0.2.0"
+    "@freik/web-utils": ">=0.3.1"
+  checksum: 4c449571a57fc9988f3888ef163a2a6fb7d8c3df93d49f2de1b6f1525cb6c36fbc1fb2ca435d8a932dd12f9357d5c420df77c7e930347105a9aac51574737a62
   languageName: node
   linkType: hard
 
@@ -4584,9 +4584,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.5.0":
-  version: 8.12.0
-  resolution: "@testing-library/dom@npm:8.12.0"
+"@testing-library/dom@npm:^8.0.0":
+  version: 8.13.0
+  resolution: "@testing-library/dom@npm:8.13.0"
   dependencies:
     "@babel/code-frame": ^7.10.4
     "@babel/runtime": ^7.12.5
@@ -4596,7 +4596,7 @@ __metadata:
     dom-accessibility-api: ^0.5.9
     lz-string: ^1.4.4
     pretty-format: ^27.0.2
-  checksum: 2bbf5fa5c1e883571c440ccee76c0568fa5153b43c097456dd7146797256687352bfca9db574e0e78a022ce14722a6acaaba5f680ee16b95e12405501713d34d
+  checksum: 880f1872b9949800d4444e3bdbd03df86d6f41ec7c27136dff1da29e87d2df2d7ee904afcdf895ffce351c25bd12119117eae023354d50e707ad56d43b2ed3ed
   languageName: node
   linkType: hard
 
@@ -4617,17 +4617,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.3.0":
-  version: 13.3.0
-  resolution: "@testing-library/react@npm:13.3.0"
+"@testing-library/react@npm:^12.1.5":
+  version: 12.1.5
+  resolution: "@testing-library/react@npm:12.1.5"
   dependencies:
     "@babel/runtime": ^7.12.5
-    "@testing-library/dom": ^8.5.0
-    "@types/react-dom": ^18.0.0
+    "@testing-library/dom": ^8.0.0
+    "@types/react-dom": <18.0.0
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 98fd8616a7cae0ecfcbe97b5b3c5b91fbafccf449c04875395ccc0e3f0b139e53b3261b9536ec2169a5e2883a1be2098907209064061fe0c2ff21dfbc785dd40
+    react: <18.0.0
+    react-dom: <18.0.0
+  checksum: 4abd0490405e709a7df584a0db604e508a4612398bb1326e8fa32dd9393b15badc826dcf6d2f7525437886d507871f719f127b9860ed69ddd204d1fa834f576a
   languageName: node
   linkType: hard
 
@@ -5034,21 +5034,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^17.0.17":
+"@types/react-dom@npm:<18.0.0, @types/react-dom@npm:^17.0.17":
   version: 17.0.17
   resolution: "@types/react-dom@npm:17.0.17"
   dependencies:
     "@types/react": ^17
   checksum: 23caf98aa03e968811560f92a2c8f451694253ebe16b670929b24eaf0e7fa62ba549abe9db0ac028a9d8a9086acd6ab9c6c773f163fa21224845edbc00ba6232
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^18.0.0":
-  version: 18.0.1
-  resolution: "@types/react-dom@npm:18.0.1"
-  dependencies:
-    "@types/react": "*"
-  checksum: 6c183e2e50240b77ed767cd968fe061ef4f2b47f84da5ec9e412a767d68c9a004d1f6ccca4295a5aa2c3ee723377e59006a2031f3767c00d8ac9e240a51bb142
   languageName: node
   linkType: hard
 
@@ -5058,17 +5049,6 @@ __metadata:
   dependencies:
     "@types/react": ^17
   checksum: 0be325798b6b38cc31fbb11f2f1e1a5578cc3b23eddf1ddd1ab58ccf50966e8f779383084d8bc3a7db3108ad815af8fbae5c0f54329a88d52200e01547d85c33
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:*":
-  version: 17.0.38
-  resolution: "@types/react@npm:17.0.38"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 4079f4f959cd4a4bfaeda8b89fe8a1b1f8bdc9d87acfdc5f74a0b39cec9ec6a470724357c62778c0f063180b360c250e920c5a142f1dbcda67d9cc25a6d43a85
   languageName: node
   linkType: hard
 
@@ -8713,15 +8693,15 @@ __metadata:
     "@freik/audiodb": ^0.3.0
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.2.0
-    "@freik/elect-main-utils": ^0.2.3
+    "@freik/elect-main-utils": ^0.2.4
     "@freik/elect-render-utils": ^0.2.4
-    "@freik/electron-renderer": ^0.2.2
+    "@freik/electron-renderer": ^0.2.3
     "@freik/media-core": ~0.10.5
     "@freik/media-utils": ~0.13.5
     "@freik/node-utils": ~1.1.1
     "@freik/web-utils": ^0.3.2
     "@testing-library/jest-dom": ^5.16.4
-    "@testing-library/react": ^13.3.0
+    "@testing-library/react": ^12.1.5
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^27.5.2
     "@types/node": ^17.0.38
@@ -16699,8 +16679,8 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=c54ba0&locator=emp%40workspace%3A."
-  checksum: 212bcb8378f7d69df5e34358c0750bdd9aefebf4d6fe8cd55da22e2dca9bcd07167f1e8950f11ebc6805266ceb02c34dafc1d87c7d0d7b51eaa5a48e421738e5
+  resolution: "shared@file:./shared#./shared::hash=791010&locator=emp%40workspace%3A."
+  checksum: 2c342ad1536f03b2a317bf9b8b58c4e140550efd9659d0fe317f3df5dd511db095b0df4e94aaca33007e1938acf35d37954881ae62adf0d32feec2f9b42bbbeb
   languageName: node
   linkType: hard
 

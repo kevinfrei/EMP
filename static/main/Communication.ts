@@ -1,5 +1,5 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
-import { Type } from '@freik/core-utils';
+import { MakeError, Type } from '@freik/core-utils';
 import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
 import { Menu } from 'electron/main';
@@ -33,6 +33,8 @@ import {
 } from './SongLikesAndHates';
 import { getXcodeStatus, isXcodeInfo, startTranscode } from './Transcoding';
 
+const err = MakeError('Communication');
+
 /**
  * Show a file in the shell
  * @param filePath - The path to the file to show
@@ -56,6 +58,16 @@ async function setSaveMenu(enabled: boolean): Promise<void> {
   }
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   return;
+}
+
+async function showMenu(): Promise<void> {
+  const menu = Menu.getApplicationMenu();
+  if (menu) {
+    menu.popup();
+  } else {
+    err('Sorry: Menu is falsy');
+  }
+  return Promise.resolve();
 }
 
 const isKeyValue = Type.is2TypeOfFn(Type.isString, Type.isString);
@@ -130,4 +142,5 @@ export function CommsSetup(): void {
   // For transcoding:
   Comms.registerChannel(IpcId.TranscodingUpdate, getXcodeStatus, isVoid);
   Comms.registerChannel(IpcId.TranscodingBegin, startTranscode, isXcodeInfo);
+  Comms.registerChannel(IpcId.ShowMenu, showMenu, isVoid);
 }
