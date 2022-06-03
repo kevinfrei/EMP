@@ -6,7 +6,9 @@ import {
 } from '@freik/elect-main-utils';
 import { BrowserWindow, screen } from 'electron';
 import isDev from 'electron-is-dev';
+import { BrowserWindowConstructorOptions } from 'electron/main';
 import * as path from 'path';
+import process from 'process';
 import { OnWindowCreated } from './electronSetup';
 import { RegisterListeners, RegisterProtocols } from './protocols';
 
@@ -30,7 +32,7 @@ export async function CreateWindow(
   await RegisterProtocols();
   RegisterListeners();
   // Create the window, but don't show it just yet
-  mainWindow = new BrowserWindow({
+  const opts: BrowserWindowConstructorOptions = {
     ...GetBrowserWindowPos(LoadWindowPos()),
     title: 'EMP: Electron Music Player',
     // backgroundColor: '#282c34', // Unnecessary if you're not showing :)
@@ -52,7 +54,11 @@ export async function CreateWindow(
     */
     fullscreenable: false,
     acceptFirstMouse: true, // Gets 'activating' clicks
-  }).on('ready-to-show', () => {
+  };
+  if (process.platform === 'darwin') {
+    opts.titleBarStyle = 'hidden';
+  }
+  mainWindow = new BrowserWindow(opts).on('ready-to-show', () => {
     // Wait to show the main window until it's actually ready...
     if (mainWindow) {
       mainWindow.show();
@@ -124,4 +130,32 @@ export function ToggleMiniPlayer(): void {
       mainWindow.setSize(270, windowPos.bounds.height);
     }
   }
+}
+
+export function CloseWindow(): Promise<void> {
+  if (mainWindow) {
+    mainWindow.close();
+  }
+  return Promise.resolve();
+}
+
+export function MinimizeWindow(): Promise<void> {
+  if (mainWindow) {
+    mainWindow.minimize();
+  }
+  return Promise.resolve();
+}
+
+export function RestoreWindow(): Promise<void> {
+  if (mainWindow) {
+    mainWindow.restore();
+  }
+  return Promise.resolve();
+}
+
+export function MaximizeWindow(): Promise<void> {
+  if (mainWindow) {
+    mainWindow.maximize();
+  }
+  return Promise.resolve();
 }

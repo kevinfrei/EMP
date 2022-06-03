@@ -26,6 +26,10 @@ export enum IpcId {
   TranscodingUpdate = 'get-xcode-update',
   TranscodingBegin = 'start-xcode',
   UploadImage = 'upload-image',
+  MinimizeWindow = 'minimize-window',
+  MaximizeWindow = 'maximize-window',
+  RestoreWindow = 'restore-window',
+  CloseWindow = 'close-window',
 }
 
 export enum Keys {

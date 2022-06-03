@@ -1,6 +1,5 @@
 @media (min-width: 500px) {
   #volume-container {
-    grid-column: 4;
     grid-row: 1;
     display: grid;
     justify-self: center;
@@ -8,6 +7,14 @@
     padding-right: 10px;
     grid-template-columns: 24px auto;
     grid-template-rows: auto;
+  }
+  /* The volume control on mac goes to the right, as window buttons are on the left */
+  .volume-container-mac {
+    grid-column: 4;
+  }
+  /* For Windows/Linux, the volume control goes to the left so the window buttons can be on the right */
+  .volume-container-win-linux {
+    grid-column: 1;
   }
   .volume-slider {
     grid-row: 1;

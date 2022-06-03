@@ -32,6 +32,12 @@ import {
   setSongLikes,
 } from './SongLikesAndHates';
 import { getXcodeStatus, isXcodeInfo, startTranscode } from './Transcoding';
+import {
+  CloseWindow,
+  MaximizeWindow,
+  MinimizeWindow,
+  RestoreWindow,
+} from './window';
 
 const err = MakeError('Communication');
 
@@ -87,6 +93,11 @@ export function CommsSetup(): void {
   // functions. Media Info, Search, and MusicDB stuff needs a different handler
   // because they don't just read/write to disk.
   Comms.SetupDefault();
+
+  Comms.registerChannel(IpcId.CloseWindow, CloseWindow, isVoid);
+  Comms.registerChannel(IpcId.MinimizeWindow, MinimizeWindow, isVoid);
+  Comms.registerChannel(IpcId.RestoreWindow, RestoreWindow, isVoid);
+  Comms.registerChannel(IpcId.MaximizeWindow, MaximizeWindow, isVoid);
 
   // "complex" API's (not just save/restore data to the persist cache)
 

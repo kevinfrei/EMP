@@ -14,9 +14,23 @@ import { IpcId } from 'shared';
 interface MyWindow extends Window {
   searchBox?: ISearchBox | null;
   db: FlatAudioDatabase;
+  // This is set up by the @freik/electron-renderer package
+  freik?: { hostOs?: 'darwin' | 'win32' | 'linux' };
 }
 
 declare let window: MyWindow;
+
+export function isHostMac(): boolean {
+  return window.freik ? window.freik.hostOs === 'darwin' : false;
+}
+
+export function isHostLinux(): boolean {
+  return window.freik ? window.freik.hostOs === 'linux' : false;
+}
+
+export function isHostWindows(): boolean {
+  return window.freik ? window.freik.hostOs === 'win32' : false;
+}
 
 export function SetDB(db: FlatAudioDatabase): void {
   const albums = db.albums.sort((a, b) =>

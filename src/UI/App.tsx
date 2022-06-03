@@ -1,10 +1,11 @@
 import { IconButton, SpinnerSize } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { FreikElem, Ipc } from '@freik/elect-render-utils';
 import { Spinner } from '@freik/web-utils';
-import { RecoilRoot } from 'recoil';
+import { useState } from 'react';
+import { RecoilRoot, useRecoilValue } from 'recoil';
 import { IpcId } from 'shared';
-import {} from '../__mocks__/MyWindow';
+import { isHostMac } from '../MyWindow';
+import { isMiniplayerState } from '../Recoil/Local';
 import { SongDetailPanel } from './DetailPanel/SongDetailPanel';
 import { PlaybackControls } from './PlaybackControls';
 import { Sidebar } from './Sidebar';
@@ -14,21 +15,47 @@ import { Utilities } from './Utilities';
 import { ViewSelector } from './Views/Selector';
 import { VolumeControl } from './VolumeControl';
 
-function Hamburger(): JSX.Element {
-  if (
-    Type.hasType(window, 'freik', Type.isObject) &&
-    Type.hasStr(window.freik, 'hostOs') &&
-    window.freik.hostOs !== 'darwin'
-  ) {
-    return (
-      <IconButton
-        iconProps={{ iconName: 'GlobalNavButton' }}
-        title="hamburger"
-        onClick={() => void Ipc.InvokeMain(IpcId.FlushImageCache)}
-      />
-    );
-  } else {
+function WindowChrome(): JSX.Element {
+  const isMiniPlayer = useRecoilValue(isMiniplayerState);
+  const [isMax, setIsMax] = useState(false);
+  if (isHostMac() || isMiniPlayer) {
+    // For macOS, the menu is always up there, wasting space,
+    // and the window buttons are handed in the main process
+    // Just turn this stuff off in MiniPlayer mode, too...
     return <></>;
+  } else {
+    // 'ChromeMaximize' << Doesn't exist in Fluent Icons
+    // 'CheckBox' 'SingleColumn' 'GridViewLarge' all look okay
+    const resMaxTitle = isMax ? 'restore' : 'maximize';
+    const resMaxName = isMax ? 'ChromeRestore' : 'GridViewLarge';
+    const resMaxId: IpcId = isMax ? IpcId.RestoreWindow : IpcId.MaximizeWindow;
+    return (
+      <span id="window-chrome">
+        <IconButton
+          iconProps={{ iconName: 'GlobalNavButton' }}
+          title="hamburger"
+          onClick={() => void Ipc.InvokeMain(IpcId.ShowMenu)}
+        />
+        <IconButton
+          iconProps={{ iconName: 'ChromeMinimize' }}
+          title="minimize"
+          onClick={() => void Ipc.InvokeMain(IpcId.MinimizeWindow)}
+        />
+        <IconButton
+          iconProps={{ iconName: resMaxName }}
+          title={resMaxTitle}
+          onClick={() => {
+            setIsMax(!isMax);
+            void Ipc.InvokeMain(resMaxId);
+          }}
+        />
+        <IconButton
+          iconProps={{ iconName: 'ChromeClose' }}
+          title="close"
+          onClick={() => void Ipc.InvokeMain(IpcId.CloseWindow)}
+        />
+      </span>
+    );
   }
 }
 
@@ -40,10 +67,10 @@ export function App(): JSX.Element {
           <FreikElem />
           <Utilities />
         </Spinner>
-        <Hamburger />
       </span>
       <span id="left-column"></span>
       <span id="top-row"></span>
+      <WindowChrome />
       <Spinner label="Intializing...">
         <PlaybackControls />
         <SongPlaying />
