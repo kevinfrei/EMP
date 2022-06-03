@@ -22,14 +22,20 @@
       Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
+
+      NOTE:
+      IF YOU MOVE THIS FILE AROUND IN THE DEPLOYED APP, YOU'LL NEED TO ALSO CHANGE
+      THE loadURL CODE IN window.ts TO REFLECT WHERE YOU MOVED THIS THING!
     -->
     <title>Electron Music Player</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!-- H I don't fully grok, thanks to js module system proliferation -->
-    <script>var exports={"__esModule":true};</script>
+    <!-- I don't fully grok, thanks to js module system proliferation -->
+    <script>
+      var exports = { __esModule: true };
+    </script>
     <!-- You can also require other files to run in this process -->
     <script src="%PUBLIC_URL%/renderer.js"></script>
   </body>

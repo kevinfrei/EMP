@@ -52,6 +52,10 @@ async function showLocFromKey(mediaKey?: MediaKey): Promise<void> {
   }
 }
 
+/**
+ * Enables or disables the "Save Playlist" button (used to reflect whether the
+ * playlist has been modified)
+ */
 async function setSaveMenu(enabled: boolean): Promise<void> {
   const menu = Menu.getApplicationMenu();
   if (menu) {
@@ -66,6 +70,10 @@ async function setSaveMenu(enabled: boolean): Promise<void> {
   return;
 }
 
+/**
+ * Pops up the menu (for Windows/Linus cuz they don't have menu bars always
+ * burning screen space)
+ */
 async function showMenu(): Promise<void> {
   const menu = Menu.getApplicationMenu();
   if (menu) {

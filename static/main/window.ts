@@ -4,9 +4,12 @@ import {
   LoadWindowPos,
   setMainWindow,
 } from '@freik/elect-main-utils';
-import { BrowserWindow, screen } from 'electron';
+import {
+  BrowserWindow,
+  BrowserWindowConstructorOptions,
+  screen,
+} from 'electron';
 import isDev from 'electron-is-dev';
-import { BrowserWindowConstructorOptions } from 'electron/main';
 import * as path from 'path';
 import process from 'process';
 import { OnWindowCreated } from './electronSetup';
