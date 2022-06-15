@@ -7,10 +7,30 @@ import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import pLimit from 'p-limit';
 import { IpcId, TranscodeInfo, TranscodeState } from 'shared';
 
 const err = MakeError('downsample-err');
+
+// !#@$ Electron doesn't like ESM modules...
+interface LimitFunction {
+  readonly activeCount: number;
+  readonly pendingCount: number;
+  clearQueue: () => void;
+  <Arguments extends unknown[], ReturnType>(
+    fn: (...args: Arguments) => PromiseLike<ReturnType> | ReturnType,
+    ...argz: Arguments
+  ): Promise<ReturnType>;
+}
+type LimitType = (concurrency: number) => LimitFunction;
+let pLimit: LimitType;
+import('p-limit')
+  .then((val) => {
+    pLimit = val as unknown as LimitType;
+  })
+  .catch((reason) => {
+    err('unable to import p-limit');
+    err(reason);
+  });
 
 const cp = {
   spawnAsync: ProcUtil.spawnAsync,
