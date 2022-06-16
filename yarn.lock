@@ -3673,6 +3673,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@freik/p-limit@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "@freik/p-limit@npm:5.0.0"
+  checksum: 785da73c350c347adfea032830d4196ab7af274d69ba00be8a2bf2342f93d1e39f3528d9cb35c72d95dcbe1881d4f4cce26a77ac44499faf5f5162ecd1bba246
+  languageName: node
+  linkType: hard
+
 "@freik/web-utils@npm:^0.3.2":
   version: 0.3.2
   resolution: "@freik/web-utils@npm:0.3.2"
@@ -8729,6 +8736,7 @@ __metadata:
     "@freik/media-core": ~0.10.5
     "@freik/media-utils": ~0.13.5
     "@freik/node-utils": ~1.1.1
+    "@freik/p-limit": ^5.0.0
     "@freik/web-utils": ^0.3.2
     "@testing-library/jest-dom": ^5.16.4
     "@testing-library/react": ^12.1.5
@@ -8759,7 +8767,6 @@ __metadata:
     jest: 27.5.1
     jest-transform-css: ^4.0.1
     open: ^8.4.0
-    p-limit: ^4.0.0
     postcss: 8.4.14
     prettier: ^2.7.0
     react: ^17.0.2
@@ -14127,15 +14134,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-limit@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "p-limit@npm:4.0.0"
-  dependencies:
-    yocto-queue: ^1.0.0
-  checksum: 01d9d70695187788f984226e16c903475ec6a947ee7b21948d6f597bed788e3112cc7ec2e171c1d37125057a5f45f3da21d8653e04a3a793589e12e9e80e756b
-  languageName: node
-  linkType: hard
-
 "p-locate@npm:^2.0.0":
   version: 2.0.0
   resolution: "p-locate@npm:2.0.0"
@@ -19176,12 +19174,5 @@ __metadata:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
-  languageName: node
-  linkType: hard
-
-"yocto-queue@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "yocto-queue@npm:1.0.0"
-  checksum: 2cac84540f65c64ccc1683c267edce396b26b1e931aa429660aefac8fbe0188167b7aee815a3c22fa59a28a58d898d1a2b1825048f834d8d629f4c2a5d443801
   languageName: node
   linkType: hard
