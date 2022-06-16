@@ -342,9 +342,9 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           try {
             await fsp.access(toSkip);
           } catch (e) {
-            return false;
+            return e.code === 'ENOENT' && e.errno === -2;
           }
-          return true;
+          return false;
         },
         keepGoing: true,
         fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
@@ -359,6 +359,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
     reportStatusMessage('Completed scanning. Transcoding in progress.');
     await handleLots(settings.source, settings.dest, workQueue);
   } finally {
+    reportStatusMessage('Transcoding Completed.');
     finishStatusReporting();
   }
 }
