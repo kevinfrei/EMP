@@ -87,6 +87,3 @@ export const playOrderDisplayingState = atom<boolean>({
   key: 'playOrderShowing',
   default: false,
 });
-
-// This is the currently 'typed' set of characters (for scrolling lists)
-export const keyBufferState = atom<string>({ key: 'KeyBuffer', default: '' });

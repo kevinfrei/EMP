@@ -12,19 +12,19 @@ import { songListFromKeyFuncFam } from './ReadWrite';
 export const neverPlayHatesState = atom<boolean>({
   key: 'neverPlayHates',
   default: true,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const onlyPlayLikesState = atom<boolean>({
   key: 'onlyPlayLikes',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 const songLikeBackerState = atom<Set<SongKey>>({
   key: 'likedSongs',
   default: new Set<SongKey>(),
-  effects_UNSTABLE: [
+  effects: [
     Effects.bidirectionalSyncWithTranslate<Set<SongKey>>(
       (val: Set<string>) => [...val],
       (val: unknown) =>
@@ -74,7 +74,7 @@ export const songLikeFuncFam = selectorFamily<boolean, SongKey>({
 const songHateBackerState = atom<Set<SongKey>>({
   key: 'hatedSongs',
   default: new Set<SongKey>(),
-  effects_UNSTABLE: [
+  effects: [
     Effects.bidirectionalSyncWithTranslate<Set<SongKey>>(
       (val: Set<string>) => [...val],
       (val: unknown) =>

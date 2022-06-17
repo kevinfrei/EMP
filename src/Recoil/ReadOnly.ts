@@ -118,8 +118,7 @@ function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
 
 const musicLibraryState = atom<MusicLibrary>({
   key: 'musicDatabase',
-  default: emptyLibrary,
-  effects_UNSTABLE: [
+  effects: [
     Effects.oneWayFromMain(
       async (): Promise<MusicLibrary> => {
         const fad = await Ipc.CallMain(

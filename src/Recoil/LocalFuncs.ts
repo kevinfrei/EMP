@@ -1,14 +1,12 @@
 import { Type } from '@freik/core-utils';
 import { SongKey } from '@freik/media-core';
-import { selector, selectorFamily } from 'recoil';
-import { CurrentView } from 'shared';
+import { selector } from 'recoil';
 import {
   currentIndexState,
-  keyBufferState,
   songListState,
   songPlaybackOrderState,
 } from './Local';
-import { curViewFunc, repeatState } from './ReadWrite';
+import { repeatState } from './ReadWrite';
 
 // This is the current index into the nowPlayist (sorted, never shuffled) list
 export const currentSongIndexFunc = selector<number>({
@@ -87,13 +85,4 @@ export const hasPrevSongFunc = selector<boolean>({
 export const hasAnySongsFunc = selector<boolean>({
   key: 'hasAnySongs',
   get: ({ get }) => get(songListState).length > 0,
-});
-
-export const focusedKeysFuncFam = selectorFamily<string, CurrentView>({
-  key: 'focusedKeys',
-  get:
-    (view: CurrentView) =>
-    ({ get }) => {
-      return get(curViewFunc) === view ? get(keyBufferState) : '';
-    },
 });

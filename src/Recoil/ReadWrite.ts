@@ -19,19 +19,19 @@ import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
 export const mutedState = atom<boolean>({
   key: 'mute',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const volumeState = atom<number>({
   key: 'volume',
   default: 0.5,
-  effects_UNSTABLE: [Effects.syncWithMain<number>()],
+  effects: [Effects.syncWithMain<number>()],
 });
 
 const shuffleState = atom<boolean>({
   key: 'shuffle',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const shuffleFunc = selector<boolean>({
@@ -84,71 +84,71 @@ export const shuffleFunc = selector<boolean>({
 export const repeatState = atom<boolean>({
   key: 'repeat',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 // This is the 'locations' for searching
 export const locationsState = atom<string[]>({
   key: 'locations',
   default: [],
-  effects_UNSTABLE: [Effects.syncWithMain<string[]>()],
+  effects: [Effects.syncWithMain<string[]>()],
 });
 
 export const defaultLocationState = atom<string>({
   key: 'defaultLocation',
   default: '',
-  effects_UNSTABLE: [Effects.syncWithMain<string>()],
+  effects: [Effects.syncWithMain<string>()],
 });
 
 // Sort with/without articles setting
 export const ignoreArticlesState = atom<boolean>({
   key: 'rSortWithArticles',
   default: true,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 // Only show artists in the list who appear on full albums
 export const showArtistsWithFullAlbumsState = atom<boolean>({
   key: 'FullAlbumsOnly',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const downloadAlbumArtworkState = atom({
   key: 'downloadAlbumArtwork',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const downloadArtistArtworkState = atom({
   key: 'downloadArtistArtwork',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const saveAlbumArtworkWithMusicState = atom({
   key: 'saveAlbumArtworkWithMusic',
   default: false,
-  effects_UNSTABLE: [Effects.syncWithMain<boolean>()],
+  effects: [Effects.syncWithMain<boolean>()],
 });
 
 export const albumCoverNameState = atom({
   key: 'albumCoverName',
   default: '.CoverArt',
-  effects_UNSTABLE: [Effects.syncWithMain<string>()],
+  effects: [Effects.syncWithMain<string>()],
 });
 
 // The minimum # of songs an artist needs to show up in the artist list
 export const minSongCountForArtistListState = atom<number>({
   key: 'MinSongCount',
   default: 1,
-  effects_UNSTABLE: [Effects.syncWithMain<number>()],
+  effects: [Effects.syncWithMain<number>()],
 });
 
 const curViewBackerState = atom<CurrentView>({
   key: 'CurrentView',
   default: CurrentView.settings,
-  effects_UNSTABLE: [Effects.syncWithMain<CurrentView>()],
+  effects: [Effects.syncWithMain<CurrentView>()],
 });
 
 // This makes the miniplayer view always select the current view
