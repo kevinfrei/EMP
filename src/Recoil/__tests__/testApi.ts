@@ -4,7 +4,7 @@ import { MakeError } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { act } from 'react-test-renderer';
 import { RecoilState, Snapshot, snapshot_UNSTABLE } from 'recoil';
-import { currentIndexState, songListState } from '../Local';
+import { currentIndexState, songListState } from '../SongPlaying';
 
 jest.useFakeTimers();
 jest.mock('../../MyWindow');

@@ -43,12 +43,12 @@ function reQuote(str: string): { [key: string]: string } {
 /// vvvv Hurray for a Typescript compiler bug
 // eslint-disable-next-line no-shadow
 enum XcodeResCode {
-  AlreadyExists,
-  MediaInfoFailure,
-  EncodeFailure,
-  UnknownError,
-  AlreadyLowBitRate,
-  Success,
+  alreadyExists,
+  mediaInfoFailure,
+  encodeFailure,
+  unknownError,
+  alreadyLowBitRate,
+  success,
 }
 
 type TranscodeResult = {
@@ -63,12 +63,12 @@ export async function toMp4Async(
   originalFile: string,
   newFile: string,
 ): Promise<TranscodeResult> {
-  const quality = 1.0;
+  // const quality = 1.0;
   try {
     try {
       await fsp.stat(newFile);
       return tr(
-        XcodeResCode.AlreadyExists,
+        XcodeResCode.alreadyExists,
         `'${newFile}' already appears to exist`,
       );
     } catch (error) {
@@ -90,7 +90,7 @@ export async function toMp4Async(
         // MediaInfo failed: no continue, sorry
         const resStr = Type.asString(res.error.toString(), 'Unknown error');
         return tr(
-          XcodeResCode.MediaInfoFailure,
+          XcodeResCode.mediaInfoFailure,
           `mediainfo returned an error '${resStr}':${res.stderr.toString()}`,
         );
       }
@@ -106,7 +106,7 @@ export async function toMp4Async(
         ) {
           // If it's less than 10% higher than the target, we're fine
           // Unless it's a wma, and then we still have to convert it
-          return tr(XcodeResCode.AlreadyLowBitRate, originalFile);
+          return tr(XcodeResCode.alreadyLowBitRate, originalFile);
         }
       }
     }
@@ -127,23 +127,23 @@ export async function toMp4Async(
       )
     ) {
       return tr(
-        XcodeResCode.Success,
+        XcodeResCode.success,
         `Successfully transcode ${originalFile} to ${newFile}`,
       );
     } else {
       return tr(
-        XcodeResCode.EncodeFailure,
+        XcodeResCode.encodeFailure,
         `Unable to encode ${originalFile} to ${newFile}`,
       );
     }
   } catch (e) {
     if (Type.hasType(e, 'toString', Type.isFunction)) {
       return tr(
-        XcodeResCode.UnknownError,
+        XcodeResCode.unknownError,
         `${Type.asString(e, 'unknown error')} occurred.`,
       );
     } else {
-      return tr(XcodeResCode.UnknownError, 'unknown error occurred');
+      return tr(XcodeResCode.unknownError, 'unknown error occurred');
     }
   }
 }
@@ -270,7 +270,7 @@ async function convert(
     }
     const res = await toMp4Async(file, newName);
     switch (res.code) {
-      case XcodeResCode.AlreadyLowBitRate:
+      case XcodeResCode.alreadyLowBitRate:
         try {
           await fsp.copyFile(file, relName);
           if (filePairs !== undefined) {
@@ -284,13 +284,13 @@ async function convert(
         }
         reportFileTranscoded(file);
         break;
-      case XcodeResCode.Success:
+      case XcodeResCode.success:
         reportFileTranscoded(file);
         if (filePairs !== undefined) {
           filePairs.set(file, newName);
         }
         break;
-      case XcodeResCode.AlreadyExists:
+      case XcodeResCode.alreadyExists:
         reportFileUntouched();
         if (filePairs !== undefined) {
           filePairs.set(file, newName);
@@ -338,8 +338,8 @@ async function cleanTarget(
       dontFollowSymlinks: false,
     },
   );
-  console.log(leftovers);
-  console.log(leftovers.size);
+  // console.log(leftovers);
+  // console.log(leftovers.size);
 }
 
 async function handleLots(
