@@ -240,10 +240,12 @@ function reportFailure(file: string, error: string) {
 }
 
 async function convert(
-  srcdir: string,
-  targetDir: string,
+  settings: TranscodeInfo,
   file: string,
+  filePairs?: Map<string, string>,
 ): Promise<void> {
+  const srcdir = settings.source;
+  const targetDir = settings.dest;
   reportFilePending();
   try {
     if (!path.normalize(file).startsWith(srcdir)) {
@@ -252,10 +254,6 @@ async function convert(
     }
     const relName = path.join(targetDir, file.substring(srcdir.length));
     const newName = PathUtil.changeExt(relName, 'm4a');
-    if (!newName) {
-      reportFailure(file, `Name failure: ${file} => ${newName}`);
-      return;
-    }
     try {
       const dr = path.dirname(newName);
       try {
@@ -275,18 +273,28 @@ async function convert(
       case XcodeResCode.AlreadyLowBitRate:
         try {
           await fsp.copyFile(file, relName);
+          if (filePairs !== undefined) {
+            filePairs.set(file, relName);
+          }
         } catch (e) {
           reportFailure(
             file,
             `Unable to copy already mid-quality file ${file} to ${relName}`,
           );
         }
+        reportFileTranscoded(file);
         break;
       case XcodeResCode.Success:
         reportFileTranscoded(file);
+        if (filePairs !== undefined) {
+          filePairs.set(file, newName);
+        }
         break;
       case XcodeResCode.AlreadyExists:
         reportFileUntouched();
+        if (filePairs !== undefined) {
+          filePairs.set(file, newName);
+        }
         break;
       default:
         reportFailure(
@@ -299,15 +307,52 @@ async function convert(
   }
 }
 
+function pathfix(f: string): string {
+  return f.split('\\').join('/').toLowerCase();
+}
+
+async function cleanTarget(
+  settings: TranscodeInfo,
+  filePairs: Map<string, string>,
+): Promise<void> {
+  const leftovers: Set<string> = new Set<string>();
+  const transcoded: Set<string> = new Set<string>(
+    [...filePairs.values()].map(pathfix),
+  );
+  await ForFiles(
+    settings.dest,
+    (fileName) => {
+      const pf = pathfix(fileName);
+      if (!transcoded.has(pf)) {
+        leftovers.add(fileName);
+      }
+      return true;
+    },
+    {
+      keepGoing: true,
+      fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
+      order: 'breadth',
+      skipHiddenFiles: true,
+      skipHiddenFolders: true,
+      dontAssumeDotsAreHidden: false,
+      dontFollowSymlinks: false,
+    },
+  );
+  console.log(leftovers);
+  console.log(leftovers.size);
+}
+
 async function handleLots(
-  srcdir: string,
-  targetDir: string,
+  settings: TranscodeInfo,
   files: string[],
 ): Promise<void> {
   const limit = pLimit(Math.max(os.cpus().length - 2, 1));
+  const filePairs: Map<string, string> | undefined = settings.mirror
+    ? new Map<string, string>()
+    : undefined;
   try {
     await Promise.all(
-      files.map((f) => limit(async () => convert(srcdir, targetDir, f))),
+      files.map((f) => limit(async () => convert(settings, f, filePairs))),
     );
   } catch (e) {
     err('Crashy crashy :(');
@@ -315,6 +360,11 @@ async function handleLots(
     reportStatusMessage(
       `And exception occured: ${Type.asString(e, 'unknown')}`,
     );
+  }
+  if (filePairs !== undefined) {
+    // Find all the files in the mirror target, and remove any files that don't
+    // have matching pairs in the source
+    await cleanTarget(settings, filePairs);
   }
 }
 
@@ -357,7 +407,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
     );
     // We've now got our work queue
     reportStatusMessage('Completed scanning. Transcoding in progress.');
-    await handleLots(settings.source, settings.dest, workQueue);
+    await handleLots(settings, workQueue);
   } finally {
     reportStatusMessage('Transcoding Completed.');
     finishStatusReporting();
