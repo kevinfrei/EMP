@@ -18,18 +18,20 @@ import {
   onlyPlayLikesState,
 } from './Likes';
 import {
-  activePlaylistState,
-  currentIndexState,
   displayMessageState,
   nowPlayingSortState,
   recentlyQueuedState,
-  songListState,
-  songPlaybackOrderState,
 } from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
 import { repeatState, shuffleFunc } from './ReadWrite';
+import {
+  activePlaylistState,
+  currentIndexState,
+  songListState,
+  songPlaybackOrderState,
+} from './SongPlaying';
 
 const log = MakeLogger('api', true); // eslint-disable-line
 const err = MakeError('api-err'); // eslint-disable-line

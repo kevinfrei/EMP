@@ -5,7 +5,7 @@ import { PlaylistName, SongKey } from '@freik/media-core';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { IpcId } from 'shared';
 import { isPlaylist } from '../Tools';
-import { activePlaylistState, songListState } from './Local';
+import { activePlaylistState, songListState } from './SongPlaying';
 
 // Stuff for playlists
 

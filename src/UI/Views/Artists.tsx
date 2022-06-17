@@ -27,8 +27,8 @@ import {
 } from 'recoil';
 import { CurrentView } from 'shared';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import { artistImageUrlFuncFam } from '../../Recoil/ImageUrls';
 import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';
-import { artistImageUrlFuncFam } from '../../Recoil/Local';
 import {
   allAlbumsFunc,
   allArtistsFunc,

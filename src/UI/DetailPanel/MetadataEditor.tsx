@@ -33,7 +33,7 @@ import {
 import {
   albumCoverUrlFuncFam,
   picCacheAvoiderStateFam,
-} from '../../Recoil/Local';
+} from '../../Recoil/ImageUrls';
 import { albumKeyForSongKeyFuncFam } from '../../Recoil/ReadOnly';
 
 const log = MakeLogger('MetadataEditor');

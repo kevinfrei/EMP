@@ -35,14 +35,7 @@ import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { Keys } from 'shared';
 import { StopAndClear } from '../../Recoil/api';
-import {
-  activePlaylistState,
-  isMiniplayerState,
-  nowPlayingSortState,
-  songListState,
-  songPlaybackOrderState,
-} from '../../Recoil/Local';
-import { currentSongIndexFunc } from '../../Recoil/LocalFuncs';
+import { isMiniplayerState, nowPlayingSortState } from '../../Recoil/Local';
 import {
   playlistFuncFam,
   playlistNamesFunc,
@@ -54,6 +47,12 @@ import {
   curSongsFunc,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
+import {
+  activePlaylistState,
+  currentSongIndexFunc,
+  songListState,
+  songPlaybackOrderState,
+} from '../../Recoil/SongPlaying';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {

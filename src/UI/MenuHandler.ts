@@ -3,7 +3,6 @@ import { MyTransactionInterface } from '@freik/web-utils';
 import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
-import { activePlaylistState, songListState } from '../Recoil/Local';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import {
@@ -13,6 +12,7 @@ import {
   shuffleFunc,
   volumeState,
 } from '../Recoil/ReadWrite';
+import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
 import { onClickPlayPause } from './PlaybackControls';
 import { GetAudioElem } from './SongPlaying';
 import { addLocation } from './Views/Settings';

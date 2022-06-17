@@ -7,13 +7,13 @@ import {
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Keys } from 'shared';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
+import { playingState } from '../Recoil/MediaPlaying';
+import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import {
   hasAnySongsFunc,
   hasNextSongFunc,
   hasPrevSongFunc,
-} from '../Recoil/LocalFuncs';
-import { playingState } from '../Recoil/MediaPlaying';
-import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
+} from '../Recoil/SongPlaying';
 import { GetAudioElem } from './SongPlaying';
 import './styles/PlaybackControls.css';
 import { GetHelperText } from './Utilities';

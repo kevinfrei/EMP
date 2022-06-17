@@ -4,14 +4,14 @@ import { SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
 import { CurrentView } from 'shared';
 import { ShuffleArray } from '../Tools';
+import { isMiniplayerState } from './Local';
+import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
 import {
   currentIndexState,
-  isMiniplayerState,
+  currentSongIndexFunc,
   songListState,
   songPlaybackOrderState,
-} from './Local';
-import { currentSongIndexFunc } from './LocalFuncs';
-import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
+} from './SongPlaying';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');

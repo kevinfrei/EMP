@@ -1,13 +1,15 @@
 import { IDetailsRowProps, Panel, PanelType } from '@fluentui/react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import {
-  currentIndexState,
   isMiniplayerState,
   playOrderDisplayingState,
-  songListState,
-  songPlaybackOrderState,
 } from '../../Recoil/Local';
 import { shuffleFunc } from '../../Recoil/ReadWrite';
+import {
+  currentIndexState,
+  songListState,
+  songPlaybackOrderState,
+} from '../../Recoil/SongPlaying';
 import { SimpleSongsList } from './MixedSongs';
 
 export function PlaybackOrder(): JSX.Element {

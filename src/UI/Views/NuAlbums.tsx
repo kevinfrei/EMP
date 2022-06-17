@@ -10,7 +10,7 @@ import { useMyTransaction } from '@freik/web-utils';
 import { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { albumCoverUrlFuncFam } from '../../Recoil/Local';
+import { albumCoverUrlFuncFam } from '../../Recoil/ImageUrls';
 import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';

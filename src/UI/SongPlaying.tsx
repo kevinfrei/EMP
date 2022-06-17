@@ -4,12 +4,8 @@ import { useMyTransaction } from '@freik/web-utils';
 import { SyntheticEvent } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { MaybePlayNext } from '../Recoil/api';
-import {
-  albumCoverUrlFuncFam,
-  playOrderDisplayingState,
-  songListState,
-} from '../Recoil/Local';
-import { currentSongKeyFunc } from '../Recoil/LocalFuncs';
+import { albumCoverUrlFuncFam } from '../Recoil/ImageUrls';
+import { playOrderDisplayingState } from '../Recoil/Local';
 import {
   MediaTime,
   mediaTimePercentFunc,
@@ -25,6 +21,7 @@ import {
   SongDescription,
 } from '../Recoil/ReadOnly';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
+import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import './styles/SongPlaying.css';
 import { mySliderStyles } from './Utilities';

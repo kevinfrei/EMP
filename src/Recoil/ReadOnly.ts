@@ -16,7 +16,7 @@ import { IpcId } from 'shared';
 import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
-import { songListState } from './Local';
+import { songListState } from './SongPlaying';
 
 // type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
