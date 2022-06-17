@@ -99,19 +99,19 @@ export function MenuHandler(
           let theView: CurrentView = CurrentView.none;
           switch (message.select) {
             case 'NowPlaying':
-              theView = CurrentView.current;
+              theView = CurrentView.now_playing;
               break;
             case 'Artists':
-              theView = CurrentView.artist;
+              theView = CurrentView.artists;
               break;
             case 'Albums':
-              theView = CurrentView.album;
+              theView = CurrentView.albums;
               break;
             case 'Songs':
-              theView = CurrentView.song;
+              theView = CurrentView.songs;
               break;
             case 'Playlists':
-              theView = CurrentView.playlist;
+              theView = CurrentView.playlists;
               break;
             case 'Settings':
               theView = CurrentView.settings;

@@ -18,12 +18,12 @@ const mkEntry = (name: CurrentView, title: StrId, accelerator: Keys) => ({
 
 const views: (ViewEntry | null)[] = [
   // mkEntry('recent', 'Recently Added', ),
-  mkEntry(CurrentView.current, StrId.ViewNowPlaying, Keys.NowPlaying),
+  mkEntry(CurrentView.now_playing, StrId.ViewNowPlaying, Keys.NowPlaying),
   null,
-  mkEntry(CurrentView.album, StrId.ViewAlbums, Keys.Albums),
-  mkEntry(CurrentView.artist, StrId.ViewArtists, Keys.Artists),
-  mkEntry(CurrentView.song, StrId.ViewSongs, Keys.Songs),
-  mkEntry(CurrentView.playlist, StrId.ViewPlaylists, Keys.Playlists),
+  mkEntry(CurrentView.albums, StrId.ViewAlbums, Keys.Albums),
+  mkEntry(CurrentView.artists, StrId.ViewArtists, Keys.Artists),
+  mkEntry(CurrentView.songs, StrId.ViewSongs, Keys.Songs),
+  mkEntry(CurrentView.playlists, StrId.ViewPlaylists, Keys.Playlists),
   null,
   mkEntry(CurrentView.tools, StrId.ViewTools, Keys.Tools),
   mkEntry(CurrentView.settings, StrId.ViewSettings, Keys.Settings),

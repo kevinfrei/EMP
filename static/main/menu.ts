@@ -38,8 +38,8 @@ function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
   };
 }
 
-function getId(lbl: string) {
-  return lbl.replace('&', '').toLocaleLowerCase();
+function getId(lbl: string): string {
+  return lbl.replaceAll('&', '').replaceAll(' ', '_').toLocaleLowerCase();
 }
 
 // TODO: Add an action to be taken, with a quick x-plat shortcut key
@@ -140,7 +140,7 @@ const viewMenu: MenuItemConstructorOptions = {
     xaction('T&ools', Keys.Settings, { state: 'view', select: 'Tools' }),
     xaction('Se&ttings', Keys.Tools, { state: 'view', select: 'Settings' }),
     ___,
-    xaction('M&iniPlayer', Keys.ToggleMiniPlayer, ToggleMiniPlayer),
+    xaction('Toggle M&ini Player', Keys.ToggleMiniPlayer, ToggleMiniPlayer),
   ],
 };
 const mediaMenu: MenuItemConstructorOptions = {
@@ -253,10 +253,7 @@ export function MakeMainMenu(): void {
     for (const id in Type.enumKeys(CurrentView)) {
       const mnu = menu.getMenuItemById(CurrentView[id]);
       if (mnu) {
-        err(`Setting non null menu from ${CurrentView[id]}/${id} for ${val}`);
         mnu.enabled = `${id}` !== val;
-      } else {
-        err(`Didn't find menu from ${CurrentView[id]}/${id} for ${val}`);
       }
     }
   });
@@ -264,8 +261,8 @@ export function MakeMainMenu(): void {
   // Toggle mute/adjust vol up/dn
   Persistence.subscribe('volume', (val: string) => {
     const vol = Number.parseFloat(val);
-    const up = menu.getMenuItemById('volume up');
-    const dn = menu.getMenuItemById('volume down');
+    const up = menu.getMenuItemById('volume_up');
+    const dn = menu.getMenuItemById('volume_down');
     if (up && dn) {
       up.enabled = vol < 1.0;
       dn.enabled = vol > 0.0;

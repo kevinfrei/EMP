@@ -25,19 +25,19 @@ export function ViewSelector(): JSX.Element {
       <div className="current-view" style={sl(CurrentView.disabled)}>
         <NuAlbumView />
       </div>
-      <div className="current-view" style={sl(CurrentView.album)}>
+      <div className="current-view" style={sl(CurrentView.albums)}>
         <GroupedAlbumList />
       </div>
-      <div className="current-view" style={sl(CurrentView.artist)}>
+      <div className="current-view" style={sl(CurrentView.artists)}>
         <GroupedAristList />
       </div>
-      <div className="current-view" style={sl(CurrentView.song)}>
+      <div className="current-view" style={sl(CurrentView.songs)}>
         <MixedSongsList />
       </div>
-      <div className="current-view" style={sl(CurrentView.playlist)}>
+      <div className="current-view" style={sl(CurrentView.playlists)}>
         <PlaylistView />
       </div>
-      <div className="current-view" style={sl(CurrentView.current)}>
+      <div className="current-view" style={sl(CurrentView.now_playing)}>
         <NowPlayingView />
       </div>
       <div className="current-view" style={sl(CurrentView.recent)}>

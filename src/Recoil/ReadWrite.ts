@@ -155,7 +155,7 @@ const curViewBackerState = atom<CurrentView>({
 export const curViewFunc = selector<CurrentView>({
   key: 'CurViewWithMiniplayerAwareness',
   get: ({ get }) =>
-    get(isMiniplayerState) ? CurrentView.current : get(curViewBackerState),
+    get(isMiniplayerState) ? CurrentView.now_playing : get(curViewBackerState),
   set: ({ set }, newVal) => set(curViewBackerState, newVal),
 });
 

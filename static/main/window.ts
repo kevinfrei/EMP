@@ -115,6 +115,8 @@ export function ToggleMiniPlayer(): void {
           windowPos.bounds.width,
       ) < 20;
     if (windowPos.bounds.width < 450) {
+      // We're currently in the mini-player, switch to normal
+      // TODO: Update the menu?
       const newWidth = Math.max(prevWidth, 570);
       if (atRightEdge) {
         mainWindow.setPosition(
@@ -125,6 +127,7 @@ export function ToggleMiniPlayer(): void {
       mainWindow.setSize(newWidth, windowPos.bounds.height);
       prevWidth = 0;
     } else {
+      // We're in a normal view. Switch to mini-player
       prevWidth = windowPos.bounds.width;
       if (atRightEdge) {
         const x = display.bounds.x + display.bounds.width - 270;

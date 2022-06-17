@@ -136,7 +136,7 @@ export function GroupedAlbumList(): JSX.Element {
 
   const albums = useRecoilValue(allAlbumsFunc);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
-  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.album));
+  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.albums));
   const allSongs = useRecoilValue(allSongsFunc);
   const allArtists = useRecoilValue(allArtistsFunc);
   const newAlbumSort = useRecoilValue(albumSortState);

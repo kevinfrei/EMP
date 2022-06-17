@@ -162,7 +162,7 @@ export function GroupedAristList(): JSX.Element {
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
   const fullAlbums = useRecoilValue(showArtistsWithFullAlbumsState);
   const minSongCount = useRecoilValue(minSongCountForArtistListState);
-  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.artist));
+  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.artists));
   const artistContext = useRecoilValue(artistContextState);
 
   const [curSort, setSort] = useRecoilState(sortOrderState);
