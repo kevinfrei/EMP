@@ -16771,8 +16771,8 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=5ed27b&locator=emp%40workspace%3A."
-  checksum: 35484a656660e87e375f0d0711b7a1f5bc7aa3d235581bac7bbb71de3850c3e5666f72633facc9d444b392e1b62a8ca2acb032c9176f91eb9fb87ed3c8d38c03
+  resolution: "shared@file:./shared#./shared::hash=e54317&locator=emp%40workspace%3A."
+  checksum: 37796b2ea833b4c4f21df19e30031d03059a350b396c604dba5fe4e07572abf993bb3dff5be67d6ad0de761474b3e17a0ba648438a9873019b5cfd56758618c1
   languageName: node
   linkType: hard
 

@@ -342,7 +342,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           try {
             await fsp.access(toSkip);
           } catch (e) {
-            return e.code === 'ENOENT' && e.errno === -2;
+            return Type.has(e, 'code') && e.code === 'ENOENT';
           }
           return false;
         },
