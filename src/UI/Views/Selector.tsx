@@ -19,39 +19,26 @@ export function ViewSelector(): JSX.Element {
   const which = useRecoilValue(curViewFunc);
   const sl = (v: CurrentView): CSSProperties =>
     which === v ? {} : { visibility: 'hidden' };
+  const panes: [CurrentView, JSX.Element][] = [
+    [CurrentView.disabled, <NuAlbumView />],
+    [CurrentView.albums, <GroupedAlbumList />],
+    [CurrentView.artists, <GroupedAristList />],
+    [CurrentView.songs, <MixedSongsList />],
+    [CurrentView.playlists, <PlaylistView />],
+    [CurrentView.now_playing, <NowPlayingView />],
+    [CurrentView.recent, <RecentlyAddedView />],
+    [CurrentView.settings, <SettingsView />],
+    [CurrentView.search, <SearchResultsView />],
+    [CurrentView.tools, <ToolsView />],
+  ];
   return (
     <>
       <PlaybackOrder />
-      <div className="current-view" style={sl(CurrentView.disabled)}>
-        <NuAlbumView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.albums)}>
-        <GroupedAlbumList />
-      </div>
-      <div className="current-view" style={sl(CurrentView.artists)}>
-        <GroupedAristList />
-      </div>
-      <div className="current-view" style={sl(CurrentView.songs)}>
-        <MixedSongsList />
-      </div>
-      <div className="current-view" style={sl(CurrentView.playlists)}>
-        <PlaylistView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.now_playing)}>
-        <NowPlayingView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.recent)}>
-        <RecentlyAddedView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.settings)}>
-        <SettingsView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.search)}>
-        <SearchResultsView />
-      </div>
-      <div className="current-view" style={sl(CurrentView.tools)}>
-        <ToolsView />
-      </div>
+      {panes.map(([cv, elem]) => (
+        <div key={cv} className="current-view" style={sl(cv)}>
+          {elem}
+        </div>
+      ))}
     </>
   );
 }
