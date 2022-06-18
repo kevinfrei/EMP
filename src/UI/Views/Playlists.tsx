@@ -9,7 +9,7 @@ import {
   Text,
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
-import { Song, SongKey } from '@freik/media-core';
+import { PlaylistName, Song, SongKey } from '@freik/media-core';
 import {
   Dialogs,
   MakeSetState,
@@ -25,7 +25,6 @@ import {
   PlaySongs,
   RenamePlaylist,
 } from '../../Recoil/api';
-import { PlaylistName } from '../../Recoil/Local';
 import {
   allPlaylistsFunc,
   playlistFuncFam,
