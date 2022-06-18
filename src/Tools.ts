@@ -1,5 +1,6 @@
 // This is for getting at "global" stuff from the window object
 import { MakeLogger, Type } from '@freik/core-utils';
+import { PlaylistName } from '@freik/media-core';
 
 const log = MakeLogger('Tools');
 
@@ -52,7 +53,7 @@ export function GetIndexOf<T, E>(
  * Miscellaney
  */
 
-export function isPlaylist(playlist?: string): playlist is string {
+export function isPlaylist(playlist?: string): playlist is PlaylistName {
   return Type.isString(playlist) && playlist.length > 0;
 }
 
@@ -74,21 +75,21 @@ export function ShuffleArray<T>(array: T[]): T[] {
 export function secondsToTime(val: number): string {
   const expr = new Date(val * 1000).toISOString();
   if (val < 600) {
-    return expr.substr(15, 4);
+    return expr.substring(15, 19);
   } else if (val < 3600) {
-    return expr.substr(14, 5);
+    return expr.substring(14, 19);
   } else if (val < 36000) {
-    return expr.substr(12, 7);
+    return expr.substring(12, 19);
   } else {
-    return expr.substr(11, 8);
+    return expr.substring(11, 19);
   }
 }
 
 export function fractionalSecondsStrToHMS(vals: string): string {
   const decimal = vals.indexOf('.');
-  let suffix: string = decimal > 0 ? vals.substr(decimal) : '';
+  let suffix: string = decimal > 0 ? vals.substring(decimal) : '';
   suffix = suffix.replace(/0+$/g, '');
-  suffix = suffix.length === 1 ? '' : suffix.substr(0, 3);
+  suffix = suffix.length === 1 ? '' : suffix.substring(0, 3);
   const val = parseInt(vals, 10);
   return secondsToTime(val) + suffix;
 }

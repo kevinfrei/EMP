@@ -96,11 +96,11 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   const trimmedTrack = (props.track || '').trim();
   const diskNum =
     trimmedTrack.length > 2
-      ? trimmedTrack.substr(0, trimmedTrack.length - 2)
+      ? trimmedTrack.substring(0, trimmedTrack.length - 2)
       : '';
   const trackNum =
     trimmedTrack.length > 2
-      ? Number.parseInt(trimmedTrack.substr(diskNum.length), 10).toString()
+      ? Number.parseInt(trimmedTrack.substring(diskNum.length), 10).toString()
       : trimmedTrack;
   const isVa = val(vaType, props.va) === 'va';
   const isOST = val(vaType, props.va) === 'ost';

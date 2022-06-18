@@ -2,8 +2,6 @@ import { SongKey } from '@freik/media-core';
 import { atom } from 'recoil';
 import { MakeSortKey } from '../Sorting';
 
-export type PlaylistName = string;
-
 // This is the sort for the current playlist
 export const nowPlayingSortState = atom({
   key: 'nowPlayingSort',

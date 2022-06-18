@@ -55,7 +55,7 @@ function MakeAlbumGroupKey(albumKey: AlbumKey): string {
 /*
 function GetAlbumGroup(groupKey: string): string | void {
   if (groupKey.startsWith('L*')) {
-    return groupKey.substr(2);
+    return groupKey.substring(2);
   }
 }
 */
@@ -67,7 +67,7 @@ function GetArtistAlbum(groupKey: string): [ArtistKey, AlbumKey] | void {
   if (groupKey.startsWith('R*')) {
     const index = groupKey.lastIndexOf('*');
     if (index > 2) {
-      return [groupKey.substring(2, index), groupKey.substring(index + 1)];
+      return [groupKey.substringing(2, 2 + index), groupKey.substring(index + 1)];
     }
   }
 }

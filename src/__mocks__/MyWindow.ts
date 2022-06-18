@@ -91,8 +91,8 @@ function MockWrite(key?: string): Promise<void> {
       reject('Invalid string to save to storage');
       return;
     }
-    const item = key.substr(0, split);
-    const value = key.substr(split + 1);
+    const item = key.substring(0, split);
+    const value = key.substring(split + 1);
     fakeStorage.set(item, value);
     err('Saved!');
     err(key);

@@ -56,11 +56,11 @@ export type SortKey = {
 export function noArticles(phrase: string): string {
   const res = phrase.toLocaleUpperCase();
   if (res.startsWith('THE ')) {
-    return res.substr(4);
+    return res.substring(4);
   } else if (res.startsWith('A ')) {
-    return res.substr(2);
+    return res.substring(2);
   } else if (res.startsWith('AN ')) {
-    return res.substr(3);
+    return res.substring(3);
   }
   return res;
 }
@@ -103,11 +103,13 @@ function MakeSortKeyMultiMap(
 function flipChar(char: string, listOfChars: string): string {
   const loc = listOfChars.toLocaleLowerCase().indexOf(char);
   if (loc > 0) {
-    return char + listOfChars.substr(0, loc) + listOfChars.substr(loc + 1);
+    return (
+      char + listOfChars.substring(0, loc) + listOfChars.substring(loc + 1)
+    );
   } else if (loc === 0) {
     return (
       (listOfChars[0] !== char ? char : char.toLocaleUpperCase()) +
-      listOfChars.substr(1)
+      listOfChars.substring(1)
     );
   }
   return char + listOfChars;
