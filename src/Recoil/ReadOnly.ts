@@ -371,12 +371,6 @@ export const searchFuncFam = selectorFamily<ipc.SearchResults, string>({
   key: 'search',
   get: (searchTerm: string) => async (): Promise<ipc.SearchResults> => {
     const res = await ipc.SearchWhole(searchTerm);
-    if (res) {
-      log('results:');
-      log(res);
-    } else {
-      log('no results');
-    }
     return res || { songs: [], albums: [], artists: [] };
   },
 });

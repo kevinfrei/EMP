@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Effects } from '@freik/elect-render-utils';
-import { SongKey } from '@freik/media-core';
+import { isAlbumKey, isArtistKey, isSongKey, SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
 import { CurrentView } from 'shared';
 import { ShuffleArray } from '../Tools';
@@ -34,6 +34,7 @@ const shuffleState = atom<boolean>({
   effects: [Effects.syncWithMain<boolean>()],
 });
 
+// This handles dealing with the playback order along with the state change
 export const shuffleFunc = selector<boolean>({
   key: 'shuffleFunc',
   get: ({ get }) => get(shuffleState),
@@ -87,7 +88,7 @@ export const repeatState = atom<boolean>({
   effects: [Effects.syncWithMain<boolean>()],
 });
 
-// This is the 'locations' for searching
+// This is the 'locations' for searching for tunes
 export const locationsState = atom<string[]>({
   key: 'locations',
   default: [],
@@ -145,6 +146,8 @@ export const minSongCountForArtistListState = atom<number>({
   effects: [Effects.syncWithMain<number>()],
 });
 
+// The currently selected item from the left bar
+// artist, album, search, tools, settings, etc...
 const curViewBackerState = atom<CurrentView>({
   key: 'CurrentView',
   default: CurrentView.settings,
@@ -184,22 +187,16 @@ export const songListFromKeyFuncFam = selectorFamily<SongKey[] | null, string>({
   get:
     (arg: string) =>
     ({ get }) => {
-      if (arg.startsWith('S')) {
+      if (isSongKey('S')) {
         return [arg];
       }
-      if (arg.startsWith('L')) {
+      if (isAlbumKey('L')) {
         const alb = get(maybeAlbumByKeyFuncFam(arg));
-        if (!alb) {
-          return null;
-        }
-        return alb.songs;
+        return !alb ? null : alb.songs;
       }
-      if (arg.startsWith('R')) {
+      if (isArtistKey('R')) {
         const art = get(maybeArtistByKeyFuncFam(arg));
-        if (!art) {
-          return null;
-        }
-        return art.songs;
+        return !art ? null : art.songs;
       }
       return null;
     },
