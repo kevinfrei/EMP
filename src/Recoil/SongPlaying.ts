@@ -1,4 +1,5 @@
 import { Type } from '@freik/core-utils';
+import { Effects } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
 import { atom, selector } from 'recoil';
 import { repeatState } from './ReadWrite';
@@ -9,12 +10,14 @@ import { repeatState } from './ReadWrite';
 export const currentIndexState = atom<number>({
   key: 'currentIndex',
   default: -1,
+  effects: [Effects.syncWithMain<number>()],
 });
 
 // The order of the playlist to play
 export const songPlaybackOrderState = atom<'ordered' | number[]>({
   key: 'playbackOrder',
   default: 'ordered',
+  effects: [Effects.syncWithMain<'ordered' | number[]>()],
 });
 
 // The name of the active playlist
@@ -22,12 +25,14 @@ export const songPlaybackOrderState = atom<'ordered' | number[]>({
 export const activePlaylistState = atom<string>({
   key: 'nowPlaying',
   default: '',
+  effects: [Effects.syncWithMain<string>()],
 });
 
 // The currently active playlist
 export const songListState = atom<SongKey[]>({
   key: 'currentSongList',
   default: [],
+  effects: [Effects.syncWithMain<SongKey[]>()],
 });
 
 // This is the current index into the nowPlayist (sorted, never shuffled) list

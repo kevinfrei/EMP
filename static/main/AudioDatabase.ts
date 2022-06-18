@@ -11,6 +11,7 @@ import {
   MakeLogger,
   Operations,
   SafelyUnpickle,
+  Sleep,
   Type,
 } from '@freik/core-utils';
 import { Comms, Persistence } from '@freik/elect-main-utils';
@@ -28,6 +29,7 @@ const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
 
 let theAudioDb: AudioDatabase | null;
+let initialUpdateComplete = false;
 
 export async function GetAudioDB(): Promise<AudioDatabase> {
   if (theAudioDb == null) {
@@ -37,6 +39,9 @@ export async function GetAudioDB(): Promise<AudioDatabase> {
 }
 
 export async function GetSimpleMusicDatabase(): Promise<FlatAudioDatabase> {
+  while (!initialUpdateComplete) {
+    await Sleep(50);
+  }
   const db = await GetAudioDB();
   return db.getFlatDatabase();
 }
@@ -79,14 +84,23 @@ export async function UpdateLocations(locs: string): Promise<void> {
     await Promise.all([...add].map((loc) => db.addFileLocation(loc)));
     // This shouldn't be needed, as db.add/remove should update the db as needed
     // await RescanAudioDatase();
-    SendDatabase(db);
+
+    // This isn't necessary. The UI will request the DB, and we wait until the db is complete
+    // UpdateAudioLocations handles this change explicitly
+    // SendDatabase(db);
   } catch (e) {
     err(e);
+  } finally {
+    initialUpdateComplete = true;
   }
 }
 
 export function UpdateAudioLocations(newLocations: string): void {
-  UpdateLocations(newLocations).catch(err);
+  UpdateLocations(newLocations)
+    .catch(err)
+    .then(GetAudioDB)
+    .then((db) => SendDatabase(db))
+    .catch(err);
 }
 
 function getCommonPrefix(

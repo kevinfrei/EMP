@@ -249,7 +249,6 @@ export const albumKeyForSongKeyFuncFam = selectorFamily<AlbumKey, SongKey>({
 
 export const artistStringFuncFam = selectorFamily<string, ArtistKey[]>({
   key: 'ArtistString',
-
   get:
     (artistList: ArtistKey[]) =>
     ({ get }): string => {
