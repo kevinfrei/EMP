@@ -1,7 +1,6 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { Helpers } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { NativeImage } from 'electron';
@@ -32,7 +31,9 @@ export function isHostWindows(): boolean {
   return window.freik ? window.freik.hostOs === 'win32' : false;
 }
 
+// This is mostly just used for debugging...
 export function SetDB(db: FlatAudioDatabase): void {
+  /*
   const albums = db.albums.sort((a, b) =>
     Helpers.NormalizedStringCompare(a.title, b.title),
   );
@@ -42,7 +43,10 @@ export function SetDB(db: FlatAudioDatabase): void {
   const songs = db.songs.sort((a, b) =>
     Helpers.NormalizedStringCompare(a.title, b.title),
   );
-  window.db = { albums, artists, songs };
+  */
+  // eslint-disable-next-line no-console
+  console.log('Database set on window object');
+  window.db = { albums: db.albums, artists: db.artists, songs: db.songs };
 }
 
 export function SetSearch(searchBox: ISearchBox | null): void {

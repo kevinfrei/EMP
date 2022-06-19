@@ -69,3 +69,21 @@ export const transcodeStatusState = atom<TranscodeState>({
     ),
   ],
 });
+
+export const sourceLocationState = atom<string>({
+  key: 'xcodeSrcLoc',
+  default: '',
+  effects: [Effects.syncWithMain<string>()],
+});
+
+export const destLocationState = atom<string>({
+  key: 'xcodeDstLoc',
+  default: '',
+  effects: [Effects.syncWithMain<string>()],
+});
+
+export const xcodeBitRateState = atom<number>({
+  key: 'xcodeMirror',
+  default: 128,
+  effects: [Effects.syncWithMain<number>()],
+});

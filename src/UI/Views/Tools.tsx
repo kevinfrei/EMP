@@ -9,9 +9,19 @@ import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
 import { Expandable, StateToggle, useBoolState } from '@freik/web-utils';
-import { SyntheticEvent, useCallback, useState } from 'react';
-import { SetterOrUpdater } from 'recoil';
+import { SyntheticEvent, useState } from 'react';
+import {
+  SetterOrUpdater,
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
 import { IpcId } from 'shared';
+import {
+  destLocationState,
+  sourceLocationState,
+  xcodeBitRateState,
+} from '../../Recoil/TranscodeState';
 import { TranscodeStatus } from '../TranscodeStatus';
 import './styles/Tools.css';
 
@@ -39,12 +49,12 @@ const getDir = (
 };
 
 export function ToolsView(): JSX.Element {
-  const copyArtworkState = useBoolState(true);
-  const mirrorState = useBoolState(true);
-  const [srcLoc, setSrcLoc] = useState('');
-  const [dstLoc, setDstLoc] = useState('');
+  const copyArtwork = useBoolState(false);
+  const mirror = useBoolState(false);
+  const [srcLoc, setSrcLoc] = useRecoilState(sourceLocationState);
+  const [dstLoc, setDstLoc] = useRecoilState(destLocationState);
   const [err, setError] = useState('');
-  const [bitrate, setBitrate] = useState(128);
+  const bitrate = useRecoilValue(xcodeBitRateState);
   const max = 256;
   const min = 64;
   const step = 4;
@@ -90,16 +100,16 @@ export function ToolsView(): JSX.Element {
     }
   };
 
-  const onChange = useCallback(
-    (event: SyntheticEvent<HTMLElement>, newValue?: string) => {
-      const numVal = Type.isUndefined(newValue)
-        ? newValue
-        : getNumericPart(newValue);
-      if (!Type.isUndefined(numVal)) {
-        setBitrate(numVal);
-      }
-    },
-    [],
+  const onChange = useRecoilCallback(
+    ({ set }) =>
+      (event: SyntheticEvent<HTMLElement>, newValue?: string) => {
+        const numVal = Type.isUndefined(newValue)
+          ? newValue
+          : getNumericPart(newValue);
+        if (!Type.isUndefined(numVal)) {
+          set(xcodeBitRateState, numVal);
+        }
+      },
   );
 
   // To get cover-art, see this page:
@@ -114,11 +124,11 @@ export function ToolsView(): JSX.Element {
         <br />
         <br />
         <Stack horizontal>
-          <StateToggle label="Copy artwork (NYI) " state={copyArtworkState} />
+          <StateToggle label="Copy artwork (NYI) " state={copyArtwork} />
           <span style={{ width: 25 }} />
           <StateToggle
             label="Mirror Source: WARNING- This may delete files! (NYI)"
-            state={mirrorState}
+            state={mirror}
           />
         </Stack>
         <TextField
@@ -156,8 +166,8 @@ export function ToolsView(): JSX.Element {
               void PostMain(IpcId.TranscodingBegin.toString(), {
                 source: srcLoc,
                 dest: dstLoc,
-                artwork: copyArtworkState[0],
-                mirror: mirrorState[0],
+                artwork: copyArtwork[0],
+                mirror: mirror[0],
                 format: 'm4a',
                 bitrate: bitrate * 1024,
               });

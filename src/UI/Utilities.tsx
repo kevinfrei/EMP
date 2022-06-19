@@ -1,9 +1,9 @@
 import { ISliderStyles } from '@fluentui/react';
 import { DebouncedDelay, MakeError } from '@freik/core-utils';
 import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
-import { Catch, useMyTransaction } from '@freik/web-utils';
+import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { IpcId, Keys } from 'shared';
 import { keyBufferState } from '../Recoil/KeyBuffer';
 import { isMiniplayerState } from '../Recoil/Local';
@@ -106,4 +106,9 @@ export function GetHelperText(key: Keys) {
   if (key === 'Right') {
     return accPrefix + '-→';
   }
+}
+
+export function useRecoilBoolState(st: RecoilState<boolean>): BoolState {
+  const [value, setter] = useRecoilState(st);
+  return [value, () => setter(true), () => setter(false)];
 }
