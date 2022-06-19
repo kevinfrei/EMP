@@ -28,6 +28,33 @@
     grid-row: 1;
     grid-column: 4;
     float: right;
+    height: 33px;
+  }
+  #close-button {
+    width: 40px;
+    color: #888;
+    margin-left: 1px;
+    padding: 0px;
+    float: right;
+  }
+  #menu-button,
+  #minimize-button,
+  #maximize-button {
+    width: 30px;
+    color: #888;
+    margin-left: 1px;
+    padding: 0px;
+    float: right;
+  }
+  #close-button:hover {
+    color: white;
+    background-color: #e81123;
+  }
+  #menu-button:hover,
+  #minimize-button:hover,
+  #maximize-button:hover {
+    color: #444;
+    background-color: lightgray;
   }
 }
 

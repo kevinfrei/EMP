@@ -29,20 +29,18 @@ function WindowChrome(): JSX.Element {
     const resMaxTitle = isMax ? 'restore' : 'maximize';
     const resMaxName = isMax ? 'ChromeRestore' : 'GridViewLarge';
     const resMaxId: IpcId = isMax ? IpcId.RestoreWindow : IpcId.MaximizeWindow;
+    const ic = (iconName: string) => ({ iconName, style: { fontSize: 10 } });
     return (
       <span id="window-chrome">
         <IconButton
-          iconProps={{ iconName: 'GlobalNavButton' }}
-          title="hamburger"
-          onClick={() => void Ipc.InvokeMain(IpcId.ShowMenu)}
+          id="close-button"
+          iconProps={ic('ChromeClose')}
+          title="close"
+          onClick={() => void Ipc.InvokeMain(IpcId.CloseWindow)}
         />
         <IconButton
-          iconProps={{ iconName: 'ChromeMinimize' }}
-          title="minimize"
-          onClick={() => void Ipc.InvokeMain(IpcId.MinimizeWindow)}
-        />
-        <IconButton
-          iconProps={{ iconName: resMaxName }}
+          id="maximize-button"
+          iconProps={ic(resMaxName)}
           title={resMaxTitle}
           onClick={() => {
             setIsMax(!isMax);
@@ -50,9 +48,16 @@ function WindowChrome(): JSX.Element {
           }}
         />
         <IconButton
-          iconProps={{ iconName: 'ChromeClose' }}
-          title="close"
-          onClick={() => void Ipc.InvokeMain(IpcId.CloseWindow)}
+          id="minimize-button"
+          iconProps={ic('ChromeMinimize')}
+          title="minimize"
+          onClick={() => void Ipc.InvokeMain(IpcId.MinimizeWindow)}
+        />
+        <IconButton
+          id="menu-button"
+          iconProps={ic('ChevronDown')}
+          title="hamburger"
+          onClick={() => void Ipc.InvokeMain(IpcId.ShowMenu)}
         />
       </span>
     );

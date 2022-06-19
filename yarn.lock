@@ -3455,16 +3455,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@freik/audiodb@npm:0.3.0"
+"@freik/audiodb@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@freik/audiodb@npm:0.3.1"
   dependencies:
-    "@freik/core-utils": ^0.34.0
-    "@freik/media-core": ^0.10.3
-    "@freik/media-utils": ^0.13.4
-    "@freik/node-utils": ^0.21.0
+    "@freik/core-utils": ">=1.2.0"
+    "@freik/media-core": ">=0.10.5"
+    "@freik/media-utils": ">=0.13.5"
+    "@freik/node-utils": ">=1.1.1"
     xxhashjs: ^0.2.2
-  checksum: 7fe9599f95226db97b7e5a2688b1f4bea14e442df944714642f18e6da714916874719155f9eab3ddd08a1fdead1bb10c0cd9c7be2924132491f5ba5f33ee5154
+  checksum: 0b45737ca1671e69129bcd6ab25bb5548eb21fb1a8bf9cb8774127aa7f8382b47e03d59ce98af185ee0a2cac839a94671e51296f40b810f480ccdfb95f5abf63
   languageName: node
   linkType: hard
 
@@ -3519,17 +3519,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/core-utils@npm:^0.33.0":
-  version: 0.33.0
-  resolution: "@freik/core-utils@npm:0.33.0"
-  checksum: 8dfb3f733e421843dff9373f7b1abc97e33ed03817696113ae22c73034f5d86d057976337fdad270654286ae6b46a2033ec304f09b621ed313313f9a1e78e679
-  languageName: node
-  linkType: hard
-
-"@freik/core-utils@npm:^0.34.0":
-  version: 0.34.0
-  resolution: "@freik/core-utils@npm:0.34.0"
-  checksum: 312c8da6d8a96d9d07d75e7810b614d7d2660378cb065ec1a868fe0cfd690c95fa736e98812e65f008e7ec7a4a987842009ff35dcedd8c3a0754a0323f6d5f28
+"@freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:~1.2.0":
+  version: 1.2.0
+  resolution: "@freik/core-utils@npm:1.2.0"
+  checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
   languageName: node
   linkType: hard
 
@@ -3537,13 +3530,6 @@ __metadata:
   version: 1.1.1
   resolution: "@freik/core-utils@npm:1.1.1"
   checksum: 419c8fe9bc712b6ac47eb771487ac7ae65ecceeee2c3afdb633d33588da12c89c34716fb844bb767e23b6f368db98735dccc27bbdd86f6d0e752c94af355cb2e
-  languageName: node
-  linkType: hard
-
-"@freik/core-utils@npm:~1.2.0":
-  version: 1.2.0
-  resolution: "@freik/core-utils@npm:1.2.0"
-  checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
   languageName: node
   linkType: hard
 
@@ -3590,16 +3576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-core@npm:^0.10.3":
-  version: 0.10.3
-  resolution: "@freik/media-core@npm:0.10.3"
-  dependencies:
-    "@freik/core-utils": ^0.34.0
-  checksum: be518983c57d90dbd2c5ec8404d38fb34614ae774b46cde28d2b6ec9e7803bd19b6479641c06d91d9179775f4ed04e7ac79bed53b77bf29192538762e02b0f6d
-  languageName: node
-  linkType: hard
-
-"@freik/media-core@npm:^0.10.5, @freik/media-core@npm:~0.10.5":
+"@freik/media-core@npm:>=0.10.5, @freik/media-core@npm:^0.10.5, @freik/media-core@npm:~0.10.5":
   version: 0.10.5
   resolution: "@freik/media-core@npm:0.10.5"
   dependencies:
@@ -3608,19 +3585,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-utils@npm:^0.13.4":
-  version: 0.13.4
-  resolution: "@freik/media-utils@npm:0.13.4"
-  dependencies:
-    "@freik/core-utils": ^0.34.0
-    "@freik/media-core": ^0.10.3
-    "@freik/node-utils": ^0.20.6
-    music-metadata: ^7.11.4
-  checksum: cc7207eaa4166218c9679fde031a0c277b559c13341e2d200d652baf29412cc7e71beaa44f35833e27500e772a402e44dc0ae7a1a11ae1316de368805798a64e
-  languageName: node
-  linkType: hard
-
-"@freik/media-utils@npm:~0.13.5":
+"@freik/media-utils@npm:>=0.13.5, @freik/media-utils@npm:~0.13.5":
   version: 0.13.5
   resolution: "@freik/media-utils@npm:0.13.5"
   dependencies:
@@ -3632,22 +3597,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/node-utils@npm:^0.20.6":
-  version: 0.20.7
-  resolution: "@freik/node-utils@npm:0.20.7"
+"@freik/node-utils@npm:>=1.1.1, @freik/node-utils@npm:~1.1.1":
+  version: 1.1.1
+  resolution: "@freik/node-utils@npm:1.1.1"
   dependencies:
-    "@freik/core-utils": ^0.33.0
-  checksum: fbfe7cdd6104d998f2212bbaf3cb1ac6c4d0f1baac7488b413e87d3279d0cf716825deb9f28dc3aac7b9ba077322cffba5b19f6f9802b95913abb29c7020c219
-  languageName: node
-  linkType: hard
-
-"@freik/node-utils@npm:^0.21.0":
-  version: 0.21.0
-  resolution: "@freik/node-utils@npm:0.21.0"
-  dependencies:
-    "@freik/core-utils": ^0.34.0
     is-hidden-file: ^1.1.2
-  checksum: 2dd99eb131dd2f45d4eb707f2e15acca61381763a64ce6163aca5e14c92244e00a3d3f33c24a00d6e0c4bc9c36bed468e94c4c814b79701fcd50b122b64e648b
+  peerDependencies:
+    "@freik/core-utils": ">=1.1.1"
+  checksum: e3f08290d2417008a132deffa22a5a1b1e6f96df4c339b4558a051d7ee97985b61d1701c913aae80143581da46357fbe45ee3215766959f59212068443c88d21
   languageName: node
   linkType: hard
 
@@ -3659,17 +3616,6 @@ __metadata:
   peerDependencies:
     "@freik/core-utils": ^1.1.1
   checksum: dc019e718a78023ab7ec9904c9b9cfee0d0fe60731833bc32d284c63f3caca160935f2cfac4d08ab5d5b29d4f19e6dc4a3ac97abffe63f3571dbbb51006ef557
-  languageName: node
-  linkType: hard
-
-"@freik/node-utils@npm:~1.1.1":
-  version: 1.1.1
-  resolution: "@freik/node-utils@npm:1.1.1"
-  dependencies:
-    is-hidden-file: ^1.1.2
-  peerDependencies:
-    "@freik/core-utils": ">=1.1.1"
-  checksum: e3f08290d2417008a132deffa22a5a1b1e6f96df4c339b4558a051d7ee97985b61d1701c913aae80143581da46357fbe45ee3215766959f59212068443c88d21
   languageName: node
   linkType: hard
 
@@ -8727,7 +8673,7 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.4.1
     "@fluentui/react": ^8.76.1
     "@fluentui/react-hooks": ^8.6.0
-    "@freik/audiodb": ^0.3.0
+    "@freik/audiodb": ^0.3.1
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.2.0
     "@freik/elect-main-utils": ^0.2.4
@@ -13634,20 +13580,6 @@ __metadata:
   bin:
     multicast-dns: cli.js
   checksum: f515b49ca964429ab48a4ac8041fcf969c927aeb49ab65288bd982e52c849a870fc3b03565780b0d194a1a02da8821f28b6425e48e95b8107bc9fcc92f571a6f
-  languageName: node
-  linkType: hard
-
-"music-metadata@npm:^7.11.4":
-  version: 7.11.4
-  resolution: "music-metadata@npm:7.11.4"
-  dependencies:
-    content-type: ^1.0.4
-    debug: ^4.3.2
-    file-type: 16.5.3
-    media-typer: ^1.1.0
-    strtok3: ^6.2.4
-    token-types: ^4.1.1
-  checksum: 1d494d780f0c1d8c6fbc6e51684d8ae1de98d4ebbbbe80bf5196ee865e20090391e739a5a56caf9d911962151a7830a74eb691b52626bd0958a05f2d36910705
   languageName: node
   linkType: hard
 
