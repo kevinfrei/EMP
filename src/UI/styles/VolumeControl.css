@@ -69,14 +69,16 @@
     grid-row: 1;
     align-self: center;
     justify-self: end;
-    margin-right: -7px;
+    margin-right: -6px;
+    font-size: 14px;
   }
   #mute {
     grid-column: 1;
     grid-row: 1;
     align-self: center;
     justify-self: end;
-    margin-right: -4px;
+    margin-right: -3px;
+    font-size: 14px;
   }
 }
 
