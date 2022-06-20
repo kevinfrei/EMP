@@ -83,7 +83,7 @@ export const destLocationState = atom<string>({
 });
 
 export const xcodeBitRateState = atom<number>({
-  key: 'xcodeMirror',
+  key: 'xcodeBitRate',
   default: 128,
   effects: [Effects.syncWithMain<number>()],
 });

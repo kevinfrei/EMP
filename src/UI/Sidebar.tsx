@@ -1,8 +1,8 @@
-import { SearchBox, Text } from '@fluentui/react';
+import { FontIcon, SearchBox, Text } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { CurrentView, Keys, st, StrId } from 'shared';
-import { SetSearch } from '../MyWindow';
+import { isHostMac, SetSearch } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
@@ -83,8 +83,16 @@ export function Sidebar(): JSX.Element {
   const onFocus = useRecoilCallback(({ set }) => () => {
     set(curViewFunc, CurrentView.search);
   });
+  const otherGrabber = isHostMac() ? (
+    <br />
+  ) : (
+    <span id="other-grabber">
+      <FontIcon id="grab-icon" iconName="More" />
+    </span>
+  );
   return (
     <div id="sidebar">
+      {otherGrabber}
       <SearchBox
         placeholder="Search"
         onSearch={onSearch}
@@ -93,7 +101,7 @@ export function Sidebar(): JSX.Element {
         componentRef={(ref) => SetSearch(ref)}
         title={GetHelperText(Keys.Find)}
       />
-      <br />
+      <div style={{ height: 8 }} />
       {views.map((ve, index) => getEntry(curView, setCurView, ve, index))}
       <br />
       <Notifier />

@@ -23,12 +23,14 @@
     align-self: center;
     width: 86px;
     margin-left: 2px;
+    z-index: 100;
   }
   #volIcon {
     grid-column: 1;
     grid-row: 1;
     align-self: center;
     justify-self: end;
+    z-index: 100;
   }
   #mute {
     grid-column: 1;
@@ -36,6 +38,7 @@
     align-self: center;
     justify-self: end;
     margin-right: 4px;
+    z-index: 100;
   }
 }
 
@@ -57,15 +60,16 @@
     grid-column: 2;
     justify-self: center;
     align-self: center;
-    width: 64px;
-    margin-left: 2px;
+    width: 60px;
+    margin-left: 4px;
+    margin-right: 2px;
   }
   #volIcon {
     grid-column: 1;
     grid-row: 1;
     align-self: center;
     justify-self: end;
-    margin-right: -8px;
+    margin-right: -7px;
   }
   #mute {
     grid-column: 1;

@@ -65,24 +65,24 @@ function WindowChrome(): JSX.Element {
 }
 
 export function App(): JSX.Element {
+  const lilGrabber = isHostMac() ? 'grab-mac' : 'grab-other';
   return (
     <RecoilRoot>
-      <span id="grabber">
-        <Spinner label="Brief Communication. Please standby...">
-          <FreikElem />
-          <Utilities />
-        </Spinner>
-      </span>
-      <span id="left-column"></span>
-      <span id="top-row"></span>
+      <Spinner>
+        <FreikElem />
+        <Utilities />
+        <span id={lilGrabber} />
+      </Spinner>
+      <span id="left-column" />
+      <span id="top-row" />
       <WindowChrome />
-      <Spinner label="Intializing...">
+      <Spinner>
         <PlaybackControls />
         <SongPlaying />
         <VolumeControl />
         <Sidebar />
       </Spinner>
-      <Spinner label="Please wait..." size={SpinnerSize.large}>
+      <Spinner size={SpinnerSize.large}>
         <ViewSelector />
       </Spinner>
       <SongDetailPanel />

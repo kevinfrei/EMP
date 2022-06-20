@@ -15,16 +15,16 @@
     font-weight: lighter;
   }
   #img-current-cover-art {
-    height: 32px;
-    width: 32px;
+    height: 36px;
+    width: 36px;
     object-fit: contain;
   }
   #song-cover-art {
     grid-column: 1;
     grid-row: 1 / 4;
-    height: 32px;
-    width: 32px;
-    padding: 2px;
+    height: 36px;
+    width: 36px;
+    padding: 0px;
     -webkit-app-region: drag;
     border-right: solid 1px rgb(230, 230, 230);
   }
@@ -61,15 +61,14 @@
   .song-slider {
     grid-row: 3;
     grid-column: 2 / 5;
-    margin: -12px 0px;
+    margin: -12px -4px;
     border: 0px;
     padding: 0px;
   }
   #showPlayOrder {
     grid-row: 2;
     grid-column: 5;
-    border: 1px;
-    border-color: black;
+    margin-right: 1pt;
   }
 }
 

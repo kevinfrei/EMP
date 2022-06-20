@@ -15,7 +15,6 @@
       brightness(95%) contrast(94%);
     cursor: pointer;
   }
-
   .sidebar-icon {
     grid-column: 1;
     height: 18px;
@@ -23,11 +22,21 @@
     margin-top: 6px;
     margin-left: 4px;
   }
-
   .sidebar-text {
     grid-column: 2;
     align-self: center;
     margin: 4px;
+  }
+  #other-grabber {
+    -webkit-app-region: drag;
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    margin-top: -10px;
+  }
+  #grab-icon {
+    grid-row: 1;
+    grid-column: 1;
   }
 }
 @media (max-width: 499px) {
