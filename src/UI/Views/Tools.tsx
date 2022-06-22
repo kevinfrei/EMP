@@ -1,5 +1,9 @@
 import {
+  ChoiceGroup,
   DefaultButton,
+  IChoiceGroupOption,
+  IChoiceGroupStyles,
+  Label,
   SpinButton,
   Stack,
   Text,
@@ -9,7 +13,7 @@ import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
 import { Expandable, StateToggle, useBoolState } from '@freik/web-utils';
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useCallback, useState } from 'react';
 import {
   SetterOrUpdater,
   useRecoilCallback,
@@ -33,6 +37,13 @@ const targetFormats: IDropdownOption[] = [
 ];
 */
 
+const sourceOptions: IChoiceGroupOption[] = [
+  { key: 'dir', text: 'Disk location' },
+  { key: 'album', text: 'Album' },
+  { key: 'artist', text: 'Artist' },
+  { key: 'playlist', text: 'Playlist' },
+];
+
 const getDir = (
   setter: SetterOrUpdater<string>,
   setError: SetterOrUpdater<string>,
@@ -48,7 +59,7 @@ const getDir = (
     });
 };
 
-export function ToolsView(): JSX.Element {
+export function TranscoderConfiguration(): JSX.Element {
   const copyArtwork = useBoolState(false);
   const mirror = useBoolState(false);
   const [srcLoc, setSrcLoc] = useRecoilState(sourceLocationState);
@@ -112,6 +123,34 @@ export function ToolsView(): JSX.Element {
       },
   );
 
+  const [selectedKey, setSelectedKey] = useState<string | undefined>('dir');
+
+  const onChangeSourceOption = useCallback(
+    (
+      ev?: React.FormEvent<HTMLElement | HTMLInputElement>,
+      option?: IChoiceGroupOption,
+    ) => {
+      if (!Type.isUndefined(option)) setSelectedKey(option.key);
+    },
+    [],
+  );
+
+  // Still fighting this :/
+  const customStyles: Partial<IChoiceGroupStyles> = {
+    flexContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      alignItems: 'flex-start',
+    },
+    root: { width: '90%', display: 'flex', flexDirection: 'row' },
+    label: {
+      flexGrow: '1',
+      display: 'flex',
+      flexDirection: 'row',
+      fontFamily: 'monospace',
+    },
+  };
   // To get cover-art, see this page:
   // https://stackoverflow.com/questions/17798709/ffmpeg-how-to-embed-cover-art-image-to-m4a
   return (
@@ -129,6 +168,16 @@ export function ToolsView(): JSX.Element {
           <StateToggle
             label="Mirror Source: WARNING- This may delete files! (NYI)"
             state={mirror}
+          />
+        </Stack>
+        <Stack horizontal>
+          <Label>Howdy:&nbsp;</Label>
+          <ChoiceGroup
+            selectedKey={selectedKey}
+            options={sourceOptions}
+            onChange={onChangeSourceOption}
+            styles={customStyles}
+            // label="Source to transcode:"
           />
         </Stack>
         <TextField
@@ -176,6 +225,16 @@ export function ToolsView(): JSX.Element {
         </Stack>
         <Stack>{err}</Stack>
         <TranscodeStatus />
+      </Expandable>
+    </Stack>
+  );
+}
+
+export function ToolsView(): JSX.Element {
+  return (
+    <Stack className="tools-view">
+      <Expandable separator label="Transcoder" defaultShow>
+        <TranscoderConfiguration />
       </Expandable>
     </Stack>
   );

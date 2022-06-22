@@ -3,6 +3,7 @@ import { Effects } from '@freik/elect-render-utils';
 import { atom } from 'recoil';
 import { IpcId, TranscodeState } from 'shared';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const err = MakeError('transcoding-recoil');
 
 type FailType = { file: string; error: string };
@@ -42,6 +43,8 @@ const emptyXcodeInfo: TranscodeState = {
   filesTranscoded: [],
 };
 
+const xcodeErr = (curStatus: string) => ({ ...emptyXcodeInfo, curStatus });
+
 export const transcodeStatusState = atom<TranscodeState>({
   key: IpcId.TranscodingUpdate,
   default: emptyXcodeInfo,
@@ -49,23 +52,12 @@ export const transcodeStatusState = atom<TranscodeState>({
   effects: [
     Effects.oneWayFromMain(
       // TODO: I don't think I need to initialize this thing...
-      (): TranscodeState => ({
-        ...emptyXcodeInfo,
-        curStatus: 'Transcoding currently inactive',
-      }),
+      (): TranscodeState => xcodeErr('Transcoding currently inactive'),
       IpcId.TranscodingUpdate,
-      (mxu: unknown) => {
-        if (isTranscodeState(mxu)) {
-          return mxu;
-        } else {
-          err('Invalid transcode state received:');
-          err(mxu);
-          return {
-            ...emptyXcodeInfo,
-            curStatus: 'Invalid Transcode state from backend :/',
-          };
-        }
-      },
+      (mxu: unknown) =>
+        isTranscodeState(mxu)
+          ? mxu
+          : xcodeErr('Invalid Transcode state from backend :/'),
     ),
   ],
 });

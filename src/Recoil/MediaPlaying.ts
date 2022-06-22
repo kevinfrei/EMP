@@ -8,7 +8,10 @@ export type MediaTime = {
 
 // This reflects the current state of audio playback
 // True: It's playing; False: It's paused/stopped
-export const playingState = atom<boolean>({ key: 'playing', default: false });
+export const playingState = atom<boolean>({
+  key: 'playing',
+  default: false,
+});
 
 // The duration & current position of the currently playing song
 export const mediaTimeState = atom<MediaTime>({
