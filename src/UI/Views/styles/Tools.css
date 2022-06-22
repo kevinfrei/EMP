@@ -1,3 +1,17 @@
 .tools-view {
   margin: 10px;
 }
+
+#xcode-source-area {
+  display: grid;
+  grid-template-columns: 2fr 8fr;
+  align-items: end;
+  column-gap: 10pt;
+}
+
+#xcode-options {
+  display: grid;
+  column-gap: 10pt;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: baseline;
+}

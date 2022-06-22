@@ -62,10 +62,10 @@ export const transcodeStatusState = atom<TranscodeState>({
   ],
 });
 
-export const sourceLocationState = atom<string>({
+export const sourceLocationState = atom<string[]>({
   key: 'xcodeSrcLoc',
-  default: '',
-  effects: [Effects.syncWithMain<string>()],
+  default: ['', '', '', ''],
+  effects: [Effects.syncWithMain<string[]>()],
 });
 
 export const destLocationState = atom<string>({
