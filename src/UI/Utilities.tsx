@@ -1,8 +1,15 @@
-import { ISliderStyles } from '@fluentui/react';
-import { DebouncedDelay, MakeError } from '@freik/core-utils';
+import {
+  ISliderStyles,
+  ISpinButtonStyleProps,
+  ISpinButtonStyles,
+  IStyleFunctionOrObject,
+  Position,
+  SpinButton,
+} from '@fluentui/react';
+import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
 import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
-import { useEffect } from 'react';
+import { CSSProperties, SyntheticEvent, useEffect } from 'react';
 import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { IpcId, Keys } from 'shared';
 import { keyBufferState } from '../Recoil/KeyBuffer';
@@ -111,4 +118,77 @@ export function GetHelperText(key: Keys) {
 export function useRecoilBoolState(st: RecoilState<boolean>): BoolState {
   const [value, setter] = useRecoilState(st);
   return [value, () => setter(true), () => setter(false)];
+}
+
+export type StringSpinButtonProps = {
+  id?: string;
+  className?: string;
+  label?: string;
+  value: number;
+  filter: (val: string) => number | undefined;
+  format: (val: number) => string;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (newValue?: number) => void;
+  style?: CSSProperties;
+  labelPosition?: Position;
+  styles?: IStyleFunctionOrObject<ISpinButtonStyleProps, ISpinButtonStyles>;
+};
+
+export function StringSpinButton({
+  id,
+  className,
+  label,
+  value,
+  filter,
+  format,
+  min,
+  max,
+  step,
+  onChange,
+  style,
+  styles,
+  labelPosition,
+}: StringSpinButtonProps): JSX.Element {
+  const onIncrement = (val: string): string | void => {
+    const num = filter(val);
+    if (Type.isNumber(num)) {
+      return format(Math.min(num + step, max));
+    }
+  };
+  const onDecrement = (val: string): string | void => {
+    const num = filter(val);
+    if (Type.isNumber(num)) {
+      return format(Math.max(num - step, min));
+    }
+  };
+  const onValidate = (val: string): string | void => {
+    const num = filter(val);
+    if (Type.isNumber(num)) {
+      return format(Math.max(Math.min(num, max), min));
+    }
+  };
+  const internalChange = (
+    event: SyntheticEvent<HTMLElement>,
+    newValue?: string,
+  ) => {
+    const numVal = Type.isUndefined(newValue) ? newValue : filter(newValue);
+    onChange(numVal);
+  };
+  return (
+    <SpinButton
+      id={id}
+      className={className}
+      label={label}
+      value={format(value)}
+      style={style}
+      styles={styles}
+      labelPosition={labelPosition}
+      onChange={internalChange}
+      onValidate={onValidate}
+      onIncrement={onIncrement}
+      onDecrement={onDecrement}
+    />
+  );
 }

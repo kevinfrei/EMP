@@ -1,9 +1,8 @@
 import {
-  ComboBox,
   DefaultButton,
-  IComboBox,
+  Dropdown,
   IComboBoxOption,
-  SpinButton,
+  IDropdownOption,
   Stack,
   Text,
   TextField,
@@ -12,7 +11,7 @@ import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
 import { StateToggle, useBoolState } from '@freik/web-utils';
-import { SyntheticEvent, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   SetterOrUpdater,
   useRecoilCallback,
@@ -25,6 +24,7 @@ import {
   sourceLocationState,
   xcodeBitRateState,
 } from '../../../Recoil/TranscodeState';
+import { StringSpinButton } from '../../Utilities';
 import '../styles/Tools.css';
 import { TranscodeStatus } from './TranscodeStatus';
 
@@ -80,71 +80,35 @@ export function TranscoderConfiguration(): JSX.Element {
   const [dstLoc, setDstLoc] = useRecoilState(destLocationState);
   const [err, setError] = useState('');
   const bitrate = useRecoilValue(xcodeBitRateState);
-  const max = 320;
-  const min = 64;
-  const step = 4;
-  const suffix = 'Kbps';
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
-  const getNumericPart = (value: string): number | undefined => {
-    const valueRegex = /^(\d+).*/;
-    if (valueRegex.test(value)) {
-      const numericValue = Number(value.replace(valueRegex, '$1'));
-      return isNaN(numericValue) ? undefined : numericValue;
+  const onChange = useRecoilCallback(({ set }) => (numVal?: number) => {
+    if (!Type.isUndefined(numVal)) {
+      set(xcodeBitRateState, numVal);
     }
-    return undefined;
-  };
-
-  /** Increment the value (or return nothing to keep the previous value if invalid) */
-  const onIncrement = (value: string): string | void => {
-    const numericValue = getNumericPart(value);
-    if (numericValue !== undefined) {
-      return String(Math.min(numericValue + step, max)) + suffix;
-    }
-  };
-
-  /** Decrement the value (or return nothing to keep the previous value if invalid) */
-  const onDecrement = (value: string): string | void => {
-    const numericValue = getNumericPart(value);
-    if (numericValue !== undefined) {
-      return String(Math.max(numericValue - step, min)) + suffix;
-    }
-  };
-
-  /**
-   * Clamp the value within the valid range (or return nothing to keep the previous value
-   * if there's not valid numeric input)
-   */
-  const onValidate = (value: string): string | void => {
-    let numericValue = getNumericPart(value);
-    if (numericValue !== undefined) {
-      numericValue = Math.min(numericValue, max);
-      numericValue = Math.max(numericValue, min);
-      return String(numericValue) + suffix;
-    }
-  };
-
-  const onChange = useRecoilCallback(
-    ({ set }) =>
-      (event: SyntheticEvent<HTMLElement>, newValue?: string) => {
-        const numVal = Type.isUndefined(newValue)
-          ? newValue
-          : getNumericPart(newValue);
-        if (!Type.isUndefined(numVal)) {
-          set(xcodeBitRateState, numVal);
-        }
-      },
-  );
+  });
 
   const onSelectSource = useCallback(
-    (event: React.FormEvent<IComboBox>, option?: IComboBoxOption): void => {
-      const key = option?.key;
-      if (Type.isString(key)) setSrcLocType(key);
+    (
+      event: React.FormEvent<HTMLDivElement>,
+      option?: IDropdownOption,
+    ): void => {
+      if (Type.isString(option)) setSrcLocType(option);
     },
     [],
   );
 
+  // TODO: Create the element for the transcode source type (and populated it, if appropriate)
+  let xcodeSrcLocElem = (
+    <TextField
+      value={srcLoc[indexFromKey(srcLocType)]}
+      readOnly
+      required
+      onClick={() => {}}
+      iconProps={{ iconName: 'More' }}
+    />
+  );
   // To get cover-art, see this page:
   // https://stackoverflow.com/questions/17798709/ffmpeg-how-to-embed-cover-art-image-to-m4a
   return (
@@ -154,19 +118,13 @@ export function TranscoderConfiguration(): JSX.Element {
       </Text>
       <br />
       <div id="xcode-source-area">
-        <ComboBox
+        <Dropdown
           label="Music Source"
           selectedKey={srcLocType}
           onChange={onSelectSource}
           options={sourceOptions}
         />
-        <TextField
-          value={srcLoc[indexFromKey(srcLocType)]}
-          readOnly
-          required
-          onClick={() => {}}
-          iconProps={{ iconName: 'More' }}
-        />
+        {xcodeSrcLocElem}
       </div>
       <TextField
         label="Destination"
@@ -178,13 +136,18 @@ export function TranscoderConfiguration(): JSX.Element {
       />
       <br />
       <div id="xcode-options">
-        <SpinButton
+        <StringSpinButton
           label="Target Bit Rate"
-          value={`${bitrate} Kbps`}
+          value={bitrate}
+          filter={(val) => {
+            const numericValue = parseInt(val.trim(), 10);
+            return isNaN(numericValue) ? undefined : numericValue;
+          }}
+          format={(val) => `${val} Kbps`}
           onChange={onChange}
-          onValidate={onValidate}
-          onIncrement={onIncrement}
-          onDecrement={onDecrement}
+          min={64}
+          max={320}
+          step={4}
         />
         <StateToggle label="Copy artwork (NYI) " state={copyArtwork} />
         <StateToggle
