@@ -16,6 +16,10 @@ import { IpcId } from 'shared';
 import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
+import {
+  minSongCountForArtistListState,
+  showArtistsWithFullAlbumsState,
+} from './ReadWrite';
 import { songListState } from './SongPlaying';
 
 // type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
@@ -25,6 +29,10 @@ export type AlbumDescription = {
   album: string;
   year: string;
 };
+
+export type AlbumDescriptionWithKey = {
+  key: AlbumKey;
+} & AlbumDescription;
 
 export type SongDescription = {
   title: string;
@@ -334,12 +342,15 @@ export const maybeDataForSongFunc = selectorFamily<
     },
 });
 
-export const dataForAlbumFuncFam = selectorFamily<AlbumDescription, AlbumKey>({
+export const dataForAlbumFuncFam = selectorFamily<
+  AlbumDescriptionWithKey,
+  AlbumKey
+>({
   key: 'DataForAlbum',
   get:
     (ak: AlbumKey) =>
-    ({ get }): AlbumDescription => {
-      const res = { artist: '', album: '', year: '' };
+    ({ get }): AlbumDescriptionWithKey => {
+      const res = { artist: '', album: '', year: '', key: '' };
       if (!ak) {
         return res;
       }
@@ -348,6 +359,7 @@ export const dataForAlbumFuncFam = selectorFamily<AlbumDescription, AlbumKey>({
         res.album = album.title;
         res.year = album.year ? album.year.toString() : '';
       }
+      res.key = ak;
       if (album.primaryArtists.length) {
         const maybeArtistName = get(artistStringFuncFam(album.primaryArtists));
         if (maybeArtistName) {
@@ -362,6 +374,16 @@ export const dataForAlbumFuncFam = selectorFamily<AlbumDescription, AlbumKey>({
       }
       return res;
     },
+});
+
+export const allAlbumsDataFunc = selector<AlbumDescriptionWithKey[]>({
+  key: 'AllAlbumData',
+  get: ({ get }) => {
+    const allAlbums = get(allAlbumsFunc);
+    return [...allAlbums.keys()].map((l: AlbumKey) =>
+      get(dataForAlbumFuncFam(l)),
+    );
+  },
 });
 
 export const searchTermState = atom<string>({ key: 'searchTerm', default: '' });
@@ -473,4 +495,28 @@ export const commonDataFuncFam = selectorFamily<MetadataProps, SongKey[]>({
       }
       return props;
     },
+});
+
+export const filteredArtistsFunc = selector<Artist[]>({
+  key: 'filteredArtists',
+  get: ({ get }) => {
+    const fullAlbums = get(showArtistsWithFullAlbumsState);
+    const minSongCount = get(minSongCountForArtistListState);
+    const artists = [...get(allArtistsFunc).values()];
+    if (fullAlbums) {
+      const albums = get(allAlbumsFunc);
+      return artists.filter((artist) => {
+        for (const lKey of artist.albums) {
+          const album = albums.get(lKey);
+          if (album && album.primaryArtists.indexOf(artist.key) >= 0) {
+            return true;
+          }
+        }
+        return false;
+      });
+    } else if (minSongCount > 1) {
+      return artists.filter((artist) => artist.songs.length >= minSongCount);
+    }
+    return artists;
+  },
 });

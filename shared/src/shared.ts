@@ -142,6 +142,19 @@ export type TranscodeState = {
   itemsRemoved?: string[];
 };
 
+export enum TranscodeSourceType {
+  Playlist = 'p',
+  Artist = 'r',
+  Album = 'l',
+  Disk = 'd',
+}
+
+export type TranscodeSourceTypeNames = keyof typeof TranscodeSourceType;
+
+export function isTranscodeSourceType(v: unknown): v is TranscodeSourceType {
+  return v === 'p' || v === 'r' || v === 'l' || v === 'd';
+}
+
 /*
 export enum Decisions {
   approve,

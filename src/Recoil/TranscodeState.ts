@@ -1,8 +1,10 @@
 import { MakeError, Type } from '@freik/core-utils';
 import { Effects } from '@freik/elect-render-utils';
 import { AlbumKey, ArtistKey, PlaylistName } from '@freik/media-core';
-import { atom, selector } from 'recoil';
-import { IpcId, TranscodeState } from 'shared';
+import { atom, selector, selectorFamily } from 'recoil';
+import { IpcId, TranscodeSourceType, TranscodeState } from 'shared';
+import { allPlaylistsFunc } from './PlaylistsState';
+import { allAlbumsFunc, allArtistsFunc } from './ReadOnly';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const err = MakeError('transcoding-recoil');
@@ -63,9 +65,9 @@ export const transcodeStatusState = atom<TranscodeState>({
   ],
 });
 
-export const sourceLocationTypeState = atom<'p' | 'r' | 'l' | 'd'>({
+export const sourceLocationTypeState = atom<TranscodeSourceType>({
   key: 'xcodeSrcLocType',
-  default: 'p',
+  default: TranscodeSourceType.Playlist,
 });
 
 export const sourceLocationDirState = atom<string>({
@@ -92,25 +94,52 @@ export const sourceLocationAlbumState = atom<AlbumKey>({
   effects: [Effects.syncWithMain<AlbumKey>()],
 });
 
-export const validSourceState = selector<boolean>({
+const validPlaylist = selectorFamily<boolean, PlaylistName>({
+  key: 'validPlaylist',
+  get:
+    (plName: PlaylistName) =>
+    ({ get }) => {
+      return get(allPlaylistsFunc).has(plName);
+    },
+});
+
+const validArtist = selectorFamily<boolean, ArtistKey>({
+  key: 'validArtist',
+  get:
+    (artistKey: ArtistKey) =>
+    ({ get }) => {
+      return get(allArtistsFunc).has(artistKey);
+    },
+});
+
+const validAlbum = selectorFamily<boolean, AlbumKey>({
+  key: 'validAlbum',
+  get:
+    (albumKey: AlbumKey) =>
+    ({ get }) => {
+      return get(allAlbumsFunc).has(albumKey);
+    },
+});
+
+export const validSourceFunc = selector<boolean>({
   key: 'xcodeValidSource',
   get: ({ get }) => {
     const sel = get(sourceLocationTypeState);
     switch (sel) {
-      case 'p':
-        return get(sourceLocationPlaylistState).length > 0;
-      case 'r':
-        return get(sourceLocationArtistState).length > 0;
-      case 'l':
-        return get(sourceLocationAlbumState).length > 0;
-      case 'd':
+      case TranscodeSourceType.Playlist:
+        return get(validPlaylist(get(sourceLocationPlaylistState)));
+      case TranscodeSourceType.Artist:
+        return get(validArtist(get(sourceLocationArtistState)));
+      case TranscodeSourceType.Album:
+        return get(validAlbum(get(sourceLocationAlbumState)));
+      case TranscodeSourceType.Disk:
         return get(sourceLocationDirState).length > 0;
     }
   },
 });
 
-export const sourceLocationDescriptorState = selector<{
-  type: 'p' | 'd' | 'r' | 'l';
+export const sourceLocationDescriptorFunc = selector<{
+  type: TranscodeSourceType;
   loc: string;
 }>({
   key: 'xcodeSourceLocDescr',
@@ -118,16 +147,16 @@ export const sourceLocationDescriptorState = selector<{
     let loc: string;
     const type = get(sourceLocationTypeState);
     switch (type) {
-      case 'p':
+      case TranscodeSourceType.Playlist:
         loc = get(sourceLocationPlaylistState);
         break;
-      case 'r':
+      case TranscodeSourceType.Artist:
         loc = get(sourceLocationArtistState);
         break;
-      case 'l':
+      case TranscodeSourceType.Album:
         loc = get(sourceLocationAlbumState);
         break;
-      case 'd':
+      case TranscodeSourceType.Disk:
         loc = get(sourceLocationDirState);
         break;
     }

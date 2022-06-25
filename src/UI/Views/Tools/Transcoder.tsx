@@ -11,27 +11,32 @@ import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
 import { StateToggle, useBoolState } from '@freik/web-utils';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   SetterOrUpdater,
   useRecoilCallback,
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { IpcId } from 'shared';
+import { IpcId, isTranscodeSourceType, TranscodeSourceType } from 'shared';
 import {
   destLocationState,
   sourceLocationAlbumState,
   sourceLocationArtistState,
-  sourceLocationDescriptorState,
+  sourceLocationDescriptorFunc,
   sourceLocationDirState,
   sourceLocationPlaylistState,
   sourceLocationTypeState,
-  validSourceState,
+  validSourceFunc,
   xcodeBitRateState,
 } from '../../../Recoil/TranscodeState';
 import { StringSpinButton } from '../../Utilities';
 import '../styles/Tools.css';
+import {
+  AlbumSelector,
+  ArtistSelector,
+  PlaylistSelector,
+} from './SourceSelectors';
 import { TranscodeStatus } from './TranscodeStatus';
 
 /*
@@ -43,18 +48,11 @@ const targetFormats: IDropdownOption[] = [
 */
 
 const sourceOptions: IComboBoxOption[] = [
-  { key: 'p', text: 'Playlist' },
-  { key: 'r', text: 'Artist' },
-  { key: 'l', text: 'Album' },
-  { key: 'd', text: 'Disk location' },
+  { key: TranscodeSourceType.Playlist, text: 'Playlist' },
+  { key: TranscodeSourceType.Artist, text: 'Artist' },
+  { key: TranscodeSourceType.Album, text: 'Album' },
+  { key: TranscodeSourceType.Disk, text: 'Disk location' },
 ];
-
-function isValidSourceLocType(val: unknown): val is 'p' | 'r' | 'l' | 'd' {
-  return (
-    Type.isString(val) &&
-    (val === 'p' || val === 'r' || val === 'l' || val === 'd')
-  );
-}
 
 const getDir = (
   setter: SetterOrUpdater<string>,
@@ -76,20 +74,11 @@ export function TranscoderConfiguration(): JSX.Element {
   const mirror = useBoolState(false);
   const [srcLocType, setSrcLocType] = useRecoilState(sourceLocationTypeState);
   const [srcDirLoc, setSrcDirLoc] = useRecoilState(sourceLocationDirState);
-  const [srcPlaylistLoc, setSrcPlaylistLoc] = useRecoilState(
-    sourceLocationPlaylistState,
-  );
-  const [srcArtistLoc, setSrcArtistLoc] = useRecoilState(
-    sourceLocationArtistState,
-  );
-  const [srcAlbumLoc, setSrcAlbumLoc] = useRecoilState(
-    sourceLocationAlbumState,
-  );
   const [dstLoc, setDstLoc] = useRecoilState(destLocationState);
   const [err, setError] = useState('');
   const bitrate = useRecoilValue(xcodeBitRateState);
-  const validSource = useRecoilValue(validSourceState);
-  const srcLocDescr = useRecoilValue(sourceLocationDescriptorState);
+  const validSource = useRecoilValue(validSourceFunc);
+  const srcLocDescr = useRecoilValue(sourceLocationDescriptorFunc);
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
@@ -99,58 +88,30 @@ export function TranscoderConfiguration(): JSX.Element {
     }
   });
 
-  const onSelectSource = useCallback(
-    (
-      event: React.FormEvent<HTMLDivElement>,
-      option?: IDropdownOption,
-    ): void => {
-      if (!Type.isUndefined(option) && isValidSourceLocType(option.key)) {
-        setSrcLocType(option.key);
-      }
-    },
-    [],
-  );
+  const onSelectSource = (
+    event: React.FormEvent<HTMLDivElement>,
+    option?: IDropdownOption,
+  ): void => {
+    if (!Type.isUndefined(option) && isTranscodeSourceType(option.key)) {
+      setSrcLocType(option.key);
+    }
+  };
 
   // TODO: Create the element for the transcode source type (and populated it, if appropriate)
   let xcodeSrcLocElem;
   switch (srcLocType) {
-    case 'p':
+    case TranscodeSourceType.Playlist:
       xcodeSrcLocElem = (
-        <TextField
-          value={srcPlaylistLoc}
-          onChange={(ev, newValue: string | undefined) => {
-            if (Type.isString(newValue)) {
-              setSrcPlaylistLoc(newValue);
-            }
-          }}
-        />
+        <PlaylistSelector value={sourceLocationPlaylistState} />
       );
       break;
-    case 'r':
-      xcodeSrcLocElem = (
-        <TextField
-          value={srcArtistLoc}
-          onChange={(ev, newValue: string | undefined) => {
-            if (Type.isString(newValue)) {
-              setSrcArtistLoc(newValue);
-            }
-          }}
-        />
-      );
+    case TranscodeSourceType.Artist:
+      xcodeSrcLocElem = <ArtistSelector value={sourceLocationArtistState} />;
       break;
-    case 'l':
-      xcodeSrcLocElem = (
-        <TextField
-          value={srcAlbumLoc}
-          onChange={(ev, newValue: string | undefined) => {
-            if (Type.isString(newValue)) {
-              setSrcAlbumLoc(newValue);
-            }
-          }}
-        />
-      );
+    case TranscodeSourceType.Album:
+      xcodeSrcLocElem = <AlbumSelector value={sourceLocationAlbumState} />;
       break;
-    case 'd':
+    case TranscodeSourceType.Disk:
     default:
       xcodeSrcLocElem = (
         <TextField
