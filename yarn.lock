@@ -2938,6 +2938,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.18.3":
+  version: 7.18.3
+  resolution: "@babel/runtime@npm:7.18.3"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: db8526226aa02cfa35a5a7ac1a34b5f303c62a1f000c7db48cb06c6290e616483e5036ab3c4e7a84d0f3be6d4e2148d5fe5cec9564bf955f505c3e764b83d7f1
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.15.4, @babel/template@npm:^7.16.0, @babel/template@npm:^7.3.3":
   version: 7.16.0
   resolution: "@babel/template@npm:7.16.0"
@@ -3318,9 +3327,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react-focus@npm:^8.7.0":
-  version: 8.7.0
-  resolution: "@fluentui/react-focus@npm:8.7.0"
+"@fluentui/react-focus@npm:^8.7.1":
+  version: 8.7.1
+  resolution: "@fluentui/react-focus@npm:8.7.1"
   dependencies:
     "@fluentui/keyboard-key": ^0.4.1
     "@fluentui/merge-styles": ^8.5.2
@@ -3331,7 +3340,7 @@ __metadata:
   peerDependencies:
     "@types/react": ">=16.8.0 <18.0.0"
     react: ">=16.8.0 <18.0.0"
-  checksum: 15e0ba9f853c2546af50bac2129c9a85cfcf2be7c7e6977d4ebdfb72df529a83ec80c0cebbdeb6ac09fcc49d86cf949f1b691160285f9ab704cb1c6738f81d7d
+  checksum: f39bc466d0cd3a24129e9cc86c2fbd334f23f611f7ef2ed6dc05752f3d30c7f4225d7295f0e3c22c901a8ea1788db85d1d22e0fca0e8299c3cd314cb7b047850
   languageName: node
   linkType: hard
 
@@ -3375,15 +3384,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react@npm:^8.77.0":
-  version: 8.77.0
-  resolution: "@fluentui/react@npm:8.77.0"
+"@fluentui/react@npm:^8.77.1":
+  version: 8.77.1
+  resolution: "@fluentui/react@npm:8.77.1"
   dependencies:
     "@fluentui/date-time-utilities": ^8.5.1
     "@fluentui/font-icons-mdl2": ^8.4.1
     "@fluentui/foundation-legacy": ^8.2.8
     "@fluentui/merge-styles": ^8.5.2
-    "@fluentui/react-focus": ^8.7.0
+    "@fluentui/react-focus": ^8.7.1
     "@fluentui/react-hooks": ^8.6.0
     "@fluentui/react-portal-compat-context": ^9.0.0-rc.2
     "@fluentui/react-window-provider": ^2.2.1
@@ -3398,7 +3407,7 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <18.0.0"
     react: ">=16.8.0 <18.0.0"
     react-dom: ">=16.8.0 <18.0.0"
-  checksum: 04a2cd57e19fa23493512157dfc4f4abdb83425bb0eac579097f633eb24fe7ce851efff920fb4762298f29a7f02d314730bb5d420ef40b2663961a6130cfe3e3
+  checksum: aa4a12631aba17fc427789be428f5474d3c8d8d6ca6a037d8e5c1bb4e1b3cc51ae08c331fb1bab7f5bbdfec1bd4baa3533fa6235dc00870f0665557797715562
   languageName: node
   linkType: hard
 
@@ -6262,6 +6271,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"axe-core@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "axe-core@npm:4.4.2"
+  checksum: 93fbb36c5ac8ab5e67e49678a6f7be0dc799a9f560edd95cca1f0a8183def8c50205972366b9941a3ea2b20224a1fe230e6d87ef38cb6db70472ed1b694febd1
+  languageName: node
+  linkType: hard
+
 "axios@npm:^0.25.0":
   version: 0.25.0
   resolution: "axios@npm:0.25.0"
@@ -7941,6 +7957,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"damerau-levenshtein@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "damerau-levenshtein@npm:1.0.8"
+  checksum: d240b7757544460ae0586a341a53110ab0a61126570ef2d8c731e3eab3f0cb6e488e2609e6a69b46727635de49be20b071688698744417ff1b6c1d7ccd03e0de
+  languageName: node
+  linkType: hard
+
 "data-urls@npm:^2.0.0":
   version: 2.0.0
   resolution: "data-urls@npm:2.0.0"
@@ -8615,16 +8638,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^19.0.4":
-  version: 19.0.4
-  resolution: "electron@npm:19.0.4"
+"electron@npm:^19.0.6":
+  version: 19.0.6
+  resolution: "electron@npm:19.0.6"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 7bc568349ccd735c4285ffb127b719096397df3b659d01220045235e3ca2adcb741f18b3fde385689249a5e783d53b551de539b07121f9f161976e988a20f6c1
+  checksum: 19aac7f2051a41877ba16aa5bd7e53cb1cfcb60e724b8edc33823a8efb9c4e312eb26f8c5efef7eafb1079bdc7b433938cbdbdfe82eed567535fb6f1ebdc3da7
   languageName: node
   linkType: hard
 
@@ -8671,7 +8694,7 @@ __metadata:
     "@babel/eslint-parser": ^7.18.2
     "@babel/plugin-transform-react-jsx": ^7.17.12
     "@fluentui/font-icons-mdl2": ^8.4.1
-    "@fluentui/react": ^8.77.0
+    "@fluentui/react": ^8.77.1
     "@fluentui/react-hooks": ^8.6.0
     "@freik/audiodb": ^0.3.1
     "@freik/build-tools": 3.2.2
@@ -8697,7 +8720,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.29.0
     album-art: ^2.0.2
     cross-env: ^7.0.3
-    electron: ^19.0.4
+    electron: ^19.0.6
     electron-builder: ^23.2.0
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
@@ -8705,9 +8728,9 @@ __metadata:
     eslint: ^8.18.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-import: ^2.26.0
-    eslint-plugin-jsx-a11y: ^6.5.1
+    eslint-plugin-jsx-a11y: ^6.6.0
     eslint-plugin-prettier: ^4.0.0
-    eslint-plugin-react: ^7.30.0
+    eslint-plugin-react: ^7.30.1
     eslint-plugin-react-hooks: ^4.6.0
     husky: ^8.0.1
     jest: 27.5.1
@@ -8719,7 +8742,7 @@ __metadata:
     react-dom: ^17.0.2
     react-scripts: ^5.0.1
     react-test-renderer: ^17.0.2
-    recoil: ^0.7.3
+    recoil: ^0.7.4
     rimraf: ^3.0.2
     shared: "file:./shared"
     svg-react-loader: ^0.4.6
@@ -9132,6 +9155,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-plugin-jsx-a11y@npm:^6.6.0":
+  version: 6.6.0
+  resolution: "eslint-plugin-jsx-a11y@npm:6.6.0"
+  dependencies:
+    "@babel/runtime": ^7.18.3
+    aria-query: ^4.2.2
+    array-includes: ^3.1.5
+    ast-types-flow: ^0.0.7
+    axe-core: ^4.4.2
+    axobject-query: ^2.2.0
+    damerau-levenshtein: ^1.0.8
+    emoji-regex: ^9.2.2
+    has: ^1.0.3
+    jsx-ast-utils: ^3.3.1
+    language-tags: ^1.0.5
+    minimatch: ^3.1.2
+    semver: ^6.3.0
+  peerDependencies:
+    eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
+  checksum: d9da9a3ec71137c12519289c63e71250d5d78d4b7729b84e7e12edf1aad993083f23303d9b62359591b2f8aababb1bbec032cd84f1425e759b11a055e3acd144
+  languageName: node
+  linkType: hard
+
 "eslint-plugin-prettier@npm:^4.0.0":
   version: 4.0.0
   resolution: "eslint-plugin-prettier@npm:4.0.0"
@@ -9189,9 +9235,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.30.0":
-  version: 7.30.0
-  resolution: "eslint-plugin-react@npm:7.30.0"
+"eslint-plugin-react@npm:^7.30.1":
+  version: 7.30.1
+  resolution: "eslint-plugin-react@npm:7.30.1"
   dependencies:
     array-includes: ^3.1.5
     array.prototype.flatmap: ^1.3.0
@@ -9209,7 +9255,7 @@ __metadata:
     string.prototype.matchall: ^4.0.7
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
-  checksum: 729b7682a0fe6eab068171c159503ac57120ecc7b20067e76300b08879745c16a687e2033378ab45d9a3182da8844d06197a89081be83e1eb21fcceb76e79214
+  checksum: 553fb9ece6beb7c14cf6f84670c786c8ac978c2918421994dcc4edd2385302022e5d5ac4a39fafdb35954e29cecddefed61758040c3c530cafcf651f674a9d51
   languageName: node
   linkType: hard
 
@@ -12805,6 +12851,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsx-ast-utils@npm:^3.3.1":
+  version: 3.3.1
+  resolution: "jsx-ast-utils@npm:3.3.1"
+  dependencies:
+    array-includes: ^3.1.5
+    object.assign: ^4.1.2
+  checksum: 1d4b32fd24bbba561d5ca5c8d6ea095be646f83fc357d6f0cd2752f97f3ba0e0ffabc2f54b37a9d98258fc8ec0e1286cb7723cc1c9dc7af402d74fff72ae0a2b
+  languageName: node
+  linkType: hard
+
 "jszip@npm:^3.1.0":
   version: 3.7.1
   resolution: "jszip@npm:3.7.1"
@@ -15845,9 +15901,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.3":
-  version: 0.7.3
-  resolution: "recoil@npm:0.7.3"
+"recoil@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "recoil@npm:0.7.4"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -15857,7 +15913,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 6f48077eea4da8a4b0434eb9567210b74d603086bf5760810719bb12cc74d31b93291e7b80d26caa1e3b7e8cf3ec5fc44308fae8be22228cbcc64c78b048751e
+  checksum: 797b97ee74b2fbbb8e4dda8a951b13569d45a3440cfc05e870056255ff22c73aa816de70d66168a5b9ebe16c14d262777947dd752c8cb9559ef8ae3fbb586472
   languageName: node
   linkType: hard
 
@@ -16703,8 +16759,8 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=427010&locator=emp%40workspace%3A."
-  checksum: c332a20a10fceb1c2ef9eab5c39c7f355525e3f22d4d020e8c12432be9e6da31580e2140cea8bbf83d7f07de719e7539d1746ebca1379d3a5fcf338d9de1960d
+  resolution: "shared@file:./shared#./shared::hash=d3af7f&locator=emp%40workspace%3A."
+  checksum: fa945d73162aa10cb41437f0a6a4942fef1ed0028dc0a84f5d4e60e94bab2bf3f11d8e23598000cfac4348750b1e2082c9c4599cf13afbb340bd9b634f261210
   languageName: node
   linkType: hard
 

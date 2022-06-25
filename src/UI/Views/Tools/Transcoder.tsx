@@ -21,7 +21,13 @@ import {
 import { IpcId } from 'shared';
 import {
   destLocationState,
-  sourceLocationState,
+  sourceLocationAlbumState,
+  sourceLocationArtistState,
+  sourceLocationDescriptorState,
+  sourceLocationDirState,
+  sourceLocationPlaylistState,
+  sourceLocationTypeState,
+  validSourceState,
   xcodeBitRateState,
 } from '../../../Recoil/TranscodeState';
 import { StringSpinButton } from '../../Utilities';
@@ -37,24 +43,17 @@ const targetFormats: IDropdownOption[] = [
 */
 
 const sourceOptions: IComboBoxOption[] = [
-  { key: 'playlist', text: 'Playlist' },
-  { key: 'artist', text: 'Artist' },
-  { key: 'album', text: 'Album' },
-  { key: 'dir', text: 'Disk location' },
+  { key: 'p', text: 'Playlist' },
+  { key: 'r', text: 'Artist' },
+  { key: 'l', text: 'Album' },
+  { key: 'd', text: 'Disk location' },
 ];
 
-function indexFromKey(key: string): number {
-  switch (key) {
-    case 'playlist':
-      return 1;
-    case 'artist':
-      return 2;
-    case 'album':
-      return 3;
-    case 'dir':
-    default:
-      return 0;
-  }
+function isValidSourceLocType(val: unknown): val is 'p' | 'r' | 'l' | 'd' {
+  return (
+    Type.isString(val) &&
+    (val === 'p' || val === 'r' || val === 'l' || val === 'd')
+  );
 }
 
 const getDir = (
@@ -75,11 +74,22 @@ const getDir = (
 export function TranscoderConfiguration(): JSX.Element {
   const copyArtwork = useBoolState(false);
   const mirror = useBoolState(false);
-  const [srcLocType, setSrcLocType] = useState<string>('playlist');
-  const [srcLoc, setSrcLoc] = useRecoilState(sourceLocationState);
+  const [srcLocType, setSrcLocType] = useRecoilState(sourceLocationTypeState);
+  const [srcDirLoc, setSrcDirLoc] = useRecoilState(sourceLocationDirState);
+  const [srcPlaylistLoc, setSrcPlaylistLoc] = useRecoilState(
+    sourceLocationPlaylistState,
+  );
+  const [srcArtistLoc, setSrcArtistLoc] = useRecoilState(
+    sourceLocationArtistState,
+  );
+  const [srcAlbumLoc, setSrcAlbumLoc] = useRecoilState(
+    sourceLocationAlbumState,
+  );
   const [dstLoc, setDstLoc] = useRecoilState(destLocationState);
   const [err, setError] = useState('');
   const bitrate = useRecoilValue(xcodeBitRateState);
+  const validSource = useRecoilValue(validSourceState);
+  const srcLocDescr = useRecoilValue(sourceLocationDescriptorState);
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
@@ -94,21 +104,67 @@ export function TranscoderConfiguration(): JSX.Element {
       event: React.FormEvent<HTMLDivElement>,
       option?: IDropdownOption,
     ): void => {
-      if (Type.isString(option)) setSrcLocType(option);
+      if (!Type.isUndefined(option) && isValidSourceLocType(option.key)) {
+        setSrcLocType(option.key);
+      }
     },
     [],
   );
 
   // TODO: Create the element for the transcode source type (and populated it, if appropriate)
-  let xcodeSrcLocElem = (
-    <TextField
-      value={srcLoc[indexFromKey(srcLocType)]}
-      readOnly
-      required
-      onClick={() => {}}
-      iconProps={{ iconName: 'More' }}
-    />
-  );
+  let xcodeSrcLocElem;
+  switch (srcLocType) {
+    case 'p':
+      xcodeSrcLocElem = (
+        <TextField
+          value={srcPlaylistLoc}
+          onChange={(ev, newValue: string | undefined) => {
+            if (Type.isString(newValue)) {
+              setSrcPlaylistLoc(newValue);
+            }
+          }}
+        />
+      );
+      break;
+    case 'r':
+      xcodeSrcLocElem = (
+        <TextField
+          value={srcArtistLoc}
+          onChange={(ev, newValue: string | undefined) => {
+            if (Type.isString(newValue)) {
+              setSrcArtistLoc(newValue);
+            }
+          }}
+        />
+      );
+      break;
+    case 'l':
+      xcodeSrcLocElem = (
+        <TextField
+          value={srcAlbumLoc}
+          onChange={(ev, newValue: string | undefined) => {
+            if (Type.isString(newValue)) {
+              setSrcAlbumLoc(newValue);
+            }
+          }}
+        />
+      );
+      break;
+    case 'd':
+    default:
+      xcodeSrcLocElem = (
+        <TextField
+          value={srcDirLoc}
+          readOnly
+          required
+          onClick={() => {
+            getDir(setSrcDirLoc, setError);
+          }}
+          iconProps={{ iconName: 'More' }}
+        />
+      );
+      break;
+  }
   // To get cover-art, see this page:
   // https://stackoverflow.com/questions/17798709/ffmpeg-how-to-embed-cover-art-image-to-m4a
   return (
@@ -139,11 +195,11 @@ export function TranscoderConfiguration(): JSX.Element {
         <StringSpinButton
           label="Target Bit Rate"
           value={bitrate}
-          filter={(val) => {
+          filter={(val: string) => {
             const numericValue = parseInt(val.trim(), 10);
             return isNaN(numericValue) ? undefined : numericValue;
           }}
-          format={(val) => `${val} Kbps`}
+          format={(val: number) => `${val} Kbps`}
           onChange={onChange}
           min={64}
           max={320}
@@ -156,10 +212,10 @@ export function TranscoderConfiguration(): JSX.Element {
         />
         <DefaultButton
           text="Transcode"
-          disabled={srcLoc.length === 0 || dstLoc.length === 0}
+          disabled={!validSource || dstLoc.length === 0}
           onClick={() => {
             void PostMain(IpcId.TranscodingBegin.toString(), {
-              source: srcLoc,
+              source: srcLocDescr,
               dest: dstLoc,
               artwork: copyArtwork[0],
               mirror: mirror[0],

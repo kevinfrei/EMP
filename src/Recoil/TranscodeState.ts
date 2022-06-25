@@ -1,6 +1,7 @@
 import { MakeError, Type } from '@freik/core-utils';
 import { Effects } from '@freik/elect-render-utils';
-import { atom } from 'recoil';
+import { AlbumKey, ArtistKey, PlaylistName } from '@freik/media-core';
+import { atom, selector } from 'recoil';
 import { IpcId, TranscodeState } from 'shared';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -62,10 +63,76 @@ export const transcodeStatusState = atom<TranscodeState>({
   ],
 });
 
-export const sourceLocationState = atom<string[]>({
-  key: 'xcodeSrcLoc',
-  default: ['', '', '', ''],
-  effects: [Effects.syncWithMain<string[]>()],
+export const sourceLocationTypeState = atom<'p' | 'r' | 'l' | 'd'>({
+  key: 'xcodeSrcLocType',
+  default: 'p',
+});
+
+export const sourceLocationDirState = atom<string>({
+  key: 'xcodeSrcLocDir',
+  default: '',
+  effects: [Effects.syncWithMain<string>()],
+});
+
+export const sourceLocationPlaylistState = atom<PlaylistName>({
+  key: 'xcodeSrcLocPlaylist',
+  default: '',
+  effects: [Effects.syncWithMain<PlaylistName>()],
+});
+
+export const sourceLocationArtistState = atom<ArtistKey>({
+  key: 'xcodeSrcLocArtist',
+  default: '',
+  effects: [Effects.syncWithMain<ArtistKey>()],
+});
+
+export const sourceLocationAlbumState = atom<AlbumKey>({
+  key: 'xcodeSrcLocAlbum',
+  default: '',
+  effects: [Effects.syncWithMain<AlbumKey>()],
+});
+
+export const validSourceState = selector<boolean>({
+  key: 'xcodeValidSource',
+  get: ({ get }) => {
+    const sel = get(sourceLocationTypeState);
+    switch (sel) {
+      case 'p':
+        return get(sourceLocationPlaylistState).length > 0;
+      case 'r':
+        return get(sourceLocationArtistState).length > 0;
+      case 'l':
+        return get(sourceLocationAlbumState).length > 0;
+      case 'd':
+        return get(sourceLocationDirState).length > 0;
+    }
+  },
+});
+
+export const sourceLocationDescriptorState = selector<{
+  type: 'p' | 'd' | 'r' | 'l';
+  loc: string;
+}>({
+  key: 'xcodeSourceLocDescr',
+  get: ({ get }) => {
+    let loc: string;
+    const type = get(sourceLocationTypeState);
+    switch (type) {
+      case 'p':
+        loc = get(sourceLocationPlaylistState);
+        break;
+      case 'r':
+        loc = get(sourceLocationArtistState);
+        break;
+      case 'l':
+        loc = get(sourceLocationAlbumState);
+        break;
+      case 'd':
+        loc = get(sourceLocationDirState);
+        break;
+    }
+    return { type, loc };
+  },
 });
 
 export const destLocationState = atom<string>({
