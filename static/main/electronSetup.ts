@@ -68,13 +68,8 @@ export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
       if (!HasWindow()) {
         CreateWindow(windowCreated).catch(err);
       }
-    })
-    //    .on('will-quit', unregisterGlobalShortcuts);
-    .setAboutPanelOptions({
-      applicationName: 'Electron-based Music Player',
-      authors: ['Kevin Frei'],
-      website: 'https://github.com/kevinfrei/EMP',
     });
+  //    .on('will-quit', unregisterGlobalShortcuts);
   await WhenReady(windowCreated);
   //  registerGlobalShortcuts();
 }

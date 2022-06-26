@@ -1,0 +1,47 @@
+import { MakeError, Type } from '@freik/core-utils';
+import { BrowserWindow, shell } from 'electron';
+import isDev from 'electron-is-dev';
+
+const err = MakeError('window-err');
+
+let aboutWindow: BrowserWindow | undefined;
+
+export function ShowAbout(): void {
+  if (Type.isUndefined(aboutWindow)) {
+    aboutWindow = new BrowserWindow({
+      title: 'About EMP',
+      webPreferences: { nodeIntegration: false, contextIsolation: true },
+      show: false,
+      minWidth: 400,
+      maxWidth: 400,
+      width: 400,
+      maxHeight: 250,
+      minHeight: 250,
+      height: 250,
+    })
+      .on('ready-to-show', () => {
+        if (aboutWindow) {
+          aboutWindow.show();
+          aboutWindow.focus();
+        }
+      })
+      .on('closed', () => {
+        aboutWindow = undefined;
+      });
+    aboutWindow.webContents.on('will-navigate', function (e, url) {
+      /* If url isn't the actual page */
+      if (url !== aboutWindow?.webContents.getURL()) {
+        e.preventDefault();
+        shell.openExternal(url).catch(err);
+      }
+    });
+    aboutWindow.removeMenu();
+  }
+  aboutWindow
+    .loadURL(
+      isDev
+        ? 'http://localhost:3000/about.html'
+        : `file://${__dirname}/../about.html`,
+    )
+    .catch(err);
+}

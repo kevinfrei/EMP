@@ -11,6 +11,7 @@ import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
 import { CurrentView, Keys } from 'shared';
+import { ShowAbout } from './About';
 import { ToggleMiniPlayer } from './window';
 
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -80,7 +81,7 @@ const appMenu: MenuItemConstructorOptions = {
   role: 'appMenu',
   label: app.name,
   submenu: [
-    { role: 'about' },
+    action('About EMP', ShowAbout),
     ___,
     { role: 'services' },
     ___,
@@ -200,7 +201,7 @@ const helpItem: MenuItemConstructorOptions = action(`${app.name} help`, () => {
 const helpMenu: MenuItemConstructorOptions = {
   //    role: 'help',
   label: '&Help',
-  submenu: isMac ? [helpItem] : [helpItem, ___, { role: 'about' }],
+  submenu: isMac ? [helpItem] : [helpItem, ___, action('About EMP', ShowAbout)],
 };
 const dbgMenu: MenuItemConstructorOptions = {
   label: '&Debug',
