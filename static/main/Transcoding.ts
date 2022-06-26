@@ -197,8 +197,8 @@ function reportStatusMessage(msg: string) {
 }
 
 // The number of directories we've looked through
-function reportFileFound() {
-  curStatus.filesFound++;
+function reportFilesFound(count?: number) {
+  curStatus.filesFound += count ? count : 1;
 }
 
 // The files that were actually transcoded
@@ -409,7 +409,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
         settings.source.loc,
         (fileName) => {
           workQueue.push(fileName);
-          reportFileFound();
+          reportFilesFound();
           return true;
         },
         {
@@ -454,6 +454,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
       }
     }
     // We've now got our work queue
+    reportFilesFound(workQueue.length);
     reportStatusMessage('Completed scanning. Transcoding in progress.');
     await handleLots(settings, workQueue);
   } finally {

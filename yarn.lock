@@ -3464,16 +3464,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@freik/audiodb@npm:0.4.0"
+"@freik/audiodb@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "@freik/audiodb@npm:0.4.2"
   dependencies:
     "@freik/core-utils": ">=1.2.0"
     "@freik/media-core": ">=0.10.5"
     "@freik/media-utils": ">=0.13.5"
     "@freik/node-utils": ">=1.1.1"
     xxhashjs: ^0.2.2
-  checksum: 2c8827db183092b5352adac68017545ba98763c54bdf2d1fec7d2c08aefb7a9c54cf33c7995f690fb2375568fe7521aa4a27cdf877edb24a02c4dd2620d5d2b9
+  checksum: 8782fbf9cc9969a0e4bbf332bd1d9a71ccac13535d9223c600363a8853c6d88354b71ddfd0f2bd56f459e4032fca9d906663d348356a425bad22435949c5328d
   languageName: node
   linkType: hard
 
@@ -8696,7 +8696,7 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.4.1
     "@fluentui/react": ^8.77.1
     "@fluentui/react-hooks": ^8.6.0
-    "@freik/audiodb": ^0.4.0
+    "@freik/audiodb": ^0.4.2
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.2.0
     "@freik/elect-main-utils": ^0.2.4
@@ -16759,10 +16759,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=da1b53&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=698770&locator=emp%40workspace%3A."
   dependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 6b426523b1c405bc2dc0c5623941c84c0ce2574c267c2b37cb4e5b95081c31b88b8882a42c795d2c79b408527576814ae542f87c0a9c95fbc909cd6c8e828906
+  checksum: e084c0a53fe4dd5408531ca46d68b57192bdcc56b314299f898a1a72128ea193cb71bf8527496525aa8a6ce8516a28f91042331e6e37d58609e65e4dd03c7610
   languageName: node
   linkType: hard
 

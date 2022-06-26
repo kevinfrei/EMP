@@ -1,7 +1,7 @@
 {
   "license": "CC0-1.0",
   "name": "emp",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "private": true,
   "description": "Electron Music Player",
   "author": "Kevin Frei <kevinfrei@hotmail.com>",
@@ -67,7 +67,7 @@
     "@fluentui/font-icons-mdl2": "^8.4.1",
     "@fluentui/react": "^8.77.1",
     "@fluentui/react-hooks": "^8.6.0",
-    "@freik/audiodb": "^0.4.0",
+    "@freik/audiodb": "^0.4.2",
     "@freik/core-utils": "~1.2.0",
     "@freik/elect-main-utils": "^0.2.4",
     "@freik/elect-render-utils": "^0.2.4",
