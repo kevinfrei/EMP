@@ -249,11 +249,10 @@ export function MakeMainMenu(): void {
     }
   });
   Persistence.subscribe('CurrentView', (val: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-for-in-array, guard-for-in
-    for (const id in Type.enumKeys(CurrentView)) {
-      const mnu = menu.getMenuItemById(CurrentView[id]);
+    for (const id of Object.getOwnPropertyNames(CurrentView)) {
+      const mnu = menu.getMenuItemById(id);
       if (mnu) {
-        mnu.enabled = `${id}` !== val;
+        mnu.enabled = `${CurrentView[id]}` !== val;
       }
     }
   });
