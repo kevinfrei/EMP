@@ -3464,16 +3464,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.3.1":
-  version: 0.3.1
-  resolution: "@freik/audiodb@npm:0.3.1"
+"@freik/audiodb@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@freik/audiodb@npm:0.4.0"
   dependencies:
     "@freik/core-utils": ">=1.2.0"
     "@freik/media-core": ">=0.10.5"
     "@freik/media-utils": ">=0.13.5"
     "@freik/node-utils": ">=1.1.1"
     xxhashjs: ^0.2.2
-  checksum: 0b45737ca1671e69129bcd6ab25bb5548eb21fb1a8bf9cb8774127aa7f8382b47e03d59ce98af185ee0a2cac839a94671e51296f40b810f480ccdfb95f5abf63
+  checksum: 2c8827db183092b5352adac68017545ba98763c54bdf2d1fec7d2c08aefb7a9c54cf33c7995f690fb2375568fe7521aa4a27cdf877edb24a02c4dd2620d5d2b9
   languageName: node
   linkType: hard
 
@@ -3528,7 +3528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:~1.2.0":
+"@freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:^1.2.0, @freik/core-utils@npm:~1.2.0":
   version: 1.2.0
   resolution: "@freik/core-utils@npm:1.2.0"
   checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
@@ -8696,7 +8696,7 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.4.1
     "@fluentui/react": ^8.77.1
     "@fluentui/react-hooks": ^8.6.0
-    "@freik/audiodb": ^0.3.1
+    "@freik/audiodb": ^0.4.0
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.2.0
     "@freik/elect-main-utils": ^0.2.4
@@ -16759,8 +16759,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=5ec4dc&locator=emp%40workspace%3A."
-  checksum: 2a14b191f4d87f5f533f1b3a8a065714da28d6f355a9c08b702cc015d2412719c6d214c1bf45b13aed22e8a5402f46406f23a276856eba663dc25fa6f5bafd67
+  resolution: "shared@file:./shared#./shared::hash=da1b53&locator=emp%40workspace%3A."
+  dependencies:
+    "@freik/core-utils": ^1.2.0
+  checksum: 6b426523b1c405bc2dc0c5623941c84c0ce2574c267c2b37cb4e5b95081c31b88b8882a42c795d2c79b408527576814ae542f87c0a9c95fbc909cd6c8e828906
   languageName: node
   linkType: hard
 

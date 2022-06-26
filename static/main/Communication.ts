@@ -3,7 +3,7 @@ import { MakeError, Type } from '@freik/core-utils';
 import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
 import { Menu } from 'electron/main';
-import { IpcId } from 'shared';
+import { IpcId, isXcodeInfo } from 'shared';
 import {
   GetMediaInfoForSong,
   GetPathFromKey,
@@ -31,7 +31,7 @@ import {
   setSongHates,
   setSongLikes,
 } from './SongLikesAndHates';
-import { getXcodeStatus, isXcodeInfo, startTranscode } from './Transcoding';
+import { getXcodeStatus, startTranscode } from './Transcoding';
 import {
   CloseWindow,
   MaximizeWindow,

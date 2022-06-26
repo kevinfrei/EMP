@@ -8,7 +8,14 @@ import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { IpcId, TranscodeInfo, TranscodeState } from 'shared';
+import {
+  IpcId,
+  TranscodeInfo,
+  TranscodeSourceType,
+  TranscodeState,
+} from 'shared';
+import { GetAudioDB } from './AudioDatabase';
+import { LoadPlaylist } from './playlists';
 
 const err = MakeError('downsample-err');
 
@@ -16,18 +23,6 @@ const cp = {
   spawnAsync: ProcUtil.spawnAsync,
   ...ocp,
 };
-
-export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>(
-  [
-    ['source', Type.isString],
-    ['dest', Type.isString],
-    ['artwork', Type.isBoolean],
-    ['mirror', Type.isBoolean],
-    ['format', (o: unknown): o is 'm4a' | 'aac' | 'mp3' => o === 'm4a'],
-    ['bitrate', Type.isNumber],
-  ],
-  [],
-);
 
 const cwd = process.cwd();
 
@@ -39,6 +34,11 @@ function reQuote(str: string): { [key: string]: string } {
   res = res.replace(/~!~/g, '"');
   return JSON.parse(res) as { [key: string]: string };
 }
+
+type SongSource = {
+  isPath: boolean;
+  pathOrKey: string;
+};
 
 /// vvvv Hurray for a Typescript compiler bug
 // eslint-disable-next-line no-shadow
@@ -239,20 +239,45 @@ function reportFailure(file: string, error: string) {
   }
 }
 
+// Get the full song file name from the song's media info in the database
+async function getFullSongPathFromSettings(
+  settings: TranscodeInfo,
+  file: string,
+): Promise<[string, string] | void> {
+  if (settings.source.type === TranscodeSourceType.Disk) {
+    const srcdir = settings.source.loc;
+    if (!path.normalize(file).startsWith(srcdir)) {
+      reportFailure(file, `${file} doesn't match ${srcdir}`);
+      return;
+    }
+    return [file, path.join(settings.dest, file.substring(srcdir.length))];
+  } else {
+    const db = await GetAudioDB();
+    const filepath = db.getCanonicalFileName(file);
+    const src = db.getSong(file);
+    if (src && filepath) {
+      return [src.path, filepath.replaceAll('/', path.sep)];
+    }
+  }
+}
+
 async function convert(
   settings: TranscodeInfo,
   file: string,
   filePairs?: Map<string, string>,
 ): Promise<void> {
-  const srcdir = settings.source;
-  const targetDir = settings.dest;
   reportFilePending();
   try {
-    if (!path.normalize(file).startsWith(srcdir)) {
-      reportFailure(file, `${file} doesn't match ${srcdir}`);
+    const fullSongPath = await getFullSongPathFromSettings(settings, file);
+    if (!fullSongPath) {
       return;
     }
-    const relName = path.join(targetDir, file.substring(srcdir.length));
+    const src = fullSongPath[0];
+    let relName = fullSongPath[1];
+    if (!path.isAbsolute(relName)) {
+      relName = path.join(settings.dest, relName);
+    }
+    err(`${src} -> ${relName}`);
     const newName = PathUtil.changeExt(relName, 'm4a');
     try {
       const dr = path.dirname(newName);
@@ -268,38 +293,38 @@ async function convert(
       );
       return;
     }
-    const res = await toMp4Async(file, newName);
+    const res = await toMp4Async(src, newName);
     switch (res.code) {
       case XcodeResCode.alreadyLowBitRate:
         try {
-          await fsp.copyFile(file, relName);
+          await fsp.copyFile(src, relName);
           if (filePairs !== undefined) {
-            filePairs.set(file, relName);
+            filePairs.set(src, relName);
           }
         } catch (e) {
           reportFailure(
-            file,
-            `Unable to copy already mid-quality file ${file} to ${relName}`,
+            src,
+            `Unable to copy already mid-quality file ${src} to ${relName}`,
           );
         }
-        reportFileTranscoded(file);
+        reportFileTranscoded(src);
         break;
       case XcodeResCode.success:
-        reportFileTranscoded(file);
+        reportFileTranscoded(src);
         if (filePairs !== undefined) {
-          filePairs.set(file, newName);
+          filePairs.set(src, newName);
         }
         break;
       case XcodeResCode.alreadyExists:
         reportFileUntouched();
         if (filePairs !== undefined) {
-          filePairs.set(file, newName);
+          filePairs.set(src, newName);
         }
         break;
       default:
         reportFailure(
-          file,
-          `Transcode failure ${res.code}: ${res.message} - ${file} => ${newName}`,
+          src,
+          `Transcode failure ${res.code}: ${res.message} - ${src} => ${newName}`,
         );
     }
   } finally {
@@ -377,34 +402,57 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
   bitrate = settings.bitrate;
   startStatusReporting();
   try {
-    reportStatusMessage(`Scanning source: ${settings.source}`);
     const workQueue: string[] = [];
-    await ForFiles(
-      settings.source,
-      (fileName) => {
-        workQueue.push(fileName);
-        reportFileFound();
-        return true;
-      },
-      {
-        recurse: async (dirName: string): Promise<boolean> => {
-          const toSkip = PathUtil.join(dirName, '.notranscode');
-          try {
-            await fsp.access(toSkip);
-          } catch (e) {
-            return Type.has(e, 'code') && e.code === 'ENOENT';
-          }
-          return false;
+    if (settings.source.type === TranscodeSourceType.Disk) {
+      reportStatusMessage(`Scanning source: ${settings.source.loc}`);
+      await ForFiles(
+        settings.source.loc,
+        (fileName) => {
+          workQueue.push(fileName);
+          reportFileFound();
+          return true;
         },
-        keepGoing: true,
-        fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
-        order: 'breadth',
-        skipHiddenFiles: true,
-        skipHiddenFolders: true,
-        dontAssumeDotsAreHidden: false,
-        dontFollowSymlinks: false,
-      },
-    );
+        {
+          recurse: async (dirName: string): Promise<boolean> => {
+            const toSkip = PathUtil.join(dirName, '.notranscode');
+            try {
+              await fsp.access(toSkip);
+            } catch (e) {
+              return Type.has(e, 'code') && e.code === 'ENOENT';
+            }
+            return false;
+          },
+          keepGoing: true,
+          fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
+          order: 'breadth',
+          skipHiddenFiles: true,
+          skipHiddenFolders: true,
+          dontAssumeDotsAreHidden: false,
+          dontFollowSymlinks: false,
+        },
+      );
+    } else {
+      const db = await GetAudioDB();
+      switch (settings.source.type) {
+        case TranscodeSourceType.Album:
+          const album = db.getAlbum(settings.source.loc);
+          if (album) {
+            workQueue.push(...album.songs);
+          }
+          // TODO: Report no such album
+          break;
+        case TranscodeSourceType.Artist:
+          const artist = db.getArtist(settings.source.loc);
+          if (artist) {
+            workQueue.push(...artist.songs);
+          }
+          // TODO: Report no such album
+          break;
+        case TranscodeSourceType.Playlist:
+          workQueue.push(...(await LoadPlaylist(settings.source.loc)));
+          break;
+      }
+    }
     // We've now got our work queue
     reportStatusMessage('Completed scanning. Transcoding in progress.');
     await handleLots(settings, workQueue);

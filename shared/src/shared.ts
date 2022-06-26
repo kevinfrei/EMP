@@ -1,3 +1,5 @@
+import { Type } from '@freik/core-utils';
+
 export enum IpcId {
   ClearHates = 'clear-hates',
   ClearLikes = 'clear-likes',
@@ -123,8 +125,31 @@ export enum TranscodeFormatTargets {
 // This generates 'm4a' | 'mp3' | 'aac'
 export type TranscodeFormatTargetNames = keyof typeof TranscodeFormatTargets;
 
+export enum TranscodeSourceType {
+  Playlist = 'p',
+  Artist = 'r',
+  Album = 'l',
+  Disk = 'd',
+}
+
+export type TranscodeSourceTypeNames = keyof typeof TranscodeSourceType;
+
+export function isTranscodeSourceType(v: unknown): v is TranscodeSourceType {
+  return v === 'p' || v === 'r' || v === 'l' || v === 'd';
+}
+
+export type TranscodeSourceLocation = {
+  type: TranscodeSourceType;
+  loc: string;
+};
+
+export const isXcodeSrcLoc = Type.isSpecificTypeFn<TranscodeSourceLocation>([
+  ['type', isTranscodeSourceType],
+  ['loc', Type.isString],
+]);
+
 export type TranscodeInfo = {
-  source: string;
+  source: { type: TranscodeSourceType; loc: string };
   dest: string;
   artwork: boolean;
   mirror: boolean;
@@ -142,18 +167,14 @@ export type TranscodeState = {
   itemsRemoved?: string[];
 };
 
-export enum TranscodeSourceType {
-  Playlist = 'p',
-  Artist = 'r',
-  Album = 'l',
-  Disk = 'd',
-}
-
-export type TranscodeSourceTypeNames = keyof typeof TranscodeSourceType;
-
-export function isTranscodeSourceType(v: unknown): v is TranscodeSourceType {
-  return v === 'p' || v === 'r' || v === 'l' || v === 'd';
-}
+export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>([
+  ['source', isXcodeSrcLoc],
+  ['dest', Type.isString],
+  ['artwork', Type.isBoolean],
+  ['mirror', Type.isBoolean],
+  ['format', (o: unknown): o is 'm4a' | 'aac' | 'mp3' => o === 'm4a'],
+  ['bitrate', Type.isNumber],
+]);
 
 /*
 export enum Decisions {

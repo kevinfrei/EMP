@@ -14,5 +14,8 @@
   "files": [
     "./build/**/*"
   ],
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.1.1",
+  "dependencies": {
+    "@freik/core-utils": "^1.2.0"
+  }
 }
