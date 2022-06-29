@@ -3359,6 +3359,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fluentui/react-icon-provider@npm:^1.3.9":
+  version: 1.3.9
+  resolution: "@fluentui/react-icon-provider@npm:1.3.9"
+  dependencies:
+    "@fluentui/set-version": ^8.2.1
+    "@fluentui/style-utilities": ^8.7.1
+    tslib: ^2.1.0
+  peerDependencies:
+    "@types/react": ">=16.8.0 <18.0.0"
+    "@types/react-dom": ">=16.8.0 <18.0.0"
+    react: ">=16.8.0 <18.0.0"
+    react-dom: ">=16.8.0 <18.0.0"
+  checksum: d970eec55db4a5e4cf943ad22191dcdb9f10d6523b22df5b12f88f80b1b745c6d22321b2e2db202629fa7ef3d5bd3f81a1d65043395f67a3ba84f806200b6f37
+  languageName: node
+  linkType: hard
+
+"@fluentui/react-icons-mdl2@npm:^1.3.11":
+  version: 1.3.11
+  resolution: "@fluentui/react-icons-mdl2@npm:1.3.11"
+  dependencies:
+    "@fluentui/react-icon-provider": ^1.3.9
+    "@fluentui/set-version": ^8.2.1
+    "@fluentui/utilities": ^8.8.3
+    "@microsoft/load-themed-styles": ^1.10.26
+    tslib: ^2.1.0
+  peerDependencies:
+    react: ">=16.8.0 <18.0.0"
+  checksum: 952443255a854207d9bb784764480473440443ab53bfad66e40f6e05610edcfd03568750b243dfd128d05ec676acd9e232ef1843070267a39010636d750c72d9
+  languageName: node
+  linkType: hard
+
 "@fluentui/react-portal-compat-context@npm:^9.0.0-rc.2":
   version: 9.0.0-rc.2
   resolution: "@fluentui/react-portal-compat-context@npm:9.0.0-rc.2"
@@ -3431,6 +3462,20 @@ __metadata:
     "@microsoft/load-themed-styles": ^1.10.26
     tslib: ^2.1.0
   checksum: 8e4f7b82428776f539953edc039e9dc6a76d7e6afc0b9c8e5494c18955322a0bc0219aa8178cb045434df6887658bd57dc18e301ab175581992cbcce0dc86727
+  languageName: node
+  linkType: hard
+
+"@fluentui/style-utilities@npm:^8.7.1":
+  version: 8.7.1
+  resolution: "@fluentui/style-utilities@npm:8.7.1"
+  dependencies:
+    "@fluentui/merge-styles": ^8.5.2
+    "@fluentui/set-version": ^8.2.1
+    "@fluentui/theme": ^2.6.6
+    "@fluentui/utilities": ^8.8.3
+    "@microsoft/load-themed-styles": ^1.10.26
+    tslib: ^2.1.0
+  checksum: 2d59ecbefa735376e38066580929bb379872599ccc441e88fe2693b6e467d7fcd7d74d1a211a35c8ab4814bd60976fe788aa2c9f4023aa7a5f491f2d29eff513
   languageName: node
   linkType: hard
 
@@ -8696,6 +8741,7 @@ __metadata:
     "@fluentui/font-icons-mdl2": ^8.4.1
     "@fluentui/react": ^8.77.1
     "@fluentui/react-hooks": ^8.6.0
+    "@fluentui/react-icons-mdl2": ^1.3.11
     "@freik/audiodb": ^0.4.2
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.2.0
@@ -16759,10 +16805,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=61ff1c&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=791ad1&locator=emp%40workspace%3A."
   dependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 096a4b0af93829fa874811d7b30ab5d908bfeb4748c423a348e9d21f8928ca708ecdf2a5b2720c6c4ee935b40a2bcb4b2d516bad1d92859c7dc0cb843b362216
+  checksum: 3bf797bfc79e92a68afbf7ece0cf85cdfdddbedb6ebac80354e112fe464cd31c208dad72685fe42ad90a8069735160ffe330c00a4238102313e03bc80a2a59dd
   languageName: node
   linkType: hard
 

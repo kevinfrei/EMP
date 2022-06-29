@@ -155,6 +155,7 @@ type StrIdImpl = {
   ViewPlaylists: 'Playlists';
   ViewSettings: 'Settings';
   ViewTools: 'Tools';
+  ImportFiles: 'Import Files...';
 };
 export const StrId: StrIdImpl = {
   // MediaInfo.tsx strings
@@ -198,6 +199,7 @@ export const StrId: StrIdImpl = {
   ViewPlaylists: 'Playlists',
   ViewSettings: 'Settings',
   ViewTools: 'Tools',
+  ImportFiles: 'Import Files...',
 };
 Object.freeze(StrId);
 export type StrId = string;

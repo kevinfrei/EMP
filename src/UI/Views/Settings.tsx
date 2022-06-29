@@ -18,7 +18,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IpcId, Keys } from 'shared';
+import { IpcId, Keys, st } from 'shared';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
@@ -88,7 +88,7 @@ function MusicLocations(): JSX.Element {
           />
           <Label>{elem}</Label>&nbsp;
           {defLoc === elem ? (
-            <Text variant="small">[NYI: Save Location]</Text>
+            <Text variant="small">[Default "Save" Location (NYI)]</Text>
           ) : (
             <DefaultButton
               styles={setSaveStyle}
@@ -116,6 +116,12 @@ function MusicLocations(): JSX.Element {
             onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>
+        <DefaultButton
+          text="Import Files"
+          onClick={() => {}}
+          iconProps={{}}
+          title={st(StrId.ImportFiles)}
+        />
       </Stack>
       <Text>{`${artists.size} Artists, ${albums.size} Albums, ${songs.size} Songs`}</Text>
     </>
