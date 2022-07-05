@@ -19,11 +19,12 @@ import {
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
+import https from 'node:https';
 import { GetAudioDB } from './AudioDatabase';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
-const log = MakeLogger('cover-art', false && electronIsDev);
+const log = MakeLogger('cover-art', true || electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
@@ -45,6 +46,7 @@ async function albumCoverName(): Promise<string> {
   const val = await Persistence.getItemAsync('albumCoverName');
   return val || '.CoverArt';
 }
+*/
 
 function httpsDownloader(url: string): Promise<Buffer> {
   const buf: Uint8Array[] = [];
@@ -55,7 +57,6 @@ function httpsDownloader(url: string): Promise<Buffer> {
     });
   });
 }
-*/
 
 async function getArt(album: string, artist: string): Promise<string | void> {
   const attempt = await albumArt(artist, { album, size: 'large' });
@@ -201,11 +202,10 @@ async function tryToDownloadAlbumCover(
         if (res) {
           log(res);
           try {
-            /*
-            const data = await httpsDownloader(res);
-            log('Got album data from teh interwebs');
-            await SavePicForAlbum(db, album, data);
-            return data;*/
+            // const data = await httpsDownloader(res);
+            // log('Got album data from teh interwebs');
+            // await SavePicForAlbum(db, album, data);
+            // return data;
           } catch (e) {
             err(e);
           }
@@ -249,12 +249,13 @@ export async function PictureHandler(
   try {
     const db = await GetAudioDB();
 
-    // log(`Got a request for ${id}`);
+    log(`Got a request for ${id}`);
     if (id.lastIndexOf('#') !== -1) {
-      id = id.substr(0, id.lastIndexOf('#'));
+      id = id.substring(0, id.lastIndexOf('#'));
     }
     const maybePath = await getPictureFromDB(db, id);
     if (maybePath) {
+      log('Found it easily: ', maybePath);
       return {
         data: maybePath,
       };
@@ -262,11 +263,13 @@ export async function PictureHandler(
     if (isAlbumKey(id)) {
       const data = await tryToDownloadAlbumCover(db, id);
       if (data) {
+        log('Found the album: ', data);
         return { data };
       }
     } else if (isArtistKey(id)) {
       const data = await tryToDownloadArtistImage(db, id);
       if (data) {
+        log('Found the artist: ', data);
         return { data };
       }
     }
@@ -274,6 +277,7 @@ export async function PictureHandler(
     log(`Error while trying to get picture for ${id}`);
     log(error);
   }
+  log('Returning the default...');
   return await GetDefaultPicBuffer();
 }
 

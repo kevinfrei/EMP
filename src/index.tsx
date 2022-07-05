@@ -1,19 +1,27 @@
-import { registerIcons, unregisterIcons } from '@fluentui/react/lib/Styling';
+import { registerIcons } from '@fluentui/react/lib/Styling';
 // Note: This approach works with any SVG icon set, not just @fluentui/react-icons-mdl2
 import {
   AddIcon,
+  CancelIcon,
+  CheckMarkIcon,
   ChevronDownIcon,
+  ChevronDownSmallIcon,
   ChevronRightIcon,
+  ChevronRightMedIcon,
   ChevronUpIcon,
+  ChevronUpSmallIcon,
   ChromeCloseIcon,
   ChromeMinimizeIcon,
   ChromeRestoreIcon,
+  CompletedIcon,
   DeleteIcon,
   DependencyAddIcon,
   DislikeIcon,
   DislikeSolidIcon,
   FolderSearchIcon,
   GridViewLargeIcon,
+  GroupedAscendingIcon,
+  GroupedDescendingIcon,
   InfoIcon,
   LikeIcon,
   LikeSolidIcon,
@@ -22,7 +30,15 @@ import {
   MoreIcon,
   RenameIcon,
   SaveIcon,
+  SearchIcon,
+  SortDownIcon,
+  SortUpIcon,
   UnknownIcon,
+  Volume0Icon,
+  Volume1Icon,
+  Volume2Icon,
+  Volume3Icon,
+  VolumeDisabledIcon,
 } from '@fluentui/react-icons-mdl2';
 import { Util } from '@freik/elect-render-utils';
 import React from 'react';
@@ -32,20 +48,28 @@ import { App } from './UI/App';
 import './UI/styles/index.css';
 
 Util.SetInit(() => {
-  unregisterIcons(['']);
+  // unregisterIcons(['']);
   registerIcons({
     icons: {
       add: <AddIcon />,
+      checkmark: <CheckMarkIcon />,
+      cancel: <CancelIcon />,
+      chevronDown: <ChevronDownIcon />,
+      chevronRight: <ChevronRightIcon />,
+      chevrondownsmall: <ChevronDownSmallIcon />,
+      chevronrightmed: <ChevronRightMedIcon />,
+      chevronupsmall: <ChevronUpSmallIcon />,
+      chromeClose: <ChromeCloseIcon />,
+      chromeMinimize: <ChromeMinimizeIcon />,
+      completed: <CompletedIcon />,
+      delete: <DeleteIcon />,
       dependencyAdd: <DependencyAddIcon />,
       dislike: <DislikeIcon />,
       dislikeSolid: <DislikeSolidIcon />,
-      chevronDown: <ChevronDownIcon />,
-      chevronRight: <ChevronRightIcon />,
-      chromeClose: <ChromeCloseIcon />,
-      chromeMinimize: <ChromeMinimizeIcon />,
-      delete: <DeleteIcon />,
       folderSearch: <FolderSearchIcon />,
       gridViewLarge: <GridViewLargeIcon />,
+      groupedascending: <GroupedAscendingIcon />,
+      groupeddescending: <GroupedDescendingIcon />,
       info: <InfoIcon />,
       like: <LikeIcon />,
       likeSolid: <LikeSolidIcon />,
@@ -56,7 +80,15 @@ Util.SetInit(() => {
       rename: <RenameIcon />,
       restore: <ChromeRestoreIcon />,
       save: <SaveIcon />,
+      search: <SearchIcon />,
+      sortdown: <SortDownIcon />,
+      sortup: <SortUpIcon />,
       unknown: <UnknownIcon />,
+      volume0: <Volume0Icon />,
+      volume1: <Volume1Icon />,
+      volume2: <Volume2Icon />,
+      volume3: <Volume3Icon />,
+      volumedisabled: <VolumeDisabledIcon />,
     },
   });
   const root = document.getElementById('root');
