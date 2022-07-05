@@ -1,4 +1,3 @@
-import { initializeIcons } from '@fluentui/font-icons-mdl2';
 /*
 import { Suspense } from 'react';
 import { act, create } from 'react-test-renderer';
@@ -8,8 +7,9 @@ import VolumeControl from '../VolumeControl';
 
 jest.mock('../../MyWindow');
 
+export {};
+
 it('renders without crashing', () => {
-  initializeIcons();
   /*
   await act(async () => {
     create(

@@ -1,4 +1,3 @@
-import { initializeIcons } from '@fluentui/font-icons-mdl2';
 /*
 import { Suspense } from 'react';
 import { act, create } from 'react-test-renderer';
@@ -8,8 +7,9 @@ import Settings from '../Views/Settings';
 
 jest.mock('../../MyWindow');
 
+export {};
+
 it('Render Settings without crashing', () => {
-  initializeIcons();
   /*
   await act(async () => {
     const elem = (

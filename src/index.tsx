@@ -24,7 +24,6 @@ import {
   SaveIcon,
   UnknownIcon,
 } from '@fluentui/react-icons-mdl2';
-// import { initializeIcons } from '@fluentui/font-icons-mdl2';
 import { Util } from '@freik/elect-render-utils';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -33,7 +32,6 @@ import { App } from './UI/App';
 import './UI/styles/index.css';
 
 Util.SetInit(() => {
-  // initializeIcons();
   unregisterIcons(['']);
   registerIcons({
     icons: {

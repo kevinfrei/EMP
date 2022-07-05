@@ -1,5 +1,3 @@
-import { initializeIcons } from '@fluentui/font-icons-mdl2';
-
 /*
 import { Suspense } from 'react';
 import { act, create } from 'react-test-renderer';
@@ -8,8 +6,10 @@ import { Sidebar } from '../Sidebar';
 */
 jest.mock('../../MyWindow');
 
+export {};
+
 it('renders without crashing', () => {
-  initializeIcons();
+  // initializeIcons();
   /* await act(async () => {
     create(
       <RecoilRoot>

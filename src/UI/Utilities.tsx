@@ -33,10 +33,10 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 // keep track of which mode we're in, and generally deal with "global" silliness
 export function Utilities(): JSX.Element {
   const saveable = useRecoilValue(saveableFunc);
-  const callback = useMyTransaction(
+  const menuCallback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),
   );
-  useListener('menuAction', callback);
+  useListener('menuAction', menuCallback);
   const handleWidthChange = useMyTransaction(
     ({ set }) =>
       (ev: MediaQueryList | MediaQueryListEvent) => {
@@ -50,6 +50,24 @@ export function Utilities(): JSX.Element {
   useEffect(() => {
     Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
   }, [saveable]);
+  useEffect(() => {
+    // Media stuff:
+    navigator.mediaSession.setActionHandler('play', () =>
+      menuCallback({ state: 'playback' }),
+    );
+    navigator.mediaSession.setActionHandler('pause', () =>
+      menuCallback({ state: 'playback' }),
+    );
+    navigator.mediaSession.setActionHandler('stop', () =>
+      menuCallback({ state: 'playback' }),
+    );
+    navigator.mediaSession.setActionHandler('nexttrack', () =>
+      menuCallback({ state: 'nextTrack' }),
+    );
+    navigator.mediaSession.setActionHandler('previoustrack', () =>
+      menuCallback({ state: 'prevTrack' }),
+    );
+  });
   /* This is for a global search typing thingamajig */
   const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {
     if (!isSearchBox(ev.target)) {
