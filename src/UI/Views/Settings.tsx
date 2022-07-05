@@ -18,7 +18,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IpcId, Keys, st } from 'shared';
+import { IpcId, Keys, st, StrId } from 'shared';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
