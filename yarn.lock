@@ -3623,16 +3623,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/audiodb@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "@freik/audiodb@npm:0.4.3"
+"@freik/audiodb@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "@freik/audiodb@npm:0.4.5"
   dependencies:
     "@freik/core-utils": ">=1.2.0"
-    "@freik/media-core": ">=0.10.5"
+    "@freik/media-core": ">=0.10.6"
     "@freik/media-utils": ">=0.13.5"
     "@freik/node-utils": ">=1.1.1"
     xxhashjs: ^0.2.2
-  checksum: 0dcd005fa6194ed40a6ccdd013936211f25e31671a46c4a01dfab276745468215e726a0e524fde84239d19d8f1b499d70c1c996ba8b53ac434337a954bd731cd
+  checksum: caf2c4fef3bbaed11cec54b7c908ab4bb4006d36ddd1c27a6fb8d786ff558b41671094816e041d2f13adb03beadee51ece701514356487a926d916cd649e08aa
   languageName: node
   linkType: hard
 
@@ -3687,7 +3687,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:^1.2.0, @freik/core-utils@npm:~1.2.0":
+"@freik/core-utils@npm:>=1.1.1, @freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:^1.2.0, @freik/core-utils@npm:~1.2.0":
   version: 1.2.0
   resolution: "@freik/core-utils@npm:1.2.0"
   checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
@@ -3744,7 +3744,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-core@npm:>=0.10.5, @freik/media-core@npm:^0.10.5, @freik/media-core@npm:~0.10.5":
+"@freik/media-core@npm:>=0.10.6, @freik/media-core@npm:~0.10.6":
+  version: 0.10.6
+  resolution: "@freik/media-core@npm:0.10.6"
+  dependencies:
+    "@freik/core-utils": ">=1.1.1"
+  checksum: 9aaa0aceb14d7b8888db423b0f0423532899b30737da25e64e367c24325646a72497c2f5ce0c8616588cc94ba3d04e4dacd11dd86074dc646999a7006d434082
+  languageName: node
+  linkType: hard
+
+"@freik/media-core@npm:^0.10.5":
   version: 0.10.5
   resolution: "@freik/media-core@npm:0.10.5"
   dependencies:
@@ -5151,10 +5160,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "@types/node@npm:18.0.0"
-  checksum: aab2b325727a2599f6d25ebe0dedf58c40fb66a51ce4ca9c0226ceb70fcda2d3afccdca29db5942eb48b158ee8585a274a1e3750c718bbd5399d7f41d62dfdcc
+"@types/node@npm:^18.0.3":
+  version: 18.0.3
+  resolution: "@types/node@npm:18.0.3"
+  checksum: 5dec59fbbc1186c808b53df1ca717dad034dbd6a901c75f5b052c845618b531b05f27217122c6254db99529a68618e4cfc534ae3dbf4e88754e9e572df80defa
   languageName: node
   linkType: hard
 
@@ -8873,13 +8882,13 @@ __metadata:
     "@fluentui/react": ^8.77.3
     "@fluentui/react-hooks": ^8.6.0
     "@fluentui/react-icons-mdl2": ^1.3.11
-    "@freik/audiodb": ^0.4.3
+    "@freik/audiodb": ^0.4.5
     "@freik/build-tools": 3.2.2
     "@freik/core-utils": ~1.2.0
     "@freik/elect-main-utils": ^0.2.4
     "@freik/elect-render-utils": ^0.2.4
     "@freik/electron-renderer": ^0.2.3
-    "@freik/media-core": ~0.10.5
+    "@freik/media-core": ~0.10.6
     "@freik/media-utils": ~0.13.5
     "@freik/node-utils": ~1.1.1
     "@freik/p-limit": ^5.0.0
@@ -8888,7 +8897,7 @@ __metadata:
     "@testing-library/react": ^12.1.5
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^27.5.2
-    "@types/node": ^18.0.0
+    "@types/node": ^18.0.3
     "@types/react": ^17.0.47
     "@types/react-dom": ^17.0.17
     "@types/react-test-renderer": ^17.0.2

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { registerIcons } from '@fluentui/react/lib/Styling';
 // Note: This approach works with any SVG icon set, not just @fluentui/react-icons-mdl2
 import {
@@ -18,6 +19,7 @@ import {
   DependencyAddIcon,
   DislikeIcon,
   DislikeSolidIcon,
+  DownloadDocumentIcon,
   FolderSearchIcon,
   GridViewLargeIcon,
   GroupedAscendingIcon,
@@ -30,6 +32,7 @@ import {
   MoreIcon,
   RenameIcon,
   SaveIcon,
+  SearchDataIcon,
   SearchIcon,
   SortDownIcon,
   SortUpIcon,
@@ -66,6 +69,7 @@ Util.SetInit(() => {
       dependencyAdd: <DependencyAddIcon />,
       dislike: <DislikeIcon />,
       dislikeSolid: <DislikeSolidIcon />,
+      DownloadDocument: <DownloadDocumentIcon />,
       folderSearch: <FolderSearchIcon />,
       gridViewLarge: <GridViewLargeIcon />,
       groupedascending: <GroupedAscendingIcon />,
@@ -81,6 +85,7 @@ Util.SetInit(() => {
       restore: <ChromeRestoreIcon />,
       save: <SaveIcon />,
       search: <SearchIcon />,
+      SearchData: <SearchDataIcon />,
       sortdown: <SortDownIcon />,
       sortup: <SortUpIcon />,
       unknown: <UnknownIcon />,

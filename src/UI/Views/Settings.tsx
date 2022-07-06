@@ -113,14 +113,15 @@ function MusicLocations(): JSX.Element {
         >
           <DefaultButton
             text="Rescan Locations"
+            iconProps={{ iconName: 'SearchData' }}
             onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>
         &nbsp;
         <DefaultButton
-          text="Import Files"
+          text="Import Files (NYI)"
           onClick={() => {}}
-          iconProps={{}}
+          iconProps={{ iconName: 'DownloadDocument' }}
           title={st(StrId.ImportFiles)}
         />
       </Stack>
