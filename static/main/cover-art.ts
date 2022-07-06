@@ -9,18 +9,22 @@ import {
 } from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
 import {
+  Album,
   AlbumKey,
+  Artist,
   ArtistKey,
   isAlbumKey,
   isArtistKey,
   MediaKey,
   SongKey,
 } from '@freik/media-core';
+import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
+import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
@@ -35,7 +39,6 @@ async function shouldDownloadArtistArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadArtistArtwork')) === 'true';
 }
 
-/*
 async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
   return (
     (await Persistence.getItemAsync('saveAlbumArtworkWithMusic')) === 'true'
@@ -46,7 +49,6 @@ async function albumCoverName(): Promise<string> {
   const val = await Persistence.getItemAsync('albumCoverName');
   return val || '.CoverArt';
 }
-*/
 
 function httpsDownloader(url: string): Promise<Buffer> {
   const buf: Uint8Array[] = [];
@@ -202,10 +204,10 @@ async function tryToDownloadAlbumCover(
         if (res) {
           log(res);
           try {
-            // const data = await httpsDownloader(res);
-            // log('Got album data from teh interwebs');
-            // await SavePicForAlbum(db, album, data);
-            // return data;
+            const data = await httpsDownloader(res);
+            log('Got album data from teh interwebs');
+            await SavePicForAlbum(db, album, data);
+            return data;
           } catch (e) {
             err(e);
           }
@@ -228,11 +230,10 @@ async function tryToDownloadArtistImage(
       if (res) {
         log(res);
         try {
-          /*
           const data = await httpsDownloader(res);
           log('Got artist data from teh interwebs');
           await SavePicForArtist(db, artist, data);
-          return data;*/
+          return data;
         } catch (e) {
           err(e);
         }
@@ -281,7 +282,6 @@ export async function PictureHandler(
   return await GetDefaultPicBuffer();
 }
 
-/*
 async function SavePicForAlbum(
   db: AudioDatabase,
   album: Album,
@@ -327,7 +327,6 @@ async function SavePicForArtist(
   log('Saving artist pic to blob store');
   await db.setArtistPicture(artist.key, data);
 }
-*/
 
 type CoverKey = { songKey: SongKey } | { albumKey: AlbumKey };
 type ImageData = { nativeImage: Uint8Array } | { imagePath: string };
