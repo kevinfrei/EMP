@@ -116,6 +116,7 @@ function MusicLocations(): JSX.Element {
             onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>
+        &nbsp;
         <DefaultButton
           text="Import Files"
           onClick={() => {}}

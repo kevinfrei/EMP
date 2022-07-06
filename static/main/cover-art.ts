@@ -28,7 +28,7 @@ import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
 import { BufferResponse, GetDefaultPicBuffer } from './protocols';
 
-const log = MakeLogger('cover-art', true || electronIsDev);
+const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
