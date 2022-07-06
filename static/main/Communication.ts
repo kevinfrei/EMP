@@ -13,7 +13,11 @@ import {
   SearchWholeWord,
   SetMediaInfoForSong,
 } from './AudioDatabase';
-import { isAlbumCoverData, SaveNativeImageForAlbum } from './cover-art';
+import {
+  GetPicDataUri,
+  isAlbumCoverData,
+  SaveNativeImageForAlbum,
+} from './cover-art';
 import {
   CheckPlaylists,
   DeletePlaylist,
@@ -162,4 +166,7 @@ export function CommsSetup(): void {
   Comms.registerChannel(IpcId.TranscodingUpdate, getXcodeStatus, isVoid);
   Comms.registerChannel(IpcId.TranscodingBegin, startTranscode, isXcodeInfo);
   Comms.registerChannel(IpcId.ShowMenu, showMenu, isVoid);
+
+  // Artwork Thumbnails:
+  Comms.registerChannel(IpcId.GetPicUri, GetPicDataUri, Type.isString);
 }

@@ -33,6 +33,7 @@ type IpcIdImpl = {
   MaximizeWindow: 'maximize-window';
   RestoreWindow: 'restore-window';
   CloseWindow: 'close-window';
+  GetPicUri: 'get-pic-uri';
 };
 export const IpcId: IpcIdImpl = {
   ClearHates: 'clear-hates',
@@ -66,6 +67,7 @@ export const IpcId: IpcIdImpl = {
   MaximizeWindow: 'maximize-window',
   RestoreWindow: 'restore-window',
   CloseWindow: 'close-window',
+  GetPicUri: 'get-pic-uri',
 };
 Object.freeze(IpcId);
 export type IpcId = string;

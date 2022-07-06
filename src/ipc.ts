@@ -1,6 +1,12 @@
 import { MakeLogger, Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
-import { AlbumKey, ArtistKey, FullMetadata, SongKey } from '@freik/media-core';
+import {
+  AlbumKey,
+  ArtistKey,
+  FullMetadata,
+  MediaKey,
+  SongKey,
+} from '@freik/media-core';
 import { IpcId } from 'shared';
 
 const log = MakeLogger('ipc');
@@ -19,6 +25,16 @@ export async function GetMediaInfo(
     key,
     Type.isMapOfStrings,
   );
+}
+
+export async function GetPicDataUri(key: MediaKey): Promise<string | void> {
+  const res = Ipc.CallMain<string, MediaKey>(
+    IpcId.GetPicUri,
+    key,
+    Type.isString,
+  );
+  log(res);
+  return res;
 }
 
 export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {

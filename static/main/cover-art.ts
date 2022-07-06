@@ -22,11 +22,16 @@ import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
+import Jimp from 'jimp/es';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
-import { BufferResponse, GetDefaultPicBuffer } from './protocols';
+import {
+  BufferResponse,
+  GetDefaultPicBuffer,
+  GetDefaultPicUri,
+} from './protocols';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
 const err = MakeError('cover-art-err');
@@ -242,43 +247,50 @@ async function tryToDownloadArtistImage(
   }
 }
 
+type PicData = { data: Buffer };
+
+async function TryToGetPic(id: MediaKey): Promise<PicData | undefined> {
+  const db = await GetAudioDB();
+  const maybePath = await getPictureFromDB(db, id);
+  if (maybePath) {
+    log('Found it easily: ', maybePath);
+    return {
+      data: maybePath,
+    };
+  }
+  if (isAlbumKey(id)) {
+    const data = await tryToDownloadAlbumCover(db, id);
+    if (data) {
+      log('Found the album: ', data);
+      return { data };
+    }
+  } else if (isArtistKey(id)) {
+    const data = await tryToDownloadArtistImage(db, id);
+    if (data) {
+      log('Found the artist: ', data);
+      return { data };
+    }
+  }
+}
+
 export async function PictureHandler(
   req: ProtocolRequest,
   id: MediaKey,
 ): Promise<BufferResponse> {
   // Check to see if there's a song in the album that has a cover image
   try {
-    const db = await GetAudioDB();
-
     log(`Got a request for ${id}`);
     if (id.lastIndexOf('#') !== -1) {
       id = id.substring(0, id.lastIndexOf('#'));
     }
-    const maybePath = await getPictureFromDB(db, id);
-    if (maybePath) {
-      log('Found it easily: ', maybePath);
-      return {
-        data: maybePath,
-      };
-    }
-    if (isAlbumKey(id)) {
-      const data = await tryToDownloadAlbumCover(db, id);
-      if (data) {
-        log('Found the album: ', data);
-        return { data };
-      }
-    } else if (isArtistKey(id)) {
-      const data = await tryToDownloadArtistImage(db, id);
-      if (data) {
-        log('Found the artist: ', data);
-        return { data };
-      }
+    const d = await TryToGetPic(id);
+    if (!Type.isUndefined(d)) {
+      return d;
     }
   } catch (error) {
     log(`Error while trying to get picture for ${id}`);
     log(error);
   }
-  log('Returning the default...');
   return await GetDefaultPicBuffer();
 }
 
@@ -365,4 +377,24 @@ export async function SaveNativeImageForAlbum(
     await db.setAlbumPicture(albumKey, await fs.readFile(arg.imagePath));
     return '';
   }
+}
+
+async function getDataUri(buf: Buffer) {
+  const im = await Jimp.read(buf);
+  const scaled = im.scaleToFit(256, 256);
+  const res = await scaled.getBase64Async(Jimp.MIME_PNG);
+  return 'data:image/png;base64,' + res + '=';
+}
+
+export async function GetPicDataUri(data: string): Promise<string> {
+  try {
+    const d = await TryToGetPic(data);
+    if (!Type.isUndefined(d)) {
+      return await getDataUri(d.data);
+    }
+  } catch (e) {
+    err('GetPicDataUri error:');
+    err(e);
+  }
+  return GetDefaultPicUri();
 }

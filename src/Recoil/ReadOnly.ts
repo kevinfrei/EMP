@@ -7,6 +7,7 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
+  MediaKey,
   Song,
   SongKey,
 } from '@freik/media-core';
@@ -53,6 +54,18 @@ export const mediaInfoFuncFam = selectorFamily<Map<string, string>, SongKey>({
     log(`Got media info for ${sk}:`);
     log(result);
     return result;
+  },
+});
+
+export const picForKeyFam = selectorFamily<string, MediaKey>({
+  key: 'picForkey',
+  get: (mk: MediaKey) => async (): Promise<string> => {
+    const data = await ipc.GetPicDataUri(mk);
+    if (Type.isString(data)) {
+      return data;
+    } else {
+      return 'error';
+    }
   },
 });
 
