@@ -52,7 +52,7 @@ async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
 
 async function albumCoverName(): Promise<string> {
   const val = await Persistence.getItemAsync('albumCoverName');
-  return val || '.CoverArt';
+  return Type.asString(val, '.CoverArt');
 }
 
 function httpsDownloader(url: string): Promise<Buffer> {
@@ -107,11 +107,9 @@ async function LookForAlbum(
   log(`Finding album art for ${artist}: ${album}`);
   let albTrim = album.trim();
   let lastAlbum: string;
-
+  const setKey = `${artist}/${albTrim}`.toLocaleLowerCase();
   // Let's see if we should stop looking for this album
-  if (
-    await checkSet('noMoreLooking', `${artist}/${albTrim}`.toLocaleLowerCase())
-  ) {
+  if (await checkSet('noMoreLooking', setKey)) {
     return;
   }
   do {
@@ -127,13 +125,13 @@ async function LookForAlbum(
     lastAlbum = albTrim;
     for (const pair of ['()', '[]', '{}']) {
       if (albTrim.endsWith(pair[1]) && albTrim.indexOf(pair[0]) > 0) {
-        albTrim = albTrim.substr(0, albTrim.lastIndexOf(pair[0])).trim();
+        albTrim = albTrim.substring(0, albTrim.lastIndexOf(pair[0])).trim();
         break;
       } else {
         const ind = albTrim.lastIndexOf(pair[0]);
         if (ind > 0) {
           // Maybe the stuff got cut off, let's just trim it anyway
-          albTrim = albTrim.substr(0, ind).trim();
+          albTrim = albTrim.substring(0, ind).trim();
           break;
         }
       }
@@ -142,10 +140,7 @@ async function LookForAlbum(
 
   // Record the failure, so we stop looking...
 
-  await addToSet(
-    'noMoreLooking',
-    `${artist}/${album.trim()}`.toLocaleLowerCase(),
-  );
+  await addToSet('noMoreLooking', setKey);
 }
 
 // Try to find an artist match
