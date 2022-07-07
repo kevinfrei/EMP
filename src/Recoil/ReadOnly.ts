@@ -7,6 +7,7 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
+  isSongKey,
   MediaKey,
   Song,
   SongKey,
@@ -59,14 +60,19 @@ export const mediaInfoFuncFam = selectorFamily<Map<string, string>, SongKey>({
 
 export const picForKeyFam = selectorFamily<string, MediaKey>({
   key: 'picForkey',
-  get: (mk: MediaKey) => async (): Promise<string> => {
-    const data = await ipc.GetPicDataUri(mk);
-    if (Type.isString(data)) {
-      return data;
-    } else {
-      return 'error';
-    }
-  },
+  get:
+    (mk: MediaKey) =>
+    async ({ get }): Promise<string> => {
+      if (isSongKey(mk)) {
+        mk = get(albumKeyForSongKeyFuncFam(mk));
+      }
+      const data = await ipc.GetPicDataUri(mk);
+      if (Type.isString(data)) {
+        return data;
+      } else {
+        return 'error';
+      }
+    },
 });
 
 type SongMap = Map<SongKey, Song>;

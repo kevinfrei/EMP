@@ -376,9 +376,8 @@ export async function SaveNativeImageForAlbum(
 
 async function getDataUri(buf: Buffer) {
   const im = await Jimp.read(buf);
-  const scaled = im.scaleToFit(256, 256);
-  const res = await scaled.getBase64Async(Jimp.MIME_PNG);
-  return 'data:image/png;base64,' + res + '=';
+  const scaled = im.scaleToFit(144, 144);
+  return scaled.getBase64Async(Jimp.MIME_JPEG);
 }
 
 export async function GetPicDataUri(data: string): Promise<string> {

@@ -1,4 +1,4 @@
-import { MakeError, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
@@ -17,7 +17,7 @@ import { onClickPlayPause } from './PlaybackControls';
 import { GetAudioElem } from './SongPlaying';
 import { addLocation } from './Views/Settings';
 
-const log = MakeError('MenuHandler'); // eslint-disable-line
+const log = MakeLogger('MenuHandler'); // eslint-disable-line
 const err = MakeError('MenuHandler-err'); // eslint-disable-line
 
 function updateTime({ set }: MyTransactionInterface, offset: number) {
