@@ -20,23 +20,23 @@ const audioMimeTypes = new Map<string, string>([
   ['.wma', 'audio/x-ms-wma'],
 ]);
 
-const defaultPicPath = path.join(__dirname, '..', 'img-album.svg');
-let defaultPicBuffer: BufferResponse | null = null;
-let defaultPicUri: string | null = null;
+const defaultAlbumPicPath = path.join(__dirname, '..', 'img-album.svg');
+let defaultAlbumPicBuffer: BufferResponse | null = null;
+let defaultAlbumPicUri: string | null = null;
 
-export async function GetDefaultPicBuffer(): Promise<BufferResponse> {
-  if (!defaultPicBuffer) {
-    defaultPicBuffer = {
-      data: await fs.readFile(defaultPicPath),
+export async function GetDefaultAlbumPicBuffer(): Promise<BufferResponse> {
+  if (!defaultAlbumPicBuffer) {
+    defaultAlbumPicBuffer = {
+      data: await fs.readFile(defaultAlbumPicPath),
       mimeType: 'image/svg+xml',
     };
   }
-  return defaultPicBuffer;
+  return defaultAlbumPicBuffer;
 }
 
-export async function GetDefaultPicUri(): Promise<string> {
-  if (!defaultPicUri) {
-    const br = await GetDefaultPicBuffer();
+export async function GetDefaultAlbumPicUri(): Promise<string> {
+  if (!defaultAlbumPicUri) {
+    const br = await GetDefaultAlbumPicBuffer();
     if (
       Type.hasStr(br, 'mimeType') &&
       Type.has(br, 'data') &&
@@ -50,10 +50,23 @@ export async function GetDefaultPicUri(): Promise<string> {
       svg = svg.trim();
       // Encode the uri-unsafe characters
       svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
-      defaultPicUri = `data:image/svg+xml,${svg}`;
+      defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
     }
   }
-  return Type.asString(defaultPicUri, '');
+  return Type.asString(defaultAlbumPicUri, '');
+}
+
+const defaultArtistPicPath = path.join(__dirname, '..', 'img-artist.svg');
+let defaultArtistPicBuffer: BufferResponse | null = null;
+
+export async function GetDefaultArtistPicBuffer(): Promise<BufferResponse> {
+  if (!defaultArtistPicBuffer) {
+    defaultArtistPicBuffer = {
+      data: await fs.readFile(defaultArtistPicPath),
+      mimeType: 'image/svg+xml',
+    };
+  }
+  return defaultArtistPicBuffer;
 }
 
 const e404 = { error: 404 };
@@ -81,7 +94,7 @@ async function tuneProtocolHandler(
 
 // This sets up all protocol handlers
 export async function RegisterProtocols(): Promise<void> {
-  const defPicBuffer = await GetDefaultPicBuffer();
+  const defPicBuffer = await GetDefaultAlbumPicBuffer();
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album

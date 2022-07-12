@@ -29,8 +29,9 @@ import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
 import {
   BufferResponse,
-  GetDefaultPicBuffer,
-  GetDefaultPicUri,
+  GetDefaultAlbumPicBuffer,
+  GetDefaultAlbumPicUri,
+  GetDefaultArtistPicBuffer,
 } from './protocols';
 
 const log = MakeLogger('cover-art', false && electronIsDev);
@@ -286,7 +287,9 @@ export async function PictureHandler(
     log(`Error while trying to get picture for ${id}`);
     log(error);
   }
-  return await GetDefaultPicBuffer();
+  return isArtistKey(id)
+    ? GetDefaultArtistPicBuffer()
+    : GetDefaultAlbumPicBuffer();
 }
 
 async function SavePicForAlbum(
@@ -390,5 +393,5 @@ export async function GetPicDataUri(data: string): Promise<string> {
     err('GetPicDataUri error:');
     err(e);
   }
-  return GetDefaultPicUri();
+  return GetDefaultAlbumPicUri();
 }
