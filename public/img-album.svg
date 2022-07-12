@@ -1,13 +1,9 @@
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none"
-  stroke="#000" stroke-width="2" viewBox="0 0 64 64" height="64px" xml:space="preserve">
-  <circle cx="32" cy="32" r="31" />
-  <circle cx="32" cy="32" r="8" />
-  <path d="M32,48c-8.8,0-16-7.2-16-16" />
-  <path d="M32,48" />
-  <path d="M32,16c8.8,0,16,7.2,16,16" />
-  <path d="M32,9" />
-  <path d="M32,55C19.3,55,9,44.7,9,32" />
-  <path d="M32,55" />
-  <path d="M55,32" />
-  <path d="M32,9c12.7,0,23,10.3,23,23" />
+<svg xmlns='http://www.w3.org/2000/svg' style='fill:none;stroke:#301;stroke-linecap:round;stroke-width:19'
+  viewBox='0 0 640 640' height='640px' xml:space='preserve'>
+  <circle cx='320' cy='320' r='310' />
+  <circle cx='320' cy='320' r='80' />
+  <path d='M320,480c-88,0-160-72-160-160' />
+  <path d='M320,160c88,0,160,72,160,160' />
+  <path d='M320,550C193,550,90,447,90,320' />
+  <path d='M320,99c127,0,230,103,230,230' />
 </svg>

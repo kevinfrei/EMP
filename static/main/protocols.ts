@@ -42,12 +42,15 @@ export async function GetDefaultPicUri(): Promise<string> {
       Type.has(br, 'data') &&
       Type.hasType(br.data, 'toString', Type.isFunction)
     ) {
-      const d = br.data;
-      const s: unknown = d.toString();
-      if (Type.isString(s)) {
-        const uri = 'data:' + br.mimeType + ',' + encodeURI(s);
-        defaultPicUri = uri;
-      }
+      let svg = br.data.toString() as string;
+      // Remove space from between tags, duplicate spaces
+      svg = svg.replace(/>\s{1,}</g, '><');
+      svg = svg.replace(/\s{1,}\/>/g, '/>');
+      svg = svg.replace(/\s{2,}/g, ' ');
+      svg = svg.trim();
+      // Encode the uri-unsafe characters
+      svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
+      defaultPicUri = `data:image/svg+xml,${svg}`;
     }
   }
   return Type.asString(defaultPicUri, '');
