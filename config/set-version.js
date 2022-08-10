@@ -1,6 +1,7 @@
-const { write } = require('jimp');
 const path = require('path');
 const fsp = require('fs').promises;
+const prettier = require('prettier');
+
 const readline = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -82,14 +83,16 @@ async function readJSONFile(filename) {
   return JSON.parse(text);
 }
 
-async function writeJSONFile(filename, json) {
-  const data = JSON.stringify(json, null, '  ');
-  await fsp.writeFile(filename, data, 'utf-8');
+async function writeJSONFile(filename, json, options) {
+  const text = JSON.stringify(json);
+  const formatted = prettier.format(text, { ...options, parser: 'json' });
+  await fsp.writeFile(filename, formatted, 'utf-8');
 }
 
-async function writeHTMLFile(filename, html) {
-  const data = html.join('\n');
-  await fsp.writeFile(filename, data, 'utf-8');
+async function writeHTMLFile(filename, html, options) {
+  const text = html.join('\n');
+  const formatted = prettier.format(text, { ...options, parser: 'html' });
+  await fsp.writeFile(filename, formatted, 'utf-8');
 }
 
 function bumpVer(which, ver) {
@@ -132,12 +135,14 @@ async function main() {
   console.log(`Bumping to new version ${verStr}`);
   pkg.version = verStr;
   about.version = verStr;
-  await writeJSONFile(pkgPath, pkg);
+  const options = prettier.resolveConfig(pkgPath);
+  await writeJSONFile(pkgPath, pkg, options);
   about.contents[about.index] = `<div id="version">Version ${verStr}</div>`;
   await writeHTMLFile(
     aboutPath,
     // This makes HTML comments format into a nice place
     about.contents.map((val) => '      ' + val),
+    options,
   );
 }
 
