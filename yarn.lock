@@ -338,13 +338,13 @@ __metadata:
   linkType: hard
 
 "@babel/generator@npm:^7.18.10":
-  version: 7.18.10
-  resolution: "@babel/generator@npm:7.18.10"
+  version: 7.18.12
+  resolution: "@babel/generator@npm:7.18.12"
   dependencies:
     "@babel/types": ^7.18.10
     "@jridgewell/gen-mapping": ^0.3.2
     jsesc: ^2.5.1
-  checksum: 6e888448dd018571e2a36859c1722dc389e22abac99180523422112d208b9eff137da57f03325c9b1e78c2e8b9b4e7004c9a880cc04643582177b9252dd1435f
+  checksum: 07dd71d255144bb703a80ab0156c35d64172ce81ddfb70ff24e2be687b052080233840c9a28d92fa2c33f7ecb8a8b30aef03b807518afc53b74c7908bf8859b1
   languageName: node
   linkType: hard
 
@@ -1184,12 +1184,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.18.10":
-  version: 7.18.10
-  resolution: "@babel/parser@npm:7.18.10"
+"@babel/parser@npm:^7.18.10, @babel/parser@npm:^7.18.11":
+  version: 7.18.11
+  resolution: "@babel/parser@npm:7.18.11"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: adf417daccb5bc5edb53cc86b8e60abd911eaee8212703ea702ec17ff7967a9a17a84f6aa19b1cd0faec58e9beaa31a026c85238fd8ca08f2d66ba1db8180dc6
+  checksum: 5ecc75b83e62ec53a947b1635a6ca75d6210d4a4f962f9f16f4239a6783f98e57f9662b598fa2fb1b8e12c0ad5c2bd86846ed0b97b85eb73dd7498b3a6d71a4b
   languageName: node
   linkType: hard
 
@@ -3286,8 +3286,8 @@ __metadata:
   linkType: hard
 
 "@babel/traverse@npm:^7.18.10":
-  version: 7.18.10
-  resolution: "@babel/traverse@npm:7.18.10"
+  version: 7.18.11
+  resolution: "@babel/traverse@npm:7.18.11"
   dependencies:
     "@babel/code-frame": ^7.18.6
     "@babel/generator": ^7.18.10
@@ -3295,11 +3295,11 @@ __metadata:
     "@babel/helper-function-name": ^7.18.9
     "@babel/helper-hoist-variables": ^7.18.6
     "@babel/helper-split-export-declaration": ^7.18.6
-    "@babel/parser": ^7.18.10
+    "@babel/parser": ^7.18.11
     "@babel/types": ^7.18.10
     debug: ^4.1.0
     globals: ^11.1.0
-  checksum: c58b744b1c145649d3bf8167f7a3a6df032808f4582fb8f86b15fba0b7f237640f2289e67b854abfd7f1bda0abdbc0a71527fe78c6d470120ba0a96e64f8bf36
+  checksum: 727409464d5cf27f33555010098ce9bb435f0648cc76e674f4fb7513522356655ba62be99c8df330982b391ccf5f0c0c23c7bd7453d4936d47e2181693fed14c
   languageName: node
   linkType: hard
 
@@ -5718,10 +5718,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.6.5":
-  version: 18.6.5
-  resolution: "@types/node@npm:18.6.5"
-  checksum: e3e66c9a84b94010a57c1b9dac882c08484278d74f9d120dbe6a3e45d00740d178bd1d34a5deee28197c94b9f4359153b637bab9b305328e865027e9987a0f3d
+"@types/node@npm:^18.7.1":
+  version: 18.7.1
+  resolution: "@types/node@npm:18.7.1"
+  checksum: f1e2b701b107f97be01da4c46845cd23bcdcb2865f9abbb2847546d09587e726ea207daca6f0d1e72196875ef8c62feeeff5f1c1f2070445acd6d1a61d815c7c
   languageName: node
   linkType: hard
 
@@ -9405,16 +9405,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^20.0.1":
-  version: 20.0.1
-  resolution: "electron@npm:20.0.1"
+"electron@npm:^20.0.2":
+  version: 20.0.2
+  resolution: "electron@npm:20.0.2"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 1ae66fdd7d9bb03bc8eaead814c429ccc20427cfc430ab70cd55c24e3f948c2aab7713de3478894ce15e5436bc4c5353b538062420b493f17bc62a626b836abe
+  checksum: 68a37306b64413a918a6d310fe48234ecb14b0b5f7ad97ccc25ebd4e14baaef3783c9a4b3e72350343d83dcf6f02baeb89ffda594dfa311024e9d56292f24464
   languageName: node
   linkType: hard
 
@@ -9478,7 +9478,7 @@ __metadata:
     "@testing-library/react": ^12.1.5
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^27.5.2
-    "@types/node": ^18.6.5
+    "@types/node": ^18.7.1
     "@types/react": ^17.0.48
     "@types/react-dom": ^17.0.17
     "@types/react-test-renderer": ^17.0.2
@@ -9487,7 +9487,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.33.0
     album-art: ^2.0.2
     cross-env: ^7.0.3
-    electron: ^20.0.1
+    electron: ^20.0.2
     electron-builder: ^23.3.3
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
@@ -9510,7 +9510,7 @@ __metadata:
     react-dom: ^17.0.2
     react-scripts: ^5.0.1
     react-test-renderer: ^17.0.2
-    recoil: ^0.7.4
+    recoil: ^0.7.5
     rimraf: ^3.0.2
     shared: "file:./shared"
     svg-react-loader: ^0.4.6
@@ -13730,12 +13730,12 @@ __metadata:
   linkType: hard
 
 "jsx-ast-utils@npm:^3.3.2":
-  version: 3.3.2
-  resolution: "jsx-ast-utils@npm:3.3.2"
+  version: 3.3.3
+  resolution: "jsx-ast-utils@npm:3.3.3"
   dependencies:
     array-includes: ^3.1.5
-    object.assign: ^4.1.2
-  checksum: 61d4596d44480afc03ae0a7ebb272aa6603dc4c3645805dea0fc8d9f0693542cd0959f3ba7c0c9b16c13dd5a900c7c4310108bada273132a8355efe3fed22064
+    object.assign: ^4.1.3
+  checksum: a2ed78cac49a0f0c4be8b1eafe3c5257a1411341d8e7f1ac740debae003de04e5f6372bfcfbd9d082e954ffd99aac85bcda85b7c6bc11609992483f4cdc0f745
   languageName: node
   linkType: hard
 
@@ -14834,6 +14834,18 @@ __metadata:
     has-symbols: ^1.0.1
     object-keys: ^1.1.1
   checksum: d621d832ed7b16ac74027adb87196804a500d80d9aca536fccb7ba48d33a7e9306a75f94c1d29cbfa324bc091bfc530bc24789568efdaee6a47fcfa298993814
+  languageName: node
+  linkType: hard
+
+"object.assign@npm:^4.1.3":
+  version: 4.1.3
+  resolution: "object.assign@npm:4.1.3"
+  dependencies:
+    call-bind: ^1.0.2
+    define-properties: ^1.1.4
+    has-symbols: ^1.0.3
+    object-keys: ^1.1.1
+  checksum: fe87c8acd60e0d7140e1eae8886804e7497bf6a019bae715084083c2abd1760bd5aa9c3f0e5b02c82ca5cc33b641dc908c42c86c6f7d6dfd9f083a7baa95d318
   languageName: node
   linkType: hard
 
@@ -16885,9 +16897,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recoil@npm:^0.7.4":
-  version: 0.7.4
-  resolution: "recoil@npm:0.7.4"
+"recoil@npm:^0.7.5":
+  version: 0.7.5
+  resolution: "recoil@npm:0.7.5"
   dependencies:
     hamt_plus: 1.0.2
   peerDependencies:
@@ -16897,7 +16909,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 797b97ee74b2fbbb8e4dda8a951b13569d45a3440cfc05e870056255ff22c73aa816de70d66168a5b9ebe16c14d262777947dd752c8cb9559ef8ae3fbb586472
+  checksum: 19b410cca6839c8b886b91378112e12de3e0393b547211dafcf7a272c1aa2d7af6c09a9ed39fb3e1997abe5f3d6583e3774dc9f9cdda8c36e4cb0be64a1b17ce
   languageName: node
   linkType: hard
 
@@ -17743,10 +17755,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=0e8adb&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=5c4abc&locator=emp%40workspace%3A."
   dependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: e751c03518bca407c5f0d7167b2e3726c56e4c5dd32ef7c6ace43d05d527b3377884699e0f5248ba9732eede0bc6759c7163ebef591cb1324cb6c42f7b99d5a2
+  checksum: 4e4e6f6bb472d1f7b93d3b9afc9685677952c54af34615a2166643d142de99ecf0806a31979aa0320550e8ffbf1f6a92951f967883e19dc4b46b37dccada2bc4
   languageName: node
   linkType: hard
 

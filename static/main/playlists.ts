@@ -69,6 +69,12 @@ export async function GetPlaylists(): Promise<string[]> {
     err('Error while reading playlists:');
     err(e);
   }
+  try {
+    await fsp.mkdir(playlistDir());
+  } catch (e) {
+    err('Errow while trying to create the playlist dir');
+    err(e);
+  }
   return [];
 }
 

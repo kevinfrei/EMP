@@ -1,3 +1,4 @@
+import { Type } from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
 import { UpdateLocations } from './AudioDatabase';
 import { CommsSetup } from './Communication';
@@ -13,7 +14,5 @@ export function InitBeforeAnythingElse(): void {
 export async function WindowStartup(): Promise<void> {
   //
   const locs = await Persistence.getItemAsync('locations');
-  if (locs) {
-    await UpdateLocations(locs);
-  }
+  await UpdateLocations(Type.isString(locs) ? locs : '[]');
 }
