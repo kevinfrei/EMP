@@ -13,6 +13,7 @@ import {
   Catch,
   Expandable,
   MyTransactionInterface,
+  Spinner,
   StateToggle,
   useBoolRecoilState,
   useMyTransaction,
@@ -218,7 +219,9 @@ export function SettingsView(): JSX.Element {
   return (
     <Stack className="settings-view">
       <Expandable separator label="Music Locations" defaultShow={true}>
-        <MusicLocations />
+        <Spinner>
+          <MusicLocations />
+        </Spinner>
       </Expandable>
       <Expandable separator label="Sorting & Filtering" defaultShow={true}>
         <LikeFiltering />
