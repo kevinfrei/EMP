@@ -1,4 +1,4 @@
-import { MakeError, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AsyncSend } from '@freik/elect-main-utils/lib/comms';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
@@ -17,7 +17,8 @@ import {
 import { GetAudioDB } from './AudioDatabase';
 import { LoadPlaylist } from './playlists';
 
-const err = MakeError('downsample-err');
+const err = MakeError('transcoding-err');
+const log = MakeLogger('transcoding');
 
 const cp = {
   spawnAsync: ProcUtil.spawnAsync,
@@ -277,7 +278,7 @@ async function convert(
     if (!path.isAbsolute(relName)) {
       relName = path.join(settings.dest, relName);
     }
-    err(`${src} -> ${relName}`);
+    log(`${src} -> ${relName}`);
     const newName = PathUtil.changeExt(relName, 'm4a');
     try {
       const dr = path.dirname(newName);
@@ -398,6 +399,8 @@ export function getXcodeStatus(): Promise<TranscodeState> {
 }
 
 export async function startTranscode(settings: TranscodeInfo): Promise<void> {
+  log('Transcoding started:');
+  log(settings);
   clearStatus();
   bitrate = settings.bitrate;
   startStatusReporting();
