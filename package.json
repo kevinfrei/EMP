@@ -49,8 +49,7 @@
     "format": "ftool format",
     "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
     "chk": "ftool check",
-    "nulinecount": "ftool linecount .css .ts .tsx -__ -.d.ts",
-    "linecount": "git ls-files|grep '\\.\\(css\\|ts\\|tsx\\)$'|grep -v __|grep -v \\.d\\.ts|xargs wc -l",
+    "linecount": "ftool linecount .css .ts .tsx .html -__ -.d.ts",
     "postinstall": "husky install",
     "verbump": "node config/set-version.js",
     "bumpver": "node config/set-version.js"
@@ -87,7 +86,7 @@
     "@babel/core": "^7.19.1",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/plugin-transform-react-jsx": "^7.19.0",
-    "@freik/build-tools": "3.3.0",
+    "@freik/build-tools": "3.4.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/electron-devtools-installer": "^2.2.2",

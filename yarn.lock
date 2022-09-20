@@ -3628,9 +3628,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/build-tools@npm:3.3.0":
-  version: 3.3.0
-  resolution: "@freik/build-tools@npm:3.3.0"
+"@freik/build-tools@npm:3.4.0":
+  version: 3.4.0
+  resolution: "@freik/build-tools@npm:3.4.0"
   dependencies:
     "@babel/cli": ~7
     "@babel/core": ~7
@@ -3678,7 +3678,7 @@ __metadata:
   bin:
     er: lib/tools.js
     ftool: lib/tools.js
-  checksum: 03b1ecc6f3612f234a81caff9e20baaa69ed485c9f91ee7f8f5964c48cc51b5f740ed5dcda6fff281ae1b8cf4d94fcd484c0239de5688b0c230c45905e7eeafe
+  checksum: a9c61b32f7d49b807c69469d80f4b281cdef83131b7604c49cea53cbc5045f626af0efc775487433918d3fa7b527d158fd771c4b8fb4b87fc1bc0211aafa46c8
   languageName: node
   linkType: hard
 
@@ -9862,7 +9862,7 @@ __metadata:
     "@fluentui/react-hooks": ^8.6.11
     "@fluentui/react-icons-mdl2": ^1.3.22
     "@freik/audiodb": ^0.5.1
-    "@freik/build-tools": 3.3.0
+    "@freik/build-tools": 3.4.0
     "@freik/core-utils": ~1.2.0
     "@freik/elect-main-utils": ^0.3.0
     "@freik/elect-render-utils": ^0.3.0
@@ -18731,10 +18731,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=92cd9f&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=98fd3d&locator=emp%40workspace%3A."
   dependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 228094a30ba15912c03c922c4dce6a89b32ad9144d4c85d7c1937f0dc6399b17345b18a47425cf7cc3598f0402364119634308db843d93df57203ec4d0faba55
+  checksum: 9afa042ff0291168463f20702f35deddb063b37234d487892cb8b9a528be83934496c60e5dd95468be3f018939b31a4ae0dc74c91f2d968aa16eb281c2116e69
   languageName: node
   linkType: hard
 
