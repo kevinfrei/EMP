@@ -14,7 +14,13 @@
       "buildResources": "build"
     },
     "fileAssociations": {
-      "ext": ["mp3", "m4a", "aac", "flac", "wma"],
+      "ext": [
+        "mp3",
+        "m4a",
+        "aac",
+        "flac",
+        "wma"
+      ],
       "description": "Audio files",
       "role": "Viewer"
     },
@@ -24,7 +30,12 @@
     "linux": {
       "icon": "build/icon.png",
       "category": "Audio",
-      "mimeTypes": ["audio/mpeg", "audio/m4a", "audio/aac", "audio/x-flac"]
+      "mimeTypes": [
+        "audio/mpeg",
+        "audio/m4a",
+        "audio/aac",
+        "audio/x-flac"
+      ]
     },
     "win": {
       "icon": "build/icon.png"
@@ -55,7 +66,7 @@
     "bumpver": "node config/set-version.js"
   },
   "dependencies": {
-    "@fluentui/react": "^8.96.0",
+    "@fluentui/react": "^8.97.1",
     "@fluentui/react-hooks": "^8.6.11",
     "@fluentui/react-icons-mdl2": "^1.3.22",
     "@freik/audiodb": "^0.5.1",
@@ -79,31 +90,35 @@
     "xxhashjs": "^0.2.2"
   },
   "browserslist": {
-    "production": ["last 1 chrome version"],
-    "development": ["last 1 chrome version"]
+    "production": [
+      "last 1 chrome version"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
   },
   "devDependencies": {
-    "@babel/core": "^7.19.1",
+    "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/plugin-transform-react-jsx": "^7.19.0",
-    "@freik/build-tools": "3.4.0",
+    "@freik/build-tools": "3.4.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/electron-devtools-installer": "^2.2.2",
     "@types/jest": "^27.5.2",
-    "@types/node": "^18.7.18",
+    "@types/node": "^18.8.0",
     "@types/react": "^17.0.50",
     "@types/react-dom": "^17.0.17",
     "@types/react-test-renderer": "^17.0.2",
     "@types/xxhashjs": "^0.2.2",
-    "@typescript-eslint/eslint-plugin": "^5.38.0",
-    "@typescript-eslint/parser": "^5.38.0",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
     "cross-env": "^7.0.3",
-    "electron": "^20.1.4",
+    "electron": "^21.0.1",
     "electron-builder": "^23.5.1",
     "electron-devtools-installer": "^3.2.0",
     "electron-react-devtools": "^0.5.3",
-    "eslint": "^8.23.1",
+    "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
@@ -112,15 +127,15 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.1",
     "jest": "27.5.1",
-    "jest-transform-css": "^4.0.1",
-    "postcss": "8.4.16",
+    "jest-transform-css": "^5.0.0",
+    "postcss": "8.4.17",
     "prettier": "^2.7.1",
     "react-scripts": "^5.0.1",
     "react-test-renderer": "^17.0.2",
     "rimraf": "^3.0.2",
     "svg-react-loader": "^0.4.6",
     "ts-jest": "27.1.5",
-    "typescript": "^4.8.3",
+    "typescript": "^4.8.4",
     "wait-on": "^6.0.1"
   },
   "packageManager": "yarn@3.1.1"
