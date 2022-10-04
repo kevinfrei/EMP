@@ -353,7 +353,7 @@ function pathfix(f: string): string {
 async function cleanTarget(
   settings: TranscodeInfo,
   filePairs: Map<string, string>,
-): Promise<void> {
+): Promise<Set<string>> {
   const leftovers: Set<string> = new Set<string>();
   const transcoded: Set<string> = new Set<string>(
     [...filePairs.values()].map(pathfix),
@@ -377,8 +377,7 @@ async function cleanTarget(
       dontFollowSymlinks: false,
     },
   );
-  console.log(leftovers);
-  console.log(leftovers.size);
+  return leftovers;
 }
 
 // Transcode the files from 'files' according to the settings
@@ -407,7 +406,10 @@ async function handleLots(
   if (filePairs !== undefined) {
     // Find all the files in the mirror target, and remove any files that don't
     // have matching pairs in the source
-    await cleanTarget(settings, filePairs);
+    const toRemove = await cleanTarget(settings, filePairs);
+    await Promise.all(
+      [...toRemove].map((f) => limit(async () => fsp.unlink(f))),
+    );
   }
 }
 

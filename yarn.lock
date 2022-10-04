@@ -18808,10 +18808,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=4ebc3d&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=ac0d72&locator=emp%40workspace%3A."
   dependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 03460c71a53e70e4bbf32e21ec987c6d1a3a761688177b26e8b2745f6766ea35143e5e36809c248f76cd566ed6f72866e376978b9aee7faae4a9ed35f00cdd68
+  checksum: 6c5d08d3621aa70588aef1015686efd5ffcd1de6b1719215423c82c98f6d281c6ac9c31b2895933437c4037b80313c1e292dcbb0f69c8c5b4d465599a0c05569
   languageName: node
   linkType: hard
 
