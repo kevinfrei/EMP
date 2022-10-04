@@ -173,11 +173,12 @@ function reportStatus() {
 
 let reportEvent: null | ReturnType<typeof setTimeout> = null;
 
+// Set up an event every 2 seconds to update the UI with the state of transcoding
 function startStatusReporting() {
   if (reportEvent !== null) {
     clearInterval(reportEvent);
   }
-  reportEvent = setInterval(reportStatus, 500);
+  reportEvent = setInterval(reportStatus, 2000);
 }
 
 function stopStatusReporting() {
@@ -262,12 +263,24 @@ async function getFullSongPathFromSettings(
   }
 }
 
+function isImage(filepath: string): boolean {
+  const fp = filepath.toLocaleUpperCase();
+  return fp.endsWith('.PNG') || fp.endsWith('.JPG');
+}
+
 async function convert(
   settings: TranscodeInfo,
   file: string,
   filePairs?: Map<string, string>,
 ): Promise<void> {
   reportFilePending();
+  // First, check to see if it's a cover image
+  if (isImage(file)) {
+    if (settings.artwork) {
+      // TOOD: Copy artwork, because we're supposed to:
+    }
+    return;
+  }
   try {
     const fullSongPath = await getFullSongPathFromSettings(settings, file);
     if (!fullSongPath) {
@@ -364,19 +377,23 @@ async function cleanTarget(
       dontFollowSymlinks: false,
     },
   );
-  // console.log(leftovers);
-  // console.log(leftovers.size);
+  console.log(leftovers);
+  console.log(leftovers.size);
 }
 
+// Transcode the files from 'files' according to the settings
 async function handleLots(
   settings: TranscodeInfo,
   files: string[],
 ): Promise<void> {
+  // Don't use all the cores if we have multiple cores:
   const limit = pLimit(Math.max(os.cpus().length - 2, 1));
+  // This is the (optional) list of files that we should be transcoding to
   const filePairs: Map<string, string> | undefined = settings.mirror
     ? new Map<string, string>()
     : undefined;
   try {
+    // Okay, convert all the files:
     await Promise.all(
       files.map((f) => limit(async () => convert(settings, f, filePairs))),
     );
@@ -398,43 +415,58 @@ export function getXcodeStatus(): Promise<TranscodeState> {
   return Promise.resolve(curStatus);
 }
 
+// Read through all the files on the disk to build up the work queue
+async function ScanSourceFromDisk(
+  settings: TranscodeInfo,
+  workQueue: string[],
+) {
+  const fileTypes = ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'];
+  if (settings.artwork) {
+    fileTypes.push('jpg', 'png');
+  }
+  reportStatusMessage(`Scanning source: ${settings.source.loc}`);
+  await ForFiles(
+    settings.source.loc,
+    (fileName) => {
+      workQueue.push(fileName);
+      reportFilesFound();
+      return true;
+    },
+    {
+      recurse: async (dirName: string): Promise<boolean> => {
+        const toSkip = PathUtil.join(dirName, '.notranscode');
+        try {
+          await fsp.access(toSkip);
+        } catch (e) {
+          return Type.has(e, 'code') && e.code === 'ENOENT';
+        }
+        return false;
+      },
+      keepGoing: true,
+      order: 'breadth',
+      fileTypes,
+      skipHiddenFiles: !settings.artwork, // We want to pick up hidden images
+      skipHiddenFolders: true,
+      dontAssumeDotsAreHidden: false,
+      dontFollowSymlinks: false,
+    },
+  );
+}
+
+// This is the entry point for the transcoding engine
 export async function startTranscode(settings: TranscodeInfo): Promise<void> {
   log('Transcoding started:');
   log(settings);
   clearStatus();
   bitrate = settings.bitrate;
+  // Start UI reporting
   startStatusReporting();
   try {
     const workQueue: string[] = [];
     if (settings.source.type === TranscodeSourceType.Disk) {
-      reportStatusMessage(`Scanning source: ${settings.source.loc}`);
-      await ForFiles(
-        settings.source.loc,
-        (fileName) => {
-          workQueue.push(fileName);
-          reportFilesFound();
-          return true;
-        },
-        {
-          recurse: async (dirName: string): Promise<boolean> => {
-            const toSkip = PathUtil.join(dirName, '.notranscode');
-            try {
-              await fsp.access(toSkip);
-            } catch (e) {
-              return Type.has(e, 'code') && e.code === 'ENOENT';
-            }
-            return false;
-          },
-          keepGoing: true,
-          fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
-          order: 'breadth',
-          skipHiddenFiles: true,
-          skipHiddenFolders: true,
-          dontAssumeDotsAreHidden: false,
-          dontFollowSymlinks: false,
-        },
-      );
+      await ScanSourceFromDisk(settings, workQueue);
     } else {
+      // TODO: Handle artwork for this stuff
       const db = await GetAudioDB();
       switch (settings.source.type) {
         case TranscodeSourceType.Album:
@@ -455,9 +487,9 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           workQueue.push(...(await LoadPlaylist(settings.source.loc)));
           break;
       }
+      reportFilesFound(workQueue.length);
     }
     // We've now got our work queue
-    reportFilesFound(workQueue.length);
     reportStatusMessage('Completed scanning. Transcoding in progress.');
     await handleLots(settings, workQueue);
   } finally {
