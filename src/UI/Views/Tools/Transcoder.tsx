@@ -168,7 +168,7 @@ export function TranscoderConfiguration(): JSX.Element {
         />
         <StateToggle label="Copy artwork (NYI) " state={copyArtwork} />
         <StateToggle
-          label={'Mirror Source WARNING: May delete files! (NYI)'}
+          label={'Mirror Source WARNING: May delete files!'}
           state={mirror}
         />
         <DefaultButton

@@ -8,6 +8,7 @@ import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import rimraf from 'rimraf';
 import {
   IpcId,
   TranscodeInfo,
@@ -450,10 +451,9 @@ async function handleLots(
     const dirsToRemove = await findExcessDirs(settings);
     for (const dir of dirsToRemove) {
       reportItemRemoved(dir);
-      console.log(dir);
-      // rimraf(dir, () => {
-      /* */
-      // });
+      rimraf(dir, () => {
+        /* */
+      });
     }
   }
 }
