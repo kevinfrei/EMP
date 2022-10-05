@@ -2,7 +2,7 @@ import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { AsyncSend } from '@freik/elect-main-utils/lib/comms';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
-import { ForFiles, PathUtil, ProcUtil } from '@freik/node-utils';
+import { ForDirs, ForFiles, PathUtil, ProcUtil } from '@freik/node-utils';
 import { pLimit } from '@freik/p-limit';
 import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
@@ -371,13 +371,45 @@ async function cleanTarget(
       keepGoing: true,
       fileTypes: ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'],
       order: 'breadth',
-      skipHiddenFiles: true,
+      skipHiddenFiles: false,
       skipHiddenFolders: true,
       dontAssumeDotsAreHidden: false,
       dontFollowSymlinks: false,
     },
   );
   return leftovers;
+}
+
+async function findExcessDirs(settings: TranscodeInfo): Promise<string[]> {
+  // For each directory in the destination, check to see if it also exists
+  // in the source location
+  const result: string[] = [];
+  const dst = pathfix(settings.dest);
+  const src = pathfix(settings.source.loc);
+  await ForDirs(
+    dst,
+    async (dirname: string) => {
+      const theDir = pathfix(dirname);
+      if (!theDir.toLocaleUpperCase().startsWith(dst.toLocaleUpperCase())) {
+        err('Failed a very basic test: Not sure what to do with it...');
+        return false;
+      }
+      const srcDir = PathUtil.join(src, theDir.substring(dst.length));
+      try {
+        const st = await fsp.stat(srcDir);
+        if (!st.isDirectory()) {
+          result.push(dirname);
+        }
+      } catch (e) {
+        result.push(dirname);
+      }
+      return true;
+    },
+    {
+      recurse: true,
+    },
+  );
+  return result;
 }
 
 // Transcode the files from 'files' according to the settings
@@ -408,8 +440,21 @@ async function handleLots(
     // have matching pairs in the source
     const toRemove = await cleanTarget(settings, filePairs);
     await Promise.all(
-      [...toRemove].map((f) => limit(async () => fsp.unlink(f))),
+      [...toRemove].map((f) =>
+        limit(async () => {
+          reportItemRemoved(f);
+          return fsp.unlink(f);
+        }),
+      ),
     );
+    const dirsToRemove = await findExcessDirs(settings);
+    for (const dir of dirsToRemove) {
+      reportItemRemoved(dir);
+      console.log(dir);
+      // rimraf(dir, () => {
+      /* */
+      // });
+    }
   }
 }
 
