@@ -9867,16 +9867,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^21.0.1":
-  version: 21.0.1
-  resolution: "electron@npm:21.0.1"
+"electron@npm:^21.1.0":
+  version: 21.1.0
+  resolution: "electron@npm:21.1.0"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 1362c1a820187c7061cb3de84d91f0b8839fdfa9428c12d59d4e9966d691b747dcaf34ca55649216b5724296ddf53b303222b6f52c1982717cdaa4078ce99a71
+  checksum: ca74353bd645cfbaa427a813d1d20e621b115ad657dd138482a55573f87f9fe4157522977e5485b4707003a794f61fa0b074a74d8092a5fa86c9d094a9bcf054
   languageName: node
   linkType: hard
 
@@ -9957,7 +9957,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.39.0
     album-art: ^2.0.2
     cross-env: ^7.0.3
-    electron: ^21.0.1
+    electron: ^21.1.0
     electron-builder: ^23.6.0
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
