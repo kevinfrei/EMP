@@ -9,7 +9,6 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { useId } from '@fluentui/react-hooks';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
@@ -64,10 +63,6 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   const [vars, setVars] = useState<false | string>(false);
   const [moreArtists, setMoreArtists] = useState<false | string>(false);
   const [diskName, setDiskName] = useState<false | string>(false);
-  // These are for tooltips in FluentUI
-  const priArtistsId = useId('md-priArtists');
-  const secArtistsId = useId('md-secArtists');
-  const variationsId = useId('md-variations');
 
   const isMultiple = !props.forSong && Type.isArrayOfString(props.forSongs);
   const isSingle = Type.isString(props.forSong) && !props.forSongs;
@@ -250,7 +245,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         content={st(StrId.ArtistTooltip)}
         // This id is used on the tooltip itself, not the host
         // (so an element with this id only exists when the tooltip is shown)
-        id={priArtistsId}
+        id="priArtistsId"
         calloutProps={{ gapSpace: 0 }}
         styles={{ root: { display: 'inline-block' } }}
         directionalHint={DirectionalHint.bottomAutoEdge}
@@ -259,7 +254,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           label={st(StrId.Artists)}
           value={val(artist, props.artist)}
           onChange={(e, nv) => nv && setArtist(nv)}
-          aria-describedby={priArtistsId}
+          aria-describedby="priArtistsId"
         />
       </TooltipHost>
       <div className="metadata-specs">
@@ -316,7 +311,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           content={st(StrId.ArtistTooltip)}
           // This id is used on the tooltip itself, not the host
           // (so an element with this id only exists when the tooltip is shown)
-          id={secArtistsId}
+          id="secArtistsId"
           calloutProps={{ gapSpace: 0 }}
           styles={{ root: { display: 'inline-block' } }}
           directionalHint={DirectionalHint.bottomAutoEdge}
@@ -324,7 +319,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           <TextField
             style={{ width: 400 }}
             label={st(StrId.AdditionalArtists)}
-            aria-describedby={secArtistsId}
+            aria-describedby="secArtistsId"
             value={val(moreArtists, props.moreArtists)}
             onChange={(e, nv) => nv && setMoreArtists(nv)}
           />
@@ -336,7 +331,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           content={st(StrId.VariationsTooltip)}
           // This id is used on the tooltip itself, not the host
           // (so an element with this id only exists when the tooltip is shown)
-          id={variationsId}
+          id="variationsId"
           calloutProps={{ gapSpace: 0 }}
           styles={{ root: { display: 'inline-block' } }}
           directionalHint={DirectionalHint.bottomAutoEdge}
@@ -344,7 +339,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           <TextField
             style={{ width: 400 }}
             label={st(StrId.VariationsTooltip)}
-            aria-describedby={variationsId}
+            aria-describedby="variationsId"
             value={val(vars, props.variations)}
             onChange={(e, nv) => nv && setVars(nv)}
           />
