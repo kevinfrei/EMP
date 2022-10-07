@@ -3,7 +3,6 @@ import {
   Dropdown,
   IComboBoxOption,
   IDropdownOption,
-  Stack,
   Text,
   TextField,
 } from '@fluentui/react';
@@ -186,7 +185,7 @@ export function TranscoderConfiguration(): JSX.Element {
           }}
         />
       </div>
-      <Stack>{err}</Stack>
+      <div>{err}</div>
       <TranscodeStatus />
     </>
   );

@@ -1,4 +1,4 @@
-import { Stack, Text } from '@fluentui/react';
+import { Text } from '@fluentui/react';
 import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
 import { TranscodeState } from 'shared';
@@ -74,10 +74,10 @@ export function TranscodeStatus(): JSX.Element {
     >
       {curState.filesFailed.map(({ file, error }, idx) => (
         <div key={idx} style={{ margin: 10 }}>
-          <Stack horizontal>
+          <span>
             <Text>{file}:</Text>
             <Text>{error}</Text>
-          </Stack>
+          </span>
         </div>
       ))}
     </Expandable>
@@ -86,23 +86,27 @@ export function TranscodeStatus(): JSX.Element {
   );
   return (
     <Expandable label={summary} indent={15}>
-      <Stack>
-        <Text>{curState.filesFound} total files to process</Text>
-        <Text>{curState.filesPending} files remain to be processed</Text>
-        <Text>{complete} files completed</Text>
-        <Expandable label="Details" indent={30}>
-          <Text>{curState.filesUntouched} files already existed</Text>
-          <CountedStringList
-            list={curState.filesTranscoded}
-            header="files transcoded"
-          />
-          <CountedStringList
-            list={curState.itemsRemoved}
-            header="items deleted"
-          />
-          {errorList}
-        </Expandable>
-      </Stack>
+      <Text>{curState.filesFound} total files to process</Text>
+      <br />
+      <Text>{curState.filesPending} files remain to be processed</Text>
+      <br />
+      <Text>{complete} files completed</Text>
+      <br />
+      <Expandable label="Details" indent={30}>
+        <Text>{curState.filesUntouched} files already existed</Text>
+        <br />
+        <CountedStringList
+          list={curState.filesTranscoded}
+          header="files transcoded"
+        />
+        <br />
+        <CountedStringList
+          list={curState.itemsRemoved}
+          header="items deleted"
+        />
+        <br />
+        {errorList}
+      </Expandable>
     </Expandable>
   );
 }

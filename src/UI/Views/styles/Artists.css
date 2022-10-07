@@ -52,3 +52,11 @@
   height: 16px;
   width: 16px;
 }
+
+.artist-header-info,
+.artist-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}

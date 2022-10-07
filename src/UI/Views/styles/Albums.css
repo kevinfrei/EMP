@@ -92,3 +92,11 @@
   border-radius: '10px';
   margin: 0;
 }
+
+.album-header-info,
+.album-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}

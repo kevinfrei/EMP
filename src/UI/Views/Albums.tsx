@@ -8,7 +8,6 @@ import {
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
-  Stack,
   Text,
 } from '@fluentui/react';
 import { MakeError, Type } from '@freik/core-utils';
@@ -99,16 +98,15 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   );
 
   return (
-    <Stack horizontal verticalAlign="center">
+    <div className="album-header">
       <IconButton
         iconProps={{
           iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
         }}
         onClick={onHeaderExpanderClick}
       />
-      <Stack
-        horizontal
-        verticalAlign="center"
+      <div
+        className="album-header-info"
         onDoubleClick={onAddSongsClick}
         onContextMenu={onRightClick}
         style={{ padding: '2px 0px', cursor: 'pointer' }}
@@ -126,8 +124,8 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
               ? '1 song'
               : `${album.songs.length} songs`)}
         </Text>
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 }
 

@@ -1,3 +1,11 @@
 .settings-view {
   margin: 10px;
 }
+
+.artwork-settings,
+.music-loc {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}

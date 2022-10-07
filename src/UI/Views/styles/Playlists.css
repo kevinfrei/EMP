@@ -5,3 +5,10 @@
 .not-playing {
   font-weight: normal;
 }
+
+.playlist-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}

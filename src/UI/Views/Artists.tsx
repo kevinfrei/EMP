@@ -8,7 +8,6 @@ import {
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
-  Stack,
   Text,
 } from '@fluentui/react';
 import { MakeError } from '@freik/core-utils';
@@ -96,16 +95,15 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   );
   const songCount = artist.songs.length;
   return (
-    <Stack horizontal verticalAlign="center">
+    <div className="artist-header">
       <IconButton
         iconProps={{
           iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
         }}
         onClick={onHeaderExpanderClick}
       />
-      <Stack
-        horizontal
-        verticalAlign="center"
+      <div
+        className="artist-header-info"
         onDoubleClick={onAddSongsClick}
         onContextMenu={onRightClick}
         style={{ padding: '2px 0px', cursor: 'pointer' }}
@@ -119,8 +117,8 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
         <Text style={{ margin: '4px' }}>
           {`${artist.name}: ${songCount} Song${songCount > 1 ? 's' : ''}`}
         </Text>
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 }
 

@@ -5,7 +5,6 @@ import {
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
-  Stack,
   Text,
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
@@ -43,6 +42,7 @@ import {
   StickyRenderDetailsHeader,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+
 import './styles/Playlists.css';
 
 type PlaylistSong = Song & { playlist: PlaylistName };
@@ -92,30 +92,26 @@ function PlaylistHeaderDisplay({
       },
   );
   return (
-    <div onAuxClick={onRightClick}>
-      <Stack horizontal verticalAlign="center">
+    <div onAuxClick={onRightClick} className="playlist-header">
+      <IconButton
+        iconProps={{
+          iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
+        }}
+        onClick={onHeaderExpanderClick}
+      />
+      <div
+        onDoubleClick={onAddSongsClick}
+        style={{ padding: '2px 0px', cursor: 'pointer' }}
+      >
+        <Text>
+          {group.name}: {group.count} Song{group.count !== 1 ? 's' : ''}
+        </Text>
         <IconButton
-          iconProps={{
-            iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
-          }}
-          onClick={onHeaderExpanderClick}
+          style={{ height: '20px', alignSelf: 'flex-end' }}
+          iconProps={{ iconName: 'Delete' }}
+          onClick={() => onDelete(group.key)}
         />
-        <Stack
-          onDoubleClick={onAddSongsClick}
-          horizontal
-          verticalAlign="center"
-          style={{ padding: '2px 0px', cursor: 'pointer' }}
-        >
-          <Text>
-            {group.name}: {group.count} Song{group.count !== 1 ? 's' : ''}
-          </Text>
-          <IconButton
-            style={{ height: '20px', alignSelf: 'flex-end' }}
-            iconProps={{ iconName: 'Delete' }}
-            onClick={() => onDelete(group.key)}
-          />
-        </Stack>
-      </Stack>
+      </div>
     </div>
   );
 }
@@ -203,7 +199,7 @@ export function PlaylistView(): JSX.Element {
 
   // TODO: make delete work
   const onTitleRenderer = (ttl: PlaylistSong, index?: number): JSX.Element => (
-    <Stack horizontal style={{ marginLeft: -21 }}>
+    <div style={{ marginLeft: -21 }}>
       <IconButton
         style={{ height: '20px' }}
         iconProps={{ iconName: 'Delete' }}
@@ -221,7 +217,7 @@ export function PlaylistView(): JSX.Element {
         }}
       />
       {ttl.title}
-    </Stack>
+    </div>
   );
 
   const groups: IGroup[] = [];

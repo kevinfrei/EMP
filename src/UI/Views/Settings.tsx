@@ -3,7 +3,6 @@ import {
   IconButton,
   Label,
   SpinButton,
-  Stack,
   Text,
   TextField,
   TooltipHost,
@@ -82,7 +81,7 @@ function MusicLocations(): JSX.Element {
   return (
     <>
       {(newLoc || []).map((elem) => (
-        <Stack horizontal key={elem} verticalAlign="center">
+        <span key={elem} className="music-loc">
           <IconButton
             onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
             iconProps={{ iconName: 'Delete' }}
@@ -98,9 +97,9 @@ function MusicLocations(): JSX.Element {
               text="NYI: Set as"
             />
           )}
-        </Stack>
+        </span>
       ))}
-      <Stack horizontal>
+      <div>
         <DefaultButton
           text="Add Location"
           onClick={onAddLocation}
@@ -125,7 +124,7 @@ function MusicLocations(): JSX.Element {
           iconProps={{ iconName: 'DownloadDocument' }}
           title={st(StrId.ImportFiles)}
         />
-      </Stack>
+      </div>
       <Text>{`${artists.size} Artists, ${albums.size} Albums, ${songs.size} Songs`}</Text>
     </>
   );
@@ -181,7 +180,7 @@ function ArtworkSettings(): JSX.Element {
   return (
     <>
       <StateToggle label="Download Album Artwork" state={dlAlbumArtwork} />
-      <Stack horizontal>
+      <div className="artwork-settings">
         <StateToggle
           disabled={!dlAlbumArtwork[0]}
           label="Try to save Album Artwork with audio files:"
@@ -194,7 +193,7 @@ function ArtworkSettings(): JSX.Element {
           value={coverArtName}
           onChange={(_ev, nv) => nv && setCoverArtName(nv)}
         />
-      </Stack>
+      </div>
       <StateToggle label="Download Artist Artwork" state={dlArtistArtwork} />
       <DefaultButton
         text="Flush Image Cache"
@@ -207,17 +206,17 @@ function ArtworkSettings(): JSX.Element {
 
 function MetadataDatabase(): JSX.Element {
   return (
-    <Stack horizontal>
+    <>
       <DefaultButton text="Flush Metadata Cache" style={{ width: '185px' }} />
       &nbsp;
       <DefaultButton text="Clear Local Overrides" style={{ width: '185px' }} />
-    </Stack>
+    </>
   );
 }
 
 export function SettingsView(): JSX.Element {
   return (
-    <Stack className="settings-view">
+    <div className="settings-view">
       <Expandable separator label="Music Locations" defaultShow={true}>
         <Spinner>
           <MusicLocations />
@@ -234,6 +233,6 @@ export function SettingsView(): JSX.Element {
       <Expandable separator label="NYI: Metadata">
         <MetadataDatabase />
       </Expandable>
-    </Stack>
+    </div>
   );
 }

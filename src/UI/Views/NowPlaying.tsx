@@ -5,12 +5,10 @@ import {
   IDetailsHeaderProps,
   IDetailsList,
   ISeparatorStyles,
-  IStackItemStyles,
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
   Separator,
-  Stack,
   Sticky,
   StickyPositionType,
   Text,
@@ -176,16 +174,18 @@ function StickyDetailsHeader(
   }
   // This makes the header not have a bunch of extra whitespace above the header
   theProps.styles = { root: { padding: '0px' } };
-  const stackStyles: IStackItemStyles = { root: { background: '#ffffff' } };
   return (
     <Sticky stickyPosition={StickyPositionType.Header} isScrollSynced>
-      <Stack id="nowPlayingSticky" styles={stackStyles}>
+      <div
+        id="nowPlayingSticky"
+        style={{ background: 'white', paddingTop: 0.1 }}
+      >
         <TopLine />
         {defaultRender({
           ...theProps,
           onRenderColumnHeaderTooltip: (props) => <TooltipHost {...props} />,
         })}
-      </Stack>
+      </div>
     </Sticky>
   );
 }

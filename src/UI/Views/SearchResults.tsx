@@ -6,7 +6,6 @@ import {
   ScrollablePane,
   ScrollbarVisibility,
   SelectionMode,
-  Stack,
   Text,
 } from '@fluentui/react';
 import { MakeError, Type } from '@freik/core-utils';
@@ -203,7 +202,7 @@ function SearchResultsGroupHeader(props: {
   );
   const theStyle = { marginLeft: props.depth * 20 };
   return (
-    <Stack horizontal verticalAlign="center" style={theStyle}>
+    <div style={theStyle}>
       <IconButton
         iconProps={{
           iconName: props.collapsed ? 'ChevronRight' : 'ChevronDown',
@@ -213,7 +212,7 @@ function SearchResultsGroupHeader(props: {
       <Text onDoubleClick={onAddSongListClick} onContextMenu={onRightClick}>
         {props.text}
       </Text>
-    </Stack>
+    </div>
   );
 }
 
