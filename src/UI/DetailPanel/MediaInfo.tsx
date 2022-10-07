@@ -2,7 +2,6 @@ import {
   DetailsList,
   IColumn,
   SelectionMode,
-  Stack,
   TextField,
 } from '@fluentui/react';
 import { Type } from '@freik/core-utils';
@@ -77,7 +76,7 @@ function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
         onDoubleClick={() => void Ipc.InvokeMain(IpcId.ShowFile, thePath)}
       />
       <br />
-      <Stack horizontal horizontalAlign="space-between">
+      <div className="metadata-specs">
         <TextField
           prefix="Duration:"
           readOnly
@@ -90,7 +89,7 @@ function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
           value={`${bitrate} (${bps} bit ${sampleRate} ${channels})`}
           style={{ width: '280px' }}
         />
-      </Stack>
+      </div>
     </>
   );
 }
@@ -190,10 +189,10 @@ export function MediaInfoTable({
     <MultiFileEditor songKeys={keyOrKeys} />
   );
   return (
-    <Stack>
+    <>
       {theHeader}
       {theEditor}
       {theFooter}
-    </Stack>
+    </>
   );
 }

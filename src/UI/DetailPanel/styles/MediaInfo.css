@@ -1,3 +1,27 @@
 .md-field {
   font-weight: 700;
 }
+
+.metadata-specs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metadata-flags {
+  margin-top: 15;
+  margin-right: 20;
+}
+
+.metadata-clear {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.md-save-container {
+  display: flex;
+  flex-direction: row-reverse;
+}

@@ -5,7 +5,6 @@ import {
   Image,
   ImageFit,
   PrimaryButton,
-  Stack,
   Text,
   TextField,
   TooltipHost,
@@ -263,7 +262,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           aria-describedby={priArtistsId}
         />
       </TooltipHost>
-      <Stack horizontal horizontalAlign="space-between">
+      <div className="metadata-specs">
         <TextField
           label={st(StrId.Album)}
           value={val(album, props.album)}
@@ -276,8 +275,8 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           onChange={(e, nv) => (nv === '' || isNumber(nv)) && setYear(nv!)}
           style={{ width: 80 }}
         />
-      </Stack>
-      <Stack horizontal horizontalAlign="space-between">
+      </div>
+      <div className="metadata-specs">
         <TextField
           disabled={isMultiple}
           label={st(StrId.TrackNum)}
@@ -297,23 +296,22 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           onChange={(e, nv) => nv && setDiskName(nv)}
           style={{ width: 220 }}
         />
-        <Stack
-          verticalAlign="space-evenly"
-          style={{ marginTop: 15, marginRight: 20, width: 85 }}
-        >
+        <div>
+          <div style={{ height: 13 }} />
           <Checkbox
             label={st(StrId.Compilation)}
             checked={isVa}
             onChange={setVa}
           />
+          <div style={{ height: 5 }} />
           <Checkbox
             label={st(StrId.Soundtrack)}
             checked={isOST}
             onChange={setOST}
           />
-        </Stack>
-      </Stack>
-      <Stack horizontal verticalAlign="end" horizontalAlign="space-between">
+        </div>
+      </div>
+      <div className="metadata-clear">
         <TooltipHost
           content={st(StrId.ArtistTooltip)}
           // This id is used on the tooltip itself, not the host
@@ -332,8 +330,8 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           />
         </TooltipHost>
         <DefaultButton onClick={() => setMoreArtists('')}>Clear</DefaultButton>
-      </Stack>
-      <Stack horizontal verticalAlign="end" horizontalAlign="space-between">
+      </div>
+      <div className="metadata-clear">
         <TooltipHost
           content={st(StrId.VariationsTooltip)}
           // This id is used on the tooltip itself, not the host
@@ -352,11 +350,11 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
           />
         </TooltipHost>
         <DefaultButton onClick={() => setVars('')}>Clear</DefaultButton>
-      </Stack>
+      </div>
       <div style={{ height: 10 }} />
-      <Stack horizontal horizontalAlign="end">
+      <div className="md-save-container">
         <PrimaryButton onClick={onSubmit}>Save</PrimaryButton>
-      </Stack>
+      </div>
       <Image
         alt={st(StrId.AlbumCover)}
         src={coverUrl}
@@ -364,14 +362,14 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         height={350}
       />
       <br />
-      <Stack horizontal horizontalAlign="center">
+      <div>
         <DefaultButton text={st(StrId.ChooseFile)} onClick={onSelectFile} />
         &nbsp;
         <DefaultButton
           text={st(StrId.FromClipboard)}
           onClick={onImageFromClipboard}
         />
-      </Stack>
+      </div>
     </>
   );
 }
