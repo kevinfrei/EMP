@@ -78,8 +78,14 @@ export function App(): JSX.Element {
       <WindowChrome />
       <Spinner>
         <PlaybackControls />
+      </Spinner>
+      <Spinner>
         <SongPlaying />
+      </Spinner>
+      <Spinner>
         <VolumeControl />
+      </Spinner>
+      <Spinner>
         <Sidebar />
       </Spinner>
       <Spinner size={SpinnerSize.large}>

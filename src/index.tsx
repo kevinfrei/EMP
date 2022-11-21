@@ -55,12 +55,19 @@ Util.SetInit(() => {
   registerIcons({
     icons: {
       add: <AddIcon style={{ marginBottom: 3 }} />,
+      // ✓ : U+2713, &#10003;
       checkmark: <CheckMarkIcon style={{ marginBottom: 3 }} />,
+      // 🗙 : U+1f5d9, &#128473;
       cancel: <CancelIcon style={{ marginBottom: 3 }} />,
+      // ▽ : U+25BD, &#9661;
       chevronDown: <ChevronDownIcon style={{ marginBottom: 3 }} />,
+      // ▷ : U+25b7, &#9655;
       chevronRight: <ChevronRightIcon style={{ marginBottom: 3 }} />,
+      // ▿ : U+25BF, &#9663;
       chevrondownsmall: <ChevronDownSmallIcon style={{ marginBottom: 3 }} />,
+      // ▹ : U25b9, &#9657;
       chevronrightmed: <ChevronRightMedIcon style={{ marginBottom: 3 }} />,
+      // ▵ : U+25b5, &#9653;
       chevronupsmall: <ChevronUpSmallIcon style={{ marginBottom: 3 }} />,
       chromeClose: <ChromeCloseIcon style={{ marginBottom: 3 }} />,
       chromeMinimize: <ChromeMinimizeIcon style={{ marginBottom: 3 }} />,
@@ -85,15 +92,20 @@ Util.SetInit(() => {
       rename: <RenameIcon style={{ marginBottom: 3 }} />,
       restore: <ChromeRestoreIcon style={{ marginBottom: 3 }} />,
       save: <SaveIcon style={{ marginBottom: 3 }} />,
+      // 🔍: U1F50D, &#128269;
       search: <SearchIcon style={{ marginBottom: 3 }} />,
       SearchData: <SearchDataIcon style={{ marginBottom: 3 }} />,
       sortdown: <SortDownIcon style={{ marginBottom: 3 }} />,
       sortup: <SortUpIcon style={{ marginBottom: 3 }} />,
       unknown: <UnknownIcon style={{ marginBottom: 3 }} />,
+      // 🔈: U+1F508, &#128264;
       volume0: <Volume0Icon style={{ marginBottom: 3 }} />,
+      // 🔉: U+1F509, &#128265;
       volume1: <Volume1Icon style={{ marginBottom: 3 }} />,
       volume2: <Volume2Icon style={{ marginBottom: 3 }} />,
+      // 🔊: U+1F50A, &#128266;
       volume3: <Volume3Icon style={{ marginBottom: 3 }} />,
+      // 🔇	: U+1F507, &#128263;
       volumedisabled: <VolumeDisabledIcon style={{ marginBottom: 3 }} />,
     },
   });
