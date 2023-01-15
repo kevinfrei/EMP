@@ -7845,9 +7845,9 @@ __metadata:
   linkType: hard
 
 "decode-uri-component@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "decode-uri-component@npm:0.2.0"
-  checksum: f3749344ab9305ffcfe4bfe300e2dbb61fc6359e2b736812100a3b1b6db0a5668cba31a05e4b45d4d63dbf1a18dfa354cd3ca5bb3ededddabb8cd293f4404f94
+  version: 0.2.2
+  resolution: "decode-uri-component@npm:0.2.2"
+  checksum: 95476a7d28f267292ce745eac3524a9079058bbb35767b76e3ee87d42e34cd0275d2eb19d9d08c3e167f97556e8a2872747f5e65cbebcac8b0c98d83e285f139
   languageName: node
   linkType: hard
 
@@ -16723,10 +16723,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=10d1b0&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=39e58e&locator=emp%40workspace%3A."
   dependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: fe53f24ac669842f4eaffa32d64e087e068db6b90fdd9dbf073d45b6bff7eb4cddebb41533e09f36c1bbca37b8ef14e6fc8fa56fa2837230fcbb36ff807f403b
+  checksum: 65757b25de148b9fdb895d6d74fd1f5b47ed7823eb4f7d7a9652a88bd068febb3b0958422a87bbf24a88de6d22f4779620eb3241310ee3e0c7e713dca7b73fcb
   languageName: node
   linkType: hard
 
