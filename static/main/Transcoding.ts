@@ -451,9 +451,7 @@ async function handleLots(
     const dirsToRemove = await findExcessDirs(settings);
     for (const dir of dirsToRemove) {
       reportItemRemoved(dir);
-      rimraf(dir, () => {
-        /* */
-      });
+      await rimraf(dir);
     }
   }
 }

@@ -120,7 +120,7 @@ function MusicLocations(): JSX.Element {
         &nbsp;
         <DefaultButton
           text="Import Files (NYI)"
-          onClick={() => {}}
+          /* onClick={() => {}} */
           iconProps={{ iconName: 'DownloadDocument' }}
           title={st(StrId.ImportFiles)}
         />
