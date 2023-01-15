@@ -5,13 +5,6 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@freik/core-utils@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@freik/core-utils@npm:1.2.0"
-  checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
-  languageName: node
-  linkType: hard
-
 "rimraf@npm:^4.0.5":
   version: 4.0.5
   resolution: "rimraf@npm:4.0.5"
@@ -25,9 +18,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "shared@workspace:."
   dependencies:
-    "@freik/core-utils": ^1.2.0
     rimraf: ^4.0.5
     typescript: ^4.9.4
+  peerDependencies:
+    "@freik/core-utils": ^1.2.0
   languageName: unknown
   linkType: soft
 

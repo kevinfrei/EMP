@@ -9,7 +9,13 @@ import {
 import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
 import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
-import { CSSProperties, SyntheticEvent, useEffect } from 'react';
+import {
+  Component,
+  CSSProperties,
+  ReactChildren,
+  SyntheticEvent,
+  useEffect,
+} from 'react';
 import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { IpcId, Keys } from 'shared';
 import { keyBufferState } from '../Recoil/KeyBuffer';
@@ -209,4 +215,32 @@ export function StringSpinButton({
       onDecrement={onDecrement}
     />
   );
+}
+
+export class ErrorBoundary extends Component {
+  state: { hasError: boolean };
+  constructor(props: { children: ReactChildren }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: unknown) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: unknown, errorInfo: unknown) {
+    // You can also log the error to an error reporting service
+    console.error(error);
+    console.error(errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return <h4>Something went wrong</h4>;
+    }
+
+    return this.props.children;
+  }
 }

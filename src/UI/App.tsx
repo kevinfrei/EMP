@@ -11,7 +11,7 @@ import { PlaybackControls } from './PlaybackControls';
 import { Sidebar } from './Sidebar';
 import { SongPlaying } from './SongPlaying';
 import './styles/App.css';
-import { Utilities } from './Utilities';
+import { ErrorBoundary, Utilities } from './Utilities';
 import { ViewSelector } from './Views/Selector';
 import { VolumeControl } from './VolumeControl';
 
@@ -80,7 +80,9 @@ export function App(): JSX.Element {
         <PlaybackControls />
       </Spinner>
       <Spinner>
-        <SongPlaying />
+        <ErrorBoundary>
+          <SongPlaying />
+        </ErrorBoundary>
       </Spinner>
       <Spinner>
         <VolumeControl />

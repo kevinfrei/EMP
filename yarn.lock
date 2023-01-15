@@ -2578,7 +2578,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:^1.2.0, @freik/core-utils@npm:~1.2.0":
+"@freik/core-utils@npm:>=1.2.0, @freik/core-utils@npm:~1.2.0":
   version: 1.2.0
   resolution: "@freik/core-utils@npm:1.2.0"
   checksum: 0f734520a952d8a3d535aa181ed11a40c5308ef1095515a1e0edb61e2148f3e992a980384b16f47cb139b8467e442f05b01fb809a630e1d197764ab1aa527110
@@ -8526,7 +8526,7 @@ __metadata:
     react-scripts: ^5.0.1
     react-test-renderer: ^17.0.2
     recoil: ^0.7.6
-    rimraf: ^4.0.5
+    rimraf: ^4.0.6
     shared: "file:./shared"
     svg-react-loader: ^0.4.6
     ts-jest: 29.0.5
@@ -16277,12 +16277,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^4.0.5, rimraf@npm:~4.0.5":
-  version: 4.0.5
-  resolution: "rimraf@npm:4.0.5"
+"rimraf@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "rimraf@npm:4.0.6"
   bin:
     rimraf: dist/cjs/src/bin.js
-  checksum: e99139d6460d4460125288565698ff43f5cb8734feda83694187a029b21bdd6e63c063a1cb899ae8deaccc4345fbb69fa45e655329b2fb93f21ad809da1948eb
+  checksum: 5352c855295f6b45a9ee40f72bb68dd19d974ca858defd6dc2409720391b74f0fd50b7aeb3d524ba820b1b5b3e07215d2098e838c2ed9ca00fc83a433427168f
   languageName: node
   linkType: hard
 
@@ -16294,6 +16294,15 @@ __metadata:
   bin:
     rimraf: ./bin.js
   checksum: 3ea587b981a19016297edb96d1ffe48af7e6af69660e3b371dbfc73722a73a0b0e9be5c88089fbeeb866c389c1098e07f64929c7414290504b855f54f901ab10
+  languageName: node
+  linkType: hard
+
+"rimraf@npm:~4.0.5":
+  version: 4.0.5
+  resolution: "rimraf@npm:4.0.5"
+  bin:
+    rimraf: dist/cjs/src/bin.js
+  checksum: e99139d6460d4460125288565698ff43f5cb8734feda83694187a029b21bdd6e63c063a1cb899ae8deaccc4345fbb69fa45e655329b2fb93f21ad809da1948eb
   languageName: node
   linkType: hard
 
@@ -16723,10 +16732,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=39e58e&locator=emp%40workspace%3A."
-  dependencies:
+  resolution: "shared@file:./shared#./shared::hash=f65e68&locator=emp%40workspace%3A."
+  peerDependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 65757b25de148b9fdb895d6d74fd1f5b47ed7823eb4f7d7a9652a88bd068febb3b0958422a87bbf24a88de6d22f4779620eb3241310ee3e0c7e713dca7b73fcb
+  checksum: 3b3b719568f66790bba998dfea0c35c5f9e5bdc3e31edbcf89af511c7b79b5ed87454c2e844894c0ef8a85f74eee69e9f00cffdb21a494b813925b09b5b00dba
   languageName: node
   linkType: hard
 
