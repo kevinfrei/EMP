@@ -1,7 +1,7 @@
 {
   "license": "CC0-1.0",
   "name": "emp",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "private": true,
   "description": "Electron Music Player",
   "author": "Kevin Frei <kevinfrei@hotmail.com>",
@@ -10,25 +10,19 @@
   "build": {
     "appId": "com.music-player.freik",
     "productName": "Electron Music Player",
-    "directories": {
-      "buildResources": "build"
-    },
+    "directories": { "buildResources": "build" },
     "fileAssociations": {
       "ext": ["mp3", "m4a", "aac", "flac", "wma"],
       "description": "Audio files",
       "role": "Viewer"
     },
-    "mac": {
-      "icon": "build/icon.png"
-    },
+    "mac": { "icon": "build/icon.png" },
     "linux": {
       "icon": "build/icon.png",
       "category": "Audio",
       "mimeTypes": ["audio/mpeg", "audio/m4a", "audio/aac", "audio/x-flac"]
     },
-    "win": {
-      "icon": "build/icon.png"
-    }
+    "win": { "icon": "build/icon.png" }
   },
   "scripts": {
     "analyze": "ftool analyze",
