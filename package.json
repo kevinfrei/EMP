@@ -10,19 +10,25 @@
   "build": {
     "appId": "com.music-player.freik",
     "productName": "Electron Music Player",
-    "directories": { "buildResources": "build" },
+    "directories": {
+      "buildResources": "build"
+    },
     "fileAssociations": {
       "ext": ["mp3", "m4a", "aac", "flac", "wma"],
       "description": "Audio files",
       "role": "Viewer"
     },
-    "mac": { "icon": "build/icon.png" },
+    "mac": {
+      "icon": "build/icon.png"
+    },
     "linux": {
       "icon": "build/icon.png",
       "category": "Audio",
       "mimeTypes": ["audio/mpeg", "audio/m4a", "audio/aac", "audio/x-flac"]
     },
-    "win": { "icon": "build/icon.png" }
+    "win": {
+      "icon": "build/icon.png"
+    }
   },
   "scripts": {
     "analyze": "ftool analyze",
@@ -49,7 +55,7 @@
     "bumpver": "node config/set-version.js"
   },
   "dependencies": {
-    "@fluentui/react": "^8.104.5",
+    "@fluentui/react": "^8.104.6",
     "@fluentui/react-icons-mdl2": "^1.3.29",
     "@freik/audiodb": "^0.5.2",
     "@freik/core-utils": "~1.2.0",
@@ -69,7 +75,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "recoil": "^0.7.6",
-    "rimraf": "^4.0.7",
+    "rimraf": "^4.1.2",
     "shared": "file:./shared",
     "xxhashjs": "^0.2.2"
   },
@@ -80,34 +86,34 @@
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/eslint-parser": "^7.19.1",
-    "@babel/plugin-transform-react-jsx": "^7.20.7",
+    "@babel/plugin-transform-react-jsx": "^7.20.13",
     "@freik/build-tools": "3.4.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/electron-devtools-installer": "^2.2.2",
-    "@types/jest": "^29.2.5",
+    "@types/jest": "^29.4.0",
     "@types/node": "^18.11.18",
-    "@types/react": "^17.0.52",
+    "@types/react": "^17.0.53",
     "@types/react-dom": "^17.0.18",
     "@types/react-test-renderer": "^17.0.2",
     "@types/xxhashjs": "^0.2.2",
-    "@typescript-eslint/eslint-plugin": "^5.48.1",
-    "@typescript-eslint/parser": "^5.48.1",
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
     "cross-env": "^7.0.3",
-    "electron": "^22.0.2",
+    "electron": "^22.1.0",
     "electron-builder": "^23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-react-devtools": "^0.5.3",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-import": "^2.27.4",
+    "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.32.0",
+    "eslint-plugin-react": "^7.32.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.3",
-    "jest": "29.3.1",
-    "jest-environment-jsdom": "^29.3.1",
+    "jest": "29.4.0",
+    "jest-environment-jsdom": "^29.4.0",
     "jest-transform-css": "^6.0.1",
     "postcss": "8.4.21",
     "prettier": "^2.8.3",
