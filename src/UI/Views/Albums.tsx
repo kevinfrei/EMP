@@ -178,8 +178,8 @@ export function GroupedAlbumList(): JSX.Element {
     [
       ['l', 'albumId', 'Album', 50, 175, AlbumForSongRender],
       ['r', 'primaryArtists', 'Artist', 50, 250, ArtistsForSongRender],
-      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
-      ['n', 'track', '#', 10, 20],
+      ['y', 'albumId', 'Year', 55, 25, YearForSongRender],
+      ['n', 'track', '#', 15, 25],
       ['t', 'title', 'Title', 50, 150],
     ],
     (group: IGroup) => <AlbumHeaderDisplay group={group} />,

@@ -253,7 +253,7 @@ export function PlaylistView(): JSX.Element {
       ['t', 'title', 'Title', 100, 150, onTitleRenderer],
       ['r', 'artistIds', 'Artist', 100, 150, ArtistsForSongRender],
       ['l', 'albumId', 'Album', 100, 150, AlbumForSongRender],
-      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
+      ['y', 'albumId', 'Year', 55, 25, YearForSongRender],
     ],
     (group: IGroup) => (
       <PlaylistHeaderDisplay group={group} onDelete={onPlaylistDelete} />

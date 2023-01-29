@@ -205,7 +205,7 @@ export function GroupedAristList(): JSX.Element {
         filteredArtistsFromSongRenderer,
       ],
       ['l', 'albumId', 'Album', 50, 175, AlbumForSongRender],
-      ['y', 'albumId', 'Year', 45, 45, YearForSongRender],
+      ['y', 'albumId', 'Year', 55, 25, YearForSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
     ],

@@ -277,7 +277,7 @@ export function NowPlayingView(): JSX.Element {
       ['X', '', '', 18, 18, drawDeleter],
       ['l', 'albumId', 'Album', 50, 175, AlbumForSongRender],
       ['r', 'artistIds', 'Artist(s)', 50, 150, ArtistsForSongRender],
-      ['y', 'albumId', 'Year', 45, 25, YearForSongRender],
+      ['y', 'albumId', 'Year', 55, 25, YearForSongRender],
       ['n', 'track', '#', 10, 20],
       ['t', 'title', 'Title', 50, 150],
       ['', '', '👎/👍', 35, 35, LikeOrHate],
