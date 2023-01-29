@@ -8,11 +8,11 @@
     "build": "rimraf build && tsc"
   },
   "devDependencies": {
-    "rimraf": "^4.0.5",
+    "rimraf": "^4.1.2",
     "typescript": "^4.9.4"
   },
   "files": ["./build/**/*"],
-  "packageManager": "yarn@3.1.1",
+  "packageManager": "yarn@3.3.1",
   "peerDependencies": {
     "@freik/core-utils": "^1.2.0"
   }
