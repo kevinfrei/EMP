@@ -23,6 +23,8 @@ import {
   SongKey,
 } from '@freik/media-core';
 import electronIsDev from 'electron-is-dev';
+import { statSync } from 'fs';
+import path from 'path';
 import { IpcId } from 'shared';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
@@ -31,9 +33,23 @@ const err = MakeError('AudioDatabase-err');
 let theAudioDb: AudioDatabase | null;
 let initialUpdateComplete = false;
 
+function fileWatchFilter(filepath: string): boolean {
+  const stat = statSync(filepath);
+  if (stat.isDirectory()) {
+    try {
+      const noXcode = path.join(filepath, '.notranscode');
+      const st = statSync(noXcode);
+      return !st.isFile();
+    } catch (errorValue) {
+      /* */
+    }
+  }
+  return true;
+}
+
 export async function GetAudioDB(): Promise<AudioDatabase> {
   if (theAudioDb == null) {
-    theAudioDb = await MakeAudioDatabase(Persistence);
+    theAudioDb = await MakeAudioDatabase(Persistence, { fileWatchFilter });
   }
   return theAudioDb;
 }
