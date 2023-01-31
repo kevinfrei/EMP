@@ -37,11 +37,6 @@ function reQuote(str: string): { [key: string]: string } {
   return JSON.parse(res) as { [key: string]: string };
 }
 
-type SongSource = {
-  isPath: boolean;
-  pathOrKey: string;
-};
-
 /// vvvv Hurray for a Typescript compiler bug
 // eslint-disable-next-line no-shadow
 enum XcodeResCode {
@@ -59,7 +54,7 @@ type TranscodeResult = {
 };
 
 const tr = (code: XcodeResCode, message: string) => ({ code, message });
-let bitrate = 131072;
+let bitrate = 163840;
 
 export async function toMp4Async(
   originalFile: string,
