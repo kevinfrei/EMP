@@ -148,7 +148,7 @@ async function toDiskFormat(keys: SongKey[]): Promise<string> {
 }
 
 async function fromDiskFormat(flat: string): Promise<SongKey[]> {
-  const lines = flat.split('\n');
+  const lines = flat.split('\n').filter((val: string) => val.trim().length > 0);
   const db = await GetAudioDB();
   while (db.getLocations().length === 0) {
     await Sleep(50);
