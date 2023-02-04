@@ -130,6 +130,15 @@ function MusicLocations(): JSX.Element {
   );
 }
 
+function IgnoreList(): JSX.Element {
+  const ignoreItems = useRecoilValue(ignoreItemsState);
+  const itemsWithEmpty = [
+    ...ignoreItems,
+    { type: '', value: '', state: 'add' },
+  ];
+  return <></>;
+}
+
 function ArticleSorting(): JSX.Element {
   const articles = useBoolRecoilState(ignoreArticlesState);
   return <StateToggle label="Ignore articles when sorting" state={articles} />;
@@ -221,6 +230,7 @@ export function SettingsView(): JSX.Element {
         <Spinner>
           <MusicLocations />
         </Spinner>
+        <IgnoreList />
       </Expandable>
       <Expandable separator label="Sorting & Filtering" defaultShow={true}>
         <LikeFiltering />

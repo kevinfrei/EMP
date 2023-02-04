@@ -539,3 +539,56 @@ export const filteredArtistsFunc = selector<Artist[]>({
     return artists;
   },
 });
+
+type IgnoreItemType = 'path-root' | 'path-keyword' | 'dir-name';
+type BackEndIgnoreItem = { type: IgnoreItemType; value: string };
+export type IgnoreItem =
+  | (BackEndIgnoreItem & { state: 'del' })
+  | { type: ''; value: ''; state: 'add' };
+export const EmptyIgnoreItem: IgnoreItem = {
+  type: '',
+  value: '',
+  state: 'add',
+};
+const isBackendIgnoreItemFn = Type.isArrayOfFn<BackEndIgnoreItem>(
+  Type.isSpecificTypeFn(
+    [
+      [
+        'type',
+        (obj: unknown): obj is IgnoreItemType =>
+          obj === 'path-root' || obj === 'path-keyword' || obj === 'dir-name',
+      ],
+      ['value', Type.isString],
+    ],
+    ['type', 'value'],
+  ),
+);
+function MakeIgnoreListUI(il: BackEndIgnoreItem[]): IgnoreItem[] {
+  return [
+    ...il.map((val): IgnoreItem => ({ state: 'del', ...val })),
+    EmptyIgnoreItem,
+  ];
+}
+export const ignoreItemsState = atom<IgnoreItem[]>({
+  key: 'IgnoreItemsState',
+  effects: [
+    Effects.oneWayFromMain(
+      async (): Promise<IgnoreItem[]> => {
+        const il = await Ipc.CallMain(
+          IpcId.GetIgnoreList,
+          undefined,
+          isBackendIgnoreItemFn,
+        );
+        return il ? MakeIgnoreListUI(il) : [EmptyIgnoreItem];
+      },
+      IpcId.MusicDBUpdate,
+      (il: unknown) => {
+        if (isBackendIgnoreItemFn(il)) {
+          return MakeIgnoreListUI(il);
+        }
+        err('Invalid result from music-database-update:');
+        err(il);
+      },
+    ),
+  ],
+});
