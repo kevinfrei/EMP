@@ -25,7 +25,7 @@ import {
 import electronIsDev from 'electron-is-dev';
 import { statSync } from 'fs';
 import path from 'path';
-import { IpcId } from 'shared';
+import { BackEndIgnoreItem, IpcId, isBackendIgnoreItemFn } from 'shared';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
@@ -226,3 +226,13 @@ export async function SearchSubstring(
   const db = await GetAudioDB();
   return db.searchIndex(true, term);
 }
+
+export async function GetIgnoreList(): Promise<BackEndIgnoreItem[]> {
+  const ignoreListString = await Persistence.getItemAsync('ignore-list');
+  if (!ignoreListString) {
+    return [];
+  }
+  return SafelyUnpickle(ignoreListString, isBackendIgnoreItemFn) || [];
+}
+
+export async function AddIgnoreItem(item: BackEndIgnoreItem) {}

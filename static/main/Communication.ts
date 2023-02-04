@@ -3,7 +3,7 @@ import { MakeError, Type } from '@freik/core-utils';
 import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
 import { Menu } from 'electron/main';
-import { IpcId, isXcodeInfo } from 'shared';
+import { IpcId, isBackendIgnoreItemFn, isXcodeInfo } from 'shared';
 import {
   GetMediaInfoForSong,
   GetPathFromKey,
@@ -169,4 +169,17 @@ export function CommsSetup(): void {
 
   // Artwork Thumbnails:
   Comms.registerChannel(IpcId.GetPicUri, GetPicDataUri, Type.isString);
+
+  // Ignore list stuff:
+  Comms.registerChannel(IpcId.GetIgnoreList, getIgnoreList, isVoid);
+  Comms.registerChannel(
+    IpcId.AddIgnoreItem,
+    addIgnoreItem,
+    isBackendIgnoreItemFn,
+  );
+  Comms.registerChannel(
+    IpcId.RemoveIgnoreItem,
+    removeIgnoreItem,
+    isBackendIgnoreItemFn,
+  );
 }
