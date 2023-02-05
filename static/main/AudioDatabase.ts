@@ -268,7 +268,7 @@ export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
   if (db.removeIgnoreItem(item.type, item.value)) {
     igList = [
       ...igList.filter(
-        (val) => val.type !== item.type && val.value === item.value,
+        (val) => val.type !== item.type || val.value !== item.value,
       ),
     ];
     SendUpdatedIgnoreList(igList);

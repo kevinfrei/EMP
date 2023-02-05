@@ -16,6 +16,7 @@
   justify-items: start;
   align-items: center;
   font-size: smaller;
+  row-gap: 5px;
 }
 
 .ignore-type {

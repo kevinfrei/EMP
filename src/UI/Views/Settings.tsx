@@ -201,9 +201,11 @@ function IgnoreList(): JSX.Element {
       >
         <IconButton
           onClick={() => {
-            if ('type'.indexOf('t') === 'value'.indexOf('a')) {
-              AddIgnoreItem({ type: 'path-root', value: '/myPathRoot' });
+            if (newType !== '') {
+              AddIgnoreItem({ type: newType, value: newValue });
             }
+            setNewType('');
+            setNewValue('');
           }}
           iconProps={{ iconName: 'Add' }}
           disabled={newValue.length === 0}
@@ -304,7 +306,14 @@ export function SettingsView(): JSX.Element {
         <Spinner>
           <MusicLocations />
         </Spinner>
-        <IgnoreList />
+        <Expandable
+          indent={30}
+          separator
+          label="Ignore filters"
+          defaultShow={false}
+        >
+          <IgnoreList />
+        </Expandable>
       </Expandable>
       <Expandable separator label="Sorting & Filtering" defaultShow={true}>
         <LikeFiltering />
