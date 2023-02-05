@@ -325,20 +325,18 @@ export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>([
 ]);
 
 export type IgnoreItemType = 'path-root' | 'path-keyword' | 'dir-name';
-export type BackEndIgnoreItem = { type: IgnoreItemType; value: string };
+export type IgnoreItem = { type: IgnoreItemType; value: string };
 export function IsIgnoreItemType(obj: unknown): obj is IgnoreItemType {
   return obj === 'path-root' || obj === 'path-keyword' || obj === 'dir-name';
 }
-const isBackendIgnoreItemFn = Type.isSpecificTypeFn<BackEndIgnoreItem>(
+export const isIgnoreItemFn = Type.isSpecificTypeFn<IgnoreItem>(
   [
     ['type', IsIgnoreItemType],
     ['value', Type.isString],
   ],
   ['type', 'value'],
 );
-export const isBackendIgnoreItemArrayFn = Type.isArrayOfFn<BackEndIgnoreItem>(
-  isBackendIgnoreItemFn,
-);
+export const isIgnoreItemArrayFn = Type.isArrayOfFn<IgnoreItem>(isIgnoreItemFn);
 
 /*
 export enum Decisions {

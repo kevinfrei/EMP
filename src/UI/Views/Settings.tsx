@@ -1,12 +1,15 @@
 import {
   DefaultButton,
+  Dropdown,
   IconButton,
+  IDropdownOption,
   Label,
   SpinButton,
   Text,
   TextField,
   TooltipHost,
 } from '@fluentui/react';
+import { Type } from '@freik/core-utils';
 import { Ipc, Util } from '@freik/elect-render-utils';
 import {
   Catch,
@@ -17,13 +20,16 @@ import {
   useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IpcId, Keys, st, StrId } from 'shared';
+import { IgnoreItemType, IpcId, Keys, st, StrId } from 'shared';
+import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
+  ignoreItemsState,
 } from '../../Recoil/ReadOnly';
 import {
   albumCoverNameState,
@@ -130,13 +136,81 @@ function MusicLocations(): JSX.Element {
   );
 }
 
+const ignoreTypeNameMap = new Map<IgnoreItemType, string>([
+  ['path-root', 'Root Path'],
+  ['dir-name', 'Directory Name'],
+  ['path-keyword', 'Keyword'],
+]);
+
+const ignoreOptions: IDropdownOption[] = [...ignoreTypeNameMap.entries()].map(
+  ([key, text]) => ({ key, text }),
+);
+
 function IgnoreList(): JSX.Element {
   const ignoreItems = useRecoilValue(ignoreItemsState);
-  const itemsWithEmpty = [
-    ...ignoreItems,
-    { type: '', value: '', state: 'add' },
-  ];
-  return <></>;
+  const [newType, setNewType] = useState<IgnoreItemType | ''>('');
+  const [newValue, setNewValue] = useState<string>('');
+  return (
+    <div id="ignore-list">
+      {ignoreItems.map(({ type, value }, idx) => (
+        <div key={idx} style={{ display: 'contents' }}>
+          <span style={{ gridRow: idx + 1 }} className="ignore-type">
+            {ignoreTypeNameMap.get(type) || 'ERROR!'}:
+          </span>
+          <span style={{ gridRow: idx + 1 }} className="ignore-value">
+            <TextField readOnly value={value} />
+          </span>
+          <span style={{ gridRow: idx + 1 }} className="ignore-button">
+            <IconButton
+              onClick={() => {
+                RemoveIgnoreItem({ type, value });
+              }}
+              iconProps={{ iconName: 'Delete' }}
+            />
+          </span>
+        </div>
+      ))}
+      <span style={{ gridRow: ignoreItems.length + 1 }} className="ignore-type">
+        <Dropdown
+          selectedKey={newType}
+          onChange={(ev: unknown, option?: IDropdownOption) => {
+            if (!Type.isUndefined(option) && option.key !== '') {
+              setNewType(option.key as IgnoreItemType);
+            }
+          }}
+          options={ignoreOptions}
+          dropdownWidth={125}
+        />
+      </span>
+      <span
+        style={{ gridRow: ignoreItems.length + 1 }}
+        className="ignore-value"
+      >
+        <TextField
+          value={newValue}
+          onChange={(ev: unknown, value?: string) => {
+            if (!Type.isUndefined(value)) {
+              setNewValue(value);
+            }
+          }}
+        />
+      </span>
+      <span
+        style={{ gridRow: ignoreItems.length + 1 }}
+        className="ignore-button"
+      >
+        <IconButton
+          onClick={() => {
+            if ('type'.indexOf('t') === 'value'.indexOf('a')) {
+              AddIgnoreItem({ type: 'path-root', value: '/myPathRoot' });
+            }
+          }}
+          iconProps={{ iconName: 'Add' }}
+          disabled={newValue.length === 0}
+        />
+      </span>
+    </div>
+  );
 }
 
 function ArticleSorting(): JSX.Element {

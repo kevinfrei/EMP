@@ -14,7 +14,7 @@ import {
 } from '@freik/media-core';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
-import { IpcId } from 'shared';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
 import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
@@ -540,20 +540,6 @@ export const filteredArtistsFunc = selector<Artist[]>({
   },
 });
 
-export type IgnoreItem =
-  | (BackEndIgnoreItem & { state: 'del' })
-  | { type: ''; value: ''; state: 'add' };
-export const EmptyIgnoreItem: IgnoreItem = {
-  type: '',
-  value: '',
-  state: 'add',
-};
-function MakeIgnoreListUI(il: BackEndIgnoreItem[]): IgnoreItem[] {
-  return [
-    ...il.map((val): IgnoreItem => ({ state: 'del', ...val })),
-    EmptyIgnoreItem,
-  ];
-}
 export const ignoreItemsState = atom<IgnoreItem[]>({
   key: 'IgnoreItemsState',
   effects: [
@@ -562,14 +548,14 @@ export const ignoreItemsState = atom<IgnoreItem[]>({
         const il = await Ipc.CallMain(
           IpcId.GetIgnoreList,
           undefined,
-          isBackendIgnoreItemFn,
+          isIgnoreItemArrayFn,
         );
-        return il ? MakeIgnoreListUI(il) : [EmptyIgnoreItem];
+        return il || [];
       },
       IpcId.PushIgnoreList,
       (il: unknown) => {
-        if (isBackendIgnoreItemFn(il)) {
-          return MakeIgnoreListUI(il);
+        if (isIgnoreItemArrayFn(il)) {
+          return il;
         }
         err('Invalid result from music-database-update:');
         err(il);

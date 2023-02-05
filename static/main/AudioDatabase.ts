@@ -10,6 +10,7 @@ import {
   MakeError,
   MakeLogger,
   Operations,
+  Pickle,
   SafelyUnpickle,
   Sleep,
   Type,
@@ -25,7 +26,7 @@ import {
 import electronIsDev from 'electron-is-dev';
 import { statSync } from 'fs';
 import path from 'path';
-import { BackEndIgnoreItem, IpcId, isBackendIgnoreItemFn } from 'shared';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
@@ -34,22 +35,39 @@ let theAudioDb: AudioDatabase | null;
 let initialUpdateComplete = false;
 
 function fileWatchFilter(filepath: string): boolean {
-  const stat = statSync(filepath);
-  if (stat.isDirectory()) {
-    try {
-      const noXcode = path.join(filepath, '.notranscode');
-      const st = statSync(noXcode);
-      return !st.isFile();
-    } catch (errorValue) {
-      /* */
+  try {
+    const stat = statSync(filepath);
+    if (stat.isDirectory()) {
+      try {
+        const noXcode = path.join(filepath, '.notranscode');
+        const st = statSync(noXcode);
+        return !st.isFile();
+      } catch (errorValue) {
+        /* */
+      }
     }
+  } catch (e) {
+    /* */
   }
   return true;
 }
 
 export async function GetAudioDB(): Promise<AudioDatabase> {
   if (theAudioDb == null) {
-    theAudioDb = await MakeAudioDatabase(Persistence, { fileWatchFilter });
+    theAudioDb = await MakeAudioDatabase(Persistence, {
+      fileWatchFilter,
+      watchHidden: false,
+    });
+    if (theAudioDb === null) {
+      throw new Error(
+        'This be very bad, folks: Try uninstalling and reinstalling :/',
+      );
+    }
+    const igListString = await Persistence.getItemAsync('ignore-list');
+    const igList = SafelyUnpickle(igListString || '[]', isIgnoreItemArrayFn);
+    igList?.forEach(({ type, value }) =>
+      theAudioDb!.addIgnoreItem(type, value),
+    );
   }
   return theAudioDb;
 }
@@ -227,12 +245,39 @@ export async function SearchSubstring(
   return db.searchIndex(true, term);
 }
 
-export async function GetIgnoreList(): Promise<BackEndIgnoreItem[]> {
+export async function GetIgnoreList(): Promise<IgnoreItem[]> {
   const ignoreListString = await Persistence.getItemAsync('ignore-list');
   if (!ignoreListString) {
-    return [];
+    return [{ type: 'path-root', value: '/RandomStuff' }];
   }
-  return SafelyUnpickle(ignoreListString, isBackendIgnoreItemFn) || [];
+  return SafelyUnpickle(ignoreListString, isIgnoreItemArrayFn) || [];
 }
 
-export async function AddIgnoreItem(item: BackEndIgnoreItem) {}
+export async function AddIgnoreItem(item: IgnoreItem): Promise<void> {
+  const igList = await GetIgnoreList();
+  igList.push(item);
+  const db = await GetAudioDB();
+  db.addIgnoreItem(item.type, item.value);
+  SendUpdatedIgnoreList(igList);
+  await Persistence.setItemAsync('ignore-list', Pickle(igList));
+}
+
+export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
+  let igList = await GetIgnoreList();
+  const db = await GetAudioDB();
+  if (db.removeIgnoreItem(item.type, item.value)) {
+    igList = [
+      ...igList.filter(
+        (val) => val.type !== item.type && val.value === item.value,
+      ),
+    ];
+    SendUpdatedIgnoreList(igList);
+    await Persistence.setItemAsync('ignore-list', Pickle(igList));
+  }
+}
+
+export function SendUpdatedIgnoreList(list: IgnoreItem[]): void {
+  const obj: { [key: string]: unknown } = {};
+  obj[IpcId.PushIgnoreList.toString()] = list;
+  Comms.AsyncSend(obj);
+}

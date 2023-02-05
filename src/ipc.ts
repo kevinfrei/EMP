@@ -7,7 +7,7 @@ import {
   MediaKey,
   SongKey,
 } from '@freik/media-core';
-import { IpcId } from 'shared';
+import { IgnoreItem, IpcId } from 'shared';
 
 const log = MakeLogger('ipc');
 
@@ -65,4 +65,14 @@ export async function SearchWhole(
   } else {
     log('Got no search results back');
   }
+}
+
+export function AddIgnoreItem(item: IgnoreItem): void {
+  // eslint-disable-next-line no-console
+  Ipc.PostMain(IpcId.AddIgnoreItem, item).catch(console.error);
+}
+
+export function RemoveIgnoreItem(item: IgnoreItem): void {
+  // eslint-disable-next-line no-console
+  Ipc.PostMain(IpcId.RemoveIgnoreItem, item).catch(console.error);
 }
