@@ -13,6 +13,7 @@ type IpcIdImpl = {
   GetPlaylists: 'get-playlists';
   LoadPlaylists: 'load-playlists';
   ManualRescan: 'manual-rescan';
+  MenuAction: 'menuAction';
   MusicDBUpdate: 'music-database-update';
   RenamePlaylist: 'rename-playlist';
   SavePlaylist: 'save-playlist';
@@ -34,6 +35,12 @@ type IpcIdImpl = {
   RestoreWindow: 'restore-window';
   CloseWindow: 'close-window';
   GetPicUri: 'get-pic-uri';
+  GetIgnoreList: 'get-ignore-list';
+  AddIgnoreItem: 'add-ignore-item';
+  RemoveIgnoreItem: 'del-ignore-item';
+  PushIgnoreList: 'push-ignore-list';
+  IgnoreListId: 'ignore-list';
+  RescanInProgress: 'rescan-in-progress';
 };
 export const IpcId: IpcIdImpl = {
   ClearHates: 'clear-hates',
@@ -47,6 +54,7 @@ export const IpcId: IpcIdImpl = {
   GetPlaylists: 'get-playlists',
   LoadPlaylists: 'load-playlists',
   ManualRescan: 'manual-rescan',
+  MenuAction: 'menuAction',
   MusicDBUpdate: 'music-database-update',
   RenamePlaylist: 'rename-playlist',
   SavePlaylist: 'save-playlist',
@@ -68,6 +76,12 @@ export const IpcId: IpcIdImpl = {
   RestoreWindow: 'restore-window',
   CloseWindow: 'close-window',
   GetPicUri: 'get-pic-uri',
+  GetIgnoreList: 'get-ignore-list',
+  AddIgnoreItem: 'add-ignore-item',
+  RemoveIgnoreItem: 'del-ignore-item',
+  PushIgnoreList: 'push-ignore-list',
+  IgnoreListId: 'ignore-list',
+  RescanInProgress: 'rescan-in-progress',
 };
 Object.freeze(IpcId);
 export type IpcId = string;
@@ -315,6 +329,20 @@ export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>([
   ],
   ['bitrate', Type.isNumber],
 ]);
+
+export type IgnoreItemType = 'path-root' | 'path-keyword' | 'dir-name';
+export type IgnoreItem = { type: IgnoreItemType; value: string };
+export function IsIgnoreItemType(obj: unknown): obj is IgnoreItemType {
+  return obj === 'path-root' || obj === 'path-keyword' || obj === 'dir-name';
+}
+export const isIgnoreItemFn = Type.isSpecificTypeFn<IgnoreItem>(
+  [
+    ['type', IsIgnoreItemType],
+    ['value', Type.isString],
+  ],
+  ['type', 'value'],
+);
+export const isIgnoreItemArrayFn = Type.isArrayOfFn<IgnoreItem>(isIgnoreItemFn);
 
 /*
 export enum Decisions {

@@ -1,12 +1,15 @@
 import {
   DefaultButton,
+  Dropdown,
   IconButton,
+  IDropdownOption,
   Label,
   SpinButton,
   Text,
   TextField,
   TooltipHost,
 } from '@fluentui/react';
+import { Type } from '@freik/core-utils';
 import { Ipc, Util } from '@freik/elect-render-utils';
 import {
   Catch,
@@ -17,13 +20,17 @@ import {
   useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
+import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IpcId, Keys, st, StrId } from 'shared';
+import { IgnoreItemType, IpcId, Keys, st, StrId } from 'shared';
+import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
+  ignoreItemsState,
+  RescanInProgressState,
 } from '../../Recoil/ReadOnly';
 import {
   albumCoverNameState,
@@ -63,6 +70,7 @@ export async function addLocation({
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
+  const rescanInProgress = useRecoilValue(RescanInProgressState);
   const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });
@@ -114,6 +122,7 @@ function MusicLocations(): JSX.Element {
           <DefaultButton
             text="Rescan Locations"
             iconProps={{ iconName: 'SearchData' }}
+            disabled={rescanInProgress}
             onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>
@@ -127,6 +136,85 @@ function MusicLocations(): JSX.Element {
       </div>
       <Text>{`${artists.size} Artists, ${albums.size} Albums, ${songs.size} Songs`}</Text>
     </>
+  );
+}
+
+const ignoreTypeNameMap = new Map<IgnoreItemType, string>([
+  ['path-root', 'Root Path'],
+  ['dir-name', 'Directory Name'],
+  ['path-keyword', 'Keyword'],
+]);
+
+const ignoreOptions: IDropdownOption[] = [...ignoreTypeNameMap.entries()].map(
+  ([key, text]) => ({ key, text }),
+);
+
+function IgnoreList(): JSX.Element {
+  const ignoreItems = useRecoilValue(ignoreItemsState);
+  const [newType, setNewType] = useState<IgnoreItemType | ''>('');
+  const [newValue, setNewValue] = useState<string>('');
+  return (
+    <div id="ignore-list">
+      {ignoreItems.map(({ type, value }, idx) => (
+        <div key={idx} style={{ display: 'contents' }}>
+          <span style={{ gridRow: idx + 1 }} className="ignore-type">
+            {ignoreTypeNameMap.get(type) || 'ERROR!'}:
+          </span>
+          <span style={{ gridRow: idx + 1 }} className="ignore-value">
+            <TextField readOnly value={value} />
+          </span>
+          <span style={{ gridRow: idx + 1 }} className="ignore-button">
+            <IconButton
+              onClick={() => {
+                RemoveIgnoreItem({ type, value });
+              }}
+              iconProps={{ iconName: 'Delete' }}
+            />
+          </span>
+        </div>
+      ))}
+      <span style={{ gridRow: ignoreItems.length + 1 }} className="ignore-type">
+        <Dropdown
+          selectedKey={newType}
+          onChange={(ev: unknown, option?: IDropdownOption) => {
+            if (!Type.isUndefined(option) && option.key !== '') {
+              setNewType(option.key as IgnoreItemType);
+            }
+          }}
+          options={ignoreOptions}
+          dropdownWidth={125}
+        />
+      </span>
+      <span
+        style={{ gridRow: ignoreItems.length + 1 }}
+        className="ignore-value"
+      >
+        <TextField
+          value={newValue}
+          onChange={(ev: unknown, value?: string) => {
+            if (!Type.isUndefined(value)) {
+              setNewValue(value);
+            }
+          }}
+        />
+      </span>
+      <span
+        style={{ gridRow: ignoreItems.length + 1 }}
+        className="ignore-button"
+      >
+        <IconButton
+          onClick={() => {
+            if (newType !== '') {
+              AddIgnoreItem({ type: newType, value: newValue });
+            }
+            setNewType('');
+            setNewValue('');
+          }}
+          iconProps={{ iconName: 'Add' }}
+          disabled={newValue.length === 0}
+        />
+      </span>
+    </div>
   );
 }
 
@@ -221,6 +309,14 @@ export function SettingsView(): JSX.Element {
         <Spinner>
           <MusicLocations />
         </Spinner>
+        <Expandable
+          indent={30}
+          separator
+          label="Ignore filters"
+          defaultShow={false}
+        >
+          <IgnoreList />
+        </Expandable>
       </Expandable>
       <Expandable separator label="Sorting & Filtering" defaultShow={true}>
         <LikeFiltering />

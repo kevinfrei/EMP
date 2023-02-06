@@ -14,7 +14,7 @@ import {
 } from '@freik/media-core';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
-import { IpcId } from 'shared';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
 import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
@@ -538,4 +538,45 @@ export const filteredArtistsFunc = selector<Artist[]>({
     }
     return artists;
   },
+});
+
+export const ignoreItemsState = atom<IgnoreItem[]>({
+  key: 'IgnoreItemsState',
+  effects: [
+    Effects.oneWayFromMain(
+      async (): Promise<IgnoreItem[]> => {
+        const il = await Ipc.CallMain(
+          IpcId.GetIgnoreList,
+          undefined,
+          isIgnoreItemArrayFn,
+        );
+        return il || [];
+      },
+      IpcId.PushIgnoreList,
+      (il: unknown) => {
+        if (isIgnoreItemArrayFn(il)) {
+          return il;
+        }
+        err('Invalid result from music-database-update:');
+        err(il);
+      },
+    ),
+  ],
+});
+
+export const RescanInProgressState = atom<boolean>({
+  key: 'RescanInProgress',
+  effects: [
+    Effects.oneWayFromMain(
+      () => false,
+      IpcId.RescanInProgress,
+      (info: unknown) => {
+        if (Type.isBoolean(info)) {
+          return info;
+        }
+        err('Invalid RescanInProgress value:');
+        err(info);
+      },
+    ),
+  ],
 });

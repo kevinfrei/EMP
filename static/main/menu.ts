@@ -1,5 +1,5 @@
 import { MakeError, Type } from '@freik/core-utils';
-import { Comms, Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import {
   app,
   BrowserWindow,
@@ -10,8 +10,9 @@ import {
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
-import { CurrentView, Keys } from 'shared';
+import { CurrentView, IpcId, Keys } from 'shared';
 import { ShowAbout } from './About';
+import { SendToUI } from './Communication';
 import { ToggleMiniPlayer } from './window';
 
 const err = MakeError('menu-err'); // eslint-disable-line
@@ -34,9 +35,7 @@ function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
   if (Type.isFunction(handler)) {
     return handler as ClickHandler;
   }
-  return () => {
-    void Comms.AsyncSend({ menuAction: handler });
-  };
+  return () => SendToUI(IpcId.MenuAction, handler);
 }
 
 function getId(lbl: string): string {

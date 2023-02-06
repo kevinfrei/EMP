@@ -42,7 +42,7 @@ export function Utilities(): JSX.Element {
   const menuCallback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data),
   );
-  useListener('menuAction', menuCallback);
+  useListener(IpcId.MenuAction, menuCallback);
   const handleWidthChange = useMyTransaction(
     ({ set }) =>
       (ev: MediaQueryList | MediaQueryListEvent) => {

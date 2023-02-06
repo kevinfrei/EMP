@@ -10,11 +10,12 @@ import {
   MakeError,
   MakeLogger,
   Operations,
+  Pickle,
   SafelyUnpickle,
   Sleep,
   Type,
 } from '@freik/core-utils';
-import { Comms, Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import {
   isAlbumKey,
   isArtistKey,
@@ -25,7 +26,8 @@ import {
 import electronIsDev from 'electron-is-dev';
 import { statSync } from 'fs';
 import path from 'path';
-import { IpcId } from 'shared';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
+import { SendToUI } from './Communication';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
@@ -34,22 +36,39 @@ let theAudioDb: AudioDatabase | null;
 let initialUpdateComplete = false;
 
 function fileWatchFilter(filepath: string): boolean {
-  const stat = statSync(filepath);
-  if (stat.isDirectory()) {
-    try {
-      const noXcode = path.join(filepath, '.notranscode');
-      const st = statSync(noXcode);
-      return !st.isFile();
-    } catch (errorValue) {
-      /* */
+  try {
+    const stat = statSync(filepath);
+    if (stat.isDirectory()) {
+      try {
+        const noXcode = path.join(filepath, '.notranscode');
+        const st = statSync(noXcode);
+        return !st.isFile();
+      } catch (errorValue) {
+        /* */
+      }
     }
+  } catch (e) {
+    /* */
   }
   return true;
 }
 
 export async function GetAudioDB(): Promise<AudioDatabase> {
   if (theAudioDb == null) {
-    theAudioDb = await MakeAudioDatabase(Persistence, { fileWatchFilter });
+    theAudioDb = await MakeAudioDatabase(Persistence, {
+      fileWatchFilter,
+      watchHidden: false,
+    });
+    if (theAudioDb === null) {
+      throw new Error(
+        'This be very bad, folks: Try uninstalling and reinstalling :/',
+      );
+    }
+    const igListString = await Persistence.getItemAsync(IpcId.IgnoreListId);
+    const igList = SafelyUnpickle(igListString || '[]', isIgnoreItemArrayFn);
+    igList?.forEach(({ type, value }) =>
+      theAudioDb!.addIgnoreItem(type, value),
+    );
   }
   return theAudioDb;
 }
@@ -69,17 +88,20 @@ export function SendDatabase(db: AudioDatabase): void {
       `${flat.albums.length} albums,` +
       `${flat.artists.length} artists`,
   );
-  const obj: { [key: string]: unknown } = {};
-  obj[IpcId.MusicDBUpdate.toString()] = flat;
-  Comms.AsyncSend(obj);
+  SendToUI(IpcId.MusicDBUpdate, flat);
 }
 
 export async function RescanAudioDatase(): Promise<void> {
-  const db = await GetAudioDB();
-  log('Rescanning the DB');
-  await db.refresh();
-  log('Rescanning complete');
-  SendDatabase(db);
+  try {
+    SendToUI(IpcId.RescanInProgress, true);
+    const db = await GetAudioDB();
+    log('Rescanning the DB');
+    await db.refresh();
+    log('Rescanning complete');
+    SendDatabase(db);
+  } finally {
+    SendToUI(IpcId.RescanInProgress, false);
+  }
 }
 
 export async function UpdateLocations(locs: string): Promise<void> {
@@ -225,4 +247,39 @@ export async function SearchSubstring(
   }
   const db = await GetAudioDB();
   return db.searchIndex(true, term);
+}
+
+export async function GetIgnoreList(): Promise<IgnoreItem[]> {
+  const ignoreListString = await Persistence.getItemAsync(IpcId.IgnoreListId);
+  if (!ignoreListString) {
+    return [];
+  }
+  return SafelyUnpickle(ignoreListString, isIgnoreItemArrayFn) || [];
+}
+
+export async function AddIgnoreItem(item: IgnoreItem): Promise<void> {
+  const igList = await GetIgnoreList();
+  igList.push(item);
+  const db = await GetAudioDB();
+  db.addIgnoreItem(item.type, item.value);
+  SendUpdatedIgnoreList(igList);
+  await Persistence.setItemAsync(IpcId.IgnoreListId, Pickle(igList));
+}
+
+export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
+  let igList = await GetIgnoreList();
+  const db = await GetAudioDB();
+  if (db.removeIgnoreItem(item.type, item.value)) {
+    igList = [
+      ...igList.filter(
+        (val) => val.type !== item.type || val.value !== item.value,
+      ),
+    ];
+    SendUpdatedIgnoreList(igList);
+    await Persistence.setItemAsync(IpcId.IgnoreListId, Pickle(igList));
+  }
+}
+
+export function SendUpdatedIgnoreList(list: IgnoreItem[]): void {
+  SendToUI(IpcId.PushIgnoreList, list);
 }

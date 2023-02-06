@@ -9,3 +9,23 @@
   justify-content: flex-start;
   align-items: center;
 }
+
+#ignore-list {
+  display: grid;
+  grid-template-columns: 40px 140px auto;
+  justify-items: start;
+  align-items: center;
+  font-size: smaller;
+  row-gap: 5px;
+}
+
+.ignore-type {
+  font-weight: bold;
+  grid-column: 2;
+}
+.ignore-value {
+  grid-column: 3;
+}
+.ignore-button {
+  grid-column: 1;
+}

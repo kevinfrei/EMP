@@ -22,7 +22,7 @@ import { FileUtil } from '@freik/node-utils';
 import albumArt from 'album-art';
 import { ProtocolRequest } from 'electron';
 import electronIsDev from 'electron-is-dev';
-import Jimp from 'jimp/es';
+import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';
