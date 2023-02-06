@@ -38,6 +38,7 @@ type IpcIdImpl = {
   AddIgnoreItem: 'add-ignore-item';
   RemoveIgnoreItem: 'del-ignore-item';
   PushIgnoreList: 'push-ignore-list';
+  IgnoreListId: 'ignore-list';
 };
 export const IpcId: IpcIdImpl = {
   ClearHates: 'clear-hates',
@@ -76,6 +77,7 @@ export const IpcId: IpcIdImpl = {
   AddIgnoreItem: 'add-ignore-item',
   RemoveIgnoreItem: 'del-ignore-item',
   PushIgnoreList: 'push-ignore-list',
+  IgnoreListId: 'ignore-list',
 };
 Object.freeze(IpcId);
 export type IpcId = string;

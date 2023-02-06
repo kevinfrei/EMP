@@ -63,7 +63,7 @@ export async function GetAudioDB(): Promise<AudioDatabase> {
         'This be very bad, folks: Try uninstalling and reinstalling :/',
       );
     }
-    const igListString = await Persistence.getItemAsync('ignore-list');
+    const igListString = await Persistence.getItemAsync(IpcId.IgnoreListId);
     const igList = SafelyUnpickle(igListString || '[]', isIgnoreItemArrayFn);
     igList?.forEach(({ type, value }) =>
       theAudioDb!.addIgnoreItem(type, value),
@@ -246,9 +246,9 @@ export async function SearchSubstring(
 }
 
 export async function GetIgnoreList(): Promise<IgnoreItem[]> {
-  const ignoreListString = await Persistence.getItemAsync('ignore-list');
+  const ignoreListString = await Persistence.getItemAsync(IpcId.IgnoreListId);
   if (!ignoreListString) {
-    return [{ type: 'path-root', value: '/RandomStuff' }];
+    return [];
   }
   return SafelyUnpickle(ignoreListString, isIgnoreItemArrayFn) || [];
 }
@@ -259,7 +259,7 @@ export async function AddIgnoreItem(item: IgnoreItem): Promise<void> {
   const db = await GetAudioDB();
   db.addIgnoreItem(item.type, item.value);
   SendUpdatedIgnoreList(igList);
-  await Persistence.setItemAsync('ignore-list', Pickle(igList));
+  await Persistence.setItemAsync(IpcId.IgnoreListId, Pickle(igList));
 }
 
 export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
@@ -272,7 +272,7 @@ export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
       ),
     ];
     SendUpdatedIgnoreList(igList);
-    await Persistence.setItemAsync('ignore-list', Pickle(igList));
+    await Persistence.setItemAsync(IpcId.IgnoreListId, Pickle(igList));
   }
 }
 
