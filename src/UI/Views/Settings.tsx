@@ -30,6 +30,7 @@ import {
   allArtistsFunc,
   allSongsFunc,
   ignoreItemsState,
+  RescanInProgressState,
 } from '../../Recoil/ReadOnly';
 import {
   albumCoverNameState,
@@ -69,6 +70,7 @@ export async function addLocation({
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
+  const rescanInProgress = useRecoilValue(RescanInProgressState);
   const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });
@@ -120,6 +122,7 @@ function MusicLocations(): JSX.Element {
           <DefaultButton
             text="Rescan Locations"
             iconProps={{ iconName: 'SearchData' }}
+            disabled={rescanInProgress}
             onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
           />
         </TooltipHost>

@@ -182,3 +182,10 @@ export function CommsSetup(): void {
     isIgnoreItemFn,
   );
 }
+
+// This is for one-way comms to the UI process
+export function SendToUI(name: string, data: unknown) {
+  const obj: { [key: string]: unknown } = {};
+  obj[name] = data;
+  Comms.AsyncSend(obj);
+}

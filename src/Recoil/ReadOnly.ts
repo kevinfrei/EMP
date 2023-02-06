@@ -563,3 +563,20 @@ export const ignoreItemsState = atom<IgnoreItem[]>({
     ),
   ],
 });
+
+export const RescanInProgressState = atom<boolean>({
+  key: 'RescanInProgress',
+  effects: [
+    Effects.oneWayFromMain(
+      () => false,
+      IpcId.RescanInProgress,
+      (info: unknown) => {
+        if (Type.isBoolean(info)) {
+          return info;
+        }
+        err('Invalid RescanInProgress value:');
+        err(info);
+      },
+    ),
+  ],
+});

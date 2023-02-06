@@ -13,6 +13,7 @@ type IpcIdImpl = {
   GetPlaylists: 'get-playlists';
   LoadPlaylists: 'load-playlists';
   ManualRescan: 'manual-rescan';
+  MenuAction: 'menuAction';
   MusicDBUpdate: 'music-database-update';
   RenamePlaylist: 'rename-playlist';
   SavePlaylist: 'save-playlist';
@@ -39,6 +40,7 @@ type IpcIdImpl = {
   RemoveIgnoreItem: 'del-ignore-item';
   PushIgnoreList: 'push-ignore-list';
   IgnoreListId: 'ignore-list';
+  RescanInProgress: 'rescan-in-progress';
 };
 export const IpcId: IpcIdImpl = {
   ClearHates: 'clear-hates',
@@ -52,6 +54,7 @@ export const IpcId: IpcIdImpl = {
   GetPlaylists: 'get-playlists',
   LoadPlaylists: 'load-playlists',
   ManualRescan: 'manual-rescan',
+  MenuAction: 'menuAction',
   MusicDBUpdate: 'music-database-update',
   RenamePlaylist: 'rename-playlist',
   SavePlaylist: 'save-playlist',
@@ -78,6 +81,7 @@ export const IpcId: IpcIdImpl = {
   RemoveIgnoreItem: 'del-ignore-item',
   PushIgnoreList: 'push-ignore-list',
   IgnoreListId: 'ignore-list',
+  RescanInProgress: 'rescan-in-progress',
 };
 Object.freeze(IpcId);
 export type IpcId = string;

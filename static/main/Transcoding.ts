@@ -1,5 +1,4 @@
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
-import { AsyncSend } from '@freik/elect-main-utils/lib/comms';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
 import { ForDirs, ForFiles, PathUtil, ProcUtil } from '@freik/node-utils';
@@ -16,6 +15,7 @@ import {
   TranscodeState,
 } from 'shared';
 import { GetAudioDB } from './AudioDatabase';
+import { SendToUI } from './Communication';
 import { LoadPlaylist } from './playlists';
 
 const err = MakeError('transcoding-err');
@@ -162,9 +162,7 @@ function clearStatus() {
 }
 
 function reportStatus() {
-  const message: { [key: string]: TranscodeState } = {};
-  message[IpcId.TranscodingUpdate.toString()] = curStatus;
-  AsyncSend(message);
+  SendToUI(IpcId.TranscodingUpdate, curStatus);
 }
 
 let reportEvent: null | ReturnType<typeof setTimeout> = null;

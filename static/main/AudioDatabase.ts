@@ -15,7 +15,7 @@ import {
   Sleep,
   Type,
 } from '@freik/core-utils';
-import { Comms, Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/elect-main-utils';
 import {
   isAlbumKey,
   isArtistKey,
@@ -27,6 +27,7 @@ import electronIsDev from 'electron-is-dev';
 import { statSync } from 'fs';
 import path from 'path';
 import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
+import { SendToUI } from './Communication';
 
 const log = MakeLogger('AudioDatabase', false && electronIsDev);
 const err = MakeError('AudioDatabase-err');
@@ -87,17 +88,20 @@ export function SendDatabase(db: AudioDatabase): void {
       `${flat.albums.length} albums,` +
       `${flat.artists.length} artists`,
   );
-  const obj: { [key: string]: unknown } = {};
-  obj[IpcId.MusicDBUpdate.toString()] = flat;
-  Comms.AsyncSend(obj);
+  SendToUI(IpcId.MusicDBUpdate, flat);
 }
 
 export async function RescanAudioDatase(): Promise<void> {
-  const db = await GetAudioDB();
-  log('Rescanning the DB');
-  await db.refresh();
-  log('Rescanning complete');
-  SendDatabase(db);
+  try {
+    SendToUI(IpcId.RescanInProgress, true);
+    const db = await GetAudioDB();
+    log('Rescanning the DB');
+    await db.refresh();
+    log('Rescanning complete');
+    SendDatabase(db);
+  } finally {
+    SendToUI(IpcId.RescanInProgress, false);
+  }
 }
 
 export async function UpdateLocations(locs: string): Promise<void> {
@@ -277,7 +281,5 @@ export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
 }
 
 export function SendUpdatedIgnoreList(list: IgnoreItem[]): void {
-  const obj: { [key: string]: unknown } = {};
-  obj[IpcId.PushIgnoreList.toString()] = list;
-  Comms.AsyncSend(obj);
+  SendToUI(IpcId.PushIgnoreList, list);
 }

@@ -17739,10 +17739,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=0da576&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=c59120&locator=emp%40workspace%3A."
   peerDependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 5e15c935b7c120e427b6afbc01f79a47dc72851dcf2bcc9dcca54c53f955e4a10d762e396c576c58e23c930d90a619ed64dc4fdfd73cd369662aa6a30ad037ef
+  checksum: 0c8e93b836489c6ab2ae406487ffc1d712507392548936342e07b2f77961e8f57e19d92e2ec20cb595d6bef83fe5fe3d473db0f635b01c90639a97c44d90529e
   languageName: node
   linkType: hard
 
