@@ -49,6 +49,21 @@
       "preLaunchTask": "npm: react-start"
     },
     {
+      "name": "Electron: Just Main?",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/public/**/*.js"],
+      "args": ["."],
+      "outputCapture": "std",
+      "preLaunchTask": "npm: prepare"
+    },
+    {
       "name": "NPM stuff",
       "type": "node",
       "request": "launch",
