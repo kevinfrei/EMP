@@ -172,3 +172,15 @@ export async function PostMain(
       return await MockWrite(key);
   }
 }
+
+export function isHostMac(): boolean {
+  return true;
+}
+
+export function isHostLinux(): boolean {
+  return false;
+}
+
+export function isHostWindows(): boolean {
+  return false;
+}

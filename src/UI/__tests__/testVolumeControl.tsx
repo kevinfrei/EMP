@@ -1,25 +1,20 @@
-/*
-import { Suspense } from 'react';
-import { act, create } from 'react-test-renderer';
-import { RecoilRoot } from 'recoil';
-import VolumeControl from '../VolumeControl';
-*/
+import { act } from 'react-test-renderer';
+import { FluentInitIcons } from '../../FluentInit';
 
 jest.mock('../../MyWindow');
 
 export {};
 
-it('renders without crashing', () => {
-  /*
+it('renders without crashing', async () => {
   await act(async () => {
-    create(
+    FluentInitIcons();
+    /*    create(
       <RecoilRoot>
         <Suspense fallback="">
           <VolumeControl />
         </Suspense>
       </RecoilRoot>,
-    );
-    return new Promise((res, rej) => res());
+    );*/
+    return new Promise((res) => res());
   });
-  */
 });

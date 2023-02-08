@@ -3,7 +3,7 @@ jest.mock('@freik/elect-render-utils');
 import { MakeError } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { act } from 'react-test-renderer';
-import { RecoilState, Snapshot } from 'recoil';
+import { RecoilState, Snapshot, snapshot_UNSTABLE } from 'recoil';
 
 jest.useFakeTimers();
 jest.mock('../../MyWindow');
@@ -46,17 +46,19 @@ it('empty test until I figure out how to do some of this stuff for reals', () =>
   expect(true).toBeTruthy();
 });
 
-/*
 it('Adding empty songs does nothing', () => {
   const initialSnapshot = snapshot_UNSTABLE();
-  expect(
+  expect(initialSnapshot).toBeDefined();
+  /*  expect(
     initialSnapshot.getLoadable(songListState).valueOrThrow(),
   ).toStrictEqual([]);
   expect(
     initialSnapshot.getLoadable(currentIndexState).valueOrThrow(),
   ).toStrictEqual(-1);
+	*/
 });
 
+/*
 it('Need to update this to use the transaction api', () =>
   expect(true).toBeTruthy());
 it('Adding empty songs does nothing, really', async () => {
