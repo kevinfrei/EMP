@@ -1,288 +1,144 @@
 import { Type } from '@freik/core-utils';
 
-// Typescript enums are very bad and buggy in weird ways
-type IpcIdImpl = {
-  ClearHates: 'clear-hates';
-  ClearLikes: 'clear-likes';
-  DeletePlaylist: 'delete-playlist';
-  FlushImageCache: 'flush-image-cache';
-  GetHates: 'get-hates';
-  GetLikes: 'get-likes';
-  GetMediaInfo: 'media-info';
-  GetMusicDatabase: 'get-music-database';
-  GetPlaylists: 'get-playlists';
-  LoadPlaylists: 'load-playlists';
-  ManualRescan: 'manual-rescan';
-  MenuAction: 'menuAction';
-  MusicDBUpdate: 'music-database-update';
-  RenamePlaylist: 'rename-playlist';
-  SavePlaylist: 'save-playlist';
-  Search: 'search';
-  SetHates: 'set-hates';
-  SetLikes: 'set-likes';
-  SetMediaInfo: 'set-media-info';
-  SetPlaylists: 'set-playlists';
-  SetSaveMenu: 'set-save-menu';
-  ShowFile: 'show-file';
-  ShowLocFromKey: 'show-location-from-key';
-  ShowMenu: 'show-menu';
-  SubstrSearch: 'subsearch';
-  TranscodingUpdate: 'get-xcode-update';
-  TranscodingBegin: 'start-xcode';
-  UploadImage: 'upload-image';
-  MinimizeWindow: 'minimize-window';
-  MaximizeWindow: 'maximize-window';
-  RestoreWindow: 'restore-window';
-  CloseWindow: 'close-window';
-  GetPicUri: 'get-pic-uri';
-  GetIgnoreList: 'get-ignore-list';
-  AddIgnoreItem: 'add-ignore-item';
-  RemoveIgnoreItem: 'del-ignore-item';
-  PushIgnoreList: 'push-ignore-list';
-  IgnoreListId: 'ignore-list';
-  RescanInProgress: 'rescan-in-progress';
-};
-export const IpcId: IpcIdImpl = {
-  ClearHates: 'clear-hates',
-  ClearLikes: 'clear-likes',
-  DeletePlaylist: 'delete-playlist',
-  FlushImageCache: 'flush-image-cache',
-  GetHates: 'get-hates',
-  GetLikes: 'get-likes',
-  GetMediaInfo: 'media-info',
-  GetMusicDatabase: 'get-music-database',
-  GetPlaylists: 'get-playlists',
-  LoadPlaylists: 'load-playlists',
-  ManualRescan: 'manual-rescan',
-  MenuAction: 'menuAction',
-  MusicDBUpdate: 'music-database-update',
-  RenamePlaylist: 'rename-playlist',
-  SavePlaylist: 'save-playlist',
-  Search: 'search',
-  SetHates: 'set-hates',
-  SetLikes: 'set-likes',
-  SetMediaInfo: 'set-media-info',
-  SetPlaylists: 'set-playlists',
-  SetSaveMenu: 'set-save-menu',
-  ShowFile: 'show-file',
-  ShowLocFromKey: 'show-location-from-key',
-  ShowMenu: 'show-menu',
-  SubstrSearch: 'subsearch',
-  TranscodingUpdate: 'get-xcode-update',
-  TranscodingBegin: 'start-xcode',
-  UploadImage: 'upload-image',
-  MinimizeWindow: 'minimize-window',
-  MaximizeWindow: 'maximize-window',
-  RestoreWindow: 'restore-window',
-  CloseWindow: 'close-window',
-  GetPicUri: 'get-pic-uri',
-  GetIgnoreList: 'get-ignore-list',
-  AddIgnoreItem: 'add-ignore-item',
-  RemoveIgnoreItem: 'del-ignore-item',
-  PushIgnoreList: 'push-ignore-list',
-  IgnoreListId: 'ignore-list',
-  RescanInProgress: 'rescan-in-progress',
-};
-Object.freeze(IpcId);
-export type IpcId = string;
+export enum IpcId {
+  ClearHates = 'clear-hates',
+  ClearLikes = 'clear-likes',
+  DeletePlaylist = 'delete-playlist',
+  FlushImageCache = 'flush-image-cache',
+  GetHates = 'get-hates',
+  GetLikes = 'get-likes',
+  GetMediaInfo = 'media-info',
+  GetMusicDatabase = 'get-music-database',
+  GetPlaylists = 'get-playlists',
+  LoadPlaylists = 'load-playlists',
+  ManualRescan = 'manual-rescan',
+  MenuAction = 'menuAction',
+  MusicDBUpdate = 'music-database-update',
+  RenamePlaylist = 'rename-playlist',
+  SavePlaylist = 'save-playlist',
+  Search = 'search',
+  SetHates = 'set-hates',
+  SetLikes = 'set-likes',
+  SetMediaInfo = 'set-media-info',
+  SetPlaylists = 'set-playlists',
+  SetSaveMenu = 'set-save-menu',
+  ShowFile = 'show-file',
+  ShowLocFromKey = 'show-location-from-key',
+  ShowMenu = 'show-menu',
+  SubstrSearch = 'subsearch',
+  TranscodingUpdate = 'get-xcode-update',
+  TranscodingBegin = 'start-xcode',
+  UploadImage = 'upload-image',
+  MinimizeWindow = 'minimize-window',
+  MaximizeWindow = 'maximize-window',
+  RestoreWindow = 'restore-window',
+  CloseWindow = 'close-window',
+  GetPicUri = 'get-pic-uri',
+  GetIgnoreList = 'get-ignore-list',
+  AddIgnoreItem = 'add-ignore-item',
+  RemoveIgnoreItem = 'del-ignore-item',
+  PushIgnoreList = 'push-ignore-list',
+  IgnoreListId = 'ignore-list',
+  RescanInProgress = 'rescan-in-progress',
+}
 
-type KeysImpl = {
-  AddFileLocation: 'O';
-  Albums: '2';
-  Artists: '3';
-  Backward10s: '[';
-  Find: 'F';
-  Forward10s: ']';
-  NextTrack: 'Right';
-  NowPlaying: '1';
-  Play: 'P';
-  Playlists: '5';
-  PreviousTrack: 'Left';
-  Repeat: 'T';
-  SavePlaylist: 'S';
-  Settings: ',';
-  Shuffle: 'R';
-  Songs: '4';
-  ToggleMiniPlayer: '9';
-  Tools: 'L';
-};
-export const Keys: KeysImpl = {
-  AddFileLocation: 'O',
-  Albums: '2',
-  Artists: '3',
-  Backward10s: '[',
-  Find: 'F',
-  Forward10s: ']',
-  NextTrack: 'Right',
-  NowPlaying: '1',
-  Play: 'P',
-  Playlists: '5',
-  PreviousTrack: 'Left',
-  Repeat: 'T',
-  SavePlaylist: 'S',
-  Settings: ',',
-  Shuffle: 'R',
-  Songs: '4',
-  ToggleMiniPlayer: '9',
-  Tools: 'L',
-};
-Object.freeze(Keys);
-export type Keys = string;
+export enum Keys {
+  AddFileLocation = 'O',
+  Albums = '2',
+  Artists = '3',
+  Backward10s = '[',
+  Find = 'F',
+  Forward10s = ']',
+  NextTrack = 'Right',
+  NowPlaying = '1',
+  Play = 'P',
+  Playlists = '5',
+  PreviousTrack = 'Left',
+  Repeat = 'T',
+  SavePlaylist = 'S',
+  Settings = ',',
+  Shuffle = 'R',
+  Songs = '4',
+  ToggleMiniPlayer = '9',
+  Tools = 'L',
+}
 
 // TODO: This stuff let's me localize my strings eventually
-type StrIdImpl = {
+export enum StrId {
   // MediaInfo.tsx strings
-  Mono: 'mono';
-  Stereo: 'stereo';
-  Quadrophonic: 'quadrophonic';
-  Channels: ' channels';
-  BitDepth: 'bit';
-  FilePath: 'File Path';
-  Duration: 'Duration:';
-  MDHeaderField: 'Field';
-  MDHeaderValue: 'Value';
-  FilesSelected: 'Files Selected';
-  RawMetadata: 'Raw Metadata';
+  Mono = 'mono',
+  Stereo = 'stereo',
+  Quadrophonic = 'quadrophonic',
+  Channels = ' channels',
+  BitDepth = 'bit',
+  FilePath = 'File Path',
+  Duration = 'Duration:',
+  MDHeaderField = 'Field',
+  MDHeaderValue = 'Value',
+  FilesSelected = 'Files Selected',
+  RawMetadata = 'Raw Metadata',
   // Metadata Editor
-  ChooseCoverArt: 'Select Cover Art Image';
-  ImageName: 'Images';
-  ErrNotSingleAndNotMultiple: 'Not Single and not Multiple (This is a bug!)';
-  ErrSingleAndMultiple: 'Both Single and Multiple (This is a bug!)';
-  Title: 'Title';
-  ArtistTooltip: "Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'";
-  Artists: 'Artist(s)';
-  Album: 'Album';
-  Year: 'Year';
-  TrackNum: 'Track #';
-  DiskNum: 'Disk #';
-  DiskName: 'Disk Name';
-  Compilation: 'Compilation';
-  Soundtrack: 'Soundtrack';
-  AdditionalArtists: 'Additional Artist(s)';
-  VariationsTooltip: 'Separate vartiations with a semicolon';
-  Variations: 'Variation(s)';
-  AlbumCover: 'Album Cover';
-  ChooseFile: 'Choose File...';
-  FromClipboard: 'From Clipboard';
-  ViewNowPlaying: 'Now Playing';
-  ViewAlbums: 'Albums';
-  ViewArtists: 'Artists';
-  ViewSongs: 'All Songs';
-  ViewPlaylists: 'Playlists';
-  ViewSettings: 'Settings';
-  ViewTools: 'Tools';
-  ImportFiles: 'Import Files...';
-};
-export const StrId: StrIdImpl = {
-  // MediaInfo.tsx strings
-  Mono: 'mono',
-  Stereo: 'stereo',
-  Quadrophonic: 'quadrophonic',
-  Channels: ' channels',
-  BitDepth: 'bit',
-  FilePath: 'File Path',
-  Duration: 'Duration:',
-  MDHeaderField: 'Field',
-  MDHeaderValue: 'Value',
-  FilesSelected: 'Files Selected',
-  RawMetadata: 'Raw Metadata',
-  // Metadata Editor
-  ChooseCoverArt: 'Select Cover Art Image',
-  ImageName: 'Images',
-  ErrNotSingleAndNotMultiple: 'Not Single and not Multiple (This is a bug!)',
-  ErrSingleAndMultiple: 'Both Single and Multiple (This is a bug!)',
-  Title: 'Title',
-  ArtistTooltip:
-    "Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'",
-  Artists: 'Artist(s)',
-  Album: 'Album',
-  Year: 'Year',
-  TrackNum: 'Track #',
-  DiskNum: 'Disk #',
-  DiskName: 'Disk Name',
-  Compilation: 'Compilation',
-  Soundtrack: 'Soundtrack',
-  AdditionalArtists: 'Additional Artist(s)',
-  VariationsTooltip: 'Separate vartiations with a semicolon',
-  Variations: 'Variation(s)',
-  AlbumCover: 'Album Cover',
-  ChooseFile: 'Choose File...',
-  FromClipboard: 'From Clipboard',
-  ViewNowPlaying: 'Now Playing',
-  ViewAlbums: 'Albums',
-  ViewArtists: 'Artists',
-  ViewSongs: 'All Songs',
-  ViewPlaylists: 'Playlists',
-  ViewSettings: 'Settings',
-  ViewTools: 'Tools',
-  ImportFiles: 'Import Files...',
-};
-Object.freeze(StrId);
-export type StrId = string;
+  ChooseCoverArt = 'Select Cover Art Image',
+  ImageName = 'Images',
+  ErrNotSingleAndNotMultiple = 'Not Single and not Multiple (This is a bug!)',
+  ErrSingleAndMultiple = 'Both Single and Multiple (This is a bug!)',
+  Title = 'Title',
+  ArtistTooltip = "Multiple artists are specified like this: 'Artist 1, Artist 2 & Artist 3'",
+  Artists = 'Artist(s)',
+  Album = 'Album',
+  Year = 'Year',
+  TrackNum = 'Track #',
+  DiskNum = 'Disk #',
+  DiskName = 'Disk Name',
+  Compilation = 'Compilation',
+  Soundtrack = 'Soundtrack',
+  AdditionalArtists = 'Additional Artist(s)',
+  VariationsTooltip = 'Separate vartiations with a semicolon',
+  Variations = 'Variation(s)',
+  AlbumCover = 'Album Cover',
+  ChooseFile = 'Choose File...',
+  FromClipboard = 'From Clipboard',
+  ViewNowPlaying = 'Now Playing',
+  ViewAlbums = 'Albums',
+  ViewArtists = 'Artists',
+  ViewSongs = 'All Songs',
+  ViewPlaylists = 'Playlists',
+  ViewSettings = 'Settings',
+  ViewTools = 'Tools',
+  ImportFiles = 'Import Files...',
+}
+
 export function st(id: StrId): string {
   return id;
 }
 
-type CurrentViewImpl = {
-  disabled: -1;
-  none: 0;
-  recent: 1;
-  albums: 2;
-  artists: 3;
-  songs: 4;
-  playlists: 5;
-  now_playing: 6;
-  settings: 7;
-  search: 8;
-  tools: 9;
-  // This is necessary if you want to walk the keys for CurrentView
-  [keys: string]: number;
-};
-export const CurrentView: CurrentViewImpl = {
-  disabled: -1,
-  none: 0,
-  recent: 1,
-  albums: 2,
-  artists: 3,
-  songs: 4,
-  playlists: 5,
-  now_playing: 6,
-  settings: 7,
-  search: 8,
-  tools: 9,
-};
-Object.freeze(CurrentView);
-export type CurrentView = number;
+export enum CurrentView {
+  disabled = -1,
+  none = 0,
+  recent = 1,
+  albums = 2,
+  artists = 3,
+  songs = 4,
+  playlists = 5,
+  now_playing = 6,
+  settings = 7,
+  search = 8,
+  tools = 9,
+}
 
-type TranscodeFormatTargetsImpl = {
-  m4a: 'm4a';
-  mp3: 'mp3';
-  aac: 'aac';
-};
-export const TranscodeFormatTargets: TranscodeFormatTargetsImpl = {
-  m4a: 'm4a',
-  mp3: 'mp3',
-  aac: 'aac',
-};
-Object.freeze(TranscodeFormatTargets);
-export type TranscodeFormatTargets = 'm4a' | 'mp3' | 'aac';
-export type TranscodeFormatTargetNames = TranscodeFormatTargets;
+export enum TranscodeFormatTargets {
+  m4a = 'm4a',
+  mp3 = 'mp3',
+  aac = 'aac',
+}
+export type TranscodeFormatTargetNames = 'm4a' | 'mp3' | 'aac';
 
-type TranscodeSourceTypeImpl = {
-  Playlist: 'p';
-  Artist: 'r';
-  Album: 'l';
-  Disk: 'd';
-};
-export const TranscodeSourceType: TranscodeSourceTypeImpl = {
-  Playlist: 'p',
-  Artist: 'r',
-  Album: 'l',
-  Disk: 'd',
-};
-Object.freeze(TranscodeSourceType);
-export type TranscodeSourceType = 'p' | 'r' | 'l' | 'd';
-export type TranscodeSourceTypeNames = TranscodeSourceType;
+export enum TranscodeSourceType {
+  Playlist = 'p',
+  Artist = 'r',
+  Album = 'l',
+  Disk = 'd',
+}
 export function isTranscodeSourceType(v: unknown): v is TranscodeSourceType {
   return v === 'p' || v === 'r' || v === 'l' || v === 'd';
 }

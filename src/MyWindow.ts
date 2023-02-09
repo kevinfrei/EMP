@@ -46,7 +46,11 @@ export function SetDB(db: FlatAudioDatabase): void {
   */
   // eslint-disable-next-line no-console
   console.log('Database set on window object');
-  window.db = { albums: db.albums, artists: db.artists, songs: db.songs };
+  window.db = {
+    albums: db.albums,
+    artists: db.artists,
+    songs: db.songs,
+  } as FlatAudioDatabase;
 }
 
 export function SetSearch(searchBox: ISearchBox | null): void {

@@ -184,7 +184,7 @@ export function CommsSetup(): void {
 }
 
 // This is for one-way comms to the UI process
-export function SendToUI(name: string, data: unknown) {
+export function SendToUI(name: IpcId, data: unknown) {
   const obj: { [key: string]: unknown } = {};
   obj[name] = data;
   Comms.AsyncSend(obj);

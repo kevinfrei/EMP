@@ -249,10 +249,13 @@ export function MakeMainMenu(): void {
     }
   });
   Persistence.subscribe('CurrentView', (val: string) => {
-    for (const id of Object.getOwnPropertyNames(CurrentView)) {
+    let id: keyof typeof CurrentView;
+    // eslint-disable-next-line guard-for-in
+    for (id in CurrentView) {
+      const item = CurrentView[id];
       const mnu = menu.getMenuItemById(id);
       if (mnu) {
-        mnu.enabled = `${CurrentView[id]}` !== val;
+        mnu.enabled = `${item}` !== val;
       }
     }
   });
