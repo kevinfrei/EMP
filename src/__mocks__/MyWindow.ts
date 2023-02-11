@@ -1,12 +1,28 @@
 // This is for getting at "global" stuff from the window object
+import { ISearchBox } from '@fluentui/react';
+import { FlatAudioDatabase } from '@freik/audiodb';
 import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { ElectronWindow } from '@freik/elect-render-utils';
+import { IpcRenderer } from 'electron';
+import { IpcId } from 'shared';
 
 const log = MakeLogger('MyWindow-mock');
 const err = MakeError('MyWindow-mock-err');
 
+interface MyWindow extends ElectronWindow {
+  searchBox?: ISearchBox | null;
+  db: FlatAudioDatabase;
+}
+
+declare let window: MyWindow;
+
 export async function ShowOpenDialog(): Promise<string[] | void> {
   /* options: OpenDialogSyncOptions, */
   return Promise.resolve([]);
+}
+
+export function SetDB(db: FlatAudioDatabase): void {
+  window.db = db;
 }
 
 export function SetInit(/* func: () => void */): void {
@@ -78,10 +94,12 @@ const fakeStorage: Map<string, string> = new Map<string, string>([
   ['neverPlayHates', 'true'],
   ['likedSongs', '[]'],
   ['hatedSongs', '[]'],
+  ['currentSongList', '[]'],
+  ['currentIndex', '-1'],
 ]);
 
 function MockWrite(key: string, value: string): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     fakeStorage.set(key, value);
     err('Saved!');
     err(key);
@@ -129,7 +147,7 @@ function MockRead(key: string): Promise<string> {
 export async function InvokeMain<T>(
   channel: string,
   key?: T,
-): Promise<string | void> {
+): Promise<unknown | void> {
   switch (channel) {
     case 'read-from-storage':
       if (Type.isString(key)) {
@@ -142,8 +160,18 @@ export async function InvokeMain<T>(
         return await MockWrite(k, v);
       }
       break;
+    case IpcId.GetMusicDatabase:
+      return { songs: [], artists: [], albums: [] };
+    case IpcId.GetIgnoreList:
+      return [];
+    case IpcId.Search:
+      return { songs: [], artists: [], albums: [] };
+    case IpcId.GetPicUri:
+      // The google image:
+      return 'https://play-lh.googleusercontent.com/1-hPxafOxdYpYZEOKzNIkSP43HXCNftVJVttoo4ucl7rsMASXW3Xr6GlXURCubE1tA=w7680-h4320-rw';
   }
-  err(`Unabled to deal with '${channel}' for testing`);
+  err(`Unabled to deal with '${channel}' for testing. Key:`);
+  err(key);
 }
 
 export async function CallMain<R, T>(
@@ -183,4 +211,38 @@ export async function ReadFromStorage(key: string): Promise<string | void> {
 
 export async function WriteToStorage(key: string, data: string): Promise<void> {
   await InvokeMain('write-to-storage', [key, data]);
+}
+
+export function MockERU() {
+  window.electronConnector = {
+    hostOs: ((): 'mac' | 'win' | 'lin' | 'unk' => {
+      const plat = process.platform;
+      switch (plat) {
+        case 'darwin':
+          return 'mac';
+        case 'win32':
+          return 'win';
+        case 'linux':
+          return 'lin';
+        default:
+          return 'unk';
+      }
+    })(),
+    ipc: {
+      async invoke<T>(channel: string, key?: T) {
+        return await InvokeMain(channel, key);
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
+      on(key: string, listen: Function) {
+        // Probably should do something here, right?
+      },
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
+      removeEventListener(key: string, listen: Function) {
+        // Maybe do something here, too?
+      },
+    } as unknown as IpcRenderer,
+    clipboard: {
+      // TODO: Fix this up, too, right?
+    } as unknown as Electron.Clipboard,
+  };
 }

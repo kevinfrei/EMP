@@ -1,34 +1,32 @@
-/*
 import { Suspense } from 'react';
 import { act, create } from 'react-test-renderer';
 import { RecoilRoot } from 'recoil';
-import Settings from '../Views/Settings';
-*/
+import { FluentInitIcons } from '../../FluentInit';
+import { MockERU } from '../../__mocks__/MyWindow';
+import { SearchResultsView } from '../Views/SearchResults';
+import { SettingsView } from '../Views/Settings';
 
 jest.mock('../../MyWindow');
+// Wire up a fake IPC object so I don't have to mock all teh stuff from @freik/elect-render-utilsX
+beforeAll(MockERU);
+beforeAll(FluentInitIcons);
 
-export {};
-
-it('Render Settings without crashing', () => {
-  /*
+it('Render Settings without crashing', async () => {
   await act(async () => {
     const elem = (
       <RecoilRoot>
         <Suspense fallback="">
-          <Settings />
+          <SettingsView />
         </Suspense>
       </RecoilRoot>
     );
     const root = create(elem);
     root.update(elem);
-    return new Promise((res, rej) => res());
+    return new Promise((res) => res());
   });
-  */
 });
 
-it('Render SearchResults without crashing', () => {
-  /*
-  initializeIcons();
+it('Render SearchResults without crashing', async () => {
   await act(async () => {
     const elem = (
       <RecoilRoot>
@@ -39,7 +37,6 @@ it('Render SearchResults without crashing', () => {
     );
     const root = create(elem);
     root.update(elem);
-    return new Promise((res, rej) => res());
+    return new Promise((res) => res());
   });
-  */
 });
