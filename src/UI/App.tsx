@@ -1,5 +1,5 @@
 import { IconButton, SpinnerSize } from '@fluentui/react';
-import { FreikElem, Ipc } from '@freik/elect-render-utils';
+import { ElectronWireUp, Ipc } from '@freik/elect-render-utils';
 import { Spinner } from '@freik/web-utils';
 import { useState } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
@@ -69,7 +69,7 @@ export function App(): JSX.Element {
   return (
     <RecoilRoot>
       <Spinner>
-        <FreikElem />
+        <ElectronWireUp />
         <Utilities />
         <span id={lilGrabber} />
       </Spinner>

@@ -7,7 +7,7 @@ import {
   SpinButton,
 } from '@fluentui/react';
 import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
-import { Ipc, MediaQuery, useListener } from '@freik/elect-render-utils';
+import { Ipc, useListener, useMediaEffect } from '@freik/elect-render-utils';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
 import {
   Component,
@@ -49,10 +49,7 @@ export function Utilities(): JSX.Element {
         set(isMiniplayerState, ev.matches);
       },
   );
-  useEffect(() => {
-    MediaQuery.SubscribeMediaMatcher('(max-width: 499px)', handleWidthChange);
-    return () => MediaQuery.UnsubscribeMediaMatcher(handleWidthChange);
-  });
+  useMediaEffect('(max-width: 499px)', handleWidthChange);
   useEffect(() => {
     Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
   }, [saveable]);

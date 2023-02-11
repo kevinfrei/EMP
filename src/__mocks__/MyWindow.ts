@@ -80,27 +80,16 @@ const fakeStorage: Map<string, string> = new Map<string, string>([
   ['hatedSongs', '[]'],
 ]);
 
-function MockWrite(key?: string): Promise<void> {
+function MockWrite(key: string, value: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (!key) {
-      reject('No key provided');
-      return;
-    }
-    const split = key.indexOf(':');
-    if (split < 0) {
-      reject('Invalid string to save to storage');
-      return;
-    }
-    const item = key.substring(0, split);
-    const value = key.substring(split + 1);
-    fakeStorage.set(item, value);
+    fakeStorage.set(key, value);
     err('Saved!');
     err(key);
     resolve();
   });
 }
 
-function MockRead(key?: string): Promise<string> {
+function MockRead(key: string): Promise<string> {
   return new Promise((resolve, reject) => {
     if (Type.isString(key)) {
       log(`Reading '${key}' from Mock`);
@@ -137,40 +126,43 @@ function MockRead(key?: string): Promise<string> {
   });*/
 }
 
-export async function InvokeMain(
+export async function InvokeMain<T>(
   channel: string,
-  key?: string,
+  key?: T,
 ): Promise<string | void> {
   switch (channel) {
     case 'read-from-storage':
-      return await MockRead(key);
+      if (Type.isString(key)) {
+        return await MockRead(key);
+      }
+      break;
     case 'write-to-storage':
-      return await MockWrite(key);
+      if (Type.is2TupleOf(key, Type.isString, Type.isString)) {
+        const [k, v] = key;
+        return await MockWrite(k, v);
+      }
+      break;
   }
+  err(`Unabled to deal with '${channel}' for testing`);
 }
 
-export async function CallMain(
+export async function CallMain<R, T>(
   channel: string,
-  key?: string,
-): Promise<string | void> {
-  switch (channel) {
-    case 'read-from-storage':
-      return await MockRead(key);
-    case 'write-to-storage':
-      return await MockWrite(key);
+  key: T,
+  typecheck: (val: unknown) => val is R,
+): Promise<R | void> {
+  const result = await InvokeMain(channel, key);
+  if (typecheck(result)) {
+    return result;
   }
+  err(
+    `CallMain(${channel}, <T>, ${typecheck.name}(...)) result failed typecheck`,
+    result,
+  );
 }
 
-export async function PostMain(
-  channel: string,
-  key?: string,
-): Promise<string | void> {
-  switch (channel) {
-    case 'read-from-storage':
-      return await MockRead(key);
-    case 'write-to-storage':
-      return await MockWrite(key);
-  }
+export async function PostMain<T>(channel: string, key?: T): Promise<void> {
+  return CallMain(channel, key, (a: unknown): a is void => true);
 }
 
 export function isHostMac(): boolean {
@@ -183,4 +175,12 @@ export function isHostLinux(): boolean {
 
 export function isHostWindows(): boolean {
   return false;
+}
+
+export async function ReadFromStorage(key: string): Promise<string | void> {
+  return await CallMain('read-from-storage', key, Type.isString);
+}
+
+export async function WriteToStorage(key: string, data: string): Promise<void> {
+  await InvokeMain('write-to-storage', [key, data]);
 }

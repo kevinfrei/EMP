@@ -1,7 +1,7 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { Ipc } from '@freik/elect-render-utils';
+import { ElectronWindow, Ipc } from '@freik/elect-render-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { NativeImage } from 'electron';
 import { IpcId } from 'shared';
@@ -10,25 +10,23 @@ import { IpcId } from 'shared';
  * "Window" stuff goes here
  */
 
-interface MyWindow extends Window {
+interface MyWindow extends ElectronWindow {
   searchBox?: ISearchBox | null;
   db: FlatAudioDatabase;
-  // This is set up by the @freik/electron-renderer package
-  freik?: { hostOs?: 'darwin' | 'win32' | 'linux' };
 }
 
 declare let window: MyWindow;
 
 export function isHostMac(): boolean {
-  return window.freik ? window.freik.hostOs === 'darwin' : false;
+  return window.electronConnector?.hostOs === 'mac';
 }
 
 export function isHostLinux(): boolean {
-  return window.freik ? window.freik.hostOs === 'linux' : false;
+  return window.electronConnector?.hostOs === 'lin';
 }
 
 export function isHostWindows(): boolean {
-  return window.freik ? window.freik.hostOs === 'win32' : false;
+  return window.electronConnector?.hostOs === 'win';
 }
 
 // This is mostly just used for debugging...
