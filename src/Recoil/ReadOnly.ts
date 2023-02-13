@@ -406,13 +406,19 @@ export const allAlbumsDataFunc = selector<AlbumDescriptionWithKey[]>({
 });
 
 export const searchTermState = atom<string>({ key: 'searchTerm', default: '' });
-
+export const metadataEditCountState = atom<number>({
+  key: 'metadataEditCount',
+  default: 0,
+});
 export const searchFuncFam = selectorFamily<ipc.SearchResults, string>({
   key: 'search',
-  get: (searchTerm: string) => async (): Promise<ipc.SearchResults> => {
-    const res = await ipc.SearchWhole(searchTerm);
-    return res || { songs: [], albums: [], artists: [] };
-  },
+  get:
+    (searchTerm: string) =>
+    async ({ get }): Promise<ipc.SearchResults> => {
+      const mdCount = get(metadataEditCountState);
+      const res = await ipc.SearchWhole(searchTerm);
+      return res || { songs: [], albums: [], artists: [] } || mdCount;
+    },
 });
 
 type SongInfo = {

@@ -58,7 +58,7 @@
   "dependencies": {
     "@fluentui/react": "^8.105.6",
     "@fluentui/react-icons-mdl2": "^1.3.31",
-    "@freik/audiodb": "^0.8.1",
+    "@freik/audiodb": "^0.8.2",
     "@freik/core-utils": "~1.3.1",
     "@freik/elect-main-utils": "^0.3.0",
     "@freik/elect-render-utils": "^0.4.3",

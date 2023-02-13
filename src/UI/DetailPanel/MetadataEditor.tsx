@@ -32,7 +32,10 @@ import {
   albumCoverUrlFuncFam,
   picCacheAvoiderStateFam,
 } from '../../Recoil/ImageUrls';
-import { albumKeyForSongKeyFuncFam } from '../../Recoil/ReadOnly';
+import {
+  albumKeyForSongKeyFuncFam,
+  metadataEditCountState,
+} from '../../Recoil/ReadOnly';
 
 const log = MakeLogger('MetadataEditor');
 const err = MakeError('MetadataEditor-err'); // eslint-disable-line
@@ -108,12 +111,15 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     return false;
   };
 
-  const onSubmit = () => {
+  const onSubmit = useMyTransaction((xact) => () => {
+    // This is necessary to invalidate things that may otherwise be confused
+    // once the metadata is different
+    xact.set(metadataEditCountState, (cur) => cur + 1);
+
     // TODO: Save the changed values to the metadata override 'cache'
     // and reflect those changes in the music DB
 
     // Worst case: trigger a rescan of the music on the back end, I guess :(
-
     for (const songKey of Type.isArrayOfString(props.forSongs)
       ? props.forSongs
       : [props.forSong]) {
@@ -158,7 +164,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       log(md);
       SetMediaInfo(md).catch(onRejected('Saving Metadata failed'));
     }
-  };
+  });
 
   const uploadImage = async (
     { get, set }: MyTransactionInterface,
