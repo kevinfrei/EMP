@@ -1594,18 +1594,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-react-jsx@npm:^7.20.13":
-  version: 7.20.13
-  resolution: "@babel/plugin-transform-react-jsx@npm:7.20.13"
+"@babel/plugin-transform-react-jsx@npm:^7.21.0":
+  version: 7.21.0
+  resolution: "@babel/plugin-transform-react-jsx@npm:7.21.0"
   dependencies:
     "@babel/helper-annotate-as-pure": ^7.18.6
     "@babel/helper-module-imports": ^7.18.6
     "@babel/helper-plugin-utils": ^7.20.2
     "@babel/plugin-syntax-jsx": ^7.18.6
-    "@babel/types": ^7.20.7
+    "@babel/types": ^7.21.0
   peerDependencies:
     "@babel/core": ^7.0.0-0
-  checksum: b1daaa9b093ab59f71572dde7ad05ed3490433a47de103fc866f60347da55fa7fe84cf9b4c9fa22917517d52f70ab5e05ec631bba1c348733c0d8ebbd7de8c68
+  checksum: c77d277d2e55b489a9b9be185c3eed5d8e2c87046778810f8e47ee3c87b47e64cad93c02211c968486c7958fd05ce203c66779446484c98a7b3a69bec687d5dc
   languageName: node
   linkType: hard
 
@@ -2485,34 +2485,34 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react-icon-provider@npm:^1.3.29":
-  version: 1.3.29
-  resolution: "@fluentui/react-icon-provider@npm:1.3.29"
+"@fluentui/react-icon-provider@npm:^1.3.30":
+  version: 1.3.30
+  resolution: "@fluentui/react-icon-provider@npm:1.3.30"
   dependencies:
     "@fluentui/set-version": ^8.2.5
-    "@fluentui/style-utilities": ^8.9.1
+    "@fluentui/style-utilities": ^8.9.2
     tslib: ^2.1.0
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: 5143b36c6a99b820da1cea0850e6ababa49ad7a00653f2ad99b229b6a18d8645f2b1a2700b4024591fea65b8f4fd995564f75767fe16d79b5e88f43ec1b0cc11
+  checksum: e91fd6148d5571548d5d22eb85ada49c9302dca07cd05704cdd871eb99a860531e2c40e3f2a68bd79a765dcd93cc5e1d25c1d4320e5b0d6443c84a9d76966f27
   languageName: node
   linkType: hard
 
-"@fluentui/react-icons-mdl2@npm:^1.3.31":
-  version: 1.3.31
-  resolution: "@fluentui/react-icons-mdl2@npm:1.3.31"
+"@fluentui/react-icons-mdl2@npm:^1.3.32":
+  version: 1.3.32
+  resolution: "@fluentui/react-icons-mdl2@npm:1.3.32"
   dependencies:
-    "@fluentui/react-icon-provider": ^1.3.29
+    "@fluentui/react-icon-provider": ^1.3.30
     "@fluentui/set-version": ^8.2.5
-    "@fluentui/utilities": ^8.13.6
+    "@fluentui/utilities": ^8.13.7
     "@microsoft/load-themed-styles": ^1.10.26
     tslib: ^2.1.0
   peerDependencies:
     react: ">=16.8.0 <19.0.0"
-  checksum: 412f915172885251111d21fd230542a8baa046c926e32aa61b6eb6b490a2d9a46724b330ed206f04835f200165cb3f8a25273c8e05cc231fbc47d296e6ffbf6e
+  checksum: 7a4bcac1b4221848f4ffaa76b692b8e04a3465579338eeec3d242c2c3dfe4ebdbfeebf5f01af9198cd6b841289d98a4811f5c48cd585005bfc321a7c690b8796
   languageName: node
   linkType: hard
 
@@ -2541,9 +2541,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react@npm:^8.105.11":
-  version: 8.105.11
-  resolution: "@fluentui/react@npm:8.105.11"
+"@fluentui/react@npm:^8.106.1":
+  version: 8.106.1
+  resolution: "@fluentui/react@npm:8.106.1"
   dependencies:
     "@fluentui/date-time-utilities": ^8.5.5
     "@fluentui/font-icons-mdl2": ^8.5.9
@@ -2564,7 +2564,7 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: 3a43311d1e07c500d75a76f90fe0330682817aba309bdc72d5f7250031386de07d5fe5114db8a1c79033d6f532dac107e09086294da4125516b5a10d5de09de7
+  checksum: 0f1874d4efc5b65cb95f70b6256f7b2b9679646fdf9482de4335c87a4829c81c5e055303fd4227a86a0724de1594e95ca45dc41765a5a07f8d302882817ac659
   languageName: node
   linkType: hard
 
@@ -2574,20 +2574,6 @@ __metadata:
   dependencies:
     tslib: ^2.1.0
   checksum: be190d34e0bf5b1f7947f9f376483ffb97abc79799ffe8196288abed76c678c31a349d9e7a5ed3eaec892bf80723e76ae309142ee0d7659e66a49048fe2341c7
-  languageName: node
-  linkType: hard
-
-"@fluentui/style-utilities@npm:^8.9.1":
-  version: 8.9.1
-  resolution: "@fluentui/style-utilities@npm:8.9.1"
-  dependencies:
-    "@fluentui/merge-styles": ^8.5.6
-    "@fluentui/set-version": ^8.2.5
-    "@fluentui/theme": ^2.6.22
-    "@fluentui/utilities": ^8.13.6
-    "@microsoft/load-themed-styles": ^1.10.26
-    tslib: ^2.1.0
-  checksum: db09f63393cb6549e8950da3b452809b69c6092876360c678c666cfb9f10fb907abaa1cc878d38afe9b2a2d39544472d5187974a24a3d1979327bb1b9afd3928
   languageName: node
   linkType: hard
 
@@ -2605,21 +2591,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/theme@npm:^2.6.22":
-  version: 2.6.22
-  resolution: "@fluentui/theme@npm:2.6.22"
-  dependencies:
-    "@fluentui/merge-styles": ^8.5.6
-    "@fluentui/set-version": ^8.2.5
-    "@fluentui/utilities": ^8.13.6
-    tslib: ^2.1.0
-  peerDependencies:
-    "@types/react": ">=16.8.0 <19.0.0"
-    react: ">=16.8.0 <19.0.0"
-  checksum: 5095a3cd69fecf3abdc4d8f7ce050d76da8756f357072332ac4c94ad9067d55311a28a383e0300fe23182379b254d2e5d3d7ea4de4ea6dac285e34ca5b8668bd
-  languageName: node
-  linkType: hard
-
 "@fluentui/theme@npm:^2.6.23":
   version: 2.6.23
   resolution: "@fluentui/theme@npm:2.6.23"
@@ -2632,21 +2603,6 @@ __metadata:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
   checksum: 23d9b1d05e02abe8f1d65d6ce3c32047c18a1da2a7aa642d535c58648c347deeb6ededbb169084f63159208993becb88bcecb36c15ade3b43419232d4c56afd7
-  languageName: node
-  linkType: hard
-
-"@fluentui/utilities@npm:^8.13.6":
-  version: 8.13.6
-  resolution: "@fluentui/utilities@npm:8.13.6"
-  dependencies:
-    "@fluentui/dom-utilities": ^2.2.5
-    "@fluentui/merge-styles": ^8.5.6
-    "@fluentui/set-version": ^8.2.5
-    tslib: ^2.1.0
-  peerDependencies:
-    "@types/react": ">=16.8.0 <19.0.0"
-    react: ">=16.8.0 <19.0.0"
-  checksum: ec7f05070e791554221431a8cfcba58e63225b198968a372a7ff58994ec9b385855cf7a237419527b26657f4d9d800754e6da184d3d6d9aba52be7fd5b274e81
   languageName: node
   linkType: hard
 
@@ -8970,16 +8926,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^23.1.0":
-  version: 23.1.0
-  resolution: "electron@npm:23.1.0"
+"electron@npm:^23.1.1":
+  version: 23.1.1
+  resolution: "electron@npm:23.1.1"
   dependencies:
     "@electron/get": ^2.0.0
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 57c013a6dc15847a1661197f3a84774dfcbc6b3a5c3f92a4da4bbebe42b8a37eb7891d814315ae61ef28403ae4299e79a21a01a7936e8277cfcc3da9f4282af1
+  checksum: 8f1ade0518957f40f399d2e47dfeea690ff5cea81201e4f9cfaa1ad768d14699168c37c1376586a9f21bca2dc9f7fde01885967a88f39af6667df25d574452fa
   languageName: node
   linkType: hard
 
@@ -9038,9 +8994,9 @@ __metadata:
   dependencies:
     "@babel/core": ^7.21.0
     "@babel/eslint-parser": ^7.19.1
-    "@babel/plugin-transform-react-jsx": ^7.20.13
-    "@fluentui/react": ^8.105.11
-    "@fluentui/react-icons-mdl2": ^1.3.31
+    "@babel/plugin-transform-react-jsx": ^7.21.0
+    "@fluentui/react": ^8.106.1
+    "@fluentui/react-icons-mdl2": ^1.3.32
     "@freik/audiodb": ^0.8.2
     "@freik/build-tools": 3.4.5
     "@freik/core-utils": ~1.3.1
@@ -9065,7 +9021,7 @@ __metadata:
     "@typescript-eslint/parser": ^5.53.0
     album-art: ^3.1.0
     cross-env: ^7.0.3
-    electron: ^23.1.0
+    electron: ^23.1.1
     electron-builder: ^23.6.0
     electron-devtools-installer: ^3.2.0
     electron-is-dev: ^2.0.0
@@ -17953,10 +17909,10 @@ __metadata:
 
 "shared@file:./shared::locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=e0ddcb&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=566838&locator=emp%40workspace%3A."
   peerDependencies:
     "@freik/core-utils": ^1.2.0
-  checksum: 2c01fcd699a6a57aaf7c0078e65ebbc82d68ff842762c26bdd3dc2e2eebfa16d837ce55fa69556d423e31053ff1061e942c90199bc9ca4429c7cadda356dfe64
+  checksum: 5c1e8d1431682d5438c4dc294bc5b55df18b60ed84341c34d70742c04633e1a823661a044a666c46a57ca6eaffb7ff25dc0fffe20cd4a95599fbf251a7f791b6
   languageName: node
   linkType: hard
 
