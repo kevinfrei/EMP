@@ -28,50 +28,21 @@ const err = MakeError('Utilities-err'); // eslint-disable-line
 
 // Used by the key buffer to know when to reset the keys
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-let lastHeard = () => {};
+let lastHeard: () => void = () => {};
 
 // In order to allow scrolling to work, we need to clear out the key buffer
 // once it's been "consumed"
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
-// This is a react component to enable the IPC subsystem to talk to the store,
-// keep track of which mode we're in, and generally deal with "global" silliness
-export function Utilities(): JSX.Element {
-  const saveable = useRecoilValue(saveableFunc);
-  const menuCallback = useMyTransaction(
-    (xact) => (data: unknown) => MenuHandler(xact, data),
-  );
-  useListener(IpcId.MenuAction, menuCallback);
-  const handleWidthChange = useMyTransaction(
-    ({ set }) =>
-      (ev: MediaQueryList | MediaQueryListEvent) => {
-        set(isMiniplayerState, ev.matches);
-      },
-  );
-  useMediaEffect('(max-width: 499px)', handleWidthChange);
-  useEffect(() => {
-    Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
-  }, [saveable]);
-  useEffect(() => {
-    // Media stuff:
-    navigator.mediaSession.setActionHandler('play', () =>
-      menuCallback({ state: 'playback' }),
-    );
-    navigator.mediaSession.setActionHandler('pause', () =>
-      menuCallback({ state: 'playback' }),
-    );
-    navigator.mediaSession.setActionHandler('stop', () =>
-      menuCallback({ state: 'playback' }),
-    );
-    navigator.mediaSession.setActionHandler('nexttrack', () =>
-      menuCallback({ state: 'nextTrack' }),
-    );
-    navigator.mediaSession.setActionHandler('previoustrack', () =>
-      menuCallback({ state: 'prevTrack' }),
-    );
-  });
+function TypingListener(): JSX.Element {
   /* This is for a global search typing thingamajig */
+  // Connect the reset callback properly
+  lastHeard = useMyTransaction(
+    ({ reset }) =>
+      () =>
+        reset(keyBufferState),
+  );
   const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {
     if (!isSearchBox(ev.target)) {
       if (ev.key.length > 1 || ev.altKey || ev.ctrlKey || ev.metaKey) {
@@ -82,19 +53,74 @@ export function Utilities(): JSX.Element {
       }
     }
   });
-  // Connect the reset callback properly
-  lastHeard = useMyTransaction(
-    ({ reset }) =>
-      () =>
-        reset(keyBufferState),
-  );
   useEffect(() => {
     window.addEventListener('keydown', listener);
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  });
+  }, [listener]);
   return <></>;
+}
+
+// This is a react component to enable the IPC subsystem to talk to the store,
+// keep track of which mode we're in, and generally deal with "global" silliness
+function SaveMenuUpdater(): JSX.Element {
+  /* Save menu state maintenance */
+  const saveable = useRecoilValue(saveableFunc);
+  useEffect(() => {
+    Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
+  }, [saveable]);
+  return <></>;
+}
+
+// This is a react component to enable the IPC subsystem to talk to the store,
+// keep track of which mode we're in, and generally deal with "global" silliness
+function ResizeListener(): JSX.Element {
+  /* Resizing event handling stuff */
+  const handleWidthChange = useMyTransaction(
+    ({ set }) =>
+      (ev: MediaQueryList | MediaQueryListEvent) => {
+        set(isMiniplayerState, ev.matches);
+      },
+  );
+  useMediaEffect('(max-width: 499px)', handleWidthChange);
+  return <></>;
+}
+// This is a react component to enable the IPC subsystem to talk to the store,
+// keep track of which mode we're in, and generally deal with "global" silliness
+function MediaAndMenuListeners(): JSX.Element {
+  /* Menu handlers coming from the Main process */
+  const menuCallback = useMyTransaction(
+    (xact) => (data: unknown) => MenuHandler(xact, data),
+  );
+  useListener(IpcId.MenuAction, menuCallback);
+  /* OS-level media control event handlers */
+  const useMediaAction = (ev: MediaSessionAction, state: string) => {
+    useEffect(() => {
+      navigator.mediaSession.setActionHandler(ev, () =>
+        menuCallback({ state }),
+      );
+      return () => navigator.mediaSession.setActionHandler(ev, null);
+    });
+  };
+  useMediaAction('play', 'playback');
+  useMediaAction('pause', 'playback');
+  useMediaAction('stop', 'playback');
+  useMediaAction('nexttrack', 'nextTrack');
+  useMediaAction('previoustrack', 'prevTrack');
+  return <></>;
+}
+// This is a react component to enable the IPC subsystem to talk to the store,
+// keep track of which mode we're in, and generally deal with "global" silliness
+export function Utilities(): JSX.Element {
+  return (
+    <>
+      <ResizeListener />
+      <TypingListener />
+      <SaveMenuUpdater />
+      <MediaAndMenuListeners />
+    </>
+  );
 }
 
 export const mySliderStyles: Partial<ISliderStyles> = {
