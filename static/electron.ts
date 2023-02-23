@@ -1,5 +1,8 @@
+import { MakeError } from '@freik/core-utils';
 import { StartApp } from './main/electronSetup';
 import { InitBeforeAnythingElse, WindowStartup } from './main/Startup';
+
+const err = MakeError('electron.ts');
 
 // This is the entry point for the electron main process.
 // It uses main/electronSetup to get the first window open.
@@ -9,5 +12,4 @@ import { InitBeforeAnythingElse, WindowStartup } from './main/Startup';
 
 InitBeforeAnythingElse();
 
-// eslint-disable-next-line no-console
-StartApp(WindowStartup).catch((e) => console.error(e));
+StartApp(WindowStartup).catch(err);

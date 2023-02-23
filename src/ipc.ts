@@ -1,4 +1,4 @@
-import { MakeLogger, Type } from '@freik/core-utils';
+import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import {
   AlbumKey,
@@ -10,6 +10,7 @@ import {
 import { IgnoreItem, IpcId } from 'shared';
 
 const log = MakeLogger('ipc');
+const err = MakeError('ipc-error');
 
 export type SearchResults = {
   songs: SongKey[];
@@ -68,11 +69,9 @@ export async function SearchWhole(
 }
 
 export function AddIgnoreItem(item: IgnoreItem): void {
-  // eslint-disable-next-line no-console
-  Ipc.PostMain(IpcId.AddIgnoreItem, item).catch(console.error);
+  Ipc.PostMain(IpcId.AddIgnoreItem, item).catch(err);
 }
 
 export function RemoveIgnoreItem(item: IgnoreItem): void {
-  // eslint-disable-next-line no-console
-  Ipc.PostMain(IpcId.RemoveIgnoreItem, item).catch(console.error);
+  Ipc.PostMain(IpcId.RemoveIgnoreItem, item).catch(err);
 }

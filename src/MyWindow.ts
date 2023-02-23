@@ -1,10 +1,13 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
+import { MakeLogger } from '@freik/core-utils';
 import { ElectronWindow, Ipc } from '@freik/elect-render-utils';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { NativeImage } from 'electron';
 import { IpcId } from 'shared';
+
+const log = MakeLogger('MyWindow-logger');
 
 /*
  * "Window" stuff goes here
@@ -42,8 +45,7 @@ export function SetDB(db: FlatAudioDatabase): void {
     Helpers.NormalizedStringCompare(a.title, b.title),
   );
   */
-  // eslint-disable-next-line no-console
-  console.log('Database set on window object');
+  log('Database set on window object');
   window.db = {
     albums: db.albums,
     artists: db.artists,
