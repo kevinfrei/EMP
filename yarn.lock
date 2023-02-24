@@ -2717,9 +2717,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/elect-render-utils@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "@freik/elect-render-utils@npm:0.4.3"
+"@freik/elect-render-utils@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "@freik/elect-render-utils@npm:0.4.4"
   peerDependencies:
     "@freik/core-utils": ">=1.3.1"
     "@freik/elect-main-utils": ">=0.3.0"
@@ -2729,7 +2729,7 @@ __metadata:
     react: ">=17.0.2"
     react-dom: ">=17.0.2"
     recoil: ">=0.6.0"
-  checksum: 92506e482b1dc7cac6c572ed857c7f144a0e984a9e849102d23f44ddbff8079f5b8a4e329300d2f4249b360db1fae04ac1338c91c8e4339f38bdbc1c325d08e6
+  checksum: 7a357814cb7d2c99835397bc555043843580dec6c5f8176fbe8c76f102adcc722953b95685340d5a1b96c7c2172ea20e0ac19861d80bc596966db87f76f48544
   languageName: node
   linkType: hard
 
@@ -5061,10 +5061,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.14.0":
-  version: 18.14.0
-  resolution: "@types/node@npm:18.14.0"
-  checksum: d83fcf5e4ed544755dd9028f5cbb6b9d46235043159111bb2ad62223729aee581c0144a9f6df8ba73d74011db9ed4ebd7af2fd5e0996714e3beb508a5da8ac5c
+"@types/node@npm:^18.14.1":
+  version: 18.14.1
+  resolution: "@types/node@npm:18.14.1"
+  checksum: 58556bbdb0050e44a4934742c1da2530812782c06d266a758e669e44c5aa196166c5fce45fdb03f016876717e3840478b3220129bb77367f979607564047f0a3
   languageName: node
   linkType: hard
 
@@ -9001,7 +9001,7 @@ __metadata:
     "@freik/build-tools": 3.4.5
     "@freik/core-utils": ~1.3.1
     "@freik/elect-main-utils": ^0.3.0
-    "@freik/elect-render-utils": ^0.4.3
+    "@freik/elect-render-utils": ^0.4.4
     "@freik/electron-renderer": ^0.4.1
     "@freik/media-core": ~0.11.1
     "@freik/media-utils": ~0.14.2
@@ -9012,7 +9012,7 @@ __metadata:
     "@testing-library/react": ^14.0.0
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^29.4.0
-    "@types/node": ^18.14.0
+    "@types/node": ^18.14.1
     "@types/react": ^17.0.53
     "@types/react-dom": ^17.0.19
     "@types/react-test-renderer": ^17.0.2

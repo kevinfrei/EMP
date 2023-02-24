@@ -581,6 +581,7 @@ export const RescanInProgressState = atom<boolean>({
           return info;
         }
         err('Invalid RescanInProgress value:');
+        err(typeof info);
         err(info);
       },
     ),
