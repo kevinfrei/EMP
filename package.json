@@ -118,5 +118,5 @@
     "typescript": "^5.0.2",
     "wait-on": "^7.0.1"
   },
-  "packageManager": "yarn@3.4.1"
+  "packageManager": "yarn@3.5.0"
 }
