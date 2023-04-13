@@ -1,27 +1,29 @@
 import { AudioDatabase } from '@freik/audiodb';
-import {
-  MakeError,
-  MakeLogger,
-  MakeWaitingQueue,
-  Pickle,
-  SafelyUnpickle,
-  Type,
-} from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  isAlbumKey,
-  isArtistKey,
   MediaKey,
   SongKey,
+  isAlbumKey,
+  isArtistKey,
 } from '@freik/media-core';
 import { FileUtil } from '@freik/node-utils';
+import { MakeWaitingQueue } from '@freik/sync';
+import {
+  Pickle,
+  SafelyUnpickle,
+  asString,
+  hasFieldType,
+  hasStrField,
+  isDefined,
+  isSetOfString,
+} from '@freik/typechk';
 import albumArt from 'album-art';
+import debug from 'debug';
 import { ProtocolRequest } from 'electron';
-import electronIsDev from 'electron-is-dev';
 import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
@@ -34,8 +36,8 @@ import {
   GetDefaultArtistPicBuffer,
 } from './protocols';
 
-const log = MakeLogger('cover-art', false && electronIsDev);
-const err = MakeError('cover-art-err');
+const log = debug('EMP:main:cover-art:log');
+const err = debug('EMP:main:cover-art:err');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadAlbumArtwork')) === 'true';
@@ -53,7 +55,7 @@ async function shouldSaveAlbumArtworkWithMusicFiles(): Promise<boolean> {
 
 async function albumCoverName(): Promise<string> {
   const val = await Persistence.getItemAsync('albumCoverName');
-  return Type.asString(val, '.CoverArt');
+  return asString(val, '.CoverArt');
 }
 
 function httpsDownloader(url: string): Promise<Buffer> {
@@ -79,7 +81,7 @@ async function getArtistImage(artist: string): Promise<string | void> {
 async function checkSet(name: string, key: string): Promise<boolean> {
   const bailData = await Persistence.getItemAsync(name);
   const skip =
-    SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
+    SafelyUnpickle(bailData || '""', isSetOfString) || new Set<string>();
   return skip.has(key);
 }
 
@@ -90,8 +92,7 @@ async function addToSet(name: string, key: string): Promise<void> {
     try {
       const bailData = await Persistence.getItemAsync(name);
       const skip =
-        SafelyUnpickle(bailData || '""', Type.isSetOfString) ||
-        new Set<string>();
+        SafelyUnpickle(bailData || '""', isSetOfString) || new Set<string>();
       skip.add(key);
       await Persistence.setItemAsync(name, Pickle(skip));
     } finally {
@@ -151,7 +152,7 @@ async function LookForArtist(artist: string): Promise<string | void> {
   // Let's see if we should stop looking for this artist
   const bailData = await Persistence.getItemAsync('noMoreLookingArtist');
   const skip =
-    SafelyUnpickle(bailData || '""', Type.isSetOfString) || new Set<string>();
+    SafelyUnpickle(bailData || '""', isSetOfString) || new Set<string>();
   if (skip.has(artist.toLocaleLowerCase())) {
     return;
   }
@@ -280,7 +281,7 @@ export async function PictureHandler(
       id = id.substring(0, id.lastIndexOf('#'));
     }
     const d = await TryToGetPic(id);
-    if (!Type.isUndefined(d)) {
+    if (isDefined(d)) {
       return d;
     }
   } catch (error) {
@@ -346,9 +347,12 @@ export type AlbumCoverData = CoverKey & ImageData;
 export function isAlbumCoverData(arg: unknown): arg is AlbumCoverData {
   // use of the !== means we get one or the other of songKey albumKey and nativeImage path
   return (
-    Type.hasStr(arg, 'songKey') !== Type.hasStr(arg, 'albumKey') &&
-    (Type.has(arg, 'nativeImage') && arg.nativeImage instanceof Uint8Array) !==
-      Type.hasStr(arg, 'imagePath')
+    hasStrField(arg, 'songKey') !== hasStrField(arg, 'albumKey') &&
+    hasFieldType(
+      arg,
+      'nativeImage',
+      (a): a is Uint8Array => a instanceof Uint8Array,
+    ) !== hasStrField(arg, 'imagePath')
   );
 }
 
@@ -357,7 +361,7 @@ export async function SaveNativeImageForAlbum(
 ): Promise<string> {
   const db = await GetAudioDB();
   let albumKey;
-  if (Type.hasStr(arg, 'albumKey')) {
+  if (hasStrField(arg, 'albumKey')) {
     albumKey = arg.albumKey;
   } else {
     const song = db.getSong(arg.songKey);
@@ -368,7 +372,7 @@ export async function SaveNativeImageForAlbum(
   if (!albumKey) {
     return 'Failed to find albumKey';
   }
-  if (Type.has(arg, 'nativeImage')) {
+  if (hasField(arg, 'nativeImage')) {
     await db.setAlbumPicture(albumKey, Buffer.from(arg.nativeImage));
     return '';
   } else {
@@ -386,7 +390,7 @@ async function getDataUri(buf: Buffer) {
 export async function GetPicDataUri(data: string): Promise<string> {
   try {
     const d = await TryToGetPic(data);
-    if (!Type.isUndefined(d)) {
+    if (isDefined(d)) {
       return await getDataUri(d.data);
     }
   } catch (e) {

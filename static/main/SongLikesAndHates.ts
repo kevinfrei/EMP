@@ -1,13 +1,14 @@
-import { MakeLogger, Type } from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
 import { SongKey } from '@freik/media-core';
+import { isString } from '@freik/typechk';
+import debug from 'debug';
 
-const log = MakeLogger('SongLikesAndHates'); // eslint-disable-line
+const log = debug('EMP:main:SongLikesAndHates'); // eslint-disable-line
 
 async function getSongPrefs(which: string): Promise<SongKey[]> {
   log('getSongPrefs');
   const songList = await Persistence.getItemAsync(which);
-  if (Type.isString(songList)) {
+  if (isString(songList)) {
     return songList.split('\n');
   }
   return [];

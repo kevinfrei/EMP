@@ -1,9 +1,10 @@
-import { MakeError, Type } from '@freik/core-utils';
 import {
   GetBrowserWindowPos,
   LoadWindowPos,
   setMainWindow,
 } from '@freik/elect-main-utils';
+import { isNumber } from '@freik/typechk';
+import debug from 'debug';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -19,7 +20,7 @@ import { RegisterListeners, RegisterProtocols } from './protocols';
 // No one should keep any references to the main window (so it doesn't leak)
 // which is the entire reason for this module's existence.
 
-const err = MakeError('window-err');
+const err = debug('EMP:main:window:error');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -100,8 +101,8 @@ export function ToggleMiniPlayer(): void {
   const windowPos = LoadWindowPos();
   if (
     mainWindow !== null &&
-    Type.isNumber(windowPos.bounds.x) &&
-    Type.isNumber(windowPos.bounds.y)
+    isNumber(windowPos.bounds.x) &&
+    isNumber(windowPos.bounds.y)
   ) {
     const display = screen.getDisplayMatching(
       windowPos.bounds as Electron.Rectangle,

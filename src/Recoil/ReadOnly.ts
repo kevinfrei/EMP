@@ -1,23 +1,32 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { MakeLogger, Type } from '@freik/core-utils';
 import { Effects, Ipc } from '@freik/elect-render-utils';
 import {
   Album,
   AlbumKey,
   Artist,
   ArtistKey,
-  isSongKey,
   MediaKey,
   Song,
   SongKey,
+  isSongKey,
 } from '@freik/media-core';
+import {
+  chkArrayOf,
+  chkObjectOfType,
+  hasFieldType,
+  isArrayOfString,
+  isBoolean,
+  isNumber,
+  isString,
+} from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
+import debug from 'debug';
 import { atom, selector, selectorFamily } from 'recoil';
 import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
-import * as ipc from '../ipc';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
+import * as ipc from '../ipc';
 import {
   minSongCountForArtistListState,
   showArtistsWithFullAlbumsState,
@@ -41,8 +50,8 @@ export type SongDescription = {
   track: number;
 } & AlbumDescription;
 
-const log = MakeLogger('ReadOnly'); // eslint-disable-line
-const err = MakeLogger('ReadOnly-err'); // eslint-disable-line
+const log = debug('EMP:render:ReadOnly:log'); // eslint-disable-line
+const err = debug('EMP:render:ReadOnly:error'); // eslint-disable-line
 
 export const mediaInfoFuncFam = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
@@ -67,11 +76,7 @@ export const picForKeyFam = selectorFamily<string, MediaKey>({
         mk = get(albumKeyForSongKeyFuncFam(mk));
       }
       const data = await ipc.GetPicDataUri(mk);
-      if (Type.isString(data)) {
-        return data;
-      } else {
-        return 'error';
-      }
+      return isString(data) ? data : 'error';
     },
 });
 
@@ -80,52 +85,44 @@ type AlbumMap = Map<AlbumKey, Album>;
 type ArtistMap = Map<ArtistKey, Artist>;
 type MusicLibrary = { songs: SongMap; albums: AlbumMap; artists: ArtistMap };
 
-const isSong = Type.isSpecificTypeFn<Song>(
-  [
-    ['key', Type.isString],
-    ['track', Type.isNumber],
-    ['title', Type.isString],
-    ['albumId', Type.isString],
-    ['artistIds', Type.isArrayOfString],
-    ['path', Type.isString],
-    ['secondaryIds', Type.isArrayOfString],
-    ['variations', Type.isArrayOfString],
-  ],
-  ['key', 'track', 'title', 'albumId', 'artistIds'],
+const isSong = chkObjectOfType<Song & { path?: string }>(
+  {
+    key: isString,
+    track: isNumber,
+    title: isString,
+    albumId: isString,
+    artistIds: isArrayOfString,
+    secondaryIds: isArrayOfString,
+  },
+  { path: isString, variations: isArrayOfString },
 );
 
-const isAlbum = Type.isSpecificTypeFn<Album>(
-  [
-    ['key', Type.isString],
-    ['year', Type.isNumber],
-    ['title', Type.isString],
-    [
-      'vatype',
-      (o: unknown): o is '' | 'ost' | 'va' =>
-        o === '' || o === 'ost' || o === 'va',
-    ],
-    ['primaryArtists', Type.isArrayOfString],
-    ['songs', Type.isArrayOfString],
-    ['diskNames', Type.isArrayOfString],
-  ],
-  ['key', 'title', 'year', 'primaryArtists', 'songs'],
+const isAlbum = chkObjectOfType<Album>(
+  {
+    key: isString,
+    year: isNumber,
+    title: isString,
+    primaryArtists: isArrayOfString,
+    songs: isArrayOfString,
+    vatype: (o: unknown) => o === '' || o === 'ost' || o === 'va',
+  },
+  {
+    diskNames: isArrayOfString,
+  },
 );
 
-const isArtist = Type.isSpecificTypeFn<Artist>(
-  [
-    ['key', Type.isString],
-    ['name', Type.isString],
-    ['albums', Type.isArrayOfString],
-    ['songs', Type.isArrayOfString],
-  ],
-  ['key', 'name', 'albums', 'songs'],
-);
+const isArtist = chkObjectOfType<Artist>({
+  key: isString,
+  name: isString,
+  albums: isArrayOfString,
+  songs: isArrayOfString,
+});
 
-const isFlatAudioDatabase = Type.isSpecificTypeFn<FlatAudioDatabase>([
-  ['songs', Type.isArrayOfFn(isSong)],
-  ['albums', Type.isArrayOfFn(isAlbum)],
-  ['artists', Type.isArrayOfFn(isArtist)],
-]);
+const isFlatAudioDatabase = chkObjectOfType<FlatAudioDatabase>({
+  songs: chkArrayOf(isSong),
+  albums: chkArrayOf(isAlbum),
+  artists: chkArrayOf(isArtist),
+});
 
 const emptyLibrary = {
   songs: new Map<SongKey, Song>(),
@@ -431,7 +428,7 @@ type SongInfo = {
 function diskNumName(songData: SongInfo): [string | null, string | null] {
   const diskNo = Math.floor(songData.song.track / 100);
   if (diskNo > 0) {
-    if (Type.hasType(songData.album, 'diskNames', Type.isArrayOfString)) {
+    if (hasFieldType(songData.album, 'diskNames', isArrayOfString)) {
       return [diskNo.toString(), songData.album.diskNames[diskNo - 1]];
     }
     return [diskNo.toString(), null];
@@ -577,7 +574,7 @@ export const RescanInProgressState = atom<boolean>({
       () => false,
       IpcId.RescanInProgress,
       (info: unknown) => {
-        if (Type.isBoolean(info)) {
+        if (isBoolean(info)) {
           return info;
         }
         err('Invalid RescanInProgress value:');

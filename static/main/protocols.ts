@@ -1,7 +1,14 @@
-import { MakeLogger, Type } from '@freik/core-utils';
 import { Comms, Persistence } from '@freik/elect-main-utils';
 import { SongKey } from '@freik/media-core';
-import { protocol, ProtocolRequest, ProtocolResponse } from 'electron';
+import {
+  asString,
+  hasField,
+  hasFieldType,
+  hasStrField,
+  isFunction,
+} from '@freik/typechk';
+import debug from 'debug';
+import { ProtocolRequest, ProtocolResponse, protocol } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
@@ -10,7 +17,7 @@ import { PictureHandler } from './cover-art';
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
 
-const log = MakeLogger('protocols');
+const log = debug('EMP:main:protocols');
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
@@ -38,9 +45,9 @@ export async function GetDefaultAlbumPicUri(): Promise<string> {
   if (!defaultAlbumPicUri) {
     const br = await GetDefaultAlbumPicBuffer();
     if (
-      Type.hasStr(br, 'mimeType') &&
-      Type.has(br, 'data') &&
-      Type.hasType(br.data, 'toString', Type.isFunction)
+      hasStrField(br, 'mimeType') &&
+      hasField(br, 'data') &&
+      hasFieldType(br.data, 'toString', isFunction)
     ) {
       let svg = br.data.toString() as string;
       // Remove space from between tags, duplicate spaces
@@ -53,7 +60,7 @@ export async function GetDefaultAlbumPicUri(): Promise<string> {
       defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
     }
   }
-  return Type.asString(defaultAlbumPicUri, '');
+  return asString(defaultAlbumPicUri, '');
 }
 
 const defaultArtistPicPath = path.join(__dirname, '..', 'img-artist.svg');

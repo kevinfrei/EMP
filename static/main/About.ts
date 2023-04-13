@@ -1,13 +1,14 @@
-import { MakeError, Type } from '@freik/core-utils';
+import { isUndefined } from '@freik/typechk';
+import debug from 'debug';
 import { BrowserWindow, shell } from 'electron';
 import isDev from 'electron-is-dev';
 
-const err = MakeError('window-err');
+const err = debug('EMP:main:about');
 
 let aboutWindow: BrowserWindow | undefined;
 
 export function ShowAbout(): void {
-  if (Type.isUndefined(aboutWindow)) {
+  if (isUndefined(aboutWindow)) {
     aboutWindow = new BrowserWindow({
       title: 'About EMP',
       webPreferences: { nodeIntegration: false, contextIsolation: true },

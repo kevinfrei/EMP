@@ -5,6 +5,13 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@freik/typechk@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@freik/typechk@npm:0.1.0"
+  checksum: 99db2186877b352ca45b8b98c3312938876cdab389a26493996a038d5ecf79c21ba233dfb08bf0458dc69f4f3e47cfc86c01d17b07e5e59e0aabcd9e4f4efea3
+  languageName: node
+  linkType: hard
+
 "rimraf@npm:^4.1.2":
   version: 4.1.2
   resolution: "rimraf@npm:4.1.2"
@@ -18,10 +25,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "shared@workspace:."
   dependencies:
+    "@freik/typechk": ^0.1.0
     rimraf: ^4.1.2
     typescript: ^4.9.5
-  peerDependencies:
-    "@freik/core-utils": ^1.2.0
   languageName: unknown
   linkType: soft
 

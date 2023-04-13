@@ -1,41 +1,40 @@
-import { MakeError, Type } from '@freik/core-utils';
 import { Effects } from '@freik/elect-render-utils';
 import { AlbumKey, ArtistKey, PlaylistName } from '@freik/media-core';
+import {
+  chkArrayOf,
+  chkObjectOfType,
+  isArrayOfString,
+  isNumber,
+  isString,
+} from '@freik/typechk';
+import debug from 'debug';
 import { atom, selector, selectorFamily } from 'recoil';
 import { IpcId, TranscodeSourceType, TranscodeState } from 'shared';
 import { allPlaylistsFunc } from './PlaylistsState';
 import { allAlbumsFunc, allArtistsFunc } from './ReadOnly';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const err = MakeError('transcoding-recoil');
+const err = debug('EMP:render:TranscodingState');
 
 type FailType = { file: string; error: string };
 
-const isFailType = Type.isSpecificTypeFn<FailType>(
-  [
-    ['file', Type.isString],
-    ['error', Type.isString],
-  ],
-  ['file', 'error'],
-);
+const isFailType = chkObjectOfType<FailType>({
+  file: isString,
+  error: isString,
+});
 
-const isTranscodeState = Type.isSpecificTypeFn<TranscodeState>(
-  [
-    ['curStatus', Type.isString],
-    ['filesFound', Type.isNumber],
-    ['filesPending', Type.isNumber],
-    ['filesTranscoded', Type.isArrayOfString],
-    ['filesUntouched', Type.isNumber],
-    ['filesFailed', Type.isArrayOfFn(isFailType)],
-    ['itemsRemoved', Type.isArrayOfString],
-  ],
-  [
-    'curStatus',
-    'filesFound',
-    'filesTranscoded',
-    'filesPending',
-    'filesUntouched',
-  ],
+const isTranscodeState = chkObjectOfType<TranscodeState>(
+  {
+    curStatus: isString,
+    filesFound: isNumber,
+    filesPending: isNumber,
+    filesTranscoded: isArrayOfString,
+    filesUntouched: isNumber,
+  },
+  {
+    filesFailed: chkArrayOf<FailType>(isFailType),
+    itemsRemoved: isArrayOfString,
+  },
 );
 
 const emptyXcodeInfo: TranscodeState = {

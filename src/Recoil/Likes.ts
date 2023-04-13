@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Type } from '@freik/core-utils';
 import { Effects } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
+import { isArrayOfString } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { atom, selectorFamily } from 'recoil';
 import { songListFromKeyFuncFam } from './ReadWrite';
@@ -28,7 +28,7 @@ const songLikeBackerState = atom<Set<SongKey>>({
     Effects.bidirectionalSyncWithTranslate<Set<SongKey>>(
       (val: Set<string>) => [...val],
       (val: unknown) =>
-        Type.isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
+        isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
       false,
     ),
   ],
@@ -78,7 +78,7 @@ const songHateBackerState = atom<Set<SongKey>>({
     Effects.bidirectionalSyncWithTranslate<Set<SongKey>>(
       (val: Set<string>) => [...val],
       (val: unknown) =>
-        Type.isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
+        isArrayOfString(val) ? new Set<string>(val) : new Set<string>(),
       false,
     ),
   ],

@@ -1,4 +1,3 @@
-import { MakeError, MakeLogger } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import {
   isAlbumKey,
@@ -9,6 +8,7 @@ import {
   SongKey,
 } from '@freik/media-core';
 import type { MyTransactionInterface } from '@freik/web-utils';
+import debug from 'debug';
 import { IpcId } from 'shared';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
@@ -33,8 +33,7 @@ import {
   songPlaybackOrderState,
 } from './SongPlaying';
 
-const log = MakeLogger('api', true); // eslint-disable-line
-const err = MakeError('api-err'); // eslint-disable-line
+const err = debug('EMP:render:api:err'); // eslint-disable-line
 
 /**
  * Try to play the next song in the playlist

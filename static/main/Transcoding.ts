@@ -1,8 +1,16 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
 import { ForDirs, ForFiles, PathUtil, ProcUtil } from '@freik/node-utils';
 import { pLimit } from '@freik/p-limit';
+import {
+  asString,
+  hasFieldType,
+  isFunction,
+  isNumber,
+  isObjectNonNull,
+  isString,
+} from '@freik/typechk';
+import debug from 'debug';
 import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
@@ -18,8 +26,8 @@ import { GetAudioDB } from './AudioDatabase';
 import { SendToUI } from './Communication';
 import { LoadPlaylist } from './playlists';
 
-const err = MakeError('transcoding-err');
-const log = MakeLogger('transcoding');
+const err = debug('EMP:main:Transcoding:error');
+const log = debug('EMP:main:transcoding:log');
 
 const cp = {
   spawnAsync: ProcUtil.spawnAsync,
@@ -80,12 +88,11 @@ export async function toMp4Async(
         encoding: 'utf8',
       });
       if (
-        Type.has(res, 'error') &&
-        Type.has(res.error, 'toString') &&
-        Type.isFunction(res.error.toString)
+        hasFieldType(res, 'error', isObjectNonNull) &&
+        hasFieldType(res.error, 'toString', isFunction)
       ) {
         // MediaInfo failed: no continue, sorry
-        const resStr = Type.asString(res.error.toString(), 'Unknown error');
+        const resStr = asString(res.error.toString(), 'Unknown error');
         return tr(
           XcodeResCode.mediaInfoFailure,
           `mediainfo returned an error '${resStr}':${res.stderr.toString()}`,
@@ -96,9 +103,8 @@ export async function toMp4Async(
       );
       if (ext !== 'wma' && ext !== 'flac' && ext !== 'wav') {
         if (
-          Type.isObject(info) &&
-          Type.has(info, 'bitrate') &&
-          Type.isNumber(info.bitrate) &&
+          isObjectNonNull(info) &&
+          hasFieldType(info, 'bitrate', isNumber) &&
           info.bitrate < bitrate * 1.1
         ) {
           // If it's less than 10% higher than the target, we're fine
@@ -134,10 +140,10 @@ export async function toMp4Async(
       );
     }
   } catch (e) {
-    if (Type.hasType(e, 'toString', Type.isFunction)) {
+    if (hasFieldType(e, 'toString', isFunction)) {
       return tr(
         XcodeResCode.unknownError,
-        `${Type.asString(e, 'unknown error')} occurred.`,
+        `${asString(e, 'unknown error')} occurred.`,
       );
     } else {
       return tr(XcodeResCode.unknownError, 'unknown error occurred');
@@ -425,9 +431,7 @@ async function handleLots(
   } catch (e) {
     err('Crashy crashy :(');
     err(e);
-    reportStatusMessage(
-      `And exception occured: ${Type.asString(e, 'unknown')}`,
-    );
+    reportStatusMessage(`And exception occured: ${asString(e, 'unknown')}`);
   }
   if (filePairs !== undefined) {
     // Find all the files in the mirror target, and remove any files that don't
@@ -476,7 +480,7 @@ async function ScanSourceFromDisk(
         try {
           await fsp.access(toSkip);
         } catch (e) {
-          return Type.has(e, 'code') && e.code === 'ENOENT';
+          return isString(e.code) && e.code === 'ENOENT';
         }
         return false;
       },

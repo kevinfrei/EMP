@@ -1,6 +1,6 @@
-import { Type } from '@freik/core-utils';
 import { Effects } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
+import { isNumber } from '@freik/typechk';
 import { atom, selector } from 'recoil';
 import { repeatState } from './ReadWrite';
 
@@ -53,7 +53,7 @@ export const currentSongIndexFunc = selector<number>({
     const order = get(songPlaybackOrderState);
     if (order === 'ordered') {
       set(currentIndexState, newVal);
-    } else if (Type.isNumber(newVal)) {
+    } else if (isNumber(newVal)) {
       set(currentIndexState, order.indexOf(newVal));
     } else {
       set(currentIndexState, -1);

@@ -1,13 +1,14 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { ElectronWindow } from '@freik/elect-render-utils';
+import { is2TupleOf, isString } from '@freik/typechk';
+import debug from 'debug';
 import { IpcRenderer } from 'electron';
 import { IpcId } from 'shared';
 
-const log = MakeLogger('MyWindow-mock');
-const err = MakeError('MyWindow-mock-err');
+const log = debug('EMP:render:MyWindow-mock:log');
+const err = debug('EMP:render:MyWindow-mock:error');
 
 interface MyWindow extends ElectronWindow {
   searchBox?: ISearchBox | null;
@@ -109,11 +110,11 @@ function MockWrite(key: string, value: string): Promise<void> {
 
 function MockRead(key: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    if (Type.isString(key)) {
+    if (isString(key)) {
       log(`Reading '${key}' from Mock`);
       const res = fakeStorage.get(key);
       log(`Next Tick: Reading ${key ? key : '?unk?'}: ${res ? res : '?und?'}`);
-      if (Type.isString(res)) {
+      if (isString(res)) {
         log('Resolving!');
         resolve(res);
       }
@@ -150,12 +151,12 @@ export async function InvokeMain<T>(
 ): Promise<unknown | void> {
   switch (channel) {
     case 'read-from-storage':
-      if (Type.isString(key)) {
+      if (isString(key)) {
         return await MockRead(key);
       }
       break;
     case 'write-to-storage':
-      if (Type.is2TupleOf(key, Type.isString, Type.isString)) {
+      if (is2TupleOf(key, isString, isString)) {
         const [k, v] = key;
         return await MockWrite(k, v);
       }
@@ -206,7 +207,7 @@ export function isHostWindows(): boolean {
 }
 
 export async function ReadFromStorage(key: string): Promise<string | void> {
-  return await CallMain('read-from-storage', key, Type.isString);
+  return await CallMain('read-from-storage', key, isString);
 }
 
 export async function WriteToStorage(key: string, data: string): Promise<void> {
