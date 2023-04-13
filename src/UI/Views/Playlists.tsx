@@ -7,7 +7,6 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { PlaylistName, Song, SongKey } from '@freik/media-core';
 import {
   Dialogs,
@@ -43,6 +42,7 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
+import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import './styles/Playlists.css';
 
 type PlaylistSong = Song & { playlist: PlaylistName };
@@ -207,7 +207,7 @@ export function PlaylistView(): JSX.Element {
           setSongPlaylistToRemove([
             ttl.playlist,
             ttl.key,
-            Type.isUndefined(index) ? -1 : index,
+            isUndefined(index) ? -1 : index,
           ]);
           if (ev.shiftKey) {
             removeSongConfirmed();
@@ -237,11 +237,9 @@ export function PlaylistView(): JSX.Element {
       ...(songs
         .map((key) => {
           const song = allSongs.get(key);
-          return Type.isUndefined(song)
-            ? undefined
-            : { playlist: plName, ...song };
+          return isUndefined(song) ? undefined : { playlist: plName, ...song };
         })
-        .filter((val) => !Type.isUndefined(val)) as PlaylistSong[]),
+        .filter(isDefined) as PlaylistSong[]),
     );
   }
 
@@ -303,8 +301,8 @@ export function PlaylistView(): JSX.Element {
             if (
               ev &&
               item &&
-              Type.hasType(ev, 'clientX', Type.isNumber) &&
-              Type.hasType(ev, 'clientY', Type.isNumber)
+              hasFieldType(ev, 'clientX', isNumber) &&
+              hasFieldType(ev, 'clientY', isNumber)
             ) {
               setSongContext({
                 data: item.key,

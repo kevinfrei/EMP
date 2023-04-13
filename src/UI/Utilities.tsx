@@ -6,12 +6,13 @@ import {
   Position,
   SpinButton,
 } from '@fluentui/react';
-import { DebouncedDelay, MakeError, Type } from '@freik/core-utils';
 import { Ipc, useListener, useMediaEffect } from '@freik/elect-render-utils';
+import { DebouncedDelay } from '@freik/sync';
+import { isNumber, isUndefined } from '@freik/typechk';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
 import {
-  Component,
   CSSProperties,
+  Component,
   ReactChildren,
   SyntheticEvent,
   useEffect,
@@ -23,8 +24,6 @@ import { isMiniplayerState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
-
-const err = MakeError('Utilities-err'); // eslint-disable-line
 
 // Used by the key buffer to know when to reset the keys
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -200,19 +199,19 @@ export function StringSpinButton({
 }: StringSpinButtonProps): JSX.Element {
   const onIncrement = (val: string): string | void => {
     const num = filter(val);
-    if (Type.isNumber(num)) {
+    if (isNumber(num)) {
       return format(Math.min(num + step, max));
     }
   };
   const onDecrement = (val: string): string | void => {
     const num = filter(val);
-    if (Type.isNumber(num)) {
+    if (isNumber(num)) {
       return format(Math.max(num - step, min));
     }
   };
   const onValidate = (val: string): string | void => {
     const num = filter(val);
-    if (Type.isNumber(num)) {
+    if (isNumber(num)) {
       return format(Math.max(Math.min(num, max), min));
     }
   };
@@ -220,7 +219,7 @@ export function StringSpinButton({
     event: SyntheticEvent<HTMLElement>,
     newValue?: string,
   ) => {
-    const numVal = Type.isUndefined(newValue) ? newValue : filter(newValue);
+    const numVal = isUndefined(newValue) ? newValue : filter(newValue);
     onChange(numVal);
   };
   return (

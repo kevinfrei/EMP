@@ -2,7 +2,7 @@
 // You can sort groupings & subelems independently, but group *always*
 
 import { IGroup } from '@fluentui/react';
-import { MakeMultiMap, MultiMap, Type } from '@freik/core-utils';
+import { MakeMultiMap, MultiMap, isMultiMapOf } from '@freik/containers';
 import {
   Album,
   AlbumKey,
@@ -11,6 +11,14 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import {
+  isArrayOfString,
+  isDefined,
+  isNumber,
+  isOneOf,
+  isString,
+  isUndefined,
+} from '@freik/typechk';
 import { Fail } from '@freik/web-utils';
 import { GetArtistStringFromKeys, GetArtistStringFromSong } from './DataSchema';
 
@@ -84,14 +92,14 @@ function MakeSortKeyMultiMap(
     | Iterable<[string, Iterable<number>]>
     | MultiMap<string, number>,
 ): MultiMap<string, number> {
-  if (Type.isOneOf(groups, Type.isUndefined, Type.isArrayOfString)) {
+  if (isOneOf(groups, isUndefined, isArrayOfString)) {
     const res = MakeMultiMap<string, number>();
-    const list = groups || (Type.isString(initial) ? [initial] : initial);
+    const list = groups || (isString(initial) ? [initial] : initial);
     list.forEach((str, index) => {
       str.split('').forEach((val) => res.set(val, index));
     });
     return res;
-  } else if (Type.isMultiMapOf(groups, Type.isString, Type.isNumber)) {
+  } else if (isMultiMapOf(groups, isString, isNumber)) {
     return groups;
   } else {
     return MakeMultiMap([...groups]);
@@ -125,9 +133,9 @@ function cmpFail<T, U>(
 ): number | string {
   const a = func(aItem);
   const b = func(bItem);
-  if (Type.isUndefined(a)) {
+  if (isUndefined(a)) {
     return 'Invalid item';
-  } else if (Type.isUndefined(b)) {
+  } else if (isUndefined(b)) {
     return 'Invalid item';
   } else {
     return compare(a, b);
@@ -144,7 +152,7 @@ function MakeCompareLoop<T>(
       const comp = lookup.get(c.toLocaleUpperCase());
       if (comp) {
         const res = comp(a, b);
-        if (Type.isString(res)) {
+        if (isString(res)) {
           Fail('Comparison lookup failure', res);
         } else if (res !== 0) {
           return c === c.toLocaleUpperCase() ? -res : res;
@@ -174,7 +182,7 @@ export function MakeSortKey(
     | MultiMap<string, number>,
 ): SortKey {
   // grouping is the list of currently specified sorting strings.
-  const grouping: string[] = Type.isString(initial) ? [initial] : [...initial];
+  const grouping: string[] = isString(initial) ? [initial] : [...initial];
   const elems: MultiMap<string, number> = MakeSortKeyMultiMap(initial, groups);
 
   // Some validation, just in case...
@@ -201,7 +209,7 @@ export function MakeSortKey(
   function newSortOrder(which: string) {
     // Handle clicking twice to invert the order
     const groupNum = elems.get(which.toLocaleLowerCase());
-    if (Type.isUndefined(groupNum)) {
+    if (isUndefined(groupNum)) {
       Fail('Unexpected');
     }
     const newGroups = grouping.map((theGroup, index) =>
@@ -460,9 +468,7 @@ export function SortSongsFromAlbums(
   // Sort each group
   for (const album of albums) {
     const songSortTmp = SortItems(
-      album.songs
-        .map((sk) => songMap.get(sk) as Song)
-        .filter((s) => !Type.isUndefined(s)),
+      album.songs.map((sk) => songMap.get(sk) as Song).filter(isDefined),
       comparator,
     );
     groups[groupIndex].startIndex = songIndex;
@@ -509,9 +515,7 @@ export function SortSongsFromArtists(
   // Sort each group
   for (const artist of artists) {
     const songSortTmp = SortItems(
-      artist.songs
-        .map((sk) => songMap.get(sk) as Song)
-        .filter((s) => !Type.isUndefined(s)),
+      artist.songs.map((sk) => songMap.get(sk) as Song).filter(isDefined),
       comparator,
     );
     groups[groupIndex].startIndex = songIndex;

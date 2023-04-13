@@ -10,8 +10,8 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
 import { AlbumKey, Song } from '@freik/media-core';
+import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
 import {
   MakeSetState,
   MyTransactionInterface,
@@ -55,8 +55,6 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Albums.css';
-
-const err = MakeError('Albums-err'); // eslint-disable-line
 
 // This is used to trigger the popup menu in the list view
 const albumContextState = atom<SongListMenuData>({
@@ -151,9 +149,9 @@ export function GroupedAlbumList(): JSX.Element {
     ({ set }) =>
       (item: Song, _index?: number, ev?: Event) => {
         if (
-          !Type.isUndefined(ev) &&
-          Type.hasType(ev, 'clientX', Type.isNumber) &&
-          Type.hasType(ev, 'clientY', Type.isNumber)
+          isDefined(ev) &&
+          hasFieldType(ev, 'clientX', isNumber) &&
+          hasFieldType(ev, 'clientY', isNumber)
         ) {
           set(albumContextState, {
             data: item.key,

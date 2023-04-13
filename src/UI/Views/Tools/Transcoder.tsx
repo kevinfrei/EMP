@@ -6,9 +6,9 @@ import {
   Text,
   TextField,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
+import { isArrayOfString, isDefined } from '@freik/typechk';
 import { StateToggle, useBoolState } from '@freik/web-utils';
 import { useState } from 'react';
 import {
@@ -17,7 +17,7 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { IpcId, isTranscodeSourceType, TranscodeSourceType } from 'shared';
+import { IpcId, TranscodeSourceType, isTranscodeSourceType } from 'shared';
 import {
   destLocationState,
   sourceLocationAlbumState,
@@ -59,7 +59,7 @@ const getDir = (
 ) => {
   Util.ShowOpenDialog({ properties: ['openDirectory'] })
     .then((val) => {
-      if (Type.isArrayOfString(val) && val.length === 1) {
+      if (isArrayOfString(val) && val.length === 1) {
         setter(val[0]);
       }
     })
@@ -82,7 +82,7 @@ export function TranscoderConfiguration(): JSX.Element {
   // const xcodeStatus = <TranscodeSummary />;
 
   const onChange = useRecoilCallback(({ set }) => (numVal?: number) => {
-    if (!Type.isUndefined(numVal)) {
+    if (isDefined(numVal)) {
       set(xcodeBitRateState, numVal);
     }
   });
@@ -91,7 +91,7 @@ export function TranscoderConfiguration(): JSX.Element {
     event: React.FormEvent<HTMLDivElement>,
     option?: IDropdownOption,
   ): void => {
-    if (!Type.isUndefined(option) && isTranscodeSourceType(option.key)) {
+    if (isDefined(option) && isTranscodeSourceType(option.key)) {
       setSrcLocType(option.key);
     }
   };

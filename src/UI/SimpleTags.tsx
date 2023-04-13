@@ -1,5 +1,5 @@
-import { Type } from '@freik/core-utils';
 import { AlbumKey, ArtistKey, Song } from '@freik/media-core';
+import { hasFieldType, isArrayOfString } from '@freik/typechk';
 import { useRecoilValue } from 'recoil';
 import { albumByKeyFuncFam, artistStringFuncFam } from '../Recoil/ReadOnly';
 
@@ -16,7 +16,7 @@ function AlbumNameForSong({ song }: { song: Song }): JSX.Element {
   const diskNum = Math.floor(song.track / 100);
   if (
     diskNum > 0 &&
-    Type.hasType(album, 'diskNames', Type.isArrayOfString) &&
+    hasFieldType(album, 'diskNames', isArrayOfString) &&
     album.diskNames.length >= diskNum &&
     album.diskNames[diskNum - 1].length > 0
   ) {

@@ -1,4 +1,3 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import {
   AlbumKey,
@@ -7,10 +6,19 @@ import {
   MediaKey,
   SongKey,
 } from '@freik/media-core';
+import {
+  chkObjectOfType,
+  chkOneOf,
+  isArrayOfString,
+  isMapOfStrings,
+  isString,
+  isUndefined,
+} from '@freik/typechk';
+import debug from 'debug';
 import { IgnoreItem, IpcId } from 'shared';
 
-const log = MakeLogger('ipc');
-const err = MakeError('ipc-error');
+const log = debug('EMP:render:ipc:log');
+const err = debug('EMP:render:ipc:error');
 
 export type SearchResults = {
   songs: SongKey[];
@@ -24,16 +32,12 @@ export async function GetMediaInfo(
   return Ipc.CallMain<Map<string, string>, string>(
     IpcId.GetMediaInfo,
     key,
-    Type.isMapOfStrings,
+    isMapOfStrings,
   );
 }
 
 export async function GetPicDataUri(key: MediaKey): Promise<string | void> {
-  const res = Ipc.CallMain<string, MediaKey>(
-    IpcId.GetPicUri,
-    key,
-    Type.isString,
-  );
+  const res = Ipc.CallMain<string, MediaKey>(IpcId.GetPicUri, key, isString);
   log(res);
   return res;
 }
@@ -42,16 +46,13 @@ export async function SetMediaInfo(md: Partial<FullMetadata>): Promise<void> {
   return Ipc.PostMain(IpcId.SetMediaInfo, md);
 }
 
-const isSearchResults = Type.isOneOfFn(
-  Type.isUndefined,
-  Type.isSpecificTypeFn<SearchResults>(
-    [
-      ['songs', Type.isArrayOfString],
-      ['albums', Type.isArrayOfString],
-      ['artists', Type.isArrayOfString],
-    ],
-    ['songs', 'albums', 'artists'],
-  ),
+const isSearchResults = chkOneOf(
+  isUndefined,
+  chkObjectOfType<SearchResults>({
+    songs: isArrayOfString,
+    albums: isArrayOfString,
+    artists: isArrayOfString,
+  }),
 );
 
 export async function SearchWhole(

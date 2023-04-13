@@ -5,9 +5,9 @@ import {
   IContextualMenuItem,
   Point,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
+import { isString } from '@freik/typechk';
 import {
   Catch,
   MyTransactionInterface,
@@ -15,12 +15,12 @@ import {
 } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
 import { IpcId } from 'shared';
-import { AddSongs, PlaySongs } from '../Recoil/api';
 import {
   songHateFuncFam,
   songLikeFuncFam,
   songLikeNumFromStringFuncFam,
 } from '../Recoil/Likes';
+import { AddSongs, PlaySongs } from '../Recoil/api';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 
 export type SongListMenuData = { data: string; spot: Point };
@@ -122,7 +122,7 @@ export function SongListMenu({
     'love',
     'hate',
   ]) {
-    if (Type.isString(itm)) {
+    if (isString(itm)) {
       switch (itm.toLowerCase()) {
         case 'add':
           realItems.push(i('Add to Now Playing', 'Add', onAdd));

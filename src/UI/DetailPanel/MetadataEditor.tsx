@@ -9,19 +9,19 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
 import { Util } from '@freik/elect-render-utils';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
+import { isArrayOfString, isString } from '@freik/typechk';
 import {
   Catch,
   MyTransactionInterface,
   onRejected,
   useMyTransaction,
 } from '@freik/web-utils';
+import debug from 'debug';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { st, StrId } from 'shared';
-import { SetMediaInfo } from '../../ipc';
+import { StrId, st } from 'shared';
 import {
   UploadFileForAlbum,
   UploadFileForSong,
@@ -36,9 +36,10 @@ import {
   albumKeyForSongKeyFuncFam,
   metadataEditCountState,
 } from '../../Recoil/ReadOnly';
+import { SetMediaInfo } from '../../ipc';
 
-const log = MakeLogger('MetadataEditor');
-const err = MakeError('MetadataEditor-err'); // eslint-disable-line
+const log = debug('EMP:render:MetadataEditor:log');
+const err = debug('EMP:render:MetadataEditor:error'); // eslint-disable-line
 
 export type MetadataProps = {
   forSong?: SongKey;
@@ -67,8 +68,8 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   const [moreArtists, setMoreArtists] = useState<false | string>(false);
   const [diskName, setDiskName] = useState<false | string>(false);
 
-  const isMultiple = !props.forSong && Type.isArrayOfString(props.forSongs);
-  const isSingle = Type.isString(props.forSong) && !props.forSongs;
+  const isMultiple = !props.forSong && isArrayOfString(props.forSongs);
+  const isSingle = isString(props.forSong) && !props.forSongs;
 
   // I don't fully understand why I have to do this, but it seems to work...
   // Without it, if you right-click different songs, whichever fields were
@@ -104,7 +105,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   const setVa = () => setVaType(isVa ? '' : 'va');
   const setOST = () => setVaType(isOST ? '' : 'ost');
   const isNumber = (vl?: string) => {
-    if (Type.isString(vl)) {
+    if (isString(vl)) {
       const num = Number.parseInt(vl, 10);
       return num.toString() === vl.trim() && vl.trim() !== 'NaN';
     }
@@ -120,7 +121,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     // and reflect those changes in the music DB
 
     // Worst case: trigger a rescan of the music on the back end, I guess :(
-    for (const songKey of Type.isArrayOfString(props.forSongs)
+    for (const songKey of isArrayOfString(props.forSongs)
       ? props.forSongs
       : [props.forSong]) {
       log('Originally:');

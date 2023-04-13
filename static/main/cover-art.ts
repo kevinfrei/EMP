@@ -16,6 +16,7 @@ import {
   Pickle,
   SafelyUnpickle,
   asString,
+  hasField,
   hasFieldType,
   hasStrField,
   isDefined,

@@ -8,7 +8,6 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -17,6 +16,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { hasFieldType, isBoolean } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -42,9 +42,6 @@ import {
   StickyRenderDetailsHeader,
 } from '../SongList';
 import './styles/SearchResults.css';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const err = MakeError('SearchResults-err');
 
 type SearchSongData = SongData & { key: string; group: string };
 
@@ -231,7 +228,7 @@ export function SearchResultsView(): JSX.Element {
       SongDetailClick(
         xact,
         item.song,
-        Type.has(ev, 'shiftKey') && ev.shiftKey === true,
+        hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
       ),
   );
   const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {

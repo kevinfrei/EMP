@@ -9251,6 +9251,7 @@ __metadata:
     "@fluentui/react-icons-mdl2": ^1.3.37
     "@freik/audiodb": ^0.8.2
     "@freik/build-tools": 3.5.0
+    "@freik/containers": ^0.1.0
     "@freik/elect-main-utils": ^0.5.0
     "@freik/elect-render-utils": ^0.5.0
     "@freik/electron-renderer": ^0.5.0
@@ -17944,10 +17945,10 @@ __metadata:
 
 "shared@file:./shared#./shared::hash=26fecf&locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=84cbd0&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=112432&locator=emp%40workspace%3A."
   dependencies:
     "@freik/typechk": ^0.1.0
-  checksum: 34dcf80a3277c42704c91af5ba766faf7a4c983de0c090c9fe698c7ec95065b50de6d6b4f692d22fef32997112f5dfda77935ac5ae625c4a50a1d1517f75c931
+  checksum: aedc3c4fa8d6fb54e074c16c5e30b617e1559c1083ef7dcbcb9bff2009373c5b2a7a7e9732ce98c5a6cd4514fd2e755658fa03e14d84ef189fc57b7cb1bbd045
   languageName: node
   linkType: hard
 

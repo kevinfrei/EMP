@@ -10,7 +10,6 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
-import { MakeError } from '@freik/core-utils';
 import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
 import {
   MakeSetState,
@@ -56,8 +55,6 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Artists.css';
-
-const err = MakeError('Artists-err'); // eslint-disable-line
 
 // This is used to trigger the popup menu in the list view
 const artistContextState = atom<SongListMenuData>({

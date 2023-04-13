@@ -1,13 +1,13 @@
 import { FontIcon, SearchBox, Text } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
+import { hasStrField, isObjectNonNull } from '@freik/typechk';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
-import { CurrentView, Keys, st, StrId } from 'shared';
-import { isHostMac, SetSearch } from '../MyWindow';
+import { CurrentView, Keys, StrId, st } from 'shared';
+import { SetSearch, isHostMac } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
-import './styles/Sidebar.css';
 import { GetHelperText } from './Utilities';
+import './styles/Sidebar.css';
 
 type ViewEntry = { name: CurrentView; title: StrId; accelerator: Keys };
 const mkEntry = (name: CurrentView, title: StrId, accelerator: Keys) => ({
@@ -59,19 +59,15 @@ function getEntry(
 // This is used to prevent responding to global keypresses when the input box
 // is active
 export function isSearchBox(target: EventTarget | null): boolean {
-  if (
-    target !== null &&
-    Type.hasStr(target, 'type') &&
-    Type.hasStr(target, 'tagName') &&
-    Type.hasStr(target, 'placeholder')
-  ) {
-    return (
-      target.type === 'text' &&
-      target.tagName === 'INPUT' &&
-      target.placeholder === 'Search'
-    );
-  }
-  return false;
+  return (
+    isObjectNonNull(target) &&
+    hasStrField(target, 'type') &&
+    hasStrField(target, 'tagName') &&
+    hasStrField(target, 'placeholder') &&
+    target.type === 'text' &&
+    target.tagName === 'INPUT' &&
+    target.placeholder === 'Search'
+  );
 }
 
 export function Sidebar(): JSX.Element {

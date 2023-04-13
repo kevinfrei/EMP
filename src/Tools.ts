@@ -1,8 +1,9 @@
 // This is for getting at "global" stuff from the window object
-import { MakeLogger, Type } from '@freik/core-utils';
 import { PlaylistName } from '@freik/media-core';
+import { isString } from '@freik/typechk';
+import debug from 'debug';
 
-const log = MakeLogger('Tools');
+const log = debug('EMP:render:Tools');
 
 /*
  * Searching
@@ -54,7 +55,7 @@ export function GetIndexOf<T, E>(
  */
 
 export function isPlaylist(playlist?: string): playlist is PlaylistName {
-  return Type.isString(playlist) && playlist.length > 0;
+  return isString(playlist) && playlist.length > 0;
 }
 
 export function RandomInt(max: number): number {

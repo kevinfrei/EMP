@@ -2,19 +2,19 @@ import { Persistence } from '@freik/elect-main-utils';
 import { isFunction, isString } from '@freik/typechk';
 import debug from 'debug';
 import {
-  app,
   BrowserWindow,
   Menu,
   MenuItem,
   MenuItemConstructorOptions,
+  app,
 } from 'electron';
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import open from 'open';
 import { CurrentView, IpcId, Keys } from 'shared';
-import { ShowAbout } from './About';
-import { SendToUI } from './Communication';
-import { ToggleMiniPlayer } from './window';
+import { ShowAbout } from './About.js';
+import { SendToUI } from './Communication.js';
+import { ToggleMiniPlayer } from './window.js';
 
 const err = debug('EMP:main:menu:error'); // eslint-disable-line
 
