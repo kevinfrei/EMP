@@ -7,10 +7,10 @@ import {
   MenuItem,
   MenuItemConstructorOptions,
   app,
+  shell,
 } from 'electron';
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
-import open from 'open';
 import { CurrentView, IpcId, Keys } from 'shared';
 import { ShowAbout } from './About.js';
 import { SendToUI } from './Communication.js';
@@ -196,7 +196,7 @@ const windowMenu: MenuItemConstructorOptions = {
       ],
 };
 const helpItem: MenuItemConstructorOptions = action(`${app.name} help`, () => {
-  void open('https://github.com/kevinfrei/EMP/wiki');
+  void shell.openExternal('https://github.com/kevinfrei/EMP/wiki');
 });
 const helpMenu: MenuItemConstructorOptions = {
   //    role: 'help',

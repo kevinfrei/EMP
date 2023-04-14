@@ -10,6 +10,7 @@ import { Ipc, useListener, useMediaEffect } from '@freik/elect-render-utils';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
+import debug from 'debug';
 import {
   CSSProperties,
   Component,
@@ -24,6 +25,8 @@ import { isMiniplayerState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
+
+const err = debug('EMP:render:Utilities:error');
 
 // Used by the key buffer to know when to reset the keys
 // eslint-disable-next-line @typescript-eslint/no-empty-function

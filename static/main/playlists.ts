@@ -1,6 +1,7 @@
 import { ArraySetEqual } from '@freik/helpers';
 import { SongKey } from '@freik/media-core';
 import { Sleep } from '@freik/sync';
+import { FromPathSafeName, ToPathSafeName } from '@freik/text';
 import {
   chkObjectOfType,
   isArrayOfString,
@@ -11,7 +12,7 @@ import debug from 'debug';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
-import { GetAudioDB } from './AudioDatabase';
+import { GetAudioDB } from './AudioDatabase.js';
 
 const log = debug('EMP:main:playlists:log');
 const err = debug('EMP:main:playlists:error');

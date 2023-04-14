@@ -5,17 +5,17 @@ import { pLimit } from '@freik/p-limit';
 import {
   asString,
   hasFieldType,
+  hasStrField,
   isFunction,
   isNumber,
   isObjectNonNull,
-  isString,
 } from '@freik/typechk';
 import debug from 'debug';
 import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import rimraf from 'rimraf';
+import { rimraf } from 'rimraf';
 import {
   IpcId,
   TranscodeInfo,
@@ -480,7 +480,7 @@ async function ScanSourceFromDisk(
         try {
           await fsp.access(toSkip);
         } catch (e) {
-          return isString(e.code) && e.code === 'ENOENT';
+          return hasStrField(e, 'code') && e.code === 'ENOENT';
         }
         return false;
       },
