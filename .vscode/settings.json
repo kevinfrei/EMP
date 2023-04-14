@@ -31,7 +31,5 @@
   "editor.tabSize": 2,
   "prettier.configPath": ".prettierrc",
   "json.format.enable": false,
-  "eslint.nodePath": ".yarn/sdks",
-  "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "typescript.enablePromptUseWorkspaceTsdk": true
 }

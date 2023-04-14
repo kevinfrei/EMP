@@ -10584,8 +10584,8 @@ __metadata:
   linkType: hard
 
 "fork-ts-checker-webpack-plugin@npm:^6.5.0":
-  version: 6.5.2
-  resolution: "fork-ts-checker-webpack-plugin@npm:6.5.2"
+  version: 6.5.3
+  resolution: "fork-ts-checker-webpack-plugin@npm:6.5.3"
   dependencies:
     "@babel/code-frame": ^7.8.3
     "@types/json-schema": ^7.0.5
@@ -10610,7 +10610,7 @@ __metadata:
       optional: true
     vue-template-compiler:
       optional: true
-  checksum: c823de02ee258a26ea5c0c488b2f1825b941f72292417478689862468a9140b209ad7df52f67bd134228fe9f40e9115b604fc8f88a69338929fe52be869469b6
+  checksum: 9732a49bfeed8fc23e6e8a59795fa7c238edeba91040a9b520db54b4d316dda27f9f1893d360e296fd0ad8930627d364417d28a8c7007fba60cc730ebfce4956
   languageName: node
   linkType: hard
 
@@ -17945,10 +17945,10 @@ __metadata:
 
 "shared@file:./shared#./shared::hash=26fecf&locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=112432&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=9731b3&locator=emp%40workspace%3A."
   dependencies:
     "@freik/typechk": ^0.1.0
-  checksum: aedc3c4fa8d6fb54e074c16c5e30b617e1559c1083ef7dcbcb9bff2009373c5b2a7a7e9732ce98c5a6cd4514fd2e755658fa03e14d84ef189fc57b7cb1bbd045
+  checksum: 75af6ae5a1db5f14e9e1b061935e85fc036bc8629d15fff647f1a0f504314a6be8055daa08f3421021b38b5ba5ce6a709d9887617d9c1dcc5c33fd7ba44ddb9c
   languageName: node
   linkType: hard
 
