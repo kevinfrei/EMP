@@ -1,8 +1,8 @@
-import { MakeError } from '@freik/core-utils';
-import { StartApp } from './main/electronSetup';
+import debug from 'debug';
 import { InitBeforeAnythingElse, WindowStartup } from './main/Startup';
+import { StartApp } from './main/electronSetup';
 
-const err = MakeError('electron.ts');
+const err = debug('EMP:main:electron');
 
 // This is the entry point for the electron main process.
 // It uses main/electronSetup to get the first window open.

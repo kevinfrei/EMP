@@ -1,7 +1,15 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
-import { MakeError, Type } from '@freik/core-utils';
 import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
 import { MediaKey } from '@freik/media-core';
+import {
+  chk2TupleOf,
+  chkOneOf,
+  isArrayOfString,
+  isBoolean,
+  isString,
+  isUndefined,
+} from '@freik/typechk';
+import debug from 'debug';
 import { Menu } from 'electron/main';
 import { IpcId, isIgnoreItemFn, isXcodeInfo } from 'shared';
 import {
@@ -17,20 +25,6 @@ import {
   SetMediaInfoForSong,
 } from './AudioDatabase';
 import {
-  GetPicDataUri,
-  isAlbumCoverData,
-  SaveNativeImageForAlbum,
-} from './cover-art';
-import {
-  CheckPlaylists,
-  DeletePlaylist,
-  GetPlaylists,
-  isPlaylistSaveData,
-  LoadPlaylist,
-  RenamePlaylist,
-  SavePlaylist,
-} from './playlists';
-import {
   clearSongHates,
   clearSongLikes,
   getSongHates,
@@ -40,13 +34,27 @@ import {
 } from './SongLikesAndHates';
 import { getXcodeStatus, startTranscode } from './Transcoding';
 import {
+  GetPicDataUri,
+  SaveNativeImageForAlbum,
+  isAlbumCoverData,
+} from './cover-art';
+import {
+  CheckPlaylists,
+  DeletePlaylist,
+  GetPlaylists,
+  LoadPlaylist,
+  RenamePlaylist,
+  SavePlaylist,
+  isPlaylistSaveData,
+} from './playlists';
+import {
   CloseWindow,
   MaximizeWindow,
   MinimizeWindow,
   RestoreWindow,
 } from './window';
 
-const err = MakeError('Communication');
+const err = debug('EMP:main:Communication');
 
 /**
  * Show a file in the shell
@@ -91,14 +99,14 @@ async function showMenu(): Promise<void> {
   return Promise.resolve();
 }
 
-const isKeyValue = Type.is2TypeOfFn(Type.isString, Type.isString);
+const isKeyValue = chk2TupleOf(isString, isString);
 
 // I don't actually care about this type :)
 function isVoid(obj: any): obj is void {
   return true;
 }
 
-const isStrOrUndef = Type.isOneOfFn(Type.isUndefined, Type.isString);
+const isStrOrUndef = chkOneOf(isUndefined, isString);
 
 /**
  * Setup any async listeners, plus register all the "invoke" handlers
@@ -120,8 +128,8 @@ export function CommsSetup(): void {
   Comms.registerChannel(IpcId.GetMusicDatabase, GetSimpleMusicDatabase, isVoid);
   Comms.registerChannel(IpcId.ManualRescan, RescanAudioDatase, isVoid);
 
-  Comms.registerChannel(IpcId.ShowLocFromKey, showLocFromKey, Type.isString);
-  Comms.registerChannel(IpcId.GetMediaInfo, GetMediaInfoForSong, Type.isString);
+  Comms.registerChannel(IpcId.ShowLocFromKey, showLocFromKey, isString);
+  Comms.registerChannel(IpcId.GetMediaInfo, GetMediaInfoForSong, isString);
 
   // Migrated, but not yet validated
   Comms.registerChannel(
@@ -139,39 +147,35 @@ export function CommsSetup(): void {
   // Comms.registerChannel('flush-image-cache', FlushImageCache, isVoid);
 
   Comms.registerChannel(IpcId.Search, SearchWholeWord, isStrOrUndef);
-  Comms.registerChannel(IpcId.SubstrSearch, SearchSubstring, Type.isString);
+  Comms.registerChannel(IpcId.SubstrSearch, SearchSubstring, isString);
 
-  Comms.registerChannel(IpcId.LoadPlaylists, LoadPlaylist, Type.isString);
+  Comms.registerChannel(IpcId.LoadPlaylists, LoadPlaylist, isString);
   Comms.registerChannel(IpcId.GetPlaylists, GetPlaylists, isVoid);
-  Comms.registerChannel(
-    IpcId.SetPlaylists,
-    CheckPlaylists,
-    Type.isArrayOfString,
-  );
+  Comms.registerChannel(IpcId.SetPlaylists, CheckPlaylists, isArrayOfString);
   Comms.registerChannel(IpcId.RenamePlaylist, RenamePlaylist, isKeyValue);
   Comms.registerChannel(IpcId.SavePlaylist, SavePlaylist, isPlaylistSaveData);
-  Comms.registerChannel(IpcId.DeletePlaylist, DeletePlaylist, Type.isString);
+  Comms.registerChannel(IpcId.DeletePlaylist, DeletePlaylist, isString);
 
   // These are implementing functionality not currently in
   // the audio-database module
   Comms.registerChannel(IpcId.GetLikes, getSongLikes, isVoid);
-  Comms.registerChannel(IpcId.SetLikes, setSongLikes, Type.isArrayOfString);
-  Comms.registerChannel(IpcId.ClearLikes, clearSongLikes, Type.isArrayOfString);
+  Comms.registerChannel(IpcId.SetLikes, setSongLikes, isArrayOfString);
+  Comms.registerChannel(IpcId.ClearLikes, clearSongLikes, isArrayOfString);
 
   Comms.registerChannel(IpcId.GetHates, getSongHates, isVoid);
-  Comms.registerChannel(IpcId.SetHates, setSongHates, Type.isArrayOfString);
-  Comms.registerChannel(IpcId.ClearHates, clearSongHates, Type.isArrayOfString);
+  Comms.registerChannel(IpcId.SetHates, setSongHates, isArrayOfString);
+  Comms.registerChannel(IpcId.ClearHates, clearSongHates, isArrayOfString);
 
-  Comms.registerChannel(IpcId.ShowFile, Shell.ShowFile, Type.isString);
+  Comms.registerChannel(IpcId.ShowFile, Shell.ShowFile, isString);
   // Save-Playlist-as disabling
-  Comms.registerChannel(IpcId.SetSaveMenu, setSaveMenu, Type.isBoolean);
+  Comms.registerChannel(IpcId.SetSaveMenu, setSaveMenu, isBoolean);
   // For transcoding:
   Comms.registerChannel(IpcId.TranscodingUpdate, getXcodeStatus, isVoid);
   Comms.registerChannel(IpcId.TranscodingBegin, startTranscode, isXcodeInfo);
   Comms.registerChannel(IpcId.ShowMenu, showMenu, isVoid);
 
   // Artwork Thumbnails:
-  Comms.registerChannel(IpcId.GetPicUri, GetPicDataUri, Type.isString);
+  Comms.registerChannel(IpcId.GetPicUri, GetPicDataUri, isString);
 
   // Ignore list stuff:
   Comms.registerChannel(IpcId.GetIgnoreList, GetIgnoreList, isVoid);

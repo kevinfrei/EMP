@@ -1,21 +1,22 @@
-import { MakeError, Type } from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
+import { isFunction, isString } from '@freik/typechk';
+import debug from 'debug';
 import {
-  app,
   BrowserWindow,
   Menu,
   MenuItem,
   MenuItemConstructorOptions,
+  app,
+  shell,
 } from 'electron';
 import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
-import open from 'open';
 import { CurrentView, IpcId, Keys } from 'shared';
-import { ShowAbout } from './About';
-import { SendToUI } from './Communication';
-import { ToggleMiniPlayer } from './window';
+import { ShowAbout } from './About.js';
+import { SendToUI } from './Communication.js';
+import { ToggleMiniPlayer } from './window.js';
 
-const err = MakeError('menu-err'); // eslint-disable-line
+const err = debug('EMP:main:menu:error'); // eslint-disable-line
 
 type ClickHandler = (
   mnu: MenuItem,
@@ -32,7 +33,7 @@ function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
   if (!handler) {
     return;
   }
-  if (Type.isFunction(handler)) {
+  if (isFunction(handler)) {
     return handler as ClickHandler;
   }
   return () => SendToUI(IpcId.MenuAction, handler);
@@ -62,7 +63,7 @@ function action(
   accOrHdlr: string | ClickHandler | unknown | void,
   handler?: ClickHandler | unknown,
 ): MenuItemConstructorOptions {
-  if (Type.isString(accOrHdlr)) {
+  if (isString(accOrHdlr)) {
     return {
       label,
       id: getId(label),
@@ -195,7 +196,7 @@ const windowMenu: MenuItemConstructorOptions = {
       ],
 };
 const helpItem: MenuItemConstructorOptions = action(`${app.name} help`, () => {
-  void open('https://github.com/kevinfrei/EMP/wiki');
+  void shell.openExternal('https://github.com/kevinfrei/EMP/wiki');
 });
 const helpMenu: MenuItemConstructorOptions = {
   //    role: 'help',

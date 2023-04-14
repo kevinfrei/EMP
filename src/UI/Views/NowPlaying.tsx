@@ -14,7 +14,6 @@ import {
   Text,
   TooltipHost,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import {
   Album,
   AlbumKey,
@@ -23,6 +22,7 @@ import {
   Song,
   SongKey,
 } from '@freik/media-core';
+import { isNumber } from '@freik/typechk';
 import {
   Dialogs,
   MyTransactionInterface,
@@ -32,7 +32,6 @@ import {
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
 import { Keys } from 'shared';
-import { StopAndClear } from '../../Recoil/api';
 import { isMiniplayerState, nowPlayingSortState } from '../../Recoil/Local';
 import {
   playlistFuncFam,
@@ -51,6 +50,7 @@ import {
   songListState,
   songPlaybackOrderState,
 } from '../../Recoil/SongPlaying';
+import { StopAndClear } from '../../Recoil/api';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {
@@ -58,7 +58,7 @@ import {
   ArtistsForSongRender,
   YearForSongRender,
 } from '../SimpleTags';
-import { altRowRenderer, MakeColumns } from '../SongList';
+import { MakeColumns, altRowRenderer } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { GetHelperText } from '../Utilities';
 import { LikeOrHate } from './MixedSongs';
@@ -228,7 +228,7 @@ export function NowPlayingView(): JSX.Element {
       onClick={() => {
         // If we're going to be removing a song before the current index
         // we need to move the curIndex pointer as well
-        const listLocation = Type.isNumber(index)
+        const listLocation = isNumber(index)
           ? index
           : songList.indexOf(song.key);
         if (listLocation < curIndex) {

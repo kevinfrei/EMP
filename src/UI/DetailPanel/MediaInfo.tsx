@@ -4,9 +4,9 @@ import {
   SelectionMode,
   TextField,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { SongKey } from '@freik/media-core';
+import { isArray, isString } from '@freik/typechk';
 import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
 import { IpcId } from 'shared';
@@ -132,7 +132,7 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
   const diskNum = Math.floor(theSong.track / 100);
   const diskName =
     diskNum > 0 &&
-    Type.isArray(theAlbum.diskNames) &&
+    isArray(theAlbum.diskNames) &&
     theAlbum.diskNames.length >= diskNum
       ? theAlbum.diskNames[diskNum - 1]
       : '';
@@ -167,7 +167,7 @@ export function MediaInfoTable({
     return <></>;
   }
   // Either Details or a Multi-editing header
-  const theHeader = Type.isString(keyOrKeys) ? (
+  const theHeader = isString(keyOrKeys) ? (
     <MediaFormatDetails forSong={keyOrKeys} />
   ) : (
     <Expandable label="Files Selected">
@@ -176,14 +176,14 @@ export function MediaInfoTable({
   );
 
   // For single-song, the raw metadata in a table
-  const theFooter = Type.isString(keyOrKeys) ? (
+  const theFooter = isString(keyOrKeys) ? (
     <Expandable label="Raw Metadata" separator>
       <RawMetadata songKey={keyOrKeys} />
     </Expandable>
   ) : (
     <></>
   );
-  const theEditor = Type.isString(keyOrKeys) ? (
+  const theEditor = isString(keyOrKeys) ? (
     <SingleFileEditor songKey={keyOrKeys} />
   ) : (
     <MultiFileEditor songKeys={keyOrKeys} />

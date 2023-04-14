@@ -6,31 +6,25 @@ import {
   MinimumMetadata,
   SearchResults,
 } from '@freik/audiodb';
-import {
-  MakeError,
-  MakeLogger,
-  Operations,
-  Pickle,
-  SafelyUnpickle,
-  Sleep,
-  Type,
-} from '@freik/core-utils';
 import { Persistence } from '@freik/elect-main-utils';
+import { SetDifference } from '@freik/helpers';
 import {
+  MediaKey,
+  SongKey,
   isAlbumKey,
   isArtistKey,
   isSongKey,
-  MediaKey,
-  SongKey,
 } from '@freik/media-core';
-import electronIsDev from 'electron-is-dev';
+import { Sleep } from '@freik/sync';
+import { Pickle, SafelyUnpickle, isArrayOfString } from '@freik/typechk';
+import debug from 'debug';
 import { statSync } from 'fs';
 import path from 'path';
 import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
 import { SendToUI } from './Communication';
 
-const log = MakeLogger('AudioDatabase', false && electronIsDev);
-const err = MakeError('AudioDatabase-err');
+const log = debug('EMP:main:AudioDatabase:log');
+const err = debug('EMP:main:AudioDatabase:error');
 
 let theAudioDb: AudioDatabase | null;
 let initialUpdateComplete = false;
@@ -106,14 +100,14 @@ export async function RescanAudioDatase(): Promise<void> {
 
 export async function UpdateLocations(locs: string): Promise<void> {
   try {
-    const locations = SafelyUnpickle(locs, Type.isArrayOfString);
+    const locations = SafelyUnpickle(locs, isArrayOfString);
     if (!locations) {
       return;
     }
     const db = await GetAudioDB();
     const existingLocations = db.getLocations();
-    const add = Operations.SetDifference(new Set(locations), existingLocations);
-    const del = Operations.SetDifference(new Set(existingLocations), locations);
+    const add = SetDifference(new Set(locations), existingLocations);
+    const del = SetDifference(new Set(existingLocations), locations);
     log('Adding:');
     log(add);
     log('removing:');

@@ -1,7 +1,9 @@
 {
   "search.exclude": {
     "public/**/*.js": true,
-    "public/**/*.js.map": true
+    "public/**/*.js.map": true,
+    "**/.yarn": true,
+    "**/.pnp.*": true
   },
   "files.exclude": {
     "**/.git": true,
@@ -28,5 +30,6 @@
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
   "prettier.configPath": ".prettierrc",
-  "json.format.enable": false
+  "json.format.enable": false,
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

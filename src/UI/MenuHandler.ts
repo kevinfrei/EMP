@@ -1,8 +1,8 @@
-import { MakeError, MakeLogger, Type } from '@freik/core-utils';
+import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
+import debug from 'debug';
 import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
-import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import {
@@ -13,12 +13,13 @@ import {
   volumeState,
 } from '../Recoil/ReadWrite';
 import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
+import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { onClickPlayPause } from './PlaybackControls';
 import { GetAudioElem } from './SongPlaying';
 import { addLocation } from './Views/Settings';
 
-const log = MakeLogger('MenuHandler'); // eslint-disable-line
-const err = MakeError('MenuHandler-err'); // eslint-disable-line
+const log = debug('EMP:render:MenuHandler:log'); // eslint-disable-line
+const err = debug('EMP:render:MenuHandler:error'); // eslint-disable-line
 
 function updateTime({ set }: MyTransactionInterface, offset: number) {
   const ae = GetAudioElem();
@@ -43,7 +44,7 @@ export function MenuHandler(
   log('Menu command:');
   log(message);
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
-  if (Type.hasStr(message, 'state')) {
+  if (hasStrField(message, 'state')) {
     switch (message.state) {
       case 'savePlaylist': {
         const nowPlaying = xact.get(activePlaylistState);
@@ -95,7 +96,7 @@ export function MenuHandler(
         xact.set(volumeState, (val) => Math.max(0, val - 0.1));
         break;
       case 'view':
-        if (Type.hasStr(message, 'select')) {
+        if (hasStrField(message, 'select')) {
           let theView: CurrentView = CurrentView.none;
           switch (message.select) {
             case 'NowPlaying':

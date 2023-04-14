@@ -1,12 +1,11 @@
-import { MakeLogger } from '@freik/core-utils';
 import {
   MyTransactionInterface,
   onRejected,
   useMyTransaction,
 } from '@freik/web-utils';
+import debug from 'debug';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Keys } from 'shared';
-import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import {
@@ -14,12 +13,13 @@ import {
   hasNextSongFunc,
   hasPrevSongFunc,
 } from '../Recoil/SongPlaying';
+import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { GetAudioElem } from './SongPlaying';
-import './styles/PlaybackControls.css';
 import { GetHelperText } from './Utilities';
+import './styles/PlaybackControls.css';
 
-const log = MakeLogger('SongControls');
-const err = MakeLogger('SongControls-err');
+const log = debug('EMP:render:SongControls:log');
+const err = debug('EMP:render:SongControls:error');
 
 export function onClickPlayPause({ set }: MyTransactionInterface): void {
   const ae = GetAudioElem();

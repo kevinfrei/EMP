@@ -1,10 +1,9 @@
 import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
-import { MakeLogger } from '@freik/core-utils';
 import { useMyTransaction } from '@freik/web-utils';
+import debug from 'debug';
 import { SyntheticEvent, useEffect } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { MaybePlayNext } from '../Recoil/api';
 import { albumCoverUrlFuncFam } from '../Recoil/ImageUrls';
 import { playOrderDisplayingState } from '../Recoil/Local';
 import {
@@ -16,19 +15,20 @@ import {
   playingState,
 } from '../Recoil/MediaPlaying';
 import {
+  SongDescription,
   albumKeyForSongKeyFuncFam,
   allSongsFunc,
   dataForSongFuncFam,
   picForKeyFam,
-  SongDescription,
 } from '../Recoil/ReadOnly';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
+import { MaybePlayNext } from '../Recoil/api';
 import { SongDetailClick } from './DetailPanel/Clickers';
-import './styles/SongPlaying.css';
 import { mySliderStyles } from './Utilities';
+import './styles/SongPlaying.css';
 
-const log = MakeLogger('SongPlayback');
+const log = debug('EMP:render:SongPlayback');
 
 export function GetAudioElem(): HTMLMediaElement | void {
   return document.getElementById('audioElement') as HTMLMediaElement;

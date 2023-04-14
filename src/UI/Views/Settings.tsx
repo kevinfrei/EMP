@@ -9,8 +9,8 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { Ipc, Util } from '@freik/elect-render-utils';
+import { isDefined } from '@freik/typechk';
 import {
   Catch,
   Expandable,
@@ -177,7 +177,7 @@ function IgnoreList(): JSX.Element {
         <Dropdown
           selectedKey={newType}
           onChange={(ev: unknown, option?: IDropdownOption) => {
-            if (!Type.isUndefined(option) && option.key !== '') {
+            if (isDefined(option) && option.key !== '') {
               setNewType(option.key as IgnoreItemType);
             }
           }}
@@ -192,7 +192,7 @@ function IgnoreList(): JSX.Element {
         <TextField
           value={newValue}
           onChange={(ev: unknown, value?: string) => {
-            if (!Type.isUndefined(value)) {
+            if (isDefined(value)) {
               setNewValue(value);
             }
           }}

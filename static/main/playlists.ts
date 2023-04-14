@@ -1,20 +1,21 @@
-import {
-  FromPathSafeName,
-  MakeError,
-  MakeLogger,
-  Operations,
-  Sleep,
-  ToPathSafeName,
-  Type,
-} from '@freik/core-utils';
+import { ArraySetEqual } from '@freik/helpers';
 import { SongKey } from '@freik/media-core';
+import { Sleep } from '@freik/sync';
+import { FromPathSafeName, ToPathSafeName } from '@freik/text';
+import {
+  chkObjectOfType,
+  isArrayOfString,
+  isString,
+  typecheck,
+} from '@freik/typechk';
+import debug from 'debug';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
-import { GetAudioDB } from './AudioDatabase';
+import { GetAudioDB } from './AudioDatabase.js';
 
-const log = MakeLogger('playlists');
-const err = MakeError('playlists-err');
+const log = debug('EMP:main:playlists:log');
+const err = debug('EMP:main:playlists:error');
 
 function playlistDir(): string {
   return path.join(app.getPath('userData'), 'playlists');
@@ -84,12 +85,8 @@ export type PlaylistSaveData = {
 };
 
 // eslint-disable-next-line
-export function isPlaylistSaveData(data: any): data is PlaylistSaveData {
-  return (
-    Type.hasStr(data, 'name') &&
-    Type.hasType(data, 'songs', Type.isArrayOfString)
-  );
-}
+export const isPlaylistSaveData: typecheck<PlaylistSaveData> =
+  chkObjectOfType<PlaylistSaveData>({ name: isString, songs: isArrayOfString });
 
 export async function SavePlaylist(data: PlaylistSaveData): Promise<void> {
   log('savePlaylist');
@@ -125,7 +122,7 @@ export async function LoadPlaylist(data: string): Promise<string[]> {
 
 export async function CheckPlaylists(names: string[]): Promise<void> {
   log('checkPlaylists');
-  if (Operations.ArraySetEqual<string>(names, await GetPlaylists())) {
+  if (ArraySetEqual<string>(names, await GetPlaylists())) {
     log("They're equal");
   } else {
     err('NOT equal :/');

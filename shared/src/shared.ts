@@ -1,4 +1,10 @@
-import { Type } from '@freik/core-utils';
+import {
+  chkArrayOf,
+  chkObjectOfType,
+  isBoolean,
+  isNumber,
+  isString,
+} from '@freik/typechk';
 
 export enum IpcId {
   ClearHates = 'clear-hates',
@@ -148,10 +154,10 @@ export type TranscodeSourceLocation = {
   loc: string;
 };
 
-export const isXcodeSrcLoc = Type.isSpecificTypeFn<TranscodeSourceLocation>([
-  ['type', isTranscodeSourceType],
-  ['loc', Type.isString],
-]);
+export const isXcodeSrcLoc = chkObjectOfType<TranscodeSourceLocation>({
+  type: isTranscodeSourceType,
+  loc: isString,
+});
 
 export type TranscodeState = {
   curStatus: string;
@@ -172,33 +178,27 @@ export type TranscodeInfo = {
   bitrate: number;
 };
 
-export const isXcodeInfo = Type.isSpecificTypeFn<TranscodeInfo>([
-  ['source', isXcodeSrcLoc],
-  ['dest', Type.isString],
-  ['artwork', Type.isBoolean],
-  ['mirror', Type.isBoolean],
-  [
-    'format',
-    (o: unknown): o is TranscodeFormatTargetNames => {
-      return o === 'm4a' || o === 'mp3' || o === 'aac';
-    },
-  ],
-  ['bitrate', Type.isNumber],
-]);
+export const isXcodeInfo = chkObjectOfType<TranscodeInfo>({
+  source: isXcodeSrcLoc,
+  dest: isString,
+  artwork: isBoolean,
+  mirror: isBoolean,
+  format: (o: unknown): o is TranscodeFormatTargetNames => {
+    return o === 'm4a' || o === 'mp3' || o === 'aac';
+  },
+  bitrate: isNumber,
+});
 
 export type IgnoreItemType = 'path-root' | 'path-keyword' | 'dir-name';
 export type IgnoreItem = { type: IgnoreItemType; value: string };
 export function IsIgnoreItemType(obj: unknown): obj is IgnoreItemType {
   return obj === 'path-root' || obj === 'path-keyword' || obj === 'dir-name';
 }
-export const isIgnoreItemFn = Type.isSpecificTypeFn<IgnoreItem>(
-  [
-    ['type', IsIgnoreItemType],
-    ['value', Type.isString],
-  ],
-  ['type', 'value'],
-);
-export const isIgnoreItemArrayFn = Type.isArrayOfFn<IgnoreItem>(isIgnoreItemFn);
+export const isIgnoreItemFn = chkObjectOfType<IgnoreItem>({
+  type: IsIgnoreItemType,
+  value: isString,
+});
+export const isIgnoreItemArrayFn = chkArrayOf<IgnoreItem>(isIgnoreItemFn);
 
 /*
 export enum Decisions {

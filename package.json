@@ -10,19 +10,25 @@
   "build": {
     "appId": "com.music-player.freik",
     "productName": "Electron Music Player",
-    "directories": { "buildResources": "build" },
+    "directories": {
+      "buildResources": "build"
+    },
     "fileAssociations": {
       "ext": ["mp3", "m4a", "aac", "flac", "wma"],
       "description": "Audio files",
       "role": "Viewer"
     },
-    "mac": { "icon": "build/icon.png" },
+    "mac": {
+      "icon": "build/icon.png"
+    },
     "linux": {
       "icon": "build/icon.png",
       "category": "Audio",
       "mimeTypes": ["audio/mpeg", "audio/m4a", "audio/aac", "audio/x-flac"]
     },
-    "win": { "icon": "build/icon.png" }
+    "win": {
+      "icon": "build/icon.png"
+    }
   },
   "scripts": {
     "build-shared": "cd shared && yarn build && echo Run 'yarn install' and relaunch VSCode...",
@@ -50,26 +56,31 @@
     "bumpver": "node config/set-version.js"
   },
   "dependencies": {
-    "@fluentui/react": "^8.106.7",
+    "@fluentui/react": "^8.107.5",
     "@fluentui/react-icons-mdl2": "^1.3.37",
     "@freik/audiodb": "^0.8.2",
-    "@freik/core-utils": "~1.3.1",
-    "@freik/elect-main-utils": "^0.3.0",
-    "@freik/elect-render-utils": "^0.4.4",
-    "@freik/electron-renderer": "^0.4.1",
-    "@freik/media-core": "~0.11.1",
+    "@freik/containers": "^0.1.0",
+    "@freik/elect-main-utils": "^0.5.1",
+    "@freik/elect-render-utils": "^0.5.0",
+    "@freik/electron-renderer": "^0.5.0",
+    "@freik/helpers": "^0.2.1",
+    "@freik/media-core": "^0.11.4",
     "@freik/media-utils": "~0.14.2",
-    "@freik/node-utils": "~1.2.4",
+    "@freik/node-utils": "~1.3.3",
     "@freik/p-limit": "^5.0.0",
-    "@freik/web-utils": "^0.4.0",
+    "@freik/sync": "^0.1.0",
+    "@freik/text": "^0.2.0",
+    "@freik/typechk": "^0.1.0",
+    "@freik/web-utils": "^0.4.2",
     "album-art": "^3.1.0",
+    "debug": "^4.3.4",
     "electron-is-dev": "^2.0.0",
     "jimp": "^0.22.7",
-    "open": "^8.4.2",
+    "open": "^9.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "recoil": "^0.7.7",
-    "rimraf": "^4.4.0",
+    "rimraf": "^5.0.0",
     "shared": "file:./shared#./shared::hash=26fecf&locator=emp%40workspace%3A.",
     "xxhashjs": "^0.2.2"
   },
@@ -78,28 +89,29 @@
     "development": ["last 1 chrome version"]
   },
   "devDependencies": {
-    "@babel/core": "^7.21.3",
+    "@babel/core": "^7.21.4",
     "@babel/eslint-parser": "^7.21.3",
     "@babel/plugin-transform-react-jsx": "^7.21.0",
-    "@freik/build-tools": "3.4.6",
+    "@freik/build-tools": "3.5.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
+    "@types/debug": "^4.1.7",
     "@types/electron-devtools-installer": "^2.2.2",
     "@types/jest": "^29.5.0",
-    "@types/node": "^18.15.3",
-    "@types/react": "^17.0.53",
+    "@types/node": "^18.15.11",
+    "@types/react": "^17.0.58",
     "@types/react-dom": "^17.0.19",
     "@types/react-test-renderer": "^17.0.2",
     "@types/xxhashjs": "^0.2.2",
-    "@typescript-eslint/eslint-plugin": "^5.55.0",
-    "@typescript-eslint/parser": "^5.55.0",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
     "cross-env": "^7.0.3",
-    "electron": "^23.1.4",
+    "electron": "^24.1.1",
     "electron-builder": "^23.6.0",
     "electron-devtools-installer": "^3.2.0",
     "electron-react-devtools": "^0.5.3",
-    "eslint": "^8.36.0",
-    "eslint-config-prettier": "^8.7.0",
+    "eslint": "^8.38.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-prettier": "^4.2.1",
@@ -110,12 +122,12 @@
     "jest-environment-jsdom": "^29.5.0",
     "jest-transform-css": "^6.0.1",
     "postcss": "8.4.21",
-    "prettier": "^2.8.4",
+    "prettier": "^2.8.7",
     "react-scripts": "^5.0.1",
     "react-test-renderer": "^17.0.2",
     "svg-react-loader": "^0.4.6",
-    "ts-jest": "29.0.5",
-    "typescript": "^5.0.2",
+    "ts-jest": "29.1.0",
+    "typescript": "^5.0.4",
     "wait-on": "^7.0.1"
   },
   "packageManager": "yarn@3.5.0"

@@ -13,13 +13,10 @@ import {
   StickyPositionType,
   TooltipHost,
 } from '@fluentui/react';
-import { MakeError, Type } from '@freik/core-utils';
 import { ArtistKey } from '@freik/media-core';
+import { hasFieldType, isDefined } from '@freik/typechk';
 import { Dispatch, SetStateAction } from 'react';
 import { SortKey } from '../Sorting';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const err = MakeError('SongList-err');
 
 type ColumnRenderTuple<T> = [
   string, // key
@@ -187,9 +184,9 @@ export function ProcessSongGroupData<T>(
       },
     },
     onRenderHeader: (props?: IDetailsGroupDividerProps) => {
-      return Type.isUndefined(props) || Type.isUndefined(props.group)
-        ? null
-        : headerRenderer(props.group);
+      return hasFieldType(props, 'group', isDefined)
+        ? headerRenderer(props.group)
+        : null;
     },
   };
   const columns = MakeColumns(renderers, getSort, performSort, groupFieldName);

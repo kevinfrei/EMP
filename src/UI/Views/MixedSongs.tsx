@@ -5,11 +5,9 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
-import { MakeError } from '@freik/core-utils';
 import { Song, SongKey } from '@freik/media-core';
 import { useMyTransaction } from '@freik/web-utils';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
-import { AddSongs } from '../../Recoil/api';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -22,6 +20,7 @@ import {
   dataForSongListFuncFam,
 } from '../../Recoil/ReadOnly';
 import { ignoreArticlesState } from '../../Recoil/ReadWrite';
+import { AddSongs } from '../../Recoil/api';
 import { MakeSortKey, SortSongList } from '../../Sorting';
 import {
   AlbumForSongRender,
@@ -29,14 +28,12 @@ import {
   YearForSongRender,
 } from '../SimpleTags';
 import {
-  altRowRenderer,
   MakeColumns,
   StickyRenderDetailsHeader,
+  altRowRenderer,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/MixedSongs.css';
-
-const err = MakeError('MixedSongs-err'); // eslint-disable-line
 
 const sortOrderState = atom({
   key: 'mixedSongSortOrder',

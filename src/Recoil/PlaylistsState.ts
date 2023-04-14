@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Type } from '@freik/core-utils';
 import { Ipc } from '@freik/elect-render-utils';
 import { PlaylistName, SongKey } from '@freik/media-core';
+import { isArray, isArrayOfString, isSetOfString } from '@freik/typechk';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
 import { IpcId } from 'shared';
 import { isPlaylist } from '../Tools';
@@ -32,7 +32,7 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
       const playlistsString = await Ipc.CallMain<string[], void>(
         IpcId.GetPlaylists,
         undefined,
-        Type.isArrayOfString,
+        isArrayOfString,
       );
       if (!playlistsString) {
         return new Set();
@@ -43,7 +43,7 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
     }
   },
   set: ({ set }, newValue) => {
-    const data = Type.isSetOfString(newValue) ? [...newValue] : [];
+    const data = isSetOfString(newValue) ? [...newValue] : [];
     set(playlistNamesBackerState, data);
     void Ipc.PostMain(IpcId.SetPlaylists, data);
   },
@@ -72,7 +72,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
         const listStr = await Ipc.CallMain(
           IpcId.LoadPlaylists,
           arg,
-          Type.isArrayOfString,
+          isArrayOfString,
         );
         if (!listStr) {
           return [];
@@ -90,7 +90,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
         names.add(name);
         set(playlistNamesFunc, new Set(names));
       }
-      const songs = Type.isArray(newValue) ? newValue : [];
+      const songs = isArray(newValue) ? newValue : [];
       set(playlistBackerFam(name), songs);
       void Ipc.PostMain(IpcId.SavePlaylist, { name, songs });
     },

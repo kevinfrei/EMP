@@ -1,12 +1,12 @@
 import { ComboBox, IComboBox, IComboBoxOption } from '@fluentui/react';
-import { Type } from '@freik/core-utils';
 import { AlbumKey, Artist, ArtistKey, PlaylistName } from '@freik/media-core';
+import { isDefined, isString } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
 import { RecoilState, useRecoilValue } from 'recoil';
 import { playlistNamesFunc } from '../../../Recoil/PlaylistsState';
 import {
-  albumByKeyFuncFam,
   AlbumDescriptionWithKey,
+  albumByKeyFuncFam,
   allAlbumsDataFunc,
   artistByKeyFuncFam,
   filteredArtistsFunc,
@@ -30,11 +30,7 @@ export function PlaylistSelector({
         index?: number,
         val?: string,
       ): void => {
-        if (
-          !Type.isUndefined(option) &&
-          Type.isString(val) &&
-          playlists.has(val)
-        ) {
+        if (isDefined(option) && isString(val) && playlists.has(val)) {
           set(value, val);
         }
       },
@@ -69,11 +65,7 @@ export function ArtistSelector({
         index?: number,
         newValue?: string,
       ) => {
-        if (
-          !Type.isUndefined(option) &&
-          Type.isString(option.key) &&
-          Type.isString(newValue)
-        ) {
+        if (isDefined(option) && isString(option.key) && isString(newValue)) {
           try {
             const art = get(artistByKeyFuncFam(option.key));
             if (art.key === option.key) {
@@ -119,11 +111,7 @@ export function AlbumSelector({
         index?: number,
         newValue?: string,
       ) => {
-        if (
-          !Type.isUndefined(option) &&
-          Type.isString(option.key) &&
-          Type.isString(newValue)
-        ) {
+        if (isDefined(option) && isString(option.key) && isString(newValue)) {
           try {
             const alb = get(albumByKeyFuncFam(option.key));
             if (alb.key === option.key) {

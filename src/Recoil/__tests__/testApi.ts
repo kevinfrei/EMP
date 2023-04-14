@@ -1,14 +1,14 @@
 jest.mock('@freik/elect-render-utils');
 
-import { MakeError } from '@freik/core-utils';
 import { MyTransactionInterface } from '@freik/web-utils';
+import debug from 'debug';
 import { act } from 'react-test-renderer';
 import { RecoilState, Snapshot, snapshot_UNSTABLE } from 'recoil';
 
 jest.useFakeTimers();
 jest.mock('../../MyWindow');
 
-const err = MakeError('api.test');
+const err = debug('EMP:render:testApi');
 
 export function flushPromisesAndTimers(): Promise<void> {
   // Wrap flush with act() to avoid warning that only shows up in OSS environment
