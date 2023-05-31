@@ -6,6 +6,7 @@ import {
   SelectionMode,
 } from '@fluentui/react';
 import { Song, SongKey } from '@freik/media-core';
+import { isNumber } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -141,10 +142,13 @@ export function MixedSongsList(): JSX.Element {
 export function SimpleSongsList({
   forSongs,
   bold,
+  keyprefix,
 }: {
   forSongs: SongKey[];
   bold?: (props: IDetailsRowProps) => boolean;
+  keyprefix?: string;
 }): JSX.Element {
+  const pfx = keyprefix || 'ssl';
   const songList = useRecoilValue(dataForSongListFuncFam(forSongs));
   if (!songList) {
     return <></>;
@@ -203,6 +207,9 @@ export function SimpleSongsList({
         compact={true}
         selectionMode={SelectionMode.none}
         onRenderRow={altRowRenderer(bold ? bold : () => false)}
+        getKey={(item: any, index?: number) =>
+          `${pfx}${isNumber(index) ? forSongs[index] : 'ERROR!'}`
+        }
       />
     </div>
   );

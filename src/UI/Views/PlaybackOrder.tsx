@@ -13,21 +13,22 @@ import {
 import { SimpleSongsList } from './MixedSongs';
 
 export function PlaybackOrder(): JSX.Element {
+  const curIndex = useRecoilValue(currentIndexState);
+  const isShuffle = useRecoilValue(shuffleFunc);
+  const isMiniplayer = useRecoilValue(isMiniplayerState);
+  const pbOrder = useRecoilValue(songPlaybackOrderState);
+  const unsortedSongKeys = useRecoilValue(songListState);
+  const sortedSongKeys =
+    pbOrder !== 'ordered'
+      ? pbOrder.map((val) => unsortedSongKeys[val])
+      : unsortedSongKeys;
   const isOpen = useRecoilValue(playOrderDisplayingState);
   const close = useRecoilCallback(
     ({ set }) =>
       () =>
         set(playOrderDisplayingState, false),
   );
-  const pbOrder = useRecoilValue(songPlaybackOrderState);
-  let songKeys = useRecoilValue(songListState);
-  if (pbOrder !== 'ordered') {
-    songKeys = pbOrder.map((val) => songKeys[val]);
-  }
-  const curIndex = useRecoilValue(currentIndexState);
   const isBold = (props: IDetailsRowProps) => props.itemIndex === curIndex;
-  const isShuffle = useRecoilValue(shuffleFunc);
-  const isMiniplayer = useRecoilValue(isMiniplayerState);
   return (
     <Panel
       isLightDismiss
@@ -38,7 +39,11 @@ export function PlaybackOrder(): JSX.Element {
       type={PanelType.medium}
       isBlocking={false}
     >
-      <SimpleSongsList forSongs={songKeys} bold={isBold} />
+      <SimpleSongsList
+        forSongs={sortedSongKeys}
+        bold={isBold}
+        keyprefix="po-"
+      />
     </Panel>
   );
 }

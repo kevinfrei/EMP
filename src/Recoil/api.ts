@@ -148,7 +148,7 @@ export function AddSongs(
       );
     } else {
       // Get the first clump (to *not* shuffle)
-      const alreadyPlayed = playOrder.slice(0, curIdx);
+      const alreadyPlayed = playOrder.slice(0, curIdx + 1);
       // The second clump (the stuff to mix in)
       const leftToPlay = [
         ...playOrder.slice(curIdx + 1),
@@ -228,19 +228,21 @@ export function ShufflePlaying(
   const curIndex = get(currentIndexState);
   const curSongList = get(songListState);
   if (curIndex < 0 || ignoreCur) {
-    const nums = Array.from(curSongList, (_item, idx) => idx);
+    const nums = Array.from(curSongList, (_, idx) => idx);
     set(songPlaybackOrderState, ShuffleArray(nums));
-    if (curSongList.length > 0) {
-      set(currentIndexState, 0);
-    }
   } else {
+    // Make an array skipping the current index (with an extra at the end...)
     const notNowPlaying = Array.from(curSongList, (_, idx) =>
       idx >= curIndex ? idx + 1 : idx,
     );
+    // Remove the extra at the end
     notNowPlaying.pop();
     const newSongs = ShuffleArray(notNowPlaying);
     // Re-insert curIndex back at the beginning of the array
     set(songPlaybackOrderState, [curIndex, ...newSongs]);
+  }
+  if (curSongList.length > 0) {
+    set(currentIndexState, 0);
   }
   reset(nowPlayingSortState);
 }
