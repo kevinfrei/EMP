@@ -1,8 +1,8 @@
 import debug from 'debug';
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
-import { StartApp } from './main/electronSetup';
-import { InitBeforeAnythingElse, WindowStartup } from './main/Startup';
+import { StartApp } from './electronSetup';
+import { InitBeforeAnythingElse, WindowStartup } from './Startup';
 
 const err = debug('EMP:main:electron');
 err.enabled = true;

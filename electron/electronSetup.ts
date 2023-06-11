@@ -33,16 +33,18 @@ async function WhenReady(windowCreated: OnWindowCreated) {
     try {
       // Load the react developer tools if we're in development mode
       /* eslint-disable */
+      /*
       const {
         default: installExtension,
         REACT_DEVELOPER_TOOLS,
       } = require('electron-devtools-installer');
       const name = await installExtension(REACT_DEVELOPER_TOOLS);
       log('Added Extension: ' + name);
+      */
       /* eslint-enable */
     } catch (e) {
-      err('An error occurred while trying to load the React Dev Tools:');
-      err(e);
+      // err('An error occurred while trying to load the React Dev Tools:');
+      // err(e);
     }
   }
   // This method will be called when Electron has finished

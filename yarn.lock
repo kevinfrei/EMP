@@ -4696,9 +4696,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/elect-main-utils@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "@freik/elect-main-utils@npm:0.5.1"
+"@freik/elect-main-utils@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "@freik/elect-main-utils@npm:0.5.2"
   dependencies:
     "@freik/sync": ^0.1.0
     "@freik/typechk": ^0.1.0
@@ -4706,42 +4706,42 @@ __metadata:
     electron-is-dev: ^2.0.0
   peerDependencies:
     "@freik/elect-render-utils": ">=0.3.0"
-    "@freik/electron-renderer": ">=0.3.0"
+    "@freik/electron-renderer": ">=0.5.0"
     "@freik/node-utils": ">=1.2.0"
     electron: ">=20.0.0"
-  checksum: 627533ac7bce5194f9f0f616f377df26e7ae7ab015ad6e0f57c79264c91fdeb8fb463c2b839c76cc4060fa036b2a0a50355db709187f3eebe2638537a38da207
+  checksum: 4242c2be2c6392f43e9d7f32b950e856c4668a7c4d750d24db0c84bcda62f6820f00b59a0caaf455a6a346bc66adaa2824c7b026b4a4aea65e3bc844af845ebb
   languageName: node
   linkType: hard
 
-"@freik/elect-render-utils@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@freik/elect-render-utils@npm:0.5.0"
+"@freik/elect-render-utils@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@freik/elect-render-utils@npm:0.5.1"
   dependencies:
     "@freik/seqnum": ^1.0.0
     "@freik/typechk": ^0.1.0
     debug: ^4.3.4
   peerDependencies:
-    "@freik/elect-main-utils": ">=0.3.0"
-    "@freik/electron-renderer": ">=0.4.0"
+    "@freik/elect-main-utils": ">=0.5.0"
+    "@freik/electron-renderer": ">=0.5.0"
     "@freik/web-utils": ">=0.4.0"
-    electron: ">=19.0.0"
+    electron: ">=20.0.0"
     react: ">=17.0.2"
     react-dom: ">=17.0.2"
     recoil: ">=0.7.0"
-  checksum: 3cfd81d4ad9d8bb0e9c370daf61af59dfa5bb055f8f71322f067c9c48f4c6675873fee86968f1cf100a6331123ca1602ebd6b0aa4c8c996c4c6d03ddc1eb6938
+  checksum: ff2a6c871842f3169180c8aeae7dc48f0ac2d4b3cc7ac884789474f4de344ab7e798d73d515088de16ae493a53cb51ba7d0cbf66fbe4e96d4c8a3f3ad3748077
   languageName: node
   linkType: hard
 
-"@freik/electron-renderer@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "@freik/electron-renderer@npm:0.5.0"
+"@freik/electron-renderer@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@freik/electron-renderer@npm:0.5.1"
   dependencies:
     debug: ^4.3.4
   peerDependencies:
     "@freik/elect-main-utils": ">=0.3.0"
     "@freik/elect-render-utils": ">=0.4.3"
     "@freik/web-utils": ">=0.4.0"
-  checksum: 6dde24d0cfc6f94553e0ec5114075ec1eb728ad45c92c27c8f1fc82eb77d857007095e680ee954393a598555bd4a294f28eba85ddddaf2b68d1db3ee99fbbd09
+  checksum: e83a47d7d79fae76f60390a88b5b33c318f5031a2b9ce6879745eb775ac540d6b1cd0af4fd4291af19e705001779570adbc4adb370413d9c163d9413014c9d91
   languageName: node
   linkType: hard
 
@@ -7024,10 +7024,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.2.6":
-  version: 20.2.6
-  resolution: "@types/node@npm:20.2.6"
-  checksum: 5222bceb188ca36947ac20b1fdbb39eabb599bb57d46d010182299a959ad38e3a6abc5167d81e685538b1aed1702e62df9a61ac473cafacd6a0a5f73bd627abf
+"@types/node@npm:^20.3.0":
+  version: 20.3.0
+  resolution: "@types/node@npm:20.3.0"
+  checksum: 613e878174febc0104dae210088645cbb5096a19ae5fdf57fbc06fa6ef71755b839858c2b313fb8c1df8b7c6660e1b5f7a64db2126af9d47d1d9238e2bc0a86d
   languageName: node
   linkType: hard
 
@@ -11011,9 +11011,9 @@ __metadata:
     "@freik/audiodb": ^0.8.2
     "@freik/build-tools": 3.6.0
     "@freik/containers": ^0.1.0
-    "@freik/elect-main-utils": ^0.5.1
-    "@freik/elect-render-utils": ^0.5.0
-    "@freik/electron-renderer": ^0.5.0
+    "@freik/elect-main-utils": ^0.5.2
+    "@freik/elect-render-utils": ^0.5.1
+    "@freik/electron-renderer": ^0.5.1
     "@freik/helpers": ^0.2.1
     "@freik/media-core": ^0.11.4
     "@freik/media-utils": ~0.14.2
@@ -11028,7 +11028,7 @@ __metadata:
     "@types/debug": ^4.1.8
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^29.5.2
-    "@types/node": ^20.2.6
+    "@types/node": ^20.3.0
     "@types/react": ^17.0.61
     "@types/react-dom": ^17.0.20
     "@types/react-test-renderer": ^17.0.2
@@ -19787,10 +19787,10 @@ __metadata:
 
 "shared@file:./shared#./shared::hash=26fecf&locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=b5b804&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=628b02&locator=emp%40workspace%3A."
   dependencies:
     "@freik/typechk": ^0.1.0
-  checksum: cb85baca16d27bb48b6a61151a53615e4f5ad11ff7a739676e140733136ce0c60c90b41db4191607c20f4e7acf2e22caae2939ec04e7f6f02105711859165958
+  checksum: 61283af13afaf51916e7e0b2a589742f78db219284571f241df8af1785b04a9f1ade98b664434df7e7d77d8e4b758b5055912fef56cf0a2e9a82e1832a1b7ac0
   languageName: node
   linkType: hard
 
