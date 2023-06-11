@@ -1,8 +1,8 @@
 import debug from 'debug';
-import { app, BrowserWindow } from 'electron';
+import { app } from 'electron';
 import path from 'node:path';
-import { StartApp } from './electronSetup';
 import { InitBeforeAnythingElse, WindowStartup } from './Startup';
+import { StartApp } from './electronSetup';
 
 const err = debug('EMP:main:electron');
 err.enabled = true;
@@ -18,10 +18,10 @@ err.enabled = true;
 // │
 
 process.env.DIST = path.join(__dirname, '../dist');
-process.env.PUBLIC = app.isPackaged
+process.env.PUB = app.isPackaged
   ? process.env.DIST
   : path.join(process.env.DIST, '../public');
-
+/*
 let win: BrowserWindow | null;
 // Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
 const VITE_DEV_SERVER_URL: string = process.env.VITE_DEV_SERVER_URL!;
@@ -57,6 +57,7 @@ app.on('window-all-closed', () => {
 });
 
 app.whenReady().then(createWindow).catch(err);
+*/
 
 // This is the entry point for the electron main process.
 // It uses main/electronSetup to get the first window open.

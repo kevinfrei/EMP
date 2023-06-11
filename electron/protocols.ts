@@ -27,14 +27,21 @@ const audioMimeTypes = new Map<string, string>([
   ['.wma', 'audio/x-ms-wma'],
 ]);
 
-const defaultAlbumPicPath = path.join(__dirname, '..', 'img-album.svg');
+let defPath: string | null = null;
+function defaultAlbumPicPath() {
+  if (defPath === null) {
+    defPath = path.join(process.env.PUB, 'img-album.svg');
+  }
+  return defPath;
+}
+
 let defaultAlbumPicBuffer: BufferResponse | null = null;
 let defaultAlbumPicUri: string | null = null;
 
 export async function GetDefaultAlbumPicBuffer(): Promise<BufferResponse> {
   if (!defaultAlbumPicBuffer) {
     defaultAlbumPicBuffer = {
-      data: await fs.readFile(defaultAlbumPicPath),
+      data: await fs.readFile(defaultAlbumPicPath()),
       mimeType: 'image/svg+xml',
     };
   }

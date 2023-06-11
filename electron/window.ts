@@ -45,9 +45,9 @@ export async function CreateWindow(
       contextIsolation: false,
     },
     // While debugging, leave these commented out:
-    // frame: false,
-    // show: false,
-    // autoHideMenuBar: true,
+    frame: false,
+    show: false,
+    autoHideMenuBar: true,
     minWidth: 270,
     minHeight: 308,
     /*

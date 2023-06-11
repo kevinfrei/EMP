@@ -17,7 +17,7 @@ declare namespace NodeJS {
      */
     DIST: string;
     /** /dist/ or /public/ */
-    PUBLIC: string;
+    PUB: string;
     /** Potentially a server URL override */
     VITE_DEV_SERVER_URL?: string;
   }

@@ -21,7 +21,9 @@ export default defineConfig({
         },
       },
     ]),
-    renderer(),
+    renderer({
+      resolve: { module: { type: 'esm' } },
+    }),
   ],
   build: {
     minify: false,
