@@ -47,9 +47,9 @@ export async function CreateWindow(
       webSecurity: !isDev,
       contextIsolation: false,
     },
-    frame: false,
-    show: false,
-    autoHideMenuBar: true,
+    // frame: false,
+    // show: false,
+    // autoHideMenuBar: true,
     minWidth: 270,
     minHeight: 308,
     /*

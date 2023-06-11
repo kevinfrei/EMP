@@ -10,7 +10,7 @@ import {
   isUndefined,
 } from '@freik/typechk';
 import debug from 'debug';
-import { Menu } from 'electron/main';
+import { Menu } from 'electron';
 import { IpcId, isIgnoreItemFn, isXcodeInfo } from 'shared';
 import {
   AddIgnoreItem,

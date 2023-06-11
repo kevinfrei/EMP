@@ -1,4 +1,5 @@
 /node_modules
 src/**/*.d.ts
 static/**/*.d.ts
+electron/**/*.d.ts
 shared/**/*

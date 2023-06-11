@@ -6,21 +6,20 @@
     "module": "esnext",
     "sourceMap": true,
     "strict": true,
-    "incremental": true,
-    "tsBuildInfoFile": ".tsweb.tsbuildinfo",
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "bundler",
     "forceConsistentCasingInFileNames": true,
     "lib": ["dom", "dom.iterable", "es2021"],
     "allowJs": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
+    "useDefineForClassFields": true,
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src", "electron", "renderer", "vite.config.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
