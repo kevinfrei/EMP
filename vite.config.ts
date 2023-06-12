@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import path from 'path';
 import { defineConfig } from 'vite';
 import electron from 'vite-plugin-electron';
 import renderer from 'vite-plugin-electron-renderer';
@@ -27,5 +28,11 @@ export default defineConfig({
   ],
   build: {
     minify: false,
+    rollupOptions: {
+      input: {
+        index: path.join(__dirname, 'index.html'),
+        about: path.join(__dirname, 'about.html'),
+      },
+    },
   },
 });

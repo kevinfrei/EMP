@@ -1,9 +1,10 @@
 import { isUndefined } from '@freik/typechk';
 import debug from 'debug';
 import { BrowserWindow, shell } from 'electron';
-import isDev from 'electron-is-dev';
+import { promises as fsp } from 'fs';
 
 const err = debug('EMP:main:about');
+err.enabled = true;
 
 let aboutWindow: BrowserWindow | undefined;
 
@@ -12,7 +13,6 @@ export function ShowAbout(): void {
     aboutWindow = new BrowserWindow({
       title: 'About EMP',
       webPreferences: { nodeIntegration: false, contextIsolation: true },
-      show: false,
       alwaysOnTop: true,
       center: true,
       fullscreenable: false,
@@ -30,15 +30,15 @@ export function ShowAbout(): void {
     })
       .on('ready-to-show', () => {
         if (aboutWindow) {
-          aboutWindow.show();
           aboutWindow.focus();
+          aboutWindow.webContents.openDevTools();
         }
       })
       .on('closed', () => {
         aboutWindow = undefined;
       });
     aboutWindow.webContents.on('will-navigate', function (e, url) {
-      /* If url isn't the actual page */
+      // If url isn't the actual page
       if (url !== aboutWindow?.webContents.getURL()) {
         e.preventDefault();
         shell.openExternal(url).catch(err);
@@ -46,11 +46,13 @@ export function ShowAbout(): void {
     });
     aboutWindow.removeMenu();
   }
-  aboutWindow
-    .loadURL(
-      isDev
-        ? 'http://localhost:3000/about.html'
-        : `file://${__dirname}/../about.html`,
-    )
-    .catch(err);
+  lookAround().catch(err);
+  aboutWindow.loadURL('about.html').catch(err);
+}
+
+async function lookAround() {
+  const vals = await fsp.readdir(__dirname);
+  for (const val of vals) {
+    err(val);
+  }
 }

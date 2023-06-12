@@ -4908,6 +4908,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@freik/typechk@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@freik/typechk@npm:0.2.0"
+  checksum: f7239221e7a7c005784d49fe274343e34048f5d84122322adacb4ac42bedc4c096474df65e52a8f99cfab9c046d0831e658681c3ff56317e44a413fa60423adf
+  languageName: node
+  linkType: hard
+
 "@freik/web-utils@npm:^0.5.2":
   version: 0.5.2
   resolution: "@freik/web-utils@npm:0.5.2"
@@ -11021,7 +11028,7 @@ __metadata:
     "@freik/p-limit": ^5.0.0
     "@freik/sync": ^0.1.0
     "@freik/text": ^0.2.0
-    "@freik/typechk": ^0.1.0
+    "@freik/typechk": ^0.2.0
     "@freik/web-utils": ^0.5.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0
@@ -19787,10 +19794,10 @@ __metadata:
 
 "shared@file:./shared#./shared::hash=26fecf&locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=d18439&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=628b02&locator=emp%40workspace%3A."
   dependencies:
     "@freik/typechk": ^0.1.0
-  checksum: 9f9a9c9658d9513f1e7fb19b51de849bb2890f01d32887955de941a6acada205f402ab8bf032c6ed9e49ab00f27cd45f5961b670e3117781e86c92bb3a936ddf
+  checksum: 61283af13afaf51916e7e0b2a589742f78db219284571f241df8af1785b04a9f1ade98b664434df7e7d77d8e4b758b5055912fef56cf0a2e9a82e1832a1b7ac0
   languageName: node
   linkType: hard
 

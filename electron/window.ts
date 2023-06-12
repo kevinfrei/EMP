@@ -8,9 +8,9 @@ import debug from 'debug';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
+  app,
   screen,
 } from 'electron';
-import isDev from 'electron-is-dev';
 import * as path from 'path';
 import process from 'process';
 import { OnWindowCreated } from './electronSetup';
@@ -41,10 +41,9 @@ export async function CreateWindow(
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
-      webSecurity: !isDev,
+      webSecurity: app.isPackaged,
       contextIsolation: false,
     },
-    // While debugging, leave these commented out:
     frame: false,
     show: false,
     autoHideMenuBar: true,
@@ -72,11 +71,15 @@ export async function CreateWindow(
         mainWindow.maximize();
       }
       // Call the user specified "ready to go" function
-      windowCreated().catch(err);
-      // open the devtools
-      if (isDev) {
-        mainWindow.webContents.openDevTools();
-      }
+      windowCreated()
+        .then(() => {
+          // open the devtools
+          if (!app.isPackaged) {
+            err('Opening dev tools...');
+            mainWindow?.webContents.openDevTools();
+          }
+        })
+        .catch(err);
     }
   });
 
@@ -96,8 +99,6 @@ export async function CreateWindow(
   } else {
     await mainWindow.loadFile(path.join(process.env.DIST, 'index.html'));
   }
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
 }
 
 let prevWidth = 0;

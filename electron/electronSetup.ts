@@ -8,8 +8,9 @@ app.commandLine.appendSwitch('disable-http-cache');
 
 export type OnWindowCreated = () => Promise<void>;
 
-const log = debug('EMP:main:electronSetup:log');
+// const log = debug('EMP:main:electronSetup:log');
 const err = debug('EMP:main:electronSetup:error');
+err.enabled = true;
 
 /*
 

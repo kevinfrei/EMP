@@ -20,6 +20,12 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src", "electron", "renderer", "vite.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "electron/**/*.ts",
+    "renderer/*.ts",
+    "vite.config.ts"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
