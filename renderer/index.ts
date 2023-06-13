@@ -6,11 +6,10 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 import { ElectronWindow } from '@freik/elect-render-utils';
-import debug from 'debug';
-import { clipboard, ipcRenderer } from 'electron';
+import { MakeLog } from '@freik/logger';
+import { clipboard, contextBridge, ipcRenderer } from 'electron';
 
-const err = debug('@freik/electron-renderer:error');
-err.enabled = true;
+const { wrn } = MakeLog('renderer');
 
 // This needs to stay in sync with the @freik/elect-render-utils type
 // The presence of the Electron.Clipboard item is a little problematic
@@ -44,7 +43,7 @@ function InitRender(): void {
     if (window.initApp) {
       window.initApp();
     } else {
-      err('FAILURE: No window.initApp() attached.');
+      wrn('FAILURE: No window.initApp() attached.');
     }
   });
 }
@@ -74,9 +73,20 @@ function getHostOs(): 'mac' | 'win' | 'lin' | 'unk' {
   }
   return 'unk';
 }
-
-window.electronConnector = {
-  ipc: ipcRenderer,
-  hostOs: getHostOs(),
-  clipboard,
-};
+if (process.contextIsolated) {
+  try {
+    contextBridge.exposeInMainWorld('electronConnector', {
+      ipc: ipcRenderer,
+      hostOs: getHostOs(),
+      clipboard,
+    });
+  } catch (e) {
+    wrn(e);
+  }
+} else {
+  window.electronConnector = {
+    ipc: ipcRenderer,
+    hostOs: getHostOs(),
+    clipboard,
+  };
+}
