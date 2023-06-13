@@ -14,7 +14,7 @@ import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
-const { log } = MakeLog('EMP:main:protocols');
+const { log, wrn } = MakeLog('EMP:main:protocols');
 
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
@@ -119,6 +119,7 @@ export async function RegisterProtocols(): Promise<void> {
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
+  log('Registering pic://key/ protocol');
   Comms.registerProtocolHandler(
     'pic://key/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -126,12 +127,14 @@ export async function RegisterProtocols(): Promise<void> {
     PictureHandler,
     defPicBuffer,
   );
+  log('Registering tune://song/ protocol');
   Comms.registerProtocolHandler(
     'tune://song/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerFileProtocol,
     tuneProtocolHandler,
   );
+  log('Finished protocol registration');
 }
 
 // This sets up reactive responses to changes, for example:

@@ -285,8 +285,8 @@ export async function PictureHandler(
       return d;
     }
   } catch (error) {
-    log(`Error while trying to get picture for ${id}`);
-    log(error);
+    wrn(`Error while trying to get picture for ${id}`);
+    wrn(error);
   }
   return isArtistKey(id)
     ? GetDefaultArtistPicBuffer()

@@ -16,10 +16,10 @@ const { wrn } = MakeLog('EMP:main:electronSetup');
 // │ │ └── preload.js
 // │
 
-process.env.DIST = path.join(__dirname, '../dist');
+process.env.DIST = path.join(__dirname, '..', 'dist');
 process.env.PUB = app.isPackaged
   ? process.env.DIST
-  : path.join(process.env.DIST, '../public');
+  : path.join(__dirname, '..', 'public');
 /*
 let win: BrowserWindow | null;
 // Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x

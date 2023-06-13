@@ -1,6 +1,7 @@
 import { Persistence } from '@freik/elect-main-utils';
 import { MakeLog } from '@freik/logger';
 import { isString } from '@freik/typechk';
+import { app } from 'electron';
 import { UpdateLocations } from './AudioDatabase';
 import { CommsSetup } from './Communication';
 import { RegisterListeners, RegisterProtocols } from './protocols';
@@ -12,7 +13,7 @@ const { wrn } = MakeLog('EMP:main:Startup');
  */
 export function InitBeforeAnythingElse(): void {
   CommsSetup();
-  RegisterProtocols().catch(wrn);
+  app.whenReady().then(RegisterProtocols).catch(wrn);
   RegisterListeners();
 }
 

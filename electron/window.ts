@@ -74,7 +74,6 @@ export async function CreateWindow(
         .then(() => {
           // open the devtools
           if (!app.isPackaged) {
-            log('Opening dev tools...');
             mainWindow?.webContents.openDevTools();
           }
         })
