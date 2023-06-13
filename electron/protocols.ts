@@ -70,13 +70,20 @@ export async function GetDefaultAlbumPicUri(): Promise<string> {
   return asString(defaultAlbumPicUri, '');
 }
 
-const defaultArtistPicPath = path.join(__dirname, '..', 'img-artist.svg');
+let defArtist: string | null = null;
+function defaultArtistPicPath() {
+  if (!defArtist) {
+    defArtist = path.join(process.env.PUB, 'img-artist.svg');
+  }
+  return defArtist;
+}
+
 let defaultArtistPicBuffer: BufferResponse | null = null;
 
 export async function GetDefaultArtistPicBuffer(): Promise<BufferResponse> {
   if (!defaultArtistPicBuffer) {
     defaultArtistPicBuffer = {
-      data: await fs.readFile(defaultArtistPicPath),
+      data: await fs.readFile(defaultArtistPicPath()),
       mimeType: 'image/svg+xml',
     };
   }

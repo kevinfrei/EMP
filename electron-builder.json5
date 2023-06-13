@@ -9,6 +9,9 @@
   directories: {
     output: 'release/${version}',
   },
+  extraMetadata: {
+    main: 'dist-electron/main.js',
+  },
   fileAssociations: {
     ext: ['mp3', 'm4a', 'aac', 'flac', 'wma'],
     description: 'Audio files',

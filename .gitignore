@@ -19,6 +19,7 @@
 # production
 /build
 /dist
+/release
 /public/main
 /public/**/*.js
 /**/*.js.map

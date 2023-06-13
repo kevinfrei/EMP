@@ -1,7 +1,7 @@
 import { MakeLog } from '@freik/logger';
 import { isUndefined } from '@freik/typechk';
 import { BrowserWindow, shell } from 'electron';
-import { promises as fsp } from 'fs';
+import path from 'path';
 
 const { wrn } = MakeLog('EMP:main:about');
 
@@ -18,7 +18,7 @@ export function ShowAbout(): void {
       maximizable: false,
       minimizable: false,
       modal: true,
-      resizable: false,
+      resizable: true,
       skipTaskbar: true,
       minWidth: 400,
       maxWidth: 400,
@@ -30,7 +30,6 @@ export function ShowAbout(): void {
       .on('ready-to-show', () => {
         if (aboutWindow) {
           aboutWindow.focus();
-          aboutWindow.webContents.openDevTools();
         }
       })
       .on('closed', () => {
@@ -45,13 +44,14 @@ export function ShowAbout(): void {
     });
     aboutWindow.removeMenu();
   }
-  lookAround().catch(wrn);
-  aboutWindow.loadURL('about.html').catch(wrn);
-}
-
-async function lookAround() {
-  const vals = await fsp.readdir(__dirname);
-  for (const val of vals) {
-    wrn(val);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    wrn(
+      `Loading "${process.env.VITE_DEV_SERVER_URL}about.html" from server...`,
+    );
+    aboutWindow
+      .loadURL(`${process.env.VITE_DEV_SERVER_URL}about.html`)
+      .catch(wrn);
+  } else {
+    aboutWindow.loadFile(path.join(process.env.DIST, 'about.html')).catch(wrn);
   }
 }
