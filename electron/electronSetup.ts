@@ -1,16 +1,14 @@
-import debug from 'debug';
+import { MakeLog } from '@freik/logger';
 import { app } from 'electron';
 import isDev from 'electron-is-dev';
 import { MakeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
 
+const { wrn } = MakeLog('EMP:main:electronSetup');
+
 app.commandLine.appendSwitch('disable-http-cache');
 
 export type OnWindowCreated = () => Promise<void>;
-
-// const log = debug('EMP:main:electronSetup:log');
-const err = debug('EMP:main:electronSetup:error');
-err.enabled = true;
 
 /*
 
@@ -69,7 +67,7 @@ export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (!HasWindow()) {
-        CreateWindow(windowCreated).catch(err);
+        CreateWindow(windowCreated).catch(wrn);
       }
     });
   //    .on('will-quit', unregisterGlobalShortcuts);

@@ -1,9 +1,9 @@
+import { MakeLog } from '@freik/logger';
 import {
   MyTransactionInterface,
   onRejected,
   useMyTransaction,
 } from '@freik/web-utils';
-import debug from 'debug';
 import { ForwardedRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Keys } from 'shared';
@@ -19,8 +19,7 @@ import { isMutableRefObject } from '../Tools';
 import { GetHelperText } from './Utilities';
 import './styles/PlaybackControls.css';
 
-const log = debug('EMP:render:SongControls:log');
-const err = debug('EMP:render:SongControls:error');
+const { log, err } = MakeLog('EMP:render:SongControls');
 
 export function onClickPlayPause(
   { set }: MyTransactionInterface,

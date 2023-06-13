@@ -3,8 +3,8 @@ import {
   LoadWindowPos,
   setMainWindow,
 } from '@freik/elect-main-utils';
+import { MakeLog } from '@freik/logger';
 import { isNumber } from '@freik/typechk';
-import debug from 'debug';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
@@ -15,12 +15,11 @@ import * as path from 'path';
 import process from 'process';
 import { OnWindowCreated } from './electronSetup';
 
+const { log, wrn } = MakeLog('EMP:main:window');
+
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)
 // which is the entire reason for this module's existence.
-
-const err = debug('EMP:main:window:error');
-err.enabled = true;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -75,11 +74,11 @@ export async function CreateWindow(
         .then(() => {
           // open the devtools
           if (!app.isPackaged) {
-            err('Opening dev tools...');
+            log('Opening dev tools...');
             mainWindow?.webContents.openDevTools();
           }
         })
-        .catch(err);
+        .catch(wrn);
     }
   });
 

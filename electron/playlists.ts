@@ -1,4 +1,5 @@
 import { ArraySetEqual } from '@freik/helpers';
+import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import { Sleep } from '@freik/sync';
 import { FromPathSafeName, ToPathSafeName } from '@freik/text';
@@ -8,14 +9,12 @@ import {
   isString,
   typecheck,
 } from '@freik/typechk';
-import debug from 'debug';
 import { app } from 'electron';
 import { promises as fsp } from 'fs';
 import path from 'path';
 import { GetAudioDB } from './AudioDatabase.js';
 
-const log = debug('EMP:main:playlists:log');
-const err = debug('EMP:main:playlists:error');
+const { log, wrn } = MakeLog('EMP:main:playlists');
 
 function playlistDir(): string {
   return path.join(app.getPath('userData'), 'playlists');
@@ -38,10 +37,10 @@ export async function RenamePlaylist([curName, newName]: [
     await fsp.rename(playlistPath(curName), playlistPath(newName));
     log('Renamed successfully:');
   } catch (e) {
-    err('Unable to rename playlist:');
-    err(curName);
-    err(newName);
-    err(e);
+    wrn('Unable to rename playlist:');
+    wrn(curName);
+    wrn(newName);
+    wrn(e);
   }
 }
 
@@ -53,9 +52,9 @@ export async function DeletePlaylist(data: string): Promise<void> {
     log('Deleted successfully:');
     log(data);
   } catch (e) {
-    err('Unable to delete playlist:');
-    err(data);
-    err(e);
+    wrn('Unable to delete playlist:');
+    wrn(data);
+    wrn(e);
   }
 }
 
@@ -67,14 +66,14 @@ export async function GetPlaylists(): Promise<string[]> {
     log(res);
     return res.map(playlistName);
   } catch (e) {
-    err('Error while reading playlists:');
-    err(e);
+    wrn('Error while reading playlists:');
+    wrn(e);
   }
   try {
     await fsp.mkdir(playlistDir());
   } catch (e) {
-    err('Errow while trying to create the playlist dir');
-    err(e);
+    wrn('Errow while trying to create the playlist dir');
+    wrn(e);
   }
   return [];
 }
@@ -101,9 +100,9 @@ export async function SavePlaylist(data: PlaylistSaveData): Promise<void> {
       await toDiskFormat(data.songs),
     );
   } catch (e) {
-    err('Error while saving playlist:');
-    err(data);
-    err(e);
+    wrn('Error while saving playlist:');
+    wrn(data);
+    wrn(e);
   }
 }
 
@@ -113,9 +112,9 @@ export async function LoadPlaylist(data: string): Promise<string[]> {
     const vals = await fsp.readFile(playlistPath(data), 'utf-8');
     return await fromDiskFormat(vals);
   } catch (e) {
-    err('Error while loading playlist:');
-    err(data);
-    err(e);
+    wrn('Error while loading playlist:');
+    wrn(data);
+    wrn(e);
   }
   return [];
 }
@@ -125,7 +124,7 @@ export async function CheckPlaylists(names: string[]): Promise<void> {
   if (ArraySetEqual<string>(names, await GetPlaylists())) {
     log("They're equal");
   } else {
-    err('NOT equal :/');
+    wrn('NOT equal :/');
   }
   return;
 }

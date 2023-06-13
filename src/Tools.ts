@@ -1,10 +1,10 @@
 // This is for getting at "global" stuff from the window object
+import { MakeLog } from '@freik/logger';
 import { PlaylistName } from '@freik/media-core';
 import { hasField, isObjectNonNull, isString } from '@freik/typechk';
-import debug from 'debug';
 import { ForwardedRef, MutableRefObject } from 'react';
 
-const log = debug('EMP:render:Tools');
+const { log } = MakeLog('EMP:render:Tools');
 
 /*
  * Searching

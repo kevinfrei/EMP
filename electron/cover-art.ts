@@ -1,5 +1,6 @@
 import { AudioDatabase } from '@freik/audiodb';
 import { Persistence } from '@freik/elect-main-utils';
+import { MakeLog } from '@freik/logger';
 import {
   Album,
   AlbumKey,
@@ -23,7 +24,6 @@ import {
   isSetOfString,
 } from '@freik/typechk';
 import albumArt from 'album-art';
-import debug from 'debug';
 import { ProtocolRequest } from 'electron';
 import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
@@ -37,8 +37,7 @@ import {
   GetDefaultArtistPicBuffer,
 } from './protocols';
 
-const log = debug('EMP:main:cover-art:log');
-const err = debug('EMP:main:cover-art:err');
+const { log, wrn } = MakeLog('EMP:main:cover-art');
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadAlbumArtwork')) === 'true';
@@ -212,7 +211,7 @@ async function tryToDownloadAlbumCover(
             await SavePicForAlbum(db, album, data);
             return data;
           } catch (e) {
-            err(e);
+            wrn(e);
           }
         }
       }
@@ -238,7 +237,7 @@ async function tryToDownloadArtistImage(
           await SavePicForArtist(db, artist, data);
           return data;
         } catch (e) {
-          err(e);
+          wrn(e);
         }
       }
     }
@@ -320,8 +319,8 @@ async function SavePicForAlbum(
           await FileUtil.hideFile(albumPath);
         }
       } catch (e) {
-        err('Saving picture failed :(');
-        err(e);
+        wrn('Saving picture failed :(');
+        wrn(e);
       }
     }
   } else {
@@ -395,8 +394,8 @@ export async function GetPicDataUri(data: string): Promise<string> {
       return await getDataUri(d.data);
     }
   } catch (e) {
-    err('GetPicDataUri error:');
-    err(e);
+    wrn('GetPicDataUri error:');
+    wrn(e);
   }
   return GetDefaultAlbumPicUri();
 }

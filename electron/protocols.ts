@@ -1,4 +1,5 @@
 import { Comms, Persistence } from '@freik/elect-main-utils';
+import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import {
   asString,
@@ -7,17 +8,16 @@ import {
   hasStrField,
   isFunction,
 } from '@freik/typechk';
-import debug from 'debug';
 import { ProtocolRequest, ProtocolResponse, protocol } from 'electron';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
+const { log } = MakeLog('EMP:main:protocols');
+
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
-
-const log = debug('EMP:main:protocols');
 
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],

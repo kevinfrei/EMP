@@ -10,6 +10,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { Util } from '@freik/elect-render-utils';
+import { MakeLog } from '@freik/logger';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { isArrayOfString, isString } from '@freik/typechk';
 import {
@@ -18,7 +19,6 @@ import {
   onRejected,
   useMyTransaction,
 } from '@freik/web-utils';
-import debug from 'debug';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { StrId, st } from 'shared';
@@ -38,8 +38,7 @@ import {
 } from '../../Recoil/ReadOnly';
 import { SetMediaInfo } from '../../ipc';
 
-const log = debug('EMP:render:MetadataEditor:log');
-const err = debug('EMP:render:MetadataEditor:error'); // eslint-disable-line
+const { log } = MakeLog('EMP:render:MetadataEditor');
 
 export type MetadataProps = {
   forSong?: SongKey;

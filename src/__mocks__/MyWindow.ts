@@ -2,13 +2,12 @@
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { ElectronWindow } from '@freik/elect-render-utils';
+import { MakeLog } from '@freik/logger';
 import { is2TupleOf, isString } from '@freik/typechk';
-import debug from 'debug';
 import { IpcRenderer } from 'electron';
 import { IpcId } from 'shared';
 
-const log = debug('EMP:render:MyWindow-mock:log');
-const err = debug('EMP:render:MyWindow-mock:error');
+const { log, wrn } = MakeLog('EMP:render:MyWindow-mock');
 
 interface MyWindow extends ElectronWindow {
   searchBox?: ISearchBox | null;
@@ -102,8 +101,8 @@ const fakeStorage: Map<string, string> = new Map<string, string>([
 function MockWrite(key: string, value: string): Promise<void> {
   return new Promise((resolve) => {
     fakeStorage.set(key, value);
-    err('Saved!');
-    err(key);
+    wrn('Saved!');
+    wrn(key);
     resolve();
   });
 }
@@ -171,8 +170,8 @@ export async function InvokeMain<T>(
       // The google image:
       return 'https://play-lh.googleusercontent.com/1-hPxafOxdYpYZEOKzNIkSP43HXCNftVJVttoo4ucl7rsMASXW3Xr6GlXURCubE1tA=w7680-h4320-rw';
   }
-  err(`Unabled to deal with '${channel}' for testing. Key:`);
-  err(key);
+  wrn(`Unabled to deal with '${channel}' for testing. Key:`);
+  wrn(key);
 }
 
 export async function CallMain<R, T>(
@@ -184,7 +183,7 @@ export async function CallMain<R, T>(
   if (typecheck(result)) {
     return result;
   }
-  err(
+  wrn(
     `CallMain(${channel}, <T>, ${typecheck.name}(...)) result failed typecheck`,
     result,
   );

@@ -1,10 +1,9 @@
+import { MakeLog } from '@freik/logger';
 import { isUndefined } from '@freik/typechk';
-import debug from 'debug';
 import { BrowserWindow, shell } from 'electron';
 import { promises as fsp } from 'fs';
 
-const err = debug('EMP:main:about');
-err.enabled = true;
+const { wrn } = MakeLog('EMP:main:about');
 
 let aboutWindow: BrowserWindow | undefined;
 
@@ -41,18 +40,18 @@ export function ShowAbout(): void {
       // If url isn't the actual page
       if (url !== aboutWindow?.webContents.getURL()) {
         e.preventDefault();
-        shell.openExternal(url).catch(err);
+        shell.openExternal(url).catch(wrn);
       }
     });
     aboutWindow.removeMenu();
   }
-  lookAround().catch(err);
-  aboutWindow.loadURL('about.html').catch(err);
+  lookAround().catch(wrn);
+  aboutWindow.loadURL('about.html').catch(wrn);
 }
 
 async function lookAround() {
   const vals = await fsp.readdir(__dirname);
   for (const val of vals) {
-    err(val);
+    wrn(val);
   }
 }

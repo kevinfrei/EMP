@@ -8,7 +8,6 @@ import {
   SongKey,
 } from '@freik/media-core';
 import type { MyTransactionInterface } from '@freik/web-utils';
-import debug from 'debug';
 import { IpcId } from 'shared';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
@@ -33,7 +32,7 @@ import {
   songPlaybackOrderState,
 } from './SongPlaying';
 
-const err = debug('EMP:render:api:err'); // eslint-disable-line
+// const { err, log } = MakeLog('EMP:render:api');
 
 /**
  * Try to play the next song in the playlist

@@ -55,7 +55,6 @@
     "@freik/typechk": "^0.2.0",
     "@freik/web-utils": "^0.5.2",
     "album-art": "^3.1.0",
-    "debug": "^4.3.4",
     "electron-is-dev": "^2.0.0",
     "jimp": "^0.22.8",
     "open": "^9.1.0",

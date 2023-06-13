@@ -1,11 +1,10 @@
-import debug from 'debug';
+import { MakeLog } from '@freik/logger';
 import { app } from 'electron';
 import path from 'node:path';
 import { InitBeforeAnythingElse, WindowStartup } from './Startup';
 import { StartApp } from './electronSetup';
 
-const err = debug('EMP:main:electron');
-err.enabled = true;
+const { wrn } = MakeLog('EMP:main:electronSetup');
 
 // The built directory structure
 //
@@ -45,10 +44,10 @@ function createWindow() {
   });
 
   if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL).catch(err);
+    win.loadURL(VITE_DEV_SERVER_URL).catch(wrn);
   } else {
     // win.loadFile('dist/index.html')
-    win.loadFile(path.join(process.env.DIST, 'index.html')).catch(err);
+    win.loadFile(path.join(process.env.DIST, 'index.html')).catch(wrn);
   }
 }
 
@@ -56,7 +55,7 @@ app.on('window-all-closed', () => {
   win = null;
 });
 
-app.whenReady().then(createWindow).catch(err);
+app.whenReady().then(createWindow).catch(wrn);
 */
 
 // This is the entry point for the electron main process.
@@ -67,4 +66,4 @@ app.whenReady().then(createWindow).catch(err);
 
 InitBeforeAnythingElse();
 
-StartApp(WindowStartup).catch(err);
+StartApp(WindowStartup).catch(wrn);

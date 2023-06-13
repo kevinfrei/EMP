@@ -2,12 +2,12 @@
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { ElectronWindow, Ipc } from '@freik/elect-render-utils';
+import { MakeLog } from '@freik/logger';
 import { AlbumKey, SongKey } from '@freik/media-core';
-import debug from 'debug';
 import { NativeImage } from 'electron';
 import { IpcId } from 'shared';
 
-const log = debug('EMP:render:MyWindow');
+const { log } = MakeLog('EMP:render:MyWindow');
 
 /*
  * "Window" stuff goes here

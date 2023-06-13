@@ -1,6 +1,6 @@
+import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
-import debug from 'debug';
 import { ForwardedRef } from 'react';
 import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
@@ -18,8 +18,7 @@ import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
 
-const log = debug('EMP:render:MenuHandler:log'); // eslint-disable-line
-const err = debug('EMP:render:MenuHandler:error'); // eslint-disable-line
+const { wrn, log } = MakeLog('EMP:render:MenuHandler');
 
 function updateTime({ set, get }: MyTransactionInterface, offset: number) {
   const curTime = get(mediaTimeState);
@@ -119,24 +118,24 @@ export function MenuHandler(
               theView = CurrentView.tools;
               break;
             default:
-              err('Invalid view selection: ' + message.select);
+              wrn('Invalid view selection: ' + message.select);
               break;
           }
           if (theView !== CurrentView.none) {
             xact.set(curViewFunc, theView);
           }
         } else {
-          err('Invalid view menu message:');
-          err(message);
+          wrn('Invalid view menu message:');
+          wrn(message);
         }
         break;
       default:
-        err('Unknown menu message:');
-        err(message);
+        wrn('Unknown menu message:');
+        wrn(message);
         break;
     }
   } else {
-    err('Malformed menu message:');
-    err(message);
+    wrn('Malformed menu message:');
+    wrn(message);
   }
 }

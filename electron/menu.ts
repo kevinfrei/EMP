@@ -1,6 +1,5 @@
 import { Persistence } from '@freik/elect-main-utils';
 import { isFunction, isString } from '@freik/typechk';
-import debug from 'debug';
 import {
   BrowserWindow,
   Menu,
@@ -16,7 +15,7 @@ import { ShowAbout } from './About.js';
 import { SendToUI } from './Communication.js';
 import { ToggleMiniPlayer } from './window.js';
 
-const err = debug('EMP:main:menu:error'); // eslint-disable-line
+// const { wrn } = MakeLog('EMP:main:menu');
 
 type ClickHandler = (
   mnu: MenuItem,
