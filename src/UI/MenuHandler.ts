@@ -19,6 +19,7 @@ import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
 
 const { wrn, log } = MakeLog('EMP:render:MenuHandler');
+log.enabled = true;
 
 function updateTime({ set, get }: MyTransactionInterface, offset: number) {
   const curTime = get(mediaTimeState);
@@ -38,8 +39,8 @@ export function MenuHandler(
   message: unknown,
   audioRef: ForwardedRef<HTMLAudioElement>,
 ): void {
-  log('Menu command:');
-  log(message);
+  wrn('Menu command:', message);
+  log('Menu command:', message);
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
   if (hasStrField(message, 'state')) {
     switch (message.state) {

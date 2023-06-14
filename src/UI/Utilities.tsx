@@ -97,6 +97,7 @@ function MediaAndMenuListeners({
   audioRef: ForwardedRef<HTMLAudioElement>;
 }): JSX.Element {
   /* Menu handlers coming from the Main process */
+  wrn('MenuAndMenuListers');
   const menuCallback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data, audioRef),
   );

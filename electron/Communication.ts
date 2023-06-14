@@ -54,7 +54,8 @@ import {
   RestoreWindow,
 } from './window';
 
-const { wrn } = MakeLog('EMP:main:Communication');
+const { wrn, log } = MakeLog('EMP:main:Communication');
+log.enabled = true;
 
 /**
  * Show a file in the shell
@@ -191,5 +192,7 @@ export function CommsSetup(): void {
 export function SendToUI(name: IpcId, data: unknown) {
   const obj: { [key: string]: unknown } = {};
   obj[name] = data;
+  log(`Sending ${name} with data:`);
+  log(data);
   Comms.AsyncSend(obj);
 }
