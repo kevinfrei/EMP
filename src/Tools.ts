@@ -1,7 +1,8 @@
 // This is for getting at "global" stuff from the window object
 import { PlaylistName } from '@freik/media-core';
-import { isString } from '@freik/typechk';
+import { hasField, isObjectNonNull, isString } from '@freik/typechk';
 import debug from 'debug';
+import { ForwardedRef, MutableRefObject } from 'react';
 
 const log = debug('EMP:render:Tools');
 
@@ -103,4 +104,14 @@ export function divGrand(val: string): string {
   flt = flt.replace(/0+$/g, '');
   flt = flt.replace(/\.$/, '');
   return flt;
+}
+
+export function isMutableRefObject<T>(
+  ref: ForwardedRef<T>,
+): ref is MutableRefObject<T> {
+  return (
+    isObjectNonNull(ref) &&
+    hasField(ref, 'current') &&
+    isObjectNonNull(ref.current)
+  );
 }
