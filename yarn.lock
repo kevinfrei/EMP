@@ -4504,9 +4504,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react@npm:^8.110.2":
-  version: 8.110.2
-  resolution: "@fluentui/react@npm:8.110.2"
+"@fluentui/react@npm:^8.110.3":
+  version: 8.110.3
+  resolution: "@fluentui/react@npm:8.110.3"
   dependencies:
     "@fluentui/date-time-utilities": ^8.5.12
     "@fluentui/font-icons-mdl2": ^8.5.21
@@ -4527,7 +4527,7 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: c8b77bf4bd38d08716f4e4e88fa693a23ce5a80949213cfb83679f234b40795e34a531befaf2c16136f8d2bf12d4087d447e6e6feae7a308b3356904dea73a6f
+  checksum: ab594ee5b56f9121402ec46c250468e349e7f13fdcfeeb5e891ef9327604752ef8a90600af7b7aa9b1068b4a309637041b6caaf1b369bd57849e1ef73cc99b3b
   languageName: node
   linkType: hard
 
@@ -4790,12 +4790,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/logger@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@freik/logger@npm:0.1.0"
+"@freik/logger@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@freik/logger@npm:0.2.0"
   dependencies:
     debug: ^4.3.4
-  checksum: 76090df9b5171019d04237b210be5f1cd2fa8eb588129ceab8b98dff4d9245bb31db5833d5567ddc6b3cd88727e23bc7f1245842993875592e4d87f903866b44
+  checksum: 9e62f6f6ecf1d4bbd3d71e0fcba3da7f5c8fbf541e145f57c605042ba5949f0dd0157504a00c90ca0737f73e7e6969f9b464041156da8f7cb79cec30a1239879
   languageName: node
   linkType: hard
 
@@ -7171,14 +7171,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17.0.61":
-  version: 17.0.61
-  resolution: "@types/react@npm:17.0.61"
+"@types/react@npm:^17.0.62":
+  version: 17.0.62
+  resolution: "@types/react@npm:17.0.62"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 73fa034c3a9f52f71a33f1bf55d12e1571b0df57b5e65cf6b8e9495842de03f3399121e0f496308d6679c1101e783f1614af7ac23c1228982f229819379b1b7f
+  checksum: 428a5aff44824ef504e9a9259b5894fe44a5db1c344b536990f07e132900ff5b34cbef0be77a84f30f37be1f88fc8b56dce328f568de8d65de3bfe414c05b2e1
   languageName: node
   linkType: hard
 
@@ -11084,7 +11084,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "emp@workspace:."
   dependencies:
-    "@fluentui/react": ^8.110.2
+    "@fluentui/react": ^8.110.3
     "@fluentui/react-components": ^9.21.0
     "@fluentui/react-icons-mdl2": ^1.3.45
     "@freik/audiodb": ^0.8.2
@@ -11094,7 +11094,7 @@ __metadata:
     "@freik/elect-render-utils": ^0.5.1
     "@freik/electron-renderer": ^0.5.1
     "@freik/helpers": ^0.3.0
-    "@freik/logger": ^0.1.0
+    "@freik/logger": ^0.2.0
     "@freik/media-core": ^0.12.0
     "@freik/media-utils": ~0.14.2
     "@freik/node-utils": ~1.3.3
@@ -11109,7 +11109,7 @@ __metadata:
     "@types/electron-devtools-installer": ^2.2.2
     "@types/jest": ^29.5.2
     "@types/node": ^20.3.1
-    "@types/react": ^17.0.61
+    "@types/react": ^17.0.62
     "@types/react-dom": ^17.0.20
     "@types/react-test-renderer": ^17.0.2
     "@types/xxhashjs": ^0.2.2
@@ -19834,10 +19834,10 @@ __metadata:
 
 "shared@file:./shared#./shared::hash=26fecf&locator=emp%40workspace%3A.":
   version: 0.0.6
-  resolution: "shared@file:./shared#./shared::hash=b5b804&locator=emp%40workspace%3A."
+  resolution: "shared@file:./shared#./shared::hash=0c8680&locator=emp%40workspace%3A."
   dependencies:
     "@freik/typechk": ^0.1.0
-  checksum: cb85baca16d27bb48b6a61151a53615e4f5ad11ff7a739676e140733136ce0c60c90b41db4191607c20f4e7acf2e22caae2939ec04e7f6f02105711859165958
+  checksum: 014bf1b9e077eaa3ceec3982042e89f2264d41de6ce964e4f477def2d149d785eb47aa75b260f3644fe46301b5799ef363532ceb8023f04583fbabfa54191c87
   languageName: node
   linkType: hard
 
