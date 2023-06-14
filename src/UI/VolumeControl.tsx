@@ -2,19 +2,12 @@ import { FontIcon, Slider } from '@fluentui/react';
 import { useRecoilState } from 'recoil';
 import { isHostMac } from '../MyWindow';
 import { mutedState, volumeState } from '../Recoil/ReadWrite';
-import { GetAudioElem } from './SongPlaying';
-import './styles/VolumeControl.css';
 import { mySliderStyles } from './Utilities';
+import './styles/VolumeControl.css';
 
 export function VolumeControl(): JSX.Element {
   const [muted, setMuted] = useRecoilState(mutedState);
   const [volume, setVolume] = useRecoilState(volumeState);
-  const ae = GetAudioElem();
-
-  if (ae) {
-    ae.muted = muted;
-    ae.volume = volume * volume; // Better resolution at the lower volume
-  }
   // Make the icon reflect approximate volume
   const iconNum = Math.min(3, Math.floor(4 * (volume + 0.1))).toString();
   const cls = `volume-container-${isHostMac() ? 'mac' : 'win-linux'}`;
