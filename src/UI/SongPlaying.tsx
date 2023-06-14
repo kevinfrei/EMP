@@ -2,7 +2,7 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { useMyTransaction } from '@freik/web-utils';
 import debug from 'debug';
-import { SyntheticEvent, useEffect } from 'react';
+import { SyntheticEvent, useEffect, useRef } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { albumCoverUrlFuncFam } from '../Recoil/ImageUrls';
 import { playOrderDisplayingState } from '../Recoil/Local';
@@ -21,7 +21,12 @@ import {
   dataForSongFuncFam,
   picForKeyFam,
 } from '../Recoil/ReadOnly';
-import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
+import {
+  mutedState,
+  repeatState,
+  shuffleFunc,
+  volumeState,
+} from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
 import { SongDetailClick } from './DetailPanel/Clickers';
@@ -84,18 +89,9 @@ function MediaTimeSlider(): JSX.Element {
       min={0}
       max={1}
       disabled={songKey.length === 0}
-      step={1e-5}
+      step={1e-7}
       styles={mySliderStyles}
       onChange={(value: number) => {
-        const ae = GetAudioElem();
-        if (!ae) {
-          return;
-        }
-        const targetTime = ae.duration * value;
-        // eslint-disable-next-line id-blacklist
-        if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
-          ae.currentTime = ae.duration * value;
-        }
         setMediaTimePercent(value);
       }}
       showValue={false}
@@ -136,8 +132,12 @@ function ArtistAlbum(): JSX.Element {
 }
 
 export function SongPlaying(): JSX.Element {
+  const audioRef = useRef<HTMLAudioElement>(null);
   const songKey = useRecoilValue(currentSongKeyFunc);
   const isShuffle = useRecoilValue(shuffleFunc);
+  const isMuted = useRecoilValue(mutedState);
+  const volumeLevel = useRecoilValue(volumeState);
+  const playbackPercent = useRecoilValue(mediaTimePercentFunc);
   const onPlay = useRecoilCallback(
     ({ set }) =>
       () =>
@@ -155,9 +155,8 @@ export function SongPlaying(): JSX.Element {
     if (rep && songList.length === 1) {
       // Because we rely on auto-play, if we just try to play the same song
       // again, it won't start playing
-      const ae = GetAudioElem();
-      if (ae) {
-        void ae.play();
+      if (audioRef.current) {
+        void audioRef.current.play();
       }
     } else {
       xact.set(playingState, MaybePlayNext(xact));
@@ -184,7 +183,6 @@ export function SongPlaying(): JSX.Element {
   );
   const metadata = useRecoilValue(dataForSongFuncFam(songKey));
   const picDataUri = useRecoilValue(picForKeyFam(songKey));
-  log(picDataUri);
   useEffect(() => {
     navigator.mediaSession.metadata = new MediaMetadata({
       artist: metadata.artist,
@@ -197,8 +195,29 @@ export function SongPlaying(): JSX.Element {
       ],
     });
   }, [songKey, metadata, picDataUri]);
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volumeLevel * volumeLevel;
+    }
+  }, [audioRef, volumeLevel]);
+  // TODO: Make this effect only trigger due to user intervention
+  useEffect(() => {
+    if (audioRef.current) {
+      const targetTime = audioRef.current.duration * playbackPercent;
+      const currentTime = audioRef.current.currentTime;
+      // eslint-disable-next-line id-blacklist
+      if (
+        targetTime < Number.MAX_SAFE_INTEGER &&
+        targetTime >= 0 &&
+        Math.abs(targetTime - currentTime) > 1.5
+      ) {
+        audioRef.current.currentTime = targetTime;
+      }
+    }
+  }, [audioRef, playbackPercent]);
   const audio = (
     <audio
+      ref={audioRef}
       id="audioElement"
       autoPlay={true}
       src={songKey !== '' ? 'tune://song/' + songKey : ''}
@@ -206,6 +225,7 @@ export function SongPlaying(): JSX.Element {
       onPause={onPause}
       onEnded={onEnded}
       onTimeUpdate={onTimeUpdate}
+      muted={isMuted}
     />
   );
   const showDetail = useMyTransaction(

@@ -3,7 +3,7 @@ import { MyTransactionInterface } from '@freik/web-utils';
 import debug from 'debug';
 import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
-import { mediaTimeState } from '../Recoil/MediaPlaying';
+import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import {
   curViewFunc,
@@ -15,26 +15,22 @@ import {
 import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { onClickPlayPause } from './PlaybackControls';
-import { GetAudioElem } from './SongPlaying';
 import { addLocation } from './Views/Settings';
 
 const log = debug('EMP:render:MenuHandler:log'); // eslint-disable-line
 const err = debug('EMP:render:MenuHandler:error'); // eslint-disable-line
 
-function updateTime({ set }: MyTransactionInterface, offset: number) {
-  const ae = GetAudioElem();
-  if (!ae) {
-    return;
-  }
-  const targetTime = Math.min(
-    ae.duration,
-    Math.max(0, ae.currentTime + offset),
+function updateTime({ set, get }: MyTransactionInterface, offset: number) {
+  const curTime = get(mediaTimeState);
+  const position = Math.min(
+    curTime.duration,
+    Math.max(0, curTime.position + offset),
   );
   // eslint-disable-next-line id-blacklist
-  if (targetTime < Number.MAX_SAFE_INTEGER && targetTime >= 0) {
-    ae.currentTime = targetTime;
+  if (position < Number.MAX_SAFE_INTEGER && position >= 0) {
+    set(mediaTimeState, { position, duration: curTime.duration });
+    set(mediaTimePercentFunc, position / curTime.duration);
   }
-  set(mediaTimeState, { position: targetTime, duration: ae.duration });
 }
 
 export function MenuHandler(
