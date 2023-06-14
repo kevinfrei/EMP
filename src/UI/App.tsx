@@ -1,7 +1,7 @@
 import { IconButton, SpinnerSize } from '@fluentui/react';
 import { ElectronWireUp, Ipc } from '@freik/elect-render-utils';
 import { Spinner } from '@freik/web-utils';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 import { IpcId } from 'shared';
 import { isHostMac } from '../MyWindow';
@@ -10,10 +10,10 @@ import { SongDetailPanel } from './DetailPanel/SongDetailPanel';
 import { PlaybackControls } from './PlaybackControls';
 import { Sidebar } from './Sidebar';
 import { SongPlaying } from './SongPlaying';
-import './styles/App.css';
 import { ErrorBoundary, Utilities } from './Utilities';
 import { ViewSelector } from './Views/Selector';
 import { VolumeControl } from './VolumeControl';
+import './styles/App.css';
 
 function WindowChrome(): JSX.Element {
   const isMiniPlayer = useRecoilValue(isMiniplayerState);
@@ -65,23 +65,24 @@ function WindowChrome(): JSX.Element {
 }
 
 export function App(): JSX.Element {
+  const audioRef = useRef<HTMLAudioElement>(null);
   const lilGrabber = isHostMac() ? 'grab-mac' : 'grab-other';
   return (
     <RecoilRoot>
       <Spinner>
         <ElectronWireUp />
-        <Utilities />
+        <Utilities audioRef={audioRef} />
         <span id={lilGrabber} />
       </Spinner>
       <span id="left-column" />
       <span id="top-row" />
       <WindowChrome />
       <Spinner>
-        <PlaybackControls />
+        <PlaybackControls audioRef={audioRef} />
       </Spinner>
       <Spinner>
         <ErrorBoundary>
-          <SongPlaying />
+          <SongPlaying ref={audioRef} />
         </ErrorBoundary>
       </Spinner>
       <Spinner>

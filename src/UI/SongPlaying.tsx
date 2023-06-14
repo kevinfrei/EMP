@@ -2,7 +2,7 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { useMyTransaction } from '@freik/web-utils';
 import debug from 'debug';
-import { SyntheticEvent, useEffect, useRef } from 'react';
+import { ForwardedRef, SyntheticEvent, forwardRef, useEffect } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { albumCoverUrlFuncFam } from '../Recoil/ImageUrls';
 import { playOrderDisplayingState } from '../Recoil/Local';
@@ -29,15 +29,12 @@ import {
 } from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
+import { isMutableRefObject } from '../Tools';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import { mySliderStyles } from './Utilities';
 import './styles/SongPlaying.css';
 
 const log = debug('EMP:render:SongPlayback');
-
-export function GetAudioElem(): HTMLMediaElement | void {
-  return document.getElementById('audioElement') as HTMLMediaElement;
-}
 
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
@@ -131,137 +128,138 @@ function ArtistAlbum(): JSX.Element {
   }
 }
 
-export function SongPlaying(): JSX.Element {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const songKey = useRecoilValue(currentSongKeyFunc);
-  const isShuffle = useRecoilValue(shuffleFunc);
-  const isMuted = useRecoilValue(mutedState);
-  const volumeLevel = useRecoilValue(volumeState);
-  const playbackPercent = useRecoilValue(mediaTimePercentFunc);
-  const onPlay = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(playingState, true),
-  );
-  const onPause = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(playingState, false),
-  );
-  const onEnded = useMyTransaction((xact) => () => {
-    log('Heading to the next song!!!');
-    const songList = xact.get(songListState);
-    const rep = xact.get(repeatState);
-    if (rep && songList.length === 1) {
-      // Because we rely on auto-play, if we just try to play the same song
-      // again, it won't start playing
-      if (audioRef.current) {
-        void audioRef.current.play();
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const SongPlaying = forwardRef(
+  (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
+    const songKey = useRecoilValue(currentSongKeyFunc);
+    const isShuffle = useRecoilValue(shuffleFunc);
+    const isMuted = useRecoilValue(mutedState);
+    const volumeLevel = useRecoilValue(volumeState);
+    const playbackPercent = useRecoilValue(mediaTimePercentFunc);
+    const onPlay = useRecoilCallback(
+      ({ set }) =>
+        () =>
+          set(playingState, true),
+    );
+    const onPause = useRecoilCallback(
+      ({ set }) =>
+        () =>
+          set(playingState, false),
+    );
+    const onEnded = useMyTransaction((xact) => () => {
+      log('Heading to the next song!!!');
+      const songList = xact.get(songListState);
+      const rep = xact.get(repeatState);
+      if (rep && songList.length === 1) {
+        // Because we rely on auto-play, if we just try to play the same song
+        // again, it won't start playing
+        if (isMutableRefObject(audioRef)) {
+          void audioRef.current.play();
+        }
+      } else {
+        xact.set(playingState, MaybePlayNext(xact));
       }
-    } else {
-      xact.set(playingState, MaybePlayNext(xact));
-    }
-  });
-  const onTimeUpdate = useMyTransaction(
-    ({ set }) =>
-      (ev: SyntheticEvent<HTMLMediaElement>) => {
-        const ae = ev.currentTarget;
+    });
+    const onTimeUpdate = useMyTransaction(
+      ({ set }) =>
+        (ev: SyntheticEvent<HTMLMediaElement>) => {
+          const ae = ev.currentTarget;
+          // eslint-disable-next-line id-blacklist
+          if (!Number.isNaN(ae.duration)) {
+            set(mediaTimeState, (prevTime: MediaTime) => {
+              if (
+                Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
+                Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
+              ) {
+                return { position: ae.currentTime, duration: ae.duration };
+              } else {
+                return prevTime;
+              }
+            });
+          }
+        },
+    );
+    const metadata = useRecoilValue(dataForSongFuncFam(songKey));
+    const picDataUri = useRecoilValue(picForKeyFam(songKey));
+    useEffect(() => {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        artist: metadata.artist,
+        album: metadata.album,
+        title: metadata.title,
+        artwork: [
+          {
+            src: picDataUri,
+          },
+        ],
+      });
+    }, [songKey, metadata, picDataUri]);
+    useEffect(() => {
+      if (isMutableRefObject(audioRef)) {
+        audioRef.current.volume = volumeLevel * volumeLevel;
+      }
+    }, [audioRef, volumeLevel]);
+    // TODO: Make this effect only trigger due to user intervention
+    useEffect(() => {
+      if (isMutableRefObject(audioRef)) {
+        const targetTime = audioRef.current.duration * playbackPercent;
+        const currentTime = audioRef.current.currentTime;
         // eslint-disable-next-line id-blacklist
-        if (!Number.isNaN(ae.duration)) {
-          set(mediaTimeState, (prevTime: MediaTime) => {
-            if (
-              Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
-              Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
-            ) {
-              return { position: ae.currentTime, duration: ae.duration };
-            } else {
-              return prevTime;
-            }
-          });
+        if (
+          targetTime < Number.MAX_SAFE_INTEGER &&
+          targetTime >= 0 &&
+          Math.abs(targetTime - currentTime) > 1.5
+        ) {
+          audioRef.current.currentTime = targetTime;
+        }
+      }
+    }, [audioRef, playbackPercent]);
+    const audio = (
+      <audio
+        ref={audioRef}
+        autoPlay={true}
+        src={songKey !== '' ? 'tune://song/' + songKey : ''}
+        onPlay={onPlay}
+        onPause={onPause}
+        onEnded={onEnded}
+        onTimeUpdate={onTimeUpdate}
+        muted={isMuted}
+      />
+    );
+    const showDetail = useMyTransaction(
+      (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+        if (songKey !== '') {
+          const songs = xact.get(allSongsFunc);
+          const song = songs.get(songKey);
+          if (song) {
+            SongDetailClick(xact, song, event.shiftKey);
+          }
         }
       },
-  );
-  const metadata = useRecoilValue(dataForSongFuncFam(songKey));
-  const picDataUri = useRecoilValue(picForKeyFam(songKey));
-  useEffect(() => {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      artist: metadata.artist,
-      album: metadata.album,
-      title: metadata.title,
-      artwork: [
-        {
-          src: picDataUri,
-        },
-      ],
-    });
-  }, [songKey, metadata, picDataUri]);
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volumeLevel * volumeLevel;
-    }
-  }, [audioRef, volumeLevel]);
-  // TODO: Make this effect only trigger due to user intervention
-  useEffect(() => {
-    if (audioRef.current) {
-      const targetTime = audioRef.current.duration * playbackPercent;
-      const currentTime = audioRef.current.currentTime;
-      // eslint-disable-next-line id-blacklist
-      if (
-        targetTime < Number.MAX_SAFE_INTEGER &&
-        targetTime >= 0 &&
-        Math.abs(targetTime - currentTime) > 1.5
-      ) {
-        audioRef.current.currentTime = targetTime;
-      }
-    }
-  }, [audioRef, playbackPercent]);
-  const audio = (
-    <audio
-      ref={audioRef}
-      id="audioElement"
-      autoPlay={true}
-      src={songKey !== '' ? 'tune://song/' + songKey : ''}
-      onPlay={onPlay}
-      onPause={onPause}
-      onEnded={onEnded}
-      onTimeUpdate={onTimeUpdate}
-      muted={isMuted}
-    />
-  );
-  const showDetail = useMyTransaction(
-    (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-      if (songKey !== '') {
-        const songs = xact.get(allSongsFunc);
-        const song = songs.get(songKey);
-        if (song) {
-          SongDetailClick(xact, song, event.shiftKey);
-        }
-      }
-    },
-  );
-  const flipDisplay = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(playOrderDisplayingState, (prv) => !prv),
-  );
-  return (
-    <span id="song-container" onAuxClick={showDetail}>
-      <CoverArt />
-      <SongName />
-      <ArtistAlbum />
-      <MediaTimePosition />
-      <MediaTimeSlider />
-      <MediaTimeRemaining />
-      {audio}
-      <ListIcon
-        id="showPlayOrder"
-        onClick={flipDisplay}
-        style={{
-          width: '12px',
-          display: isShuffle ? 'block' : 'none',
-          cursor: 'pointer',
-        }}
-      />
-    </span>
-  );
-}
+    );
+    const flipDisplay = useRecoilCallback(
+      ({ set }) =>
+        () =>
+          set(playOrderDisplayingState, (prv) => !prv),
+    );
+    return (
+      <span id="song-container" onAuxClick={showDetail}>
+        <CoverArt />
+        <SongName />
+        <ArtistAlbum />
+        <MediaTimePosition />
+        <MediaTimeSlider />
+        <MediaTimeRemaining />
+        {audio}
+        <ListIcon
+          id="showPlayOrder"
+          onClick={flipDisplay}
+          style={{
+            width: '12px',
+            display: isShuffle ? 'block' : 'none',
+            cursor: 'pointer',
+          }}
+        />
+      </span>
+    );
+  },
+);

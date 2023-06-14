@@ -4,6 +4,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import debug from 'debug';
+import { ForwardedRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Keys } from 'shared';
 import { playingState } from '../Recoil/MediaPlaying';
@@ -14,34 +15,44 @@ import {
   hasPrevSongFunc,
 } from '../Recoil/SongPlaying';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
-import { GetAudioElem } from './SongPlaying';
+import { isMutableRefObject } from '../Tools';
 import { GetHelperText } from './Utilities';
 import './styles/PlaybackControls.css';
 
 const log = debug('EMP:render:SongControls:log');
 const err = debug('EMP:render:SongControls:error');
 
-export function onClickPlayPause({ set }: MyTransactionInterface): void {
-  const ae = GetAudioElem();
-  if (!ae) {
+export function onClickPlayPause(
+  { set }: MyTransactionInterface,
+  audioRef: ForwardedRef<HTMLAudioElement>,
+): void {
+  if (!isMutableRefObject<HTMLAudioElement>(audioRef)) {
     err('Clicking but no audio element');
     return;
   }
   set(playingState, (isPlaying) => {
     if (isPlaying) {
-      ae.pause();
+      audioRef.current.pause();
       return false;
-    } else if (ae.readyState === 4) {
-      ae.play().catch(onRejected('Audio Element play failed'));
+    } else if (audioRef.current.readyState === 4) {
+      audioRef.current.play().catch(onRejected('Audio Element play failed'));
       return true;
     } else {
-      log(`We're not playing, but also not state 4: ${ae.readyState}`);
+      log(
+        `We're not playing, but also not state 4: ${audioRef.current.readyState}`,
+      );
     }
     return isPlaying;
   });
 }
 
-export function PlaybackControls(): JSX.Element {
+export type PlaybackControlsProps = {
+  audioRef: ForwardedRef<HTMLAudioElement>;
+};
+
+export function PlaybackControls({
+  audioRef,
+}: PlaybackControlsProps): JSX.Element {
   const isPlaying = useRecoilValue(playingState);
 
   const hasAnySong = useRecoilValue(hasAnySongsFunc);
@@ -65,7 +76,7 @@ export function PlaybackControls(): JSX.Element {
   });
   const clickRepeat = () => repSet(!rep);
   const clickPlayPause = useMyTransaction(
-    (xact) => () => onClickPlayPause(xact),
+    (xact) => () => onClickPlayPause(xact, audioRef),
   );
 
   const clickPrev = useMyTransaction((xact) => () => {

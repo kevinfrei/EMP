@@ -14,6 +14,7 @@ import debug from 'debug';
 import {
   CSSProperties,
   Component,
+  ForwardedRef,
   ReactChildren,
   SyntheticEvent,
   useEffect,
@@ -90,10 +91,14 @@ function ResizeListener(): JSX.Element {
 }
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
-function MediaAndMenuListeners(): JSX.Element {
+function MediaAndMenuListeners({
+  audioRef,
+}: {
+  audioRef: ForwardedRef<HTMLAudioElement>;
+}): JSX.Element {
   /* Menu handlers coming from the Main process */
   const menuCallback = useMyTransaction(
-    (xact) => (data: unknown) => MenuHandler(xact, data),
+    (xact) => (data: unknown) => MenuHandler(xact, data, audioRef),
   );
   useListener(IpcId.MenuAction, menuCallback);
   /* OS-level media control event handlers */
@@ -114,13 +119,15 @@ function MediaAndMenuListeners(): JSX.Element {
 }
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
-export function Utilities(): JSX.Element {
+export function Utilities(props: {
+  audioRef: ForwardedRef<HTMLAudioElement>;
+}): JSX.Element {
   return (
     <>
       <ResizeListener />
       <TypingListener />
       <SaveMenuUpdater />
-      <MediaAndMenuListeners />
+      <MediaAndMenuListeners audioRef={props.audioRef} />
     </>
   );
 }

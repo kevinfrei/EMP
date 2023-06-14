@@ -1,6 +1,7 @@
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import debug from 'debug';
+import { ForwardedRef } from 'react';
 import { CurrentView } from 'shared';
 import { FocusSearch } from '../MyWindow';
 import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
@@ -36,6 +37,7 @@ function updateTime({ set, get }: MyTransactionInterface, offset: number) {
 export function MenuHandler(
   xact: MyTransactionInterface,
   message: unknown,
+  audioRef: ForwardedRef<HTMLAudioElement>,
 ): void {
   log('Menu command:');
   log(message);
@@ -65,7 +67,7 @@ export function MenuHandler(
 
       // Playback control:
       case 'playback':
-        onClickPlayPause(xact);
+        onClickPlayPause(xact, audioRef);
         break;
       case 'nextTrack':
         void MaybePlayNext(xact);

@@ -13,7 +13,7 @@ it('renders without crashing', async () => {
   await act(async () => {
     create(
       <RecoilRoot>
-        <PlaybackControls />
+        <PlaybackControls audioRef={null} />
       </RecoilRoot>,
     );
     return new Promise((res) => res());
