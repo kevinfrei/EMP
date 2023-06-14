@@ -8,7 +8,6 @@ import {
   app,
   shell,
 } from 'electron';
-import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import { CurrentView, IpcId, Keys } from 'shared';
 import { ShowAbout } from './About.js';
@@ -226,7 +225,7 @@ export function MakeMainMenu(): void {
     // Rip off the appMenu for non-Mac
     template.shift();
   }
-  if (isDev) {
+  if (!app.isPackaged) {
     // Add the debug menu for dev-mode
     template.push(dbgMenu);
   }

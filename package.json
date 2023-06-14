@@ -42,7 +42,6 @@
     "@freik/typechk": "^0.2.0",
     "@freik/web-utils": "^0.5.2",
     "album-art": "^3.1.0",
-    "electron-is-dev": "^2.0.0",
     "jimp": "^0.22.8",
     "open": "^9.1.0",
     "react": "^17.0.2",
@@ -53,8 +52,12 @@
     "xxhashjs": "^0.2.2"
   },
   "browserslist": {
-    "production": ["last 1 chrome version"],
-    "development": ["last 1 chrome version"]
+    "production": [
+      "last 1 chrome version"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
   },
   "devDependencies": {
     "@freik/build-tools": "3.6.0",
@@ -74,8 +77,6 @@
     "cross-env": "^7.0.3",
     "electron": "^25.1.0",
     "electron-builder": "^23.6.0",
-    "electron-devtools-installer": "^3.2.0",
-    "electron-react-devtools": "^0.5.3",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
@@ -97,8 +98,7 @@
     "typescript": "^5.0.4",
     "vite": "^4.3.9",
     "vite-plugin-electron": "^0.12.0",
-    "vite-plugin-electron-renderer": "^0.14.5",
-    "wait-on": "^7.0.1"
+    "vite-plugin-electron-renderer": "^0.14.5"
   },
   "packageManager": "yarn@3.6.0"
 }
