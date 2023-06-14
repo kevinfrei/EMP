@@ -8,6 +8,7 @@ import {
 } from '@freik/audiodb';
 import { Persistence } from '@freik/elect-main-utils';
 import { SetDifference } from '@freik/helpers';
+import { MakeLog } from '@freik/logger';
 import {
   MediaKey,
   SongKey,
@@ -17,14 +18,12 @@ import {
 } from '@freik/media-core';
 import { Sleep } from '@freik/sync';
 import { Pickle, SafelyUnpickle, isArrayOfString } from '@freik/typechk';
-import debug from 'debug';
 import { statSync } from 'fs';
 import path from 'path';
 import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
 import { SendToUI } from './Communication';
 
-const log = debug('EMP:main:AudioDatabase:log');
-const err = debug('EMP:main:AudioDatabase:error');
+const { log, wrn } = MakeLog('EMP:main:AudioDatabase');
 
 let theAudioDb: AudioDatabase | null;
 let initialUpdateComplete = false;
@@ -121,7 +120,7 @@ export async function UpdateLocations(locs: string): Promise<void> {
     // UpdateAudioLocations handles this change explicitly
     // SendDatabase(db);
   } catch (e) {
-    err(e);
+    wrn(e);
   } finally {
     initialUpdateComplete = true;
   }
@@ -129,10 +128,10 @@ export async function UpdateLocations(locs: string): Promise<void> {
 
 export function UpdateAudioLocations(newLocations: string): void {
   UpdateLocations(newLocations)
-    .catch(err)
+    .catch(wrn)
     .then(GetAudioDB)
     .then((db) => SendDatabase(db))
-    .catch(err);
+    .catch(wrn);
 }
 
 function getCommonPrefix(
@@ -214,7 +213,7 @@ export async function SetMediaInfoForSong(
     // Get the path from the database
     const sng = db.getSong(fullPath.substr(1));
     if (!sng) {
-      err('Unable to get the song for the song key for a metadata update');
+      wrn('Unable to get the song for the song key for a metadata update');
       return;
     }
     fullPath = sng.path;

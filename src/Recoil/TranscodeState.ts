@@ -7,14 +7,12 @@ import {
   isNumber,
   isString,
 } from '@freik/typechk';
-import debug from 'debug';
 import { atom, selector, selectorFamily } from 'recoil';
 import { IpcId, TranscodeSourceType, TranscodeState } from 'shared';
 import { allPlaylistsFunc } from './PlaylistsState';
 import { allAlbumsFunc, allArtistsFunc } from './ReadOnly';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const err = debug('EMP:render:TranscodingState');
+// const { err, log } = MakeLog('EMP:render:TranscodingState');
 
 type FailType = { file: string; error: string };
 

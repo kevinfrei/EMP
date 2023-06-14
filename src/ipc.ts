@@ -1,4 +1,5 @@
 import { Ipc } from '@freik/elect-render-utils';
+import { MakeLog } from '@freik/logger';
 import {
   AlbumKey,
   ArtistKey,
@@ -14,11 +15,9 @@ import {
   isString,
   isUndefined,
 } from '@freik/typechk';
-import debug from 'debug';
 import { IgnoreItem, IpcId } from 'shared';
 
-const log = debug('EMP:render:ipc:log');
-const err = debug('EMP:render:ipc:error');
+const { log, wrn } = MakeLog('EMP:render:ipc');
 
 export type SearchResults = {
   songs: SongKey[];
@@ -70,9 +69,9 @@ export async function SearchWhole(
 }
 
 export function AddIgnoreItem(item: IgnoreItem): void {
-  Ipc.PostMain(IpcId.AddIgnoreItem, item).catch(err);
+  Ipc.PostMain(IpcId.AddIgnoreItem, item).catch(wrn);
 }
 
 export function RemoveIgnoreItem(item: IgnoreItem): void {
-  Ipc.PostMain(IpcId.RemoveIgnoreItem, item).catch(err);
+  Ipc.PostMain(IpcId.RemoveIgnoreItem, item).catch(wrn);
 }

@@ -1,15 +1,13 @@
-import debug from 'debug';
+import { MakeLog } from '@freik/logger';
 import { app } from 'electron';
-import isDev from 'electron-is-dev';
 import { MakeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
+
+const { wrn } = MakeLog('EMP:main:electronSetup');
 
 app.commandLine.appendSwitch('disable-http-cache');
 
 export type OnWindowCreated = () => Promise<void>;
-
-const log = debug('EMP:main:electronSetup:log');
-const err = debug('EMP:main:electronSetup:error');
 
 /*
 
@@ -29,22 +27,6 @@ function unregisterGlobalShortcuts() {
 
 async function WhenReady(windowCreated: OnWindowCreated) {
   await app.whenReady();
-  if (isDev) {
-    try {
-      // Load the react developer tools if we're in development mode
-      /* eslint-disable */
-      const {
-        default: installExtension,
-        REACT_DEVELOPER_TOOLS,
-      } = require('electron-devtools-installer');
-      const name = await installExtension(REACT_DEVELOPER_TOOLS);
-      log('Added Extension: ' + name);
-      /* eslint-enable */
-    } catch (e) {
-      err('An error occurred while trying to load the React Dev Tools:');
-      err(e);
-    }
-  }
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
@@ -66,7 +48,7 @@ export async function StartApp(windowCreated: OnWindowCreated): Promise<void> {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
       if (!HasWindow()) {
-        CreateWindow(windowCreated).catch(err);
+        CreateWindow(windowCreated).catch(wrn);
       }
     });
   //    .on('will-quit', unregisterGlobalShortcuts);

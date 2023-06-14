@@ -1,7 +1,7 @@
 import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
+import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
-import debug from 'debug';
 import { ForwardedRef, SyntheticEvent, forwardRef, useEffect } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { albumCoverUrlFuncFam } from '../Recoil/ImageUrls';
@@ -34,7 +34,7 @@ import { SongDetailClick } from './DetailPanel/Clickers';
 import { mySliderStyles } from './Utilities';
 import './styles/SongPlaying.css';
 
-const log = debug('EMP:render:SongPlayback');
+const { log } = MakeLog('EMP:render:SongPlayback');
 
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);

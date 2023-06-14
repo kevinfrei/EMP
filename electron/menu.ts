@@ -1,6 +1,5 @@
 import { Persistence } from '@freik/elect-main-utils';
 import { isFunction, isString } from '@freik/typechk';
-import debug from 'debug';
 import {
   BrowserWindow,
   Menu,
@@ -9,14 +8,13 @@ import {
   app,
   shell,
 } from 'electron';
-import isDev from 'electron-is-dev';
 import { KeyboardEvent } from 'electron/main';
 import { CurrentView, IpcId, Keys } from 'shared';
 import { ShowAbout } from './About.js';
 import { SendToUI } from './Communication.js';
 import { ToggleMiniPlayer } from './window.js';
 
-const err = debug('EMP:main:menu:error'); // eslint-disable-line
+// const { wrn } = MakeLog('EMP:main:menu');
 
 type ClickHandler = (
   mnu: MenuItem,
@@ -227,7 +225,7 @@ export function MakeMainMenu(): void {
     // Rip off the appMenu for non-Mac
     template.shift();
   }
-  if (isDev) {
+  if (!app.isPackaged) {
     // Add the debug menu for dev-mode
     template.push(dbgMenu);
   }

@@ -7,10 +7,10 @@ import {
   SpinButton,
 } from '@fluentui/react';
 import { Ipc, useListener, useMediaEffect } from '@freik/elect-render-utils';
+import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
-import debug from 'debug';
 import {
   CSSProperties,
   Component,
@@ -27,7 +27,7 @@ import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
 
-const err = debug('EMP:render:Utilities:error');
+const { wrn } = MakeLog('EMP:render:Utilities');
 
 // Used by the key buffer to know when to reset the keys
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -263,8 +263,8 @@ export class ErrorBoundary extends Component {
 
   componentDidCatch(error: unknown, errorInfo: unknown) {
     // You can also log the error to an error reporting service
-    err(error);
-    err(errorInfo);
+    wrn(error);
+    wrn(errorInfo);
   }
 
   render() {

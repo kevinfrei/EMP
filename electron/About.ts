@@ -1,9 +1,9 @@
+import { MakeLog } from '@freik/logger';
 import { isUndefined } from '@freik/typechk';
-import debug from 'debug';
 import { BrowserWindow, shell } from 'electron';
-import isDev from 'electron-is-dev';
+import path from 'path';
 
-const err = debug('EMP:main:about');
+const { wrn } = MakeLog('EMP:main:about');
 
 let aboutWindow: BrowserWindow | undefined;
 
@@ -12,14 +12,13 @@ export function ShowAbout(): void {
     aboutWindow = new BrowserWindow({
       title: 'About EMP',
       webPreferences: { nodeIntegration: false, contextIsolation: true },
-      show: false,
       alwaysOnTop: true,
       center: true,
       fullscreenable: false,
       maximizable: false,
       minimizable: false,
       modal: true,
-      resizable: false,
+      resizable: true,
       skipTaskbar: true,
       minWidth: 400,
       maxWidth: 400,
@@ -30,7 +29,6 @@ export function ShowAbout(): void {
     })
       .on('ready-to-show', () => {
         if (aboutWindow) {
-          aboutWindow.show();
           aboutWindow.focus();
         }
       })
@@ -38,19 +36,22 @@ export function ShowAbout(): void {
         aboutWindow = undefined;
       });
     aboutWindow.webContents.on('will-navigate', function (e, url) {
-      /* If url isn't the actual page */
+      // If url isn't the actual page
       if (url !== aboutWindow?.webContents.getURL()) {
         e.preventDefault();
-        shell.openExternal(url).catch(err);
+        shell.openExternal(url).catch(wrn);
       }
     });
     aboutWindow.removeMenu();
   }
-  aboutWindow
-    .loadURL(
-      isDev
-        ? 'http://localhost:3000/about.html'
-        : `file://${__dirname}/../about.html`,
-    )
-    .catch(err);
+  if (process.env.VITE_DEV_SERVER_URL) {
+    wrn(
+      `Loading "${process.env.VITE_DEV_SERVER_URL}about.html" from server...`,
+    );
+    aboutWindow
+      .loadURL(`${process.env.VITE_DEV_SERVER_URL}about.html`)
+      .catch(wrn);
+  } else {
+    aboutWindow.loadFile(path.join(process.env.DIST, 'about.html')).catch(wrn);
+  }
 }

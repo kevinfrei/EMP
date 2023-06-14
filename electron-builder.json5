@@ -1,0 +1,47 @@
+/**
+ * @see https://www.electron.build/configuration/configuration
+ */
+{
+  $schema: 'https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json',
+  appId: 'com.music-player.freik',
+  productName: 'Electron Music Player',
+  asar: true,
+  directories: {
+    output: 'release/${version}',
+  },
+  extraMetadata: {
+    main: 'dist-electron/main.js',
+  },
+  fileAssociations: {
+    ext: ['mp3', 'm4a', 'aac', 'flac', 'wma'],
+    description: 'Audio files',
+    role: 'Viewer',
+  },
+  files: ['dist-electron', 'dist'],
+  mac: {
+    artifactName: '${productName}_${version}.${ext}',
+    target: ['dmg'],
+    icon: 'build/icon.png',
+  },
+  linux: {
+    icon: 'build/icon.png',
+    category: 'Audio',
+    mimeTypes: ['audio/mpeg', 'audio/m4a', 'audio/aac', 'audio/x-flac'],
+  },
+  win: {
+    icon: 'build/icon.png',
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64'],
+      },
+    ],
+    artifactName: '${productName}_${version}.${ext}',
+  },
+  nsis: {
+    oneClick: false,
+    perMachine: false,
+    allowToChangeInstallationDirectory: true,
+    deleteAppDataOnUninstall: false,
+  },
+}

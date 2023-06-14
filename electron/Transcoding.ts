@@ -1,3 +1,4 @@
+import { MakeLog } from '@freik/logger';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
 import { ForDirs, ForFiles, PathUtil, ProcUtil } from '@freik/node-utils';
@@ -10,7 +11,6 @@ import {
   isNumber,
   isObjectNonNull,
 } from '@freik/typechk';
-import debug from 'debug';
 import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
@@ -26,8 +26,7 @@ import { GetAudioDB } from './AudioDatabase';
 import { SendToUI } from './Communication';
 import { LoadPlaylist } from './playlists';
 
-const err = debug('EMP:main:Transcoding:error');
-const log = debug('EMP:main:transcoding:log');
+const { log, wrn } = MakeLog('EMP:main:Transcoding');
 
 const cp = {
   spawnAsync: ProcUtil.spawnAsync,
@@ -391,7 +390,7 @@ async function findExcessDirs(settings: TranscodeInfo): Promise<string[]> {
     async (dirname: string) => {
       const theDir = pathfix(dirname);
       if (!theDir.toLocaleUpperCase().startsWith(dst.toLocaleUpperCase())) {
-        err('Failed a very basic test: Not sure what to do with it...');
+        wrn('Failed a very basic test: Not sure what to do with it...');
         return false;
       }
       const srcDir = PathUtil.join(src, theDir.substring(dst.length));
@@ -429,8 +428,8 @@ async function handleLots(
       files.map((f) => limit(async () => convert(settings, f, filePairs))),
     );
   } catch (e) {
-    err('Crashy crashy :(');
-    err(e);
+    wrn('Crashy crashy :(');
+    wrn(e);
     reportStatusMessage(`And exception occured: ${asString(e, 'unknown')}`);
   }
   if (filePairs !== undefined) {

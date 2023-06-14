@@ -1,5 +1,6 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
 import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
+import { MakeLog } from '@freik/logger';
 import { MediaKey } from '@freik/media-core';
 import {
   chk2TupleOf,
@@ -9,8 +10,7 @@ import {
   isString,
   isUndefined,
 } from '@freik/typechk';
-import debug from 'debug';
-import { Menu } from 'electron/main';
+import { Menu } from 'electron';
 import { IpcId, isIgnoreItemFn, isXcodeInfo } from 'shared';
 import {
   AddIgnoreItem,
@@ -54,7 +54,7 @@ import {
   RestoreWindow,
 } from './window';
 
-const err = debug('EMP:main:Communication');
+const { wrn } = MakeLog('EMP:main:Communication');
 
 /**
  * Show a file in the shell
@@ -94,7 +94,7 @@ async function showMenu(): Promise<void> {
   if (menu) {
     menu.popup();
   } else {
-    err('Sorry: Menu is falsy');
+    wrn('Sorry: Menu is falsy');
   }
   return Promise.resolve();
 }

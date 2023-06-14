@@ -3,24 +3,23 @@ import {
   LoadWindowPos,
   setMainWindow,
 } from '@freik/elect-main-utils';
+import { MakeLog } from '@freik/logger';
 import { isNumber } from '@freik/typechk';
-import debug from 'debug';
 import {
   BrowserWindow,
   BrowserWindowConstructorOptions,
+  app,
   screen,
 } from 'electron';
-import isDev from 'electron-is-dev';
 import * as path from 'path';
 import process from 'process';
 import { OnWindowCreated } from './electronSetup';
-import { RegisterListeners, RegisterProtocols } from './protocols';
+
+const { wrn } = MakeLog('EMP:main:window');
 
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)
 // which is the entire reason for this module's existence.
-
-const err = debug('EMP:main:window:error');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -33,8 +32,6 @@ export function HasWindow(): boolean {
 export async function CreateWindow(
   windowCreated: OnWindowCreated,
 ): Promise<void> {
-  await RegisterProtocols();
-  RegisterListeners();
   // Create the window, but don't show it just yet
   const opts: BrowserWindowConstructorOptions = {
     ...GetBrowserWindowPos(LoadWindowPos()),
@@ -43,8 +40,7 @@ export async function CreateWindow(
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
-      // enableRemoteModule: true,
-      webSecurity: !isDev,
+      webSecurity: app.isPackaged,
       contextIsolation: false,
     },
     frame: false,
@@ -74,25 +70,33 @@ export async function CreateWindow(
         mainWindow.maximize();
       }
       // Call the user specified "ready to go" function
-      windowCreated().catch(err);
-      // open the devtools
-      if (isDev) {
-        mainWindow.webContents.openDevTools();
-      }
+      windowCreated()
+        .then(() => {
+          // open the devtools
+          if (!app.isPackaged) {
+            mainWindow?.webContents.openDevTools();
+          }
+        })
+        .catch(wrn);
     }
   });
 
-  setMainWindow(mainWindow);
-  // Load the base URL
-  await mainWindow.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : // If this file moves, you have to fix this to make it work for release
-        `file://${path.join(__dirname, '../index.html')}`,
-  );
+  // Test active push message to Renderer-process.
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow?.webContents.send(
+      'main-process-message',
+      new Date().toLocaleString(),
+    );
+  });
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  setMainWindow(mainWindow);
+
+  // Load the base URL
+  if (process.env.VITE_DEV_SERVER_URL) {
+    await mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+  } else {
+    await mainWindow.loadFile(path.join(process.env.DIST, 'index.html'));
+  }
 }
 
 let prevWidth = 0;

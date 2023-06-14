@@ -1,9 +1,9 @@
 import { Persistence } from '@freik/elect-main-utils';
+import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import { isString } from '@freik/typechk';
-import debug from 'debug';
 
-const log = debug('EMP:main:SongLikesAndHates'); // eslint-disable-line
+const { log } = MakeLog('EMP:main:SongLikesAndHates');
 
 async function getSongPrefs(which: string): Promise<SongKey[]> {
   log('getSongPrefs');

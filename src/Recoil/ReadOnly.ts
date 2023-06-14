@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { Effects, Ipc } from '@freik/elect-render-utils';
+import { MakeLog } from '@freik/logger';
 import {
   Album,
   AlbumKey,
@@ -21,7 +22,6 @@ import {
   isString,
 } from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
-import debug from 'debug';
 import { atom, selector, selectorFamily } from 'recoil';
 import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
 import { SetDB } from '../MyWindow';
@@ -32,6 +32,8 @@ import {
   showArtistsWithFullAlbumsState,
 } from './ReadWrite';
 import { songListState } from './SongPlaying';
+
+const { err: wrn, log } = MakeLog('EMP:render:ReadOnly:log'); // eslint-disable-line
 
 // type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
@@ -49,9 +51,6 @@ export type SongDescription = {
   title: string;
   track: number;
 } & AlbumDescription;
-
-const log = debug('EMP:render:ReadOnly:log'); // eslint-disable-line
-const err = debug('EMP:render:ReadOnly:error'); // eslint-disable-line
 
 export const mediaInfoFuncFam = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
@@ -157,8 +156,8 @@ const musicLibraryState = atom<MusicLibrary>({
         if (isFlatAudioDatabase(fad)) {
           return MakeMusicLibraryFromFlatAudioDatabase(fad);
         }
-        err('Invalid result from music-database-update:');
-        err(fad);
+        wrn('Invalid result from music-database-update:');
+        wrn(fad);
       },
     ),
   ],
@@ -560,8 +559,8 @@ export const ignoreItemsState = atom<IgnoreItem[]>({
         if (isIgnoreItemArrayFn(il)) {
           return il;
         }
-        err('Invalid result from music-database-update:');
-        err(il);
+        wrn('Invalid result from music-database-update:');
+        wrn(il);
       },
     ),
   ],
@@ -577,9 +576,9 @@ export const RescanInProgressState = atom<boolean>({
         if (isBoolean(info)) {
           return info;
         }
-        err('Invalid RescanInProgress value:');
-        err(typeof info);
-        err(info);
+        wrn('Invalid RescanInProgress value:');
+        wrn(typeof info);
+        wrn(info);
       },
     ),
   ],
