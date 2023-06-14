@@ -14,7 +14,7 @@ import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
-const { log, wrn } = MakeLog('EMP:main:protocols');
+const { log } = MakeLog('EMP:main:protocols');
 
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;

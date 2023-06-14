@@ -15,7 +15,7 @@ import * as path from 'path';
 import process from 'process';
 import { OnWindowCreated } from './electronSetup';
 
-const { log, wrn } = MakeLog('EMP:main:window');
+const { wrn } = MakeLog('EMP:main:window');
 
 // This should control access to the main window
 // No one should keep any references to the main window (so it doesn't leak)

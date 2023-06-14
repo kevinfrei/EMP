@@ -1,8 +1,9 @@
+import { MakeLog } from '@freik/logger';
 import { app } from 'electron';
 import { MakeMainMenu } from './menu';
 import { CreateWindow, HasWindow } from './window';
 
-// const { wrn } = MakeLog('EMP:main:electronSetup');
+const { wrn } = MakeLog('EMP:main:electronSetup');
 
 app.commandLine.appendSwitch('disable-http-cache');
 
