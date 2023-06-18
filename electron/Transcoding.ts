@@ -21,7 +21,7 @@ import {
   TranscodeInfo,
   TranscodeSourceType,
   TranscodeState,
-} from 'shared';
+} from '@freik/emp-shared';
 import { GetAudioDB } from './AudioDatabase';
 import { SendToUI } from './Communication';
 import { LoadPlaylist } from './playlists';

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Ipc } from '@freik/elect-render-utils';
+import { Ipc } from '@freik/electron-render';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import { isArray, isArrayOfString, isSetOfString } from '@freik/typechk';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { IpcId } from 'shared';
+import { IpcId } from '@freik/emp-shared';
 import { isPlaylist } from '../Tools';
 import { activePlaylistState, songListState } from './SongPlaying';
 

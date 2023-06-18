@@ -1,5 +1,6 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
-import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
+import { Comms, Persistence, Shell } from '@freik/electron-main';
+import { IpcId, isIgnoreItemFn, isXcodeInfo } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { MediaKey } from '@freik/media-core';
 import {
@@ -11,7 +12,6 @@ import {
   isUndefined,
 } from '@freik/typechk';
 import { Menu } from 'electron';
-import { IpcId, isIgnoreItemFn, isXcodeInfo } from 'shared';
 import {
   AddIgnoreItem,
   GetIgnoreList,
@@ -54,7 +54,7 @@ import {
   RestoreWindow,
 } from './window';
 
-const { wrn } = MakeLog('EMP:main:Communication');
+const { wrn, log } = MakeLog('EMP:main:Communication');
 
 /**
  * Show a file in the shell
@@ -191,5 +191,7 @@ export function CommsSetup(): void {
 export function SendToUI(name: IpcId, data: unknown) {
   const obj: { [key: string]: unknown } = {};
   obj[name] = data;
+  log(`Sending ${name} with data:`);
+  log(data);
   Comms.AsyncSend(obj);
 }

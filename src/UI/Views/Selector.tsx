@@ -1,6 +1,6 @@
 import { CSSProperties, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { CurrentView } from 'shared';
+import { CurrentView } from '@freik/emp-shared';
 import { curViewFunc } from '../../Recoil/ReadWrite';
 import { GroupedAlbumList } from './Albums';
 import { GroupedAristList } from './Artists';

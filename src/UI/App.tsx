@@ -1,9 +1,9 @@
 import { IconButton, SpinnerSize } from '@fluentui/react';
-import { ElectronWireUp, Ipc } from '@freik/elect-render-utils';
+import { ElectronWireUp, Ipc } from '@freik/electron-render';
 import { Spinner } from '@freik/web-utils';
 import { useRef, useState } from 'react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
-import { IpcId } from 'shared';
+import { IpcId } from '@freik/emp-shared';
 import { isHostMac } from '../MyWindow';
 import { isMiniplayerState } from '../Recoil/Local';
 import { SongDetailPanel } from './DetailPanel/SongDetailPanel';

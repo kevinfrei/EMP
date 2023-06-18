@@ -6,7 +6,7 @@ import {
   MinimumMetadata,
   SearchResults,
 } from '@freik/audiodb';
-import { Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/electron-main';
 import { SetDifference } from '@freik/helpers';
 import { MakeLog } from '@freik/logger';
 import {
@@ -20,7 +20,7 @@ import { Sleep } from '@freik/sync';
 import { Pickle, SafelyUnpickle, isArrayOfString } from '@freik/typechk';
 import { statSync } from 'fs';
 import path from 'path';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { SendToUI } from './Communication';
 
 const { log, wrn } = MakeLog('EMP:main:AudioDatabase');

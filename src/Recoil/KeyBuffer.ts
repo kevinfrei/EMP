@@ -1,5 +1,5 @@
 import { atom, selectorFamily } from 'recoil';
-import { CurrentView } from 'shared';
+import { CurrentView } from '@freik/emp-shared';
 import { curViewFunc } from './ReadWrite';
 
 // This is the currently 'typed' set of characters (for scrolling lists)

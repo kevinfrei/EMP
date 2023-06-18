@@ -6,7 +6,7 @@ import {
   Position,
   SpinButton,
 } from '@fluentui/react';
-import { Ipc, useListener, useMediaEffect } from '@freik/elect-render-utils';
+import { Ipc, useListener, useMediaEffect } from '@freik/electron-render';
 import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
@@ -20,7 +20,7 @@ import {
   useEffect,
 } from 'react';
 import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { IpcId, Keys } from 'shared';
+import { IpcId, Keys } from '@freik/emp-shared';
 import { keyBufferState } from '../Recoil/KeyBuffer';
 import { isMiniplayerState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
@@ -97,6 +97,7 @@ function MediaAndMenuListeners({
   audioRef: ForwardedRef<HTMLAudioElement>;
 }): JSX.Element {
   /* Menu handlers coming from the Main process */
+  wrn('MenuAndMenuListers');
   const menuCallback = useMyTransaction(
     (xact) => (data: unknown) => MenuHandler(xact, data, audioRef),
   );

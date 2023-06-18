@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // Note: This approach works with any SVG icon set, not just @fluentui/react-icons-mdl2
-// import { Util } from '@freik/elect-render-utils';
+// import { Util } from '@freik/electron-render';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { FluentInitIcons } from './FluentInit';

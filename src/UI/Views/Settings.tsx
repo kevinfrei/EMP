@@ -9,7 +9,7 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { Ipc, Util } from '@freik/elect-render-utils';
+import { Ipc, Util } from '@freik/electron-render';
 import { isDefined } from '@freik/typechk';
 import {
   Catch,
@@ -22,7 +22,7 @@ import {
 } from '@freik/web-utils';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IgnoreItemType, IpcId, Keys, st, StrId } from 'shared';
+import { IgnoreItemType, IpcId, Keys, st, StrId } from '@freik/emp-shared';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {

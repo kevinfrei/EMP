@@ -24,7 +24,7 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { CurrentView } from 'shared';
+import { CurrentView } from '@freik/emp-shared';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { albumCoverUrlFuncFam } from '../../Recoil/ImageUrls';
 import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';

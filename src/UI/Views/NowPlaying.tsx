@@ -31,7 +31,7 @@ import {
 } from '@freik/web-utils';
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
-import { Keys } from 'shared';
+import { Keys } from '@freik/emp-shared';
 import { isMiniplayerState, nowPlayingSortState } from '../../Recoil/Local';
 import {
   playlistFuncFam,

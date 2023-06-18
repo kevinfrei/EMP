@@ -9,7 +9,7 @@ import {
   TextField,
   TooltipHost,
 } from '@fluentui/react';
-import { Util } from '@freik/elect-render-utils';
+import { Util } from '@freik/electron-render';
 import { MakeLog } from '@freik/logger';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { isArrayOfString, isString } from '@freik/typechk';
@@ -21,7 +21,7 @@ import {
 } from '@freik/web-utils';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { StrId, st } from 'shared';
+import { StrId, st } from '@freik/emp-shared';
 import {
   UploadFileForAlbum,
   UploadFileForSong,

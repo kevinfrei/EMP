@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { Effects } from '@freik/elect-render-utils';
+import { Effects } from '@freik/electron-render';
 import { isAlbumKey, isArtistKey, isSongKey, SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
-import { CurrentView } from 'shared';
+import { CurrentView } from '@freik/emp-shared';
 import { ShuffleArray } from '../Tools';
 import { isMiniplayerState } from './Local';
 import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
