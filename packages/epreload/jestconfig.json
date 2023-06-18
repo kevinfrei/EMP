@@ -1,0 +1,15 @@
+{
+  "transform": {
+    "^.+\\.(t|j)sx?$": "ts-jest"
+  },
+  "globals": {
+    "ts-jest": { "useESM": false, "tsconfig": "tsconfig.json" }
+  },
+  "extensionsToTreatAsEsm": [".ts", ".tsx"],
+  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "moduleNameMapper": {
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  },
+  "collectCoverage": true
+}

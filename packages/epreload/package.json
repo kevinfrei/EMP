@@ -1,0 +1,61 @@
+{
+  "name": "@freik/electron-renderer",
+  "version": "0.5.1",
+  "description": "Kevin Frei's Electron Renderer utility",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "test": "jest --config jestconfig.json --passWithNoTests",
+    "watch": "jest --config jestconfig.json --watch --passWithNoTests",
+    "clean": "rimraf lib && rimraf \".tsbuildinfo\"",
+    "build": "tsc --project tsconfig.json",
+    "cleanbuild": "yarn clean && yarn build",
+    "prepare": "yarn run build",
+    "prepublishOnly": "yarn test && yarn run lint",
+    "format": "ftool format",
+    "lint": "yarn run eslint --fix --ext .ts src",
+    "preversion": "yarn run lint",
+    "version": "yarn run format && git add -A src",
+    "postversion": "git push && git push --tags --no-verify",
+    "compile": "tsc --noEmit -p tsconfig.json",
+    "chk": "yarn format && yarn lint && yarn compile && yarn test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinfrei/electron-renderer.git"
+  },
+  "author": "kevinfrei@hotmail.com",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/kevinfrei/electron-renderer/issues"
+  },
+  "homepage": "https://github.com/kevinfrei/electron-renderer#readme",
+  "dependencies": {
+    "debug": "^4.3.4"
+  },
+  "peerDependencies": {
+    "@freik/elect-main-utils": ">=0.3.0",
+    "@freik/elect-render-utils": ">=0.4.3",
+    "@freik/web-utils": ">=0.4.0"
+  },
+  "devDependencies": {
+    "@freik/build-tools": "^3.6.0",
+    "@freik/elect-render-utils": "^0.5.0",
+    "@types/debug": "^4.1.8",
+    "@types/jest": "^29.5.2",
+    "@typescript-eslint/eslint-plugin": "^5.59.9",
+    "@typescript-eslint/parser": "^5.59.9",
+    "electron": "^25.1.0",
+    "eslint": "^8.42.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.8",
+    "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4"
+  },
+  "files": ["lib/**/*"],
+  "packageManager": "yarn@3.6.0"
+}
