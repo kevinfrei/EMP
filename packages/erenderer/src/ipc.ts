@@ -1,8 +1,8 @@
 import { MakeLog } from '@freik/logger';
 import SeqNum from '@freik/seqnum';
 import {
+  hasField,
   hasFieldType,
-  hasStrField,
   isArray,
   isBoolean,
   isDefined,
@@ -12,8 +12,7 @@ import {
 import { IpcRendererEvent } from 'electron';
 import { ElectronWindow, ListenKey, MessageHandler } from './types';
 
-const { con, err, wrn } = MakeLog('@freik:elect-render-tools:ipc');
-const log = con;
+const { log, err, wrn } = MakeLog('@freik:elect-render-tools:ipc');
 
 /**
  * @async
@@ -85,20 +84,18 @@ function HandleMessage(message: unknown): void {
   // send multiple "messages" in a single message:
   // { artists: ..., albums: ..., songs: ... } will invoke listeners for
   // all three of those 'messages'
-  con('In HandleMessage', message);
+  let state = 0;
   let handled = false;
   if (isObjectNonNull(message)) {
-    con('non-null!');
+    state = 1;
     for (const field of Object.keys(message)) {
-      con('checking ', field);
-      if (hasStrField(message, field)) {
-        con('has string field!');
+      if (hasField(message, field)) {
+        state = 2;
         const lstn = listeners.get(field);
-        con('listener:', lstn);
         if (lstn) {
+          state = 3;
           for (const handler of lstn.values()) {
             handled = true;
-            con(`Handling message: ${field}`);
             handler(message[field]);
           }
         }
@@ -107,7 +104,7 @@ function HandleMessage(message: unknown): void {
   }
   if (!handled) {
     err('**********');
-    err('Unhandled message:');
+    err('Unhandled message (state', state, ')');
     err(message);
     err('**********');
   }
@@ -173,18 +170,18 @@ export async function InvokeMain<T>(
   let result;
   if (!window.electronConnector) throw Error('nope');
   if (isDefined(key)) {
-    con(`Invoking main("${channel}", "...")`);
+    log(`Invoking main("${channel}", "...")`);
     result = (await window.electronConnector.ipc.invoke(
       channel,
       key,
     )) as unknown;
-    con(`Invoke main ("${channel}" "...") returned:`);
+    log(`Invoke main ("${channel}" "...") returned:`);
   } else {
-    con(`Invoking main("${channel}")`);
+    log(`Invoking main("${channel}")`);
     result = (await window.electronConnector.ipc.invoke(channel)) as unknown;
-    con(`Invoke main ("${channel}") returned:`);
+    log(`Invoke main ("${channel}") returned:`);
   }
-  con(result);
+  log(result);
   return result;
 }
 

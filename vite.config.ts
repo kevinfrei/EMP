@@ -36,19 +36,5 @@ export default defineConfig({
   },
   resolve: {
     preserveSymlinks: true,
-    alias: [
-      {
-        find: /^@freik\/elect-render-utils$/,
-        replacement: `${path.resolve('../EMP/packages/erenderer')}`,
-      },
-      {
-        find: /^@freik\/elect-main-utils$/,
-        replacement: `${path.resolve('../EMP/packages/emain')}`,
-      },
-      {
-        find: /^@freik\/electron-renderer$/,
-        replacement: `${path.resolve('../EMP/packages/epreload')}`,
-      },
-    ],
   },
 });
