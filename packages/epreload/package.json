@@ -51,10 +51,7 @@
     "ts-jest": "^29.1.0",
     "typescript": "5.0.4"
   },
-  "files": [
-    "lib/**/*"
-  ],
-  "packageManager": "yarn@3.6.0",
+  "files": ["lib/**/*"],
   "dependencies": {
     "@freik/logger": "^0.2.0"
   }

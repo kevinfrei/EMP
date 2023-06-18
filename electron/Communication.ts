@@ -1,5 +1,6 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
 import { Comms, Persistence, Shell } from '@freik/electron-main';
+import { IpcId, isIgnoreItemFn, isXcodeInfo } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { MediaKey } from '@freik/media-core';
 import {
@@ -11,7 +12,6 @@ import {
   isUndefined,
 } from '@freik/typechk';
 import { Menu } from 'electron';
-import { IpcId, isIgnoreItemFn, isXcodeInfo } from '@freik/emp-shared';
 import {
   AddIgnoreItem,
   GetIgnoreList,
@@ -55,7 +55,6 @@ import {
 } from './window';
 
 const { wrn, log } = MakeLog('EMP:main:Communication');
-log.enabled = true;
 
 /**
  * Show a file in the shell
