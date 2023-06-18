@@ -1,7 +1,7 @@
 import { FontIcon, SearchBox, Text } from '@fluentui/react';
 import { hasStrField, isObjectNonNull } from '@freik/typechk';
 import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
-import { CurrentView, Keys, StrId, st } from 'shared';
+import { CurrentView, Keys, StrId, st } from '@freik/emp-shared';
 import { SetSearch, isHostMac } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
 import { curViewFunc } from '../Recoil/ReadWrite';

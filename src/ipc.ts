@@ -1,4 +1,4 @@
-import { Ipc } from '@freik/elect-render-utils';
+import { Ipc } from '@freik/electron-render';
 import { MakeLog } from '@freik/logger';
 import {
   AlbumKey,
@@ -15,7 +15,7 @@ import {
   isString,
   isUndefined,
 } from '@freik/typechk';
-import { IgnoreItem, IpcId } from 'shared';
+import { IgnoreItem, IpcId } from '@freik/emp-shared';
 
 const { log, wrn } = MakeLog('EMP:render:ipc');
 

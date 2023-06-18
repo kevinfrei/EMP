@@ -1,4 +1,4 @@
-import { Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { isString } from '@freik/typechk';
 import { app } from 'electron';

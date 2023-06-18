@@ -1,7 +1,7 @@
 import { Text } from '@fluentui/react';
 import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
-import { TranscodeState } from 'shared';
+import { TranscodeState } from '@freik/emp-shared';
 import { transcodeStatusState } from '../../../Recoil/TranscodeState';
 
 function completed(xcs: TranscodeState): number {

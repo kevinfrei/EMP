@@ -1,5 +1,5 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
-import { Comms, Persistence, Shell } from '@freik/elect-main-utils';
+import { Comms, Persistence, Shell } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { MediaKey } from '@freik/media-core';
 import {
@@ -11,7 +11,7 @@ import {
   isUndefined,
 } from '@freik/typechk';
 import { Menu } from 'electron';
-import { IpcId, isIgnoreItemFn, isXcodeInfo } from 'shared';
+import { IpcId, isIgnoreItemFn, isXcodeInfo } from '@freik/emp-shared';
 import {
   AddIgnoreItem,
   GetIgnoreList,

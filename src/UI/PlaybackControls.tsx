@@ -6,7 +6,7 @@ import {
 } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Keys } from 'shared';
+import { Keys } from '@freik/emp-shared';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import {

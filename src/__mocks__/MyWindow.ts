@@ -1,11 +1,11 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { ElectronWindow } from '@freik/elect-render-utils';
+import { ElectronWindow } from '@freik/electron-render';
 import { MakeLog } from '@freik/logger';
 import { is2TupleOf, isString } from '@freik/typechk';
 import { IpcRenderer } from 'electron';
-import { IpcId } from 'shared';
+import { IpcId } from '@freik/emp-shared';
 
 const { log, wrn } = MakeLog('EMP:render:MyWindow-mock');
 

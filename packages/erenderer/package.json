@@ -1,16 +1,14 @@
 {
-  "name": "@freik/elect-render-utils",
-  "version": "0.5.2",
+  "name": "@freik/electron-render",
+  "version": "0.1.0",
   "description": "Kevin Frei's Electron Render utilities",
-  "module": "./lib/esm/index.js",
-  "main": "./lib/cjs/index.js",
-  "types": "./lib/esm/index.d.ts",
+  "module": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "*** Normal stuff ***": "Common stuff that you'll do all the time",
-    "build": "tsc --project tsconfig.cjs.json && tsc --project tsconfig.esm.json",
-    "format": "ftool format",
-    "chk": "yarn format && yarn lint && yarn compile && yarn test",
-    "doc": "typedoc ./src/index.ts --tsconfig tsconfig.esm.json && yarn format",
+    "build": "tsc",
+    "chk": "yarn lint && yarn compile && yarn test",
+    "doc": "typedoc ./src/index.ts",
     "test": "jest --config jest.jsdom.js --passWithNoTests",
     "*** Less common stuff ***": "Stuff you may not do very frequently",
     "watch": "jest --config jest.jsdom.js --watch",
@@ -36,19 +34,16 @@
   "dependencies": {
     "@freik/logger": "^0.2.0",
     "@freik/seqnum": "^1.1.0",
-    "@freik/typechk": "^0.2.0"
+    "@freik/typechk": "^0.2.0",
+    "@freik/web-utils": "^0.5.2",
+    "electron": "^25.1.1"
   },
   "peerDependencies": {
-    "@freik/elect-main-utils": ">=0.5.0",
-    "@freik/electron-renderer": ">=0.5.0",
-    "@freik/web-utils": ">=0.4.0",
-    "electron": ">=20.0.0",
     "react": ">=17.0.2",
     "react-dom": ">=17.0.2",
     "recoil": ">=0.7.0"
   },
   "devDependencies": {
-    "@freik/build-tools": "^3.6.0",
     "@freik/web-utils": "^0.5.2",
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.2",
@@ -58,7 +53,7 @@
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
     "electron": "^25.1.1",
-    "eslint": "^8.42.0",
+    "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsx-a11y": "^6.7.1",
@@ -82,6 +77,5 @@
   "files": ["lib/**/*"],
   "engines": {
     "node": "^14.13.1 || >= 16.0.0"
-  },
-  "packageManager": "yarn@3.6.0"
+  }
 }

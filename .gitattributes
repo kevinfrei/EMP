@@ -1,3 +1,2 @@
-.yarn/**/*        -diff
-shared/.yarn/**/* -diff
+**/.yarn/**/*        -diff
 **/yarn.lock      -diff

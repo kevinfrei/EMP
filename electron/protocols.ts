@@ -1,4 +1,4 @@
-import { Comms, Persistence } from '@freik/elect-main-utils';
+import { Comms, Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import {

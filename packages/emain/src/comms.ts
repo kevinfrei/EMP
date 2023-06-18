@@ -1,7 +1,6 @@
 import { is2TupleOf, isString } from '@freik/typechk';
 import debug from 'debug';
-import { ProtocolRequest, ProtocolResponse, ipcMain } from 'electron';
-import isDev from 'electron-is-dev';
+import { ProtocolRequest, ProtocolResponse, app, ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { Persistence } from './persist';
 import { ShowOpenDialog, isOpenDialogOptions } from './shell';
@@ -108,7 +107,7 @@ export function SendToMain(channel: string, ...data: unknown[]): void {
 }
 
 async function wwwIsDev(): Promise<boolean> {
-  return Promise.resolve(isDev);
+  return Promise.resolve(!app.isPackaged);
 }
 
 /**

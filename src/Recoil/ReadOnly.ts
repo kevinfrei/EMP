@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { Effects, Ipc } from '@freik/elect-render-utils';
+import { Effects, Ipc } from '@freik/electron-render';
 import { MakeLog } from '@freik/logger';
 import {
   Album,
@@ -23,7 +23,7 @@ import {
 } from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from 'shared';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import * as ipc from '../ipc';

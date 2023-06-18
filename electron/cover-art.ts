@@ -1,5 +1,5 @@
 import { AudioDatabase } from '@freik/audiodb';
-import { Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import {
   Album,

@@ -12,7 +12,7 @@ import {
 import { IpcRendererEvent } from 'electron';
 import { ElectronWindow, ListenKey, MessageHandler } from './types';
 
-const { log, wrn } = MakeLog('@freik:elect-render-tools:ipc');
+const { con, err, log, wrn } = MakeLog('@freik:elect-render-tools:ipc');
 
 /**
  * @async
@@ -92,7 +92,7 @@ function HandleMessage(message: unknown): void {
         if (lstn) {
           for (const handler of lstn.values()) {
             handled = true;
-            log(`Handling message: ${id}`);
+            con(`Handling message: ${id}`);
             handler(message[id]);
           }
         }
@@ -100,10 +100,10 @@ function HandleMessage(message: unknown): void {
     }
   }
   if (!handled) {
-    wrn('**********');
-    wrn('Unhandled message:');
-    wrn(message);
-    wrn('**********');
+    err('**********');
+    err('Unhandled message:');
+    err(message);
+    err('**********');
   }
 }
 
@@ -167,18 +167,18 @@ export async function InvokeMain<T>(
   let result;
   if (!window.electronConnector) throw Error('nope');
   if (isDefined(key)) {
-    log(`Invoking main("${channel}", "...")`);
+    con(`Invoking main("${channel}", "...")`);
     result = (await window.electronConnector.ipc.invoke(
       channel,
       key,
     )) as unknown;
-    log(`Invoke main ("${channel}" "...") returned:`);
+    con(`Invoke main ("${channel}" "...") returned:`);
   } else {
-    log(`Invoking main("${channel}")`);
+    con(`Invoking main("${channel}")`);
     result = (await window.electronConnector.ipc.invoke(channel)) as unknown;
-    log(`Invoke main ("${channel}") returned:`);
+    con(`Invoke main ("${channel}") returned:`);
   }
-  log(result);
+  con(result);
   return result;
 }
 

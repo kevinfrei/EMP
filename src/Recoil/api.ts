@@ -1,4 +1,4 @@
-import { Ipc } from '@freik/elect-render-utils';
+import { Ipc } from '@freik/electron-render';
 import {
   isAlbumKey,
   isArtistKey,
@@ -8,7 +8,7 @@ import {
   SongKey,
 } from '@freik/media-core';
 import type { MyTransactionInterface } from '@freik/web-utils';
-import { IpcId } from 'shared';
+import { IpcId } from '@freik/emp-shared';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,

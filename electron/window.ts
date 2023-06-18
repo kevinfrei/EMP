@@ -2,7 +2,7 @@ import {
   GetBrowserWindowPos,
   LoadWindowPos,
   setMainWindow,
-} from '@freik/elect-main-utils';
+} from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { isNumber } from '@freik/typechk';
 import {

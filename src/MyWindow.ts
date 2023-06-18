@@ -1,11 +1,11 @@
 // This is for getting at "global" stuff from the window object
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { ElectronWindow, Ipc } from '@freik/elect-render-utils';
+import { ElectronWindow, Ipc } from '@freik/electron-render';
 import { MakeLog } from '@freik/logger';
 import { AlbumKey, SongKey } from '@freik/media-core';
 import { NativeImage } from 'electron';
-import { IpcId } from 'shared';
+import { IpcId } from '@freik/emp-shared';
 
 const { log } = MakeLog('EMP:render:MyWindow');
 

@@ -5,7 +5,7 @@ import {
   IContextualMenuItem,
   Point,
 } from '@fluentui/react';
-import { Ipc } from '@freik/elect-render-utils';
+import { Ipc } from '@freik/electron-render';
 import { SongKey } from '@freik/media-core';
 import { isString } from '@freik/typechk';
 import {
@@ -14,7 +14,7 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
-import { IpcId } from 'shared';
+import { IpcId } from '@freik/emp-shared';
 import {
   songHateFuncFam,
   songLikeFuncFam,

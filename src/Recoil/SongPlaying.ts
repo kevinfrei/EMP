@@ -1,4 +1,4 @@
-import { Effects } from '@freik/elect-render-utils';
+import { Effects } from '@freik/electron-render';
 import { SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
 import { atom, selector } from 'recoil';

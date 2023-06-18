@@ -1,4 +1,4 @@
-import { Persistence } from '@freik/elect-main-utils';
+import { Persistence } from '@freik/electron-main';
 import { isFunction, isString } from '@freik/typechk';
 import {
   BrowserWindow,
@@ -9,7 +9,7 @@ import {
   shell,
 } from 'electron';
 import { KeyboardEvent } from 'electron/main';
-import { CurrentView, IpcId, Keys } from 'shared';
+import { CurrentView, IpcId, Keys } from '@freik/emp-shared';
 import { ShowAbout } from './About.js';
 import { SendToUI } from './Communication.js';
 import { ToggleMiniPlayer } from './window.js';

@@ -6,8 +6,12 @@ import {
   Text,
   TextField,
 } from '@fluentui/react';
-import { Util } from '@freik/elect-render-utils';
-import { PostMain } from '@freik/elect-render-utils/lib/esm/ipc';
+import { Ipc, Util } from '@freik/electron-render';
+import {
+  IpcId,
+  TranscodeSourceType,
+  isTranscodeSourceType,
+} from '@freik/emp-shared';
 import { isArrayOfString, isDefined } from '@freik/typechk';
 import { StateToggle, useBoolState } from '@freik/web-utils';
 import { useState } from 'react';
@@ -17,7 +21,6 @@ import {
   useRecoilState,
   useRecoilValue,
 } from 'recoil';
-import { IpcId, TranscodeSourceType, isTranscodeSourceType } from 'shared';
 import {
   destLocationState,
   sourceLocationAlbumState,
@@ -174,7 +177,7 @@ export function TranscoderConfiguration(): JSX.Element {
           text="Transcode"
           disabled={!validSource || dstLoc.length === 0}
           onClick={() => {
-            void PostMain(IpcId.TranscodingBegin.toString(), {
+            void Ipc.PostMain(IpcId.TranscodingBegin.toString(), {
               source: srcLocDescr,
               dest: dstLoc,
               artwork: copyArtwork[0],

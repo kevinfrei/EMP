@@ -2,7 +2,7 @@ import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
-import { CurrentView } from 'shared';
+import { CurrentView } from '@freik/emp-shared';
 import { FocusSearch } from '../MyWindow';
 import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';

@@ -1,4 +1,4 @@
-import { Effects } from '@freik/elect-render-utils';
+import { Effects } from '@freik/electron-render';
 import { AlbumKey, ArtistKey, PlaylistName } from '@freik/media-core';
 import {
   chkArrayOf,
@@ -8,7 +8,7 @@ import {
   isString,
 } from '@freik/typechk';
 import { atom, selector, selectorFamily } from 'recoil';
-import { IpcId, TranscodeSourceType, TranscodeState } from 'shared';
+import { IpcId, TranscodeSourceType, TranscodeState } from '@freik/emp-shared';
 import { allPlaylistsFunc } from './PlaylistsState';
 import { allAlbumsFunc, allArtistsFunc } from './ReadOnly';
 
