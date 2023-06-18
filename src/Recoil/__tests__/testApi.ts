@@ -1,4 +1,4 @@
-jest.mock('@freik/electron-render');
+// jest.mock('@freik/electron-render');
 
 import { MakeLog } from '@freik/logger';
 import { MyTransactionInterface } from '@freik/web-utils';
