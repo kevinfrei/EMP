@@ -1,7 +1,7 @@
 import { MakeLog } from '@freik/logger';
 import SeqNum from '@freik/seqnum';
 import {
-  hasField,
+  hasFieldType,
   hasStrField,
   isArray,
   isBoolean,
@@ -12,7 +12,8 @@ import {
 import { IpcRendererEvent } from 'electron';
 import { ElectronWindow, ListenKey, MessageHandler } from './types';
 
-const { con, err, log, wrn } = MakeLog('@freik:elect-render-tools:ipc');
+const { con, err, wrn } = MakeLog('@freik:elect-render-tools:ipc');
+const log = con;
 
 /**
  * @async
@@ -84,16 +85,21 @@ function HandleMessage(message: unknown): void {
   // send multiple "messages" in a single message:
   // { artists: ..., albums: ..., songs: ... } will invoke listeners for
   // all three of those 'messages'
+  con('In HandleMessage', message);
   let handled = false;
   if (isObjectNonNull(message)) {
-    for (const id in message) {
-      if (hasStrField(message, id)) {
-        const lstn = listeners.get(id);
+    con('non-null!');
+    for (const field of Object.keys(message)) {
+      con('checking ', field);
+      if (hasStrField(message, field)) {
+        con('has string field!');
+        const lstn = listeners.get(field);
+        con('listener:', lstn);
         if (lstn) {
           for (const handler of lstn.values()) {
             handled = true;
-            con(`Handling message: ${id}`);
-            handler(message[id]);
+            con(`Handling message: ${field}`);
+            handler(message[field]);
           }
         }
       }
@@ -109,13 +115,13 @@ function HandleMessage(message: unknown): void {
 
 declare let window: ElectronWindow;
 
-function listener(_event: IpcRendererEvent, data: unknown) {
+export function listener(_event: IpcRendererEvent, data: unknown) {
   if (
     isArray(data) &&
     isObjectNonNull(data[0]) &&
-    hasField(data[0], 'message')
+    hasFieldType(data[0], 'message', isObjectNonNull)
   ) {
-    log('*** Async message formed properly:');
+    log('*** Properly formed async message received:');
     log(data[0]);
     HandleMessage(data[0].message);
   } else {

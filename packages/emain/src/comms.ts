@@ -1,14 +1,12 @@
+import { MakeLog } from '@freik/logger';
 import { is2TupleOf, isString } from '@freik/typechk';
-import debug from 'debug';
 import { ProtocolRequest, ProtocolResponse, app, ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { Persistence } from './persist';
 import { ShowOpenDialog, isOpenDialogOptions } from './shell';
 import { getMainWindow } from './win';
 
-const log = debug('@freik/electron-main-tools:comms:log');
-const err = debug('@freik/electron-main-tools:comms:error');
-err.enabled = true;
+const { log, err } = MakeLog('@freik:electron-main-tools:comms');
 
 /**
  * The type of a "channel handler", used by {@link registerChannel}

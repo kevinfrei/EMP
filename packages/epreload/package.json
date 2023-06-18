@@ -29,9 +29,6 @@
     "url": "https://github.com/kevinfrei/electron-renderer/issues"
   },
   "homepage": "https://github.com/kevinfrei/electron-renderer#readme",
-  "dependencies": {
-    "debug": "^4.3.4"
-  },
   "peerDependencies": {
     "@freik/electron-main": ">=0.1.0",
     "@freik/electron-render": ">=0.1.0",
@@ -54,6 +51,11 @@
     "ts-jest": "^29.1.0",
     "typescript": "5.0.4"
   },
-  "files": ["lib/**/*"],
-  "packageManager": "yarn@3.6.0"
+  "files": [
+    "lib/**/*"
+  ],
+  "packageManager": "yarn@3.6.0",
+  "dependencies": {
+    "@freik/logger": "^0.2.0"
+  }
 }

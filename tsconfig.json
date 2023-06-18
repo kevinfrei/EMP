@@ -2,8 +2,8 @@
   "compilerOptions": {
     "noFallthroughCasesInSwitch": false,
     "jsx": "react-jsx",
-    "target": "es2021",
-    "module": "esnext",
+    "target": "ES2022",
+    "module": "ES2022",
     "sourceMap": true,
     "strict": true,
     "noImplicitAny": true,

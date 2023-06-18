@@ -2,11 +2,10 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 import { ElectronWindow } from '@freik/electron-render';
-import debug from 'debug';
+import { MakeLog } from '@freik/logger';
 import { clipboard, ipcRenderer } from 'electron';
 
-const err = debug('@freik/electron-preload:error');
-err.enabled = true;
+const { err } = MakeLog('@freik:electron-preload');
 
 // This needs to stay in sync with the @freik/elect-render-utils type
 // The presence of the Electron.Clipboard item is a little problematic

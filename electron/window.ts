@@ -93,7 +93,9 @@ export async function CreateWindow(
 
   // Load the base URL
   if (process.env.VITE_DEV_SERVER_URL) {
-    await mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
+    await mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL, {
+      extraHeaders: 'pragma: no-cache\n',
+    });
   } else {
     await mainWindow.loadFile(path.join(process.env.DIST, 'index.html'));
   }
