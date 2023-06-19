@@ -60,10 +60,10 @@
     },
   ],
   win: {
-    icon: 'public/icon.png',
+    icon: 'public/icon.ico',
     target: [
       {
-        target: 'nsis',
+        target: 'msi',
         arch: ['x64'],
       },
     ],
