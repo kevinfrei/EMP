@@ -12,24 +12,55 @@
   extraMetadata: {
     main: 'dist-electron/main.js',
   },
-  fileAssociations: {
-    ext: ['mp3', 'm4a', 'aac', 'flac', 'wma'],
-    description: 'Audio files',
-    role: 'Viewer',
-  },
+  fileAssociations: [
+    {
+      ext: 'mp3',
+      description: 'MP3 Audio file',
+      role: 'Viewer',
+      mimeType: 'audio/mpeg',
+    },
+    {
+      ext: 'm4a',
+      description: 'MPEG-4 Audio file',
+      role: 'Viewer',
+      mimeType: 'audio/m4a',
+    },
+    {
+      ext: 'aac',
+      description: 'MPEG-4 Raw Audio file',
+      role: 'Viewer',
+      mimeType: 'audio/aac',
+    },
+    {
+      ext: 'flac',
+      description: 'FLAC Lossless Audio file',
+      role: 'Viewer',
+      mimeType: 'audio/x-flac',
+    },
+    {
+      ext: 'wma',
+      description: 'Windows Media Audio file',
+      role: 'Viewer',
+      mimeType: 'audio/x-ms-wma',
+    },
+  ],
   files: ['dist-electron', 'dist'],
   mac: {
     artifactName: '${productName}_${version}.${ext}',
     target: ['dmg'],
-    icon: 'build/icon.png',
+    icon: 'public/icon.png',
   },
   linux: {
-    icon: 'build/icon.png',
+    icon: 'public/icon.png',
     category: 'Audio',
-    mimeTypes: ['audio/mpeg', 'audio/m4a', 'audio/aac', 'audio/x-flac'],
   },
+  publish: [
+    {
+      provider: 'github',
+    },
+  ],
   win: {
-    icon: 'build/icon.png',
+    icon: 'public/icon.png',
     target: [
       {
         target: 'nsis',

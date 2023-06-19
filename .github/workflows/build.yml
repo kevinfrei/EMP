@@ -11,8 +11,7 @@ jobs:
 
     strategy:
       matrix:
-        # ubuntu-latest
-        os: [macos-latest, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Check out Git repository
@@ -32,7 +31,6 @@ jobs:
 
           # If the commit is tagged with a version (e.g. "v1.0.0"),
           # release the app after building
-          release: false
-          # ${{ startsWith(github.ref, 'refs/tags/v') }}
+          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
-          # args: --publish=onTag
+          args: --publish=onTag
