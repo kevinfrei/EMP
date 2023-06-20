@@ -12,7 +12,7 @@ import {
 import { IpcRendererEvent } from 'electron';
 import { ElectronWindow, ListenKey, MessageHandler } from './types';
 
-const { log, err, wrn } = MakeLog('@freik:elect-render-tools:ipc');
+const { log, wrn } = MakeLog('@freik:elect-render-tools:ipc');
 
 /**
  * @async
@@ -103,10 +103,10 @@ function HandleMessage(message: unknown): void {
     }
   }
   if (!handled) {
-    err('**********');
-    err('Unhandled message (state', state, ')');
-    err(message);
-    err('**********');
+    wrn('**********');
+    wrn('Unhandled message (state', state, ')');
+    wrn(message);
+    wrn('**********');
   }
 }
 

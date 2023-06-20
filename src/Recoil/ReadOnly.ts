@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { Effects, Ipc } from '@freik/electron-render';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import {
   Album,
@@ -23,7 +24,6 @@ import {
 } from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import * as ipc from '../ipc';
@@ -33,7 +33,7 @@ import {
 } from './ReadWrite';
 import { songListState } from './SongPlaying';
 
-const { err: wrn, log } = MakeLog('EMP:render:ReadOnly:log'); // eslint-disable-line
+const { wrn, log } = MakeLog('EMP:render:ReadOnly:log'); // eslint-disable-line
 
 // type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 
