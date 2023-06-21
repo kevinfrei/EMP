@@ -34,7 +34,7 @@
   "dependencies": {
     "@freik/logger": "^0.2.0",
     "@freik/sync": "^0.2.1",
-    "@freik/typechk": "^0.4.0"
+    "@freik/typechk": "^0.5.0"
   },
   "devDependencies": {
     "@freik/node-utils": "^1.3.3",

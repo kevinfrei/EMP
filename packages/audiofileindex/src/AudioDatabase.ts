@@ -1,4 +1,4 @@
-import { MakeMultiMap, MultiMap } from '@freik/containers';
+import { MakeMultiMap, MultiMap, isMultiMapOf } from '@freik/containers';
 import {
   ArrayIntersection,
   ArraySetEqual,
@@ -40,11 +40,14 @@ import {
   Unpickle,
   chkBothOf,
   chkMapOf,
+  chkObjectOfType,
   chkStrField,
   hasField,
   hasFieldType,
   isArray,
+  isArrayOf,
   isDefined,
+  isMapOf,
   isNumber,
   isString,
   isUndefined,
@@ -870,10 +873,30 @@ export async function MakeAudioDatabase(
     const artists = chkArtists(flattened.dbArtists)
       ? flattened.dbArtists
       : false;
-    // TODO: Extra validation!!!
-    const titleIndex = flattened.albumTitleIndex as MultiMap<string, AlbumKey>;
-    const nameIndex = flattened.artistNameIndex as Map<string, ArtistKey>;
-    const idx = flattened.indices as { location: string; hash: string }[];
+    const titleIndex = isMultiMapOf<string, AlbumKey>(
+      flattened.albumTitleIndex,
+      isString,
+      isAlbumKey,
+    )
+      ? flattened.albumTitleIndex
+      : false;
+    const nameIndex = isMapOf<string, ArtistKey>(
+      flattened.artistNameIndex,
+      isString,
+      isArtistKey,
+    )
+      ? flattened.artistNameIndex
+      : false;
+    const idx = isArrayOf<{ location: string; hash: string }>(
+      flattened.indices,
+      chkObjectOfType({ location: isString, hash: isString }),
+    )
+      ? flattened.indices
+      : false;
+    if (!songs || !albums || !artists || !titleIndex || !nameIndex || !idx) {
+      wrn(`Invalid AFI loaded from ${persistenceIdName}`);
+      return false;
+    }
     const audioIndices = new Map(
       (
         await Promise.all(
