@@ -13,8 +13,11 @@ import {
   FullMetadata,
   MediaKey,
   SongKey,
+  isAlbum,
   isAlbumKey,
+  isArtist,
   isArtistKey,
+  isSong,
   isSongKey,
 } from '@freik/media-core';
 import {
@@ -35,6 +38,8 @@ import {
 import {
   Pickle,
   Unpickle,
+  chkMapOf,
+  chkStrField,
   hasField,
   hasFieldType,
   isArray,
@@ -840,6 +845,11 @@ export async function MakeAudioDatabase(
     };
   }
 
+  const isSongWithPath = chkBothOf(isSong, chkStrField('path'));
+  const chkSongs = chkMapOf(isSongKey, isSongWithPath);
+  const chkAlbums = chkMapOf(isAlbumKey, isAlbum);
+  const chkArtists = chkMapOf(isArtistKey, isArtist);
+
   async function load(): Promise<boolean> {
     const stringVal = await persist.getItemAsync(persistenceIdName);
     const flattened = Unpickle(stringVal || '0');
@@ -854,10 +864,12 @@ export async function MakeAudioDatabase(
     ) {
       return false;
     }
+    const songs = chkSongs(flattened.dbSongs) ? flattened.dbSongs : false;
+    const albums = chkAlbums(flattened.dbAlbums) ? flattened.dbAlbums : false;
+    const artists = chkArtists(flattened.dbArtists)
+      ? flattened.dbArtists
+      : false;
     // TODO: Extra validation!!!
-    const songs = flattened.dbSongs as Map<SongKey, SongWithPath>;
-    const albums = flattened.dbAlbums as Map<AlbumKey, Album>;
-    const artists = flattened.dbArtists as Map<ArtistKey, Artist>;
     const titleIndex = flattened.albumTitleIndex as MultiMap<string, AlbumKey>;
     const nameIndex = flattened.artistNameIndex as Map<string, ArtistKey>;
     const idx = flattened.indices as { location: string; hash: string }[];
