@@ -34,7 +34,7 @@
   "dependencies": {
     "@freik/logger": "^0.2.0",
     "@freik/seqnum": "^1.1.0",
-    "@freik/typechk": "^0.3.1",
+    "@freik/typechk": "^0.4.0",
     "@freik/web-utils": "^0.5.2",
     "electron": "^25.1.1"
   },

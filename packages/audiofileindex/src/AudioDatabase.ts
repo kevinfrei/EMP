@@ -38,6 +38,7 @@ import {
 import {
   Pickle,
   Unpickle,
+  chkBothOf,
   chkMapOf,
   chkStrField,
   hasField,

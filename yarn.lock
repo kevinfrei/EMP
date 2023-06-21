@@ -3548,7 +3548,7 @@ __metadata:
     "@freik/node-utils": ^1.3.3
     "@freik/search": ^1.1.0
     "@freik/text": ^0.3.1
-    "@freik/typechk": ^0.3.1
+    "@freik/typechk": ^0.4.0
     "@types/debug": ^4.1.8
     "@types/jest": ^29.5.2
     "@types/rmfr": ^2.0.2
@@ -3648,7 +3648,7 @@ __metadata:
     "@freik/logger": ^0.2.0
     "@freik/node-utils": ^1.3.3
     "@freik/sync": ^0.2.1
-    "@freik/typechk": ^0.3.1
+    "@freik/typechk": ^0.4.0
     "@types/debug": ^4.1.8
     "@types/jest": ^29.5.2
     "@typescript-eslint/eslint-plugin": ^5.60.0
@@ -3704,7 +3704,7 @@ __metadata:
   dependencies:
     "@freik/logger": ^0.2.0
     "@freik/seqnum": ^1.1.0
-    "@freik/typechk": ^0.3.1
+    "@freik/typechk": ^0.4.0
     "@freik/web-utils": ^0.5.2
     "@types/debug": ^4.1.8
     "@types/jest": ^29.5.2
@@ -3745,7 +3745,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@freik/emp-shared@workspace:shared"
   dependencies:
-    "@freik/typechk": ^0.3.1
+    "@freik/typechk": ^0.4.0
     rimraf: ^5.0.1
     typescript: 5.0.4
   languageName: unknown
@@ -3926,6 +3926,13 @@ __metadata:
   version: 0.3.1
   resolution: "@freik/typechk@npm:0.3.1"
   checksum: 369bfbf559eddd5c8dd78895ff809e06006f5330b71a5e02f5a15fe911a8820065b8031f4fd387c2b3ee9e3d4975a159b1abbd23694c0863fb1e0ab474bb8489
+  languageName: node
+  linkType: hard
+
+"@freik/typechk@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@freik/typechk@npm:0.4.0"
+  checksum: ffaa2678c3fee78ccd6264d3cf7324f37b0976ac5bf21fe14442383105f28f380e5df932a24373e86e12ffd41c75b9b418615c3fdba31c7d446185e01ab7a083
   languageName: node
   linkType: hard
 
@@ -10504,7 +10511,7 @@ __metadata:
     "@freik/p-limit": ^5.0.0
     "@freik/sync": ^0.2.1
     "@freik/text": ^0.3.1
-    "@freik/typechk": ^0.3.1
+    "@freik/typechk": ^0.4.0
     "@freik/web-utils": ^0.5.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^14.0.0

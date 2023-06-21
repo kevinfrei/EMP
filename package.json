@@ -44,7 +44,7 @@
     "@freik/p-limit": "^5.0.0",
     "@freik/sync": "^0.2.1",
     "@freik/text": "^0.3.1",
-    "@freik/typechk": "^0.3.1",
+    "@freik/typechk": "^0.4.0",
     "@freik/web-utils": "^0.5.2",
     "album-art": "^3.1.0",
     "jimp": "^0.22.8",
