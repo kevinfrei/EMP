@@ -36,7 +36,7 @@
     "@freik/seqnum": "^1.1.0",
     "@freik/typechk": "^0.5.0",
     "@freik/web-utils": "^0.5.2",
-    "electron": "^25.1.1"
+    "electron": "^25.2.0"
   },
   "peerDependencies": {
     "react": ">=17.0.2",
@@ -52,7 +52,7 @@
     "@types/react-test-renderer": "^17.0.2",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
-    "electron": "^25.1.1",
+    "electron": "^25.2.0",
     "eslint": "^8.43.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",

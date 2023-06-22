@@ -3545,7 +3545,7 @@ __metadata:
     "@freik/logger": ^0.2.0
     "@freik/media-core": ^0.14.0
     "@freik/media-utils": ^0.15.0
-    "@freik/node-utils": ^1.3.3
+    "@freik/node-utils": ^1.3.4
     "@freik/search": ^1.1.0
     "@freik/text": ^0.3.1
     "@freik/typechk": ^0.5.0
@@ -3646,14 +3646,14 @@ __metadata:
   resolution: "@freik/electron-main@workspace:packages/emain"
   dependencies:
     "@freik/logger": ^0.2.0
-    "@freik/node-utils": ^1.3.3
+    "@freik/node-utils": ^1.3.4
     "@freik/sync": ^0.2.1
     "@freik/typechk": ^0.5.0
     "@types/debug": ^4.1.8
     "@types/jest": ^29.5.2
     "@typescript-eslint/eslint-plugin": ^5.60.0
     "@typescript-eslint/parser": ^5.60.0
-    electron: ^25.1.1
+    electron: ^25.2.0
     eslint: ^8.43.0
     eslint-config-prettier: ^8.8.0
     eslint-plugin-import: ^2.27.5
@@ -3681,7 +3681,7 @@ __metadata:
     "@types/jest": ^29.5.2
     "@typescript-eslint/eslint-plugin": ^5.60.0
     "@typescript-eslint/parser": ^5.60.0
-    electron: ^25.1.1
+    electron: ^25.2.0
     eslint: ^8.43.0
     eslint-config-prettier: ^8.8.0
     eslint-plugin-import: ^2.27.5
@@ -3713,7 +3713,7 @@ __metadata:
     "@types/react-test-renderer": ^17.0.2
     "@typescript-eslint/eslint-plugin": ^5.60.0
     "@typescript-eslint/parser": ^5.60.0
-    electron: ^25.1.1
+    electron: ^25.2.0
     eslint: ^8.43.0
     eslint-config-prettier: ^8.8.0
     eslint-plugin-import: ^2.27.5
@@ -3778,7 +3778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/is-hidden-file@npm:^1.11.0":
+"@freik/is-hidden-file@npm:^1.10.12, @freik/is-hidden-file@npm:^1.11.0":
   version: 1.11.0
   resolution: "@freik/is-hidden-file@npm:1.11.0"
   dependencies:
@@ -3807,7 +3807,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/media-utils@npm:^0.15.0, @freik/media-utils@npm:~0.15.0":
+"@freik/media-utils@npm:^0.15.0":
   version: 0.15.0
   resolution: "@freik/media-utils@npm:0.15.0"
   dependencies:
@@ -3819,7 +3819,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/node-utils@npm:^1.3.3, @freik/node-utils@npm:~1.3.3":
+"@freik/node-utils@npm:^1.3.3":
   version: 1.3.3
   resolution: "@freik/node-utils@npm:1.3.3"
   dependencies:
@@ -3832,6 +3832,22 @@ __metadata:
     "@freik/typechk": ^0.1.0
     debug: ^4.3.4
   checksum: 936e7c2ab328bf19c62e52ee17f21a8d97f35158bf604264c8155e8f34245aea4972eba51b912974f77f4795d0a0063bd06b4950fa43cc4cc74452b4ce3e1c03
+  languageName: node
+  linkType: hard
+
+"@freik/node-utils@npm:^1.3.4":
+  version: 1.3.4
+  resolution: "@freik/node-utils@npm:1.3.4"
+  dependencies:
+    "@freik/containers": ^0.2.1
+    "@freik/helpers": ^0.3.0
+    "@freik/is-hidden-file": ^1.10.12
+    "@freik/logger": ^0.2.0
+    "@freik/seqnum": ^1.1.0
+    "@freik/sync": ^0.2.1
+    "@freik/text": ^0.3.1
+    "@freik/typechk": ^0.5.0
+  checksum: ee6de266e51ffa30f4334920e4224638b5e62c3623a9cdc734c3594283d9d4dfdd5aa49205de6af1b0cf305cb84cedf068d042177e7401e9169b99b75a741cd8
   languageName: node
   linkType: hard
 
@@ -10404,16 +10420,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^25.1.1":
-  version: 25.1.1
-  resolution: "electron@npm:25.1.1"
+"electron@npm:^25.2.0":
+  version: 25.2.0
+  resolution: "electron@npm:25.2.0"
   dependencies:
     "@electron/get": ^2.0.0
     "@types/node": ^18.11.18
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: fd07fd6cb2230cf6aa322458aee9549a06b02560573131b89e984aa172b6b0535efdce48d10863505ff62c229b3c392475b6d3f35a92e1bfd98e7f835cfb139e
+  checksum: 264b19af3077da70fc137a244cec24a7674b0938695fcbf8b22a48164d43efe58c597e189501ee48d02bb52ff26e6952a8c69e4c50bb42686f117d6e10a33aa4
   languageName: node
   linkType: hard
 
@@ -10483,8 +10499,8 @@ __metadata:
     "@freik/helpers": ^0.3.0
     "@freik/logger": ^0.2.0
     "@freik/media-core": ^0.14.0
-    "@freik/media-utils": ~0.15.0
-    "@freik/node-utils": ~1.3.3
+    "@freik/media-utils": ^0.15.0
+    "@freik/node-utils": ^1.3.4
     "@freik/p-limit": ^5.0.0
     "@freik/sync": ^0.2.1
     "@freik/text": ^0.3.1
@@ -10505,7 +10521,7 @@ __metadata:
     "@vitejs/plugin-react": ^4.0.1
     album-art: ^3.1.0
     cross-env: ^7.0.3
-    electron: ^25.1.1
+    electron: ^25.2.0
     electron-builder: ^24.5.0
     eslint: ^8.43.0
     eslint-config-prettier: ^8.8.0

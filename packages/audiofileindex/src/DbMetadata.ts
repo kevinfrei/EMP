@@ -14,7 +14,7 @@ import {
   isBoolean,
   isNumber,
   isObjectNonNull,
-  isObjectOfType,
+  isObjectOfExactType,
   isString,
 } from '@freik/typechk';
 import path from 'path';
@@ -137,7 +137,7 @@ const chkVaType = chkOneOf(
 // Checks to make sure obj is a Partial<FullMetadata>
 export function IsOnlyMetadata(obj: unknown): obj is MinimumMetadata {
   cleanseKeys(obj);
-  return isObjectOfType(
+  return isObjectOfExactType(
     obj,
     {
       originalPath: isString,
@@ -188,7 +188,7 @@ function minMetadataEqual(a: MinimumMetadata, b: MinimumMetadata): boolean {
 
 export function IsFullMetadata(obj: unknown): obj is FullMetadata {
   cleanseKeys(obj);
-  return isObjectOfType(
+  return isObjectOfExactType(
     obj,
     {
       originalPath: isString,
