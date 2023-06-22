@@ -1,4 +1,3 @@
-import { MakeMultiMap } from '@freik/containers';
 import { ArrayIntersection } from '@freik/helpers';
 import { Album, Artist } from '@freik/media-core';
 import { FileUtil, MakePersistence } from '@freik/node-utils';
@@ -13,10 +12,6 @@ jest.setTimeout(3000000);
 const persist = MakePersistence('./src/__tests__/persist-basic/');
 
 async function cleanup() {
-  const stub = MakeMultiMap<string, string>();
-  if (Object.keys(global).length === 0) {
-    console.log(stub.size());
-  }
   await remove('./src/__tests__/persist-basic/test.json');
   await remove(
     './src/__tests__/NotActuallyFiles/Yello - 1985 - Stella/01 - Test.flac',
@@ -240,8 +235,6 @@ it('Rebuilding a DB after initial creation', async () => {
       continue;
     }
     const data = cover as Buffer;
-    // console.log(key);
-    // console.log(data);
     expect(data.length == 1 || data.length == 19).toBeTruthy();
     expect(data[0] == 10 || data.length == 19).toBeTruthy(); // All my "jpg"s but one
     coverCount++;
@@ -293,22 +286,15 @@ it('Loading and Saving', async () => {
 
 it('Ignoring stuff', async () => {
   await Promise.resolve(process.nextTick);
-  console.log('Here we are1');
   const db = await MakeAudioDatabase(persist);
-  console.log('Here we are2');
   expect(db).toBeDefined();
   if (!(await db.addFileLocation('./src/__tests__/NotActuallyFiles'))) {
-    console.log('Num3');
     await db.removeFileLocation('./src/__tests__/NotActuallyFiles');
-    console.log('Num4');
     expect(
       await db.addFileLocation('./src/__tests__/NotActuallyFiles'),
     ).toBeTruthy();
-    console.log('Num5');
   }
-  console.log('Num6');
   let flat = db.getFlatDatabase();
-  console.log('Num7');
   expect(flat.songs.length).toEqual(743);
   expect(flat.albums.length).toEqual(189);
   expect(flat.artists.length).toEqual(273);

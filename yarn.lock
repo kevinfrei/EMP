@@ -3621,23 +3621,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/containers@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@freik/containers@npm:0.1.0"
-  dependencies:
-    "@freik/helpers": ^0.1.0
-    "@freik/typechk": ^0.1.0
-  checksum: 244cd2b3ec2e2c3423d8416ff917dbc7d075d66226962b7b3fee3ed64f0ffd9d4fed77fcbf7c608fae6c5ca4a90296df9182cd2bad0e91e46398425d473f24e8
-  languageName: node
-  linkType: hard
-
 "@freik/containers@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "@freik/containers@npm:0.2.1"
+  version: 0.2.2
+  resolution: "@freik/containers@npm:0.2.2"
   dependencies:
     "@freik/helpers": ^0.3.0
-    "@freik/typechk": ^0.2.0
-  checksum: 1f6b111eff2594838447d837d66f4c156a7a8a6144cf82f90233f152298ad3e3bfc9af57be682d39aa82d15e1ef114928b6f5c59dcfb108efa98cdb61ee78a6a
+    "@freik/typechk": ^0.5.0
+  checksum: a9f86f7f95268acbd45de42e2211e041e53dd8357b1064a12d8f750b2ce15d8e3b9e5a6485b97016696fc8c9540374fa670742b77349dea70544cd12384fc0a7
   languageName: node
   linkType: hard
 
@@ -3751,24 +3741,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@freik/helpers@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@freik/helpers@npm:0.1.0"
-  dependencies:
-    "@freik/typechk": ^0.1.0
-  checksum: dfea8daaae6fce5fc497eca0b45dd69f176a2991e80950c3c6bdcd55d00ea838bea505a183abc2bd9fb4a8a30a3f5ee285e053c6cd549627bd79a606f465dd74
-  languageName: node
-  linkType: hard
-
-"@freik/helpers@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "@freik/helpers@npm:0.2.1"
-  dependencies:
-    "@freik/typechk": ^0.1.0
-  checksum: a26931681fdce23fc7dfde53dce530684f74d0f36a4e0953d912b5045664c9fce5def40c0759428e489ecc75f3ded880f3cfc104e09d1ab28676313c42c4a9bb
-  languageName: node
-  linkType: hard
-
 "@freik/helpers@npm:^0.3.0":
   version: 0.3.0
   resolution: "@freik/helpers@npm:0.3.0"
@@ -3778,7 +3750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/is-hidden-file@npm:^1.10.12, @freik/is-hidden-file@npm:^1.11.0":
+"@freik/is-hidden-file@npm:^1.10.12":
   version: 1.11.0
   resolution: "@freik/is-hidden-file@npm:1.11.0"
   dependencies:
@@ -3819,23 +3791,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/node-utils@npm:^1.3.3":
-  version: 1.3.3
-  resolution: "@freik/node-utils@npm:1.3.3"
-  dependencies:
-    "@freik/containers": ^0.1.0
-    "@freik/helpers": ^0.2.1
-    "@freik/is-hidden-file": ^1.11.0
-    "@freik/seqnum": ^1.0.0
-    "@freik/sync": ^0.1.0
-    "@freik/text": ^0.1.0
-    "@freik/typechk": ^0.1.0
-    debug: ^4.3.4
-  checksum: 936e7c2ab328bf19c62e52ee17f21a8d97f35158bf604264c8155e8f34245aea4972eba51b912974f77f4795d0a0063bd06b4950fa43cc4cc74452b4ce3e1c03
-  languageName: node
-  linkType: hard
-
-"@freik/node-utils@npm:^1.3.4":
+"@freik/node-utils@npm:^1.3.3, @freik/node-utils@npm:^1.3.4":
   version: 1.3.4
   resolution: "@freik/node-utils@npm:1.3.4"
   dependencies:
@@ -3865,21 +3821,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@freik/seqnum@npm:^1.0.0, @freik/seqnum@npm:^1.1.0":
+"@freik/seqnum@npm:^1.1.0":
   version: 1.1.0
   resolution: "@freik/seqnum@npm:1.1.0"
   checksum: 5e4efd5f83a6ab2735497b7f5265c08d4e162f219d9fa32c8c2c123f9440d535b68525cc5957a6c71d5413dabd5013649d0cd2c57818580bb5e3039217a59f6e
-  languageName: node
-  linkType: hard
-
-"@freik/sync@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@freik/sync@npm:0.1.0"
-  dependencies:
-    "@freik/containers": ^0.1.0
-    "@freik/seqnum": ^1.0.0
-    "@freik/typechk": ^0.1.0
-  checksum: 2781dfcd7e00c61e948c09c24a4f657de1f8aaabd1cf264defa37bc63b46d92da436b94bf2623e87bab118c0f83efae68c349cec95077c01edb8f5b406db76c5
   languageName: node
   linkType: hard
 
@@ -3891,13 +3836,6 @@ __metadata:
     "@freik/seqnum": ^1.1.0
     "@freik/typechk": ^0.2.0
   checksum: 2a82f8456f7cd2094e1aba4060c69638381d5a99060dd315501cfd58b5e0715f0bb416762219d63e8ff960c66856d8404b9d0257ecec727efb2e2344c42ed837
-  languageName: node
-  linkType: hard
-
-"@freik/text@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@freik/text@npm:0.1.0"
-  checksum: 8449cbd5b10201785b4122ea28238e289c5b0feba944ebf477266f7e5b94e868c545e1b496d3833d167b20c1538fbfb223bc1ef9ad6c616b30fc8ad430d48170
   languageName: node
   linkType: hard
 
