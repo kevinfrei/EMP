@@ -20,6 +20,12 @@
       "script": "debugstart",
       "label": "npm: react-start",
       "detail": "yarn react-start"
+    },
+    {
+      "type": "npm",
+      "script": "lerna-build",
+      "label": "lerna: build",
+      "detail": "yarn lerna-build"
     }
   ]
 }

@@ -185,7 +185,8 @@ async function getPictureFromDB(
   if (isArtistKey(id)) {
     const artistPic = await db.getArtistPicture(id);
     if (artistPic) {
-      log(`Found artist art for ${id}`);
+      // Typescript bug here :/
+      log(`Found artist art for ${id as unknown as string}`);
     }
     return artistPic;
   }

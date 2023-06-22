@@ -1,3 +1,4 @@
+import { Keys } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import {
   MyTransactionInterface,
@@ -6,7 +7,6 @@ import {
 } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Keys } from '@freik/emp-shared';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import {
@@ -19,14 +19,14 @@ import { isMutableRefObject } from '../Tools';
 import { GetHelperText } from './Utilities';
 import './styles/PlaybackControls.css';
 
-const { log, err } = MakeLog('EMP:render:SongControls');
+const { log, wrn } = MakeLog('EMP:render:SongControls');
 
 export function onClickPlayPause(
   { set }: MyTransactionInterface,
   audioRef: ForwardedRef<HTMLAudioElement>,
 ): void {
   if (!isMutableRefObject<HTMLAudioElement>(audioRef)) {
-    err('Clicking but no audio element');
+    wrn('Clicking but no audio element');
     return;
   }
   set(playingState, (isPlaying) => {

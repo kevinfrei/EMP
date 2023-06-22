@@ -71,6 +71,22 @@
         "${workspaceRoot}/node_modules/react-scripts/bin/react-scripts.js",
         "start"
       ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "audio-db tests",
+      "runtimeArgs": [
+        "--preserve-symlinks",
+        "--inspect-brk",
+        "${workspaceFolder}/node_modules/jest/bin/jest.js",
+        "--runInBand",
+        "--config",
+        "${workspaceFolder}/packages/audiofileindex/jestconfig.json"
+      ],
+      "cwd": "${workspaceFolder}/packages/audiofileindex",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "openOnSessionStart"
     }
   ],
   "compounds": [
