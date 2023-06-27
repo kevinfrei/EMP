@@ -1,20 +1,21 @@
 import {
   chkArrayOf,
-  hasFieldType,
-  hasStrField,
+  chkBothOf,
+  chkFieldType,
+  chkObjectOfType,
+  chkStrField,
   isArrayOfString,
   isBoolean,
-  isObjectOfType,
   isString,
+  typecheck,
 } from '@freik/typechk';
 import { OpenDialogOptions, dialog, shell } from 'electron';
 import { getMainWindow } from './win';
 
-function isFileFilter(o: unknown): o is Electron.FileFilter {
-  return (
-    hasStrField(o, 'name') && hasFieldType(o, 'extensions', isArrayOfString)
-  );
-}
+const isFileFilter: typecheck<Electron.FileFilter> = chkBothOf(
+  chkStrField('name'),
+  chkFieldType('extensions', isArrayOfString),
+);
 
 type ODOProps =
   | 'openFile'
@@ -60,9 +61,10 @@ const openDialogOptionTypes = {
  * @returns True if obj is
  * [OpenDialogOptions](https://www.electronjs.org/docs/latest/api/dialog)
  */
-export function isOpenDialogOptions(obj: unknown): obj is OpenDialogOptions {
-  return isObjectOfType<OpenDialogOptions>(obj, {}, openDialogOptionTypes);
-}
+export const isOpenDialogOptions = chkObjectOfType<OpenDialogOptions>(
+  {},
+  openDialogOptionTypes,
+);
 
 /**
  * Show an "Open" dialog, configured according to `options`

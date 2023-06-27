@@ -4,7 +4,7 @@ import { SongKey } from '@freik/media-core';
 import { Sleep } from '@freik/sync';
 import { FromPathSafeName, ToPathSafeName } from '@freik/text';
 import {
-  chkObjectOfType,
+  chkObjectOfExactType,
   isArrayOfString,
   isString,
   typecheck,
@@ -85,7 +85,10 @@ export type PlaylistSaveData = {
 
 // eslint-disable-next-line
 export const isPlaylistSaveData: typecheck<PlaylistSaveData> =
-  chkObjectOfType<PlaylistSaveData>({ name: isString, songs: isArrayOfString });
+  chkObjectOfExactType<PlaylistSaveData>({
+    name: isString,
+    songs: isArrayOfString,
+  });
 
 export async function SavePlaylist(data: PlaylistSaveData): Promise<void> {
   log('savePlaylist');

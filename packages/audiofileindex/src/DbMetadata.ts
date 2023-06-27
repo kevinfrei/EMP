@@ -7,11 +7,13 @@ import { OnlyOneActive } from '@freik/sync';
 import {
   Pickle,
   Unpickle,
+  chkFieldType,
   chkOneOf,
   hasField,
   isArray,
   isArrayOfString,
   isBoolean,
+  isBothOf,
   isNumber,
   isObjectNonNull,
   isObjectOfExactType,
@@ -315,31 +317,27 @@ function MakeMetadataStore(
       return false;
     }
     if (
-      !hasField(valuesToRestore, 'store') ||
-      !hasField(valuesToRestore, 'fails')
+      !isBothOf(
+        valuesToRestore,
+        chkFieldType('store', isArray),
+        chkFieldType('fails', isArrayOfString),
+      )
     ) {
       log('MDS: Format failure');
-      return false;
-    }
-    if (
-      !isArray(valuesToRestore.store) ||
-      !isArrayOfString(valuesToRestore.fails)
-    ) {
-      log('MDS: Deep format failure');
       return false;
     }
     store.clear();
     let okay = true;
     valuesToRestore.store.forEach((val: unknown) => {
       if (IsOnlyMetadata(val)) {
-        store.set(val.originalPath, val);
+        store.set(normalize(val.originalPath), val);
       } else {
         log(`MDS: failure for ${Pickle(val)}`);
         okay = false;
       }
     });
     stopTrying.clear();
-    valuesToRestore.fails.forEach((val) => stopTrying.add(val));
+    valuesToRestore.fails.forEach(stopTrying.add);
     dirty = !okay;
     log(`MDS Load ${okay ? 'Success' : 'Failure'}`);
     loaded = okay;

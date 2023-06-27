@@ -121,6 +121,10 @@ export function GetBrowserWindowPos(st: WindowPosition): Rectangle {
     } as Rectangle;
   }
 
+  // TODO: If the last time you ran, you had a different layout,
+  // this position may be 'off screen'. In Windows, it doesn't get moved back.
+  // (Not sure about MacOS or Linux right now: I'm on an airplane...)
+
   return {
     width: st.bounds.width,
     height: st.bounds.height,

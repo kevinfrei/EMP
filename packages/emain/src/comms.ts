@@ -1,5 +1,5 @@
 import { MakeLog } from '@freik/logger';
-import { is2TupleOf, isString } from '@freik/typechk';
+import { chk2TupleOf, isString } from '@freik/typechk';
 import { ProtocolRequest, ProtocolResponse, app, ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
 import { Persistence } from './persist';
@@ -118,9 +118,7 @@ export function AsyncSend(message: unknown): void {
   SendToMain('async-data', { message });
 }
 
-function isKeyValue(obj: unknown): obj is [string, string] {
-  return is2TupleOf(obj, isString, isString);
-}
+const isKeyValue = chk2TupleOf<string, string>(isString, isString);
 
 /**
  * Call this before starting your window. This will register handlers for
