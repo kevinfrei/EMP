@@ -5,7 +5,7 @@ import {
   onRejected,
   useMyTransaction,
 } from '@freik/web-utils';
-import { ForwardedRef } from 'react';
+import { ForwardedRef, MouseEventHandler } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { playingState } from '../Recoil/MediaPlaying';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
@@ -83,11 +83,16 @@ export function PlaybackControls({
       MaybePlayPrev(xact);
     }
   });
-  const clickNext = useMyTransaction((xact) => () => {
-    if (hasNextSong) {
-      MaybePlayNext(xact);
-    }
-  });
+  const clickNext: MouseEventHandler<HTMLSpanElement> = useMyTransaction(
+    (xact) => (ev) => {
+      if (hasNextSong) {
+        MaybePlayNext(
+          xact,
+          ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey,
+        );
+      }
+    },
+  );
   return (
     <span id="control-container">
       <span

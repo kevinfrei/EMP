@@ -1,4 +1,5 @@
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import {
   isAlbumKey,
   isArtistKey,
@@ -7,14 +8,15 @@ import {
   PlaylistName,
   SongKey,
 } from '@freik/media-core';
+import { isNumber } from '@freik/typechk';
 import type { MyTransactionInterface } from '@freik/web-utils';
-import { IpcId } from '@freik/emp-shared';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,
   isSongLiked,
   neverPlayHatesState,
   onlyPlayLikesState,
+  songHateFuncFam,
 } from './Likes';
 import {
   displayMessageState,
@@ -28,6 +30,7 @@ import { repeatState, shuffleFunc } from './ReadWrite';
 import {
   activePlaylistState,
   currentIndexState,
+  currentSongKeyFunc,
   songListState,
   songPlaybackOrderState,
 } from './SongPlaying';
@@ -43,10 +46,20 @@ import {
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
  */
-export function MaybePlayNext(xact: MyTransactionInterface): boolean {
+export function MaybePlayNext(
+  xact: MyTransactionInterface,
+  dislike = false,
+): boolean {
   const { get, set } = xact;
   const curIndex = get(currentIndexState);
   const songList = get(songListState);
+  const curSong = get(currentSongKeyFunc);
+  if (dislike) {
+    set(songHateFuncFam(curSong), true);
+    if (get(neverPlayHatesState)) {
+      RemoveSongFromNowPlaying(xact, curSong);
+    }
+  }
   if (curIndex + 1 < songList.length) {
     set(currentIndexState, curIndex + 1);
     return true;
@@ -299,4 +312,24 @@ export function SongListFromKey(
     return art ? art.songs : [];
   }
   return [];
+}
+
+export function RemoveSongFromNowPlaying(
+  { get, set }: MyTransactionInterface,
+  indexOrKey: number | SongKey,
+) {
+  // If we're going to be removing a song before the current index
+  // we need to move the curIndex pointer as well
+  const songList = get(songListState);
+  const listLocation = isNumber(indexOrKey)
+    ? indexOrKey
+    : songList.indexOf(indexOrKey);
+  const curSongIndex = get(currentIndexState);
+  if (listLocation < curSongIndex) {
+    set(currentIndexState, curSongIndex - 1);
+  }
+  set(
+    songListState,
+    songList.filter((v, i) => i !== listLocation),
+  );
 }
