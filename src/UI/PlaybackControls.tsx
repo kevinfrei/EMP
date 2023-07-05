@@ -83,11 +83,16 @@ export function PlaybackControls({
       MaybePlayPrev(xact);
     }
   });
-  const clickNext = useMyTransaction((xact) => () => {
-    if (hasNextSong) {
-      MaybePlayNext(xact);
-    }
-  });
+  const clickNext: React.MouseEventHandler<HTMLSpanElement> = useMyTransaction(
+    (xact) => (ev: MouseEvent) => {
+      if (hasNextSong) {
+        MaybePlayNext(
+          xact,
+          ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey,
+        );
+      }
+    },
+  );
   return (
     <span id="control-container">
       <span

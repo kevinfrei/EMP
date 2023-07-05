@@ -1,5 +1,5 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
-import { Comms, Persistence, Shell } from '@freik/electron-main';
+import { Comms, Shell } from '@freik/electron-main';
 import { IpcId, isIgnoreItemFn, isXcodeInfo } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { MediaKey } from '@freik/media-core';
@@ -78,7 +78,7 @@ async function setSaveMenu(enabled: boolean): Promise<void> {
     if (item) {
       item.enabled = enabled;
     } else {
-      await Persistence.getItemAsync('nothing');
+      await Promise.resolve();
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-empty-function

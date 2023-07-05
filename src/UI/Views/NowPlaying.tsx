@@ -14,6 +14,7 @@ import {
   Text,
   TooltipHost,
 } from '@fluentui/react';
+import { Keys } from '@freik/emp-shared';
 import {
   Album,
   AlbumKey,
@@ -31,7 +32,6 @@ import {
 } from '@freik/web-utils';
 import { useState } from 'react';
 import { atom, useRecoilState, useRecoilValue } from 'recoil';
-import { Keys } from '@freik/emp-shared';
 import { isMiniplayerState, nowPlayingSortState } from '../../Recoil/Local';
 import {
   playlistFuncFam,
@@ -50,7 +50,7 @@ import {
   songListState,
   songPlaybackOrderState,
 } from '../../Recoil/SongPlaying';
-import { StopAndClear } from '../../Recoil/api';
+import { RemoveSongFromNowPlaying, StopAndClear } from '../../Recoil/api';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {
@@ -215,7 +215,10 @@ export function NowPlayingView(): JSX.Element {
       });
     }
   };
-
+  const removeSong = useMyTransaction(
+    (xact: MyTransactionInterface) => (indexOrKey: number | SongKey) =>
+      RemoveSongFromNowPlaying(xact, indexOrKey),
+  );
   const drawDeleter = (song: Song, index?: number) => (
     <FontIcon
       style={{
@@ -225,17 +228,7 @@ export function NowPlayingView(): JSX.Element {
         paddingTop: '2px',
       }}
       iconName="Delete"
-      onClick={() => {
-        // If we're going to be removing a song before the current index
-        // we need to move the curIndex pointer as well
-        const listLocation = isNumber(index)
-          ? index
-          : songList.indexOf(song.key);
-        if (listLocation < curIndex) {
-          setCurIndex(curIndex - 1);
-        }
-        setSongList(songList.filter((v, i) => i !== listLocation));
-      }}
+      onClick={() => removeSong(isNumber(index) ? index : song.key)}
     />
   );
 
