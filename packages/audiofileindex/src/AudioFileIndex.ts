@@ -73,7 +73,8 @@ export type AudioFileIndex = {
 const AFITypeTag = Symbol.for('freik.AudioFileIndexTag');
 
 // Helpers for the file list stuff
-const audioTypes = MakeSuffixWatcher('flac', 'mp3', 'aac', 'm4a');
+// emp => A JSON file pointing to another file, with (maybe) metadata overrides
+const audioTypes = MakeSuffixWatcher('flac', 'mp3', 'aac', 'm4a', 'emp');
 // Any other image types to care about?
 const imageTypes = MakeSuffixWatcher('png', 'jpg', 'jpeg', 'heic', 'hei');
 function watchTypes(pathName: string) {

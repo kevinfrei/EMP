@@ -1,3 +1,4 @@
+import { SongWithPath } from '@freik/audiodb';
 import { Comms, Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
@@ -14,7 +15,7 @@ import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
-const { log } = MakeLog('EMP:main:protocols');
+const { log, err } = MakeLog('EMP:main:protocols');
 
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
@@ -92,8 +93,44 @@ export async function GetDefaultArtistPicBuffer(): Promise<BufferResponse> {
 
 const e404 = { error: 404 };
 
+// This function deals with .emp files
+async function getRealFile(
+  song: SongWithPath,
+): Promise<{ extension: string; thePath: string }> {
+  let thePath = song.path;
+  log('Returning file read from ' + thePath);
+  let extension = path.extname(thePath).toLowerCase();
+  if (extension === '.emp') {
+    // For an .emp file, read the contents to get to the *actual* file
+    try {
+      const empFile = (await fs.readFile(thePath)).toString();
+      try {
+        const thePtr: unknown = JSON.parse(empFile);
+        if (hasStrField(thePtr, 'original')) {
+          if (path.isAbsolute(thePtr.original)) {
+            throw new Error(".emp 'original' field must be relative");
+          }
+          thePath = path.resolve(path.dirname(thePath), thePtr.original);
+          extension = path.extname(thePath).toLowerCase();
+        } else {
+          throw new Error(".emp file missing 'original' field");
+        }
+      } catch (e) {
+        err(e);
+        err('Invalid .emp file format:');
+        err(empFile);
+      }
+    } catch (e) {
+      err(e);
+      err('Probably missing file from .emp file:');
+      err(thePath);
+    }
+  }
+  return { extension, thePath };
+}
+
 async function tuneProtocolHandler(
-  req: ProtocolRequest,
+  _: ProtocolRequest,
   trimmedUrl: string,
 ): Promise<FileResponse> {
   const key: SongKey = trimmedUrl;
@@ -102,10 +139,8 @@ async function tuneProtocolHandler(
   log('Got DB');
   const song = db.getSong(key);
   if (song) {
-    const thePath = song.path;
-    log('Returning file read from ' + thePath);
-    const mimeType =
-      audioMimeTypes.get(path.extname(thePath).toLowerCase()) ?? 'audio/mpeg';
+    const { extension, thePath } = await getRealFile(song);
+    const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
     return { path: thePath, mimeType };
   } else {
     log('Song not found');
