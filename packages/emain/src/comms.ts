@@ -172,7 +172,59 @@ export function registerProtocolHandler<ResponseType>(
     }
     if (req.url.startsWith(type)) {
       log(`Processing request ${type}`);
-      const res = await processor(req, req.url.substr(type.length));
+      const res = await processor(req, req.url.substring(type.length));
+      log('Returning:');
+      log(res);
+      return res;
+    }
+    err('URL does not fully match type');
+    err('Got ');
+    err(req.url);
+    err('Expected');
+    err(type);
+    return defaultValue;
+  };
+  registerer(protName, (req, callback) => {
+    handler(req)
+      .then(callback)
+      .catch((reason) => {
+        log('error');
+        log(reason);
+      });
+  });
+}
+
+/*
+  protocol.handle('pic', async (req: Request): Promise<Response> => {
+    return net.fetch();
+  });
+*/
+
+/**
+ * Helper to check URL's & transition to async functions
+ *
+ * @param type The 'header' of the protocol. "pix://foo/" for example
+ * @param registerer The type of protocol registration function to use.
+ * [protocol.registerBufferProtocol](https://www.electronjs.org/docs/latest/api/protocol#protocolregisterfileprotocolscheme-handler)
+ * for example. It must match the response type appropriately!
+ * @param processor The function that will process the protocol request
+ * @param defaultValue The (optional) default return value (Error 404)
+ */
+export function registerProtocolHandler25(
+  type: string,
+  processor: (req: Request, trimmedUrl: string) => Promise<Response> | Response,
+  defaultValue: ProtocolResponse | ResponseType = e404,
+) {
+  const protName = type.substring(0, type.indexOf(':'));
+  log(`Protocol ${type} (${protName})`);
+  const handler = async (req: ProtocolRequest) => {
+    if (!req.url) {
+      err('Request with no URL');
+      return { error: -324 };
+    }
+    if (req.url.startsWith(type)) {
+      log(`Processing request ${type}`);
+      const res = await processor(req, req.url.substring(type.length));
       log('Returning:');
       log(res);
       return res;
