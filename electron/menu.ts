@@ -1,4 +1,5 @@
 import { Persistence } from '@freik/electron-main';
+import { CurrentView, IpcId, Keys } from '@freik/emp-shared';
 import { isFunction, isString } from '@freik/typechk';
 import {
   BrowserWindow,
@@ -9,7 +10,6 @@ import {
   shell,
 } from 'electron';
 import { KeyboardEvent } from 'electron/main';
-import { CurrentView, IpcId, Keys } from '@freik/emp-shared';
 import { ShowAbout } from './About.js';
 import { SendToUI } from './Communication.js';
 import { ToggleMiniPlayer } from './window.js';
@@ -27,12 +27,12 @@ const isMac = process.platform === 'darwin';
 // eslint-disable-next-line
 const ___: MenuItemConstructorOptions = { type: 'separator' };
 
-function getClick(handler?: ClickHandler | unknown): ClickHandler | undefined {
+function getClick<T>(handler?: ClickHandler | T): ClickHandler | undefined {
   if (!handler) {
     return;
   }
   if (isFunction(handler)) {
-    return handler as ClickHandler;
+    return handler;
   }
   return () => SendToUI(IpcId.MenuAction, handler);
 }
@@ -42,10 +42,10 @@ function getId(lbl: string): string {
 }
 
 // TODO: Add an action to be taken, with a quick x-plat shortcut key
-function xaction(
+function xaction<T>(
   label: string,
   accelerator: string,
-  handler?: ClickHandler | unknown,
+  handler?: ClickHandler | T,
 ): MenuItemConstructorOptions {
   return {
     label,
@@ -56,10 +56,10 @@ function xaction(
 }
 
 // Typescript Method Overloading is kinda weird...
-function action(
+function action<T>(
   label: string,
-  accOrHdlr: string | ClickHandler | unknown | void,
-  handler?: ClickHandler | unknown,
+  accOrHdlr: string | ClickHandler | T,
+  handler?: ClickHandler | T,
 ): MenuItemConstructorOptions {
   if (isString(accOrHdlr)) {
     return {

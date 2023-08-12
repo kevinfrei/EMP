@@ -24,17 +24,16 @@ import {
   isSetOfString,
 } from '@freik/typechk';
 import albumArt from 'album-art';
-import { ProtocolRequest } from 'electron';
 import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
 import {
-  BufferResponse,
-  GetDefaultAlbumPicBuffer,
+  GetDefaultAlbumPicResponse,
   GetDefaultAlbumPicUri,
-  GetDefaultArtistPicBuffer,
+  // GetDefaultAlbumPicUri,
+  GetDefaultArtistPicResponse,
 } from './protocols';
 
 const { log, wrn } = MakeLog('EMP:main:cover-art');
@@ -272,9 +271,9 @@ async function TryToGetPic(id: MediaKey): Promise<PicData | undefined> {
 }
 
 export async function PictureHandler(
-  req: ProtocolRequest,
+  _: Request,
   id: MediaKey,
-): Promise<BufferResponse> {
+): Promise<Response> {
   // Check to see if there's a song in the album that has a cover image
   try {
     log(`Got a request for ${id}`);
@@ -283,15 +282,20 @@ export async function PictureHandler(
     }
     const d = await TryToGetPic(id);
     if (isDefined(d)) {
-      return d;
+      return new Response(
+        d.data.buffer.slice(
+          d.data.byteOffset,
+          d.data.byteOffset + d.data.byteLength,
+        ),
+      );
     }
   } catch (error) {
     wrn(`Error while trying to get picture for ${id}`);
     wrn(error);
   }
   return isArtistKey(id)
-    ? GetDefaultArtistPicBuffer()
-    : GetDefaultAlbumPicBuffer();
+    ? GetDefaultArtistPicResponse()
+    : GetDefaultAlbumPicResponse();
 }
 
 async function SavePicForAlbum(

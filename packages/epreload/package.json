@@ -5,19 +5,17 @@
   "module": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
-    "test": "jest --config jestconfig.json --passWithNoTests",
+    "justtest": "jest --config jestconfig.json --passWithNoTests",
     "watch": "jest --config jestconfig.json --watch --passWithNoTests",
-    "clean": "rimraf lib && rimraf \".tsbuildinfo\"",
+    "clean": "rimraf lib .tsbuildinfo",
     "build": "tsc --project tsconfig.json",
     "cleanbuild": "yarn clean && yarn build",
     "prepare": "yarn run build",
-    "prepublishOnly": "yarn test && yarn run lint",
+    "prepublishOnly": "yarn test",
     "lint": "yarn run eslint --fix --ext .ts src",
     "preversion": "yarn run lint",
-    "version": "git add -A src",
-    "postversion": "git push && git push --tags --no-verify",
-    "compile": "tsc --noEmit -p tsconfig.json",
-    "chk": "yarn lint && yarn compile && yarn test"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "yarn lint && yarn typecheck && yarn justtest"
   },
   "repository": {
     "type": "git",
@@ -41,7 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
     "electron": "^25.5.0",
-    "eslint": "^8.46.0",
+    "eslint": "^8.47.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -53,6 +51,6 @@
   },
   "files": ["lib/**/*"],
   "dependencies": {
-    "@freik/logger": "^0.2.0"
+    "@freik/logger": "^0.2.3"
   }
 }

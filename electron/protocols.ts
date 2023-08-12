@@ -2,21 +2,16 @@ import { SongWithPath } from '@freik/audiodb';
 import { Comms, Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
-import {
-  asString,
-  hasField,
-  hasFieldType,
-  hasStrField,
-  isFunction,
-} from '@freik/typechk';
-import { ProtocolRequest, ProtocolResponse, protocol } from 'electron';
+import { asString, hasStrField } from '@freik/typechk';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { pathToFileURL } from 'url';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
 const { log, err } = MakeLog('EMP:main:protocols');
 
+/*
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
 
@@ -27,6 +22,7 @@ const audioMimeTypes = new Map<string, string>([
   ['.flac', 'audio/x-flac'],
   ['.wma', 'audio/x-ms-wma'],
 ]);
+*/
 
 let defPath: string | null = null;
 function defaultAlbumPicPath() {
@@ -36,37 +32,41 @@ function defaultAlbumPicPath() {
   return defPath;
 }
 
-let defaultAlbumPicBuffer: BufferResponse | null = null;
+let defaultAlbumPicResponse: Response | null = null;
+let defaultAlbumPicBuffer: Buffer | null = null;
 let defaultAlbumPicUri: string | null = null;
 
-export async function GetDefaultAlbumPicBuffer(): Promise<BufferResponse> {
+async function GetDefaultAlbumPicBuffer(): Promise<Buffer> {
   if (!defaultAlbumPicBuffer) {
-    defaultAlbumPicBuffer = {
-      data: await fs.readFile(defaultAlbumPicPath()),
-      mimeType: 'image/svg+xml',
-    };
+    defaultAlbumPicBuffer = await fs.readFile(defaultAlbumPicPath());
   }
   return defaultAlbumPicBuffer;
+}
+
+export async function GetDefaultAlbumPicResponse(): Promise<Response> {
+  if (!defaultAlbumPicResponse) {
+    const b = await GetDefaultAlbumPicBuffer();
+    const ab: ArrayBuffer = b.buffer.slice(
+      b.byteOffset,
+      b.byteOffset + b.byteLength,
+    );
+    defaultAlbumPicResponse = new Response(ab);
+  }
+  return defaultAlbumPicResponse;
 }
 
 export async function GetDefaultAlbumPicUri(): Promise<string> {
   if (!defaultAlbumPicUri) {
     const br = await GetDefaultAlbumPicBuffer();
-    if (
-      hasStrField(br, 'mimeType') &&
-      hasField(br, 'data') &&
-      hasFieldType(br.data, 'toString', isFunction)
-    ) {
-      let svg = br.data.toString() as string;
-      // Remove space from between tags, duplicate spaces
-      svg = svg.replace(/>\s{1,}</g, '><');
-      svg = svg.replace(/\s{1,}\/>/g, '/>');
-      svg = svg.replace(/\s{2,}/g, ' ');
-      svg = svg.trim();
-      // Encode the uri-unsafe characters
-      svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
-      defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
-    }
+    let svg = br.toString();
+    // Remove space from between tags, duplicate spaces
+    svg = svg.replace(/>\s{1,}</g, '><');
+    svg = svg.replace(/\s{1,}\/>/g, '/>');
+    svg = svg.replace(/\s{2,}/g, ' ');
+    svg = svg.trim();
+    // Encode the uri-unsafe characters
+    svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
+    defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
   }
   return asString(defaultAlbumPicUri, '');
 }
@@ -79,19 +79,24 @@ function defaultArtistPicPath() {
   return defArtist;
 }
 
-let defaultArtistPicBuffer: BufferResponse | null = null;
+let defaultArtistPicBuffer: Response | null = null;
 
-export async function GetDefaultArtistPicBuffer(): Promise<BufferResponse> {
+export async function GetDefaultArtistPicResponse(): Promise<Response> {
   if (!defaultArtistPicBuffer) {
-    defaultArtistPicBuffer = {
-      data: await fs.readFile(defaultArtistPicPath()),
-      mimeType: 'image/svg+xml',
-    };
+    const b = await fs.readFile(defaultArtistPicPath());
+    const ab: ArrayBuffer = b.buffer.slice(
+      b.byteOffset,
+      b.byteOffset + b.byteLength,
+    );
+    defaultArtistPicBuffer = new Response(ab);
   }
   return defaultArtistPicBuffer;
 }
 
-const e404 = { error: 404 };
+const e404: Response = new Response(new ArrayBuffer(0), {
+  status: 404,
+  statusText: 'Not Found',
+});
 
 // This function deals with .emp files
 async function getRealFile(
@@ -130,18 +135,18 @@ async function getRealFile(
 }
 
 async function tuneProtocolHandler(
-  _: ProtocolRequest,
+  _: Request,
   trimmedUrl: string,
-): Promise<FileResponse> {
+): Promise<Response> {
   const key: SongKey = trimmedUrl;
   log(`SongKey: ${key}`);
   const db = await GetAudioDB();
   log('Got DB');
   const song = db.getSong(key);
   if (song) {
-    const { extension, thePath } = await getRealFile(song);
-    const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
-    return { path: thePath, mimeType };
+    const { /* extension,*/ thePath } = await getRealFile(song);
+    // const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
+    return fetch(pathToFileURL(thePath));
   } else {
     log('Song not found');
     return e404;
@@ -149,27 +154,18 @@ async function tuneProtocolHandler(
 }
 
 // This sets up all protocol handlers
-export async function RegisterProtocols(): Promise<void> {
-  const defPicBuffer = await GetDefaultAlbumPicBuffer();
+export function RegisterProtocols(): Promise<void> {
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
   log('Registering pic://key/ protocol');
-  Comms.registerProtocolHandler(
-    'pic://key/',
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    protocol.registerBufferProtocol,
-    PictureHandler,
-    defPicBuffer,
-  );
+  Comms.registerProtocolHandler('pic://key/', PictureHandler, e404);
   log('Registering tune://song/ protocol');
-  Comms.registerProtocolHandler(
-    'tune://song/',
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    protocol.registerFileProtocol,
-    tuneProtocolHandler,
-  );
+  Comms.registerProtocolHandler('tune://song/', tuneProtocolHandler, e404);
   log('Finished protocol registration');
+  return new Promise(() => {
+    /* */
+  });
 }
 
 // This sets up reactive responses to changes, for example:

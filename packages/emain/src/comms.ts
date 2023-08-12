@@ -1,7 +1,14 @@
 import { MakeLog } from '@freik/logger';
 import { chk2TupleOf, isString } from '@freik/typechk';
-import { ProtocolRequest, ProtocolResponse, app, ipcMain } from 'electron';
+import {
+  ProtocolRequest,
+  ProtocolResponse,
+  app,
+  ipcMain,
+  protocol,
+} from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
+import { URL } from 'url';
 import { Persistence } from './persist';
 import { ShowOpenDialog, isOpenDialogOptions } from './shell';
 import { getMainWindow } from './win';
@@ -154,7 +161,7 @@ const e404 = { error: 404 };
  * @param processor The function that will process the protocol request
  * @param defaultValue The (optional) default return value (Error 404)
  */
-export function registerProtocolHandler<ResponseType>(
+export function registerOldProtocolHandler<ResponseType>(
   type: string,
   registerer: Registerer<ResponseType>,
   processor: (
@@ -210,21 +217,18 @@ export function registerProtocolHandler<ResponseType>(
  * @param processor The function that will process the protocol request
  * @param defaultValue The (optional) default return value (Error 404)
  */
-export function registerProtocolHandler25(
+export function registerProtocolHandler(
   type: string,
   processor: (req: Request, trimmedUrl: string) => Promise<Response> | Response,
-  defaultValue: ProtocolResponse | ResponseType = e404,
+  defaultValue: Response,
 ) {
   const protName = type.substring(0, type.indexOf(':'));
-  log(`Protocol ${type} (${protName})`);
-  const handler = async (req: ProtocolRequest) => {
-    if (!req.url) {
-      err('Request with no URL');
-      return { error: -324 };
-    }
+  log(`Registering protocol handler ${type} (${protName})`);
+  protocol.handle(protName, (req: Request) => {
     if (req.url.startsWith(type)) {
-      log(`Processing request ${type}`);
-      const res = await processor(req, req.url.substring(type.length));
+      const { host, pathname } = new URL(req.url);
+      log(`Processing request ${type}://${host}/${pathname}`);
+      const res = processor(req, pathname);
       log('Returning:');
       log(res);
       return res;
@@ -235,13 +239,5 @@ export function registerProtocolHandler25(
     err('Expected');
     err(type);
     return defaultValue;
-  };
-  registerer(protName, (req, callback) => {
-    handler(req)
-      .then(callback)
-      .catch((reason) => {
-        log('error');
-        log(reason);
-      });
   });
 }

@@ -7,6 +7,7 @@ import {
   SpinButton,
 } from '@fluentui/react';
 import { Ipc, useListener, useMediaEffect } from '@freik/electron-render';
+import { IpcId, Keys } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
@@ -20,7 +21,6 @@ import {
   useEffect,
 } from 'react';
 import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { IpcId, Keys } from '@freik/emp-shared';
 import { keyBufferState } from '../Recoil/KeyBuffer';
 import { isMiniplayerState } from '../Recoil/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
@@ -164,10 +164,10 @@ export function GetHelperText(key: Keys) {
   if (key.length === 1) {
     return `${accPrefix}-${key}`;
   }
-  if (key === 'Left') {
+  if (key === Keys.PreviousTrack) {
     return accPrefix + '-←';
   }
-  if (key === 'Right') {
+  if (key === Keys.NextTrack) {
     return accPrefix + '-→';
   }
 }
