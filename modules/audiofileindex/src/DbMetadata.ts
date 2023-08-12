@@ -337,7 +337,7 @@ function MakeMetadataStore(
       }
     });
     stopTrying.clear();
-    valuesToRestore.fails.forEach(stopTrying.add);
+    valuesToRestore.fails.forEach((val) => stopTrying.add(val));
     dirty = !okay;
     log(`MDS Load ${okay ? 'Success' : 'Failure'}`);
     loaded = okay;

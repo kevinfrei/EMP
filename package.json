@@ -7,14 +7,17 @@
   "author": "Kevin Frei <kevinfrei@hotmail.com>",
   "main": "dist-electron/main.js",
   "homepage": "./",
-  "workspaces": ["shared", "packages/*"],
+  "workspaces": [
+    "shared",
+    "modules/*"
+  ],
   "scripts": {
     "clean": "rimraf public/main public/*.js build dist",
     "testui": "jest --config config/jest.jsdom.js --watch",
     "testnode": "jest --config config/jest.node.js --watch",
     "justtest": "jest --config config/jest.jsdom.js && jest --pass-with-no-tests --config config/jest.node.js",
     "format": "ftool format",
-    "lint": "yarn eslint --fix --ext .ts --ext .tsx ./",
+    "lint": "yarn eslint --fix --ext .ts --ext .tsx ./src ./electron ./renderer",
     "linecount": "ftool linecount .css .ts .tsx .html -__ -.d.ts",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
@@ -59,8 +62,12 @@
     "xxhashjs": "^0.2.2"
   },
   "browserslist": {
-    "production": ["last 1 chrome version"],
-    "development": ["last 1 chrome version"]
+    "production": [
+      "last 1 chrome version"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
   },
   "devDependencies": {
     "@freik/build-tools": "3.6.3",

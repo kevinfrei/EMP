@@ -12,7 +12,9 @@
     "rimraf": "^5.0.1",
     "typescript": "5.1.6"
   },
-  "files": ["./build/**/*"],
+  "files": [
+    "./build/**/*"
+  ],
   "dependencies": {
     "@freik/typechk": "^0.5.3"
   }
