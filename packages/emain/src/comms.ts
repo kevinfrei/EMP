@@ -1,14 +1,7 @@
 import { MakeLog } from '@freik/logger';
 import { chk2TupleOf, isString } from '@freik/typechk';
-import {
-  ProtocolRequest,
-  ProtocolResponse,
-  app,
-  ipcMain,
-  protocol,
-} from 'electron';
+import { ProtocolRequest, ProtocolResponse, app, ipcMain } from 'electron';
 import { IpcMainInvokeEvent } from 'electron/main';
-import { URL } from 'url';
 import { Persistence } from './persist';
 import { ShowOpenDialog, isOpenDialogOptions } from './shell';
 import { getMainWindow } from './win';
@@ -198,46 +191,5 @@ export function registerOldProtocolHandler<ResponseType>(
         log('error');
         log(reason);
       });
-  });
-}
-
-/*
-  protocol.handle('pic', async (req: Request): Promise<Response> => {
-    return net.fetch();
-  });
-*/
-
-/**
- * Helper to check URL's & transition to async functions
- *
- * @param type The 'header' of the protocol. "pix://foo/" for example
- * @param registerer The type of protocol registration function to use.
- * [protocol.registerBufferProtocol](https://www.electronjs.org/docs/latest/api/protocol#protocolregisterfileprotocolscheme-handler)
- * for example. It must match the response type appropriately!
- * @param processor The function that will process the protocol request
- * @param defaultValue The (optional) default return value (Error 404)
- */
-export function registerProtocolHandler(
-  type: string,
-  processor: (req: Request, trimmedUrl: string) => Promise<Response> | Response,
-  defaultValue: Response,
-) {
-  const protName = type.substring(0, type.indexOf(':'));
-  log(`Registering protocol handler ${type} (${protName})`);
-  protocol.handle(protName, (req: Request) => {
-    if (req.url.startsWith(type)) {
-      const { host, pathname } = new URL(req.url);
-      log(`Processing request ${type}://${host}/${pathname}`);
-      const res = processor(req, pathname);
-      log('Returning:');
-      log(res);
-      return res;
-    }
-    err('URL does not fully match type');
-    err('Got ');
-    err(req.url);
-    err('Expected');
-    err(type);
-    return defaultValue;
   });
 }

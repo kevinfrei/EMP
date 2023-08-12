@@ -4,7 +4,11 @@ import { isString } from '@freik/typechk';
 import { app } from 'electron';
 import { UpdateLocations } from './AudioDatabase';
 import { CommsSetup } from './Communication';
-import { RegisterListeners, RegisterProtocols } from './protocols';
+import {
+  RegisterListeners,
+  RegisterPrivileges,
+  RegisterProtocols,
+} from './protocols';
 
 const { wrn } = MakeLog('EMP:main:Startup');
 
@@ -13,6 +17,7 @@ const { wrn } = MakeLog('EMP:main:Startup');
  */
 export function InitBeforeAnythingElse(): void {
   CommsSetup();
+  RegisterPrivileges();
   app.whenReady().then(RegisterProtocols).catch(wrn);
   RegisterListeners();
 }

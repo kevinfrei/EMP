@@ -1,20 +1,23 @@
 import { SongWithPath } from '@freik/audiodb';
-import { Comms, Persistence } from '@freik/electron-main';
+import { Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import { asString, hasStrField } from '@freik/typechk';
-import { promises as fs } from 'fs';
+import { net, protocol } from 'electron';
+import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
-const { log, err } = MakeLog('EMP:main:protocols');
+const fsp = fs.promises;
 
+const { log, err } = MakeLog('EMP:main:protocols');
+log.enabled = true;
 /*
 export type FileResponse = string | ProtocolResponse;
 export type BufferResponse = Buffer | ProtocolResponse;
-
+*/
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
   ['.m4a', 'audio/m4a'],
@@ -22,7 +25,6 @@ const audioMimeTypes = new Map<string, string>([
   ['.flac', 'audio/x-flac'],
   ['.wma', 'audio/x-ms-wma'],
 ]);
-*/
 
 let defPath: string | null = null;
 function defaultAlbumPicPath() {
@@ -38,7 +40,7 @@ let defaultAlbumPicUri: string | null = null;
 
 async function GetDefaultAlbumPicBuffer(): Promise<Buffer> {
   if (!defaultAlbumPicBuffer) {
-    defaultAlbumPicBuffer = await fs.readFile(defaultAlbumPicPath());
+    defaultAlbumPicBuffer = await fsp.readFile(defaultAlbumPicPath());
   }
   return defaultAlbumPicBuffer;
 }
@@ -83,7 +85,7 @@ let defaultArtistPicBuffer: Response | null = null;
 
 export async function GetDefaultArtistPicResponse(): Promise<Response> {
   if (!defaultArtistPicBuffer) {
-    const b = await fs.readFile(defaultArtistPicPath());
+    const b = await fsp.readFile(defaultArtistPicPath());
     const ab: ArrayBuffer = b.buffer.slice(
       b.byteOffset,
       b.byteOffset + b.byteLength,
@@ -108,7 +110,7 @@ async function getRealFile(
   if (extension === '.emp') {
     // For an .emp file, read the contents to get to the *actual* file
     try {
-      const empFile = (await fs.readFile(thePath)).toString();
+      const empFile = (await fsp.readFile(thePath)).toString();
       try {
         const thePtr: unknown = JSON.parse(empFile);
         if (hasStrField(thePtr, 'original')) {
@@ -134,38 +136,61 @@ async function getRealFile(
   return { extension, thePath };
 }
 
-async function tuneProtocolHandler(
-  _: Request,
-  trimmedUrl: string,
-): Promise<Response> {
-  const key: SongKey = trimmedUrl;
+async function tuneProtocolHandler(req: Request): Promise<Response> {
+  const { pathname } = new URL(req.url);
+  const key: SongKey = pathname.substring(1);
   log(`SongKey: ${key}`);
   const db = await GetAudioDB();
-  log('Got DB');
   const song = db.getSong(key);
   if (song) {
-    const { /* extension,*/ thePath } = await getRealFile(song);
-    // const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
-    return fetch(pathToFileURL(thePath));
-  } else {
-    log('Song not found');
-    return e404;
+    const { extension, thePath } = await getRealFile(song);
+    const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
+    const url = pathToFileURL(thePath);
+    log('Trying to send file:');
+    log(`${thePath} (${extension} : ${mimeType})`);
+    try {
+      return net.fetch(
+        url.href /* {
+        headers: {
+          'Content-Type': mimeType, // eslint-disable-line @typescript-eslint/naming-convention
+          'Content-Disposition': 'inline', // eslint-disable-line @typescript-eslint/naming-convention
+        },
+      }*/,
+      );
+    } catch (e) {
+      err(`Fetch of ${thePath} failed with error:`);
+      err(e);
+    }
   }
+  log('Song not found');
+  return e404;
+}
+
+export function RegisterPrivileges(): void {
+  protocol.registerSchemesAsPrivileged([
+    {
+      scheme: 'tune',
+      privileges: {
+        secure: true,
+        standard: true,
+        supportFetchAPI: true, // Add this if you want to use fetch with this protocol.
+        stream: true, // Add this if you intend to use the protocol for streaming i.e. in video/audio html tags.
+        // corsEnabled: true, // Add this if you need to enable cors for this protocol.
+      },
+    },
+  ]);
 }
 
 // This sets up all protocol handlers
-export function RegisterProtocols(): Promise<void> {
+export function RegisterProtocols(): void {
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
   log('Registering pic://key/ protocol');
-  Comms.registerProtocolHandler('pic://key/', PictureHandler, e404);
+  protocol.handle('pic', PictureHandler);
   log('Registering tune://song/ protocol');
-  Comms.registerProtocolHandler('tune://song/', tuneProtocolHandler, e404);
+  protocol.handle('tune', tuneProtocolHandler);
   log('Finished protocol registration');
-  return new Promise(() => {
-    /* */
-  });
 }
 
 // This sets up reactive responses to changes, for example:

@@ -4061,7 +4061,7 @@ __metadata:
     "@freik/logger": ^0.2.3
     "@freik/media-core": ^0.14.3
     "@freik/media-utils": ^0.16.0
-    "@freik/node-utils": ^1.3.8
+    "@freik/node-utils": ^1.3.10
     "@freik/search": ^1.1.3
     "@freik/text": ^0.3.4
     "@freik/typechk": ^0.5.3
@@ -4147,7 +4147,7 @@ __metadata:
   resolution: "@freik/electron-main@workspace:packages/emain"
   dependencies:
     "@freik/logger": ^0.2.3
-    "@freik/node-utils": ^1.3.8
+    "@freik/node-utils": ^1.3.10
     "@freik/sync": ^0.2.4
     "@freik/typechk": ^0.5.3
     "@types/debug": ^4.1.8
@@ -4329,6 +4329,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@freik/node-utils@npm:^1.3.10":
+  version: 1.3.10
+  resolution: "@freik/node-utils@npm:1.3.10"
+  dependencies:
+    "@freik/containers": ^0.2.5
+    "@freik/helpers": ^0.3.4
+    "@freik/is-hidden-file": ^1.11.0
+    "@freik/logger": ^0.2.3
+    "@freik/seqnum": ^1.1.3
+    "@freik/sync": ^0.2.4
+    "@freik/text": ^0.3.4
+    "@freik/typechk": ^0.5.3
+  checksum: 4e9301339ef5430045ec6de15e7c6d51c03e499e7c35a64a8aa25718b80d0d1ef8ea26e544b179a5eea9cf1b983af6b7906d6d8b8616285ef9e6facf87656c7e
+  languageName: node
+  linkType: hard
+
 "@freik/node-utils@npm:^1.3.3":
   version: 1.3.4
   resolution: "@freik/node-utils@npm:1.3.4"
@@ -4342,22 +4358,6 @@ __metadata:
     "@freik/text": ^0.3.1
     "@freik/typechk": ^0.5.0
   checksum: ee6de266e51ffa30f4334920e4224638b5e62c3623a9cdc734c3594283d9d4dfdd5aa49205de6af1b0cf305cb84cedf068d042177e7401e9169b99b75a741cd8
-  languageName: node
-  linkType: hard
-
-"@freik/node-utils@npm:^1.3.8":
-  version: 1.3.8
-  resolution: "@freik/node-utils@npm:1.3.8"
-  dependencies:
-    "@freik/containers": ^0.2.5
-    "@freik/helpers": ^0.3.4
-    "@freik/is-hidden-file": ^1.11.0
-    "@freik/logger": ^0.2.3
-    "@freik/seqnum": ^1.1.3
-    "@freik/sync": ^0.2.4
-    "@freik/text": ^0.3.4
-    "@freik/typechk": ^0.5.3
-  checksum: 2dfc185d74f03a4b1e35cfa002837bd62695c5f4279cf8f5434c3c2d530c3b9606fc1c9c3d9e137f8a5b64ced2ed9232da265a855b29f85ca306a4fa963f361a
   languageName: node
   linkType: hard
 
@@ -11205,7 +11205,7 @@ __metadata:
     "@freik/logger": ^0.2.3
     "@freik/media-core": ^0.14.3
     "@freik/media-utils": ^0.16.0
-    "@freik/node-utils": ^1.3.8
+    "@freik/node-utils": ^1.3.10
     "@freik/p-limit": ^5.0.0
     "@freik/sync": ^0.2.4
     "@freik/text": ^0.3.4
