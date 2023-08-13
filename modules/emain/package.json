@@ -14,7 +14,7 @@
     "clean": "rimraf lib .tsbuildinfo && rimraf \".tsbuildinfo\"",
     "watch": "jest --config jestconfig.json --watch --passWithNoTests",
     "cleanbuild": "yarn clean && yarn build",
-    "lint": "yarn run eslint --fix --ext .ts src",
+    "lint": "yarn eslint --fix --ext .ts src",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "### NPM lifecycle stuff ***": "",
     "prepare": "yarn run build",
