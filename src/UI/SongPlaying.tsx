@@ -35,6 +35,8 @@ import { mySliderStyles } from './Utilities';
 import './styles/SongPlaying.css';
 
 const { log } = MakeLog('EMP:render:SongPlayback');
+// log.enabled = true;
+// const log = console.log;
 
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
@@ -89,7 +91,12 @@ function MediaTimeSlider(): JSX.Element {
       step={1e-7}
       styles={mySliderStyles}
       onChange={(value: number) => {
+        log('Change: ' + value);
         setMediaTimePercent(value);
+      }}
+      onChanged={(_, value: number) => {
+        log('Changed:' + value);
+        log(_);
       }}
       showValue={false}
     />
@@ -164,6 +171,8 @@ export const SongPlaying = forwardRef(
       ({ set }) =>
         (ev: SyntheticEvent<HTMLMediaElement>) => {
           const ae = ev.currentTarget;
+          log('time update');
+          log(ev);
           // eslint-disable-next-line id-blacklist
           if (!Number.isNaN(ae.duration)) {
             set(mediaTimeState, (prevTime: MediaTime) => {
@@ -217,7 +226,7 @@ export const SongPlaying = forwardRef(
       <audio
         ref={audioRef}
         autoPlay={true}
-        src={songKey !== '' ? 'tune://song/' + songKey : ''}
+        src={songKey !== '' ? 'trune://song/' + songKey : ''}
         onPlay={onPlay}
         onPause={onPause}
         onEnded={onEnded}

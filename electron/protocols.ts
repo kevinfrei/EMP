@@ -1,9 +1,9 @@
 import { SongWithPath } from '@freik/audiodb';
-import { Persistence } from '@freik/electron-main';
+import { Comms, Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import { asString, hasStrField } from '@freik/typechk';
-import { protocol } from 'electron';
+import { ProtocolRequest, ProtocolResponse, protocol } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
@@ -13,8 +13,8 @@ const fsp = fs.promises;
 
 const { log, err } = MakeLog('EMP:main:protocols');
 log.enabled = true;
-/*
 export type FileResponse = string | ProtocolResponse;
+/*
 export type BufferResponse = Buffer | ProtocolResponse;
 */
 const audioMimeTypes = new Map<string, string>([
@@ -135,7 +135,26 @@ async function getRealFile(
   return { extension, thePath };
 }
 
-async function tuneProtocolHandler(req: Request): Promise<Response> {
+async function tuneProtocolHandler(
+  _: ProtocolRequest,
+  trimmedUrl: string,
+): Promise<FileResponse> {
+  const key: SongKey = trimmedUrl;
+  const db = await GetAudioDB();
+  const song = db.getSong(key);
+  if (song) {
+    const { extension, thePath } = await getRealFile(song);
+    const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
+    log('Got old tune:');
+    log(_.headers);
+    return { path: thePath, mimeType };
+  } else {
+    log('Song not found');
+    return e404;
+  }
+}
+
+async function tuneNewProtocolHandler(req: Request): Promise<Response> {
   const { pathname } = new URL(req.url);
   const key: SongKey = pathname.substring(1);
   log(`SongKey: ${key}`);
@@ -148,9 +167,17 @@ async function tuneProtocolHandler(req: Request): Promise<Response> {
     // const url = pathToFileURL(thePath);
     log('Trying to send file:');
     log(`${thePath} (${extension} : ${mimeType})`);
+    log(req.headers);
     try {
       const arr = buf.buffer;
-      return new Response(arr, { headers: { 'Content-Type': mimeType } });
+      return new Response(arr, {
+        headers: {
+          'Content-Type': mimeType + ', audio/flac',
+          // 'Access-Control-Allow-Origin': '*',
+          // 'Last-Modified': 'Thu, 01 Jan 1995 00:01:12 GMT',
+          // 'Content-Disposition': 'inline'
+        },
+      });
       // return net.fetch(url.href, {
       // bypassCustomProtocolHandlers: true,
       // headers: {
@@ -191,7 +218,13 @@ export function RegisterProtocols(): void {
   log('Registering pic://key/ protocol');
   protocol.handle('pic', PictureHandler);
   log('Registering tune://song/ protocol');
-  protocol.handle('tune', tuneProtocolHandler);
+  protocol.handle('tune', tuneNewProtocolHandler);
+  Comms.registerOldProtocolHandler(
+    'trune://song/',
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    protocol.registerFileProtocol,
+    tuneProtocolHandler,
+  );
   log('Finished protocol registration');
 }
 
