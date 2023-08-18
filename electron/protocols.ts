@@ -3,10 +3,9 @@ import { Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
 import { asString, hasStrField } from '@freik/typechk';
-import { net, protocol } from 'electron';
+import { protocol } from 'electron';
 import fs from 'fs';
 import path from 'path';
-import { pathToFileURL } from 'url';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
@@ -22,7 +21,7 @@ const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
   ['.m4a', 'audio/m4a'],
   ['.aac', 'audio/aac'],
-  ['.flac', 'audio/x-flac'],
+  ['.flac', 'audio/flac'],
   ['.wma', 'audio/x-ms-wma'],
 ]);
 
@@ -145,18 +144,20 @@ async function tuneProtocolHandler(req: Request): Promise<Response> {
   if (song) {
     const { extension, thePath } = await getRealFile(song);
     const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
-    const url = pathToFileURL(thePath);
+    const buf = await fsp.readFile(thePath);
+    // const url = pathToFileURL(thePath);
     log('Trying to send file:');
     log(`${thePath} (${extension} : ${mimeType})`);
     try {
-      return net.fetch(
-        url.href /* {
-        headers: {
-          'Content-Type': mimeType, // eslint-disable-line @typescript-eslint/naming-convention
-          'Content-Disposition': 'inline', // eslint-disable-line @typescript-eslint/naming-convention
-        },
-      }*/,
-      );
+      const arr = buf.buffer;
+      return new Response(arr, { headers: { 'Content-Type': mimeType } });
+      // return net.fetch(url.href, {
+      // bypassCustomProtocolHandlers: true,
+      // headers: {
+      // 'Content-Type': mimeType, // eslint-disable-line @typescript-eslint/naming-convention
+      // 'Content-Disposition': 'inline', // eslint-disable-line @typescript-eslint/naming-convention
+      // },
+      // });
     } catch (e) {
       err(`Fetch of ${thePath} failed with error:`);
       err(e);
@@ -171,11 +172,12 @@ export function RegisterPrivileges(): void {
     {
       scheme: 'tune',
       privileges: {
-        secure: true,
+        // secure: true,
         standard: true,
         supportFetchAPI: true, // Add this if you want to use fetch with this protocol.
         stream: true, // Add this if you intend to use the protocol for streaming i.e. in video/audio html tags.
         // corsEnabled: true, // Add this if you need to enable cors for this protocol.
+        // bypassCSP: false
       },
     },
   ]);

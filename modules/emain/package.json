@@ -17,7 +17,7 @@
     "lint": "yarn eslint --fix --ext .ts src",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "### NPM lifecycle stuff ***": "",
-    "prepare": "yarn run build",
+    "prepare": "yarn build",
     "prepublishOnly": "yarn test"
   },
   "repository": "github:kevinfrei/elect-main-utils",
