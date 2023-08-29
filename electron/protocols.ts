@@ -150,7 +150,7 @@ async function tuneProtocolHandler(
     return { path: thePath, mimeType };
   } else {
     log('Song not found');
-    return e404;
+    return { path: '' };
   }
 }
 
@@ -172,6 +172,7 @@ async function tuneNewProtocolHandler(req: Request): Promise<Response> {
       const arr = buf.buffer;
       return new Response(arr, {
         headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           'Content-Type': mimeType + ', audio/flac',
           // 'Access-Control-Allow-Origin': '*',
           // 'Last-Modified': 'Thu, 01 Jan 1995 00:01:12 GMT',
