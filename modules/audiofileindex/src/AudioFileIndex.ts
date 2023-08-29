@@ -61,9 +61,9 @@ export type AudioFileIndex = {
   ): Promise<void>;
   updateMetadata(newMetadata: MinimumMetadata): void;
   getMetadataForSong(filePath: string): Promise<FullMetadata | void>;
-  setImageForSong(filePathOrKey: SongKey | string, buf: Buffer): Promise<void>;
+  setImageForSong(filePathOrKey: SongKey, buf: Buffer): Promise<void>;
   getImageForSong(
-    filePathOrKey: SongKey | string,
+    filePathOrKey: SongKey,
     preferInternal?: boolean,
   ): Promise<Buffer | void>;
   destroy(): void;
@@ -513,7 +513,7 @@ export async function MakeAudioFileIndex(
 
   // public
   async function setImageForSong(
-    keyOrPath: SongKey | string,
+    keyOrPath: SongKey,
     buf: Buffer,
   ): Promise<void> {
     const key = getAFIKey(keyOrPath) ? keyOrPath : makeSongKey(keyOrPath);
@@ -537,7 +537,7 @@ export async function MakeAudioFileIndex(
   }
   // public
   async function getImageForSong(
-    keyOrPath: SongKey | string,
+    keyOrPath: SongKey,
     preferInternal?: boolean,
   ): Promise<Buffer | void> {
     const key = getAFIKey(keyOrPath) ? keyOrPath : makeSongKey(keyOrPath);

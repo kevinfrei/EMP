@@ -82,9 +82,9 @@
         "${workspaceFolder}/node_modules/jest/bin/jest.js",
         "--runInBand",
         "--config",
-        "${workspaceFolder}/packages/audiofileindex/jestconfig.json"
+        "${workspaceFolder}/modules/audiofileindex/jestconfig.json"
       ],
-      "cwd": "${workspaceFolder}/packages/audiofileindex",
+      "cwd": "${workspaceFolder}/modules/audiofileindex",
       "console": "integratedTerminal",
       "internalConsoleOptions": "openOnSessionStart"
     }

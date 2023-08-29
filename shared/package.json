@@ -10,10 +10,12 @@
   },
   "devDependencies": {
     "rimraf": "^5.0.1",
-    "typescript": "5.0.4"
+    "typescript": "^5.2.2"
   },
-  "files": ["./build/**/*"],
+  "files": [
+    "./build/**/*"
+  ],
   "dependencies": {
-    "@freik/typechk": "^0.5.0"
+    "@freik/typechk": "^0.5.7"
   }
 }

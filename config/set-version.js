@@ -85,13 +85,13 @@ async function readJSONFile(filename) {
 
 async function writeJSONFile(filename, json, options) {
   const text = JSON.stringify(json);
-  const formatted = prettier.format(text, { ...options, parser: 'json' });
+  const formatted = await prettier.format(text, { ...options, parser: 'json' });
   await fsp.writeFile(filename, formatted, 'utf-8');
 }
 
 async function writeHTMLFile(filename, html, options) {
   const text = html.join('\n');
-  const formatted = prettier.format(text, { ...options, parser: 'html' });
+  const formatted = await prettier.format(text, { ...options, parser: 'html' });
   await fsp.writeFile(filename, formatted, 'utf-8');
 }
 
@@ -114,7 +114,7 @@ async function main() {
   const curDir = process.cwd();
   const pkgPath = path.join(curDir, 'package.json');
   const pkg = await readJSONFile(pkgPath);
-  const aboutPath = path.join(curDir, 'public', 'about.html');
+  const aboutPath = path.join(curDir, 'about.html');
   const about = await getAboutVersion(aboutPath);
   const aboutVer = about.version;
   const packageVer = pkg.version;

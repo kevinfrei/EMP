@@ -154,7 +154,7 @@ const e404 = { error: 404 };
  * @param processor The function that will process the protocol request
  * @param defaultValue The (optional) default return value (Error 404)
  */
-export function registerProtocolHandler<ResponseType>(
+export function registerOldProtocolHandler<ResponseType>(
   type: string,
   registerer: Registerer<ResponseType>,
   processor: (
@@ -172,7 +172,7 @@ export function registerProtocolHandler<ResponseType>(
     }
     if (req.url.startsWith(type)) {
       log(`Processing request ${type}`);
-      const res = await processor(req, req.url.substr(type.length));
+      const res = await processor(req, req.url.substring(type.length));
       log('Returning:');
       log(res);
       return res;

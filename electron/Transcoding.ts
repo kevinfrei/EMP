@@ -1,3 +1,9 @@
+import {
+  IpcId,
+  TranscodeInfo,
+  TranscodeSourceType,
+  TranscodeState,
+} from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import type { Attributes } from '@freik/media-core';
 import { Encode, Metadata as MD } from '@freik/media-utils';
@@ -16,12 +22,6 @@ import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
-import {
-  IpcId,
-  TranscodeInfo,
-  TranscodeSourceType,
-  TranscodeState,
-} from '@freik/emp-shared';
 import { GetAudioDB } from './AudioDatabase';
 import { SendToUI } from './Communication';
 import { LoadPlaylist } from './playlists';
@@ -91,6 +91,7 @@ export async function toMp4Async(
         hasFieldType(res.error, 'toString', isFunction)
       ) {
         // MediaInfo failed: no continue, sorry
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         const resStr = asString(res.error.toString(), 'Unknown error');
         return tr(
           XcodeResCode.mediaInfoFailure,

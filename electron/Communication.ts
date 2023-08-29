@@ -188,8 +188,8 @@ export function CommsSetup(): void {
 }
 
 // This is for one-way comms to the UI process
-export function SendToUI(name: IpcId, data: unknown) {
-  const obj: { [key: string]: unknown } = {};
+export function SendToUI<T>(name: IpcId, data: T) {
+  const obj: { [key: string]: T } = {};
   obj[name] = data;
   log(`Sending ${name} with data:`);
   log(data);

@@ -2,10 +2,10 @@
 import { ISearchBox } from '@fluentui/react';
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { ElectronWindow } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { is2TupleOf, isString } from '@freik/typechk';
 import { IpcRenderer } from 'electron';
-import { IpcId } from '@freik/emp-shared';
 
 const { log, wrn } = MakeLog('EMP:render:MyWindow-mock');
 
@@ -147,7 +147,7 @@ function MockRead(key: string): Promise<string> {
 export async function InvokeMain<T>(
   channel: string,
   key?: T,
-): Promise<unknown | void> {
+): Promise<unknown> {
   switch (channel) {
     case 'read-from-storage':
       if (isString(key)) {

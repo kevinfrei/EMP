@@ -67,7 +67,7 @@ module.exports = {
   moduleDirectories: [
     'node_modules',
     '<rootDir>/../shared',
-    '<rootDir>/../packages',
+    '<rootDir>/../modules',
   ],
 
   // An array of file extensions your modules use

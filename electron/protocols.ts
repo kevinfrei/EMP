@@ -2,29 +2,26 @@ import { SongWithPath } from '@freik/audiodb';
 import { Comms, Persistence } from '@freik/electron-main';
 import { MakeLog } from '@freik/logger';
 import { SongKey } from '@freik/media-core';
-import {
-  asString,
-  hasField,
-  hasFieldType,
-  hasStrField,
-  isFunction,
-} from '@freik/typechk';
+import { asString, hasStrField } from '@freik/typechk';
 import { ProtocolRequest, ProtocolResponse, protocol } from 'electron';
-import { promises as fs } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import { GetAudioDB, UpdateAudioLocations } from './AudioDatabase';
 import { PictureHandler } from './cover-art';
 
+const fsp = fs.promises;
+
 const { log, err } = MakeLog('EMP:main:protocols');
-
+log.enabled = true;
 export type FileResponse = string | ProtocolResponse;
+/*
 export type BufferResponse = Buffer | ProtocolResponse;
-
+*/
 const audioMimeTypes = new Map<string, string>([
   ['.mp3', 'audio/mpeg'],
   ['.m4a', 'audio/m4a'],
   ['.aac', 'audio/aac'],
-  ['.flac', 'audio/x-flac'],
+  ['.flac', 'audio/flac'],
   ['.wma', 'audio/x-ms-wma'],
 ]);
 
@@ -36,37 +33,41 @@ function defaultAlbumPicPath() {
   return defPath;
 }
 
-let defaultAlbumPicBuffer: BufferResponse | null = null;
+let defaultAlbumPicResponse: Response | null = null;
+let defaultAlbumPicBuffer: Buffer | null = null;
 let defaultAlbumPicUri: string | null = null;
 
-export async function GetDefaultAlbumPicBuffer(): Promise<BufferResponse> {
+async function GetDefaultAlbumPicBuffer(): Promise<Buffer> {
   if (!defaultAlbumPicBuffer) {
-    defaultAlbumPicBuffer = {
-      data: await fs.readFile(defaultAlbumPicPath()),
-      mimeType: 'image/svg+xml',
-    };
+    defaultAlbumPicBuffer = await fsp.readFile(defaultAlbumPicPath());
   }
   return defaultAlbumPicBuffer;
+}
+
+export async function GetDefaultAlbumPicResponse(): Promise<Response> {
+  if (!defaultAlbumPicResponse) {
+    const b = await GetDefaultAlbumPicBuffer();
+    const ab: ArrayBuffer = b.buffer.slice(
+      b.byteOffset,
+      b.byteOffset + b.byteLength,
+    );
+    defaultAlbumPicResponse = new Response(ab);
+  }
+  return defaultAlbumPicResponse;
 }
 
 export async function GetDefaultAlbumPicUri(): Promise<string> {
   if (!defaultAlbumPicUri) {
     const br = await GetDefaultAlbumPicBuffer();
-    if (
-      hasStrField(br, 'mimeType') &&
-      hasField(br, 'data') &&
-      hasFieldType(br.data, 'toString', isFunction)
-    ) {
-      let svg = br.data.toString() as string;
-      // Remove space from between tags, duplicate spaces
-      svg = svg.replace(/>\s{1,}</g, '><');
-      svg = svg.replace(/\s{1,}\/>/g, '/>');
-      svg = svg.replace(/\s{2,}/g, ' ');
-      svg = svg.trim();
-      // Encode the uri-unsafe characters
-      svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
-      defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
-    }
+    let svg = br.toString();
+    // Remove space from between tags, duplicate spaces
+    svg = svg.replace(/>\s{1,}</g, '><');
+    svg = svg.replace(/\s{1,}\/>/g, '/>');
+    svg = svg.replace(/\s{2,}/g, ' ');
+    svg = svg.trim();
+    // Encode the uri-unsafe characters
+    svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
+    defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
   }
   return asString(defaultAlbumPicUri, '');
 }
@@ -79,19 +80,24 @@ function defaultArtistPicPath() {
   return defArtist;
 }
 
-let defaultArtistPicBuffer: BufferResponse | null = null;
+let defaultArtistPicBuffer: Response | null = null;
 
-export async function GetDefaultArtistPicBuffer(): Promise<BufferResponse> {
+export async function GetDefaultArtistPicResponse(): Promise<Response> {
   if (!defaultArtistPicBuffer) {
-    defaultArtistPicBuffer = {
-      data: await fs.readFile(defaultArtistPicPath()),
-      mimeType: 'image/svg+xml',
-    };
+    const b = await fsp.readFile(defaultArtistPicPath());
+    const ab: ArrayBuffer = b.buffer.slice(
+      b.byteOffset,
+      b.byteOffset + b.byteLength,
+    );
+    defaultArtistPicBuffer = new Response(ab);
   }
   return defaultArtistPicBuffer;
 }
 
-const e404 = { error: 404 };
+const e404: Response = new Response(new ArrayBuffer(0), {
+  status: 404,
+  statusText: 'Not Found',
+});
 
 // This function deals with .emp files
 async function getRealFile(
@@ -103,7 +109,7 @@ async function getRealFile(
   if (extension === '.emp') {
     // For an .emp file, read the contents to get to the *actual* file
     try {
-      const empFile = (await fs.readFile(thePath)).toString();
+      const empFile = (await fsp.readFile(thePath)).toString();
       try {
         const thePtr: unknown = JSON.parse(empFile);
         if (hasStrField(thePtr, 'original')) {
@@ -134,37 +140,88 @@ async function tuneProtocolHandler(
   trimmedUrl: string,
 ): Promise<FileResponse> {
   const key: SongKey = trimmedUrl;
-  log(`SongKey: ${key}`);
   const db = await GetAudioDB();
-  log('Got DB');
   const song = db.getSong(key);
   if (song) {
     const { extension, thePath } = await getRealFile(song);
     const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
+    log('Got old tune:');
+    log(_.headers);
     return { path: thePath, mimeType };
   } else {
     log('Song not found');
-    return e404;
+    return { path: '' };
   }
 }
 
+async function tuneNewProtocolHandler(req: Request): Promise<Response> {
+  const { pathname } = new URL(req.url);
+  const key: SongKey = pathname.substring(1);
+  log(`SongKey: ${key}`);
+  const db = await GetAudioDB();
+  const song = db.getSong(key);
+  if (song) {
+    const { extension, thePath } = await getRealFile(song);
+    const mimeType = audioMimeTypes.get(extension) ?? 'audio/mpeg';
+    const buf = await fsp.readFile(thePath);
+    // const url = pathToFileURL(thePath);
+    log('Trying to send file:');
+    log(`${thePath} (${extension} : ${mimeType})`);
+    log(req.headers);
+    try {
+      const arr = buf.buffer;
+      return new Response(arr, {
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          'Content-Type': mimeType + ', audio/flac',
+          // 'Access-Control-Allow-Origin': '*',
+          // 'Last-Modified': 'Thu, 01 Jan 1995 00:01:12 GMT',
+          // 'Content-Disposition': 'inline'
+        },
+      });
+      // return net.fetch(url.href, {
+      // bypassCustomProtocolHandlers: true,
+      // headers: {
+      // 'Content-Type': mimeType, // eslint-disable-line @typescript-eslint/naming-convention
+      // 'Content-Disposition': 'inline', // eslint-disable-line @typescript-eslint/naming-convention
+      // },
+      // });
+    } catch (e) {
+      err(`Fetch of ${thePath} failed with error:`);
+      err(e);
+    }
+  }
+  log('Song not found');
+  return e404;
+}
+
+export function RegisterPrivileges(): void {
+  protocol.registerSchemesAsPrivileged([
+    {
+      scheme: 'tune',
+      privileges: {
+        // secure: true,
+        standard: true,
+        supportFetchAPI: true, // Add this if you want to use fetch with this protocol.
+        stream: true, // Add this if you intend to use the protocol for streaming i.e. in video/audio html tags.
+        // corsEnabled: true, // Add this if you need to enable cors for this protocol.
+        // bypassCSP: false
+      },
+    },
+  ]);
+}
+
 // This sets up all protocol handlers
-export async function RegisterProtocols(): Promise<void> {
-  const defPicBuffer = await GetDefaultAlbumPicBuffer();
+export function RegisterProtocols(): void {
   // TODO: Enable both song & album pictures
   // folder-level photos are fine, but for song requests, check the song
   // then fall back to the album
   log('Registering pic://key/ protocol');
-  Comms.registerProtocolHandler(
-    'pic://key/',
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    protocol.registerBufferProtocol,
-    PictureHandler,
-    defPicBuffer,
-  );
+  protocol.handle('pic', PictureHandler);
   log('Registering tune://song/ protocol');
-  Comms.registerProtocolHandler(
-    'tune://song/',
+  protocol.handle('tune', tuneNewProtocolHandler);
+  Comms.registerOldProtocolHandler(
+    'trune://song/',
     // eslint-disable-next-line @typescript-eslint/unbound-method
     protocol.registerFileProtocol,
     tuneProtocolHandler,

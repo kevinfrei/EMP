@@ -166,7 +166,7 @@ export function InitialWireUp(): () => void {
 export async function InvokeMain<T>(
   channel: string,
   key?: T,
-): Promise<unknown | void> {
+): Promise<unknown> {
   let result;
   if (!window.electronConnector) throw Error('nope');
   if (isDefined(key)) {

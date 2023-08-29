@@ -24,20 +24,20 @@ import {
   isSetOfString,
 } from '@freik/typechk';
 import albumArt from 'album-art';
-import { ProtocolRequest } from 'electron';
 import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
 import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
 import {
-  BufferResponse,
-  GetDefaultAlbumPicBuffer,
+  GetDefaultAlbumPicResponse,
   GetDefaultAlbumPicUri,
-  GetDefaultArtistPicBuffer,
+  // GetDefaultAlbumPicUri,
+  GetDefaultArtistPicResponse,
 } from './protocols';
 
 const { log, wrn } = MakeLog('EMP:main:cover-art');
+log.enabled = true;
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadAlbumArtwork')) === 'true';
@@ -271,11 +271,10 @@ async function TryToGetPic(id: MediaKey): Promise<PicData | undefined> {
   }
 }
 
-export async function PictureHandler(
-  req: ProtocolRequest,
-  id: MediaKey,
-): Promise<BufferResponse> {
+export async function PictureHandler(req: Request): Promise<Response> {
   // Check to see if there's a song in the album that has a cover image
+  const { pathname } = new URL(req.url);
+  let id = pathname.substring(1);
   try {
     log(`Got a request for ${id}`);
     if (id.lastIndexOf('#') !== -1) {
@@ -283,15 +282,21 @@ export async function PictureHandler(
     }
     const d = await TryToGetPic(id);
     if (isDefined(d)) {
-      return d;
+      log(`Sending data for ${id}`);
+      return new Response(
+        d.data.buffer.slice(
+          d.data.byteOffset,
+          d.data.byteOffset + d.data.byteLength,
+        ),
+      );
     }
   } catch (error) {
     wrn(`Error while trying to get picture for ${id}`);
     wrn(error);
   }
   return isArtistKey(id)
-    ? GetDefaultArtistPicBuffer()
-    : GetDefaultAlbumPicBuffer();
+    ? GetDefaultArtistPicResponse()
+    : GetDefaultAlbumPicResponse();
 }
 
 async function SavePicForAlbum(
