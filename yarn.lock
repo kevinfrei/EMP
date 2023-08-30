@@ -4241,9 +4241,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@freik/emp-shared@^0.0.6, @freik/emp-shared@workspace:shared":
+"@freik/emp-shared@^0.0.6, @freik/emp-shared@workspace:modules/shared":
   version: 0.0.0-use.local
-  resolution: "@freik/emp-shared@workspace:shared"
+  resolution: "@freik/emp-shared@workspace:modules/shared"
   dependencies:
     "@freik/typechk": ^0.5.7
     rimraf: ^5.0.1
