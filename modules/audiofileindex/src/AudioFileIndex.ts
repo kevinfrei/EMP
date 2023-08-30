@@ -1,4 +1,5 @@
 import { MakeMultiMap, MultiMap, chkMultiMapOf } from '@freik/containers';
+import { SetIntersection } from '@freik/helpers';
 import { MakeLog } from '@freik/logger';
 import {
   FullMetadata,
@@ -26,6 +27,7 @@ import {
 } from '@freik/text';
 import {
   FreikTypeTag,
+  Pickle,
   SafelyUnpickle,
   isDefined,
   isFunction,
@@ -214,6 +216,17 @@ async function loadIgnoreItems(
   );
 }
 
+async function saveIgnoreItems(
+  persist: Persist,
+  ignoreItems: MultiMap<IgnoreType, string>,
+): Promise<void> {
+  try {
+    await persist.setItemAsync('ignore-items', Pickle(ignoreItems));
+  } catch (e) {
+    wrn(e);
+  }
+}
+
 export type AudioFileIndexOptions = {
   readOnlyFallbackLocation: string;
   fileWatchFilter: Watcher;
@@ -257,9 +270,44 @@ export async function MakeAudioFileIndex(
     }
   })();
   const watchFilter = options?.fileWatchFilter;
+
+  function ignoreWatchFilter(filepath: string): boolean {
+    // Read the ignore info and check to see if this path should be ignored
+    const pathroots = data.ignoreItems.get('path-root');
+    if (isDefined(pathroots)) {
+      for (const pathroot of pathroots) {
+        if (filepath.toLowerCase().startsWith(pathroot.toLowerCase())) {
+          return false;
+        }
+      }
+    }
+    const dirnames = data.ignoreItems.get('dir-name');
+    if (isDefined(dirnames)) {
+      const pieces = new Set<string>(
+        filepath.split(/\/|\\/).map((str) => str.toLowerCase()),
+      );
+      if (SetIntersection(pieces, dirnames).size > 0) {
+        return false;
+      }
+    }
+    const pathkeywords = data.ignoreItems.get('path-keyword');
+    if (isDefined(pathkeywords)) {
+      const lcase = filepath.toLowerCase();
+      for (const pathkw of pathkeywords) {
+        if (lcase.indexOf(pathkw) >= 0) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   function makeFilteredWatcher(w: Watcher): Watcher {
     if (isFunction(watchFilter)) {
       return (fullpath: string) => {
+        if (!ignoreWatchFilter(fullpath)) {
+          return false;
+        }
         let o = fullpath;
         if (isAbsolute(o)) {
           if (!o.startsWith(rootLocation)) {
@@ -273,7 +321,7 @@ export async function MakeAudioFileIndex(
         return watchFilter(o) && w(o);
       };
     } else {
-      return w;
+      return (obj: string) => ignoreWatchFilter(obj) && w(obj);
     }
   }
   const ignoreItems = await loadIgnoreItems(tmpPersist);
@@ -313,11 +361,12 @@ export async function MakeAudioFileIndex(
   // TODO: Add these
   function addIgnoreItem(which: IgnoreType, value: string): void {
     data.ignoreItems.set(which, value);
-    // TODO: Save the data
+    void saveIgnoreItems(data.persist, data.ignoreItems);
   }
   function removeIgnoreItem(which: IgnoreType, value: string): boolean {
-    return data.ignoreItems.remove(which, value);
-    // TODO: Save the data
+    const res = data.ignoreItems.remove(which, value);
+    void saveIgnoreItems(data.persist, data.ignoreItems);
+    return res;
   }
   function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
     data.ignoreItems.forEach((st, ky) => st.forEach((vl) => yield [ky, vl]));

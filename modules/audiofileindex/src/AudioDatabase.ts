@@ -216,7 +216,6 @@ function getPersistenceIdName(options: AudioDatabaseOptions): string {
 }
 
 function makeFullOptions(
-  extraIgnoreFunc: Watcher,
   options?: Partial<AudioDatabaseOptions>,
 ): AudioDatabaseOptions {
   const func: Watcher | undefined =
@@ -224,8 +223,8 @@ function makeFullOptions(
       ? options.fileWatchFilter
       : undefined;
   const fileWatchFilter: Watcher = isUndefined(func)
-    ? extraIgnoreFunc
-    : (filepath: string) => extraIgnoreFunc(filepath) && func(filepath);
+    ? (o: string) => true
+    : func;
   return {
     // Defaults:
     readOnlyFallbackLocation: 'read-only-stuff',
@@ -248,7 +247,7 @@ export async function MakeAudioDatabase(
   localStorageLocation: string | Persist,
   opts?: Partial<AudioDatabaseOptions>,
 ): Promise<AudioDatabase> {
-  const fullOpts = makeFullOptions(ignoreWatchFilter, opts);
+  const fullOpts = makeFullOptions(opts);
   const persistenceIdName = getPersistenceIdName(fullOpts);
   const persist = isString(localStorageLocation)
     ? MakePersistence(localStorageLocation)
@@ -929,37 +928,6 @@ export async function MakeAudioDatabase(
         })),
       }),
     );
-  }
-
-  function ignoreWatchFilter(filepath: string): boolean {
-    // Read the ignore info and check to see if this path should be ignored
-    const pathroots = data.ignoreInfo.get('path-root');
-    if (isDefined(pathroots)) {
-      for (const pathroot of pathroots) {
-        if (filepath.toLowerCase().startsWith(pathroot.toLowerCase())) {
-          return false;
-        }
-      }
-    }
-    const dirnames = data.ignoreInfo.get('dir-name');
-    if (isDefined(dirnames)) {
-      const pieces = new Set<string>(
-        filepath.split(/\/|\\/).map((str) => str.toLowerCase()),
-      );
-      if (SetIntersection(pieces, dirnames).size > 0) {
-        return false;
-      }
-    }
-    const pathkeywords = data.ignoreInfo.get('path-keyword');
-    if (isDefined(pathkeywords)) {
-      const lcase = filepath.toLowerCase();
-      for (const pathkw of pathkeywords) {
-        if (lcase.indexOf(pathkw) >= 0) {
-          return false;
-        }
-      }
-    }
-    return true;
   }
 
   // Ignore Items are duplicated in each of the AFI's
