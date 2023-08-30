@@ -1,4 +1,9 @@
-import { MakeMultiMap, MultiMap, isMultiMapOf } from '@freik/containers';
+import {
+  MakeMultiMap,
+  MultiMap,
+  chkMultiMapOf,
+  isMultiMapOf,
+} from '@freik/containers';
 import {
   ArrayIntersection,
   ArraySetEqual,
@@ -37,6 +42,7 @@ import {
 } from '@freik/text';
 import {
   Pickle,
+  SafelyUnpickle,
   Unpickle,
   chkBothOf,
   chkMapOf,
@@ -51,6 +57,7 @@ import {
   isNumber,
   isString,
   isUndefined,
+  typecheck,
 } from '@freik/typechk';
 import { promises as fsp } from 'fs';
 import { h32 } from 'xxhashjs';
@@ -82,11 +89,15 @@ export type FlatAudioDatabase = {
 
 export type IgnoreType =
   /*
-	| 'artist-name'
+  | 'artist-name'
   | 'album-title'
   | 'track-title'
-	*/
+  */
   'path-root' | 'path-keyword' | 'dir-name';
+
+const isIgoreType: typecheck<IgnoreType> = (val: unknown) =>
+  isString(val) &&
+  (val === 'path-root' || val === 'path-keyword' || val === 'dir-name');
 
 export type AudioDatabase = {
   // Database API
@@ -686,7 +697,7 @@ export async function MakeAudioDatabase(
     return delSongFromAfi(filepath, afi);
   }
 
-	// Returns true if we should look inside the file for metadata
+  // Returns true if we should look inside the file for metadata
   async function addSongFromPath(filePath: string): Promise<boolean> {
     // First, figure out if this is from an index or not
     const afi = GetIndexForPath(filePath);
@@ -696,7 +707,7 @@ export async function MakeAudioDatabase(
     }
     return addSongToAfi(filePath, afi);
   }
-	*/
+  */
 
   // Returns true if we should look inside the file for metadata
   async function addSongToAfi(
@@ -893,6 +904,13 @@ export async function MakeAudioDatabase(
     )
       ? flattened.indices
       : false;
+    // Don't forget to deal with ignore items
+    const ignoreUnchecked = (await persist.getItemAsync('ignore-data')) || '0';
+    // This needs fixed...
+    const ignore = SafelyUnpickle(
+      ignoreUnchecked,
+      chkMultiMapOf(isIgoreType, isString),
+    );
     if (!songs || !albums || !artists || !titleIndex || !nameIndex || !idx) {
       wrn(`Invalid AFI loaded from ${persistenceIdName}`);
       return false;
@@ -916,6 +934,7 @@ export async function MakeAudioDatabase(
     data.albumTitleIndex = titleIndex;
     data.artistNameIndex = nameIndex;
     data.dbAudioIndices = audioIndices;
+    data.ignoreInfo = ignore || MakeMultiMap();
     return true;
   }
 
@@ -940,7 +959,7 @@ export async function MakeAudioDatabase(
 
   function saveIgnoreInfo() {
     persist
-      .setItemAsync('ignore-data', data.ignoreInfo.toJSON().toString())
+      .setItemAsync('ignore-data', Pickle(data.ignoreInfo))
       // eslint-disable-next-line no-console
       .catch(console.error);
   }
