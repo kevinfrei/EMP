@@ -342,7 +342,7 @@ export async function MakeAudioDatabase(
           log(artist);
           await artistStore.put(buf, artist);
           // await artistStore.flush();
-          /*  
+          /*
           await Promise.all(
             artist.songs.map((k) => afi.setImageForSong(k, buf)),
           );
@@ -962,6 +962,39 @@ export async function MakeAudioDatabase(
     return true;
   }
 
+  // Ignore Items are duplicated in each of the AFI's
+  // Just add the item to each of the AFI's
+  function addIgnoreItem(type: IgnoreType, val: string): void {
+    for (const [, db] of data.dbAudioIndices) {
+      db.addIgnoreItem(type, val);
+    }
+  }
+
+  // Ignore Items are duplicated in each of the AFI's
+  // We'll report 'true' if the item was deleted from *any* AFI
+  function removeIgnoreItem(type: IgnoreType, val: string): boolean {
+    let res = false;
+    for (const [, db] of data.dbAudioIndices) {
+      res ||= db.removeIgnoreItem(type, val);
+    }
+    return res;
+  }
+
+  // Ignore Items are duplicated in each of the AFI's
+  // For iteration, we should make sure not to report dupes, as there
+  // are basically going to be dupes for each AFI...
+  function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
+    const seen: Set<[IgnoreType, string]> = new Set();
+    for (const [, db] of data.dbAudioIndices) {
+      for (const pair of db.getIgnoreItems()) {
+        if (!seen.has(pair)) {
+          seen.add(pair);
+          yield pair;
+        }
+      }
+    }
+  }
+
   function updateMetadata(
     fullPath: string,
     newMetadata: Partial<FullMetadata>,
@@ -1103,6 +1136,7 @@ export async function MakeAudioDatabase(
     // Ignore stuff
     addIgnoreItem,
     removeIgnoreItem,
+    getIgnoreItems,
 
     // addSongFromPath,
     // addOrUpdateSong,
