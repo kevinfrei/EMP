@@ -1,4 +1,4 @@
-import { MakeMultiMap } from '@freik/containers';
+import { MakeMultiMap, MultiMap, chkMultiMapOf } from '@freik/containers';
 import { MakeLog } from '@freik/logger';
 import {
   FullMetadata,
@@ -13,6 +13,7 @@ import {
   MakeFileIndex,
   MakePersistence,
   MakeSuffixWatcher,
+  Persist,
   Watcher,
   PathUtil as path,
 } from '@freik/node-utils';
@@ -25,6 +26,7 @@ import {
 } from '@freik/text';
 import {
   FreikTypeTag,
+  SafelyUnpickle,
   isDefined,
   isFunction,
   isNumber,
@@ -39,6 +41,7 @@ import {
   IsFullMetadata,
   MinimumMetadata,
 } from './DbMetadata.js';
+import { IgnoreType, chkIgoreType } from './types.js';
 
 const { wrn, log } = MakeLog('AudioFileIndex');
 
@@ -68,6 +71,10 @@ export type AudioFileIndex = {
   ): Promise<Buffer | void>;
   destroy(): void;
   [FreikTypeTag]: symbol;
+  // Ignore items in the AFI:
+  addIgnoreItem(which: IgnoreType, value: string): void;
+  removeIgnoreItem(which: IgnoreType, value: string): boolean;
+  getIgnoreItems(): IterableIterator<[IgnoreType, string]>;
 };
 
 const AFITypeTag = Symbol.for('freik.AudioFileIndexTag');
@@ -197,6 +204,16 @@ async function maybeCallAndAdd(
   }
 }
 
+async function loadIgnoreItems(
+  persist: Persist,
+): Promise<MultiMap<IgnoreType, string>> {
+  const data = (await persist.getItemAsync('ignore-items')) || '';
+  return (
+    SafelyUnpickle(data, chkMultiMapOf(chkIgoreType, isString)) ||
+    MakeMultiMap()
+  );
+}
+
 export type AudioFileIndexOptions = {
   readOnlyFallbackLocation: string;
   fileWatchFilter: Watcher;
@@ -259,6 +276,7 @@ export async function MakeAudioFileIndex(
       return w;
     }
   }
+  const ignoreItems = await loadIgnoreItems(tmpPersist);
   const data = {
     songList: new Array<string>(),
     picList: new Array<string>(),
@@ -267,7 +285,7 @@ export async function MakeAudioFileIndex(
     indexHashString: '',
     persist: tmpPersist,
     fileIndex: await MakeFileIndex(rootLocation, {
-      fileWatcher: makeFilteredWatcher(watchTypes),
+      fileWatcher: makeFilteredWatcher(watchTypes), // TODO: Include ignore items
       indexFolderLocation: path.join(tmpPersist.getLocation(), 'fileIndex.txt'),
       watchHidden: true, // We need this to see hidden cover images...
     }),
@@ -288,7 +306,22 @@ export async function MakeAudioFileIndex(
       path.join(rootLocation, 'images'),
     ),
     fileSystemPictures: new Map<string, string>(),
+    // The map of ignore items
+    ignoreItems,
   };
+
+  // TODO: Add these
+  function addIgnoreItem(which: IgnoreType, value: string): void {
+    data.ignoreItems.set(which, value);
+    // TODO: Save the data
+  }
+  function removeIgnoreItem(which: IgnoreType, value: string): boolean {
+    return data.ignoreItems.remove(which, value);
+    // TODO: Save the data
+  }
+  function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
+    data.ignoreItems.forEach((st, ky) => st.forEach((vl) => yield [ky, vl]));
+  }
 
   // "this"
   const res: AudioFileIndex = {
@@ -309,6 +342,9 @@ export async function MakeAudioFileIndex(
       delIndex(res);
     },
     [FreikTypeTag]: AFITypeTag,
+    addIgnoreItem,
+    removeIgnoreItem,
+    getIgnoreItems,
   };
   data.indexHashString = addIndex(fragmentHash, data.location, res);
   data.fileIndex.forEachFileSync((pathName: string) => {

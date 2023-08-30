@@ -1,9 +1,4 @@
-import {
-  MakeMultiMap,
-  MultiMap,
-  chkMultiMapOf,
-  isMultiMapOf,
-} from '@freik/containers';
+import { MakeMultiMap, MultiMap, isMultiMapOf } from '@freik/containers';
 import {
   ArrayIntersection,
   ArraySetEqual,
@@ -42,7 +37,6 @@ import {
 } from '@freik/text';
 import {
   Pickle,
-  SafelyUnpickle,
   Unpickle,
   chkBothOf,
   chkMapOf,
@@ -57,20 +51,19 @@ import {
   isNumber,
   isString,
   isUndefined,
-  typecheck,
 } from '@freik/typechk';
 import { promises as fsp } from 'fs';
 import { h32 } from 'xxhashjs';
-import { SongWithPath, VAType } from '.';
 import {
   AudioFileIndex,
   AudioFileIndexOptions,
   GetIndexForKey,
   GetIndexForPath,
   MakeAudioFileIndex,
-} from './AudioFileIndex';
+} from './AudioFileIndex.js';
 import { MakeBlobStore } from './BlobStore.js';
 import { MusicSearch, SearchResults } from './MusicSearch.js';
+import type { IgnoreType, SongWithPath, VAType } from './types.js';
 
 const { log, wrn } = MakeLog('AudioDatabase');
 
@@ -86,18 +79,6 @@ export type FlatAudioDatabase = {
   artists: Artist[];
   albums: Album[];
 };
-
-export type IgnoreType =
-  /*
-  | 'artist-name'
-  | 'album-title'
-  | 'track-title'
-  */
-  'path-root' | 'path-keyword' | 'dir-name';
-
-const isIgoreType: typecheck<IgnoreType> = (val: unknown) =>
-  isString(val) &&
-  (val === 'path-root' || val === 'path-keyword' || val === 'dir-name');
 
 export type AudioDatabase = {
   // Database API
@@ -132,6 +113,7 @@ export type AudioDatabase = {
   // Ignoring stuff:
   addIgnoreItem(which: IgnoreType, value: string): void;
   removeIgnoreItem(which: IgnoreType, value: string): boolean;
+  getIgnoreItems(): IterableIterator<[IgnoreType, string]>;
 
   // For all the 'parsed' data
   getFlatDatabase(): FlatAudioDatabase; // Some Testing
@@ -904,13 +886,6 @@ export async function MakeAudioDatabase(
     )
       ? flattened.indices
       : false;
-    // Don't forget to deal with ignore items
-    const ignoreUnchecked = (await persist.getItemAsync('ignore-data')) || '0';
-    // This needs fixed...
-    const ignore = SafelyUnpickle(
-      ignoreUnchecked,
-      chkMultiMapOf(isIgoreType, isString),
-    );
     if (!songs || !albums || !artists || !titleIndex || !nameIndex || !idx) {
       wrn(`Invalid AFI loaded from ${persistenceIdName}`);
       return false;
@@ -934,7 +909,6 @@ export async function MakeAudioDatabase(
     data.albumTitleIndex = titleIndex;
     data.artistNameIndex = nameIndex;
     data.dbAudioIndices = audioIndices;
-    data.ignoreInfo = ignore || MakeMultiMap();
     return true;
   }
 
@@ -955,13 +929,6 @@ export async function MakeAudioDatabase(
         })),
       }),
     );
-  }
-
-  function saveIgnoreInfo() {
-    persist
-      .setItemAsync('ignore-data', Pickle(data.ignoreInfo))
-      // eslint-disable-next-line no-console
-      .catch(console.error);
   }
 
   function ignoreWatchFilter(filepath: string): boolean {
@@ -993,19 +960,6 @@ export async function MakeAudioDatabase(
       }
     }
     return true;
-  }
-
-  function addIgnoreItem(item: IgnoreType, value: string): void {
-    data.ignoreInfo.set(item, value.toLocaleLowerCase());
-    saveIgnoreInfo();
-  }
-
-  function removeIgnoreItem(item: IgnoreType, value: string): boolean {
-    if (data.ignoreInfo.remove(item, value.toLocaleLowerCase())) {
-      saveIgnoreInfo();
-      return true;
-    }
-    return false;
   }
 
   function updateMetadata(
