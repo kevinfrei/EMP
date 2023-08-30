@@ -7,6 +7,7 @@ import {
   SearchResults,
 } from '@freik/audiodb';
 import { Persistence } from '@freik/electron-main';
+import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { SetDifference } from '@freik/helpers';
 import { MakeLog } from '@freik/logger';
 import {
@@ -17,10 +18,9 @@ import {
   isSongKey,
 } from '@freik/media-core';
 import { Sleep } from '@freik/sync';
-import { Pickle, SafelyUnpickle, isArrayOfString } from '@freik/typechk';
+import { SafelyUnpickle, isArrayOfString } from '@freik/typechk';
 import { statSync } from 'fs';
 import path from 'path';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { SendToUI } from './Communication';
 
 const { log, wrn } = MakeLog('EMP:main:AudioDatabase');
@@ -243,36 +243,27 @@ export async function SearchSubstring(
 }
 
 export async function GetIgnoreList(): Promise<IgnoreItem[]> {
-  const ignoreListString = await Persistence.getItemAsync(IpcId.IgnoreListId);
-  if (!ignoreListString) {
-    return [];
+  const db = await GetAudioDB();
+  const res: IgnoreItem[] = [];
+  for (const [type, value] of db.getIgnoreItems()) {
+    res.push({ type, value });
   }
-  return SafelyUnpickle(ignoreListString, isIgnoreItemArrayFn) || [];
+  return res;
 }
 
 export async function AddIgnoreItem(item: IgnoreItem): Promise<void> {
-  const igList = await GetIgnoreList();
-  igList.push(item);
   const db = await GetAudioDB();
   db.addIgnoreItem(item.type, item.value);
-  SendUpdatedIgnoreList(igList);
-  await Persistence.setItemAsync(IpcId.IgnoreListId, Pickle(igList));
+  return SendUpdatedIgnoreList();
 }
 
 export async function RemoveIgnoreItem(item: IgnoreItem): Promise<void> {
-  let igList = await GetIgnoreList();
   const db = await GetAudioDB();
-  if (db.removeIgnoreItem(item.type, item.value)) {
-    igList = [
-      ...igList.filter(
-        (val) => val.type !== item.type || val.value !== item.value,
-      ),
-    ];
-    SendUpdatedIgnoreList(igList);
-    await Persistence.setItemAsync(IpcId.IgnoreListId, Pickle(igList));
-  }
+  db.removeIgnoreItem(item.type, item.value);
+  return SendUpdatedIgnoreList();
 }
 
-export function SendUpdatedIgnoreList(list: IgnoreItem[]): void {
-  SendToUI(IpcId.PushIgnoreList, list);
+async function SendUpdatedIgnoreList(): Promise<void> {
+  const iis = await GetIgnoreList();
+  SendToUI(IpcId.PushIgnoreList, iis);
 }

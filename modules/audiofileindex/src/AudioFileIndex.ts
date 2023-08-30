@@ -209,7 +209,7 @@ async function maybeCallAndAdd(
 async function loadIgnoreItems(
   persist: Persist,
 ): Promise<MultiMap<IgnoreType, string>> {
-  const data = (await persist.getItemAsync('ignore-items')) || '';
+  const data = (await persist.getItemAsync('ignore-items')) || '0';
   return (
     SafelyUnpickle(data, chkMultiMapOf(chkIgoreType, isString)) ||
     MakeMultiMap()
@@ -358,18 +358,23 @@ export async function MakeAudioFileIndex(
     ignoreItems,
   };
 
-  // TODO: Add these
   function addIgnoreItem(which: IgnoreType, value: string): void {
     data.ignoreItems.set(which, value);
     void saveIgnoreItems(data.persist, data.ignoreItems);
   }
+
   function removeIgnoreItem(which: IgnoreType, value: string): boolean {
     const res = data.ignoreItems.remove(which, value);
     void saveIgnoreItems(data.persist, data.ignoreItems);
     return res;
   }
+
   function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
-    data.ignoreItems.forEach((st, ky) => st.forEach((vl) => yield [ky, vl]));
+    for (const [it, setOfData] of data.ignoreItems) {
+      for (const vl of setOfData) {
+        yield [it, vl];
+      }
+    }
   }
 
   // "this"
