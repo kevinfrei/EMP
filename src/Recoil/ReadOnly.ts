@@ -559,7 +559,7 @@ export const ignoreItemsState = atom<IgnoreItem[]>({
         if (isIgnoreItemArrayFn(il)) {
           return il;
         }
-        wrn('Invalid result from music-database-update:');
+        wrn('Invalid result from ignore-items-update:');
         wrn(il);
       },
     ),

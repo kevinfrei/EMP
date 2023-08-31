@@ -32,12 +32,12 @@
     "electron": ">=20.0.0"
   },
   "dependencies": {
-    "@freik/logger": "^0.2.6",
-    "@freik/sync": "^0.2.8",
-    "@freik/typechk": "^0.5.7"
+    "@freik/logger": "^0.2.7",
+    "@freik/sync": "^0.2.9",
+    "@freik/typechk": "^0.5.8"
   },
   "devDependencies": {
-    "@freik/node-utils": "^1.4.1",
+    "@freik/node-utils": "^1.6.0",
     "@types/debug": "^4.1.8",
     "@types/jest": "^29.5.4",
     "@typescript-eslint/eslint-plugin": "^6.5.0",

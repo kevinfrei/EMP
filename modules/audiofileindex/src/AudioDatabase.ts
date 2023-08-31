@@ -66,6 +66,7 @@ import { MusicSearch, SearchResults } from './MusicSearch.js';
 import type { IgnoreType, SongWithPath, VAType } from './types.js';
 
 const { log, wrn } = MakeLog('AudioDatabase');
+// log.enabled = true;
 
 /**
  * FlatAudioDatabase
@@ -953,14 +954,17 @@ export async function MakeAudioDatabase(
   // are basically going to be dupes for each AFI...
   function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
     const seen: Set<[IgnoreType, string]> = new Set();
+    log('In AudioDB GII');
     for (const [, db] of data.dbAudioIndices) {
       for (const pair of db.getIgnoreItems()) {
         if (!seen.has(pair)) {
           seen.add(pair);
+          log('Yielding:', pair);
           yield pair;
         }
       }
     }
+    log('Leaving AudioDBB GII');
   }
 
   function updateMetadata(

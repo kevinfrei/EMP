@@ -46,6 +46,7 @@ import {
 import { IgnoreType, chkIgoreType } from './types.js';
 
 const { wrn, log } = MakeLog('AudioFileIndex');
+// log.enabled = true;
 
 type PathHandlerAsync = (pathName: string) => Promise<void>;
 type PathHandlerSync = (pathName: string) => void;
@@ -86,18 +87,11 @@ const AFITypeTag = Symbol.for('freik.AudioFileIndexTag');
 const audioTypes = MakeSuffixWatcher('flac', 'mp3', 'aac', 'm4a', 'emp');
 // Any other image types to care about?
 const imageTypes = MakeSuffixWatcher('png', 'jpg', 'jpeg', 'heic', 'hei');
-function watchTypes(pathName: string) {
-  return (
-    imageTypes(pathName) ||
-    (audioTypes(pathName) && !path.basename(pathName).startsWith('.'))
-  );
-}
 
 async function isWritableDir(pathName: string): Promise<boolean> {
   try {
     await fsp.access(pathName, FS_CONST.W_OK);
-    const s = await fsp.stat(pathName);
-    return s.isDirectory();
+    return (await fsp.stat(pathName)).isDirectory();
   } catch (e) {
     return false;
   }
@@ -206,6 +200,7 @@ async function maybeCallAndAdd(
   }
 }
 
+// Load the 'ignore items' from the .afi store
 async function loadIgnoreItems(
   persist: Persist,
 ): Promise<MultiMap<IgnoreType, string>> {
@@ -216,6 +211,7 @@ async function loadIgnoreItems(
   );
 }
 
+// Save the 'ignore items' to the .afi store
 async function saveIgnoreItems(
   persist: Persist,
   ignoreItems: MultiMap<IgnoreType, string>,
@@ -269,14 +265,15 @@ export async function MakeAudioFileIndex(
       throw new Error(`Non-writable location: ${locationName}`);
     }
   })();
+
   const watchFilter = options?.fileWatchFilter;
 
-  function ignoreWatchFilter(filepath: string): boolean {
+  function watchTypes(pathName: string) {
     // Read the ignore info and check to see if this path should be ignored
     const pathroots = data.ignoreItems.get('path-root');
     if (isDefined(pathroots)) {
       for (const pathroot of pathroots) {
-        if (filepath.toLowerCase().startsWith(pathroot.toLowerCase())) {
+        if (pathName.toLowerCase().startsWith(pathroot.toLowerCase())) {
           return false;
         }
       }
@@ -284,7 +281,7 @@ export async function MakeAudioFileIndex(
     const dirnames = data.ignoreItems.get('dir-name');
     if (isDefined(dirnames)) {
       const pieces = new Set<string>(
-        filepath.split(/\/|\\/).map((str) => str.toLowerCase()),
+        pathName.split(/\/|\\/).map((str) => str.toLowerCase()),
       );
       if (SetIntersection(pieces, dirnames).size > 0) {
         return false;
@@ -292,22 +289,22 @@ export async function MakeAudioFileIndex(
     }
     const pathkeywords = data.ignoreItems.get('path-keyword');
     if (isDefined(pathkeywords)) {
-      const lcase = filepath.toLowerCase();
+      const lcase = pathName.toLowerCase();
       for (const pathkw of pathkeywords) {
         if (lcase.indexOf(pathkw) >= 0) {
           return false;
         }
       }
     }
-    return true;
+    return (
+      imageTypes(pathName) ||
+      (audioTypes(pathName) && !path.basename(pathName).startsWith('.'))
+    );
   }
 
   function makeFilteredWatcher(w: Watcher): Watcher {
     if (isFunction(watchFilter)) {
       return (fullpath: string) => {
-        if (!ignoreWatchFilter(fullpath)) {
-          return false;
-        }
         let o = fullpath;
         if (isAbsolute(o)) {
           if (!o.startsWith(rootLocation)) {
@@ -320,9 +317,8 @@ export async function MakeAudioFileIndex(
         }
         return watchFilter(o) && w(o);
       };
-    } else {
-      return (obj: string) => ignoreWatchFilter(obj) && w(obj);
     }
+    return w;
   }
   const ignoreItems = await loadIgnoreItems(tmpPersist);
   const data = {
@@ -333,7 +329,7 @@ export async function MakeAudioFileIndex(
     indexHashString: '',
     persist: tmpPersist,
     fileIndex: await MakeFileIndex(rootLocation, {
-      fileWatcher: makeFilteredWatcher(watchTypes), // TODO: Include ignore items
+      fileWatcher: makeFilteredWatcher(watchTypes),
       indexFolderLocation: path.join(tmpPersist.getLocation(), 'fileIndex.txt'),
       watchHidden: true, // We need this to see hidden cover images...
     }),

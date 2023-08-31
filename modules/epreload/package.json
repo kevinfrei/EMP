@@ -51,6 +51,6 @@
   },
   "files": ["lib/**/*"],
   "dependencies": {
-    "@freik/logger": "^0.2.6"
+    "@freik/logger": "^0.2.7"
   }
 }

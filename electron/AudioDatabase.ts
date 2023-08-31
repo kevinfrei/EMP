@@ -7,7 +7,7 @@ import {
   SearchResults,
 } from '@freik/audiodb';
 import { Persistence } from '@freik/electron-main';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
+import { IgnoreItem, IpcId } from '@freik/emp-shared';
 import { SetDifference } from '@freik/helpers';
 import { MakeLog } from '@freik/logger';
 import {
@@ -24,6 +24,7 @@ import path from 'path';
 import { SendToUI } from './Communication';
 
 const { log, wrn } = MakeLog('EMP:main:AudioDatabase');
+// log.enabled = true;
 
 let theAudioDb: AudioDatabase | null;
 let initialUpdateComplete = false;
@@ -57,11 +58,6 @@ export async function GetAudioDB(): Promise<AudioDatabase> {
         'This be very bad, folks: Try uninstalling and reinstalling :/',
       );
     }
-    const igListString = await Persistence.getItemAsync(IpcId.IgnoreListId);
-    const igList = SafelyUnpickle(igListString || '[]', isIgnoreItemArrayFn);
-    igList?.forEach(({ type, value }) =>
-      theAudioDb!.addIgnoreItem(type, value),
-    );
   }
   return theAudioDb;
 }
@@ -113,6 +109,7 @@ export async function UpdateLocations(locs: string): Promise<void> {
     log(del);
     await Promise.all([...del].map((loc) => db.removeFileLocation(loc)));
     await Promise.all([...add].map((loc) => db.addFileLocation(loc)));
+    await SendUpdatedIgnoreList();
     // This shouldn't be needed, as db.add/remove should update the db as needed
     // await RescanAudioDatase();
 
@@ -245,9 +242,12 @@ export async function SearchSubstring(
 export async function GetIgnoreList(): Promise<IgnoreItem[]> {
   const db = await GetAudioDB();
   const res: IgnoreItem[] = [];
+  log("In 'GetIgnoreList'");
   for (const [type, value] of db.getIgnoreItems()) {
     res.push({ type, value });
   }
+  log('Returning:');
+  log(res);
   return res;
 }
 
