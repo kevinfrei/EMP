@@ -10,6 +10,7 @@ import {
 } from '@freik/media-core';
 import { Covers, Metadata } from '@freik/media-utils';
 import {
+  AndWatch,
   FileUtil,
   MakeFileIndex,
   MakePersistence,
@@ -30,9 +31,8 @@ import {
   Pickle,
   SafelyUnpickle,
   isDefined,
-  isFunction,
   isNumber,
-  isString,
+  isString
 } from '@freik/typechk';
 import { constants as FS_CONST, promises as fsp } from 'fs';
 import { isAbsolute } from 'path';
@@ -268,13 +268,24 @@ export async function MakeAudioFileIndex(
 
   const watchFilter = options?.fileWatchFilter;
 
-  function watchTypes(pathName: string) {
+  function watchTypes(pathName: string): boolean {
+    return (
+      imageTypes(pathName) ||
+      (audioTypes(pathName) && !path.basename(pathName).startsWith('.'))
+    );
+  }
+  function ignoreWatch(pathName: string): boolean {
     // Read the ignore info and check to see if this path should be ignored
     const pathroots = data.ignoreItems.get('path-root');
     if (isDefined(pathroots)) {
+      const rootlen = rootLocation.length;
+      const rootlc = rootLocation.toLocaleLowerCase();
       for (const pathroot of pathroots) {
-        if (pathName.toLowerCase().startsWith(pathroot.toLowerCase())) {
-          return false;
+        const lc = pathName.toLocaleLowerCase();
+        if (lc.startsWith(rootlc)){
+          if (lc.substring(rootlen).startsWith(pathroot.toLowerCase())) {
+            return false;
+          }
         }
       }
     }
@@ -296,30 +307,9 @@ export async function MakeAudioFileIndex(
         }
       }
     }
-    return (
-      imageTypes(pathName) ||
-      (audioTypes(pathName) && !path.basename(pathName).startsWith('.'))
-    );
+    return true;
   }
 
-  function makeFilteredWatcher(w: Watcher): Watcher {
-    if (isFunction(watchFilter)) {
-      return (fullpath: string) => {
-        let o = fullpath;
-        if (isAbsolute(o)) {
-          if (!o.startsWith(rootLocation)) {
-            wrn('Well shit!');
-            return false;
-          }
-          o = o.substring(rootLocation.length - 1);
-        } else {
-          o = '/' + o;
-        }
-        return watchFilter(o) && w(o);
-      };
-    }
-    return w;
-  }
   const ignoreItems = await loadIgnoreItems(tmpPersist);
   const data = {
     songList: new Array<string>(),
@@ -329,7 +319,7 @@ export async function MakeAudioFileIndex(
     indexHashString: '',
     persist: tmpPersist,
     fileIndex: await MakeFileIndex(rootLocation, {
-      fileWatcher: makeFilteredWatcher(watchTypes),
+      fileWatcher: AndWatch(ignoreWatch, watchTypes, watchFilter),
       indexFolderLocation: path.join(tmpPersist.getLocation(), 'fileIndex.txt'),
       watchHidden: true, // We need this to see hidden cover images...
     }),
@@ -515,13 +505,13 @@ export async function MakeAudioFileIndex(
     await data.fileIndex.rescanFiles(
       async (pathName: string) => {
         await maybeCallAndAdd(
-          makeFilteredWatcher(audioTypes),
+          AndWatch(ignoreWatch, audioTypes, watchFilter),
           audioAdds,
           pathName,
           addAudioFile,
         );
         await maybeCallAndAdd(
-          makeFilteredWatcher(imageTypes),
+          AndWatch(ignoreWatch, imageTypes, watchFilter),
           imageAdds,
           pathName,
         );

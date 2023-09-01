@@ -24,6 +24,7 @@
     "verbump": "node config/set-version.js",
     "bumpver": "node config/set-version.js",
     "dev": "vite",
+    "devbld": "npx lerna run build && vite",
     "build": "npx lerna run build && tsc && vite build && electron-builder",
     "preview": "vite preview",
     "lerna": "npx lerna run",
