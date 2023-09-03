@@ -12,7 +12,8 @@ import { PictureHandler } from './cover-art';
 const fsp = fs.promises;
 
 const { log, err } = MakeLog('EMP:main:protocols');
-log.enabled = true;
+// log.enabled = true;
+
 export type FileResponse = string | ProtocolResponse;
 /*
 export type BufferResponse = Buffer | ProtocolResponse;

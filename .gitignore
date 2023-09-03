@@ -14,7 +14,7 @@
 **/*.tsbuildinfo
 
 # testing
-/coverage
+modules/**/coverage
 
 # production
 /build
@@ -36,3 +36,5 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 dist-electron
+shared/build
+modules/*/lib

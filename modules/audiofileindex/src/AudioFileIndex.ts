@@ -1,4 +1,5 @@
-import { MakeMultiMap } from '@freik/containers';
+import { MakeMultiMap, MultiMap, chkMultiMapOf } from '@freik/containers';
+import { SetIntersection } from '@freik/helpers';
 import { MakeLog } from '@freik/logger';
 import {
   FullMetadata,
@@ -9,10 +10,12 @@ import {
 } from '@freik/media-core';
 import { Covers, Metadata } from '@freik/media-utils';
 import {
+  AndWatch,
   FileUtil,
   MakeFileIndex,
   MakePersistence,
   MakeSuffixWatcher,
+  Persist,
   Watcher,
   PathUtil as path,
 } from '@freik/node-utils';
@@ -25,8 +28,9 @@ import {
 } from '@freik/text';
 import {
   FreikTypeTag,
+  Pickle,
+  SafelyUnpickle,
   isDefined,
-  isFunction,
   isNumber,
   isString,
 } from '@freik/typechk';
@@ -39,8 +43,10 @@ import {
   IsFullMetadata,
   MinimumMetadata,
 } from './DbMetadata.js';
+import { IgnoreType, chkIgoreType } from './types.js';
 
 const { wrn, log } = MakeLog('AudioFileIndex');
+// log.enabled = true;
 
 type PathHandlerAsync = (pathName: string) => Promise<void>;
 type PathHandlerSync = (pathName: string) => void;
@@ -68,6 +74,10 @@ export type AudioFileIndex = {
   ): Promise<Buffer | void>;
   destroy(): void;
   [FreikTypeTag]: symbol;
+  // Ignore items in the AFI:
+  addIgnoreItem(which: IgnoreType, value: string): void;
+  removeIgnoreItem(which: IgnoreType, value: string): boolean;
+  getIgnoreItems(): IterableIterator<[IgnoreType, string]>;
 };
 
 const AFITypeTag = Symbol.for('freik.AudioFileIndexTag');
@@ -77,18 +87,11 @@ const AFITypeTag = Symbol.for('freik.AudioFileIndexTag');
 const audioTypes = MakeSuffixWatcher('flac', 'mp3', 'aac', 'm4a', 'emp');
 // Any other image types to care about?
 const imageTypes = MakeSuffixWatcher('png', 'jpg', 'jpeg', 'heic', 'hei');
-function watchTypes(pathName: string) {
-  return (
-    imageTypes(pathName) ||
-    (audioTypes(pathName) && !path.basename(pathName).startsWith('.'))
-  );
-}
 
 async function isWritableDir(pathName: string): Promise<boolean> {
   try {
     await fsp.access(pathName, FS_CONST.W_OK);
-    const s = await fsp.stat(pathName);
-    return s.isDirectory();
+    return (await fsp.stat(pathName)).isDirectory();
   } catch (e) {
     return false;
   }
@@ -197,6 +200,29 @@ async function maybeCallAndAdd(
   }
 }
 
+// Load the 'ignore items' from the .afi store
+async function loadIgnoreItems(
+  persist: Persist,
+): Promise<MultiMap<IgnoreType, string>> {
+  const data = (await persist.getItemAsync('ignore-items')) || '0';
+  return (
+    SafelyUnpickle(data, chkMultiMapOf(chkIgoreType, isString)) ||
+    MakeMultiMap()
+  );
+}
+
+// Save the 'ignore items' to the .afi store
+async function saveIgnoreItems(
+  persist: Persist,
+  ignoreItems: MultiMap<IgnoreType, string>,
+): Promise<void> {
+  try {
+    await persist.setItemAsync('ignore-items', Pickle(ignoreItems));
+  } catch (e) {
+    wrn(e);
+  }
+}
+
 export type AudioFileIndexOptions = {
   readOnlyFallbackLocation: string;
   fileWatchFilter: Watcher;
@@ -239,26 +265,52 @@ export async function MakeAudioFileIndex(
       throw new Error(`Non-writable location: ${locationName}`);
     }
   })();
+
   const watchFilter = options?.fileWatchFilter;
-  function makeFilteredWatcher(w: Watcher): Watcher {
-    if (isFunction(watchFilter)) {
-      return (fullpath: string) => {
-        let o = fullpath;
-        if (isAbsolute(o)) {
-          if (!o.startsWith(rootLocation)) {
-            wrn('Well shit!');
+
+  function watchTypes(pathName: string): boolean {
+    return (
+      imageTypes(pathName) ||
+      (audioTypes(pathName) && !path.basename(pathName).startsWith('.'))
+    );
+  }
+  function ignoreWatch(pathName: string): boolean {
+    // Read the ignore info and check to see if this path should be ignored
+    const pathroots = data.ignoreItems.get('path-root');
+    if (isDefined(pathroots)) {
+      const rootlen = rootLocation.length;
+      const rootlc = rootLocation.toLocaleLowerCase();
+      for (const pathroot of pathroots) {
+        const lc = pathName.toLocaleLowerCase();
+        if (lc.startsWith(rootlc)) {
+          if (lc.substring(rootlen).startsWith(pathroot.toLocaleLowerCase())) {
             return false;
           }
-          o = o.substring(rootLocation.length - 1);
-        } else {
-          o = '/' + o;
         }
-        return watchFilter(o) && w(o);
-      };
-    } else {
-      return w;
+      }
     }
+    const dirnames = data.ignoreItems.get('dir-name');
+    if (isDefined(dirnames)) {
+      const pieces = new Set<string>(
+        pathName.split(/\/|\\/).map((str) => str.toLocaleLowerCase()),
+      );
+      if (SetIntersection(pieces, dirnames).size > 0) {
+        return false;
+      }
+    }
+    const pathkeywords = data.ignoreItems.get('path-keyword');
+    if (isDefined(pathkeywords)) {
+      const lcase = pathName.toLocaleLowerCase();
+      for (const pathkw of pathkeywords) {
+        if (lcase.indexOf(pathkw) >= 0) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
+
+  const ignoreItems = await loadIgnoreItems(tmpPersist);
   const data = {
     songList: new Array<string>(),
     picList: new Array<string>(),
@@ -267,7 +319,7 @@ export async function MakeAudioFileIndex(
     indexHashString: '',
     persist: tmpPersist,
     fileIndex: await MakeFileIndex(rootLocation, {
-      fileWatcher: makeFilteredWatcher(watchTypes),
+      fileWatcher: AndWatch(ignoreWatch, watchTypes, watchFilter),
       indexFolderLocation: path.join(tmpPersist.getLocation(), 'fileIndex.txt'),
       watchHidden: true, // We need this to see hidden cover images...
     }),
@@ -288,7 +340,28 @@ export async function MakeAudioFileIndex(
       path.join(rootLocation, 'images'),
     ),
     fileSystemPictures: new Map<string, string>(),
+    // The map of ignore items
+    ignoreItems,
   };
+
+  function addIgnoreItem(which: IgnoreType, value: string): void {
+    data.ignoreItems.set(which, value.toLocaleLowerCase());
+    void saveIgnoreItems(data.persist, data.ignoreItems);
+  }
+
+  function removeIgnoreItem(which: IgnoreType, value: string): boolean {
+    const res = data.ignoreItems.remove(which, value.toLocaleLowerCase());
+    void saveIgnoreItems(data.persist, data.ignoreItems);
+    return res;
+  }
+
+  function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
+    for (const [it, setOfData] of data.ignoreItems) {
+      for (const vl of setOfData) {
+        yield [it, vl];
+      }
+    }
+  }
 
   // "this"
   const res: AudioFileIndex = {
@@ -309,6 +382,9 @@ export async function MakeAudioFileIndex(
       delIndex(res);
     },
     [FreikTypeTag]: AFITypeTag,
+    addIgnoreItem,
+    removeIgnoreItem,
+    getIgnoreItems,
   };
   data.indexHashString = addIndex(fragmentHash, data.location, res);
   data.fileIndex.forEachFileSync((pathName: string) => {
@@ -429,13 +505,13 @@ export async function MakeAudioFileIndex(
     await data.fileIndex.rescanFiles(
       async (pathName: string) => {
         await maybeCallAndAdd(
-          makeFilteredWatcher(audioTypes),
+          AndWatch(ignoreWatch, audioTypes, watchFilter),
           audioAdds,
           pathName,
           addAudioFile,
         );
         await maybeCallAndAdd(
-          makeFilteredWatcher(imageTypes),
+          AndWatch(ignoreWatch, imageTypes, watchFilter),
           imageAdds,
           pathName,
         );

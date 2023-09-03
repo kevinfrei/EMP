@@ -2,20 +2,20 @@
   "name": "@freik/emp-shared",
   "version": "0.0.6",
   "description": "A place to share code between Main and Render processes",
-  "module": "./build/shared.js",
-  "types": "./build/shared.d.ts",
+  "module": "./lib/shared.js",
+  "types": "./lib/shared.d.ts",
   "private": true,
   "scripts": {
-    "build": "rimraf build && tsc"
+    "build": "rimraf lib && tsc"
   },
   "devDependencies": {
     "rimraf": "^5.0.1",
     "typescript": "^5.2.2"
   },
   "files": [
-    "./build/**/*"
+    "./lib/**/*"
   ],
   "dependencies": {
-    "@freik/typechk": "^0.5.7"
+    "@freik/typechk": "^0.5.8"
   }
 }

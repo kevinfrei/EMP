@@ -54,18 +54,19 @@ import {
 } from '@freik/typechk';
 import { promises as fsp } from 'fs';
 import { h32 } from 'xxhashjs';
-import { SongWithPath, VAType } from '.';
 import {
   AudioFileIndex,
   AudioFileIndexOptions,
   GetIndexForKey,
   GetIndexForPath,
   MakeAudioFileIndex,
-} from './AudioFileIndex';
+} from './AudioFileIndex.js';
 import { MakeBlobStore } from './BlobStore.js';
 import { MusicSearch, SearchResults } from './MusicSearch.js';
+import type { IgnoreType, SongWithPath, VAType } from './types.js';
 
 const { log, wrn } = MakeLog('AudioDatabase');
+// log.enabled = true;
 
 /**
  * FlatAudioDatabase
@@ -79,14 +80,6 @@ export type FlatAudioDatabase = {
   artists: Artist[];
   albums: Album[];
 };
-
-export type IgnoreType =
-  /*
-	| 'artist-name'
-  | 'album-title'
-  | 'track-title'
-	*/
-  'path-root' | 'path-keyword' | 'dir-name';
 
 export type AudioDatabase = {
   // Database API
@@ -121,6 +114,7 @@ export type AudioDatabase = {
   // Ignoring stuff:
   addIgnoreItem(which: IgnoreType, value: string): void;
   removeIgnoreItem(which: IgnoreType, value: string): boolean;
+  getIgnoreItems(): IterableIterator<[IgnoreType, string]>;
 
   // For all the 'parsed' data
   getFlatDatabase(): FlatAudioDatabase; // Some Testing
@@ -223,7 +217,6 @@ function getPersistenceIdName(options: AudioDatabaseOptions): string {
 }
 
 function makeFullOptions(
-  extraIgnoreFunc: Watcher,
   options?: Partial<AudioDatabaseOptions>,
 ): AudioDatabaseOptions {
   const func: Watcher | undefined =
@@ -231,8 +224,8 @@ function makeFullOptions(
       ? options.fileWatchFilter
       : undefined;
   const fileWatchFilter: Watcher = isUndefined(func)
-    ? extraIgnoreFunc
-    : (filepath: string) => extraIgnoreFunc(filepath) && func(filepath);
+    ? (o: string) => true
+    : func;
   return {
     // Defaults:
     readOnlyFallbackLocation: 'read-only-stuff',
@@ -255,7 +248,7 @@ export async function MakeAudioDatabase(
   localStorageLocation: string | Persist,
   opts?: Partial<AudioDatabaseOptions>,
 ): Promise<AudioDatabase> {
-  const fullOpts = makeFullOptions(ignoreWatchFilter, opts);
+  const fullOpts = makeFullOptions(opts);
   const persistenceIdName = getPersistenceIdName(fullOpts);
   const persist = isString(localStorageLocation)
     ? MakePersistence(localStorageLocation)
@@ -349,7 +342,7 @@ export async function MakeAudioDatabase(
           log(artist);
           await artistStore.put(buf, artist);
           // await artistStore.flush();
-          /*  
+          /*
           await Promise.all(
             artist.songs.map((k) => afi.setImageForSong(k, buf)),
           );
@@ -686,7 +679,7 @@ export async function MakeAudioDatabase(
     return delSongFromAfi(filepath, afi);
   }
 
-	// Returns true if we should look inside the file for metadata
+  // Returns true if we should look inside the file for metadata
   async function addSongFromPath(filePath: string): Promise<boolean> {
     // First, figure out if this is from an index or not
     const afi = GetIndexForPath(filePath);
@@ -696,7 +689,7 @@ export async function MakeAudioDatabase(
     }
     return addSongToAfi(filePath, afi);
   }
-	*/
+  */
 
   // Returns true if we should look inside the file for metadata
   async function addSongToAfi(
@@ -938,55 +931,40 @@ export async function MakeAudioDatabase(
     );
   }
 
-  function saveIgnoreInfo() {
-    persist
-      .setItemAsync('ignore-data', data.ignoreInfo.toJSON().toString())
-      // eslint-disable-next-line no-console
-      .catch(console.error);
+  // Ignore Items are duplicated in each of the AFI's
+  // Just add the item to each of the AFI's
+  function addIgnoreItem(type: IgnoreType, val: string): void {
+    for (const [, db] of data.dbAudioIndices) {
+      db.addIgnoreItem(type, val);
+    }
   }
 
-  function ignoreWatchFilter(filepath: string): boolean {
-    // Read the ignore info and check to see if this path should be ignored
-    const pathroots = data.ignoreInfo.get('path-root');
-    if (isDefined(pathroots)) {
-      for (const pathroot of pathroots) {
-        if (filepath.toLowerCase().startsWith(pathroot.toLowerCase())) {
-          return false;
+  // Ignore Items are duplicated in each of the AFI's
+  // We'll report 'true' if the item was deleted from *any* AFI
+  function removeIgnoreItem(type: IgnoreType, val: string): boolean {
+    let res = false;
+    for (const [, db] of data.dbAudioIndices) {
+      res ||= db.removeIgnoreItem(type, val);
+    }
+    return res;
+  }
+
+  // Ignore Items are duplicated in each of the AFI's
+  // For iteration, we should make sure not to report dupes, as there
+  // are basically going to be dupes for each AFI...
+  function* getIgnoreItems(): IterableIterator<[IgnoreType, string]> {
+    const seen: Set<[IgnoreType, string]> = new Set();
+    log('In AudioDB GII');
+    for (const [, db] of data.dbAudioIndices) {
+      for (const pair of db.getIgnoreItems()) {
+        if (!seen.has(pair)) {
+          seen.add(pair);
+          log('Yielding:', pair);
+          yield pair;
         }
       }
     }
-    const dirnames = data.ignoreInfo.get('dir-name');
-    if (isDefined(dirnames)) {
-      const pieces = new Set<string>(
-        filepath.split(/\/|\\/).map((str) => str.toLowerCase()),
-      );
-      if (SetIntersection(pieces, dirnames).size > 0) {
-        return false;
-      }
-    }
-    const pathkeywords = data.ignoreInfo.get('path-keyword');
-    if (isDefined(pathkeywords)) {
-      const lcase = filepath.toLowerCase();
-      for (const pathkw of pathkeywords) {
-        if (lcase.indexOf(pathkw) >= 0) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  function addIgnoreItem(item: IgnoreType, value: string): void {
-    data.ignoreInfo.set(item, value.toLocaleLowerCase());
-    saveIgnoreInfo();
-  }
-
-  function removeIgnoreItem(item: IgnoreType, value: string): boolean {
-    if (data.ignoreInfo.remove(item, value.toLocaleLowerCase())) {
-      saveIgnoreInfo();
-      return true;
-    }
-    return false;
+    log('Leaving AudioDBB GII');
   }
 
   function updateMetadata(
@@ -1130,6 +1108,7 @@ export async function MakeAudioDatabase(
     // Ignore stuff
     addIgnoreItem,
     removeIgnoreItem,
+    getIgnoreItems,
 
     // addSongFromPath,
     // addOrUpdateSong,

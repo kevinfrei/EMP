@@ -1,8 +1,8 @@
+import { CurrentView } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
-import { CurrentView } from '@freik/emp-shared';
 import { FocusSearch } from '../MyWindow';
 import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
@@ -19,7 +19,7 @@ import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
 
 const { wrn, log } = MakeLog('EMP:render:MenuHandler');
-log.enabled = true;
+// log.enabled = true;
 
 function updateTime({ set, get }: MyTransactionInterface, offset: number) {
   const curTime = get(mediaTimeState);
