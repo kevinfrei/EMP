@@ -14,7 +14,7 @@
 **/*.tsbuildinfo
 
 # testing
-/coverage
+modules/**/coverage
 
 # production
 /build
