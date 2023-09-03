@@ -32,7 +32,7 @@ import {
   SafelyUnpickle,
   isDefined,
   isNumber,
-  isString
+  isString,
 } from '@freik/typechk';
 import { constants as FS_CONST, promises as fsp } from 'fs';
 import { isAbsolute } from 'path';
@@ -282,8 +282,8 @@ export async function MakeAudioFileIndex(
       const rootlc = rootLocation.toLocaleLowerCase();
       for (const pathroot of pathroots) {
         const lc = pathName.toLocaleLowerCase();
-        if (lc.startsWith(rootlc)){
-          if (lc.substring(rootlen).startsWith(pathroot.toLowerCase())) {
+        if (lc.startsWith(rootlc)) {
+          if (lc.substring(rootlen).startsWith(pathroot.toLocaleLowerCase())) {
             return false;
           }
         }
@@ -292,7 +292,7 @@ export async function MakeAudioFileIndex(
     const dirnames = data.ignoreItems.get('dir-name');
     if (isDefined(dirnames)) {
       const pieces = new Set<string>(
-        pathName.split(/\/|\\/).map((str) => str.toLowerCase()),
+        pathName.split(/\/|\\/).map((str) => str.toLocaleLowerCase()),
       );
       if (SetIntersection(pieces, dirnames).size > 0) {
         return false;
@@ -300,7 +300,7 @@ export async function MakeAudioFileIndex(
     }
     const pathkeywords = data.ignoreItems.get('path-keyword');
     if (isDefined(pathkeywords)) {
-      const lcase = pathName.toLowerCase();
+      const lcase = pathName.toLocaleLowerCase();
       for (const pathkw of pathkeywords) {
         if (lcase.indexOf(pathkw) >= 0) {
           return false;
@@ -345,12 +345,12 @@ export async function MakeAudioFileIndex(
   };
 
   function addIgnoreItem(which: IgnoreType, value: string): void {
-    data.ignoreItems.set(which, value);
+    data.ignoreItems.set(which, value.toLocaleLowerCase());
     void saveIgnoreItems(data.persist, data.ignoreItems);
   }
 
   function removeIgnoreItem(which: IgnoreType, value: string): boolean {
-    const res = data.ignoreItems.remove(which, value);
+    const res = data.ignoreItems.remove(which, value.toLocaleLowerCase());
     void saveIgnoreItems(data.persist, data.ignoreItems);
     return res;
   }
