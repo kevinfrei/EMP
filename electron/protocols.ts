@@ -34,27 +34,14 @@ function defaultAlbumPicPath() {
   return defPath;
 }
 
-let defaultAlbumPicResponse: Response | null = null;
 let defaultAlbumPicBuffer: Buffer | null = null;
 let defaultAlbumPicUri: string | null = null;
 
-async function GetDefaultAlbumPicBuffer(): Promise<Buffer> {
-  if (!defaultAlbumPicBuffer) {
+export async function GetDefaultAlbumPicBuffer(): Promise<Buffer> {
+  if (defaultAlbumPicBuffer === null) {
     defaultAlbumPicBuffer = await fsp.readFile(defaultAlbumPicPath());
   }
   return defaultAlbumPicBuffer;
-}
-
-export async function GetDefaultAlbumPicResponse(): Promise<Response> {
-  if (!defaultAlbumPicResponse) {
-    const b = await GetDefaultAlbumPicBuffer();
-    const ab: ArrayBuffer = b.buffer.slice(
-      b.byteOffset,
-      b.byteOffset + b.byteLength,
-    );
-    defaultAlbumPicResponse = new Response(ab);
-  }
-  return defaultAlbumPicResponse;
 }
 
 export async function GetDefaultAlbumPicUri(): Promise<string> {
@@ -81,16 +68,11 @@ function defaultArtistPicPath() {
   return defArtist;
 }
 
-let defaultArtistPicBuffer: Response | null = null;
+let defaultArtistPicBuffer: Buffer | null = null;
 
-export async function GetDefaultArtistPicResponse(): Promise<Response> {
-  if (!defaultArtistPicBuffer) {
-    const b = await fsp.readFile(defaultArtistPicPath());
-    const ab: ArrayBuffer = b.buffer.slice(
-      b.byteOffset,
-      b.byteOffset + b.byteLength,
-    );
-    defaultArtistPicBuffer = new Response(ab);
+export async function GetDefaultArtistPicBuffer(): Promise<Buffer> {
+  if (defaultArtistPicBuffer === null) {
+    defaultArtistPicBuffer = await fsp.readFile(defaultArtistPicPath());
   }
   return defaultArtistPicBuffer;
 }

@@ -30,14 +30,12 @@ import https from 'node:https';
 import path from 'node:path';
 import { GetAudioDB } from './AudioDatabase';
 import {
-  GetDefaultAlbumPicResponse,
+  GetDefaultAlbumPicBuffer,
   GetDefaultAlbumPicUri,
-  // GetDefaultAlbumPicUri,
-  GetDefaultArtistPicResponse,
+  GetDefaultArtistPicBuffer,
 } from './protocols';
 
 const { log, wrn } = MakeLog('EMP:main:cover-art');
-log.enabled = true;
 
 async function shouldDownloadAlbumArtwork(): Promise<boolean> {
   return (await Persistence.getItemAsync('downloadAlbumArtwork')) === 'true';
@@ -294,9 +292,14 @@ export async function PictureHandler(req: Request): Promise<Response> {
     wrn(`Error while trying to get picture for ${id}`);
     wrn(error);
   }
-  return isArtistKey(id)
-    ? GetDefaultArtistPicResponse()
-    : GetDefaultAlbumPicResponse();
+  const buf = await (isArtistKey(id)
+    ? GetDefaultArtistPicBuffer()
+    : GetDefaultAlbumPicBuffer());
+  return new Response(
+    buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength),
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    { headers: { 'Content-Type': 'image/svg+xml' } },
+  );
 }
 
 async function SavePicForAlbum(
@@ -393,6 +396,8 @@ async function getDataUri(buf: Buffer) {
   return scaled.getBase64Async(Jimp.MIME_JPEG);
 }
 
+// This is used for the Electron system-wide "what's playing" thing
+// It has to be a data URI, because we're not an actual web server
 export async function GetPicDataUri(data: string): Promise<string> {
   try {
     const d = await TryToGetPic(data);
