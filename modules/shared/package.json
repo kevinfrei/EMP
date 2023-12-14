@@ -9,13 +9,13 @@
     "build": "rimraf lib && tsc"
   },
   "devDependencies": {
-    "rimraf": "^5.0.1",
-    "typescript": "^5.2.2"
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
   },
   "files": [
     "./lib/**/*"
   ],
   "dependencies": {
-    "@freik/typechk": "^0.5.8"
+    "@freik/typechk": "^0.5.10"
   }
 }

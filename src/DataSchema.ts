@@ -1,4 +1,5 @@
 import { Album, AlbumKey, Artist, ArtistKey, Song } from '@freik/media-core';
+import { isDefined } from '@freik/typechk';
 
 export type SongData = {
   song: Song;
@@ -30,18 +31,10 @@ export function GetArtistStringFromKeys(
   artistList: ArtistKey[],
   allArtists: Map<ArtistKey, Artist>,
 ): string {
-  const artists: string[] = artistList
-    .map((ak) => {
-      const art: Artist | undefined = allArtists.get(ak);
-      return art ? art.name : '';
-    })
-    .filter((a: string) => a.length > 0);
-  if (artists.length === 1) {
-    return artists[0];
-  } else {
-    const lastPart = ' & ' + (artists.pop() || 'OOPS!');
-    return artists.join(', ') + lastPart;
-  }
+  const artists: Artist[] = artistList
+    .map((ak) => allArtists.get(ak))
+    .filter(isDefined) as Artist[];
+  return GetArtistString(artists);
 }
 
 //  type DataForSongGetter = (
