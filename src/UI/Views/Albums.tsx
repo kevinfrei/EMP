@@ -10,6 +10,7 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
+import { CurrentView } from '@freik/emp-shared';
 import { AlbumKey, Song } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
 import {
@@ -24,7 +25,6 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { CurrentView } from '@freik/emp-shared';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { albumCoverUrlFuncFam } from '../../Recoil/ImageUrls';
 import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';
@@ -88,15 +88,15 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   );
   const onRightClick = useMyTransaction(
     ({ set }) =>
-      (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-        set(albumContextState, {
-          data: group.key,
-          spot: { left: event.clientX + 14, top: event.clientY },
-        }),
+      (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+        const data = group.key;
+        const spot = { left: event.clientX + 14, top: event.clientY };
+        set(albumContextState, { data, spot });
+      },
   );
 
   return (
-    <div className="album-header">
+    <div className="album-header" onContextMenu={onRightClick}>
       <IconButton
         iconProps={{
           iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
@@ -106,7 +106,6 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
       <div
         className="album-header-info"
         onDoubleClick={onAddSongsClick}
-        onContextMenu={onRightClick}
         style={{ padding: '2px 0px', cursor: 'pointer' }}
       >
         <Image
@@ -153,10 +152,9 @@ export function GroupedAlbumList(): JSX.Element {
           hasFieldType(ev, 'clientX', isNumber) &&
           hasFieldType(ev, 'clientY', isNumber)
         ) {
-          set(albumContextState, {
-            data: item.key,
-            spot: { left: ev.clientX + 14, top: ev.clientY },
-          });
+          const data = item.key;
+          const spot = { left: ev.clientX + 14, top: ev.clientY };
+          set(albumContextState, { data, spot });
         }
       },
   );

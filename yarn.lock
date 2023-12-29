@@ -12358,6 +12358,7 @@ __metadata:
     recoil: "npm:^0.7.7"
     rimraf: "npm:^5.0.5"
     svg-react-loader: "npm:^0.4.6"
+    tree-kill: "npm:^1.2.2"
     ts-jest: "npm:29.1.1"
     typescript: "npm:^5.3.3"
     vite: "npm:^5.0.10"
@@ -23828,6 +23829,15 @@ __metadata:
   version: 0.6.6
   resolution: "traverse@npm:0.6.6"
   checksum: 8c300c9d15aa6149d6086eedd5f42475a4bfd942de1ac54ef8acc7026c970943d207a4b1d92ebdf86a73a030be11367ec50d307dddf5296df8d615199210bc01
+  languageName: node
+  linkType: hard
+
+"tree-kill@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "tree-kill@npm:1.2.2"
+  bin:
+    tree-kill: cli.js
+  checksum: 49117f5f410d19c84b0464d29afb9642c863bc5ba40fcb9a245d474c6d5cc64d1b177a6e6713129eb346b40aebb9d4631d967517f9fbe8251c35b21b13cd96c7
   languageName: node
   linkType: hard
 

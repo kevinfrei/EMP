@@ -10,6 +10,7 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
+import { CurrentView } from '@freik/emp-shared';
 import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
 import {
   MakeSetState,
@@ -23,7 +24,6 @@ import {
   useRecoilValue,
   useResetRecoilState,
 } from 'recoil';
-import { CurrentView } from '@freik/emp-shared';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { artistImageUrlFuncFam } from '../../Recoil/ImageUrls';
 import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';
@@ -92,7 +92,7 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   );
   const songCount = artist.songs.length;
   return (
-    <div className="artist-header">
+    <div className="artist-header" onContextMenu={onRightClick}>
       <IconButton
         iconProps={{
           iconName: group.isCollapsed ? 'ChevronRight' : 'ChevronDown',
@@ -102,7 +102,6 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
       <div
         className="artist-header-info"
         onDoubleClick={onAddSongsClick}
-        onContextMenu={onRightClick}
         style={{ padding: '2px 0px', cursor: 'pointer' }}
       >
         <Image

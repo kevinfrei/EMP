@@ -24,7 +24,7 @@ import { AddSongs, PlaySongs } from '../Recoil/api';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 import { ErrorBoundary } from './Utilities';
 
-export type SongListMenuData = { data: string; spot: Point };
+export type SongListMenuData = { data: string; spot?: Point };
 
 type SongListMenuArgs = {
   title?: string;
@@ -109,7 +109,9 @@ export function SongListMenu({
   const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
-
+  if (context.data === '' || context.spot === undefined) {
+    return <></>;
+  }
   const realItems: IContextualMenuItem[] = title
     ? [{ key: 'Header', name: title, itemType: ContextualMenuItemType.Header }]
     : [];
@@ -162,14 +164,14 @@ export function SongListMenu({
       realItems.push(itm);
     }
   }
-
   return (
     <ErrorBoundary>
       <ContextualMenu
-        directionalHint={DirectionalHint.bottomRightEdge}
+        directionalHint={DirectionalHint.bottomCenter}
         isBeakVisible={true}
-        hidden={context.data === ''}
         items={realItems}
+        shouldFocusOnMount={true}
+        shouldFocusOnContainer={true}
         target={context.spot}
         onDismiss={(ev) => {
           // The DetailsList panel wiggles. A lot.
@@ -179,7 +181,8 @@ export function SongListMenu({
             onClearContext();
           }
         }}
-        styles={{ container: { margin: 0, padding: 0, fontSize: 'small' } }}
+        // Hide the scroll bar on the menu
+        styles={{ container: { overflow: 'hidden' } }}
       />
     </ErrorBoundary>
   );
