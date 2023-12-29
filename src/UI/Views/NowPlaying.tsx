@@ -30,8 +30,9 @@ import {
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
+import { atom as jatom, useAtom } from 'jotai';
 import { useState } from 'react';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { isMiniplayerState, nowPlayingSortState } from '../../Recoil/Local';
 import {
   playlistFuncFam,
@@ -64,9 +65,9 @@ import { GetHelperText } from '../Utilities';
 import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
 
-const nowPlayingContextState = atom<SongListMenuData>({
-  key: 'nowPlayingContext',
-  default: { data: '', spot: { left: 0, top: 0 } },
+const nowPlayingContextState = jatom<SongListMenuData>({
+  data: '',
+  spot: { left: 0, top: 0 },
 });
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
@@ -202,12 +203,12 @@ export function NowPlayingView(): JSX.Element {
   const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
   const curSongs = useRecoilValue(curSongsFunc);
   const isMini = useRecoilValue(isMiniplayerState);
-  const [songContext, setSongContext] = useRecoilState(nowPlayingContextState);
+  const [songContext, setSongContext] = useAtom(nowPlayingContextState);
   const [playbackOrder, setPlaybackOrder] = useRecoilState(
     songPlaybackOrderState,
   );
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
-    const event = ev as any as MouseEvent;
+    const event = ev as unknown as MouseEvent;
     if (ev && item) {
       setSongContext({
         data: item.key,

@@ -17,13 +17,10 @@ import {
   MyTransactionInterface,
   useMyTransaction,
 } from '@freik/web-utils';
+import { atom as jatom, useAtom, useSetAtom } from 'jotai';
+import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import {
-  atom,
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-} from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { artistImageUrlFuncFam } from '../../Recoil/ImageUrls';
 import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';
@@ -57,23 +54,21 @@ import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Artists.css';
 
 // This is used to trigger the popup menu in the list view
-const artistContextState = atom<SongListMenuData>({
-  key: 'artistContext',
-  default: { data: '', spot: { left: 0, top: 0 } },
+const artistContextState = atomWithReset<SongListMenuData>({
+  data: '',
+  spot: { left: 0, top: 0 },
 });
 
 const [artistExpandedState, artistIsExpandedState] =
   MakeSetState<ArtistKey>('artistExpanded');
 
 // For grouping to work properly, the sort order needs to be fully specified
-const sortOrderState = atom({
-  key: 'artistsSortOrder',
-  default: MakeSortKey(['r', ''], ['r', 'ylnt']),
-});
+const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
   const picurl = useRecoilValue(artistImageUrlFuncFam(group.key));
+  const setArtistContext = useSetAtom(artistContextState);
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, artist.songs);
   });
@@ -82,14 +77,11 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
       () =>
         set(artistIsExpandedState(group.key), !group.isCollapsed),
   );
-  const onRightClick = useMyTransaction(
-    ({ set }) =>
-      (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
-        set(artistContextState, {
-          data: artist.key,
-          spot: { left: event.clientX + 14, top: event.clientY },
-        }),
-  );
+  const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+    setArtistContext({
+      data: artist.key,
+      spot: { left: event.clientX + 14, top: event.clientY },
+    });
   const songCount = artist.songs.length;
   return (
     <div className="artist-header" onContextMenu={onRightClick}>
@@ -152,24 +144,21 @@ export function GroupedAristList(): JSX.Element {
   const songs = useRecoilValue(allSongsFunc);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
   const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.artists));
-  const artistContext = useRecoilValue(artistContextState);
+  const [artistContext, setArtistContext] = useAtom(artistContextState);
   const filteredArtists = useRecoilValue(filteredArtistsFunc);
-  const [curSort, setSort] = useRecoilState(sortOrderState);
+  const [curSort, setSort] = useAtom(sortOrderState);
   const curExpandedState = useRecoilState(artistExpandedState);
-  const resetArtistContext = useResetRecoilState(artistContextState);
+  const resetArtistContext = useResetAtom(artistContextState);
 
-  const onRightClick = useMyTransaction(
-    ({ set }) =>
-      (item: ArtistSong, _index?: number, ev?: Event) => {
-        if (ev) {
-          const event = ev as any as MouseEvent;
-          set(artistContextState, {
-            data: item.key,
-            spot: { left: event.clientX + 14, top: event.clientY },
-          });
-        }
-      },
-  );
+  const onRightClick = (item: ArtistSong, _index?: number, ev?: Event) => {
+    if (ev) {
+      const event = ev as any as MouseEvent;
+      setArtistContext({
+        data: item.key,
+        spot: { left: event.clientX + 14, top: event.clientY },
+      });
+    }
+  };
   const onAddSongClick = useMyTransaction(
     (xact) => (item: ArtistSong) => AddSongs(xact, [item.key]),
   );

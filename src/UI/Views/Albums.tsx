@@ -18,13 +18,10 @@ import {
   MyTransactionInterface,
   useMyTransaction,
 } from '@freik/web-utils';
+import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import {
-  atom,
-  useRecoilState,
-  useRecoilValue,
-  useResetRecoilState,
-} from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { albumCoverUrlFuncFam } from '../../Recoil/ImageUrls';
 import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';
@@ -57,9 +54,9 @@ import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/Albums.css';
 
 // This is used to trigger the popup menu in the list view
-const albumContextState = atom<SongListMenuData>({
-  key: 'albumContext',
-  default: { data: '', spot: { left: 0, top: 0 } },
+const albumContextState = atomWithReset<SongListMenuData>({
+  data: '',
+  spot: { left: 0, top: 0 },
 });
 
 const [albumExpandedState, albumIsExpandedState] =
@@ -68,10 +65,7 @@ const [albumExpandedState, albumIsExpandedState] =
 // For grouping to work properly, the sort order needs to be fully specified
 // Also, the album year, VA type, and artist have to "stick" with the album name
 // as a single group, or you get duplicate group IDs
-const albumSortState = atom({
-  key: 'newAlbumSort',
-  default: MakeSortKey(['l', 'n'], ['lry', 'nrt']),
-});
+const albumSortState = jatom(MakeSortKey(['l', 'n'], ['lry', 'nrt']));
 
 type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
@@ -86,14 +80,12 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
       () =>
         set(albumIsExpandedState(group.key), !group.isCollapsed),
   );
-  const onRightClick = useMyTransaction(
-    ({ set }) =>
-      (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        const data = group.key;
-        const spot = { left: event.clientX + 14, top: event.clientY };
-        set(albumContextState, { data, spot });
-      },
-  );
+  const setAlbumContext = useSetAtom(albumContextState);
+  const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    const data = group.key;
+    const spot = { left: event.clientX + 14, top: event.clientY };
+    setAlbumContext({ data, spot });
+  };
 
   return (
     <div className="album-header" onContextMenu={onRightClick}>
@@ -134,31 +126,27 @@ export function GroupedAlbumList(): JSX.Element {
   const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.albums));
   const allSongs = useRecoilValue(allSongsFunc);
   const allArtists = useRecoilValue(allArtistsFunc);
-  const newAlbumSort = useRecoilValue(albumSortState);
-  const albumContext = useRecoilValue(albumContextState);
+  const newAlbumSort = useAtomValue(albumSortState);
+  const [albumContext, setAlbumContext] = useAtom(albumContextState);
 
   const curExpandedState = useRecoilState(albumExpandedState);
-  const [curSort, setSort] = useRecoilState(albumSortState);
-  const resetAlbumContext = useResetRecoilState(albumContextState);
+  const [curSort, setSort] = useAtom(albumSortState);
+  const resetAlbumContext = useResetAtom(albumContextState);
 
   const onAddSongClick = useMyTransaction(
     (xact) => (item: Song) => AddSongs(xact, [item.key]),
   );
-  const onRightClick = useMyTransaction(
-    ({ set }) =>
-      (item: Song, _index?: number, ev?: Event) => {
-        if (
-          isDefined(ev) &&
-          hasFieldType(ev, 'clientX', isNumber) &&
-          hasFieldType(ev, 'clientY', isNumber)
-        ) {
-          const data = item.key;
-          const spot = { left: ev.clientX + 14, top: ev.clientY };
-          set(albumContextState, { data, spot });
-        }
-      },
-  );
-
+  const onRightClick = (item: Song, _index?: number, ev?: Event) => {
+    if (
+      isDefined(ev) &&
+      hasFieldType(ev, 'clientX', isNumber) &&
+      hasFieldType(ev, 'clientY', isNumber)
+    ) {
+      const data = item.key;
+      const spot = { left: ev.clientX + 14, top: ev.clientY };
+      setAlbumContext({ data, spot });
+    }
+  };
   // Get the sorted song & group lists
   const { songs: sortedSongs, groups } = SortSongsFromAlbums(
     albums.values(),
