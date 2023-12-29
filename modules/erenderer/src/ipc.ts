@@ -185,6 +185,10 @@ export async function InvokeMain<T>(
   return result;
 }
 
+export function SendMain<T>(channel: string, key?: T): void {
+  void InvokeMain(channel, key);
+}
+
 /**
  * @async
  * Call a remote function with type checking on the return value.

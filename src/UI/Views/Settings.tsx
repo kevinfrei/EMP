@@ -10,6 +10,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { Ipc, Util } from '@freik/electron-render';
+import { IgnoreItemType, IpcId, Keys, st, StrId } from '@freik/emp-shared';
 import { isDefined } from '@freik/typechk';
 import {
   Catch,
@@ -20,9 +21,8 @@ import {
   useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IgnoreItemType, IpcId, Keys, st, StrId } from '@freik/emp-shared';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
@@ -46,6 +46,7 @@ import {
 import { GetHelperText } from '../Utilities';
 import './styles/Settings.css';
 
+const btnWidth: React.CSSProperties = { width: '155px', padding: 0 };
 const removeFromSet = (set: string[], val: string): string[] => {
   const newSet = new Set(set);
   newSet.delete(val);
@@ -113,6 +114,7 @@ function MusicLocations(): JSX.Element {
           onClick={onAddLocation}
           iconProps={{ iconName: 'Add' }}
           title={GetHelperText(Keys.AddFileLocation)}
+          style={btnWidth}
         />
         &nbsp;
         <TooltipHost
@@ -123,7 +125,8 @@ function MusicLocations(): JSX.Element {
             text="Rescan Locations"
             iconProps={{ iconName: 'SearchData' }}
             disabled={rescanInProgress}
-            onClick={() => void Ipc.InvokeMain(IpcId.ManualRescan)}
+            onClick={() => Ipc.SendMain(IpcId.ManualRescan)}
+            style={btnWidth}
           />
         </TooltipHost>
         &nbsp;
@@ -132,6 +135,7 @@ function MusicLocations(): JSX.Element {
           /* onClick={() => {}} */
           iconProps={{ iconName: 'DownloadDocument' }}
           title={st(StrId.ImportFiles)}
+          style={btnWidth}
         />
       </div>
       <Text>{`${artists.size} Artists, ${albums.size} Albums, ${songs.size} Songs`}</Text>
@@ -285,19 +289,9 @@ function ArtworkSettings(): JSX.Element {
       <StateToggle label="Download Artist Artwork" state={dlArtistArtwork} />
       <DefaultButton
         text="Flush Image Cache"
-        style={{ width: '185px', gridRow: 4 }}
-        onClick={() => void Ipc.InvokeMain(IpcId.FlushImageCache)}
+        style={{ ...btnWidth, gridRow: 4 }}
+        onClick={() => Ipc.SendMain(IpcId.FlushImageCache)}
       />
-    </>
-  );
-}
-
-function MetadataDatabase(): JSX.Element {
-  return (
-    <>
-      <DefaultButton text="Flush Metadata Cache" style={{ width: '185px' }} />
-      &nbsp;
-      <DefaultButton text="Clear Local Overrides" style={{ width: '185px' }} />
     </>
   );
 }
@@ -326,8 +320,20 @@ export function SettingsView(): JSX.Element {
       <Expandable separator label="Artwork" defaultShow={true}>
         <ArtworkSettings />
       </Expandable>
-      <Expandable separator label="NYI: Metadata">
-        <MetadataDatabase />
+      <Expandable separator label="Metadata" defaultShow={true}>
+        <>
+          <DefaultButton
+            text="Flush Metadata Cache"
+            style={btnWidth}
+            onClick={() => Ipc.SendMain(IpcId.FlushMetadataCache)}
+          />
+          &nbsp;
+          <DefaultButton
+            text="Clear Local Overrides"
+            style={btnWidth}
+            onClick={() => Ipc.SendMain(IpcId.ClearLocalOverrides)}
+          />
+        </>
       </Expandable>
     </div>
   );

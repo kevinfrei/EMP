@@ -67,11 +67,14 @@ export type AudioFileIndex = {
   ): Promise<void>;
   updateMetadata(newMetadata: MinimumMetadata): void;
   getMetadataForSong(filePath: string): Promise<FullMetadata | void>;
+  clearMetadataCache(): Promise<void>;
+  clearLocalMetadataOverrides(): Promise<void>;
   setImageForSong(filePathOrKey: SongKey, buf: Buffer): Promise<void>;
   getImageForSong(
     filePathOrKey: SongKey,
     preferInternal?: boolean,
   ): Promise<Buffer | void>;
+  clearLocalImageCache(): Promise<void>;
   destroy(): void;
   [FreikTypeTag]: symbol;
   // Ignore items in the AFI:
@@ -378,6 +381,9 @@ export async function MakeAudioFileIndex(
     getMetadataForSong,
     getImageForSong,
     setImageForSong,
+    clearLocalImageCache,
+    clearLocalMetadataOverrides,
+    clearMetadataCache,
     destroy: () => {
       delIndex(res);
     },
@@ -594,6 +600,21 @@ export async function MakeAudioFileIndex(
   ): Promise<void> {
     const key = getAFIKey(keyOrPath) ? keyOrPath : makeSongKey(keyOrPath);
     await data.pictures.put(buf, key);
+  }
+
+  // public
+  async function clearLocalImageCache(): Promise<void> {
+    await data.pictures.clear();
+  }
+
+  // public
+  async function clearMetadataCache(): Promise<void> {
+    data.metadataCache.clear();
+  }
+
+  // public
+  async function clearLocalMetadataOverrides(): Promise<void> {
+    data.metadataOverride.clear();
   }
 
   async function loadCoverFromFile(fullPath: string): Promise<Buffer | void> {

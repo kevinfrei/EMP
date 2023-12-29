@@ -106,6 +106,7 @@ export type MetadataStore = {
   save: () => void;
   load: () => Promise<boolean>;
   flush: () => Promise<void>;
+  clear: () => Promise<void>;
 };
 
 /**
@@ -343,6 +344,12 @@ function MakeMetadataStore(
     loaded = okay;
     return okay;
   }
+  async function clear(): Promise<void> {
+    store.clear();
+    stopTrying.clear();
+    dirty = true;
+    await saverDelay.trigger();
+  }
   return {
     get,
     set,
@@ -353,6 +360,7 @@ function MakeMetadataStore(
     save,
     load,
     flush: async () => await saverDelay.trigger(),
+    clear,
   };
 }
 

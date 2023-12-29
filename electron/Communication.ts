@@ -14,6 +14,9 @@ import {
 import { Menu } from 'electron';
 import {
   AddIgnoreItem,
+  ClearLocalOverrides,
+  FlushImageCache,
+  FlushMetadataCache,
   GetIgnoreList,
   GetMediaInfoForSong,
   GetPathFromKey,
@@ -144,7 +147,9 @@ export function CommsSetup(): void {
     isAlbumCoverData,
   );
 
-  // Comms.registerChannel('flush-image-cache', FlushImageCache, isVoid);
+  Comms.registerChannel(IpcId.FlushImageCache, FlushImageCache, isVoid);
+  Comms.registerChannel(IpcId.FlushMetadataCache, FlushMetadataCache, isVoid);
+  Comms.registerChannel(IpcId.ClearLocalOverrides, ClearLocalOverrides, isVoid);
 
   Comms.registerChannel(IpcId.Search, SearchWholeWord, isStrOrUndef);
   Comms.registerChannel(IpcId.SubstrSearch, SearchSubstring, isString);

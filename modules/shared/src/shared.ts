@@ -9,8 +9,10 @@ import {
 export const enum IpcId {
   ClearHates = 'clear-hates',
   ClearLikes = 'clear-likes',
+  ClearLocalOverrides = 'clear-local-overrides',
   DeletePlaylist = 'delete-playlist',
   FlushImageCache = 'flush-image-cache',
+  FlushMetadataCache = 'flush-metadata-cache',
   GetHates = 'get-hates',
   GetLikes = 'get-likes',
   GetMediaInfo = 'media-info',

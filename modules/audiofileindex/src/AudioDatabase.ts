@@ -105,6 +105,7 @@ export type AudioDatabase = {
   setArtistPicture(key: ArtistKey, filepath: Buffer): Promise<void>;
   getSongPicture(key: SongKey): Promise<Buffer | void>;
   setSongPicture(key: SongKey, filepath: Buffer): Promise<void>;
+  clearImageCache(): Promise<void>;
 
   // Not sure about exposing these three
   // addSongFromPath(filepath: string): void; // Some Testing
@@ -130,6 +131,8 @@ export type AudioDatabase = {
   updateMetadata(fullPath: string, newMetadata: Partial<FullMetadata>): boolean;
   getMetadata(fullPathOrKey: string): Promise<FullMetadata | void>;
   getCanonicalFileName(song: SongKey): string | void;
+  clearMetadataCache(): void;
+  clearLocalMetadataOverrides(): void;
   // addOrUpdateSong(md: FullMetadata): void;
 };
 
@@ -353,6 +356,13 @@ export async function MakeAudioDatabase(
       }
     } else {
       wrn(`Didn\'t get the AFI for ${key}`);
+    }
+  }
+
+  async function clearPicCache(): Promise<void> {
+    await artistStore.clear();
+    for (const [, ai] of data.dbAudioIndices) {
+      await ai.clearLocalImageCache();
     }
   }
 
@@ -1075,6 +1085,18 @@ export async function MakeAudioDatabase(
     return `${first} - ${second}${middle}${last}${sfx}`;
   }
 
+  function clearLocalMetadataOverrides() {
+    for (const [, ai] of data.dbAudioIndices) {
+      ai.clearLocalMetadataOverrides();
+    }
+  }
+
+  function clearMetadataCache() {
+    for (const [, ai] of data.dbAudioIndices) {
+      ai.clearMetadataCache();
+    }
+  }
+
   /*
    *
    * Begin 'constructor' code here
@@ -1104,6 +1126,7 @@ export async function MakeAudioDatabase(
     setAlbumPicture: setPicture,
     getSongPicture: getPicture,
     setSongPicture: setPicture,
+    clearImageCache: clearPicCache,
 
     // Ignore stuff
     addIgnoreItem,
@@ -1124,5 +1147,7 @@ export async function MakeAudioDatabase(
     getMetadata,
     updateMetadata,
     getCanonicalFileName,
+    clearLocalMetadataOverrides,
+    clearMetadataCache,
   };
 }

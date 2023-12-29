@@ -267,3 +267,18 @@ async function SendUpdatedIgnoreList(): Promise<void> {
   const iis = await GetIgnoreList();
   SendToUI(IpcId.PushIgnoreList, iis);
 }
+
+export async function FlushImageCache(): Promise<void> {
+  const db = await GetAudioDB();
+  await db.clearImageCache();
+}
+
+export async function FlushMetadataCache(): Promise<void> {
+  const db = await GetAudioDB();
+  await db.clearMetadataCache();
+}
+
+export async function ClearLocalOverrides(): Promise<void> {
+  const db = await GetAudioDB();
+  await db.clearLocalMetadataOverrides();
+}
