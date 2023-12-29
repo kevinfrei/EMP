@@ -8,6 +8,7 @@ import {
   Text,
 } from '@fluentui/react';
 import { PlaylistName, Song, SongKey } from '@freik/media-core';
+import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import {
   Dialogs,
   MakeSetState,
@@ -15,8 +16,10 @@ import {
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
+import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { atom, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   AddSongs,
   DeletePlaylist,
@@ -42,7 +45,6 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
-import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import './styles/Playlists.css';
 
 type PlaylistSong = Song & { playlist: PlaylistName };
@@ -51,20 +53,17 @@ type ItemType = PlaylistSong;
 const [playlistExpandedState, playlistIsExpandedState] =
   MakeSetState<PlaylistName>('playlistExpanded');
 
-const playlistContextState = atom<SongListMenuData>({
-  key: 'playlistContext',
-  default: { data: '', spot: { left: 0, top: 0 } },
+const playlistContextState = atomWithReset<SongListMenuData>({
+  data: '',
+  spot: { left: 0, top: 0 },
 });
 
-const songContextState = atom<SongListMenuData>({
-  key: 'playlistSongContext',
-  default: { data: '', spot: { left: 0, top: 0 } },
+const songContextState = atomWithReset<SongListMenuData>({
+  data: '',
+  spot: { left: 0, top: 0 },
 });
 
-const playlistSortState = atom({
-  key: 'playlistSort',
-  default: MakeSortKey(''),
-});
+const playlistSortState = jatom(MakeSortKey(''));
 
 function PlaylistHeaderDisplay({
   group,
@@ -73,6 +72,7 @@ function PlaylistHeaderDisplay({
   group: IGroup;
   onDelete: (key: string) => void;
 }): JSX.Element {
+  const setPlaylistContext = useSetAtom(playlistContextState);
   const onHeaderExpanderClick = useMyTransaction(
     ({ set }) =>
       () =>
@@ -81,16 +81,14 @@ function PlaylistHeaderDisplay({
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, xact.get(playlistFuncFam(group.key)), group.key);
   });
-  const onRightClick = useMyTransaction(
-    ({ set }) =>
-      (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
-        set(playlistContextState, {
-          data: group.key,
-          spot: { left: ev.clientX + 14, top: ev.clientY },
-        });
-        return false;
-      },
-  );
+  const onRightClick = (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    setPlaylistContext({
+      data: group.key,
+      spot: { left: ev.clientX + 14, top: ev.clientY },
+    });
+    return false;
+  };
+
   return (
     <div onAuxClick={onRightClick} className="playlist-header">
       <IconButton
@@ -128,21 +126,15 @@ export function PlaylistView(): JSX.Element {
   const playlistNames = useRecoilValue(playlistNamesFunc);
   const playlistContents = useRecoilValue(allPlaylistsFunc);
   const allSongs = useRecoilValue(allSongsFunc);
-  const playlistContext = useRecoilValue(playlistContextState);
-
+  const playlistContext = useAtomValue(playlistContextState);
+  const resetPlaylistContext = useResetAtom(playlistContextState);
   const playlistExpanded = useRecoilState(playlistExpandedState);
-  const [curSort, setSort] = useRecoilState(playlistSortState);
-  const [songContext, setSongContext] = useRecoilState(songContextState);
-  const clearSongContext = useMyTransaction(
-    ({ reset }) =>
-      () =>
-        reset(songContextState),
-  );
-  const onClearPlaylist = useMyTransaction(
-    ({ reset }) =>
-      () =>
-        reset(playlistContextState),
-  );
+  const [curSort, setSort] = useAtom(playlistSortState);
+  const [songContext, setSongContext] = useAtom(songContextState);
+  const resetSongContext = useResetAtom(songContextState);
+
+  const clearSongContext = () => resetSongContext();
+  const onClearPlaylist = () => resetPlaylistContext();
   const onPlaylistInvoked = useMyTransaction(
     (xact) => (playlistName: PlaylistName) => {
       const songs = xact.get(playlistFuncFam(playlistName));
