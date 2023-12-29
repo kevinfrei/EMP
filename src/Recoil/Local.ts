@@ -25,11 +25,6 @@ export const displayMessageState = atom<boolean>({
   default: false,
 });
 
-export const isMiniplayerState = atom<boolean>({
-  key: 'isMiniplayer',
-  default: false,
-});
-
 export const playOrderDisplayingState = atom<boolean>({
   key: 'playOrderShowing',
   default: false,

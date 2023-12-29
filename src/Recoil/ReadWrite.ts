@@ -1,9 +1,7 @@
 import { Effects } from '@freik/electron-render';
 import { isAlbumKey, isArtistKey, isSongKey, SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';
-import { CurrentView } from '@freik/emp-shared';
 import { ShuffleArray } from '../Tools';
-import { isMiniplayerState } from './Local';
 import { maybeAlbumByKeyFuncFam, maybeArtistByKeyFuncFam } from './ReadOnly';
 import {
   currentIndexState,
@@ -143,22 +141,6 @@ export const minSongCountForArtistListState = atom({
   key: 'MinSongCount',
   default: 1,
   effects: [Effects.syncWithMain<number>()],
-});
-
-// The currently selected item from the left bar
-// artist, album, search, tools, settings, etc...
-const curViewBackerState = atom<CurrentView>({
-  key: 'CurrentView',
-  default: CurrentView.settings,
-  effects: [Effects.syncWithMain<CurrentView>()],
-});
-
-// This makes the miniplayer view always select the current view
-export const curViewFunc = selector<CurrentView>({
-  key: 'CurViewWithMiniplayerAwareness',
-  get: ({ get }) =>
-    get(isMiniplayerState) ? CurrentView.now_playing : get(curViewBackerState),
-  set: ({ set }, newVal) => set(curViewBackerState, newVal),
 });
 
 // For these things:

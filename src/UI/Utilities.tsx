@@ -12,6 +12,7 @@ import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
+import { useAtom, useSetAtom } from 'jotai';
 import {
   CSSProperties,
   Component,
@@ -21,8 +22,8 @@ import {
   useEffect,
 } from 'react';
 import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
-import { keyBufferState } from '../Recoil/KeyBuffer';
-import { isMiniplayerState } from '../Recoil/Local';
+import { keyBufferState } from '../Jotai/KeyBuffer';
+import { isMiniplayerState } from '../Jotai/Local';
 import { saveableFunc } from '../Recoil/PlaylistsState';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
@@ -40,28 +41,25 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 function TypingListener(): JSX.Element {
   /* This is for a global search typing thingamajig */
-  // Connect the reset callback properly
-  lastHeard = useMyTransaction(
-    ({ reset }) =>
-      () =>
-        reset(keyBufferState),
-  );
-  const listener = useMyTransaction(({ set }) => (ev: KeyboardEvent) => {
-    if (!isSearchBox(ev.target)) {
-      if (ev.key.length > 1 || ev.altKey || ev.ctrlKey || ev.metaKey) {
-        set(keyBufferState, '');
-      } else {
-        ResetTheKeyBufferTimer();
-        set(keyBufferState, (curVal: string) => curVal + ev.key);
-      }
-    }
-  });
+  const [keyBuffer, setKeyBuffer] = useAtom(keyBufferState);
+  lastHeard = () => setKeyBuffer('');
+
   useEffect(() => {
+    const listener = (ev: KeyboardEvent) => {
+      if (!isSearchBox(ev.target)) {
+        if (ev.key.length > 1 || ev.altKey || ev.ctrlKey || ev.metaKey) {
+          setKeyBuffer('');
+        } else {
+          ResetTheKeyBufferTimer();
+          setKeyBuffer(keyBuffer + ev.key);
+        }
+      }
+    };
     window.addEventListener('keydown', listener);
     return () => {
       window.removeEventListener('keydown', listener);
     };
-  }, [listener]);
+  }, [keyBuffer, setKeyBuffer]);
   return <></>;
 }
 
@@ -79,13 +77,11 @@ function SaveMenuUpdater(): JSX.Element {
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
 function ResizeListener(): JSX.Element {
+  const setIsMiniplayer = useSetAtom(isMiniplayerState);
   /* Resizing event handling stuff */
-  const handleWidthChange = useMyTransaction(
-    ({ set }) =>
-      (ev: MediaQueryList | MediaQueryListEvent) => {
-        set(isMiniplayerState, ev.matches);
-      },
-  );
+  const handleWidthChange = (ev: MediaQueryList | MediaQueryListEvent) => {
+    setIsMiniplayer(ev.matches);
+  };
   useMediaEffect('(max-width: 499px)', handleWidthChange);
   return <></>;
 }

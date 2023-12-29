@@ -1,9 +1,8 @@
 import { IDetailsRowProps, Panel, PanelType } from '@fluentui/react';
+import { useAtomValue } from 'jotai';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import {
-  isMiniplayerState,
-  playOrderDisplayingState,
-} from '../../Recoil/Local';
+import { isMiniplayerState } from '../../Jotai/Local';
+import { playOrderDisplayingState } from '../../Recoil/Local';
 import { shuffleFunc } from '../../Recoil/ReadWrite';
 import {
   currentIndexState,
@@ -15,7 +14,7 @@ import { SimpleSongsList } from './MixedSongs';
 export function PlaybackOrder(): JSX.Element {
   const curIndex = useRecoilValue(currentIndexState);
   const isShuffle = useRecoilValue(shuffleFunc);
-  const isMiniplayer = useRecoilValue(isMiniplayerState);
+  const isMiniplayer = useAtomValue(isMiniplayerState);
   const pbOrder = useRecoilValue(songPlaybackOrderState);
   const unsortedSongKeys = useRecoilValue(songListState);
   const sortedSongKeys =

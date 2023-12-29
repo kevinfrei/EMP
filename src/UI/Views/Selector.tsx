@@ -1,7 +1,7 @@
 import { CurrentView } from '@freik/emp-shared';
+import { useAtomValue } from 'jotai';
 import { CSSProperties, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { curViewFunc } from '../../Recoil/ReadWrite';
+import { curViewFunc } from '../../Jotai/CurrentView';
 import { GroupedAlbumList } from './Albums';
 import { GroupedAristList } from './Artists';
 import { MixedSongsList } from './MixedSongs';
@@ -18,7 +18,7 @@ function ignore(view: CurrentView): boolean {
 }
 
 export function ViewSelector(): JSX.Element {
-  const which = useRecoilValue(curViewFunc);
+  const which = useAtomValue(curViewFunc);
   const [rendered, setRendered] = useState(new Set<CurrentView>([which]));
   // Let's see if I can speed this up a bit by not trying to render everything
   // the first time
