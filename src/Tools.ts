@@ -1,6 +1,6 @@
 // This is for getting at "global" stuff from the window object
 import { MakeLog } from '@freik/logger';
-import { PlaylistName } from '@freik/media-core';
+import { AlbumKey, ArtistKey, PlaylistName } from '@freik/media-core';
 import { hasField, isObjectNonNull, isString } from '@freik/typechk';
 import { ForwardedRef, MutableRefObject } from 'react';
 
@@ -114,4 +114,12 @@ export function isMutableRefObject<T>(
     hasField(ref, 'current') &&
     isObjectNonNull(ref.current)
   );
+}
+
+export function getAlbumImageUrl(albumKey: AlbumKey) {
+  return `pic://key/${albumKey}`;
+}
+
+export function getArtistImageUrl(artistKey: ArtistKey) {
+  return `pic://key/${artistKey}`;
 }

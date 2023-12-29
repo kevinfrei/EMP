@@ -10,6 +10,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { Util } from '@freik/electron-render';
+import { StrId, st } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { isArrayOfString, isString } from '@freik/typechk';
@@ -20,8 +21,6 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { StrId, st } from '@freik/emp-shared';
 import {
   UploadFileForAlbum,
   UploadFileForSong,
@@ -29,13 +28,11 @@ import {
   UploadImageForSong,
 } from '../../MyWindow';
 import {
-  albumCoverUrlFuncFam,
-  picCacheAvoiderStateFam,
-} from '../../Recoil/ImageUrls';
-import {
   albumKeyForSongKeyFuncFam,
   metadataEditCountState,
 } from '../../Recoil/ReadOnly';
+import { picCacheAvoiderStateFam } from '../../Recoil/cacheAvoider';
+import { getAlbumImageUrl } from '../../Tools';
 import { SetMediaInfo } from '../../ipc';
 
 const { log } = MakeLog('EMP:render:MetadataEditor');
@@ -229,7 +226,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       })
       .catch((e) => Catch(e));
   });
-  const coverUrl = useRecoilValue(albumCoverUrlFuncFam(props.albumId || '___'));
+  const coverUrl = getAlbumImageUrl(props.albumId || '___');
   // Nothing selected: EMPTY!
   if (!isSingle && !isMultiple) {
     return <Text>Not Single and not Multiple (This is a bug!)</Text>;

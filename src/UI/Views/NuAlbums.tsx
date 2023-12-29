@@ -10,8 +10,8 @@ import { useMyTransaction } from '@freik/web-utils';
 import { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { AddSongs } from '../../Recoil/api';
-import { albumCoverUrlFuncFam } from '../../Recoil/ImageUrls';
 import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
+import { getAlbumImageUrl } from '../../Tools';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
 
@@ -78,8 +78,8 @@ function AlbumCoverView({
   album: Album;
   cols: number;
 }): JSX.Element {
-  const picurl = useRecoilValue(albumCoverUrlFuncFam(album.key));
   const albumData = useRecoilValue(dataForAlbumFuncFam(album.key));
+  const picurl = getAlbumImageUrl(album.key);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onAddSongsClick = useMyTransaction((xact) => () => {
