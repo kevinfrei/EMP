@@ -17,13 +17,13 @@ import {
   MyTransactionInterface,
   useMyTransaction,
 } from '@freik/web-utils';
-import { atom as jatom, useAtom, useSetAtom } from 'jotai';
+import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import { artistImageUrlFuncFam } from '../../Recoil/ImageUrls';
-import { focusedKeysFuncFam } from '../../Recoil/KeyBuffer';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -143,7 +143,7 @@ export function GroupedAristList(): JSX.Element {
   const albums = useRecoilValue(allAlbumsFunc);
   const songs = useRecoilValue(allSongsFunc);
   const ignoreArticles = useRecoilValue(ignoreArticlesState);
-  const keyBuffer = useRecoilValue(focusedKeysFuncFam(CurrentView.artists));
+  const keyBuffer = useAtomValue(focusedKeysFuncFam(CurrentView.artists));
   const [artistContext, setArtistContext] = useAtom(artistContextState);
   const filteredArtists = useRecoilValue(filteredArtistsFunc);
   const [curSort, setSort] = useAtom(sortOrderState);

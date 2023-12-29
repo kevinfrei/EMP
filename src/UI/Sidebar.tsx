@@ -1,10 +1,11 @@
 import { FontIcon, SearchBox, Text } from '@fluentui/react';
-import { hasStrField, isObjectNonNull } from '@freik/typechk';
-import { SetterOrUpdater, useRecoilCallback, useRecoilState } from 'recoil';
 import { CurrentView, Keys, StrId, st } from '@freik/emp-shared';
+import { hasStrField, isObjectNonNull } from '@freik/typechk';
+import { useAtom } from 'jotai';
+import { useRecoilCallback } from 'recoil';
+import { curViewFunc } from '../Jotai/CurrentView';
 import { SetSearch, isHostMac } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
-import { curViewFunc } from '../Recoil/ReadWrite';
 import { Notifier } from './Notifier';
 import { GetHelperText } from './Utilities';
 import './styles/Sidebar.css';
@@ -31,7 +32,7 @@ const views: (ViewEntry | null)[] = [
 
 function getEntry(
   curView: CurrentView,
-  setCurView: SetterOrUpdater<CurrentView>,
+  setCurView: (newView: CurrentView) => Promise<void>,
   view: ViewEntry | null,
   index: number,
 ) {
@@ -43,7 +44,7 @@ function getEntry(
     <div
       key={index}
       className={`sidebar-container${extra}`}
-      onClick={() => setCurView(view.name)}
+      onClick={() => void setCurView(view.name)}
       title={GetHelperText(view.accelerator)}
     >
       <span className="sidebar-icon" id={st(view.title).replace(/ /g, '-')}>
@@ -71,14 +72,12 @@ export function isSearchBox(target: EventTarget | null): boolean {
 }
 
 export function Sidebar(): JSX.Element {
-  const [curView, setCurView] = useRecoilState(curViewFunc);
+  const [curView, setCurView] = useAtom(curViewFunc);
   const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
-    set(curViewFunc, CurrentView.search);
+    void setCurView(CurrentView.search);
     set(searchTermState, newValue);
   });
-  const onFocus = useRecoilCallback(({ set }) => () => {
-    set(curViewFunc, CurrentView.search);
-  });
+  const onFocus = () => void setCurView(CurrentView.search);
   const otherGrabber = isHostMac() ? (
     <br />
   ) : (
