@@ -1,11 +1,13 @@
 import { IconButton, SpinnerSize } from '@fluentui/react';
 import { ElectronWireUp, Ipc } from '@freik/electron-render';
-import { Spinner } from '@freik/web-utils';
-import { useRef, useState } from 'react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
 import { IpcId } from '@freik/emp-shared';
+import { Spinner } from '@freik/web-utils';
+import { Provider, useAtomValue } from 'jotai';
+import { useRef, useState } from 'react';
+import { RecoilRoot } from 'recoil';
+import { isMiniplayerState } from '../Jotai/Local';
+import { getStore } from '../Jotai/Storage';
 import { isHostMac } from '../MyWindow';
-import { isMiniplayerState } from '../Recoil/Local';
 import { SongDetailPanel } from './DetailPanel/SongDetailPanel';
 import { PlaybackControls } from './PlaybackControls';
 import { Sidebar } from './Sidebar';
@@ -16,7 +18,7 @@ import { VolumeControl } from './VolumeControl';
 import './styles/App.css';
 
 function WindowChrome(): JSX.Element {
-  const isMiniPlayer = useRecoilValue(isMiniplayerState);
+  const isMiniPlayer = useAtomValue(isMiniplayerState);
   const [isMax, setIsMax] = useState(false);
   if (isHostMac() || isMiniPlayer) {
     // For macOS, the menu is always up there, wasting space,
@@ -67,34 +69,37 @@ function WindowChrome(): JSX.Element {
 export function App(): JSX.Element {
   const audioRef = useRef<HTMLAudioElement>(null);
   const lilGrabber = isHostMac() ? 'grab-mac' : 'grab-other';
+  const store = getStore();
   return (
-    <RecoilRoot>
-      <Spinner>
-        <ElectronWireUp />
-        <Utilities audioRef={audioRef} />
-        <span id={lilGrabber} />
-      </Spinner>
-      <span id="left-column" />
-      <span id="top-row" />
-      <WindowChrome />
-      <Spinner>
-        <PlaybackControls audioRef={audioRef} />
-      </Spinner>
-      <Spinner>
-        <ErrorBoundary>
-          <SongPlaying ref={audioRef} />
-        </ErrorBoundary>
-      </Spinner>
-      <Spinner>
-        <VolumeControl />
-      </Spinner>
-      <Spinner>
-        <Sidebar />
-      </Spinner>
-      <Spinner size={SpinnerSize.large}>
-        <ViewSelector />
-      </Spinner>
-      <SongDetailPanel />
-    </RecoilRoot>
+    <Provider store={store}>
+      <RecoilRoot>
+        <Spinner>
+          <ElectronWireUp />
+          <Utilities audioRef={audioRef} />
+          <span id={lilGrabber} />
+        </Spinner>
+        <span id="left-column" />
+        <span id="top-row" />
+        <WindowChrome />
+        <Spinner>
+          <PlaybackControls audioRef={audioRef} />
+        </Spinner>
+        <Spinner>
+          <ErrorBoundary>
+            <SongPlaying ref={audioRef} />
+          </ErrorBoundary>
+        </Spinner>
+        <Spinner>
+          <VolumeControl />
+        </Spinner>
+        <Spinner>
+          <Sidebar />
+        </Spinner>
+        <Spinner size={SpinnerSize.large}>
+          <ViewSelector />
+        </Spinner>
+        <SongDetailPanel />
+      </RecoilRoot>
+    </Provider>
   );
 }

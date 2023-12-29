@@ -87,6 +87,23 @@ export async function writeToStorage([key, value]: [
 }
 
 /**
+ * Delete a value from persistence by name
+ * @async
+ *
+ * @param key: The string name item to delete
+ */
+export async function deleteFromStorage(key: string): Promise<void> {
+  try {
+    log(`deleteFromStorage(${key})`);
+    await Persistence.deleteItemAsync(key);
+    log(`deleteFromStorage(${key}) completed`);
+  } catch (e) {
+    err(`error from deleteFromStorage(${key})`);
+    err(e);
+  }
+}
+
+/**
  * Send arbitrary data to the main window
  *
  * @param channel The name of the channel
@@ -130,6 +147,7 @@ export function SetupDefault(): void {
   // because they don't just read/write to disk.
   registerChannel('read-from-storage', readFromStorage, isString);
   registerChannel('write-to-storage', writeToStorage, isKeyValue);
+  registerChannel('delete-from-storage', deleteFromStorage, isString);
   registerChannel('show-open-dialog', ShowOpenDialog, isOpenDialogOptions);
   registerChannel('is-dev', wwwIsDev, (a: unknown): a is void => true);
 }

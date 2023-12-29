@@ -36,6 +36,16 @@ export async function WriteToStorage(key: string, data: string): Promise<void> {
   await InvokeMain('write-to-storage', [key, data]);
 }
 
+/**
+ * @async
+ * Delete a key (and it's value...) from Electron persistent storage
+ *
+ * @param key The key to delete
+ */
+export async function DeleteFromStorage(key: string): Promise<void> {
+  await InvokeMain('delete-from-storage', key);
+}
+
 const sn = SeqNum('Listen');
 
 // map of message names to map of id's to funtions
@@ -168,7 +178,19 @@ export async function InvokeMain<T>(
   key?: T,
 ): Promise<unknown> {
   let result;
-  if (!window.electronConnector) throw Error('nope');
+  if (!window.electronConnector) {
+    // Wait a bit, as Jotai may call IPC stuff pretty early
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    for (let i = 0; i < 20; i++) {
+      await sleep(100);
+      if (window.electronConnector) {
+        break;
+      }
+    }
+  }
+  if (!window.electronConnector) {
+    throw Error('no connector wired in');
+  }
   if (isDefined(key)) {
     log(`Invoking main("${channel}", "...")`);
     result = (await window.electronConnector.ipc.invoke(

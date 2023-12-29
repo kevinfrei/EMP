@@ -3,11 +3,12 @@ import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
+import { curViewFunc } from '../Jotai/CurrentView';
+import { getStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
 import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import {
-  curViewFunc,
   mutedState,
   repeatState,
   shuffleFunc,
@@ -123,7 +124,8 @@ export function MenuHandler(
               break;
           }
           if (theView !== CurrentView.none) {
-            xact.set(curViewFunc, theView);
+            const store = getStore();
+            void store.set(curViewFunc, theView);
           }
         } else {
           wrn('Invalid view menu message:');

@@ -4,6 +4,7 @@ import {
   isBoolean,
   isNumber,
   isString,
+  typecheck,
 } from '@freik/typechk';
 
 export enum IpcId {
@@ -133,6 +134,14 @@ export enum CurrentView {
   search = 8,
   tools = 9,
 }
+
+export const isCurrentView: typecheck<CurrentView> = (
+  val: unknown,
+): val is CurrentView =>
+  isNumber(val) &&
+  Number.isInteger(val) &&
+  val >= CurrentView.disabled &&
+  val <= CurrentView.tools;
 
 export enum TranscodeFormatTargets {
   m4a = 'm4a',
