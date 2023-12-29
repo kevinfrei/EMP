@@ -6,7 +6,7 @@ import {
   isString,
 } from '@freik/typechk';
 
-export const enum IpcId {
+export enum IpcId {
   ClearHates = 'clear-hates',
   ClearLikes = 'clear-likes',
   ClearLocalOverrides = 'clear-local-overrides',
@@ -50,7 +50,7 @@ export const enum IpcId {
   RescanInProgress = 'rescan-in-progress',
 }
 
-export const enum Keys {
+export enum Keys {
   AddFileLocation = 'O',
   Albums = '2',
   Artists = '3',
@@ -72,7 +72,7 @@ export const enum Keys {
 }
 
 // TODO: This stuff let's me localize my strings eventually
-export const enum StrId {
+export enum StrId {
   // MediaInfo.tsx strings
   Mono = 'mono',
   Stereo = 'stereo',
@@ -120,7 +120,7 @@ export function st(id: StrId): string {
   return id;
 }
 
-export const enum CurrentView {
+export enum CurrentView {
   disabled = -1,
   none = 0,
   recent = 1,
@@ -134,14 +134,14 @@ export const enum CurrentView {
   tools = 9,
 }
 
-export const enum TranscodeFormatTargets {
+export enum TranscodeFormatTargets {
   m4a = 'm4a',
   mp3 = 'mp3',
   aac = 'aac',
 }
 export type TranscodeFormatTargetNames = 'm4a' | 'mp3' | 'aac';
 
-export const enum TranscodeSourceType {
+export enum TranscodeSourceType {
   Playlist = 'p',
   Artist = 'r',
   Album = 'l',

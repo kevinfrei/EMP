@@ -21,6 +21,7 @@ import {
   useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';

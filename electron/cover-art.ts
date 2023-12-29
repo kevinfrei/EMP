@@ -24,6 +24,7 @@ import {
   isSetOfString,
 } from '@freik/typechk';
 import albumArt from 'album-art';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';

@@ -275,10 +275,10 @@ export async function FlushImageCache(): Promise<void> {
 
 export async function FlushMetadataCache(): Promise<void> {
   const db = await GetAudioDB();
-  await db.clearMetadataCache();
+  db.clearMetadataCache();
 }
 
 export async function ClearLocalOverrides(): Promise<void> {
   const db = await GetAudioDB();
-  await db.clearLocalMetadataOverrides();
+  db.clearLocalMetadataOverrides();
 }
