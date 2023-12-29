@@ -16,6 +16,6 @@
     "./lib/**/*"
   ],
   "dependencies": {
-    "@freik/typechk": "^0.5.10"
+    "@freik/typechk": "^0.5.11"
   }
 }

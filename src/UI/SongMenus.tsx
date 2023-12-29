@@ -6,6 +6,7 @@ import {
   Point,
 } from '@fluentui/react';
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isString } from '@freik/typechk';
 import {
@@ -14,7 +15,6 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
-import { IpcId } from '@freik/emp-shared';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -22,6 +22,7 @@ import {
 } from '../Recoil/Likes';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import { SongListDetailClick } from './DetailPanel/Clickers';
+import { ErrorBoundary } from './Utilities';
 
 export type SongListMenuData = { data: string; spot: Point };
 
@@ -163,21 +164,23 @@ export function SongListMenu({
   }
 
   return (
-    <ContextualMenu
-      directionalHint={DirectionalHint.bottomRightEdge}
-      isBeakVisible={true}
-      hidden={context.data === ''}
-      items={realItems}
-      target={context.spot}
-      onDismiss={(ev) => {
-        // The DetailsList panel wiggles. A lot.
-        // So I had to turn off dismissal for scroll events, cuz otherwise it
-        // would disappear almost immediately.
-        if (ev?.type !== 'scroll') {
-          onClearContext();
-        }
-      }}
-      styles={{ container: { margin: 0, padding: 0, fontSize: 'small' } }}
-    />
+    <ErrorBoundary>
+      <ContextualMenu
+        directionalHint={DirectionalHint.bottomRightEdge}
+        isBeakVisible={true}
+        hidden={context.data === ''}
+        items={realItems}
+        target={context.spot}
+        onDismiss={(ev) => {
+          // The DetailsList panel wiggles. A lot.
+          // So I had to turn off dismissal for scroll events, cuz otherwise it
+          // would disappear almost immediately.
+          if (ev?.type !== 'scroll') {
+            onClearContext();
+          }
+        }}
+        styles={{ container: { margin: 0, padding: 0, fontSize: 'small' } }}
+      />
+    </ErrorBoundary>
   );
 }
