@@ -4,7 +4,6 @@ import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
 import { ForwardedRef, SyntheticEvent, forwardRef, useEffect } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { albumCoverUrlFuncFam } from '../Recoil/ImageUrls';
 import { playOrderDisplayingState } from '../Recoil/Local';
 import {
   MediaTime,
@@ -29,7 +28,7 @@ import {
 } from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
-import { isMutableRefObject } from '../Tools';
+import { getAlbumImageUrl, isMutableRefObject } from '../Tools';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import { mySliderStyles } from './Utilities';
 import './styles/SongPlaying.css';
@@ -41,7 +40,7 @@ const { log } = MakeLog('EMP:render:SongPlayback');
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
   const albumKey = useRecoilValue(albumKeyForSongKeyFuncFam(songKey));
-  const picurl = useRecoilValue(albumCoverUrlFuncFam(albumKey));
+  const picurl = getAlbumImageUrl(albumKey);
   return (
     <span id="song-cover-art">
       <img id="img-current-cover-art" src={picurl} alt="album cover" />

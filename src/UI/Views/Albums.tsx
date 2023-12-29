@@ -24,7 +24,6 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
-import { albumCoverUrlFuncFam } from '../../Recoil/ImageUrls';
 import {
   albumByKeyFuncFam,
   allAlbumsFunc,
@@ -39,7 +38,7 @@ import {
   noArticlesCmp,
   SortSongsFromAlbums,
 } from '../../Sorting';
-import { GetIndexOf } from '../../Tools';
+import { getAlbumImageUrl, GetIndexOf } from '../../Tools';
 import {
   AlbumForSongRender,
   ArtistsForSongRender,
@@ -71,7 +70,7 @@ type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const album = useRecoilValue(albumByKeyFuncFam(group.key));
   const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
-  const picurl = useRecoilValue(albumCoverUrlFuncFam(group.key));
+  const picurl = getAlbumImageUrl(group.key);
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, album.songs);
   });

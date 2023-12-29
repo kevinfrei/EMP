@@ -23,7 +23,6 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
-import { artistImageUrlFuncFam } from '../../Recoil/ImageUrls';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -39,7 +38,7 @@ import {
   noArticlesCmp,
   SortSongsFromArtists,
 } from '../../Sorting';
-import { GetIndexOf } from '../../Tools';
+import { getArtistImageUrl, GetIndexOf } from '../../Tools';
 import {
   AlbumForSongRender,
   ArtistNameFromArtistIds,
@@ -67,7 +66,7 @@ const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
-  const picurl = useRecoilValue(artistImageUrlFuncFam(group.key));
+  const picurl = getArtistImageUrl(group.key);
   const setArtistContext = useSetAtom(artistContextState);
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, artist.songs);
