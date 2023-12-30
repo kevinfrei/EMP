@@ -4,16 +4,12 @@ import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
 import { curViewFunc } from '../Jotai/CurrentView';
+import { mutedState, volumeState } from '../Jotai/SimpleSettings';
 import { getStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
 import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
-import {
-  mutedState,
-  repeatState,
-  shuffleFunc,
-  volumeState,
-} from '../Recoil/ReadWrite';
+import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { onClickPlayPause } from './PlaybackControls';
@@ -40,6 +36,7 @@ export function MenuHandler(
   message: unknown,
   audioRef: ForwardedRef<HTMLAudioElement>,
 ): void {
+  const store = getStore();
   wrn('Menu command:', message);
   log('Menu command:', message);
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
@@ -86,13 +83,17 @@ export function MenuHandler(
         break;
 
       case 'mute':
-        xact.set(mutedState, (cur) => !cur);
+        void store.set(mutedState, async (cur) => !(await cur));
         break;
       case 'louder':
-        xact.set(volumeState, (val) => Math.min(1.0, val + 0.1));
+        void store.set(volumeState, async (val) =>
+          Math.min(1.0, (await val) + 0.1),
+        );
         break;
       case 'quieter':
-        xact.set(volumeState, (val) => Math.max(0, val - 0.1));
+        void store.set(volumeState, async (val) =>
+          Math.max(0, (await val) - 0.1),
+        );
         break;
       case 'view':
         if (hasStrField(message, 'select')) {
@@ -124,7 +125,6 @@ export function MenuHandler(
               break;
           }
           if (theView !== CurrentView.none) {
-            const store = getStore();
             void store.set(curViewFunc, theView);
           }
         } else {

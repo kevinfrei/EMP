@@ -22,11 +22,21 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 // eslint-disable-next-line @typescript-eslint/naming-convention
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
-import { RescanInProgressState } from '../../Jotai/Miscellany';
+import { useBoolAtom } from '../../Jotai/Hooks';
+import { rescanInProgressState } from '../../Jotai/Miscellany';
+import {
+  albumCoverNameState,
+  defaultLocationState,
+  downloadAlbumArtworkState,
+  downloadArtistArtworkState,
+  ignoreArticlesState,
+  locationsState,
+  saveAlbumArtworkWithMusicState,
+} from '../../Jotai/SimpleSettings';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
@@ -35,14 +45,7 @@ import {
   ignoreItemsState,
 } from '../../Recoil/ReadOnly';
 import {
-  albumCoverNameState,
-  defaultLocationState,
-  downloadAlbumArtworkState,
-  downloadArtistArtworkState,
-  ignoreArticlesState,
-  locationsState,
   minSongCountForArtistListState,
-  saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/ReadWrite';
 import { GetHelperText } from '../Utilities';
@@ -64,16 +67,16 @@ export async function addLocation({
 }: MyTransactionInterface): Promise<boolean> {
   const locs = await GetDirs();
   if (locs) {
-    set(locationsState, (curLocs) => [...locs, ...curLocs]);
+    // set(locationsState, (curLocs) => [...locs, ...curLocs]);
     return true;
   }
   return false;
 }
 
 function MusicLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useRecoilState(locationsState);
-  const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
-  const rescanInProgress = useAtomValue(RescanInProgressState);
+  const [newLoc, setNewLoc] = useAtom(locationsState);
+  const [defLoc, setDefLoc] = useAtom(defaultLocationState);
+  const rescanInProgress = useAtomValue(rescanInProgressState);
   const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });
@@ -94,7 +97,7 @@ function MusicLocations(): JSX.Element {
       {(newLoc || []).map((elem) => (
         <span key={elem} className="music-loc">
           <IconButton
-            onClick={() => setNewLoc(removeFromSet(newLoc, elem))}
+            onClick={() => void setNewLoc(removeFromSet(newLoc, elem))}
             iconProps={{ iconName: 'Delete' }}
           />
           <Label>{elem}</Label>&nbsp;
@@ -104,7 +107,7 @@ function MusicLocations(): JSX.Element {
             <DefaultButton
               styles={setSaveStyle}
               iconProps={{ iconName: 'Save' }}
-              onClick={() => setDefLoc(elem)}
+              onClick={() => void setDefLoc(elem)}
               text="NYI: Set as"
             />
           )}
@@ -225,7 +228,7 @@ function IgnoreList(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const articles = useBoolRecoilState(ignoreArticlesState);
+  const articles = useBoolAtom(ignoreArticlesState);
   return <StateToggle label="Ignore articles when sorting" state={articles} />;
 }
 
@@ -267,10 +270,10 @@ function LikeFiltering(): JSX.Element {
 }
 
 function ArtworkSettings(): JSX.Element {
-  const dlAlbumArtwork = useBoolRecoilState(downloadAlbumArtworkState);
-  const dlArtistArtwork = useBoolRecoilState(downloadArtistArtworkState);
-  const saveAlbumArtwork = useBoolRecoilState(saveAlbumArtworkWithMusicState);
-  const [coverArtName, setCoverArtName] = useRecoilState(albumCoverNameState);
+  const dlAlbumArtwork = useBoolAtom(downloadAlbumArtworkState);
+  const dlArtistArtwork = useBoolAtom(downloadArtistArtworkState);
+  const saveAlbumArtwork = useBoolAtom(saveAlbumArtworkWithMusicState);
+  const [coverArtName, setCoverArtName] = useAtom(albumCoverNameState);
   return (
     <>
       <StateToggle label="Download Album Artwork" state={dlAlbumArtwork} />
@@ -285,7 +288,7 @@ function ArtworkSettings(): JSX.Element {
           disabled={!saveAlbumArtwork[0] || !dlAlbumArtwork[0]}
           description="Filename to save the artwork as"
           value={coverArtName}
-          onChange={(_ev, nv) => nv && setCoverArtName(nv)}
+          onChange={(_ev, nv) => nv && void setCoverArtName(nv)}
         />
       </div>
       <StateToggle label="Download Artist Artwork" state={dlArtistArtwork} />

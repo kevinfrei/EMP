@@ -2,6 +2,7 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
+import { useAtomValue } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import {
   ForwardedRef,
@@ -12,6 +13,7 @@ import {
 } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { playOrderDisplayingState } from '../Jotai/Local';
+import { mutedState, volumeState } from '../Jotai/SimpleSettings';
 import {
   MediaTime,
   mediaTimePercentFunc,
@@ -27,12 +29,7 @@ import {
   dataForSongFuncFam,
   picForKeyFam,
 } from '../Recoil/ReadOnly';
-import {
-  mutedState,
-  repeatState,
-  shuffleFunc,
-  volumeState,
-} from '../Recoil/ReadWrite';
+import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
 import { getAlbumImageUrl, isMutableRefObject } from '../Tools';
@@ -145,8 +142,8 @@ export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
     const songKey = useRecoilValue(currentSongKeyFunc);
     const isShuffle = useRecoilValue(shuffleFunc);
-    const isMuted = useRecoilValue(mutedState);
-    const volumeLevel = useRecoilValue(volumeState);
+    const isMuted = useAtomValue(mutedState);
+    const volumeLevel = useAtomValue(volumeState);
     const playbackPercent = useRecoilValue(mediaTimePercentFunc);
     const onPlay = useRecoilCallback(
       ({ set }) =>
