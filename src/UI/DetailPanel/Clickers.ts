@@ -1,13 +1,10 @@
 import { Song, SongKey } from '@freik/media-core';
-import { MyTransactionInterface } from '@freik/web-utils';
-import { songDetailState } from '../../Recoil/Local';
+import { songDetailState } from '../../Jotai/Local';
+import { getStore } from '../../Jotai/Storage';
 
-export function SongDetailClick(
-  { set }: MyTransactionInterface,
-  song: Song,
-  shift?: boolean,
-): void {
-  set(songDetailState, (prev) => {
+export function SongDetailClick(song: Song, shift?: boolean): void {
+  const store = getStore();
+  store.set(songDetailState, (prev) => {
     const vals = new Set(shift ? prev : []);
     if (shift && prev.has(song.key)) {
       vals.delete(song.key);
@@ -28,12 +25,9 @@ function SetInvert<T>(theSet: Set<T>, toToggle: Iterable<T>): void {
   }
 }
 
-export function SongListDetailClick(
-  { set }: MyTransactionInterface,
-  songs: SongKey[],
-  shift?: boolean,
-): void {
-  set(songDetailState, (prev) => {
+export function SongListDetailClick(songs: SongKey[], shift?: boolean): void {
+  const store = getStore();
+  store.set(songDetailState, (prev) => {
     if (shift) {
       const vals = new Set(prev);
       SetInvert(vals, songs);
@@ -44,12 +38,9 @@ export function SongListDetailClick(
 }
 
 // This is a helper to shift-click for song details
-export function SongListDetailContextMenuClick(
-  xact: MyTransactionInterface,
-  items: SongKey[],
-) {
+export function SongListDetailContextMenuClick(items: SongKey[]) {
   return (event: React.MouseEvent<HTMLElement, MouseEvent>): void => {
     const shift = event.shiftKey === true;
-    SongListDetailClick(xact, items, shift);
+    SongListDetailClick(items, shift);
   };
 }

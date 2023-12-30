@@ -2,9 +2,16 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
-import { ForwardedRef, SyntheticEvent, forwardRef, useEffect } from 'react';
+import { useAtomCallback } from 'jotai/utils';
+import {
+  ForwardedRef,
+  SyntheticEvent,
+  forwardRef,
+  useCallback,
+  useEffect,
+} from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { playOrderDisplayingState } from '../Recoil/Local';
+import { playOrderDisplayingState } from '../Jotai/Local';
 import {
   MediaTime,
   mediaTimePercentFunc,
@@ -238,15 +245,16 @@ export const SongPlaying = forwardRef(
           const songs = xact.get(allSongsFunc);
           const song = songs.get(songKey);
           if (song) {
-            SongDetailClick(xact, song, event.shiftKey);
+            SongDetailClick(song, event.shiftKey);
           }
         }
       },
     );
-    const flipDisplay = useRecoilCallback(
-      ({ set }) =>
-        () =>
-          set(playOrderDisplayingState, (prv) => !prv),
+    const flipDisplay = useAtomCallback(
+      useCallback(
+        (_get, set) => () => set(playOrderDisplayingState, (prv) => !prv),
+        [],
+      ),
     );
     return (
       <span id="song-container" onAuxClick={showDetail}>

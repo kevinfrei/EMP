@@ -194,9 +194,7 @@ function SearchResultsGroupHeader(props: {
   const onAddSongListClick = useMyTransaction((xact) => () => {
     AddSongs(xact, props.keys);
   });
-  const onRightClick = useMyTransaction((xact) =>
-    SongListDetailContextMenuClick(xact, props.keys),
-  );
+  const onRightClick = SongListDetailContextMenuClick(props.keys);
   const theStyle = { marginLeft: props.depth * 20 };
   return (
     <div style={theStyle}>
@@ -223,14 +221,15 @@ export function SearchResultsView(): JSX.Element {
   const albums = useRecoilValue(allAlbumsFunc);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
-  const onSongDetailClick = useMyTransaction(
-    (xact) => (item: SearchSongData, index?: number, ev?: Event) =>
-      SongDetailClick(
-        xact,
-        item.song,
-        hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
-      ),
-  );
+  const onSongDetailClick = (
+    item: SearchSongData,
+    _index?: number,
+    ev?: Event,
+  ) =>
+    SongDetailClick(
+      item.song,
+      hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
+    );
   const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {
     AddSongs(xact, [item.song.key]);
   });

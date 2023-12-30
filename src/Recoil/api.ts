@@ -10,6 +10,13 @@ import {
 } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
 import type { MyTransactionInterface } from '@freik/web-utils';
+import { RESET } from 'jotai/utils';
+import {
+  displayMessageState,
+  nowPlayingSortState,
+  recentlyQueuedState,
+} from '../Jotai/Local';
+import { getStore } from '../Jotai/Storage';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
   isSongHated,
@@ -18,11 +25,6 @@ import {
   onlyPlayLikesState,
   songHateFuncFam,
 } from './Likes';
-import {
-  displayMessageState,
-  nowPlayingSortState,
-  recentlyQueuedState,
-} from './Local';
 import { mediaTimeState, playingState } from './MediaPlaying';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
@@ -134,6 +136,7 @@ export function AddSongs(
   listToAdd: Iterable<SongKey>,
   playlistName?: string,
 ): void {
+  const store = getStore();
   const { get, set } = xact;
   const songList = get(songListState);
   if (songList.length === 0) {
@@ -172,8 +175,8 @@ export function AddSongs(
       ]);
     }
   }
-  set(recentlyQueuedState, playList.length);
-  set(displayMessageState, true);
+  store.set(recentlyQueuedState, playList.length);
+  store.set(displayMessageState, true);
 }
 
 /**
@@ -188,6 +191,8 @@ export function PlaySongs(
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): void {
+  const store = getStore();
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { reset, set, get } = xact;
   const playList = GetFilteredSongs(xact, listToPlay);
   if (isPlaylist(playlistName)) {
@@ -204,8 +209,8 @@ export function PlaySongs(
   }
   set(songListState, [...playList]);
   set(currentIndexState, playList.length >= 0 ? 0 : -1);
-  set(recentlyQueuedState, playList.length);
-  set(displayMessageState, true);
+  store.set(recentlyQueuedState, playList.length);
+  store.set(displayMessageState, true);
 }
 
 /**
@@ -232,9 +237,10 @@ export function StopAndClear({ reset }: MyTransactionInterface): void {
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  */
 export function ShufflePlaying(
-  { get, reset, set }: MyTransactionInterface,
+  { get, set }: MyTransactionInterface,
   ignoreCur?: boolean,
 ): void {
+  const store = getStore();
   ignoreCur = ignoreCur === true;
   const curIndex = get(currentIndexState);
   const curSongList = get(songListState);
@@ -255,7 +261,7 @@ export function ShufflePlaying(
   if (curSongList.length > 0) {
     set(currentIndexState, 0);
   }
-  reset(nowPlayingSortState);
+  store.set(nowPlayingSortState, RESET);
 }
 
 /**

@@ -83,7 +83,7 @@ export function SongListMenu({
   );
   const onProps = useMyTransaction(
     (xact) => () =>
-      SongListDetailClick(xact, onGetSongList(xact, context.data), false),
+      SongListDetailClick(onGetSongList(xact, context.data), false),
   );
   const onLove = useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);

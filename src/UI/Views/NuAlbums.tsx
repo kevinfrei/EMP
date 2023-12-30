@@ -86,9 +86,7 @@ function AlbumCoverView({
     AddSongs(xact, album.songs);
   });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRightClick = useMyTransaction((xact) =>
-    SongListDetailContextMenuClick(xact, album.songs),
-  );
+  const onRightClick = SongListDetailContextMenuClick(album.songs);
   if (!album) {
     return <></>;
   }
