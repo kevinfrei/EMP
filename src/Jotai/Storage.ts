@@ -13,7 +13,9 @@ import { WritableAtomType } from './Hooks';
 
 const theStore = createStore();
 
-export function getStore() {
+export type MyStore = typeof theStore;
+
+export function getStore(): MyStore {
   return theStore;
 }
 

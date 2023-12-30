@@ -1,13 +1,11 @@
 import { Keys } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
-import {
-  MyTransactionInterface,
-  onRejected,
-  useMyTransaction,
-} from '@freik/web-utils';
+import { onRejected, useMyTransaction } from '@freik/web-utils';
+import { useAtomValue, useStore } from 'jotai';
 import { ForwardedRef, MouseEventHandler } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { playingState } from '../Recoil/MediaPlaying';
+import { playingState } from '../Jotai/MediaPlaying';
+import { MyStore } from '../Jotai/Storage';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import {
   hasAnySongsFunc,
@@ -22,14 +20,14 @@ import './styles/PlaybackControls.css';
 const { log, wrn } = MakeLog('EMP:render:SongControls');
 
 export function onClickPlayPause(
-  { set }: MyTransactionInterface,
+  store: MyStore,
   audioRef: ForwardedRef<HTMLAudioElement>,
 ): void {
   if (!isMutableRefObject<HTMLAudioElement>(audioRef)) {
     wrn('Clicking but no audio element');
     return;
   }
-  set(playingState, (isPlaying) => {
+  store.set(playingState, (isPlaying) => {
     if (isPlaying) {
       audioRef.current.pause();
       return false;
@@ -52,7 +50,7 @@ export type PlaybackControlsProps = {
 export function PlaybackControls({
   audioRef,
 }: PlaybackControlsProps): JSX.Element {
-  const isPlaying = useRecoilValue(playingState);
+  const isPlaying = useAtomValue(playingState);
 
   const hasAnySong = useRecoilValue(hasAnySongsFunc);
   const shuf = useRecoilValue(shuffleFunc);
@@ -65,8 +63,8 @@ export function PlaybackControls({
   const playPauseClass = isPlaying
     ? 'playing'
     : hasAnySong
-    ? 'paused'
-    : 'paused disabled';
+      ? 'paused'
+      : 'paused disabled';
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
@@ -74,9 +72,8 @@ export function PlaybackControls({
     xact.set(shuffleFunc, (prevShuf) => !prevShuf);
   });
   const clickRepeat = () => repSet(!rep);
-  const clickPlayPause = useMyTransaction(
-    (xact) => () => onClickPlayPause(xact, audioRef),
-  );
+  const store = useStore();
+  const clickPlayPause = () => onClickPlayPause(store, audioRef);
 
   const clickPrev = useMyTransaction((xact) => () => {
     if (hasPrevSong) {
