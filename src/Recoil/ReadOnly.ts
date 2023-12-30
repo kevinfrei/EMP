@@ -18,7 +18,6 @@ import {
   chkObjectOfType,
   hasFieldType,
   isArrayOfString,
-  isBoolean,
   isNumber,
   isString,
 } from '@freik/typechk';
@@ -566,6 +565,7 @@ export const ignoreItemsState = atom<IgnoreItem[]>({
   ],
 });
 
+/*
 export const RescanInProgressState = atom<boolean>({
   key: 'RescanInProgress',
   effects: [
@@ -583,3 +583,4 @@ export const RescanInProgressState = atom<boolean>({
     ),
   ],
 });
+*/

@@ -24,8 +24,10 @@ function makeGetItem<T>(
   return async (key: string, initialValue: T): Promise<T> => {
     const strValue = await Ipc.ReadFromStorage(key);
     if (isString(strValue)) {
-      const val = SafelyUnpickle(strValue, chk);
-      return isUndefined(val) ? initialValue : val;
+      try {
+        const val = SafelyUnpickle(strValue, chk);
+        return isUndefined(val) ? initialValue : val;
+      } catch (e) {}
     }
     return initialValue;
   };
@@ -35,10 +37,17 @@ async function setItem<T>(key: string, newValue: T): Promise<void> {
   await Ipc.WriteToStorage(key, Pickle(newValue));
 }
 
+async function noSetItem<T>(_key: string, _newValue: T): Promise<void> {
+  await Promise.resolve();
+}
+
 async function removeItem(key: string): Promise<void> {
   await Ipc.DeleteFromStorage(key);
 }
 
+async function noRemoveItem(_key: string): Promise<void> {
+  await Promise.resolve();
+}
 type Unsub = () => void;
 function makeSubscribe<T>(
   chk: typecheck<T>,
@@ -60,6 +69,15 @@ export function getMainStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
   };
 }
 
+export function getMainReadOnlyStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
+  return {
+    getItem: makeGetItem(chk),
+    setItem: noSetItem,
+    removeItem: noRemoveItem,
+    subscribe: makeSubscribe(chk),
+  };
+}
+
 // Jotai should export this type...
 type SetStateActionWithReset<T> =
   | T
@@ -76,4 +94,16 @@ export function atomWithMainStorage<T>(
   Promise<void>
 > {
   return atomWithStorage(key, init, getMainStorage(chk), { getOnInit: true });
+}
+
+export function atomFromMain<T>(
+  key: string,
+  init: T,
+  chk: typecheck<T>,
+): WritableAtom<
+  T | Promise<T>,
+  [SetStateActionWithReset<T | Promise<T>>],
+  Promise<void>
+> {
+  return atomWithStorage(key, init, getMainReadOnlyStorage(chk));
 }
