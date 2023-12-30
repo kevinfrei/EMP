@@ -4,10 +4,10 @@ import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
 import { curViewFunc } from '../Jotai/CurrentView';
+import { mediaTimePercentFunc, mediaTimeState } from '../Jotai/MediaPlaying';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
-import { getStore } from '../Jotai/Storage';
+import { MyStore, getStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
-import { mediaTimePercentFunc, mediaTimeState } from '../Recoil/MediaPlaying';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
@@ -18,16 +18,16 @@ import { addLocation } from './Views/Settings';
 const { wrn, log } = MakeLog('EMP:render:MenuHandler');
 // log.enabled = true;
 
-function updateTime({ set, get }: MyTransactionInterface, offset: number) {
-  const curTime = get(mediaTimeState);
+function updateTime(store: MyStore, offset: number) {
+  const curTime = store.get(mediaTimeState);
   const position = Math.min(
     curTime.duration,
     Math.max(0, curTime.position + offset),
   );
 
   if (position < Number.MAX_SAFE_INTEGER && position >= 0) {
-    set(mediaTimeState, { position, duration: curTime.duration });
-    set(mediaTimePercentFunc, position / curTime.duration);
+    store.set(mediaTimeState, { position, duration: curTime.duration });
+    store.set(mediaTimePercentFunc, position / curTime.duration);
   }
 }
 
@@ -65,7 +65,7 @@ export function MenuHandler(
 
       // Playback control:
       case 'playback':
-        onClickPlayPause(xact, audioRef);
+        onClickPlayPause(store, audioRef);
         break;
       case 'nextTrack':
         void MaybePlayNext(xact);
@@ -76,10 +76,10 @@ export function MenuHandler(
 
       // Time control
       case 'fwd':
-        updateTime(xact, 10);
+        updateTime(store, 10);
         break;
       case 'back':
-        updateTime(xact, -10);
+        updateTime(store, -10);
         break;
 
       case 'mute':

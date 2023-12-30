@@ -2,7 +2,7 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
-import { useAtomValue } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import {
   ForwardedRef,
@@ -11,9 +11,8 @@ import {
   useCallback,
   useEffect,
 } from 'react';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { playOrderDisplayingState } from '../Jotai/Local';
-import { mutedState, volumeState } from '../Jotai/SimpleSettings';
 import {
   MediaTime,
   mediaTimePercentFunc,
@@ -21,7 +20,8 @@ import {
   mediaTimeRemainingFunc,
   mediaTimeState,
   playingState,
-} from '../Recoil/MediaPlaying';
+} from '../Jotai/MediaPlaying';
+import { mutedState, volumeState } from '../Jotai/SimpleSettings';
 import {
   SongDescription,
   albumKeyForSongKeyFuncFam,
@@ -53,7 +53,7 @@ function CoverArt(): JSX.Element {
 }
 
 function MediaTimePosition(): JSX.Element {
-  const mediaTimePosition = useRecoilValue(mediaTimePositionFunc);
+  const mediaTimePosition = useAtomValue(mediaTimePositionFunc);
   return (
     <Text
       id="now-playing-current-time"
@@ -67,7 +67,7 @@ function MediaTimePosition(): JSX.Element {
 }
 
 function MediaTimeRemaining(): JSX.Element {
-  const mediaTimeRemaining = useRecoilValue(mediaTimeRemainingFunc);
+  const mediaTimeRemaining = useAtomValue(mediaTimeRemainingFunc);
   return (
     <Text
       id="now-playing-remaining-time"
@@ -82,8 +82,7 @@ function MediaTimeRemaining(): JSX.Element {
 
 function MediaTimeSlider(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const [mediaTimePercent, setMediaTimePercent] =
-    useRecoilState(mediaTimePercentFunc);
+  const [mediaTimePercent, setMediaTimePercent] = useAtom(mediaTimePercentFunc);
   return (
     <Slider
       className="song-slider" /* Can't put an ID on a slider :( */
@@ -144,18 +143,12 @@ export const SongPlaying = forwardRef(
     const isShuffle = useRecoilValue(shuffleFunc);
     const isMuted = useAtomValue(mutedState);
     const volumeLevel = useAtomValue(volumeState);
-    const playbackPercent = useRecoilValue(mediaTimePercentFunc);
-    const onPlay = useRecoilCallback(
-      ({ set }) =>
-        () =>
-          set(playingState, true),
-    );
-    const onPause = useRecoilCallback(
-      ({ set }) =>
-        () =>
-          set(playingState, false),
-    );
-    const onEnded = useMyTransaction((xact) => () => {
+    const playbackPercent = useAtomValue(mediaTimePercentFunc);
+    const setPlaying = useSetAtom(playingState);
+    const setMediaTime = useSetAtom(mediaTimeState);
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    const onEnded = useMyTransaction((xact) => (): void => {
       log('Heading to the next song!!!');
       const songList = xact.get(songListState);
       const rep = xact.get(repeatState);
@@ -166,30 +159,27 @@ export const SongPlaying = forwardRef(
           void audioRef.current.play();
         }
       } else {
-        xact.set(playingState, MaybePlayNext(xact));
+        setPlaying(MaybePlayNext(xact));
       }
     });
-    const onTimeUpdate = useMyTransaction(
-      ({ set }) =>
-        (ev: SyntheticEvent<HTMLMediaElement>) => {
-          const ae = ev.currentTarget;
-          log('time update');
-          log(ev);
-
-          if (!Number.isNaN(ae.duration)) {
-            set(mediaTimeState, (prevTime: MediaTime) => {
-              if (
-                Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
-                Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
-              ) {
-                return { position: ae.currentTime, duration: ae.duration };
-              } else {
-                return prevTime;
-              }
-            });
+    const onTimeUpdate = (ev: SyntheticEvent<HTMLMediaElement>) => {
+      const ae = ev.currentTarget;
+      log('time update');
+      log(ev);
+      // eslint-disable-next-line id-blacklist
+      if (!Number.isNaN(ae.duration)) {
+        setMediaTime((prevTime: MediaTime) => {
+          if (
+            Math.trunc(ae.duration) !== Math.trunc(prevTime.duration) ||
+            Math.trunc(ae.currentTime) !== Math.trunc(prevTime.position)
+          ) {
+            return { position: ae.currentTime, duration: ae.duration };
+          } else {
+            return prevTime;
           }
-        },
-    );
+        });
+      }
+    };
     const metadata = useRecoilValue(dataForSongFuncFam(songKey));
     const picDataUri = useRecoilValue(picForKeyFam(songKey));
     useEffect(() => {
