@@ -9,6 +9,8 @@ import { Song, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
+import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { getStore } from '../../Jotai/Storage';
 import {
   songHateFuncFam,
   songLikeFuncFam,
@@ -20,7 +22,6 @@ import {
   allSongsFunc,
   dataForSongListFuncFam,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import { AddSongs } from '../../Recoil/api';
 import { MakeSortKey, SortSongList } from '../../Sorting';
 import {
@@ -42,12 +43,13 @@ const sortOrderState = atom({
 });
 const sortedSongsState = selector({
   key: 'msSorted',
-  get: ({ get }) => {
+  get: async ({ get }) => {
+    const store = getStore();
     return SortSongList(
       [...get(allSongsFunc).values()],
       get(allAlbumsFunc),
       get(allArtistsFunc),
-      get(ignoreArticlesState),
+      await store.get(ignoreArticlesState),
       get(sortOrderState),
     );
   },

@@ -1,7 +1,7 @@
 import { isBoolean } from '@freik/typechk';
 import { atomFromMain } from './Storage';
 
-export const RescanInProgressState = atomFromMain(
+export const rescanInProgressState = atomFromMain(
   'RescanInProgress',
   false,
   isBoolean,

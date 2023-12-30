@@ -22,6 +22,7 @@ import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
+import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   allAlbumsFunc,
@@ -30,7 +31,6 @@ import {
   artistByKeyFuncFam,
   filteredArtistsFunc,
 } from '../../Recoil/ReadOnly';
-import { ignoreArticlesState } from '../../Recoil/ReadWrite';
 import {
   articlesCmp,
   ArtistSong,
@@ -141,7 +141,7 @@ export function GroupedAristList(): JSX.Element {
   const artists = useRecoilValue(allArtistsFunc);
   const albums = useRecoilValue(allAlbumsFunc);
   const songs = useRecoilValue(allSongsFunc);
-  const ignoreArticles = useRecoilValue(ignoreArticlesState);
+  const ignoreArticles = useAtomValue(ignoreArticlesState);
   const keyBuffer = useAtomValue(focusedKeysFuncFam(CurrentView.artists));
   const [artistContext, setArtistContext] = useAtom(artistContextState);
   const filteredArtists = useRecoilValue(filteredArtistsFunc);
