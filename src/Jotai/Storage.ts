@@ -6,9 +6,10 @@ import {
   isUndefined,
   typecheck,
 } from '@freik/typechk';
-import { WritableAtom, createStore } from 'jotai';
-import { RESET, atomWithStorage } from 'jotai/utils';
+import { createStore } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 import { AsyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
+import { WritableAtomType } from './Hooks';
 
 const theStore = createStore();
 
@@ -78,21 +79,11 @@ export function getMainReadOnlyStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
   };
 }
 
-// Jotai should export this type...
-type SetStateActionWithReset<T> =
-  | T
-  | typeof RESET
-  | ((prev: T) => T | typeof RESET);
-
 export function atomWithMainStorage<T>(
   key: string,
   init: T,
   chk: typecheck<T>,
-): WritableAtom<
-  T | Promise<T>,
-  [SetStateActionWithReset<T | Promise<T>>],
-  Promise<void>
-> {
+): WritableAtomType<T> {
   return atomWithStorage(key, init, getMainStorage(chk), { getOnInit: true });
 }
 
@@ -100,10 +91,6 @@ export function atomFromMain<T>(
   key: string,
   init: T,
   chk: typecheck<T>,
-): WritableAtom<
-  T | Promise<T>,
-  [SetStateActionWithReset<T | Promise<T>>],
-  Promise<void>
-> {
+): WritableAtomType<T> {
   return atomWithStorage(key, init, getMainReadOnlyStorage(chk));
 }

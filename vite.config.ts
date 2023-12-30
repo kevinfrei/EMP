@@ -26,6 +26,7 @@ export default defineConfig({
       resolve: { module: { type: 'esm' } },
     }),
   ],
+  clearScreen: false,
   build: {
     rollupOptions: {
       input: {
@@ -36,5 +37,10 @@ export default defineConfig({
   },
   resolve: {
     preserveSymlinks: true,
+  },
+  optimizeDeps: {
+    // My local dependencies can't be cached, or you have to
+    // jump through hoops to update them...
+    exclude: ['@freik/*'],
   },
 });
