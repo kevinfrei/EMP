@@ -16,6 +16,7 @@ import {
   nowPlayingSortState,
   recentlyQueuedState,
 } from '../Jotai/Local';
+import { mediaTimeState, playingState } from '../Jotai/MediaPlaying';
 import { getStore } from '../Jotai/Storage';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
@@ -25,7 +26,6 @@ import {
   onlyPlayLikesState,
   songHateFuncFam,
 } from './Likes';
-import { mediaTimeState, playingState } from './MediaPlaying';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
 import { repeatState, shuffleFunc } from './ReadWrite';
@@ -222,11 +222,12 @@ export function PlaySongs(
  * @returns void
  */
 export function StopAndClear({ reset }: MyTransactionInterface): void {
+  const store = getStore();
   reset(songListState);
   reset(currentIndexState);
   reset(activePlaylistState);
-  reset(mediaTimeState);
-  reset(playingState);
+  store.set(mediaTimeState, RESET);
+  store.set(playingState, RESET);
   reset(songPlaybackOrderState);
 }
 
