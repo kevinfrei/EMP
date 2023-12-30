@@ -21,17 +21,18 @@ import {
   useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
-
+// eslint-disable-next-line @typescript-eslint/naming-convention
+import { useAtomValue } from 'jotai';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
+import { RescanInProgressState } from '../../Jotai/Miscellany';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   ignoreItemsState,
-  RescanInProgressState,
 } from '../../Recoil/ReadOnly';
 import {
   albumCoverNameState,
@@ -72,7 +73,7 @@ export async function addLocation({
 function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useRecoilState(locationsState);
   const [defLoc, setDefLoc] = useRecoilState(defaultLocationState);
-  const rescanInProgress = useRecoilValue(RescanInProgressState);
+  const rescanInProgress = useAtomValue(RescanInProgressState);
   const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });

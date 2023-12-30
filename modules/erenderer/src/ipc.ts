@@ -182,7 +182,7 @@ export async function InvokeMain<T>(
     // Wait a bit, as Jotai may call IPC stuff pretty early
     const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
     for (let i = 0; i < 20; i++) {
-      await sleep(100);
+      await sleep(i * i);
       if (window.electronConnector) {
         break;
       }
