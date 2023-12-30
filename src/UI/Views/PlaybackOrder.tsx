@@ -1,8 +1,7 @@
 import { IDetailsRowProps, Panel, PanelType } from '@fluentui/react';
-import { useAtomValue } from 'jotai';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { isMiniplayerState } from '../../Jotai/Local';
-import { playOrderDisplayingState } from '../../Recoil/Local';
+import { useAtom, useAtomValue } from 'jotai';
+import { useRecoilValue } from 'recoil';
+import { isMiniplayerState, playOrderDisplayingState } from '../../Jotai/Local';
 import { shuffleFunc } from '../../Recoil/ReadWrite';
 import {
   currentIndexState,
@@ -21,12 +20,11 @@ export function PlaybackOrder(): JSX.Element {
     pbOrder !== 'ordered'
       ? pbOrder.map((val) => unsortedSongKeys[val])
       : unsortedSongKeys;
-  const isOpen = useRecoilValue(playOrderDisplayingState);
-  const close = useRecoilCallback(
-    ({ set }) =>
-      () =>
-        set(playOrderDisplayingState, false),
+  const [isOpen, setPlaybackOrderDisplaying] = useAtom(
+    playOrderDisplayingState,
   );
+  const close = () => setPlaybackOrderDisplaying(false);
+
   const isBold = (props: IDetailsRowProps) => props.itemIndex === curIndex;
   return (
     <Panel

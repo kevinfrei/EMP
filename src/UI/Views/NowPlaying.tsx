@@ -33,8 +33,7 @@ import {
 import { atom as jatom, useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { isMiniplayerState } from '../../Jotai/Local';
-import { nowPlayingSortState } from '../../Recoil/Local';
+import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
 import {
   playlistFuncFam,
   playlistNamesFunc,
@@ -201,7 +200,7 @@ export function NowPlayingView(): JSX.Element {
   const articles = useRecoilValue(ignoreArticlesState);
   const [curIndex, setCurIndex] = useRecoilState(currentSongIndexFunc);
   const [songList, setSongList] = useRecoilState(songListState);
-  const [sortBy, setSortBy] = useRecoilState(nowPlayingSortState);
+  const [sortBy, setSortBy] = useAtom(nowPlayingSortState);
   const curSongs = useRecoilValue(curSongsFunc);
   const isMini = useAtomValue(isMiniplayerState);
   const [songContext, setSongContext] = useAtom(nowPlayingContextState);
