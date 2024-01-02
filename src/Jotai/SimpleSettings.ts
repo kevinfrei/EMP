@@ -5,7 +5,7 @@ export const mutedState = atomWithMainStorage('mute', false, isBoolean);
 
 export const volumeState = atomWithMainStorage('volume', 0.5, isNumber);
 
-// export const repeatState = atomWithMainStorage('repeat', false, isBoolean);
+export const repeatState = atomWithMainStorage('repeat', false, isBoolean);
 
 // This is the 'locations' for searching for tunes
 export const locationsState = atomWithMainStorage(

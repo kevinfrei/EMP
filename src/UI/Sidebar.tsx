@@ -1,11 +1,10 @@
 import { FontIcon, SearchBox, Text } from '@fluentui/react';
 import { CurrentView, Keys, StrId, st } from '@freik/emp-shared';
 import { hasStrField, isObjectNonNull } from '@freik/typechk';
-import { useAtom } from 'jotai';
-import { useRecoilCallback } from 'recoil';
+import { useAtom, useSetAtom } from 'jotai';
 import { curViewFunc } from '../Jotai/CurrentView';
+import { searchTermState } from '../Jotai/MusicDatabase';
 import { SetSearch, isHostMac } from '../MyWindow';
-import { searchTermState } from '../Recoil/ReadOnly';
 import { GetHelperText } from './MenuHelpers';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
@@ -73,10 +72,11 @@ export function isSearchBox(target: EventTarget | null): boolean {
 
 export function Sidebar(): JSX.Element {
   const [curView, setCurView] = useAtom(curViewFunc);
-  const onSearch = useRecoilCallback(({ set }) => (newValue: string) => {
+  const setSearchTerm = useSetAtom(searchTermState);
+  const onSearch = (newValue: string) => {
     void setCurView(CurrentView.search);
-    set(searchTermState, newValue);
-  });
+    setSearchTerm(newValue);
+  };
   const onFocus = () => void setCurView(CurrentView.search);
   const otherGrabber = isHostMac() ? (
     <br />

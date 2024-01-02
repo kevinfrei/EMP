@@ -9,13 +9,13 @@ export const isMiniplayerState = atom(false);
 export const nowPlayingSortState = atomWithReset(MakeSortKey([''], ['lyrnt']));
 
 // The currently selected song(s) to display details for
-export const songDetailState = atomWithReset<Set<SongKey>>(new Set<SongKey>());
+export const songDetailState = atomWithReset(new Set<SongKey>());
 
 // The # of recently added songs to show for a few seconds
-export const recentlyQueuedState = atomWithReset<number>(0);
+export const recentlyQueuedState = atomWithReset(0);
 
 // Is the 'display message' showing
-export const displayMessageState = atom<boolean>(false);
+export const displayMessageState = atom(false);
 
 // Are we displaying the play order?
-export const playOrderDisplayingState = atom<boolean>(false);
+export const playOrderDisplayingState = atom(false);

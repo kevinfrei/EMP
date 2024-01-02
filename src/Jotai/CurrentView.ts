@@ -7,7 +7,7 @@ import { atomWithMainStorage } from './Storage';
 
 // The currently selected item from the left bar
 // artist, album, search, tools, settings, etc...
-const curViewBackerState = atomWithMainStorage<CurrentView>(
+const curViewBackerState = atomWithMainStorage(
   'CurrentView',
   CurrentView.settings,
   isCurrentView,

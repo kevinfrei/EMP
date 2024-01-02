@@ -24,10 +24,16 @@ import {
 
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { useBoolAtom } from '../../Jotai/Hooks';
-import { rescanInProgressState } from '../../Jotai/Miscellany';
+import {
+  allAlbumsFunc,
+  allArtistsFunc,
+  allSongsFunc,
+  ignoreItemsState,
+  rescanInProgressState,
+} from '../../Jotai/MusicDatabase';
 import {
   albumCoverNameState,
   defaultLocationState,
@@ -42,12 +48,6 @@ import {
   minSongCountForArtistListState,
   showArtistsWithFullAlbumsState,
 } from '../../Recoil/Preferences';
-import {
-  allAlbumsFunc,
-  allArtistsFunc,
-  allSongsFunc,
-  ignoreItemsState,
-} from '../../Recoil/ReadOnly';
 import { GetHelperText } from '../MenuHelpers';
 import './styles/Settings.css';
 
@@ -81,9 +81,9 @@ function MusicLocations(): JSX.Element {
   const onAddLocation = useMyTransaction((xact) => () => {
     addLocation(xact).catch(Catch);
   });
-  const songs = useRecoilValue(allSongsFunc);
-  const albums = useRecoilValue(allAlbumsFunc);
-  const artists = useRecoilValue(allArtistsFunc);
+  const songs = useAtomValue(allSongsFunc);
+  const albums = useAtomValue(allAlbumsFunc);
+  const artists = useAtomValue(allArtistsFunc);
   const setSaveStyle = {
     textContainer: { fontSize: 11 },
     root: { height: 22, padding: 5, minWidth: 45 },
@@ -160,7 +160,7 @@ const ignoreOptions: IDropdownOption[] = [...ignoreTypeNameMap.entries()].map(
 );
 
 function IgnoreList(): JSX.Element {
-  const ignoreItems = useRecoilValue(ignoreItemsState);
+  const ignoreItems = useAtomValue(ignoreItemsState);
   const [newType, setNewType] = useState<IgnoreItemType | ''>('');
   const [newValue, setNewValue] = useState<string>('');
   return (
