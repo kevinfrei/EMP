@@ -5,18 +5,18 @@ import {
   TextField,
 } from '@fluentui/react';
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isArray, isString } from '@freik/typechk';
 import { Expandable } from '@freik/web-utils';
 import { useRecoilValue } from 'recoil';
-import { IpcId } from '@freik/emp-shared';
 import {
   albumByKeyFuncFam,
   artistStringFuncFam,
   commonDataFuncFam,
   mediaInfoFuncFam,
   songByKeyFuncFam,
-} from '../../Recoil/ReadOnly';
+} from '../../Jotai/MusicDatabase';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
 import { altRowRenderer } from './../SongList';
 import { SimpleSongsList } from './../Views/MixedSongs';

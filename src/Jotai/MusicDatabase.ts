@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { Effects, Ipc } from '@freik/electron-render';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
+import { isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import {
   Album,
@@ -16,6 +15,7 @@ import {
   chkObjectOfType,
   hasFieldType,
   isArrayOfString,
+  isBoolean,
   isNumber,
   isString,
 } from '@freik/typechk';
@@ -30,7 +30,7 @@ import {
   showArtistsWithFullAlbumsState,
 } from './SimpleSettings';
 import { songListState } from './SongsPlaying';
-import { atomFromIpc } from './Storage';
+import { atomFromIpc, atomFromMain } from './Storage';
 // import { songListState } from './SongPlaying';
 
 const { wrn, log } = MakeLog('EMP:render:ReadOnly:log'); // eslint-disable-line
@@ -432,46 +432,14 @@ export const filteredArtistsFunc = atom(async (get) => {
   return artists;
 });
 
-export const ignoreItemsState = atom<IgnoreItem[]>({
-  key: 'IgnoreItemsState',
-  effects: [
-    Effects.oneWayFromMain(
-      async (): Promise<IgnoreItem[]> => {
-        const il = await Ipc.CallMain(
-          IpcId.GetIgnoreList,
-          undefined,
-          isIgnoreItemArrayFn,
-        );
-        return il || [];
-      },
-      IpcId.PushIgnoreList,
-      (il: unknown) => {
-        if (isIgnoreItemArrayFn(il)) {
-          return il;
-        }
-        wrn('Invalid result from ignore-items-update:');
-        wrn(il);
-      },
-    ),
-  ],
-});
+export const ignoreItemsState = atomFromIpc(
+  'IgnoreItemsState',
+  [],
+  isIgnoreItemArrayFn,
+);
 
-/*
-export const RescanInProgressState = atom<boolean>({
-  key: 'RescanInProgress',
-  effects: [
-    Effects.oneWayFromMain(
-      () => false,
-      IpcId.RescanInProgress,
-      (info: unknown) => {
-        if (isBoolean(info)) {
-          return info;
-        }
-        wrn('Invalid RescanInProgress value:');
-        wrn(typeof info);
-        wrn(info);
-      },
-    ),
-  ],
-});
-*/
+export const rescanInProgressState = atomFromMain(
+  'RescanInProgress',
+  false,
+  isBoolean,
+);
