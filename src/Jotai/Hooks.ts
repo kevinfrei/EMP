@@ -7,9 +7,17 @@ export type SetStateActionWithReset<T> =
   | typeof RESET
   | ((prev: T) => T | typeof RESET);
 
+export type SetStateAction<T> = T | ((prev: T) => T);
+
 export type WritableAtomType<T> = WritableAtom<
   T | Promise<T>,
   [SetStateActionWithReset<T | Promise<T>>],
+  Promise<void>
+>;
+
+export type WriteOnlyAtomType<T> = WritableAtom<
+  T | Promise<T>,
+  [SetStateAction<T | Promise<T>>],
   Promise<void>
 >;
 

@@ -39,19 +39,10 @@ const isTranscodeState = chkObjectOfType<TranscodeState>(
   },
 );
 
-const emptyXcodeInfo: TranscodeState = {
-  curStatus: '',
-  filesFound: 0,
-  filesPending: 0,
-  filesUntouched: 0,
-  filesTranscoded: [],
-};
-
 // const xcodeErr = (curStatus: string) => ({ ...emptyXcodeInfo, curStatus });
 
 export const transcodeStatusState = atomFromMain(
   IpcId.TranscodingUpdate,
-  emptyXcodeInfo,
   isTranscodeState,
 );
 

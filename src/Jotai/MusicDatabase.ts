@@ -114,7 +114,6 @@ function MakeMusicLibraryFromFlatAudioDatabase(
 
 const musicLibraryState = atomFromIpc<FlatAudioDatabase, MusicLibrary>(
   'musicDatabase',
-  emptyLibrary,
   isFlatAudioDatabase,
   MakeMusicLibraryFromFlatAudioDatabase,
 );
@@ -434,12 +433,10 @@ export const filteredArtistsFunc = atom(async (get) => {
 
 export const ignoreItemsState = atomFromIpc(
   'IgnoreItemsState',
-  [],
   isIgnoreItemArrayFn,
 );
 
 export const rescanInProgressState = atomFromMain(
   'RescanInProgress',
-  false,
   isBoolean,
 );

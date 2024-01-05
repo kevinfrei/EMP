@@ -2,14 +2,18 @@ import { Ipc } from '@freik/electron-render';
 import {
   Pickle,
   SafelyUnpickle,
+  isDefined,
+  isNull,
   isString,
   isUndefined,
   typecheck,
 } from '@freik/typechk';
+import { Fail } from '@freik/web-utils';
 import { createStore } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { AsyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
-import { WritableAtomType } from './Hooks';
+import { AsyncCallback, atomFromCallback } from './FromCallback';
+import { WritableAtomType, WriteOnlyAtomType } from './Hooks';
 
 const theStore = createStore();
 
@@ -36,6 +40,24 @@ function makeGetItem<T>(
   };
 }
 
+function makeGetReadOnlyItem<T>(
+  chk: typecheck<T>,
+): (key: string) => PromiseLike<T> {
+  return async (key: string): Promise<T> => {
+    const strValue = await Ipc.ReadFromStorage(key);
+    if (isString(strValue)) {
+      const val = SafelyUnpickle(strValue, chk);
+      if (isDefined(val)) {
+        return val;
+      }
+    }
+    Fail(
+      'getReadonlyItem',
+      `Got invalid value from Ipc.ReadFromStorage(${key})`,
+    );
+  };
+}
+
 async function setItem<T>(key: string, newValue: T): Promise<void> {
   await Ipc.WriteToStorage(key, Pickle(newValue));
 }
@@ -57,6 +79,19 @@ function makeSubscribe<T>(
   };
 }
 
+function makeReadOnlySubscribe<T>(
+  chk: typecheck<T>,
+): (key: string, callback: (value: T) => void) => Unsub {
+  return (key: string, callback: (value: T) => void) => {
+    const lk = Ipc.Subscribe(key, (val: unknown) => {
+      if (chk(val)) {
+        callback(val);
+      }
+    });
+    return () => Ipc.Unsubscribe(lk);
+  };
+}
+
 export function getMainStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
   return {
     getItem: makeGetItem(chk),
@@ -74,56 +109,50 @@ export function atomWithMainStorage<T>(
   return atomWithStorage(key, init, getMainStorage(chk), { getOnInit: true });
 }
 
-async function noSetItem<T>(_key: string, _newValue: T): Promise<void> {
-  await Promise.resolve();
-}
-
-async function noRemoveItem(_key: string): Promise<void> {
-  await Promise.resolve();
-}
-
-export function getMainReadOnlyStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
+export function getMainReadOnlyStorage<T>(chk: typecheck<T>): AsyncCallback<T> {
   return {
-    getItem: makeGetItem(chk),
-    setItem: noSetItem,
-    removeItem: noRemoveItem,
-    subscribe: makeSubscribe(chk),
+    getItem: makeGetReadOnlyItem(chk),
+    subscribe: makeReadOnlySubscribe(chk),
   };
 }
 
 export function atomFromMain<T>(
   key: string,
-  init: T,
   chk: typecheck<T>,
-): WritableAtomType<T> {
-  return atomWithStorage(key, init, getMainReadOnlyStorage(chk));
+): WriteOnlyAtomType<T> {
+  return atomFromCallback(key, getMainReadOnlyStorage(chk));
 }
 
 function makeGetItemFromCall<T, U>(
   chk: typecheck<T>,
-  xform: (input: T) => U,
-): (key: string, initialValue: U) => PromiseLike<U> {
-  return async (key: string, initialValue: U): Promise<U> => {
+  xform: (input: T) => U | undefined,
+): (key: string) => PromiseLike<U> {
+  return async (key: string): Promise<U> => {
     const maybeBefore = await Ipc.CallMain(key, undefined, chk);
-    if (!maybeBefore) {
-      return initialValue;
+    if (!maybeBefore && (isUndefined(maybeBefore) || isNull(maybeBefore))) {
+      Fail(`Invalid call IPC result from CallMain with ${key}`);
+    } else {
+      const maybeValue = xform(maybeBefore as Awaited<T>);
+      if (isUndefined(maybeValue)) {
+        Fail(`Invalid coercien for IPC call result form CallMain with ${key}`);
+      } else {
+        return maybeValue;
+      }
     }
-    const maybeValue = xform(maybeBefore);
-    return isUndefined(maybeValue) ? initialValue : maybeValue;
   };
 }
 
-function makeSubscribeListener<T, U>(
+function makeSubscribeForCallback<T, U>(
   chk: typecheck<T>,
   xform: (v: T) => U | undefined,
-): (key: string, callback: (value: U) => void, initialValue: U) => Unsub {
-  return (key: string, callback: (value: U) => void, initialValue: U) => {
+): (key: string, callback: (value: U) => void) => Unsub {
+  return (key: string, callback: (value: U) => void) => {
     const lk = Ipc.Subscribe(key, (val: unknown) => {
       if (chk(val)) {
         const u = xform(val);
-        callback(isUndefined(u) ? initialValue : u);
-      } else {
-        callback(initialValue);
+        if (!isUndefined(u)) {
+          callback(u);
+        }
       }
     });
     return () => Ipc.Unsubscribe(lk);
@@ -132,59 +161,48 @@ function makeSubscribeListener<T, U>(
 
 const identity = <T>(a: T) => a;
 
-function getMainIpcListener<T>(chk: typecheck<T>): AsyncStorage<T>;
+function getMainIpcListener<T>(chk: typecheck<T>): AsyncCallback<T>;
 
 function getMainIpcListener<T, U>(
   chk: typecheck<T>,
   xform: (v: T) => U,
-): AsyncStorage<U>;
+): AsyncCallback<U>;
 
 function getMainIpcListener<T, U>(
   chk: typecheck<T>,
   xform?: (v: T) => U,
-): AsyncStorage<T> | AsyncStorage<U> {
+): AsyncCallback<T> | AsyncCallback<U> {
   if (isUndefined(xform)) {
     return {
       getItem: makeGetItemFromCall(chk, identity),
-      setItem: noSetItem,
-      removeItem: noRemoveItem,
-      subscribe: makeSubscribeListener(chk, identity),
+      subscribe: makeSubscribeForCallback(chk, identity),
     };
   } else {
     return {
       getItem: makeGetItemFromCall(chk, xform),
-      setItem: noSetItem,
-      removeItem: noRemoveItem,
-      subscribe: makeSubscribeListener(chk, xform),
+      subscribe: makeSubscribeForCallback(chk, xform),
     };
   }
 }
 
 export function atomFromIpc<T>(
   key: string,
-  init: T,
   chk: typecheck<T>,
-): WritableAtomType<T>;
+): WriteOnlyAtomType<T>;
 export function atomFromIpc<T, U>(
   key: string,
-  init: U,
   chk: typecheck<T>,
   xform: (v: T) => U,
-): WritableAtomType<U>;
+): WriteOnlyAtomType<U>;
 
 export function atomFromIpc<T, U>(
   key: string,
-  init: T,
   chk: typecheck<T>,
   xform?: (v: T) => U,
-): WritableAtomType<U> | WritableAtomType<T> {
+): WriteOnlyAtomType<U> | WriteOnlyAtomType<T> {
   if (isUndefined(xform)) {
-    return atomWithStorage(key, init, getMainIpcListener(chk), {
-      getOnInit: true,
-    });
+    return atomFromCallback(key, getMainIpcListener(chk));
   } else {
-    return atomWithStorage(key, xform(init), getMainIpcListener(chk, xform), {
-      getOnInit: true,
-    });
+    return atomFromCallback(key, getMainIpcListener(chk, xform));
   }
 }
