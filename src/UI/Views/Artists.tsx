@@ -20,17 +20,16 @@ import {
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   artistByKeyFuncFam,
   filteredArtistsFunc,
-} from '../../Recoil/ReadOnly';
+} from '../../Jotai/MusicDatabase';
+import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   articlesCmp,
   ArtistSong,
@@ -65,7 +64,7 @@ const [artistExpandedState, artistIsExpandedState] =
 const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
-  const artist = useRecoilValue(artistByKeyFuncFam(group.key));
+  const artist = useAtomValue(artistByKeyFuncFam(group.key));
   const picurl = getArtistImageUrl(group.key);
   const setArtistContext = useSetAtom(artistContextState);
   const onAddSongsClick = useMyTransaction((xact) => () => {
@@ -138,15 +137,15 @@ export function getFilteredArtists(
 export function GroupedAristList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const artists = useRecoilValue(allArtistsFunc);
-  const albums = useRecoilValue(allAlbumsFunc);
-  const songs = useRecoilValue(allSongsFunc);
+  const artists = useAtomValue(allArtistsFunc);
+  const albums = useAtomValue(allAlbumsFunc);
+  const songs = useAtomValue(allSongsFunc);
   const ignoreArticles = useAtomValue(ignoreArticlesState);
   const keyBuffer = useAtomValue(focusedKeysFuncFam(CurrentView.artists));
   const [artistContext, setArtistContext] = useAtom(artistContextState);
-  const filteredArtists = useRecoilValue(filteredArtistsFunc);
+  const filteredArtists = useAtomValue(filteredArtistsFunc);
   const [curSort, setSort] = useAtom(sortOrderState);
-  const curExpandedState = useRecoilState(artistExpandedState);
+  const curExpandedState = useRecoilValue(artistExpandedState);
   const resetArtistContext = useResetAtom(artistContextState);
 
   const onRightClick = (item: ArtistSong, _index?: number, ev?: Event) => {

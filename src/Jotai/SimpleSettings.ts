@@ -7,6 +7,8 @@ export const volumeState = atomWithMainStorage('volume', 0.5, isNumber);
 
 export const repeatState = atomWithMainStorage('repeat', false, isBoolean);
 
+export const shuffleState = atomWithMainStorage('shuffle', false, isBoolean);
+
 // This is the 'locations' for searching for tunes
 export const locationsState = atomWithMainStorage(
   'locations',
