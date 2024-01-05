@@ -21,17 +21,17 @@ import {
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   albumByKeyFuncFam,
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   dataForAlbumFuncFam,
-} from '../../Recoil/ReadOnly';
+} from '../../Jotai/MusicDatabase';
+import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   articlesCmp,
   MakeSortKey,
@@ -68,8 +68,8 @@ const albumSortState = jatom(MakeSortKey(['l', 'n'], ['lry', 'nrt']));
 
 type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
-  const album = useRecoilValue(albumByKeyFuncFam(group.key));
-  const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
+  const album = useAtomValue(albumByKeyFuncFam(group.key));
+  const albumData = useAtomValue(dataForAlbumFuncFam(group.key));
   const picurl = getAlbumImageUrl(group.key);
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, album.songs);
@@ -120,11 +120,11 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
 export function GroupedAlbumList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const albums = useRecoilValue(allAlbumsFunc);
+  const albums = useAtomValue(allAlbumsFunc);
   const ignoreArticles = useAtomValue(ignoreArticlesState);
   const keyBuffer = useAtomValue(focusedKeysFuncFam(CurrentView.albums));
-  const allSongs = useRecoilValue(allSongsFunc);
-  const allArtists = useRecoilValue(allArtistsFunc);
+  const allSongs = useAtomValue(allSongsFunc);
+  const allArtists = useAtomValue(allArtistsFunc);
   const newAlbumSort = useAtomValue(albumSortState);
   const [albumContext, setAlbumContext] = useAtom(albumContextState);
 
