@@ -202,12 +202,12 @@ function getMainIpcListener<T, U>(
 export function atomFromIpc<T>(
   key: string,
   chk: typecheck<T>,
-): WriteOnlyAtomType<T>;
+): WritableAtomType<T>;
 export function atomFromIpc<T, U>(
   key: string,
   chk: typecheck<T>,
   xform: (v: T) => U,
-): WriteOnlyAtomType<U>;
+): WritableAtomType<U>;
 
 export function atomFromIpc<T, U>(
   key: string,

@@ -20,23 +20,20 @@ import { mediaTimeState, playingState } from '../Jotai/MediaPlaying';
 import { getStore, MyStore } from '../Jotai/Storage';
 import { isPlaylist, ShuffleArray } from '../Tools';
 import {
-  isSongHated,
-  isSongLiked,
+  isSongHatedFam,
+  isSongLikedFam,
   neverPlayHatesState,
   onlyPlayLikesState,
   songHateFuncFam,
 } from './Likes';
-import { repeatState } from './PlaybackOrder';
-import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
-import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
-import { shuffleFunc } from './ReadWrite';
+import { repeatState, shuffleState } from './SimpleSettings';
 import {
   activePlaylistState,
   currentIndexState,
   currentSongKeyFunc,
   songListState,
   songPlaybackOrderState,
-} from './SongPlaying';
+} from './SongsPlaying';
 
 // const { err, log } = MakeLog('EMP:render:api');
 
@@ -57,23 +54,23 @@ export async function MaybePlayNext(
   const songList = await store.get(songListState);
   const curSong = await store.get(currentSongKeyFunc);
   if (dislike) {
-    set(songHateFuncFam(curSong), true);
-    if (get(neverPlayHatesState)) {
-      RemoveSongFromNowPlaying(xact, curSong);
+    await store.set(songHateFuncFam(curSong), true);
+    if (await store.get(neverPlayHatesState)) {
+      await RemoveSongFromNowPlaying(store, curSong);
     }
   }
   if (curIndex + 1 < songList.length) {
-    set(currentIndexState, curIndex + 1);
+    await store.set(currentIndexState, curIndex + 1);
     return true;
   }
-  const repeat = get(repeatState);
+  const repeat = await store.get(repeatState);
   if (!repeat) {
     return false;
   }
-  if (get(shuffleFunc)) {
-    ShufflePlaying(xact, true);
+  if (await store.get(shuffleState)) {
+    ShufflePlaying(store, true);
   }
-  set(currentIndexState, 0);
+  await store.set(currentIndexState, 0);
   return true;
 }
 
@@ -84,14 +81,14 @@ export async function MaybePlayNext(
  *
  * @returns Promise<void>
  */
-export function MaybePlayPrev({ get, set }: MyTransactionInterface): void {
-  const songList = get(songListState);
+export async function MaybePlayPrev(store: MyStore): Promise<void> {
+  const songList = await store.get(songListState);
   if (songList.length > 0) {
-    const curIndex = get(currentIndexState);
+    const curIndex = await store.get(currentIndexState);
     if (curIndex > 0) {
-      set(currentIndexState, curIndex - 1);
-    } else if (get(repeatState)) {
-      set(currentIndexState, songList.length - 1);
+      await store.set(currentIndexState, curIndex - 1);
+    } else if (await store.get(repeatState)) {
+      await store.set(currentIndexState, songList.length - 1);
     }
   }
 }
@@ -104,22 +101,22 @@ export function MaybePlayPrev({ get, set }: MyTransactionInterface): void {
  *
  * @returns {SongKey[]} The filtered list of songs
  */
-function GetFilteredSongs(
-  xact: MyTransactionInterface,
+async function GetFilteredSongs(
+  store: MyStore,
   listToFilter: Iterable<SongKey>,
-): SongKey[] {
-  const onlyLikes = xact.get(onlyPlayLikesState);
-  const neverHates = xact.get(neverPlayHatesState);
+): Promise<SongKey[]> {
+  const onlyLikes = await store.get(onlyPlayLikesState);
+  const neverHates = await store.get(neverPlayHatesState);
   const playList = [...listToFilter];
-  const filtered = playList.filter((songKey: SongKey) => {
-    if (onlyLikes) {
-      return isSongLiked(xact, songKey);
+  const filtered: SongKey[] = [];
+  for (const songKey of playList) {
+    if (
+      (onlyLikes && (await store.get(isSongLikedFam(songKey)))) ||
+      (neverHates && !(await store.get(isSongHatedFam(songKey))))
+    ) {
+      filtered.push(songKey);
     }
-    if (neverHates) {
-      return !isSongHated(xact, songKey);
-    }
-    return true;
-  });
+  }
   return filtered.length === 0 ? playList : filtered;
 }
 
@@ -131,33 +128,31 @@ function GetFilteredSongs(
  *
  * @returns void
  */
-export function AddSongs(
-  xact: MyTransactionInterface,
+export async function AddSongs(
+  store: MyStore,
   listToAdd: Iterable<SongKey>,
   playlistName?: string,
-): void {
-  const store = getStore();
-  const { get, set } = xact;
-  const songList = get(songListState);
+): Promise<void> {
+  const songList = await store.get(songListState);
   if (songList.length === 0) {
     // This makes it so that if you add, it will still register as
     // the playlist you added, if the current playlist is empty
-    PlaySongs(xact, listToAdd, playlistName);
+    await PlaySongs(store, listToAdd, playlistName);
   }
-  const shuffle = get(shuffleFunc);
-  const playList = GetFilteredSongs(xact, listToAdd);
+  const shuffle = await store.get(shuffleState);
+  const playList = await GetFilteredSongs(store, listToAdd);
   const fullList = [...songList, ...playList];
-  set(songListState, fullList);
+  await store.set(songListState, fullList);
   if (shuffle) {
     // If we're shuffled, shuffle in to the "rest" of the current play order
-    const playOrder = get(songPlaybackOrderState);
-    const curIdx = get(currentIndexState);
+    const playOrder = await store.get(songPlaybackOrderState);
+    const curIdx = await store.get(currentIndexState);
     if (
       playOrder === 'ordered' || // We can wind up here if the shuffle was true at start :/
       curIdx < 0
     ) {
       // No current song playing: Just shuffle & be done
-      set(
+      await store.set(
         songPlaybackOrderState,
         ShuffleArray(Array.from(fullList, (_, idx) => idx)),
       );
@@ -169,7 +164,7 @@ export function AddSongs(
         ...playOrder.slice(curIdx + 1),
         ...Array.from(playList, (_, idx) => songList.length + idx),
       ];
-      set(songPlaybackOrderState, [
+      await store.set(songPlaybackOrderState, [
         ...alreadyPlayed,
         ...ShuffleArray(leftToPlay),
       ]);
@@ -192,7 +187,7 @@ export function PlaySongs(
   playlistName?: PlaylistName,
 ): void {
   const store = getStore();
-
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { reset, set, get } = xact;
   const playList = GetFilteredSongs(xact, listToPlay);
   if (isPlaylist(playlistName)) {
