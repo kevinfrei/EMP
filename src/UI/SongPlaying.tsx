@@ -21,14 +21,13 @@ import {
   mediaTimeState,
   playingState,
 } from '../Jotai/MediaPlaying';
-import { mutedState, volumeState } from '../Jotai/SimpleSettings';
 import {
   SongDescription,
   albumKeyForSongKeyFuncFam,
   allSongsFunc,
   dataForSongFuncFam,
-  picForKeyFam,
-} from '../Recoil/ReadOnly';
+} from '../Jotai/MusicDatabase';
+import { mutedState, volumeState } from '../Jotai/SimpleSettings';
 import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
@@ -43,7 +42,7 @@ const { log } = MakeLog('EMP:render:SongPlayback');
 
 function CoverArt(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const albumKey = useRecoilValue(albumKeyForSongKeyFuncFam(songKey));
+  const albumKey = useAtomValue(albumKeyForSongKeyFuncFam(songKey));
   const picurl = getAlbumImageUrl(albumKey);
   return (
     <span id="song-cover-art">
@@ -107,9 +106,7 @@ function MediaTimeSlider(): JSX.Element {
 
 function SongName(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const { title }: SongDescription = useRecoilValue(
-    dataForSongFuncFam(songKey),
-  );
+  const { title }: SongDescription = useAtomValue(dataForSongFuncFam(songKey));
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
       {title}
@@ -119,7 +116,7 @@ function SongName(): JSX.Element {
 
 function ArtistAlbum(): JSX.Element {
   const songKey = useRecoilValue(currentSongKeyFunc);
-  const { artist, album }: SongDescription = useRecoilValue(
+  const { artist, album }: SongDescription = useAtomValue(
     dataForSongFuncFam(songKey),
   );
   if (songKey) {
@@ -181,8 +178,8 @@ export const SongPlaying = forwardRef(
         });
       }
     };
-    const metadata = useRecoilValue(dataForSongFuncFam(songKey));
-    const picDataUri = useRecoilValue(picForKeyFam(songKey));
+    const metadata = useAtomValue(dataForSongFuncFam(songKey));
+    const picDataUri = getAlbumImageUrl(songKey);
     useEffect(() => {
       navigator.mediaSession.metadata = new MediaMetadata({
         artist: metadata.artist,
