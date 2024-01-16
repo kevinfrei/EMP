@@ -1,15 +1,7 @@
 import { Ipc } from '@freik/electron-render';
 import { IpcId } from '@freik/emp-shared';
-import {
-  isAlbumKey,
-  isArtistKey,
-  isSongKey,
-  MediaKey,
-  PlaylistName,
-  SongKey,
-} from '@freik/media-core';
+import { PlaylistName, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
-import type { MyTransactionInterface } from '@freik/web-utils';
 import { RESET } from 'jotai/utils';
 import {
   displayMessageState,
@@ -17,8 +9,8 @@ import {
   recentlyQueuedState,
 } from '../Jotai/Local';
 import { mediaTimeState, playingState } from '../Jotai/MediaPlaying';
-import { getStore, MyStore } from '../Jotai/Storage';
-import { isPlaylist, ShuffleArray } from '../Tools';
+import { MyStore } from '../Jotai/Storage';
+import { ShuffleArray, isPlaylist } from '../Tools';
 import {
   isSongHatedFam,
   isSongLikedFam,
@@ -26,6 +18,7 @@ import {
   onlyPlayLikesState,
   songHateFuncFam,
 } from './Likes';
+import { playlistFuncFam, playlistNamesFunc } from './Playlists';
 import { repeatState, shuffleState } from './SimpleSettings';
 import {
   activePlaylistState,
@@ -68,7 +61,7 @@ export async function MaybePlayNext(
     return false;
   }
   if (await store.get(shuffleState)) {
-    ShufflePlaying(store, true);
+    await ShufflePlaying(store, true);
   }
   await store.set(currentIndexState, 0);
   return true;
@@ -181,29 +174,27 @@ export async function AddSongs(
  * @param listToPlay - The list of songkeys to play (in the order desired)
  * @param playlistName - The playlist name
  */
-export function PlaySongs(
-  xact: MyTransactionInterface,
+export async function PlaySongs(
+  store: MyStore,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
-): void {
-  const store = getStore();
+): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { reset, set, get } = xact;
-  const playList = GetFilteredSongs(xact, listToPlay);
+  const playList = await GetFilteredSongs(store, listToPlay);
   if (isPlaylist(playlistName)) {
-    set(activePlaylistState, playlistName);
+    await store.set(activePlaylistState, playlistName);
   } else {
-    reset(activePlaylistState);
+    await store.set(activePlaylistState, RESET);
   }
-  const shuffle = get(shuffleFunc);
+  const shuffle = await store.get(shuffleState);
   if (shuffle) {
-    set(
+    await store.set(
       songPlaybackOrderState,
       ShuffleArray(Array.from(playList, (_, idx) => idx)),
     );
   }
-  set(songListState, [...playList]);
-  set(currentIndexState, playList.length >= 0 ? 0 : -1);
+  await store.set(songListState, [...playList]);
+  await store.set(currentIndexState, playList.length >= 0 ? 0 : -1);
   store.set(recentlyQueuedState, playList.length);
   store.set(displayMessageState, true);
 }
@@ -216,14 +207,13 @@ export function PlaySongs(
  *
  * @returns void
  */
-export function StopAndClear({ reset }: MyTransactionInterface): void {
-  const store = getStore();
-  reset(songListState);
-  reset(currentIndexState);
-  reset(activePlaylistState);
+export async function StopAndClear(store: MyStore): Promise<void> {
+  await store.set(songListState, RESET);
+  await store.set(currentIndexState, RESET);
+  await store.set(activePlaylistState, RESET);
   store.set(mediaTimeState, RESET);
   store.set(playingState, RESET);
-  reset(songPlaybackOrderState);
+  await store.set(songPlaybackOrderState, RESET);
 }
 
 /**
@@ -232,17 +222,16 @@ export function StopAndClear({ reset }: MyTransactionInterface): void {
  *
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  */
-export function ShufflePlaying(
-  { get, set }: MyTransactionInterface,
+export async function ShufflePlaying(
+  store: MyStore,
   ignoreCur?: boolean,
-): void {
-  const store = getStore();
+): Promise<void> {
   ignoreCur = ignoreCur === true;
-  const curIndex = get(currentIndexState);
-  const curSongList = get(songListState);
+  const curIndex = await store.get(currentIndexState);
+  const curSongList = await store.get(songListState);
   if (curIndex < 0 || ignoreCur) {
     const nums = Array.from(curSongList, (_, idx) => idx);
-    set(songPlaybackOrderState, ShuffleArray(nums));
+    await store.set(songPlaybackOrderState, ShuffleArray(nums));
   } else {
     // Make an array skipping the current index (with an extra at the end...)
     const notNowPlaying = Array.from(curSongList, (_, idx) =>
@@ -252,10 +241,10 @@ export function ShufflePlaying(
     notNowPlaying.pop();
     const newSongs = ShuffleArray(notNowPlaying);
     // Re-insert curIndex back at the beginning of the array
-    set(songPlaybackOrderState, [curIndex, ...newSongs]);
+    await store.set(songPlaybackOrderState, [curIndex, ...newSongs]);
   }
   if (curSongList.length > 0) {
-    set(currentIndexState, 0);
+    await store.set(currentIndexState, 0);
   }
   store.set(nowPlayingSortState, RESET);
 }
@@ -263,73 +252,55 @@ export function ShufflePlaying(
 /**
  * Rename a playlist (make sure you've got the name right)
  **/
-export function RenamePlaylist(
-  { set, get }: MyTransactionInterface,
+export async function RenamePlaylist(
+  store: MyStore,
   curName: PlaylistName,
   newName: PlaylistName,
-): void {
-  const curNames = get(playlistNamesFunc);
-  const curSongs = get(playlistFuncFam(curName));
+): Promise<void> {
+  const curNames = await store.get(playlistNamesFunc);
+  const curSongs = await store.get(playlistFuncFam(curName));
+  if (curSongs === RESET) {
+    return;
+  }
   curNames.delete(curName);
   curNames.add(newName);
-  set(playlistFuncFam(newName), curSongs);
-  set(playlistNamesFunc, new Set(curNames));
+  await store.set(playlistFuncFam(newName), curSongs);
+  await store.set(playlistNamesFunc, new Set(curNames));
   void Ipc.PostMain(IpcId.RenamePlaylist, [curName, newName]);
 }
 
 /**
  * Delete a playlist (make sure you've got the name right)
  **/
-export function DeletePlaylist(
-  { set, get }: MyTransactionInterface,
+export async function DeletePlaylist(
+  store: MyStore,
   toDelete: PlaylistName,
-): void {
-  const curNames = get(playlistNamesFunc);
-  const activePlaylist = get(activePlaylistState);
+): Promise<void> {
+  const curNames = await store.get(playlistNamesFunc);
+  const activePlaylist = await store.get(activePlaylistState);
   curNames.delete(toDelete);
-  set(playlistNamesFunc, new Set(curNames));
+  await store.set(playlistNamesFunc, new Set(curNames));
   if (activePlaylist === toDelete) {
-    set(activePlaylistState, '');
+    await store.set(activePlaylistState, '');
   }
   void Ipc.PostMain(IpcId.DeletePlaylist, toDelete);
 }
 
-export function SongListFromKey(
-  { get }: MyTransactionInterface,
-  data: MediaKey,
-): SongKey[] {
-  if (data.length === 0) {
-    return [];
-  }
-  if (isSongKey(data)) {
-    return [data];
-  }
-  if (isAlbumKey(data)) {
-    const alb = get(albumByKeyFuncFam(data));
-    return alb ? alb.songs : [];
-  }
-  if (isArtistKey(data)) {
-    const art = get(artistByKeyFuncFam(data));
-    return art ? art.songs : [];
-  }
-  return [];
-}
-
-export function RemoveSongFromNowPlaying(
-  { get, set }: MyTransactionInterface,
+export async function RemoveSongFromNowPlaying(
+  store: MyStore,
   indexOrKey: number | SongKey,
-) {
+): Promise<void> {
   // If we're going to be removing a song before the current index
   // we need to move the curIndex pointer as well
-  const songList = get(songListState);
+  const songList = await store.get(songListState);
   const listLocation = isNumber(indexOrKey)
     ? indexOrKey
     : songList.indexOf(indexOrKey);
-  const curSongIndex = get(currentIndexState);
+  const curSongIndex = await store.get(currentIndexState);
   if (listLocation < curSongIndex) {
-    set(currentIndexState, curSongIndex - 1);
+    await store.set(currentIndexState, curSongIndex - 1);
   }
-  set(
+  await store.set(
     songListState,
     songList.filter((v, i) => i !== listLocation),
   );

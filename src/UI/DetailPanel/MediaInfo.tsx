@@ -9,12 +9,12 @@ import { IpcId } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isArray, isString } from '@freik/typechk';
 import { Expandable } from '@freik/web-utils';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
+import { mediaInfoFuncFam } from '../../Jotai/Media';
 import {
   albumByKeyFuncFam,
   artistStringFuncFam,
   commonDataFuncFam,
-  mediaInfoFuncFam,
   songByKeyFuncFam,
 } from '../../Jotai/MusicDatabase';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
@@ -54,7 +54,7 @@ function getSampleRate(sr: string | void): string {
 
 // This is the header for single-file editing
 function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
-  const mediaInfo = useRecoilValue(mediaInfoFuncFam(forSong));
+  const mediaInfo = useAtomValue(mediaInfoFuncFam(forSong));
 
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = fractionalSecondsStrToHMS(

@@ -11,8 +11,8 @@ import { IpcId } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
-import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
-import { useAtom, useSetAtom } from 'jotai';
+import { Catch } from '@freik/web-utils';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   CSSProperties,
   Component,
@@ -20,10 +20,9 @@ import {
   SyntheticEvent,
   useEffect,
 } from 'react';
-import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
 import { keyBufferState } from '../Jotai/KeyBuffer';
 import { isMiniplayerState } from '../Jotai/Local';
-import { saveableFunc } from '../Recoil/PlaylistsState';
+import { saveableFunc } from '../Jotai/Playlists';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
 
@@ -66,7 +65,7 @@ function TypingListener(): JSX.Element {
 // keep track of which mode we're in, and generally deal with "global" silliness
 function SaveMenuUpdater(): JSX.Element {
   /* Save menu state maintenance */
-  const saveable = useRecoilValue(saveableFunc);
+  const saveable = useAtomValue(saveableFunc);
   useEffect(() => {
     Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
   }, [saveable]);
@@ -93,9 +92,9 @@ function MediaAndMenuListeners({
 }): JSX.Element {
   /* Menu handlers coming from the Main process */
   wrn('MenuAndMenuListers');
-  const menuCallback = useMyTransaction(
-    (xact) => (data: unknown) => MenuHandler(xact, data, audioRef),
-  );
+  const menuCallback = (data: unknown) => {
+    void MenuHandler(data, audioRef);
+  };
   useListener(IpcId.MenuAction, menuCallback);
   /* OS-level media control event handlers */
   const useMediaAction = (ev: MediaSessionAction, state: string) => {
@@ -140,11 +139,6 @@ export const mySliderStyles: Partial<ISliderStyles> = {
     zIndex: 100,
   },
 };
-
-export function useRecoilBoolState(st: RecoilState<boolean>): BoolState {
-  const [value, setter] = useRecoilState(st);
-  return [value, () => setter(true), () => setter(false)];
-}
 
 export type StringSpinButtonProps = {
   id?: string;

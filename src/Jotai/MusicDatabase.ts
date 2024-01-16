@@ -7,8 +7,12 @@ import {
   AlbumKey,
   Artist,
   ArtistKey,
+  MediaKey,
   Song,
   SongKey,
+  isAlbumKey,
+  isArtistKey,
+  isSongKey,
 } from '@freik/media-core';
 import {
   chkArrayOf,
@@ -50,10 +54,14 @@ export type SongDescription = {
   track: number;
 } & AlbumDescription;
 
-type SongMap = Map<SongKey, Song>;
-type AlbumMap = Map<AlbumKey, Album>;
-type ArtistMap = Map<ArtistKey, Artist>;
-type MusicLibrary = { songs: SongMap; albums: AlbumMap; artists: ArtistMap };
+export type SongMap = Map<SongKey, Song>;
+export type AlbumMap = Map<AlbumKey, Album>;
+export type ArtistMap = Map<ArtistKey, Artist>;
+export type MusicLibrary = {
+  songs: SongMap;
+  albums: AlbumMap;
+  artists: ArtistMap;
+};
 
 const isSong = chkObjectOfType<Song & { path?: string }>(
   {
@@ -120,6 +128,10 @@ const musicLibraryState = atomFromIpc<FlatAudioDatabase, MusicLibrary>(
 
 export const allSongsFunc = atom(
   async (get) => (await get(musicLibraryState)).songs,
+);
+
+export const songExistsFam = atomFamily((key: SongKey) =>
+  atom(async (get) => (await get(allSongsFunc)).has(key)),
 );
 
 export const songByKeyFuncFam = atomFamily((sk: SongKey) =>
@@ -297,6 +309,26 @@ export const allAlbumsDataFunc = atom(async (get) => {
     [...allAlbums.keys()].map((l: AlbumKey) => get(dataForAlbumFuncFam(l))),
   );
 });
+
+export const SongListFromKey = atomFamily((data: MediaKey) =>
+  atom(async (get): Promise<SongKey[]> => {
+    if (data.length === 0) {
+      return [];
+    }
+    if (isSongKey(data)) {
+      return [data];
+    }
+    if (isAlbumKey(data)) {
+      const alb = await get(albumByKeyFuncFam(data));
+      return alb ? alb.songs : [];
+    }
+    if (isArtistKey(data)) {
+      const art = await get(artistByKeyFuncFam(data));
+      return art ? art.songs : [];
+    }
+    return [];
+  }),
+);
 
 export const searchTermState = atom('');
 

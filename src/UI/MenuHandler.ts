@@ -1,18 +1,20 @@
 import { CurrentView } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
-import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
 import { curViewFunc } from '../Jotai/CurrentView';
+import { MaybePlayNext, MaybePlayPrev } from '../Jotai/Interface';
 import { mediaTimePercentFunc, mediaTimeState } from '../Jotai/MediaPlaying';
-import { mutedState, volumeState } from '../Jotai/SimpleSettings';
+import { playlistFuncFam } from '../Jotai/Playlists';
+import {
+  mutedState,
+  repeatState,
+  shuffleState,
+  volumeState,
+} from '../Jotai/SimpleSettings';
+import { activePlaylistState, songListState } from '../Jotai/SongsPlaying';
 import { MyStore, getStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
-import { repeatState } from '../Recoil/PlaybackOrder';
-import { playlistFuncFam } from '../Recoil/PlaylistsState';
-import { shuffleFunc } from '../Recoil/ReadWrite';
-import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
-import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
 
@@ -32,11 +34,10 @@ function updateTime(store: MyStore, offset: number) {
   }
 }
 
-export function MenuHandler(
-  xact: MyTransactionInterface,
+export async function MenuHandler(
   message: unknown,
   audioRef: ForwardedRef<HTMLAudioElement>,
-): void {
+): Promise<void> {
   const store = getStore();
   wrn('Menu command:', message);
   log('Menu command:', message);
@@ -44,20 +45,20 @@ export function MenuHandler(
   if (hasStrField(message, 'state')) {
     switch (message.state) {
       case 'savePlaylist': {
-        const nowPlaying = xact.get(activePlaylistState);
-        const songList = xact.get(songListState);
-        xact.set(playlistFuncFam(nowPlaying), songList);
+        const nowPlaying = await store.get(activePlaylistState);
+        const songList = await store.get(songListState);
+        await store.set(playlistFuncFam(nowPlaying), songList);
         break;
       }
       case 'shuffle':
-        xact.set(shuffleFunc, (cur) => !cur);
+        await store.set(shuffleState, !(await store.get(shuffleState)));
         break;
       case 'repeat':
-        xact.set(repeatState, (cur) => !cur);
+        await store.set(repeatState, !(await store.get(repeatState)));
         break;
 
       case 'addLocation':
-        void addLocation(xact);
+        await addLocation(store);
         break;
 
       case 'find':
@@ -69,10 +70,10 @@ export function MenuHandler(
         onClickPlayPause(store, audioRef);
         break;
       case 'nextTrack':
-        void MaybePlayNext(xact);
+        await MaybePlayNext(store);
         break;
       case 'prevTrack':
-        void MaybePlayPrev(xact);
+        await MaybePlayPrev(store);
         break;
 
       // Time control

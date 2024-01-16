@@ -12,21 +12,13 @@ import {
 import { Ipc, Util } from '@freik/electron-render';
 import { IgnoreItemType, IpcId, Keys, st, StrId } from '@freik/emp-shared';
 import { isDefined } from '@freik/typechk';
-import {
-  Catch,
-  Expandable,
-  MyTransactionInterface,
-  Spinner,
-  StateToggle,
-  useBoolRecoilState,
-  useMyTransaction,
-} from '@freik/web-utils';
-
-import { useAtom, useAtomValue } from 'jotai';
+import { Catch, Expandable, Spinner, StateToggle } from '@freik/web-utils';
+// eslint-disable-next-line @typescript-eslint/naming-convention
+import { useAtom, useAtomValue, useStore } from 'jotai';
 import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { useBoolAtom } from '../../Jotai/Hooks';
+import { neverPlayHatesState, onlyPlayLikesState } from '../../Jotai/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -41,14 +33,12 @@ import {
   downloadArtistArtworkState,
   ignoreArticlesState,
   locationsState,
-  saveAlbumArtworkWithMusicState,
-} from '../../Jotai/SimpleSettings';
-import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
-import {
   minSongCountForArtistListState,
+  saveAlbumArtworkWithMusicState,
   showArtistsWithFullAlbumsState,
-} from '../../Recoil/Preferences';
-import { GetHelperText } from '../MenuHelpers';
+} from '../../Jotai/SimpleSettings';
+import { MyStore } from '../../Jotai/Storage';
+import { GetHelperText } from '../Utilities';
 import './styles/Settings.css';
 
 const btnWidth: React.CSSProperties = { width: '155px', padding: 0 };
@@ -62,13 +52,11 @@ async function GetDirs(): Promise<string[] | void> {
   return await Util.ShowOpenDialog({ properties: ['openDirectory'] });
 }
 
-export async function addLocation({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  set,
-}: MyTransactionInterface): Promise<boolean> {
+export async function addLocation(store: MyStore): Promise<boolean> {
   const locs = await GetDirs();
   if (locs) {
-    // set(locationsState, (curLocs) => [...locs, ...curLocs]);
+    const curLocs = await store.get(locationsState);
+    await store.set(locationsState, [...locs, ...curLocs]);
     return true;
   }
   return false;
@@ -78,9 +66,10 @@ function MusicLocations(): JSX.Element {
   const [newLoc, setNewLoc] = useAtom(locationsState);
   const [defLoc, setDefLoc] = useAtom(defaultLocationState);
   const rescanInProgress = useAtomValue(rescanInProgressState);
-  const onAddLocation = useMyTransaction((xact) => () => {
-    addLocation(xact).catch(Catch);
-  });
+  const store = useStore();
+  const onAddLocation = () => {
+    addLocation(store).catch(Catch);
+  };
   const songs = useAtomValue(allSongsFunc);
   const albums = useAtomValue(allAlbumsFunc);
   const artists = useAtomValue(allArtistsFunc);
@@ -234,10 +223,8 @@ function ArticleSorting(): JSX.Element {
 }
 
 function ArtistFiltering(): JSX.Element {
-  const onlyAlbumArtists = useBoolRecoilState(showArtistsWithFullAlbumsState);
-  const [songCount, setSongCount] = useRecoilState(
-    minSongCountForArtistListState,
-  );
+  const onlyAlbumArtists = useBoolAtom(showArtistsWithFullAlbumsState);
+  const [songCount, setSongCount] = useAtom(minSongCountForArtistListState);
   return (
     <>
       <StateToggle
@@ -248,8 +235,12 @@ function ArtistFiltering(): JSX.Element {
         label="Only show artists with at least this many songs"
         disabled={onlyAlbumArtists[0]}
         value={songCount.toString()}
-        onIncrement={() => setSongCount(Math.min(100, songCount + 1))}
-        onDecrement={() => setSongCount(Math.max(1, songCount - 1))}
+        onIncrement={() => {
+          void setSongCount(Math.min(100, songCount + 1));
+        }}
+        onDecrement={() => {
+          void setSongCount(Math.max(1, songCount - 1));
+        }}
         style={{ width: '10px' }}
       />
     </>
@@ -257,8 +248,8 @@ function ArtistFiltering(): JSX.Element {
 }
 
 function LikeFiltering(): JSX.Element {
-  const neverPlayHates = useBoolRecoilState(neverPlayHatesState);
-  const onlyPlayLikes = useBoolRecoilState(onlyPlayLikesState);
+  const neverPlayHates = useBoolAtom(neverPlayHatesState);
+  const onlyPlayLikes = useBoolAtom(onlyPlayLikesState);
   return (
     <>
       <StateToggle

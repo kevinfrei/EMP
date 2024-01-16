@@ -13,13 +13,17 @@ import {
 import { CurrentView } from '@freik/emp-shared';
 import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
 import {
-  MakeSetState,
-  MyTransactionInterface,
-  useMyTransaction,
-} from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+  atom as jatom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  useStore,
+} from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { MakeSetAtomFamily } from '../../Jotai/Hooks';
+import { AddSongs } from '../../Jotai/Interface';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import {
   allAlbumsFunc,
@@ -29,7 +33,6 @@ import {
   filteredArtistsFunc,
 } from '../../Jotai/MusicDatabase';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   articlesCmp,
   ArtistSong,
@@ -58,7 +61,7 @@ const artistContextState = atomWithReset<SongListMenuData>({
 });
 
 const [artistExpandedState, artistIsExpandedState] =
-  MakeSetState<ArtistKey>('artistExpanded');
+  MakeSetAtomFamily<ArtistKey>();
 
 // For grouping to work properly, the sort order needs to be fully specified
 const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
@@ -67,14 +70,13 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const artist = useAtomValue(artistByKeyFuncFam(group.key));
   const picurl = getArtistImageUrl(group.key);
   const setArtistContext = useSetAtom(artistContextState);
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, artist.songs);
+  const store = useStore();
+  const onAddSongsClick = AsyncHandler(async () => {
+    await AddSongs(store, artist.songs);
   });
-  const onHeaderExpanderClick = useMyTransaction(
-    ({ set }) =>
-      () =>
-        set(artistIsExpandedState(group.key), !group.isCollapsed),
-  );
+  const onHeaderExpanderClick = () => {
+    store.set(artistIsExpandedState(group.key), !group.isCollapsed);
+  };
   const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
     setArtistContext({
       data: artist.key,
@@ -145,8 +147,9 @@ export function GroupedAristList(): JSX.Element {
   const [artistContext, setArtistContext] = useAtom(artistContextState);
   const filteredArtists = useAtomValue(filteredArtistsFunc);
   const [curSort, setSort] = useAtom(sortOrderState);
-  const curExpandedState = useRecoilValue(artistExpandedState);
+  const curExpandedState = useAtomValue(artistExpandedState);
   const resetArtistContext = useResetAtom(artistContextState);
+  const store = useStore();
 
   const onRightClick = (item: ArtistSong, _index?: number, ev?: Event) => {
     if (ev) {
@@ -157,8 +160,11 @@ export function GroupedAristList(): JSX.Element {
       });
     }
   };
-  const onAddSongClick = useMyTransaction(
-    (xact) => (item: ArtistSong) => AddSongs(xact, [item.key]),
+
+  const onAddSongClick = AsyncHandler<ArtistSong, void>(
+    async (item: ArtistSong) => {
+      await AddSongs(store, [item.key]);
+    },
   );
 
   const filteredArtistsFromSongRenderer = (

@@ -1,8 +1,7 @@
 import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { MakeLog } from '@freik/logger';
-import { useMyTransaction } from '@freik/web-utils';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import {
   ForwardedRef,
@@ -11,7 +10,8 @@ import {
   useCallback,
   useEffect,
 } from 'react';
-import { useRecoilValue } from 'recoil';
+import { AsyncHandler } from '../Jotai/Helpers';
+import { MaybePlayNext } from '../Jotai/Interface';
 import { playOrderDisplayingState } from '../Jotai/Local';
 import {
   MediaTime,
@@ -27,11 +27,13 @@ import {
   allSongsFunc,
   dataForSongFuncFam,
 } from '../Jotai/MusicDatabase';
-import { mutedState, volumeState } from '../Jotai/SimpleSettings';
-import { repeatState } from '../Recoil/PlaybackOrder';
-import { shuffleFunc } from '../Recoil/ReadWrite';
-import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
-import { MaybePlayNext } from '../Recoil/api';
+import {
+  mutedState,
+  repeatState,
+  shuffleState,
+  volumeState,
+} from '../Jotai/SimpleSettings';
+import { currentSongKeyFunc, songListState } from '../Jotai/SongsPlaying';
 import { getAlbumImageUrl, isMutableRefObject } from '../Tools';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import { mySliderStyles } from './Utilities';
@@ -42,7 +44,7 @@ const { log } = MakeLog('EMP:render:SongPlayback');
 // const log = console.log;
 
 function CoverArt(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyFunc);
   const albumKey = useAtomValue(albumKeyForSongKeyFuncFam(songKey));
   const picurl = getAlbumImageUrl(albumKey);
   return (
@@ -81,7 +83,7 @@ function MediaTimeRemaining(): JSX.Element {
 }
 
 function MediaTimeSlider(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyFunc);
   const [mediaTimePercent, setMediaTimePercent] = useAtom(mediaTimePercentFunc);
   return (
     <Slider
@@ -106,7 +108,7 @@ function MediaTimeSlider(): JSX.Element {
 }
 
 function SongName(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyFunc);
   const { title }: SongDescription = useAtomValue(dataForSongFuncFam(songKey));
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
@@ -116,7 +118,7 @@ function SongName(): JSX.Element {
 }
 
 function ArtistAlbum(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyFunc);
   const { artist, album }: SongDescription = useAtomValue(
     dataForSongFuncFam(songKey),
   );
@@ -137,8 +139,8 @@ function ArtistAlbum(): JSX.Element {
 
 export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
-    const songKey = useRecoilValue(currentSongKeyFunc);
-    const isShuffle = useRecoilValue(shuffleFunc);
+    const songKey = useAtomValue(currentSongKeyFunc);
+    const isShuffle = useAtomValue(shuffleState);
     const isMuted = useAtomValue(mutedState);
     const volumeLevel = useAtomValue(volumeState);
     const playbackPercent = useAtomValue(mediaTimePercentFunc);
@@ -146,18 +148,19 @@ export const SongPlaying = forwardRef(
     const setMediaTime = useSetAtom(mediaTimeState);
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
-    const onEnded = useMyTransaction((xact) => (): void => {
+    const store = useStore();
+    const songList = useAtomValue(songListState);
+    const rep = useAtomValue(repeatState);
+    const onEnded = AsyncHandler(async () => {
       log('Heading to the next song!!!');
-      const songList = xact.get(songListState);
-      const rep = xact.get(repeatState);
       if (rep && songList.length === 1) {
         // Because we rely on auto-play, if we just try to play the same song
         // again, it won't start playing
         if (isMutableRefObject(audioRef)) {
-          void audioRef.current.play();
+          await audioRef.current.play();
         }
       } else {
-        setPlaying(MaybePlayNext(xact));
+        setPlaying(await MaybePlayNext(store));
       }
     });
     const onTimeUpdate = (ev: SyntheticEvent<HTMLMediaElement>) => {
@@ -224,13 +227,13 @@ export const SongPlaying = forwardRef(
         muted={isMuted}
       />
     );
-    const showDetail = useMyTransaction(
-      (xact) => (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
+    const showDetail = AsyncHandler(
+      async (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
         if (songKey !== '') {
-          const songs = xact.get(allSongsFunc);
-          const song = songs.get(songKey);
-          if (song) {
-            SongDetailClick(song, event.shiftKey);
+          const sm = await store.get(allSongsFunc);
+          const theSong = sm.get(songKey);
+          if (theSong) {
+            SongDetailClick(theSong, event.shiftKey);
           }
         }
       },
