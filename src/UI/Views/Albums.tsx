@@ -14,14 +14,17 @@ import { CurrentView } from '@freik/emp-shared';
 import { AlbumKey, Song } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
 import {
-  MakeSetState,
-  MyTransactionInterface,
-  useMyTransaction,
-} from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+  atom as jatom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  useStore,
+} from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { MakeSetAtomFamily } from '../../Jotai/Hooks';
+import { AddSongs } from '../../Jotai/Interface';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import {
   albumByKeyFuncFam,
@@ -31,7 +34,6 @@ import {
   dataForAlbumFuncFam,
 } from '../../Jotai/MusicDatabase';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
 import {
   articlesCmp,
   MakeSortKey,
@@ -59,7 +61,7 @@ const albumContextState = atomWithReset<SongListMenuData>({
 });
 
 const [albumExpandedState, albumIsExpandedState] =
-  MakeSetState<AlbumKey>('albumExpanded');
+  MakeSetAtomFamily<AlbumKey>();
 
 // For grouping to work properly, the sort order needs to be fully specified
 // Also, the album year, VA type, and artist have to "stick" with the album name
@@ -71,14 +73,13 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const album = useAtomValue(albumByKeyFuncFam(group.key));
   const albumData = useAtomValue(dataForAlbumFuncFam(group.key));
   const picurl = getAlbumImageUrl(group.key);
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, album.songs);
+  const store = useStore();
+  const onAddSongsClick = AsyncHandler(async () => {
+    await AddSongs(store, album.songs);
   });
-  const onHeaderExpanderClick = useMyTransaction(
-    ({ set }) =>
-      () =>
-        set(albumIsExpandedState(group.key), !group.isCollapsed),
-  );
+  const onHeaderExpanderClick = () => {
+    store.set(albumIsExpandedState(group.key), !group.isCollapsed);
+  };
   const setAlbumContext = useSetAtom(albumContextState);
   const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     const data = group.key;
@@ -128,13 +129,14 @@ export function GroupedAlbumList(): JSX.Element {
   const newAlbumSort = useAtomValue(albumSortState);
   const [albumContext, setAlbumContext] = useAtom(albumContextState);
 
-  const curExpandedState = useRecoilState(albumExpandedState);
+  const curExpandedState = useAtom(albumExpandedState);
   const [curSort, setSort] = useAtom(albumSortState);
   const resetAlbumContext = useResetAtom(albumContextState);
 
-  const onAddSongClick = useMyTransaction(
-    (xact) => (item: Song) => AddSongs(xact, [item.key]),
-  );
+  const store = useStore();
+  const onAddSongClick = AsyncHandler(async (item: Song) => {
+    await AddSongs(store, [item.key]);
+  });
   const onRightClick = (item: Song, _index?: number, ev?: Event) => {
     if (
       isDefined(ev) &&
@@ -182,7 +184,11 @@ export function GroupedAlbumList(): JSX.Element {
     );
     detailRef.focusIndex(index);
   }
-
+  /*
+  const onGetSongList = () => (data: string) => {
+    SongListFromKey(data);
+  };
+  */
   return (
     <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
@@ -202,9 +208,7 @@ export function GroupedAlbumList(): JSX.Element {
         <SongListMenu
           context={albumContext}
           onClearContext={resetAlbumContext}
-          onGetSongList={(xact: MyTransactionInterface, data: string) =>
-            SongListFromKey(xact, data)
-          }
+          /* onGetSongList={onGetSongList} */
         />
       </ScrollablePane>
     </div>
