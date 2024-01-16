@@ -1,17 +1,15 @@
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import { isArray, isArrayOfString, isSetOfString } from '@freik/typechk';
-import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { IpcId } from '@freik/emp-shared';
+import { atom } from 'jotai';
+import { RESET, atomFamily, atomWithReset } from 'jotai/utils';
 import { isPlaylist } from '../Tools';
-import { activePlaylistState, songListState } from './SongPlaying';
+import { activePlaylistState, songListState } from './SongsPlaying';
 
 // Stuff for playlists
 
-const playlistNamesBackerState = atom<string[] | false>({
-  key: 'playlistNames-backer',
-  default: false,
-});
+const playlistNamesBackerState = atomWithReset<string[] | false>(false);
 
 // function playlistNamesGetter(
 //   get: <T>(a: RecoilValue<T>) => T,
@@ -23,9 +21,8 @@ const playlistNamesBackerState = atom<string[] | false>({
 //   return new Set(backed);
 // }
 
-export const playlistNamesFunc = selector<Set<PlaylistName>>({
-  key: 'PlaylistNames',
-  get: async ({ get }) => {
+export const playlistNamesFunc = atom(
+  async (get) => {
     const backed = get(playlistNamesBackerState);
     if (backed === false) {
       const playlistsString = await Ipc.CallMain<string[], void>(
@@ -34,24 +31,25 @@ export const playlistNamesFunc = selector<Set<PlaylistName>>({
         isArrayOfString,
       );
       if (!playlistsString) {
-        return new Set();
+        return new Set<string>();
       }
       return new Set(playlistsString);
     } else {
       return new Set(backed);
     }
   },
-  set: ({ set }, newValue) => {
+  async (get, set, newValue: Set<string> | typeof RESET) => {
     const data = isSetOfString(newValue) ? [...newValue] : [];
     set(playlistNamesBackerState, data);
-    void Ipc.PostMain(IpcId.SetPlaylists, data);
+    await Ipc.PostMain(IpcId.SetPlaylists, data);
   },
-});
+);
 
-const playlistBackerFam = atomFamily<SongKey[] | false, PlaylistName>({
-  key: 'playlistFamilyBacker',
-  default: false,
-});
+const playlistBackerFam = atomFamily(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  (_name: PlaylistName) =>
+    atomWithReset<SongKey[] | false | typeof RESET>(false),
+);
 
 // function playlistGetter(
 //   get: <T>(a: RecoilValue<T>) => T,
@@ -61,16 +59,14 @@ const playlistBackerFam = atomFamily<SongKey[] | false, PlaylistName>({
 //   return !backed ? undefined : backed;
 // }
 
-export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
-  key: 'PlaylistContents',
-  get:
-    (arg: PlaylistName) =>
-    async ({ get }) => {
-      const backed = get(playlistBackerFam(arg));
+export const playlistFuncFam = atomFamily((name: PlaylistName) =>
+  atom(
+    async (get) => {
+      const backed = get(playlistBackerFam(name));
       if (backed === false) {
         const listStr = await Ipc.CallMain(
           IpcId.LoadPlaylists,
-          arg,
+          name,
           isArrayOfString,
         );
         if (!listStr) {
@@ -81,50 +77,53 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
         return backed;
       }
     },
-  set:
-    (name: PlaylistName) =>
-    ({ set, get }, newValue) => {
-      const names = get(playlistNamesFunc);
+    async (get, set, newValue: SongKey[]): Promise<void> => {
+      const names = await get(playlistNamesFunc);
       if (!names.has(name)) {
         names.add(name);
-        set(playlistNamesFunc, new Set(names));
+        await set(playlistNamesFunc, new Set(names));
       }
       const songs = isArray(newValue) ? newValue : [];
       set(playlistBackerFam(name), songs);
       void Ipc.PostMain(IpcId.SavePlaylist, { name, songs });
     },
-});
+  ),
+);
 
-export const allPlaylistsFunc = selector<Map<PlaylistName, SongKey[]>>({
-  key: 'AllPlaylists',
-  get: ({ get }) => {
+export const allPlaylistsFunc = atom(
+  async (get): Promise<Map<PlaylistName, SongKey[]>> => {
     const res = new Map<PlaylistName, SongKey[]>();
-    for (const plName of get(playlistNamesFunc)) {
-      res.set(plName, get(playlistFuncFam(plName)));
+    for (const plName of await get(playlistNamesFunc)) {
+      const content = get(playlistBackerFam(plName));
+      if (content === RESET || content === false) {
+        res.delete(plName);
+      } else {
+        res.set(plName, content);
+      }
     }
     return res;
   },
-});
+);
 
 // This decides if the current playlist is something that can be 'saved'
 // (Is it a playlist, and has it been modified)
-export const saveableFunc = selector<boolean>({
-  key: 'shouldSaveBeDisabled',
-  get: ({ get }) => {
-    const curPlaylist = get(activePlaylistState);
-    if (isPlaylist(curPlaylist)) {
-      const theSongList = get(playlistFuncFam(curPlaylist));
-      const songList = get(songListState);
-      if (songList.length !== theSongList.length) {
+export const saveableFunc = atom(async (get) => {
+  const curPlaylist = await get(activePlaylistState);
+  if (isPlaylist(curPlaylist)) {
+    const theSongList = await get(playlistFuncFam(curPlaylist));
+    if (theSongList === RESET) {
+      return false;
+    }
+    const songList = await get(songListState);
+    if (songList.length !== theSongList.length) {
+      return true;
+    }
+    for (let i = 0; i < songList.length; i++) {
+      if (songList[i] !== theSongList[i]) {
         return true;
       }
-      for (let i = 0; i < songList.length; i++) {
-        if (songList[i] !== theSongList[i]) {
-          return true;
-        }
-      }
     }
-    // If it's not a playlist, you can't save it
-    return false;
-  },
+  }
+  // If it's not a playlist, you can't save it
+  return false;
 });

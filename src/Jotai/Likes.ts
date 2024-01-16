@@ -3,6 +3,7 @@ import { SongKey } from '@freik/media-core';
 import { isArrayOfString, isBoolean } from '@freik/typechk';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import { SongListFromKey } from './MusicDatabase';
 import { atomFromIpc, atomWithMainStorage } from './Storage';
 
 // const log = MakeLogger('Likes');
@@ -95,31 +96,29 @@ export const songHateFuncFam = atomFamily((songKey: SongKey) =>
 );
 
 // 0 = neutral, 1 == like, 2 = hate, 3 = mixed
-/*
-export const songLikeNumFromStringFuncFam = selectorFamily<number, string>({
-  key: 'songLikeNumFromKey',
-  get:
-    (arg: string) =>
-      ({ get }) => {
-        const songs = get(songListFromKeyFuncFam(arg));
-        if (!songs) {
-          return 0;
-        }
-        let likes = false;
-        let hates = false;
-        songs.forEach((songKey) => {
-          if (get(songLikeFuncFam(songKey))) {
-            likes = true;
-          }
-          if (get(songHateFuncFam(songKey))) {
-            hates = true;
-          }
-        });
-        if (likes === hates) {
-          return likes ? 3 : 0;
-        } else {
-          return likes ? 1 : 2;
-        }
-      },
-});
-*/
+export const songLikeNumFromStringFuncFam = atomFamily((arg: string) =>
+  atom(async (get) => {
+    const songs = await get(SongListFromKey(arg));
+    if (!songs) {
+      return 0;
+    }
+    let likes = false;
+    let hates = false;
+    for (const songKey of songs) {
+      if (await get(songLikeFuncFam(songKey))) {
+        likes = true;
+      }
+      if (await get(songHateFuncFam(songKey))) {
+        hates = true;
+      }
+      if (likes && hates) {
+        break;
+      }
+    }
+    if (likes === hates) {
+      return likes ? 3 : 0;
+    } else {
+      return likes ? 1 : 2;
+    }
+  }),
+);

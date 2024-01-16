@@ -9,18 +9,16 @@ import { Ipc } from '@freik/electron-render';
 import { IpcId } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isString } from '@freik/typechk';
-import {
-  Catch,
-  MyTransactionInterface,
-  useMyTransaction,
-} from '@freik/web-utils';
-import { useRecoilValue } from 'recoil';
+import { Catch } from '@freik/web-utils';
+import { useAtomValue, useStore } from 'jotai';
+import { AsyncHandler } from '../Jotai/Helpers';
+import { AddSongs, PlaySongs } from '../Jotai/Interface';
 import {
   songHateFuncFam,
   songLikeFuncFam,
   songLikeNumFromStringFuncFam,
-} from '../Recoil/Likes';
-import { AddSongs, PlaySongs } from '../Recoil/api';
+} from '../Jotai/Likes';
+import { MyStore } from '../Jotai/Storage';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 import { ErrorBoundary } from './Utilities';
 
@@ -30,7 +28,7 @@ type SongListMenuArgs = {
   title?: string;
   context: SongListMenuData;
   onClearContext: () => void;
-  onGetSongList: (xact: MyTransactionInterface, data: string) => SongKey[];
+  onGetSongList: (store: MyStore, data: string) => PromiseLike<SongKey[]>;
   onGetPlaylistName?: (data: string) => string;
   items?: (IContextualMenuItem | string)[];
 };
@@ -46,6 +44,7 @@ export function SongListMenu({
   onGetPlaylistName,
   items,
 }: SongListMenuArgs): JSX.Element {
+  const store = useStore();
   const i = (
     name: string,
     iconName: string,
@@ -65,48 +64,47 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
 
-  const onAdd = useMyTransaction(
-    (xact) => () =>
-      AddSongs(
-        xact,
-        onGetSongList(xact, context.data),
+  const onAdd = AsyncHandler<void, void>(
+    async () =>
+      await AddSongs(
+        store,
+        await onGetSongList(store, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
   );
-  const onReplace = useMyTransaction(
-    (xact) => () =>
-      PlaySongs(
-        xact,
-        onGetSongList(xact, context.data),
+  const onReplace = AsyncHandler<void, void>(
+    async () =>
+      await PlaySongs(
+        store,
+        await onGetSongList(store, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
   );
-  const onProps = useMyTransaction(
-    (xact) => () =>
-      SongListDetailClick(onGetSongList(xact, context.data), false),
-  );
-  const onLove = useMyTransaction((xact) => () => {
-    const songs = onGetSongList(xact, context.data);
-    const likeVal = xact.get(songLikeNumFromStringFuncFam(context.data));
+  const onProps = AsyncHandler<void, void>(async () => {
+    SongListDetailClick(await onGetSongList(store, context.data), false);
+  });
+  const onLove = AsyncHandler<void, void>(async () => {
+    const songs = await onGetSongList(store, context.data);
+    const likeVal = await store.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* liked
-      xact.set(songLikeFuncFam(song), likeVal !== 1);
+      await store.set(songLikeFuncFam(song), likeVal !== 1);
     }
   });
 
-  const onHate = useMyTransaction((xact) => () => {
-    const songs = onGetSongList(xact, context.data);
-    const hateVal = xact.get(songLikeNumFromStringFuncFam(context.data));
+  const onHate = AsyncHandler<void, void>(async () => {
+    const songs = await onGetSongList(store, context.data);
+    const hateVal = await store.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* hated
-      xact.set(songHateFuncFam(song), hateVal !== 2);
+      await store.set(songHateFuncFam(song), hateVal !== 2);
     }
   });
 
   const onShow = () => {
     Ipc.InvokeMain(IpcId.ShowLocFromKey, context.data).catch(Catch);
   };
-  const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(context.data));
+  const likeNum = useAtomValue(songLikeNumFromStringFuncFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
   if (context.data === '' || context.spot === undefined) {

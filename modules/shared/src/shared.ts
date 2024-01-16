@@ -7,6 +7,33 @@ import {
   typecheck,
 } from '@freik/typechk';
 
+export enum MenuKeys {
+  SavePlaylist = 'savePlaylist',
+  Shuffle = 'shuffle',
+  Repeat = 'repeat',
+  AddLocation = 'addLocation',
+  Find = 'find',
+  Playback = 'playback',
+  NextTrack = 'nextTrack',
+  PrevTrack = 'prevTrack',
+  Forward = 'fwd',
+  Backward = 'back',
+  Mute = 'mute',
+  Louder = 'louder',
+  Quieter = 'quieter',
+  View = 'view',
+}
+
+export enum MenuView {
+  NowPlaying = 'NowPlaying',
+  Artists = 'Artists',
+  Albums = 'Albums',
+  Songs = 'Songs',
+  Playlists = 'Playlists',
+  Settings = 'Settings',
+  Tools = 'Tools',
+}
+
 export enum IpcId {
   ClearHates = 'clear-hates',
   ClearLikes = 'clear-likes',
