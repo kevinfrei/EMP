@@ -14,13 +14,9 @@ import {
 } from '@freik/emp-shared';
 import { isArrayOfString, isDefined } from '@freik/typechk';
 import { StateToggle, useBoolState } from '@freik/web-utils';
+import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
-import {
-  SetterOrUpdater,
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
+import { AsyncHandler } from '../../../Jotai/Helpers';
 import {
   destLocationState,
   sourceLocationAlbumState,
@@ -31,7 +27,7 @@ import {
   sourceLocationTypeState,
   validSourceFunc,
   xcodeBitRateState,
-} from '../../../Recoil/TranscodeState';
+} from '../../../Jotai/TranscodingState';
 import { StringSpinButton } from '../../Utilities';
 import '../styles/Tools.css';
 import {
@@ -74,21 +70,23 @@ const getDir = (
 export function TranscoderConfiguration(): JSX.Element {
   const copyArtwork = useBoolState(false);
   const mirror = useBoolState(false);
-  const [srcLocType, setSrcLocType] = useRecoilState(sourceLocationTypeState);
-  const [srcDirLoc, setSrcDirLoc] = useRecoilState(sourceLocationDirState);
-  const [dstLoc, setDstLoc] = useRecoilState(destLocationState);
+  const [srcLocType, setSrcLocType] = useAtom(sourceLocationTypeState);
+  const [srcDirLoc, setSrcDirLoc] = useAtom(sourceLocationDirState);
+  const [dstLoc, setDstLoc] = useAtom(destLocationState);
   const [err, setError] = useState('');
-  const bitrate = useRecoilValue(xcodeBitRateState);
-  const validSource = useRecoilValue(validSourceFunc);
-  const srcLocDescr = useRecoilValue(sourceLocationDescriptorFunc);
+  const [bitrate, setBitrate] = useAtom(xcodeBitRateState);
+  const validSource = useAtomValue(validSourceFunc);
+  const srcLocDescr = useAtomValue(sourceLocationDescriptorFunc);
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
-  const onChange = useRecoilCallback(({ set }) => (numVal?: number) => {
-    if (isDefined(numVal)) {
-      set(xcodeBitRateState, numVal);
-    }
-  });
+  const onChange = AsyncHandler<number | undefined, void>(
+    async (numVal?: number) => {
+      if (isDefined(numVal)) {
+        await setBitrate(numVal);
+      }
+    },
+  );
 
   const onSelectSource = (
     event: React.FormEvent<HTMLDivElement>,
