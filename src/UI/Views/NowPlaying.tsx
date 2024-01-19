@@ -77,7 +77,7 @@ function TopLine(): JSX.Element {
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = AsyncHandler<string, void>(async (inputName: string) => {
+  const saveListAs = AsyncHandler(async (inputName: string) => {
     if (playlists.has(inputName)) {
       window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
@@ -228,7 +228,7 @@ export function NowPlayingView(): JSX.Element {
     />
   );
 
-  const performSort = AsyncHandler<SortKey, void>(async (srt: SortKey) => {
+  const performSort = AsyncHandler(async (srt: SortKey) => {
     setSortBy(srt);
     if (srt.hasSort()) {
       const sortedSongs = SortSongList(

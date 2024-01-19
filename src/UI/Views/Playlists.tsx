@@ -172,7 +172,7 @@ export function PlaylistView(): JSX.Element {
   const renameConfirmed = (newName: string) => {
     void RenamePlaylist(store, selected, newName);
   };
-  const removeSongConfirmed = AsyncHandler<void, void>(async () => {
+  const removeSongConfirmed = AsyncHandler(async () => {
     if (
       songPlaylistToRemove[0].length > 0 &&
       songPlaylistToRemove[1].length > 0

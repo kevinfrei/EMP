@@ -52,20 +52,19 @@ const sourceOptions: IComboBoxOption[] = [
   { key: TranscodeSourceType.Disk, text: 'Disk location' },
 ];
 
-const getDir = (
-  setter: SetterOrUpdater<string>,
-  setError: SetterOrUpdater<string>,
-) => {
-  Util.ShowOpenDialog({ properties: ['openDirectory'] })
-    .then((val) => {
-      if (isArrayOfString(val) && val.length === 1) {
-        setter(val[0]);
-      }
-    })
-    .catch(() => {
-      setError('Failed to find a dir');
-    });
-};
+async function getDir(
+  setter: (val: string) => void | PromiseLike<void>,
+  setError: (val: string) => void | PromiseLike<void>,
+) {
+  try {
+    const val = await Util.ShowOpenDialog({ properties: ['openDirectory'] });
+    if (isArrayOfString(val) && val.length === 1) {
+      await setter(val[0]);
+    }
+  } catch (e) {
+    await setError('Failed to find a dir');
+  }
+}
 
 export function TranscoderConfiguration(): JSX.Element {
   const copyArtwork = useBoolState(false);
@@ -78,16 +77,17 @@ export function TranscoderConfiguration(): JSX.Element {
   const validSource = useAtomValue(validSourceFunc);
   const srcLocDescr = useAtomValue(sourceLocationDescriptorFunc);
   const srcLocPlaylist = useAtom(sourceLocationPlaylistState);
+  const srcLocArist = useAtom(sourceLocationArtistState);
+  const srcLocAlbum = useAtom(sourceLocationAlbumState);
+
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
-  const onChange = AsyncHandler<number | undefined, void>(
-    async (numVal?: number) => {
-      if (isDefined(numVal)) {
-        await setBitrate(numVal);
-      }
-    },
-  );
+  const onChange = AsyncHandler(async (numVal?: number) => {
+    if (isDefined(numVal)) {
+      await setBitrate(numVal);
+    }
+  });
 
   const onSelectSource = (
     event: React.FormEvent<HTMLDivElement>,
@@ -98,6 +98,13 @@ export function TranscoderConfiguration(): JSX.Element {
     }
   };
 
+  const srcDiskClick = AsyncHandler(
+    async () => await getDir(setSrcDirLoc, setError),
+  );
+  const dstDiskClick = AsyncHandler(
+    async () => await getDir(setDstLoc, setError),
+  );
+
   // TODO: Create the element for the transcode source type (and populated it, if appropriate)
   let xcodeSrcLocElem;
   switch (srcLocType) {
@@ -105,10 +112,10 @@ export function TranscoderConfiguration(): JSX.Element {
       xcodeSrcLocElem = <PlaylistSelector value={srcLocPlaylist} />;
       break;
     case TranscodeSourceType.Artist:
-      xcodeSrcLocElem = <ArtistSelector value={sourceLocationArtistState} />;
+      xcodeSrcLocElem = <ArtistSelector value={srcLocArist} />;
       break;
     case TranscodeSourceType.Album:
-      xcodeSrcLocElem = <AlbumSelector value={sourceLocationAlbumState} />;
+      xcodeSrcLocElem = <AlbumSelector value={srcLocAlbum} />;
       break;
     case TranscodeSourceType.Disk:
     default:
@@ -117,9 +124,7 @@ export function TranscoderConfiguration(): JSX.Element {
           value={srcDirLoc}
           readOnly
           required
-          onClick={() => {
-            getDir(setSrcDirLoc, setError);
-          }}
+          onClick={srcDiskClick}
           iconProps={{ iconName: 'More' }}
         />
       );
@@ -147,7 +152,7 @@ export function TranscoderConfiguration(): JSX.Element {
         value={dstLoc}
         readOnly
         required
-        onClick={() => getDir(setDstLoc, setError)}
+        onClick={dstDiskClick}
         iconProps={{ iconName: 'More' }}
       />
       <br />

@@ -1,9 +1,8 @@
 import { ComboBox, IComboBox, IComboBoxOption } from '@fluentui/react';
-import { AlbumKey, Artist, ArtistKey, PlaylistName } from '@freik/media-core';
+import { Artist, PlaylistName } from '@freik/media-core';
 import { isDefined, isString } from '@freik/typechk';
-import { WritableAtom, useAtomValue } from 'jotai';
-import { useAtomCallback } from 'jotai/utils';
-import { useCallback } from 'react';
+import { useAtomValue, useStore } from 'jotai';
+import { AsyncHandler } from '../../../Jotai/Helpers';
 import {
   AlbumDescriptionWithKey,
   albumByKeyFuncFam,
@@ -18,7 +17,7 @@ export function PlaylistSelector({
 }: {
   value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
-  const [getValue, setValue] = value;
+  const [theValue, setValue] = value;
   const playlists = useAtomValue(playlistNamesFunc);
   const theList: IComboBoxOption[] = [...playlists]
     .sort()
@@ -39,7 +38,7 @@ export function PlaylistSelector({
       label="Which Playlist?"
       autoComplete="on"
       options={theList}
-      selectedKey={getValue}
+      selectedKey={theValue}
       onChange={onChange}
     />
   );
@@ -48,45 +47,36 @@ export function PlaylistSelector({
 export function ArtistSelector({
   value,
 }: {
-  value: WritableAtom<ArtistKey, [ArtistKey], ArtistKey>;
+  value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
-  const selArtistKey = useAtomValue(value);
+  const [theValue, setValue] = value;
   const artists = useAtomValue(filteredArtistsFunc);
+  const store = useStore();
   const theList: IComboBoxOption[] = artists.map((r: Artist) => ({
     key: r.key,
     text: r.name,
   }));
-  const onChange = useAtomCallback(
-    useCallback(
-      async (
-        get,
-        set,
-        event: React.FormEvent<IComboBox>,
-        option?: IComboBoxOption,
-        index?: number,
-        newValue?: string,
-      ) => {
-        if (isDefined(option) && isString(option.key) && isString(newValue)) {
-          try {
-            const art = await get(artistByKeyFuncFam(option.key));
-            if (art.key === option.key) {
-              set(value, art.key);
-            }
-          } catch (e) {
-            /* */
+  const onChange = AsyncHandler(
+    async (option?: IComboBoxOption, newValue?: string) => {
+      if (isDefined(option) && isString(option.key) && isString(newValue)) {
+        try {
+          const art = await store.get(artistByKeyFuncFam(option.key));
+          if (art.key === option.key) {
+            await setValue(art.key);
           }
+        } catch (e) {
+          /* */
         }
-      },
-      [value],
-    ),
+      }
+    },
   );
   return (
     <ComboBox
       label="Which Artist?"
       autoComplete="on"
       options={theList}
-      selectedKey={selArtistKey}
-      onChange={(ev, opt, idx, newV) => void onChange(ev, opt, idx, newV)}
+      selectedKey={theValue}
+      onChange={(ev, opt, idx, newV) => void onChange(opt, newV)}
     />
   );
 }
@@ -94,10 +84,11 @@ export function ArtistSelector({
 export function AlbumSelector({
   value,
 }: {
-  value: WritableAtom<AlbumKey, [AlbumKey], AlbumKey>;
+  value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
-  const selAlbumKey = useAtomValue(value);
+  const [theValue, setValue] = value;
   const albums = useAtomValue(allAlbumsDataFunc);
+  const store = useStore();
   const theList: IComboBoxOption[] = albums.map(
     (r: AlbumDescriptionWithKey) => ({
       key: r.key,
@@ -106,37 +97,27 @@ export function AlbumSelector({
       }`,
     }),
   );
-  const onChange = useAtomCallback(
-    useCallback(
-      async (
-        get,
-        set,
-        event: React.FormEvent<IComboBox>,
-        option?: IComboBoxOption,
-        index?: number,
-        newValue?: string,
-      ) => {
-        if (isDefined(option) && isString(option.key) && isString(newValue)) {
-          try {
-            const alb = await get(albumByKeyFuncFam(option.key));
-            if (alb.key === option.key) {
-              set(value, alb.key);
-            }
-          } catch (e) {
-            /* */
+  const onChange = AsyncHandler(
+    async (option?: IComboBoxOption, newValue?: string) => {
+      if (isDefined(option) && isString(option.key) && isString(newValue)) {
+        try {
+          const alb = await store.get(albumByKeyFuncFam(option.key));
+          if (alb.key === option.key) {
+            await setValue(alb.key);
           }
+        } catch (e) {
+          /* */
         }
-      },
-      [value],
-    ),
+      }
+    },
   );
   return (
     <ComboBox
       label="Which Album?"
       autoComplete="on"
       options={theList}
-      selectedKey={selAlbumKey}
-      onChange={(ev, opt, idx, newV) => void onChange(ev, opt, idx, newV)}
+      selectedKey={theValue}
+      onChange={(ev, opt, idx, newV) => void onChange(opt, newV)}
     />
   );
 }
