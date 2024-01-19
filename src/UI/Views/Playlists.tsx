@@ -8,30 +8,29 @@ import {
   Text,
 } from '@fluentui/react';
 import { PlaylistName, Song, SongKey } from '@freik/media-core';
-import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import {
-  Dialogs,
-  MakeSetState,
-  MyTransactionInterface,
-  useDialogState,
-  useMyTransaction,
-} from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+  hasFieldType,
+  isDefined,
+  isNumber,
+  isSymbol,
+  isUndefined,
+} from '@freik/typechk';
+import { Dialogs, useDialogState } from '@freik/web-utils';
+import {
+  atom as jatom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  useStore,
+} from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  AddSongs,
-  DeletePlaylist,
-  PlaySongs,
-  RenamePlaylist,
-} from '../../Recoil/api';
+import { allSongsFunc } from '../../Jotai/MusicDatabase';
 import {
   allPlaylistsFunc,
   playlistFuncFam,
   playlistNamesFunc,
-} from '../../Recoil/PlaylistsState';
-import { allSongsFunc } from '../../Recoil/ReadOnly';
+} from '../../Jotai/Playlists';
 import { MakeSortKey } from '../../Sorting';
 import {
   AlbumForSongRender,
@@ -45,13 +44,22 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { MakeSetAtomFamily } from '../../Jotai/Hooks';
+import {
+  AddSongs,
+  DeletePlaylist,
+  PlaySongs,
+  RenamePlaylist,
+} from '../../Jotai/Interface';
+import { MyStore } from '../../Jotai/Storage';
 import './styles/Playlists.css';
 
 type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
 
 const [playlistExpandedState, playlistIsExpandedState] =
-  MakeSetState<PlaylistName>('playlistExpanded');
+  MakeSetAtomFamily<PlaylistName>();
 
 const playlistContextState = atomWithReset<SongListMenuData>({
   data: '',
@@ -73,13 +81,12 @@ function PlaylistHeaderDisplay({
   onDelete: (key: string) => void;
 }): JSX.Element {
   const setPlaylistContext = useSetAtom(playlistContextState);
-  const onHeaderExpanderClick = useMyTransaction(
-    ({ set }) =>
-      () =>
-        set(playlistIsExpandedState(group.key), !group.isCollapsed),
-  );
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, xact.get(playlistFuncFam(group.key)), group.key);
+  const store = useStore();
+  const onHeaderExpanderClick = () =>
+    store.set(playlistIsExpandedState(group.key), !group.isCollapsed);
+  const onAddSongsClick = AsyncHandler(async () => {
+    const songs = await store.get(playlistFuncFam(group.key));
+    await AddSongs(store, isSymbol(songs) ? [] : songs, group.key);
   });
   const onRightClick = (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setPlaylistContext({
@@ -123,69 +130,67 @@ export function PlaylistView(): JSX.Element {
   const [showRename, renameData] = useDialogState();
   const [showRemoveSong, removeSongData] = useDialogState();
 
-  const playlistNames = useRecoilValue(playlistNamesFunc);
-  const playlistContents = useRecoilValue(allPlaylistsFunc);
-  const allSongs = useRecoilValue(allSongsFunc);
+  const playlistNames = useAtomValue(playlistNamesFunc);
+  const playlistContents = useAtomValue(allPlaylistsFunc);
+  const allSongs = useAtomValue(allSongsFunc);
   const playlistContext = useAtomValue(playlistContextState);
   const resetPlaylistContext = useResetAtom(playlistContextState);
-  const playlistExpanded = useRecoilState(playlistExpandedState);
+  const playlistExpanded = useAtom(playlistExpandedState);
   const [curSort, setSort] = useAtom(playlistSortState);
   const [songContext, setSongContext] = useAtom(songContextState);
   const resetSongContext = useResetAtom(songContextState);
+  const store = useStore();
 
   const clearSongContext = () => resetSongContext();
   const onClearPlaylist = () => resetPlaylistContext();
-  const onPlaylistInvoked = useMyTransaction(
-    (xact) => (playlistName: PlaylistName) => {
-      const songs = xact.get(playlistFuncFam(playlistName));
-      PlaySongs(xact, songs, playlistName);
-    },
-  );
-  const onRemoveDupes = useMyTransaction(({ get, set }) => () => {
+  const onPlaylistInvoked = AsyncHandler(async (playlistName: PlaylistName) => {
+    const songs = await store.get(playlistFuncFam(playlistName));
+    await PlaySongs(store, isSymbol(songs) ? [] : songs, playlistName);
+  });
+  const onRemoveDupes = AsyncHandler(async () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = get(playlistFuncFam(playlistContext.data));
+    const songs = await store.get(playlistFuncFam(playlistContext.data));
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
-    for (const song of songs) {
+    for (const song of isSymbol(songs) ? [] : songs) {
       if (!seen.has(song)) {
         newList.push(song);
       }
       seen.add(song);
     }
-    set(playlistFuncFam(playlistContext.data), newList);
+    await store.set(playlistFuncFam(playlistContext.data), newList);
   });
   const onPlaylistDelete = (key: string) => {
     setSelected(key);
     showPlaylistDelete();
   };
-  const deleteConfirmed = useMyTransaction((xact) => () => {
-    DeletePlaylist(xact, selected);
-  });
-  const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
-    RenamePlaylist(xact, selected, newName);
-  });
-  const removeSongConfirmed = useMyTransaction((xact) => () => {
+  const deleteConfirmed = () => {
+    void DeletePlaylist(store, selected);
+  };
+  const renameConfirmed = (newName: string) => {
+    void RenamePlaylist(store, selected, newName);
+  };
+  const removeSongConfirmed = AsyncHandler<void, void>(async () => {
     if (
       songPlaylistToRemove[0].length > 0 &&
       songPlaylistToRemove[1].length > 0
     ) {
       const playlistName = songPlaylistToRemove[0];
-      const songList = xact.get(playlistFuncFam(playlistName));
+      const songListMaybe = await store.get(playlistFuncFam(playlistName));
+      const songList = isSymbol(songListMaybe) ? [] : songListMaybe;
       const songKey = songPlaylistToRemove[1];
       const index = songPlaylistToRemove[2];
       const listLocation = index >= 0 ? index : songList.indexOf(songKey);
-      xact.set(
-        playlistFuncFam(songPlaylistToRemove[0]),
-        (curList: SongKey[]) => {
-          if (curList[listLocation] === songKey) {
-            return curList.filter((_v, i) => i !== listLocation);
-          } else {
-            return curList;
-          }
-        },
-      );
+      const plAtom = playlistFuncFam(songPlaylistToRemove[0]);
+      const curList = await store.get(plAtom);
+      if (!isSymbol(curList) && curList[listLocation] === songKey) {
+        await store.set(
+          plAtom,
+          curList.filter((_v, i) => i !== listLocation),
+        );
+      }
     }
   });
 
@@ -307,9 +312,10 @@ export function PlaylistView(): JSX.Element {
         <SongListMenu
           context={playlistContext}
           onClearContext={onClearPlaylist}
-          onGetSongList={({ get }: MyTransactionInterface, data: string) =>
-            get(playlistFuncFam(data))
-          }
+          onGetSongList={async (s: MyStore, data: string) => {
+            const pl = await s.get(playlistFuncFam(data));
+            return isSymbol(pl) ? [] : pl;
+          }}
           onGetPlaylistName={(data: string) => data}
           items={[
             'add',
@@ -344,7 +350,7 @@ export function PlaylistView(): JSX.Element {
         <SongListMenu
           context={songContext}
           onClearContext={clearSongContext}
-          onGetSongList={(_xact, data) => [data]}
+          onGetSongList={(_xact, data) => Promise.resolve([data])}
         />
       </ScrollablePane>
     </div>

@@ -85,3 +85,6 @@ export function MakeSetState<T extends SerializableParam>(
   return [theAtom, MakeSetSelector(theAtom, `${key}:sel`)];
 }
 */
+
+export type DialogData = [boolean, () => void];
+export type DialogState = [() => void, DialogData];
