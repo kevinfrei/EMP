@@ -102,12 +102,6 @@ const isFlatAudioDatabase = chkObjectOfType<FlatAudioDatabase>({
   artists: chkArrayOf(isArtist),
 });
 
-const emptyLibrary = {
-  songs: new Map<SongKey, Song>(),
-  albums: new Map<AlbumKey, Album>(),
-  artists: new Map<ArtistKey, Artist>(),
-};
-
 function MakeMusicLibraryFromFlatAudioDatabase(
   fad: FlatAudioDatabase,
 ): MusicLibrary {

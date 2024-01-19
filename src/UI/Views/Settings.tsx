@@ -15,6 +15,7 @@ import { isDefined } from '@freik/typechk';
 import { Catch, Expandable, Spinner, StateToggle } from '@freik/web-utils';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 import { useAtom, useAtomValue, useStore } from 'jotai';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import React, { useState } from 'react';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { useBoolAtom } from '../../Jotai/Hooks';

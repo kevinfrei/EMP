@@ -10,16 +10,16 @@ import './styles/Notifier.css';
 export function Notifier(): JSX.Element {
   const [addedSongs, setRecentlyQueued] = useAtom(recentlyQueuedState);
   const [displayed, setDisplayMessage] = useAtom(displayMessageState);
-  const clearIt = () => setRecentlyQueued(0);
-  const startFade = () => setDisplayMessage(false);
   useEffect(() => {
+    const clearIt = () => setRecentlyQueued(0);
+    const startFade = () => setDisplayMessage(false);
     const clr = setTimeout(clearIt, 5000);
     const dsp = setTimeout(startFade, 4000);
     return () => {
       clearTimeout(clr);
       clearTimeout(dsp);
     };
-  }, [addedSongs, clearIt, startFade, displayed]);
+  }, [addedSongs, displayed]);
   return addedSongs > 0 ? (
     <MessageBar
       className={displayed ? '' : 'fade-out'}

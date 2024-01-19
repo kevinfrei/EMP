@@ -8,7 +8,7 @@ import {
   isUndefined,
   typecheck,
 } from '@freik/typechk';
-import { Fail } from '@freik/web-utils';
+import { Catch, Fail } from '@freik/web-utils';
 import { createStore } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 import { AsyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
@@ -34,7 +34,9 @@ function makeGetItem<T>(
       try {
         const val = SafelyUnpickle(strValue, chk);
         return isUndefined(val) ? initialValue : val;
-      } catch (e) {}
+      } catch (e) {
+        Catch(e);
+      }
     }
     return initialValue;
   };
