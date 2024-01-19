@@ -24,15 +24,9 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
-import {
-  Dialogs,
-  MyTransactionInterface,
-  useDialogState,
-  useMyTransaction,
-} from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue } from 'jotai';
+import { Dialogs, useDialogState } from '@freik/web-utils';
+import { atom as jatom, useAtom, useAtomValue, useStore } from 'jotai';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
 import {
   allAlbumsFunc,
@@ -40,18 +34,21 @@ import {
   curSongsFunc,
 } from '../../Jotai/MusicDatabase';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/Interface';
 import {
   playlistFuncFam,
   playlistNamesFunc,
   saveableFunc,
-} from '../../Recoil/PlaylistsState';
+} from '../../Jotai/Playlists';
 import {
   activePlaylistState,
   currentSongIndexFunc,
   songListState,
   songPlaybackOrderState,
-} from '../../Recoil/SongPlaying';
-import { RemoveSongFromNowPlaying, StopAndClear } from '../../Recoil/api';
+} from '../../Jotai/SongsPlaying';
+import { MyStore } from '../../Jotai/Storage';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {
@@ -72,35 +69,35 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useRecoilValue(playlistNamesFunc);
-  const nowPlaying = useRecoilValue(activePlaylistState);
-  const songList = useRecoilValue(songListState);
-  const saveEnabled = useRecoilValue(saveableFunc);
-
+  const playlists = useAtomValue(playlistNamesFunc);
+  const nowPlaying = useAtomValue(activePlaylistState);
+  const songList = useAtomValue(songListState);
+  const saveEnabled = useAtomValue(saveableFunc);
+  const store = useStore();
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useMyTransaction(({ set }) => (inputName: string) => {
+  const saveListAs = AsyncHandler<string, void>(async (inputName: string) => {
     if (playlists.has(inputName)) {
       window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
-      set(playlistFuncFam(inputName), [...songList]);
-      set(activePlaylistState, inputName);
+      await store.set(playlistFuncFam(inputName), [...songList]);
+      await store.set(activePlaylistState, inputName);
     }
   });
-  const stopAndClear = useMyTransaction((xact) => () => {
-    StopAndClear(xact);
-  });
-  const clickClearQueue = useMyTransaction((xact) => () => {
+  const stopAndClear = () => {
+    void StopAndClear(store);
+  };
+  const clickClearQueue = () => {
     if (isPlaylist(nowPlaying)) {
-      StopAndClear(xact);
+      void StopAndClear(store);
     } else {
       showConfirm();
     }
-  });
-  const save = useMyTransaction(({ set }) => () => {
-    set(playlistFuncFam(nowPlaying), songList);
-  });
+  };
+  const save = () => {
+    void store.set(playlistFuncFam(nowPlaying), songList);
+  };
 
   const emptyQueue = songList.length === 0;
   const isPL = isPlaylist(nowPlaying);
@@ -198,15 +195,14 @@ export function NowPlayingView(): JSX.Element {
   const albums: Map<AlbumKey, Album> = useAtomValue(allAlbumsFunc);
   const artists: Map<ArtistKey, Artist> = useAtomValue(allArtistsFunc);
   const articles = useAtomValue(ignoreArticlesState);
-  const [curIndex, setCurIndex] = useRecoilState(currentSongIndexFunc);
-  const [songList, setSongList] = useRecoilState(songListState);
+  const [curIndex, setCurIndex] = useAtom(currentSongIndexFunc);
+  const [songList, setSongList] = useAtom(songListState);
   const [sortBy, setSortBy] = useAtom(nowPlayingSortState);
   const curSongs = useAtomValue(curSongsFunc);
   const isMini = useAtomValue(isMiniplayerState);
   const [songContext, setSongContext] = useAtom(nowPlayingContextState);
-  const [playbackOrder, setPlaybackOrder] = useRecoilState(
-    songPlaybackOrderState,
-  );
+  const [playbackOrder, setPlaybackOrder] = useAtom(songPlaybackOrderState);
+  const store = useStore();
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
     const event = ev as unknown as MouseEvent;
     if (ev && item) {
@@ -216,10 +212,9 @@ export function NowPlayingView(): JSX.Element {
       });
     }
   };
-  const removeSong = useMyTransaction(
-    (xact: MyTransactionInterface) => (indexOrKey: number | SongKey) =>
-      RemoveSongFromNowPlaying(xact, indexOrKey),
-  );
+  const removeSong = (indexOrKey: number | SongKey) => {
+    void RemoveSongFromNowPlaying(store, indexOrKey);
+  };
   const drawDeleter = (song: Song, index?: number) => (
     <FontIcon
       style={{
@@ -233,7 +228,7 @@ export function NowPlayingView(): JSX.Element {
     />
   );
 
-  const performSort = (srt: SortKey) => {
+  const performSort = AsyncHandler<SortKey, void>(async (srt: SortKey) => {
     setSortBy(srt);
     if (srt.hasSort()) {
       const sortedSongs = SortSongList(
@@ -257,14 +252,14 @@ export function NowPlayingView(): JSX.Element {
           sortedSongs.map((old, index) => [old.index, index]),
         );
         const newOrder = playbackOrder.map((val) => indexMap.get(val) || 0);
-        setPlaybackOrder(newOrder);
-        setSongList(newSongList);
+        await setPlaybackOrder(newOrder);
+        await setSongList(newSongList);
       } else {
-        setSongList(newSongList);
-        setCurIndex(newKey);
+        await setSongList(newSongList);
+        await setCurIndex(newKey);
       }
     }
-  };
+  });
 
   const normalColumns = MakeColumns(
     [
@@ -312,7 +307,9 @@ export function NowPlayingView(): JSX.Element {
           onRenderRow={altRowRenderer((props) => props.itemIndex === curIndex)}
           columns={isMini ? miniColumns : normalColumns}
           onItemContextMenu={onRightClick}
-          onItemInvoked={(item, index) => setCurIndex(index ?? -1)}
+          onItemInvoked={(item, index) => {
+            void setCurIndex(index ?? -1);
+          }}
           onRenderDetailsHeader={StickyDetailsHeader}
         />
         <SongListMenu
@@ -320,8 +317,8 @@ export function NowPlayingView(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(_xact: MyTransactionInterface, data: string) =>
-            data.length > 0 ? [data] : []
+          onGetSongList={(s: MyStore, data: string) =>
+            Promise.resolve(data.length > 0 ? [data] : [])
           }
           items={['prop', 'show', '-', 'like', 'hate']}
         />

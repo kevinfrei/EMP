@@ -31,8 +31,10 @@ import {
   allSongsFunc,
   artistByKeyFuncFam,
   filteredArtistsFunc,
+  SongListFromKey,
 } from '../../Jotai/MusicDatabase';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { MyStore } from '../../Jotai/Storage';
 import {
   articlesCmp,
   ArtistSong,
@@ -147,7 +149,7 @@ export function GroupedAristList(): JSX.Element {
   const [artistContext, setArtistContext] = useAtom(artistContextState);
   const filteredArtists = useAtomValue(filteredArtistsFunc);
   const [curSort, setSort] = useAtom(sortOrderState);
-  const curExpandedState = useAtomValue(artistExpandedState);
+  const curExpandedState = useAtom(artistExpandedState);
   const resetArtistContext = useResetAtom(artistContextState);
   const store = useStore();
 
@@ -235,8 +237,8 @@ export function GroupedAristList(): JSX.Element {
         <SongListMenu
           context={artistContext}
           onClearContext={resetArtistContext}
-          onGetSongList={(xact: MyTransactionInterface, data: string) =>
-            SongListFromKey(xact, data)
+          onGetSongList={(st: MyStore, data: string) =>
+            store.get(SongListFromKey(data))
           }
         />
       </ScrollablePane>
