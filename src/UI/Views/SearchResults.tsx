@@ -17,19 +17,19 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { hasFieldType, isBoolean } from '@freik/typechk';
-import { useMyTransaction } from '@freik/web-utils';
+import { useAtomValue, useStore } from 'jotai';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
-import { AddSongs } from '../../Recoil/api';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { AddSongs } from '../../Jotai/Interface';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   searchFuncFam,
   searchTermState,
-} from '../../Recoil/ReadOnly';
+} from '../../Jotai/MusicDatabase';
 import { MakeSortKey } from '../../Sorting';
 import {
   SongDetailClick,
@@ -191,9 +191,10 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, props.keys);
-  });
+  const store = useStore();
+  const onAddSongListClick = AsyncHandler(
+    async () => await AddSongs(store, props.keys),
+  );
   const onRightClick = SongListDetailContextMenuClick(props.keys);
   const theStyle = { marginLeft: props.depth * 20 };
   return (
@@ -214,13 +215,14 @@ function SearchResultsGroupHeader(props: {
 const noSort = MakeSortKey('rlnt');
 
 export function SearchResultsView(): JSX.Element {
-  const searchTerm = useRecoilValue(searchTermState);
-  const searchResults = useRecoilValue(searchFuncFam(searchTerm));
-  const songs = useRecoilValue(allSongsFunc);
-  const artists = useRecoilValue(allArtistsFunc);
-  const albums = useRecoilValue(allAlbumsFunc);
+  const searchTerm = useAtomValue(searchTermState);
+  const searchResults = useAtomValue(searchFuncFam(searchTerm));
+  const songs = useAtomValue(allSongsFunc);
+  const artists = useAtomValue(allArtistsFunc);
+  const albums = useAtomValue(allAlbumsFunc);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
+  const store = useStore();
   const onSongDetailClick = (
     item: SearchSongData,
     _index?: number,
@@ -230,9 +232,9 @@ export function SearchResultsView(): JSX.Element {
       item.song,
       hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
     );
-  const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {
-    AddSongs(xact, [item.song.key]);
-  });
+  const onAddSongClick = AsyncHandler(
+    async (item: SearchSongData) => await AddSongs(store, [item.song.key]),
+  );
 
   if (
     !searchResults.albums.length &&
