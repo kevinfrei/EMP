@@ -14,24 +14,17 @@ import { StrId, st } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
 import { isArrayOfString, isString } from '@freik/typechk';
-import {
-  Catch,
-  MyTransactionInterface,
-  onRejected,
-  useMyTransaction,
-} from '@freik/web-utils';
+import { Catch, onRejected } from '@freik/web-utils';
+import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { albumKeyForSongKeyFuncFam } from '../../Jotai/MusicDatabase';
 import {
   UploadFileForAlbum,
   UploadFileForSong,
   UploadImageForAlbum,
   UploadImageForSong,
 } from '../../MyWindow';
-import {
-  albumKeyForSongKeyFuncFam,
-  metadataEditCountState,
-} from '../../Recoil/ReadOnly';
-import { picCacheAvoiderStateFam } from '../../Recoil/cacheAvoider';
 import { getAlbumImageUrl } from '../../Tools';
 import { SetMediaInfo } from '../../ipc';
 
@@ -63,6 +56,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
   const [vars, setVars] = useState<false | string>(false);
   const [moreArtists, setMoreArtists] = useState<false | string>(false);
   const [diskName, setDiskName] = useState<false | string>(false);
+  const store = useStore();
 
   const isMultiple = !props.forSong && isArrayOfString(props.forSongs);
   const isSingle = isString(props.forSong) && !props.forSongs;
@@ -108,10 +102,11 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
     return false;
   };
 
-  const onSubmit = useMyTransaction((xact) => () => {
+  const onSubmit = AsyncHandler(async () => {
     // This is necessary to invalidate things that may otherwise be confused
     // once the metadata is different
-    xact.set(metadataEditCountState, (cur) => cur + 1);
+    // TODO: FIgure this out for Jotai
+    // await store.set(metadataEditCountState, (cur) => cur + 1);
 
     // TODO: Save the changed values to the metadata override 'cache'
     // and reflect those changes in the music DB
@@ -159,73 +154,84 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
         md.moreArtists = Metadata.SplitArtistString(moreArtists);
       }
       log(md);
-      SetMediaInfo(md).catch(onRejected('Saving Metadata failed'));
+      try {
+        await SetMediaInfo(md);
+      } catch (e) {
+        onRejected('Saving Metadata failed');
+      }
     }
   });
 
   const uploadImage = async (
-    { get, set }: MyTransactionInterface,
     uploadSong: (sk: SongKey) => Promise<void>,
     uploadAlbum: (ak: AlbumKey) => Promise<void>,
   ) => {
     // Easy: one song:
     if (props.forSong !== undefined) {
       await uploadSong(props.forSong);
-      const albumKey = get(albumKeyForSongKeyFuncFam(props.forSong));
+      /*
+      TODO: Deal with this?
+      const albumKey = await store.get(albumKeyForSongKeyFuncFam(props.forSong));
       setTimeout(
-        () => set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
+        () => store.set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
         250,
       );
+      */
     } else {
       // Messy: Multiple songs
       const albumsSet: Set<AlbumKey> = new Set();
       for (const song of props.forSongs!) {
-        const albumKey = get(albumKeyForSongKeyFuncFam(song));
+        const albumKey = await store.get(albumKeyForSongKeyFuncFam(song));
         if (albumsSet.has(albumKey)) {
           continue;
         }
         albumsSet.add(albumKey);
         await uploadAlbum(albumKey);
         // This bonks the URL so it will be reloaded after we've uploaded the image
+        /*
+        TODO:
         setTimeout(
           () => set(picCacheAvoiderStateFam(albumKey), (p) => p + 1),
           250,
         );
+        */
       }
     }
   };
 
-  const onImageFromClipboard = useMyTransaction((xact) => () => {
+  const onImageFromClipboard = AsyncHandler(async () => {
     const img = Util.ImageFromClipboard();
     if (img !== undefined) {
-      uploadImage(
-        xact,
-        async (sk: SongKey) => await UploadImageForSong(sk, img),
-        async (ak: AlbumKey) => await UploadImageForAlbum(ak, img),
-      ).catch((e) => Catch(e));
+      try {
+        await uploadImage(
+          async (sk: SongKey) => await UploadImageForSong(sk, img),
+          async (ak: AlbumKey) => await UploadImageForAlbum(ak, img),
+        );
+      } catch (e) {
+        Catch(e);
+      }
     }
   });
-  const onSelectFile = useMyTransaction((xact) => () => {
-    Util.ShowOpenDialog({
-      title: st(StrId.ChooseCoverArt),
-      properties: ['openFile'],
-      filters: [
-        { name: st(StrId.ImageName), extensions: ['jpg', 'jpeg', 'png'] },
-      ],
-    })
-      .then((selected) => {
-        return selected !== undefined
-          ? uploadImage(
-              xact,
-              async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
-              async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
-            )
-          : new Promise(() => {
-              return;
-            });
-      })
-      .catch((e) => Catch(e));
+
+  const onSelectFile = AsyncHandler(async () => {
+    try {
+      const selected = await Util.ShowOpenDialog({
+        title: st(StrId.ChooseCoverArt),
+        properties: ['openFile'],
+        filters: [
+          { name: st(StrId.ImageName), extensions: ['jpg', 'jpeg', 'png'] },
+        ],
+      });
+      if (selected !== undefined)
+        await uploadImage(
+          async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
+          async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
+        );
+    } catch (e) {
+      Catch(e);
+    }
   });
+
   const coverUrl = getAlbumImageUrl(props.albumId || '___');
   // Nothing selected: EMPTY!
   if (!isSingle && !isMultiple) {

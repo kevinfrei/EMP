@@ -6,11 +6,11 @@ import {
   mergeStyleSets,
 } from '@fluentui/react';
 import { Album } from '@freik/media-core';
-import { useMyTransaction } from '@freik/web-utils';
+import { useAtomValue, useStore } from 'jotai';
 import { useCallback, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
-import { AddSongs } from '../../Recoil/api';
-import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { AddSongs } from '../../Jotai/Interface';
+import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Jotai/MusicDatabase';
 import { getAlbumImageUrl } from '../../Tools';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
@@ -79,13 +79,14 @@ function AlbumCoverView({
   album: Album;
   cols: number;
 }): JSX.Element {
-  const albumData = useRecoilValue(dataForAlbumFuncFam(album.key));
+  const albumData = useAtomValue(dataForAlbumFuncFam(album.key));
+  const store = useStore();
   const picurl = getAlbumImageUrl(album.key);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, album.songs);
-  });
+  const onAddSongsClick = AsyncHandler(
+    async () => await AddSongs(store, album.songs),
+  );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onRightClick = SongListDetailContextMenuClick(album.songs);
   if (!album) {
@@ -137,7 +138,7 @@ export function NuAlbumView(): JSX.Element {
       <></>
     );
   };
-  const albums = useRecoilValue(allAlbumsFunc);
+  const albums = useAtomValue(allAlbumsFunc);
   const getPageHeight = useCallback((): number => {
     const res = rowHeight.current * ROWS_PER_PAGE;
     return Number.isNaN(res) ? ROWS_PER_PAGE : res;
