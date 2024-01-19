@@ -14,6 +14,9 @@ import {
   isString,
 } from '@freik/typechk';
 import { atom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
+import { allAlbumsFunc, allArtistsFunc } from './MusicDatabase';
+import { allPlaylistsFunc } from './Playlists';
 import { atomFromMain, atomWithMainStorage } from './Storage';
 
 // const { err, log } = MakeLog('EMP:render:TranscodingState');
@@ -72,74 +75,59 @@ export const sourceLocationAlbumState = atomWithMainStorage<AlbumKey>(
   isAlbumKey,
 );
 
-// const validPlaylist = atomFamily<PlaylistName, boolean>(
-//   (param: string) =>
-//     (plName: PlaylistName) =>
-//     ({ get }) => {
-//       return get(allPlaylistsFunc).has(plName);
-//     },
-// });
+const validPlaylist = atomFamily(
+  (plName: PlaylistName) => atom(
+    async (get) => {
+      return (await get(allPlaylistsFunc)).has(plName);
+    }));
 
-// const validArtist = selectorFamily<boolean, ArtistKey>({
-//   key: 'validArtist',
-//   get:
-//     (artistKey: ArtistKey) =>
-//     ({ get }) => {
-//       return get(allArtistsFunc).has(artistKey);
-//     },
-// });
+const validArtist = atomFamily(
+  (artistKey: ArtistKey) => atom(
+    async (get) => {
+      return (await get(allArtistsFunc)).has(artistKey);
+    }));
 
-// const validAlbum = selectorFamily<boolean, AlbumKey>({
-//   key: 'validAlbum',
-//   get:
-//     (albumKey: AlbumKey) =>
-//     ({ get }) => {
-//       return get(allAlbumsFunc).has(albumKey);
-//     },
-// });
+const validAlbum = atomFamily(
+  (albumKey: AlbumKey) => atom(
+    async (get) => {
+      return (await get(allAlbumsFunc)).has(albumKey);
+    }));
 
-// export const validSourceFunc = selector<boolean>({
-//   key: 'xcodeValidSource',
-//   get: ({ get }) => {
-//     const sel = get(sourceLocationTypeState);
-//     switch (sel) {
-//       case TranscodeSourceType.Playlist:
-//         return get(validPlaylist(get(sourceLocationPlaylistState)));
-//       case TranscodeSourceType.Artist:
-//         return get(validArtist(get(sourceLocationArtistState)));
-//       case TranscodeSourceType.Album:
-//         return get(validAlbum(get(sourceLocationAlbumState)));
-//       case TranscodeSourceType.Disk:
-//         return get(sourceLocationDirState).length > 0;
-//     }
-//   },
-// });
+export const validSourceFunc = atom(
+  async (get) => {
+    const sel = get(sourceLocationTypeState);
+    switch (sel) {
+      case TranscodeSourceType.Playlist:
+        return await get(validPlaylist(await get(sourceLocationPlaylistState)));
+      case TranscodeSourceType.Artist:
+        return await get(validArtist(await get(sourceLocationArtistState)));
+      case TranscodeSourceType.Album:
+        return await get(validAlbum(await get(sourceLocationAlbumState)));
+      case TranscodeSourceType.Disk:
+        return (await get(sourceLocationDirState)).length > 0;
+    }
+  });
 
-// export const sourceLocationDescriptorFunc = selector<{
-//   type: TranscodeSourceType;
-//   loc: string;
-// }>({
-//   key: 'xcodeSourceLocDescr',
-//   get: ({ get }) => {
-//     let loc: string;
-//     const type = get(sourceLocationTypeState);
-//     switch (type) {
-//       case TranscodeSourceType.Playlist:
-//         loc = get(sourceLocationPlaylistState);
-//         break;
-//       case TranscodeSourceType.Artist:
-//         loc = get(sourceLocationArtistState);
-//         break;
-//       case TranscodeSourceType.Album:
-//         loc = get(sourceLocationAlbumState);
-//         break;
-//       case TranscodeSourceType.Disk:
-//         loc = get(sourceLocationDirState);
-//         break;
-//     }
-//     return { type, loc };
-//   },
-// });
+export const sourceLocationDescriptorFunc = atom(
+  async (get) => {
+    let loc: string;
+    const type = get(sourceLocationTypeState);
+    switch (type) {
+      case TranscodeSourceType.Playlist:
+        loc = await get(sourceLocationPlaylistState);
+        break;
+      case TranscodeSourceType.Artist:
+        loc = await get(sourceLocationArtistState);
+        break;
+      case TranscodeSourceType.Album:
+        loc = await get(sourceLocationAlbumState);
+        break;
+      case TranscodeSourceType.Disk:
+        loc = await get(sourceLocationDirState);
+        break;
+    }
+    return { type, loc };
+  });
 
 export const destLocationState = atomWithMainStorage(
   'xcodeDstLoc',

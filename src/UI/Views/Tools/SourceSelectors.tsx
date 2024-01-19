@@ -1,11 +1,9 @@
 import { ComboBox, IComboBox, IComboBoxOption } from '@fluentui/react';
 import { AlbumKey, Artist, ArtistKey, PlaylistName } from '@freik/media-core';
 import { isDefined, isString } from '@freik/typechk';
-import { useAtom, useAtomValue } from 'jotai';
+import { WritableAtom, useAtomValue } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
-import { WritableAtom } from 'jotai/vanilla';
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   AlbumDescriptionWithKey,
   albumByKeyFuncFam,
@@ -13,15 +11,15 @@ import {
   artistByKeyFuncFam,
   filteredArtistsFunc,
 } from '../../../Jotai/MusicDatabase';
-import { playlistNamesFunc } from '../../../Recoil/PlaylistsState';
+import { playlistNamesFunc } from '../../../Jotai/Playlists';
 
 export function PlaylistSelector({
   value,
 }: {
-  value: WritableAtom<PlaylistName, [PlaylistName], PlaylistName>;
+  value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
-  const [getValue, setValue] = useAtom(value);
-  const playlists = useRecoilValue(playlistNamesFunc);
+  const [getValue, setValue] = value;
+  const playlists = useAtomValue(playlistNamesFunc);
   const theList: IComboBoxOption[] = [...playlists]
     .sort()
     .map((name) => ({ key: name, text: name }));

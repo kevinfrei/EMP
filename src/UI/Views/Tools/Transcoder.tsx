@@ -77,6 +77,7 @@ export function TranscoderConfiguration(): JSX.Element {
   const [bitrate, setBitrate] = useAtom(xcodeBitRateState);
   const validSource = useAtomValue(validSourceFunc);
   const srcLocDescr = useAtomValue(sourceLocationDescriptorFunc);
+  const srcLocPlaylist = useAtom(sourceLocationPlaylistState);
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
@@ -101,9 +102,7 @@ export function TranscoderConfiguration(): JSX.Element {
   let xcodeSrcLocElem;
   switch (srcLocType) {
     case TranscodeSourceType.Playlist:
-      xcodeSrcLocElem = (
-        <PlaylistSelector value={sourceLocationPlaylistState} />
-      );
+      xcodeSrcLocElem = <PlaylistSelector value={srcLocPlaylist} />;
       break;
     case TranscodeSourceType.Artist:
       xcodeSrcLocElem = <ArtistSelector value={sourceLocationArtistState} />;

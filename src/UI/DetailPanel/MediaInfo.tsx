@@ -112,7 +112,7 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
     },
   ];
 
-  const mediaInfo = useRecoilValue(mediaInfoFuncFam(songKey));
+  const mediaInfo = useAtomValue(mediaInfoFuncFam(songKey));
   return (
     <DetailsList
       items={[...mediaInfo.entries()]}
@@ -125,10 +125,10 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
-  const theSong = useRecoilValue(songByKeyFuncFam(songKey));
-  const theArtist = useRecoilValue(artistStringFuncFam(theSong.artistIds));
-  const moreArtists = useRecoilValue(artistStringFuncFam(theSong.secondaryIds));
-  const theAlbum = useRecoilValue(albumByKeyFuncFam(theSong.albumId));
+  const theSong = useAtomValue(songByKeyFuncFam(songKey));
+  const theArtist = useAtomValue(artistStringFuncFam(theSong.artistIds));
+  const moreArtists = useAtomValue(artistStringFuncFam(theSong.secondaryIds));
+  const theAlbum = useAtomValue(albumByKeyFuncFam(theSong.albumId));
   const diskNum = Math.floor(theSong.track / 100);
   const diskName =
     diskNum > 0 &&
@@ -154,7 +154,7 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
-  const allTheInfos = useRecoilValue(commonDataFuncFam(songKeys));
+  const allTheInfos = useAtomValue(commonDataFuncFam(songKeys));
   return <MetadataEditor forSongs={songKeys} {...allTheInfos} />;
 }
 
