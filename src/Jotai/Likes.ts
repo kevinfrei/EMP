@@ -1,34 +1,35 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { IpcId, StorageKey } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isArrayOfString, isBoolean } from '@freik/typechk';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import { atomFromIpc, atomWithMainStorage } from './Helpers';
 import { songListFromKeyAtomFam } from './MusicDatabase';
-import { atomFromIpc, atomWithMainStorage } from './Storage';
 
 // const log = MakeLogger('Likes');
 // const err = MakeError('Likes-err');
 
 export const neverPlayHatesAtom = atomWithMainStorage(
-  'neverPlayHates',
+  StorageKey.NeverPlayHates,
   true,
   isBoolean,
 );
 
 export const onlyPlayLikesAtom = atomWithMainStorage(
-  'onlyPlayLikes',
+  StorageKey.OnlyPlayLikes,
   false,
   isBoolean,
 );
 
 const songLikeBackerState = atomFromIpc(
-  'likedSongs',
+  IpcId.GetLikes,
   isArrayOfString,
   (strs) => new Set<string>(strs),
 );
 
 const songHateBackerAtom = atomFromIpc(
-  'hatedSongs',
+  IpcId.GetHates,
   isArrayOfString,
   (strs) => new Set<string>(strs),
 );

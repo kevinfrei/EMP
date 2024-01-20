@@ -3,6 +3,7 @@ import { MakeLog } from '@freik/logger';
 import { onRejected } from '@freik/web-utils';
 import { useAtom, useAtomValue, useStore } from 'jotai';
 import { ForwardedRef, MouseEventHandler } from 'react';
+import { MyStore } from '../Jotai/Helpers';
 import { MaybePlayNext, MaybePlayPrev } from '../Jotai/Interface';
 import { playingAtom } from '../Jotai/MediaPlaying';
 import { repeatAtom, shuffleAtom } from '../Jotai/SimpleSettings';
@@ -11,7 +12,6 @@ import {
   hasNextSongAtom,
   hasPrevSongAtom,
 } from '../Jotai/SongsPlaying';
-import { MyStore } from '../Jotai/Storage';
 import { isMutableRefObject } from '../Tools';
 import { GetHelperText } from './Utilities';
 import './styles/PlaybackControls.css';

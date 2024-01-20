@@ -35,7 +35,7 @@ import {
 } from '../../Jotai/MusicDatabase';
 import { ignoreArticlesAtom } from '../../Jotai/SimpleSettings';
 
-import { AsyncHandler } from '../../Jotai/Helpers';
+import { AsyncHandler, MyStore } from '../../Jotai/Helpers';
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/Interface';
 import {
   playlistAtomFam,
@@ -48,7 +48,6 @@ import {
   songListAtom,
   songPlaybackOrderAtom,
 } from '../../Jotai/SongsPlaying';
-import { MyStore } from '../../Jotai/Storage';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import {

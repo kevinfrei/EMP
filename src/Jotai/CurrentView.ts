@@ -1,14 +1,14 @@
 // The currently selected item from the left bar
 
-import { CurrentView, isCurrentView } from '@freik/emp-shared';
+import { CurrentView, StorageKey, isCurrentView } from '@freik/emp-shared';
 import { atom } from 'jotai';
+import { atomWithMainStorage } from './Helpers';
 import { isMiniplayerAtom } from './Local';
-import { atomWithMainStorage } from './Storage';
 
 // The currently selected item from the left bar
 // artist, album, search, tools, settings, etc...
 const curViewBackerAtom = atomWithMainStorage(
-  'CurrentView',
+  StorageKey.CurrentView,
   CurrentView.settings,
   isCurrentView,
 );

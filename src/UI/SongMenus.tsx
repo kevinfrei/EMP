@@ -11,14 +11,13 @@ import { SongKey } from '@freik/media-core';
 import { isString } from '@freik/typechk';
 import { Catch } from '@freik/web-utils';
 import { useAtomValue, useStore } from 'jotai';
-import { AsyncHandler } from '../Jotai/Helpers';
+import { AsyncHandler, MyStore } from '../Jotai/Helpers';
 import { AddSongs, PlaySongs } from '../Jotai/Interface';
 import {
   songHateAtomFam,
   songLikeAtomFam,
   songLikeNumFromStringAtomFam,
 } from '../Jotai/Likes';
-import { MyStore } from '../Jotai/Storage';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 import { ErrorBoundary } from './Utilities';
 

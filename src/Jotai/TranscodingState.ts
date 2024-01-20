@@ -1,4 +1,9 @@
-import { IpcId, TranscodeSourceType, TranscodeState } from '@freik/emp-shared';
+import {
+  IpcId,
+  StorageKey,
+  TranscodeSourceType,
+  TranscodeState,
+} from '@freik/emp-shared';
 import {
   AlbumKey,
   ArtistKey,
@@ -15,9 +20,9 @@ import {
 } from '@freik/typechk';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
+import { atomFromMain, atomWithMainStorage } from './Helpers';
 import { allAlbumsAtom, allArtistsAtom } from './MusicDatabase';
 import { allPlaylistsAtom } from './Playlists';
-import { atomFromMain, atomWithMainStorage } from './Storage';
 
 // const { err, log } = MakeLog('EMP:render:TranscodingState');
 
@@ -52,25 +57,25 @@ export const transcodeStatusAtom = atomFromMain(
 export const sourceLocationTypeAtom = atom(TranscodeSourceType.Playlist);
 
 export const sourceLocationDirState = atomWithMainStorage(
-  'xcodeSrcLocDir',
+  StorageKey.TranscodeSrcDir,
   '',
   isString,
 );
 
 export const sourceLocationPlaylistAtom = atomWithMainStorage<PlaylistName>(
-  'xcodeSrcLocPlaylist',
+  StorageKey.TranscodeSrcPlaylist,
   '',
   isString,
 );
 
 export const sourceLocationArtistAtom = atomWithMainStorage<ArtistKey>(
-  'xcodeSrcLocArtist',
+  StorageKey.TranscodeSrcArtist,
   '',
   isArtistKey,
 );
 
 export const sourceLocationAlbumAtom = atomWithMainStorage<AlbumKey>(
-  'xcodeSrcLocAlbum',
+  StorageKey.TranscodeSrcAlbum,
   '',
   isAlbumKey,
 );
@@ -130,13 +135,13 @@ export const sourceLocationDescriptorAtom = atom(async (get) => {
 });
 
 export const destLocationAtom = atomWithMainStorage(
-  'xcodeDstLoc',
+  StorageKey.TranscodeDest,
   '',
   isString,
 );
 
 export const xcodeBitRateAtom = atomWithMainStorage(
-  'xcodeBitRate',
+  StorageKey.TranscodeBitRate,
   128,
   isNumber,
 );

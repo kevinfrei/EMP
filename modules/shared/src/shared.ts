@@ -78,6 +78,35 @@ export enum IpcId {
   RescanInProgress = 'rescan-in-progress',
 }
 
+export enum StorageKey {
+  NeverPlayHates = 'neverPlayHates',
+  OnlyPlayLikes = 'onlyPlayLikes',
+  CurrentView = 'CurrentView',
+  CurrentSongList = 'currentSongList',
+  NowPlaying = 'nowPlaying',
+  PlaybackOrder = 'playbackOrder',
+  CurrentIndex = 'currentIndex',
+  Mute = 'mute',
+  Volume = 'volume',
+  Repeat = 'repeat',
+  Shuffle = 'shuffle',
+  Locations = 'locations',
+  DefaultLocation = 'defaultLocation',
+  SortWithArticles = 'rSortWithArticles',
+  FullAlbumsOnly = 'FullAlbumsOnly',
+  DownloadAlbumArtwork = 'downloadAlbumArtwork',
+  DownloadArtistArtwork = 'downloadArtistArtwork',
+  SaveAlbumArtworkWithMusic = 'saveAlbumArtworkWithMusic',
+  AlbumCoverName = 'albumCoverName',
+  MinSongCount = 'MinSongCount',
+  TranscodeSrcDir = 'xcodeSrcLocDir',
+  TranscodeSrcPlaylist = 'xcodeSrcLocPlaylist',
+  TranscodeSrcArtist = 'xcodeSrcLocArtist',
+  TranscodeSrcAlbum = 'xcodeSrcLocAlbum',
+  TranscodeDest = 'xcodeDstLoc',
+  TranscodeBitRate = 'xcodeBitRate',
+}
+
 export enum Keys {
   AddFileLocation = 'O',
   Albums = '2',

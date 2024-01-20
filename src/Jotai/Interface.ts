@@ -9,8 +9,8 @@ import {
   recentlyQueuedAtom,
 } from '../Jotai/Local';
 import { mediaTimeAtom, playingAtom } from '../Jotai/MediaPlaying';
-import { MyStore } from '../Jotai/Storage';
 import { ShuffleArray, isPlaylist } from '../Tools';
+import { MyStore } from './Helpers';
 import {
   isSongHatedAtomFam,
   isSongLikedAtomFam,

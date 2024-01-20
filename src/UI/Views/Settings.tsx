@@ -18,7 +18,7 @@ import { useAtom, useAtomValue, useStore } from 'jotai';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 import React, { useState } from 'react';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
-import { useBoolAtom } from '../../Jotai/Hooks';
+import { MyStore, useBoolAtom } from '../../Jotai/Helpers';
 import { neverPlayHatesAtom, onlyPlayLikesAtom } from '../../Jotai/Likes';
 import {
   allAlbumsAtom,
@@ -38,7 +38,6 @@ import {
   saveAlbumArtworkWithMusicAtom,
   showArtistsWithFullAlbumsAtom,
 } from '../../Jotai/SimpleSettings';
-import { MyStore } from '../../Jotai/Storage';
 import { GetHelperText } from '../Utilities';
 import './styles/Settings.css';
 

@@ -1,6 +1,6 @@
 import { Song, SongKey } from '@freik/media-core';
+import { getStore } from '../../Jotai/Helpers';
 import { songDetailAtom } from '../../Jotai/Local';
-import { getStore } from '../../Jotai/Storage';
 
 export function SongDetailClick(song: Song, shift?: boolean): void {
   const store = getStore();

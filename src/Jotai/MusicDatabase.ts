@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { isIgnoreItemArrayFn } from '@freik/emp-shared';
+import { IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import {
   Album,
@@ -29,13 +29,12 @@ import { atomFamily } from 'jotai/utils';
 import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import * as ipc from '../ipc';
+import { atomFromIpc, atomFromMain } from './Helpers';
 import {
   minSongCountForArtistListAtom,
   showArtistsWithFullAlbumsAtom,
 } from './SimpleSettings';
 import { songListAtom } from './SongsPlaying';
-import { atomFromIpc, atomFromMain } from './Storage';
-// import { songListState } from './SongPlaying';
 
 const { wrn, log } = MakeLog('EMP:render:ReadOnly:log'); // eslint-disable-line
 
@@ -115,7 +114,7 @@ function MakeMusicLibraryFromFlatAudioDatabase(
 }
 
 const musicLibraryAtom = atomFromIpc<FlatAudioDatabase, MusicLibrary>(
-  'musicDatabase',
+  IpcId.GetMusicDatabase,
   isFlatAudioDatabase,
   MakeMusicLibraryFromFlatAudioDatabase,
 );
@@ -458,8 +457,11 @@ export const filteredArtistsAtom = atom(async (get) => {
 });
 
 export const ignoreItemsAtom = atomFromIpc(
-  'IgnoreItemsState',
+  IpcId.GetIgnoreList,
   isIgnoreItemArrayFn,
 );
 
-export const rescanInProgressAtom = atomFromMain('RescanInProgress', isBoolean);
+export const rescanInProgressAtom = atomFromMain(
+  IpcId.RescanInProgress,
+  isBoolean,
+);

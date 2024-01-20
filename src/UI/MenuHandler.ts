@@ -3,6 +3,7 @@ import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { ForwardedRef } from 'react';
 import { curViewAtom } from '../Jotai/CurrentView';
+import { MyStore, getStore } from '../Jotai/Helpers';
 import { MaybePlayNext, MaybePlayPrev } from '../Jotai/Interface';
 import { mediaTimeAtom, mediaTimePercentAtom } from '../Jotai/MediaPlaying';
 import { playlistAtomFam } from '../Jotai/Playlists';
@@ -13,7 +14,6 @@ import {
   volumeAtom,
 } from '../Jotai/SimpleSettings';
 import { activePlaylistAtom, songListAtom } from '../Jotai/SongsPlaying';
-import { MyStore, getStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
 import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
