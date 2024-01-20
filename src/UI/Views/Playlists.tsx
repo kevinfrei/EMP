@@ -25,11 +25,11 @@ import {
 } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { allSongsFunc } from '../../Jotai/MusicDatabase';
+import { allSongsAtom } from '../../Jotai/MusicDatabase';
 import {
-  allPlaylistsFunc,
-  playlistFuncFam,
-  playlistNamesFunc,
+  allPlaylistsAtom,
+  playlistAtomFam,
+  playlistNamesAtom,
 } from '../../Jotai/Playlists';
 import { MakeSortKey } from '../../Sorting';
 import {
@@ -85,7 +85,7 @@ function PlaylistHeaderDisplay({
   const onHeaderExpanderClick = () =>
     store.set(playlistIsExpandedState(group.key), !group.isCollapsed);
   const onAddSongsClick = AsyncHandler(async () => {
-    const songs = await store.get(playlistFuncFam(group.key));
+    const songs = await store.get(playlistAtomFam(group.key));
     await AddSongs(store, isSymbol(songs) ? [] : songs, group.key);
   });
   const onRightClick = (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -130,9 +130,9 @@ export function PlaylistView(): JSX.Element {
   const [showRename, renameData] = useDialogState();
   const [showRemoveSong, removeSongData] = useDialogState();
 
-  const playlistNames = useAtomValue(playlistNamesFunc);
-  const playlistContents = useAtomValue(allPlaylistsFunc);
-  const allSongs = useAtomValue(allSongsFunc);
+  const playlistNames = useAtomValue(playlistNamesAtom);
+  const playlistContents = useAtomValue(allPlaylistsAtom);
+  const allSongs = useAtomValue(allSongsAtom);
   const playlistContext = useAtomValue(playlistContextState);
   const resetPlaylistContext = useResetAtom(playlistContextState);
   const playlistExpanded = useAtom(playlistExpandedState);
@@ -144,14 +144,14 @@ export function PlaylistView(): JSX.Element {
   const clearSongContext = () => resetSongContext();
   const onClearPlaylist = () => resetPlaylistContext();
   const onPlaylistInvoked = AsyncHandler(async (playlistName: PlaylistName) => {
-    const songs = await store.get(playlistFuncFam(playlistName));
+    const songs = await store.get(playlistAtomFam(playlistName));
     await PlaySongs(store, isSymbol(songs) ? [] : songs, playlistName);
   });
   const onRemoveDupes = AsyncHandler(async () => {
     if (!playlistNames.has(playlistContext.data)) {
       return;
     }
-    const songs = await store.get(playlistFuncFam(playlistContext.data));
+    const songs = await store.get(playlistAtomFam(playlistContext.data));
     const seen = new Set<SongKey>();
     const newList: SongKey[] = [];
     for (const song of isSymbol(songs) ? [] : songs) {
@@ -160,7 +160,7 @@ export function PlaylistView(): JSX.Element {
       }
       seen.add(song);
     }
-    await store.set(playlistFuncFam(playlistContext.data), newList);
+    await store.set(playlistAtomFam(playlistContext.data), newList);
   });
   const onPlaylistDelete = (key: string) => {
     setSelected(key);
@@ -178,12 +178,12 @@ export function PlaylistView(): JSX.Element {
       songPlaylistToRemove[1].length > 0
     ) {
       const playlistName = songPlaylistToRemove[0];
-      const songListMaybe = await store.get(playlistFuncFam(playlistName));
+      const songListMaybe = await store.get(playlistAtomFam(playlistName));
       const songList = isSymbol(songListMaybe) ? [] : songListMaybe;
       const songKey = songPlaylistToRemove[1];
       const index = songPlaylistToRemove[2];
       const listLocation = index >= 0 ? index : songList.indexOf(songKey);
-      const plAtom = playlistFuncFam(songPlaylistToRemove[0]);
+      const plAtom = playlistAtomFam(songPlaylistToRemove[0]);
       const curList = await store.get(plAtom);
       if (!isSymbol(curList) && curList[listLocation] === songKey) {
         await store.set(
@@ -313,7 +313,7 @@ export function PlaylistView(): JSX.Element {
           context={playlistContext}
           onClearContext={onClearPlaylist}
           onGetSongList={async (s: MyStore, data: string) => {
-            const pl = await s.get(playlistFuncFam(data));
+            const pl = await s.get(playlistAtomFam(data));
             return isSymbol(pl) ? [] : pl;
           }}
           onGetPlaylistName={(data: string) => data}

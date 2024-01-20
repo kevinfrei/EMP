@@ -21,9 +21,9 @@ import {
   SyntheticEvent,
   useEffect,
 } from 'react';
-import { keyBufferState } from '../Jotai/KeyBuffer';
-import { isMiniplayerState } from '../Jotai/Local';
-import { saveableFunc } from '../Jotai/Playlists';
+import { keyBufferAtom } from '../Jotai/KeyBuffer';
+import { isMiniplayerAtom } from '../Jotai/Local';
+import { saveableAtom } from '../Jotai/Playlists';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
 
@@ -40,7 +40,7 @@ const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 function TypingListener(): JSX.Element {
   /* This is for a global search typing thingamajig */
-  const [keyBuffer, setKeyBuffer] = useAtom(keyBufferState);
+  const [keyBuffer, setKeyBuffer] = useAtom(keyBufferAtom);
   lastHeard = () => setKeyBuffer('');
 
   useEffect(() => {
@@ -66,7 +66,7 @@ function TypingListener(): JSX.Element {
 // keep track of which mode we're in, and generally deal with "global" silliness
 function SaveMenuUpdater(): JSX.Element {
   /* Save menu state maintenance */
-  const saveable = useAtomValue(saveableFunc);
+  const saveable = useAtomValue(saveableAtom);
   useEffect(() => {
     Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
   }, [saveable]);
@@ -76,7 +76,7 @@ function SaveMenuUpdater(): JSX.Element {
 // This is a react component to enable the IPC subsystem to talk to the store,
 // keep track of which mode we're in, and generally deal with "global" silliness
 function ResizeListener(): JSX.Element {
-  const setIsMiniplayer = useSetAtom(isMiniplayerState);
+  const setIsMiniplayer = useSetAtom(isMiniplayerAtom);
   /* Resizing event handling stuff */
   const handleWidthChange = (ev: MediaQueryList | MediaQueryListEvent) => {
     setIsMiniplayer(ev.matches);

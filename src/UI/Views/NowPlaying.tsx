@@ -27,26 +27,26 @@ import { isNumber } from '@freik/typechk';
 import { Dialogs, useDialogState } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useStore } from 'jotai';
 import { useState } from 'react';
-import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
+import { isMiniplayerAtom, nowPlayingSortAtom } from '../../Jotai/Local';
 import {
-  allAlbumsFunc,
-  allArtistsFunc,
-  curSongsFunc,
+  allAlbumsAtom,
+  allArtistsAtom,
+  curSongsAtom,
 } from '../../Jotai/MusicDatabase';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { ignoreArticlesAtom } from '../../Jotai/SimpleSettings';
 
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/Interface';
 import {
-  playlistFuncFam,
-  playlistNamesFunc,
-  saveableFunc,
+  playlistAtomFam,
+  playlistNamesAtom,
+  saveableAtom,
 } from '../../Jotai/Playlists';
 import {
-  activePlaylistState,
-  currentSongIndexFunc,
-  songListState,
-  songPlaybackOrderState,
+  activePlaylistAtom,
+  currentSongIndexAtom,
+  songListAtom,
+  songPlaybackOrderAtom,
 } from '../../Jotai/SongsPlaying';
 import { MyStore } from '../../Jotai/Storage';
 import { SortKey, SortSongList } from '../../Sorting';
@@ -69,10 +69,10 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useAtomValue(playlistNamesFunc);
-  const nowPlaying = useAtomValue(activePlaylistState);
-  const songList = useAtomValue(songListState);
-  const saveEnabled = useAtomValue(saveableFunc);
+  const playlists = useAtomValue(playlistNamesAtom);
+  const nowPlaying = useAtomValue(activePlaylistAtom);
+  const songList = useAtomValue(songListAtom);
+  const saveEnabled = useAtomValue(saveableAtom);
   const store = useStore();
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
@@ -81,8 +81,8 @@ function TopLine(): JSX.Element {
     if (playlists.has(inputName)) {
       window.alert("Sorry: You can't overwrite an existing playlist.");
     } else {
-      await store.set(playlistFuncFam(inputName), [...songList]);
-      await store.set(activePlaylistState, inputName);
+      await store.set(playlistAtomFam(inputName), [...songList]);
+      await store.set(activePlaylistAtom, inputName);
     }
   });
   const stopAndClear = () => {
@@ -96,7 +96,7 @@ function TopLine(): JSX.Element {
     }
   };
   const save = () => {
-    void store.set(playlistFuncFam(nowPlaying), songList);
+    void store.set(playlistAtomFam(nowPlaying), songList);
   };
 
   const emptyQueue = songList.length === 0;
@@ -192,16 +192,16 @@ function StickyDetailsHeader(
 export function NowPlayingView(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const albums: Map<AlbumKey, Album> = useAtomValue(allAlbumsFunc);
-  const artists: Map<ArtistKey, Artist> = useAtomValue(allArtistsFunc);
-  const articles = useAtomValue(ignoreArticlesState);
-  const [curIndex, setCurIndex] = useAtom(currentSongIndexFunc);
-  const [songList, setSongList] = useAtom(songListState);
-  const [sortBy, setSortBy] = useAtom(nowPlayingSortState);
-  const curSongs = useAtomValue(curSongsFunc);
-  const isMini = useAtomValue(isMiniplayerState);
+  const albums: Map<AlbumKey, Album> = useAtomValue(allAlbumsAtom);
+  const artists: Map<ArtistKey, Artist> = useAtomValue(allArtistsAtom);
+  const articles = useAtomValue(ignoreArticlesAtom);
+  const [curIndex, setCurIndex] = useAtom(currentSongIndexAtom);
+  const [songList, setSongList] = useAtom(songListAtom);
+  const [sortBy, setSortBy] = useAtom(nowPlayingSortAtom);
+  const curSongs = useAtomValue(curSongsAtom);
+  const isMini = useAtomValue(isMiniplayerAtom);
   const [songContext, setSongContext] = useAtom(nowPlayingContextState);
-  const [playbackOrder, setPlaybackOrder] = useAtom(songPlaybackOrderState);
+  const [playbackOrder, setPlaybackOrder] = useAtom(songPlaybackOrderAtom);
   const store = useStore();
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
     const event = ev as unknown as MouseEvent;

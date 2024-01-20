@@ -4,12 +4,12 @@ import { onRejected } from '@freik/web-utils';
 import { useAtom, useAtomValue, useStore } from 'jotai';
 import { ForwardedRef, MouseEventHandler } from 'react';
 import { MaybePlayNext, MaybePlayPrev } from '../Jotai/Interface';
-import { playingState } from '../Jotai/MediaPlaying';
-import { repeatState, shuffleState } from '../Jotai/SimpleSettings';
+import { playingAtom } from '../Jotai/MediaPlaying';
+import { repeatAtom, shuffleAtom } from '../Jotai/SimpleSettings';
 import {
-  hasAnySongsFunc,
-  hasNextSongFunc,
-  hasPrevSongFunc,
+  hasAnySongsAtom,
+  hasNextSongAtom,
+  hasPrevSongAtom,
 } from '../Jotai/SongsPlaying';
 import { MyStore } from '../Jotai/Storage';
 import { isMutableRefObject } from '../Tools';
@@ -26,7 +26,7 @@ export function onClickPlayPause(
     wrn('Clicking but no audio element');
     return;
   }
-  store.set(playingState, (isPlaying) => {
+  store.set(playingAtom, (isPlaying) => {
     if (isPlaying) {
       audioRef.current.pause();
       return false;
@@ -49,13 +49,13 @@ export type PlaybackControlsProps = {
 export function PlaybackControls({
   audioRef,
 }: PlaybackControlsProps): JSX.Element {
-  const isPlaying = useAtomValue(playingState);
+  const isPlaying = useAtomValue(playingAtom);
 
-  const hasAnySong = useAtomValue(hasAnySongsFunc);
-  const [shuf, setShuffle] = useAtom(shuffleState);
-  const [rep, setRep] = useAtom(repeatState);
-  const hasNextSong = useAtomValue(hasNextSongFunc);
-  const hasPrevSong = useAtomValue(hasPrevSongFunc);
+  const hasAnySong = useAtomValue(hasAnySongsAtom);
+  const [shuf, setShuffle] = useAtom(shuffleAtom);
+  const [rep, setRep] = useAtom(repeatAtom);
+  const hasNextSong = useAtomValue(hasNextSongAtom);
+  const hasPrevSong = useAtomValue(hasPrevSongAtom);
 
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';

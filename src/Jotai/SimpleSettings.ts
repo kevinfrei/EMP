@@ -1,67 +1,67 @@
 import { isArrayOfString, isBoolean, isNumber, isString } from '@freik/typechk';
 import { atomWithMainStorage } from './Storage';
 
-export const mutedState = atomWithMainStorage('mute', false, isBoolean);
+export const mutedAtom = atomWithMainStorage('mute', false, isBoolean);
 
-export const volumeState = atomWithMainStorage('volume', 0.5, isNumber);
+export const volumeAtom = atomWithMainStorage('volume', 0.5, isNumber);
 
-export const repeatState = atomWithMainStorage('repeat', false, isBoolean);
+export const repeatAtom = atomWithMainStorage('repeat', false, isBoolean);
 
-export const shuffleState = atomWithMainStorage('shuffle', false, isBoolean);
+export const shuffleAtom = atomWithMainStorage('shuffle', false, isBoolean);
 
 // This is the 'locations' for searching for tunes
-export const locationsState = atomWithMainStorage(
+export const locationsAtom = atomWithMainStorage(
   'locations',
   [],
   isArrayOfString,
 );
 
-export const defaultLocationState = atomWithMainStorage(
+export const defaultLocationAtom = atomWithMainStorage(
   'defaultLocation',
   '',
   isString,
 );
 
 // Sort with/without articles setting
-export const ignoreArticlesState = atomWithMainStorage(
+export const ignoreArticlesAtom = atomWithMainStorage(
   'rSortWithArticles',
   true,
   isBoolean,
 );
 
 // Only show artists in the list who appear on full albums
-export const showArtistsWithFullAlbumsState = atomWithMainStorage(
+export const showArtistsWithFullAlbumsAtom = atomWithMainStorage(
   'FullAlbumsOnly',
   false,
   isBoolean,
 );
 
-export const downloadAlbumArtworkState = atomWithMainStorage(
+export const downloadAlbumArtworkAtom = atomWithMainStorage(
   'downloadAlbumArtwork',
   false,
   isBoolean,
 );
 
-export const downloadArtistArtworkState = atomWithMainStorage(
+export const downloadArtistArtworkAtom = atomWithMainStorage(
   'downloadArtistArtwork',
   false,
   isBoolean,
 );
 
-export const saveAlbumArtworkWithMusicState = atomWithMainStorage(
+export const saveAlbumArtworkWithMusicAtom = atomWithMainStorage(
   'saveAlbumArtworkWithMusic',
   false,
   isBoolean,
 );
 
-export const albumCoverNameState = atomWithMainStorage(
+export const albumCoverNameAtom = atomWithMainStorage(
   'albumCoverName',
   '.CoverArt',
   isString,
 );
 
 // The minimum # of songs an artist needs to show up in the artist list
-export const minSongCountForArtistListState = atomWithMainStorage(
+export const minSongCountForArtistListAtom = atomWithMainStorage(
   'MinSongCount',
   1,
   isNumber,

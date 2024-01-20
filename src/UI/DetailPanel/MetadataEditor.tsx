@@ -18,7 +18,7 @@ import { Catch, onRejected } from '@freik/web-utils';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { AsyncHandler } from '../../Jotai/Helpers';
-import { albumKeyForSongKeyFuncFam } from '../../Jotai/MusicDatabase';
+import { albumKeyForSongKeyAtomFam } from '../../Jotai/MusicDatabase';
 import {
   UploadFileForAlbum,
   UploadFileForSong,
@@ -181,7 +181,7 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       // Messy: Multiple songs
       const albumsSet: Set<AlbumKey> = new Set();
       for (const song of props.forSongs!) {
-        const albumKey = await store.get(albumKeyForSongKeyFuncFam(song));
+        const albumKey = await store.get(albumKeyForSongKeyAtomFam(song));
         if (albumsSet.has(albumKey)) {
           continue;
         }

@@ -19,24 +19,24 @@ import { useAtom, useAtomValue, useStore } from 'jotai';
 import React, { useState } from 'react';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { useBoolAtom } from '../../Jotai/Hooks';
-import { neverPlayHatesState, onlyPlayLikesState } from '../../Jotai/Likes';
+import { neverPlayHatesAtom, onlyPlayLikesAtom } from '../../Jotai/Likes';
 import {
-  allAlbumsFunc,
-  allArtistsFunc,
-  allSongsFunc,
-  ignoreItemsState,
-  rescanInProgressState,
+  allAlbumsAtom,
+  allArtistsAtom,
+  allSongsAtom,
+  ignoreItemsAtom,
+  rescanInProgressAtom,
 } from '../../Jotai/MusicDatabase';
 import {
-  albumCoverNameState,
-  defaultLocationState,
-  downloadAlbumArtworkState,
-  downloadArtistArtworkState,
-  ignoreArticlesState,
-  locationsState,
-  minSongCountForArtistListState,
-  saveAlbumArtworkWithMusicState,
-  showArtistsWithFullAlbumsState,
+  albumCoverNameAtom,
+  defaultLocationAtom,
+  downloadAlbumArtworkAtom,
+  downloadArtistArtworkAtom,
+  ignoreArticlesAtom,
+  locationsAtom,
+  minSongCountForArtistListAtom,
+  saveAlbumArtworkWithMusicAtom,
+  showArtistsWithFullAlbumsAtom,
 } from '../../Jotai/SimpleSettings';
 import { MyStore } from '../../Jotai/Storage';
 import { GetHelperText } from '../Utilities';
@@ -56,24 +56,24 @@ async function GetDirs(): Promise<string[] | void> {
 export async function addLocation(store: MyStore): Promise<boolean> {
   const locs = await GetDirs();
   if (locs) {
-    const curLocs = await store.get(locationsState);
-    await store.set(locationsState, [...locs, ...curLocs]);
+    const curLocs = await store.get(locationsAtom);
+    await store.set(locationsAtom, [...locs, ...curLocs]);
     return true;
   }
   return false;
 }
 
 function MusicLocations(): JSX.Element {
-  const [newLoc, setNewLoc] = useAtom(locationsState);
-  const [defLoc, setDefLoc] = useAtom(defaultLocationState);
-  const rescanInProgress = useAtomValue(rescanInProgressState);
+  const [newLoc, setNewLoc] = useAtom(locationsAtom);
+  const [defLoc, setDefLoc] = useAtom(defaultLocationAtom);
+  const rescanInProgress = useAtomValue(rescanInProgressAtom);
   const store = useStore();
   const onAddLocation = () => {
     addLocation(store).catch(Catch);
   };
-  const songs = useAtomValue(allSongsFunc);
-  const albums = useAtomValue(allAlbumsFunc);
-  const artists = useAtomValue(allArtistsFunc);
+  const songs = useAtomValue(allSongsAtom);
+  const albums = useAtomValue(allAlbumsAtom);
+  const artists = useAtomValue(allArtistsAtom);
   const setSaveStyle = {
     textContainer: { fontSize: 11 },
     root: { height: 22, padding: 5, minWidth: 45 },
@@ -150,7 +150,7 @@ const ignoreOptions: IDropdownOption[] = [...ignoreTypeNameMap.entries()].map(
 );
 
 function IgnoreList(): JSX.Element {
-  const ignoreItems = useAtomValue(ignoreItemsState);
+  const ignoreItems = useAtomValue(ignoreItemsAtom);
   const [newType, setNewType] = useState<IgnoreItemType | ''>('');
   const [newValue, setNewValue] = useState<string>('');
   return (
@@ -219,13 +219,13 @@ function IgnoreList(): JSX.Element {
 }
 
 function ArticleSorting(): JSX.Element {
-  const articles = useBoolAtom(ignoreArticlesState);
+  const articles = useBoolAtom(ignoreArticlesAtom);
   return <StateToggle label="Ignore articles when sorting" state={articles} />;
 }
 
 function ArtistFiltering(): JSX.Element {
-  const onlyAlbumArtists = useBoolAtom(showArtistsWithFullAlbumsState);
-  const [songCount, setSongCount] = useAtom(minSongCountForArtistListState);
+  const onlyAlbumArtists = useBoolAtom(showArtistsWithFullAlbumsAtom);
+  const [songCount, setSongCount] = useAtom(minSongCountForArtistListAtom);
   return (
     <>
       <StateToggle
@@ -249,8 +249,8 @@ function ArtistFiltering(): JSX.Element {
 }
 
 function LikeFiltering(): JSX.Element {
-  const neverPlayHates = useBoolAtom(neverPlayHatesState);
-  const onlyPlayLikes = useBoolAtom(onlyPlayLikesState);
+  const neverPlayHates = useBoolAtom(neverPlayHatesAtom);
+  const onlyPlayLikes = useBoolAtom(onlyPlayLikesAtom);
   return (
     <>
       <StateToggle
@@ -263,10 +263,10 @@ function LikeFiltering(): JSX.Element {
 }
 
 function ArtworkSettings(): JSX.Element {
-  const dlAlbumArtwork = useBoolAtom(downloadAlbumArtworkState);
-  const dlArtistArtwork = useBoolAtom(downloadArtistArtworkState);
-  const saveAlbumArtwork = useBoolAtom(saveAlbumArtworkWithMusicState);
-  const [coverArtName, setCoverArtName] = useAtom(albumCoverNameState);
+  const dlAlbumArtwork = useBoolAtom(downloadAlbumArtworkAtom);
+  const dlArtistArtwork = useBoolAtom(downloadArtistArtworkAtom);
+  const saveAlbumArtwork = useBoolAtom(saveAlbumArtworkWithMusicAtom);
+  const [coverArtName, setCoverArtName] = useAtom(albumCoverNameAtom);
   return (
     <>
       <StateToggle label="Download Album Artwork" state={dlAlbumArtwork} />

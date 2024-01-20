@@ -1,15 +1,15 @@
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { useAtom } from 'jotai';
 import { useEffect } from 'react';
-import { displayMessageState, recentlyQueuedState } from '../Jotai/Local';
+import { displayMessageAtom, recentlyQueuedAtom } from '../Jotai/Local';
 import './styles/Notifier.css';
 
 // This is a little self-contained notification doohickey
 // Currently, it only displays the last "added some songs" message
 // Probably make it do other things, too, yeah?
 export function Notifier(): JSX.Element {
-  const [addedSongs, setRecentlyQueued] = useAtom(recentlyQueuedState);
-  const [displayed, setDisplayMessage] = useAtom(displayMessageState);
+  const [addedSongs, setRecentlyQueued] = useAtom(recentlyQueuedAtom);
+  const [displayed, setDisplayMessage] = useAtom(displayMessageAtom);
   useEffect(() => {
     const clearIt = () => setRecentlyQueued(0);
     const startFade = () => setDisplayMessage(false);

@@ -24,10 +24,10 @@ import { SearchResults } from '../../ipc';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { AddSongs } from '../../Jotai/Interface';
 import {
-  allAlbumsFunc,
-  allArtistsFunc,
-  allSongsFunc,
-  searchFuncFam,
+  allAlbumsAtom,
+  allArtistsAtom,
+  allSongsAtom,
+  searchAtomFam,
   searchTermState,
 } from '../../Jotai/MusicDatabase';
 import { MakeSortKey } from '../../Sorting';
@@ -216,10 +216,10 @@ const noSort = MakeSortKey('rlnt');
 
 export function SearchResultsView(): JSX.Element {
   const searchTerm = useAtomValue(searchTermState);
-  const searchResults = useAtomValue(searchFuncFam(searchTerm));
-  const songs = useAtomValue(allSongsFunc);
-  const artists = useAtomValue(allArtistsFunc);
-  const albums = useAtomValue(allAlbumsFunc);
+  const searchResults = useAtomValue(searchAtomFam(searchTerm));
+  const songs = useAtomValue(allSongsAtom);
+  const artists = useAtomValue(allArtistsAtom);
+  const albums = useAtomValue(allAlbumsAtom);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
   const store = useStore();

@@ -8,7 +8,7 @@ import { atomFromIpc } from './Storage';
 // Maybe I need new atom helper "atomFromCall" or something similar
 // TODO: I don't think this is right :/
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const mediaInfoFuncFam = atomFamily((_sk: SongKey) =>
+export const mediaInfoAtomFam = atomFamily((_sk: SongKey) =>
   atomFromIpc(
     'mediainfo', // IpcId.GetMediaInfo,
     isMapOfStrings,

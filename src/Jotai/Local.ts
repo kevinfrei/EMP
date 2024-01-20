@@ -3,19 +3,19 @@ import { atom } from 'jotai';
 import { atomWithReset } from 'jotai/utils';
 import { MakeSortKey } from '../Sorting';
 
-export const isMiniplayerState = atom(false);
+export const isMiniplayerAtom = atom(false);
 
 // This is the sort for the current playlist
-export const nowPlayingSortState = atomWithReset(MakeSortKey([''], ['lyrnt']));
+export const nowPlayingSortAtom = atomWithReset(MakeSortKey([''], ['lyrnt']));
 
 // The currently selected song(s) to display details for
-export const songDetailState = atomWithReset(new Set<SongKey>());
+export const songDetailAtom = atomWithReset(new Set<SongKey>());
 
 // The # of recently added songs to show for a few seconds
-export const recentlyQueuedState = atomWithReset(0);
+export const recentlyQueuedAtom = atomWithReset(0);
 
 // Is the 'display message' showing
-export const displayMessageState = atom(false);
+export const displayMessageAtom = atom(false);
 
 // Are we displaying the play order?
-export const playOrderDisplayingState = atom(false);
+export const playOrderDisplayingAtom = atom(false);

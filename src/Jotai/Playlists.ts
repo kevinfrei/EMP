@@ -6,11 +6,11 @@ import { isArray, isArrayOfString, isSetOfString } from '@freik/typechk';
 import { atom } from 'jotai';
 import { RESET, atomFamily, atomWithReset } from 'jotai/utils';
 import { isPlaylist } from '../Tools';
-import { activePlaylistState, songListState } from './SongsPlaying';
+import { activePlaylistAtom, songListAtom } from './SongsPlaying';
 
 // Stuff for playlists
 
-const playlistNamesBackerState = atomWithReset<string[] | false>(false);
+const playlistNamesBackerAtom = atomWithReset<string[] | false>(false);
 
 // function playlistNamesGetter(
 //   get: <T>(a: RecoilValue<T>) => T,
@@ -22,9 +22,9 @@ const playlistNamesBackerState = atomWithReset<string[] | false>(false);
 //   return new Set(backed);
 // }
 
-export const playlistNamesFunc = atom(
+export const playlistNamesAtom = atom(
   async (get) => {
-    const backed = get(playlistNamesBackerState);
+    const backed = get(playlistNamesBackerAtom);
     if (backed === false) {
       const playlistsString = await Ipc.CallMain<string[], void>(
         IpcId.GetPlaylists,
@@ -41,12 +41,12 @@ export const playlistNamesFunc = atom(
   },
   async (get, set, newValue: Set<string> | typeof RESET) => {
     const data = isSetOfString(newValue) ? [...newValue] : [];
-    set(playlistNamesBackerState, data);
+    set(playlistNamesBackerAtom, data);
     await Ipc.PostMain(IpcId.SetPlaylists, data);
   },
 );
 
-const playlistBackerFam = atomFamily(
+const playlistBackerAtomFam = atomFamily(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (_name: PlaylistName) =>
     atomWithReset<SongKey[] | false | typeof RESET>(false),
@@ -60,10 +60,10 @@ const playlistBackerFam = atomFamily(
 //   return !backed ? undefined : backed;
 // }
 
-export const playlistFuncFam = atomFamily((name: PlaylistName) =>
+export const playlistAtomFam = atomFamily((name: PlaylistName) =>
   atom(
     async (get) => {
-      const backed = get(playlistBackerFam(name));
+      const backed = get(playlistBackerAtomFam(name));
       if (backed === false) {
         const listStr = await Ipc.CallMain(
           IpcId.LoadPlaylists,
@@ -79,23 +79,23 @@ export const playlistFuncFam = atomFamily((name: PlaylistName) =>
       }
     },
     async (get, set, newValue: SongKey[]): Promise<void> => {
-      const names = await get(playlistNamesFunc);
+      const names = await get(playlistNamesAtom);
       if (!names.has(name)) {
         names.add(name);
-        await set(playlistNamesFunc, new Set(names));
+        await set(playlistNamesAtom, new Set(names));
       }
       const songs = isArray(newValue) ? newValue : [];
-      set(playlistBackerFam(name), songs);
+      set(playlistBackerAtomFam(name), songs);
       void Ipc.PostMain(IpcId.SavePlaylist, { name, songs });
     },
   ),
 );
 
-export const allPlaylistsFunc = atom(
+export const allPlaylistsAtom = atom(
   async (get): Promise<Map<PlaylistName, SongKey[]>> => {
     const res = new Map<PlaylistName, SongKey[]>();
-    for (const plName of await get(playlistNamesFunc)) {
-      const content = get(playlistBackerFam(plName));
+    for (const plName of await get(playlistNamesAtom)) {
+      const content = get(playlistBackerAtomFam(plName));
       if (content === RESET || content === false) {
         res.delete(plName);
       } else {
@@ -108,14 +108,14 @@ export const allPlaylistsFunc = atom(
 
 // This decides if the current playlist is something that can be 'saved'
 // (Is it a playlist, and has it been modified)
-export const saveableFunc = atom(async (get) => {
-  const curPlaylist = await get(activePlaylistState);
+export const saveableAtom = atom(async (get) => {
+  const curPlaylist = await get(activePlaylistAtom);
   if (isPlaylist(curPlaylist)) {
-    const theSongList = await get(playlistFuncFam(curPlaylist));
+    const theSongList = await get(playlistAtomFam(curPlaylist));
     if (theSongList === RESET) {
       return false;
     }
-    const songList = await get(songListState);
+    const songList = await get(songListAtom);
     if (songList.length !== theSongList.length) {
       return true;
     }

@@ -5,7 +5,7 @@ import { Spinner } from '@freik/web-utils';
 import { Provider, useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
 import { RecoilRoot } from 'recoil';
-import { isMiniplayerState } from '../Jotai/Local';
+import { isMiniplayerAtom } from '../Jotai/Local';
 import { getStore } from '../Jotai/Storage';
 import { isHostMac } from '../MyWindow';
 import { SongDetailPanel } from './DetailPanel/SongDetailPanel';
@@ -18,7 +18,7 @@ import { VolumeControl } from './VolumeControl';
 import './styles/App.css';
 
 function WindowChrome(): JSX.Element {
-  const isMiniPlayer = useAtomValue(isMiniplayerState);
+  const isMiniPlayer = useAtomValue(isMiniplayerAtom);
   const [isMax, setIsMax] = useState(false);
   if (isHostMac() || isMiniPlayer) {
     // For macOS, the menu is always up there, wasting space,

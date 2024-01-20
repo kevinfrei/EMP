@@ -25,16 +25,16 @@ import { useState } from 'react';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import { AddSongs } from '../../Jotai/Interface';
-import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
+import { focusedKeysAtomFam } from '../../Jotai/KeyBuffer';
 import {
-  albumByKeyFuncFam,
-  allAlbumsFunc,
-  allArtistsFunc,
-  allSongsFunc,
-  dataForAlbumFuncFam,
-  SongListFromKey,
+  albumByKeyAtomFam,
+  allAlbumsAtom,
+  allArtistsAtom,
+  allSongsAtom,
+  dataForAlbumAtomFam,
+  songListFromKeyAtomFam,
 } from '../../Jotai/MusicDatabase';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { ignoreArticlesAtom } from '../../Jotai/SimpleSettings';
 import { MyStore } from '../../Jotai/Storage';
 import {
   articlesCmp,
@@ -72,8 +72,8 @@ const albumSortState = jatom(MakeSortKey(['l', 'n'], ['lry', 'nrt']));
 
 type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
-  const album = useAtomValue(albumByKeyFuncFam(group.key));
-  const albumData = useAtomValue(dataForAlbumFuncFam(group.key));
+  const album = useAtomValue(albumByKeyAtomFam(group.key));
+  const albumData = useAtomValue(dataForAlbumAtomFam(group.key));
   const picurl = getAlbumImageUrl(group.key);
   const store = useStore();
   const onAddSongsClick = AsyncHandler(async () => {
@@ -123,11 +123,11 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
 export function GroupedAlbumList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const albums = useAtomValue(allAlbumsFunc);
-  const ignoreArticles = useAtomValue(ignoreArticlesState);
-  const keyBuffer = useAtomValue(focusedKeysFuncFam(CurrentView.albums));
-  const allSongs = useAtomValue(allSongsFunc);
-  const allArtists = useAtomValue(allArtistsFunc);
+  const albums = useAtomValue(allAlbumsAtom);
+  const ignoreArticles = useAtomValue(ignoreArticlesAtom);
+  const keyBuffer = useAtomValue(focusedKeysAtomFam(CurrentView.albums));
+  const allSongs = useAtomValue(allSongsAtom);
+  const allArtists = useAtomValue(allArtistsAtom);
   const newAlbumSort = useAtomValue(albumSortState);
   const [albumContext, setAlbumContext] = useAtom(albumContextState);
 
@@ -187,7 +187,7 @@ export function GroupedAlbumList(): JSX.Element {
     detailRef.focusIndex(index);
   }
   const onGetSongList = (st: MyStore, data: string) =>
-    st.get(SongListFromKey(data));
+    st.get(songListFromKeyAtomFam(data));
   return (
     <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>

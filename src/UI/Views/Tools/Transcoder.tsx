@@ -18,15 +18,15 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { AsyncHandler } from '../../../Jotai/Helpers';
 import {
-  destLocationState,
-  sourceLocationAlbumState,
-  sourceLocationArtistState,
-  sourceLocationDescriptorFunc,
+  destLocationAtom,
+  sourceLocationAlbumAtom,
+  sourceLocationArtistAtom,
+  sourceLocationDescriptorAtom,
   sourceLocationDirState,
-  sourceLocationPlaylistState,
-  sourceLocationTypeState,
-  validSourceFunc,
-  xcodeBitRateState,
+  sourceLocationPlaylistAtom,
+  sourceLocationTypeAtom,
+  validSourceAtom,
+  xcodeBitRateAtom,
 } from '../../../Jotai/TranscodingState';
 import { StringSpinButton } from '../../Utilities';
 import '../styles/Tools.css';
@@ -69,16 +69,16 @@ async function getDir(
 export function TranscoderConfiguration(): JSX.Element {
   const copyArtwork = useBoolState(false);
   const mirror = useBoolState(false);
-  const [srcLocType, setSrcLocType] = useAtom(sourceLocationTypeState);
+  const [srcLocType, setSrcLocType] = useAtom(sourceLocationTypeAtom);
   const [srcDirLoc, setSrcDirLoc] = useAtom(sourceLocationDirState);
-  const [dstLoc, setDstLoc] = useAtom(destLocationState);
+  const [dstLoc, setDstLoc] = useAtom(destLocationAtom);
   const [err, setError] = useState('');
-  const [bitrate, setBitrate] = useAtom(xcodeBitRateState);
-  const validSource = useAtomValue(validSourceFunc);
-  const srcLocDescr = useAtomValue(sourceLocationDescriptorFunc);
-  const srcLocPlaylist = useAtom(sourceLocationPlaylistState);
-  const srcLocArist = useAtom(sourceLocationArtistState);
-  const srcLocAlbum = useAtom(sourceLocationAlbumState);
+  const [bitrate, setBitrate] = useAtom(xcodeBitRateAtom);
+  const validSource = useAtomValue(validSourceAtom);
+  const srcLocDescr = useAtomValue(sourceLocationDescriptorAtom);
+  const srcLocPlaylist = useAtom(sourceLocationPlaylistAtom);
+  const srcLocArist = useAtom(sourceLocationArtistAtom);
+  const srcLocAlbum = useAtom(sourceLocationAlbumAtom);
 
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;

@@ -30,10 +30,10 @@ import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
 import * as ipc from '../ipc';
 import {
-  minSongCountForArtistListState,
-  showArtistsWithFullAlbumsState,
+  minSongCountForArtistListAtom,
+  showArtistsWithFullAlbumsAtom,
 } from './SimpleSettings';
-import { songListState } from './SongsPlaying';
+import { songListAtom } from './SongsPlaying';
 import { atomFromIpc, atomFromMain } from './Storage';
 // import { songListState } from './SongPlaying';
 
@@ -114,23 +114,23 @@ function MakeMusicLibraryFromFlatAudioDatabase(
   };
 }
 
-const musicLibraryState = atomFromIpc<FlatAudioDatabase, MusicLibrary>(
+const musicLibraryAtom = atomFromIpc<FlatAudioDatabase, MusicLibrary>(
   'musicDatabase',
   isFlatAudioDatabase,
   MakeMusicLibraryFromFlatAudioDatabase,
 );
 
-export const allSongsFunc = atom(
-  async (get) => (await get(musicLibraryState)).songs,
+export const allSongsAtom = atom(
+  async (get) => (await get(musicLibraryAtom)).songs,
 );
 
-export const songExistsFam = atomFamily((key: SongKey) =>
-  atom(async (get) => (await get(allSongsFunc)).has(key)),
+export const songExistsAtomFam = atomFamily((key: SongKey) =>
+  atom(async (get) => (await get(allSongsAtom)).has(key)),
 );
 
-export const songByKeyFuncFam = atomFamily((sk: SongKey) =>
+export const songByKeyAtomFam = atomFamily((sk: SongKey) =>
   atom(async (get) => {
-    const songs = await get(allSongsFunc);
+    const songs = await get(allSongsAtom);
     const song = songs.get(sk);
     if (!song) {
       Fail(sk, 'Unfound song key');
@@ -139,13 +139,13 @@ export const songByKeyFuncFam = atomFamily((sk: SongKey) =>
   }),
 );
 
-export const allAlbumsFunc = atom(
-  async (get) => (await get(musicLibraryState)).albums,
+export const allAlbumsAtom = atom(
+  async (get) => (await get(musicLibraryAtom)).albums,
 );
 
-export const albumByKeyFuncFam = atomFamily((ak: AlbumKey) =>
+export const albumByKeyAtomFam = atomFamily((ak: AlbumKey) =>
   atom(async (get) => {
-    const albums = await get(allAlbumsFunc);
+    const albums = await get(allAlbumsAtom);
     const album = albums.get(ak);
     if (!album) {
       Fail(ak, 'Unfound album key');
@@ -154,9 +154,9 @@ export const albumByKeyFuncFam = atomFamily((ak: AlbumKey) =>
   }),
 );
 
-export const maybeAlbumByKeyFuncFam = atomFamily((ak: AlbumKey) =>
+export const maybeAlbumByKeyAtomFam = atomFamily((ak: AlbumKey) =>
   atom(async (get) =>
-    ak.length === 0 ? null : await get(albumByKeyFuncFam(ak)),
+    ak.length === 0 ? null : await get(albumByKeyAtomFam(ak)),
   ),
 );
 
@@ -170,13 +170,13 @@ export const maybeAlbumByKeyFuncFam = atomFamily((ak: AlbumKey) =>
 //   },
 // });
 
-export const allArtistsFunc = atom(
-  async (get) => (await get(musicLibraryState)).artists,
+export const allArtistsAtom = atom(
+  async (get) => (await get(musicLibraryAtom)).artists,
 );
 
-export const artistByKeyFuncFam = atomFamily((ak: ArtistKey) =>
+export const artistByKeyAtomFam = atomFamily((ak: ArtistKey) =>
   atom(async (get) => {
-    const artists = await get(allArtistsFunc);
+    const artists = await get(allArtistsAtom);
     const artist = artists.get(ak);
     if (!artist) {
       Fail(ak, 'Unfound artist key');
@@ -185,19 +185,19 @@ export const artistByKeyFuncFam = atomFamily((ak: ArtistKey) =>
   }),
 );
 
-export const maybeArtistByKeyFuncFam = atomFamily((ak: ArtistKey) =>
+export const maybeArtistByKeyAtomFam = atomFamily((ak: ArtistKey) =>
   atom(async (get) =>
-    ak.length === 0 ? null : await get(artistByKeyFuncFam(ak)),
+    ak.length === 0 ? null : await get(artistByKeyAtomFam(ak)),
   ),
 );
 
-export const albumKeyForSongKeyFuncFam = atomFamily((sk: SongKey) =>
+export const albumKeyForSongKeyAtomFam = atomFamily((sk: SongKey) =>
   atom(async (get) =>
-    sk.length > 0 ? (await get(songByKeyFuncFam(sk))).albumId : '',
+    sk.length > 0 ? (await get(songByKeyAtomFam(sk))).albumId : '',
   ),
 );
 
-export const artistStringFuncFam = atomFamily((artistList: ArtistKey[]) =>
+export const artistStringAtomFam = atomFamily((artistList: ArtistKey[]) =>
   atom(async (get) => {
     if (artistList.length === 0) {
       return '';
@@ -205,7 +205,7 @@ export const artistStringFuncFam = atomFamily((artistList: ArtistKey[]) =>
     const artists: string[] = (
       await Promise.all(
         artistList.map(async (ak) => {
-          const art: Artist = await get(artistByKeyFuncFam(ak));
+          const art: Artist = await get(artistByKeyAtomFam(ak));
           return art ? art.name : '';
         }),
       )
@@ -219,12 +219,12 @@ export const artistStringFuncFam = atomFamily((artistList: ArtistKey[]) =>
   }),
 );
 
-export const curSongsFunc = atom(async (get) => {
-  const curList = await get(songListState);
+export const curSongsAtom = atom(async (get) => {
+  const curList = await get(songListAtom);
   const songList: Song[] = [];
   for (const sk of curList) {
     try {
-      const s = await get(songByKeyFuncFam(sk));
+      const s = await get(songByKeyAtomFam(sk));
       songList.push(s);
     } catch (e) {
       Catch(e, `Error for SongKey '${sk}'`);
@@ -233,47 +233,47 @@ export const curSongsFunc = atom(async (get) => {
   return songList; // curList.map((sk: SongKey) => get(getSongByKeyState(sk)));
 });
 
-export const dataForSongFuncFam = atomFamily((sk: SongKey) =>
+export const dataForSongAtomFam = atomFamily((sk: SongKey) =>
   atom(async (get): Promise<SongDescription> => {
     const res = { title: '', track: 0, artist: '', album: '', year: '' };
 
     if (sk.length === 0) {
       return res;
     }
-    const song = await get(songByKeyFuncFam(sk));
+    const song = await get(songByKeyAtomFam(sk));
     if (!song) {
       return res;
     }
     const title = song.title;
     const track = song.track;
 
-    return { title, track, ...(await get(dataForAlbumFuncFam(song.albumId))) };
+    return { title, track, ...(await get(dataForAlbumAtomFam(song.albumId))) };
   }),
 );
 
-export const dataForSongListFuncFam = atomFamily((sks: SongKey[]) =>
+export const dataForSongListAtomFam = atomFamily((sks: SongKey[]) =>
   atom(
     async (get) =>
-      await Promise.all(sks.map((sk: SongKey) => get(dataForSongFuncFam(sk)))),
+      await Promise.all(sks.map((sk: SongKey) => get(dataForSongAtomFam(sk)))),
   ),
 );
 
-export const maybeDataForSongFunc = atomFamily((ssk: SongKey[]) =>
+export const maybeDataForSongAtomFam = atomFamily((ssk: SongKey[]) =>
   atom(async (get) => {
     if (ssk.length !== 1) {
       return null;
     }
-    return await get(dataForSongFuncFam(ssk[0]));
+    return await get(dataForSongAtomFam(ssk[0]));
   }),
 );
 
-export const dataForAlbumFuncFam = atomFamily((ak: AlbumKey) =>
+export const dataForAlbumAtomFam = atomFamily((ak: AlbumKey) =>
   atom(async (get): Promise<AlbumDescriptionWithKey> => {
     const res = { artist: '', album: '', year: '', key: '' };
     if (!ak) {
       return res;
     }
-    const album: Album = await get(albumByKeyFuncFam(ak));
+    const album: Album = await get(albumByKeyAtomFam(ak));
     if (album) {
       res.album = album.title;
       res.year = album.year ? album.year.toString() : '';
@@ -281,7 +281,7 @@ export const dataForAlbumFuncFam = atomFamily((ak: AlbumKey) =>
     res.key = ak;
     if (album.primaryArtists.length) {
       const maybeArtistName = await get(
-        artistStringFuncFam(album.primaryArtists),
+        artistStringAtomFam(album.primaryArtists),
       );
       if (maybeArtistName) {
         res.artist = maybeArtistName;
@@ -297,14 +297,14 @@ export const dataForAlbumFuncFam = atomFamily((ak: AlbumKey) =>
   }),
 );
 
-export const allAlbumsDataFunc = atom(async (get) => {
-  const allAlbums = await get(allAlbumsFunc);
+export const allAlbumsDataAtom = atom(async (get) => {
+  const allAlbums = await get(allAlbumsAtom);
   return await Promise.all(
-    [...allAlbums.keys()].map((l: AlbumKey) => get(dataForAlbumFuncFam(l))),
+    [...allAlbums.keys()].map((l: AlbumKey) => get(dataForAlbumAtomFam(l))),
   );
 });
 
-export const SongListFromKey = atomFamily((data: MediaKey) =>
+export const songListFromKeyAtomFam = atomFamily((data: MediaKey) =>
   atom(async (get): Promise<SongKey[]> => {
     if (data.length === 0) {
       return [];
@@ -313,11 +313,11 @@ export const SongListFromKey = atomFamily((data: MediaKey) =>
       return [data];
     }
     if (isAlbumKey(data)) {
-      const alb = await get(albumByKeyFuncFam(data));
+      const alb = await get(albumByKeyAtomFam(data));
       return alb ? alb.songs : [];
     }
     if (isArtistKey(data)) {
-      const art = await get(artistByKeyFuncFam(data));
+      const art = await get(artistByKeyAtomFam(data));
       return art ? art.songs : [];
     }
     return [];
@@ -326,11 +326,11 @@ export const SongListFromKey = atomFamily((data: MediaKey) =>
 
 export const searchTermState = atom('');
 
-export const metadataEditCountState = atom(0);
+export const metadataEditCountAtom = atom(0);
 
-export const searchFuncFam = atomFamily((searchTerm: string) =>
+export const searchAtomFam = atomFamily((searchTerm: string) =>
   atom(async (get) => {
-    const mdCount = get(metadataEditCountState);
+    const mdCount = get(metadataEditCountAtom);
     const res = await ipc.SearchWhole(searchTerm);
     return res || { songs: [], albums: [], artists: [] } || mdCount;
   }),
@@ -358,14 +358,14 @@ function diskNumName(songData: SongInfo): [string | null, string | null] {
 // Given a collection of SongKeys, get all the common metadata info
 // and shove it in the Partial<FullMetadata> object
 // This is used in conjunction with the Metadata Editor
-export const commonDataFuncFam = atomFamily((keys: SongKey[]) =>
+export const commonDataAtomFam = atomFamily((keys: SongKey[]) =>
   atom(async (get) => {
     const theSongsData: SongInfo[] = await Promise.all(
       keys.map(async (songKey) => {
-        const song = await get(songByKeyFuncFam(songKey));
-        const artists = await get(artistStringFuncFam(song.artistIds));
-        const moreArtists = await get(artistStringFuncFam(song.secondaryIds));
-        const album = await get(albumByKeyFuncFam(song.albumId));
+        const song = await get(songByKeyAtomFam(songKey));
+        const artists = await get(artistStringAtomFam(song.artistIds));
+        const moreArtists = await get(artistStringAtomFam(song.secondaryIds));
+        const album = await get(albumByKeyAtomFam(song.albumId));
         return { song, artists, moreArtists, album };
       }),
     );
@@ -436,12 +436,12 @@ export const commonDataFuncFam = atomFamily((keys: SongKey[]) =>
   }),
 );
 
-export const filteredArtistsFunc = atom(async (get) => {
-  const fullAlbums = await get(showArtistsWithFullAlbumsState);
-  const minSongCount = await get(minSongCountForArtistListState);
-  const artists = [...(await get(allArtistsFunc)).values()];
+export const filteredArtistsAtom = atom(async (get) => {
+  const fullAlbums = await get(showArtistsWithFullAlbumsAtom);
+  const minSongCount = await get(minSongCountForArtistListAtom);
+  const artists = [...(await get(allArtistsAtom)).values()];
   if (fullAlbums) {
-    const albums = await get(allAlbumsFunc);
+    const albums = await get(allAlbumsAtom);
     return artists.filter((artist) => {
       for (const lKey of artist.albums) {
         const album = albums.get(lKey);
@@ -457,12 +457,9 @@ export const filteredArtistsFunc = atom(async (get) => {
   return artists;
 });
 
-export const ignoreItemsState = atomFromIpc(
+export const ignoreItemsAtom = atomFromIpc(
   'IgnoreItemsState',
   isIgnoreItemArrayFn,
 );
 
-export const rescanInProgressState = atomFromMain(
-  'RescanInProgress',
-  isBoolean,
-);
+export const rescanInProgressAtom = atomFromMain('RescanInProgress', isBoolean);

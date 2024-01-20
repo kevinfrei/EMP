@@ -10,7 +10,7 @@ import { useAtomValue, useStore } from 'jotai';
 import { useCallback, useRef } from 'react';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { AddSongs } from '../../Jotai/Interface';
-import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Jotai/MusicDatabase';
+import { allAlbumsAtom, dataForAlbumAtomFam } from '../../Jotai/MusicDatabase';
 import { getAlbumImageUrl } from '../../Tools';
 import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
@@ -79,7 +79,7 @@ function AlbumCoverView({
   album: Album;
   cols: number;
 }): JSX.Element {
-  const albumData = useAtomValue(dataForAlbumFuncFam(album.key));
+  const albumData = useAtomValue(dataForAlbumAtomFam(album.key));
   const store = useStore();
   const picurl = getAlbumImageUrl(album.key);
 
@@ -138,7 +138,7 @@ export function NuAlbumView(): JSX.Element {
       <></>
     );
   };
-  const albums = useAtomValue(allAlbumsFunc);
+  const albums = useAtomValue(allAlbumsAtom);
   const getPageHeight = useCallback((): number => {
     const res = rowHeight.current * ROWS_PER_PAGE;
     return Number.isNaN(res) ? ROWS_PER_PAGE : res;

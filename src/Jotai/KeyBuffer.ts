@@ -1,11 +1,11 @@
 import { CurrentView } from '@freik/emp-shared';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { curViewFunc } from './CurrentView';
+import { curViewAtom } from './CurrentView';
 
 // This is the currently 'typed' set of characters (for scrolling lists)
-export const keyBufferState = atom('');
+export const keyBufferAtom = atom('');
 
-export const focusedKeysFuncFam = atomFamily((view: CurrentView) =>
-  atom((get) => (get(curViewFunc) === view ? get(keyBufferState) : '')),
+export const focusedKeysAtomFam = atomFamily((view: CurrentView) =>
+  atom((get) => (get(curViewAtom) === view ? get(keyBufferAtom) : '')),
 );

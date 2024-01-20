@@ -14,9 +14,9 @@ import { useAtomValue, useStore } from 'jotai';
 import { AsyncHandler } from '../Jotai/Helpers';
 import { AddSongs, PlaySongs } from '../Jotai/Interface';
 import {
-  songHateFuncFam,
-  songLikeFuncFam,
-  songLikeNumFromStringFuncFam,
+  songHateAtomFam,
+  songLikeAtomFam,
+  songLikeNumFromStringAtomFam,
 } from '../Jotai/Likes';
 import { MyStore } from '../Jotai/Storage';
 import { SongListDetailClick } from './DetailPanel/Clickers';
@@ -85,26 +85,26 @@ export function SongListMenu({
   });
   const onLove = AsyncHandler(async () => {
     const songs = await onGetSongList(store, context.data);
-    const likeVal = await store.get(songLikeNumFromStringFuncFam(context.data));
+    const likeVal = await store.get(songLikeNumFromStringAtomFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* liked
-      await store.set(songLikeFuncFam(song), likeVal !== 1);
+      await store.set(songLikeAtomFam(song), likeVal !== 1);
     }
   });
 
   const onHate = AsyncHandler(async () => {
     const songs = await onGetSongList(store, context.data);
-    const hateVal = await store.get(songLikeNumFromStringFuncFam(context.data));
+    const hateVal = await store.get(songLikeNumFromStringAtomFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* hated
-      await store.set(songHateFuncFam(song), hateVal !== 2);
+      await store.set(songHateAtomFam(song), hateVal !== 2);
     }
   });
 
   const onShow = () => {
     Ipc.InvokeMain(IpcId.ShowLocFromKey, context.data).catch(Catch);
   };
-  const likeNum = useAtomValue(songLikeNumFromStringFuncFam(context.data));
+  const likeNum = useAtomValue(songLikeNumFromStringAtomFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
   if (context.data === '' || context.spot === undefined) {

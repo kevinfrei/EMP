@@ -12,28 +12,28 @@ import {
 } from 'react';
 import { AsyncHandler } from '../Jotai/Helpers';
 import { MaybePlayNext } from '../Jotai/Interface';
-import { playOrderDisplayingState } from '../Jotai/Local';
+import { playOrderDisplayingAtom } from '../Jotai/Local';
 import {
   MediaTime,
-  mediaTimePercentFunc,
-  mediaTimePositionFunc,
-  mediaTimeRemainingFunc,
-  mediaTimeState,
-  playingState,
+  mediaTimeAtom,
+  mediaTimePercentAtom,
+  mediaTimePositionAtom,
+  mediaTimeRemainingAtom,
+  playingAtom,
 } from '../Jotai/MediaPlaying';
 import {
   SongDescription,
-  albumKeyForSongKeyFuncFam,
-  allSongsFunc,
-  dataForSongFuncFam,
+  albumKeyForSongKeyAtomFam,
+  allSongsAtom,
+  dataForSongAtomFam,
 } from '../Jotai/MusicDatabase';
 import {
-  mutedState,
-  repeatState,
-  shuffleState,
-  volumeState,
+  mutedAtom,
+  repeatAtom,
+  shuffleAtom,
+  volumeAtom,
 } from '../Jotai/SimpleSettings';
-import { currentSongKeyFunc, songListState } from '../Jotai/SongsPlaying';
+import { currentSongKeyAtom, songListAtom } from '../Jotai/SongsPlaying';
 import { getAlbumImageUrl, isMutableRefObject } from '../Tools';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import { mySliderStyles } from './Utilities';
@@ -44,8 +44,8 @@ const { log } = MakeLog('EMP:render:SongPlayback');
 // const log = console.log;
 
 function CoverArt(): JSX.Element {
-  const songKey = useAtomValue(currentSongKeyFunc);
-  const albumKey = useAtomValue(albumKeyForSongKeyFuncFam(songKey));
+  const songKey = useAtomValue(currentSongKeyAtom);
+  const albumKey = useAtomValue(albumKeyForSongKeyAtomFam(songKey));
   const picurl = getAlbumImageUrl(albumKey);
   return (
     <span id="song-cover-art">
@@ -55,7 +55,7 @@ function CoverArt(): JSX.Element {
 }
 
 function MediaTimePosition(): JSX.Element {
-  const mediaTimePosition = useAtomValue(mediaTimePositionFunc);
+  const mediaTimePosition = useAtomValue(mediaTimePositionAtom);
   return (
     <Text
       id="now-playing-current-time"
@@ -69,7 +69,7 @@ function MediaTimePosition(): JSX.Element {
 }
 
 function MediaTimeRemaining(): JSX.Element {
-  const mediaTimeRemaining = useAtomValue(mediaTimeRemainingFunc);
+  const mediaTimeRemaining = useAtomValue(mediaTimeRemainingAtom);
   return (
     <Text
       id="now-playing-remaining-time"
@@ -83,8 +83,8 @@ function MediaTimeRemaining(): JSX.Element {
 }
 
 function MediaTimeSlider(): JSX.Element {
-  const songKey = useAtomValue(currentSongKeyFunc);
-  const [mediaTimePercent, setMediaTimePercent] = useAtom(mediaTimePercentFunc);
+  const songKey = useAtomValue(currentSongKeyAtom);
+  const [mediaTimePercent, setMediaTimePercent] = useAtom(mediaTimePercentAtom);
   return (
     <Slider
       className="song-slider" /* Can't put an ID on a slider :( */
@@ -108,8 +108,8 @@ function MediaTimeSlider(): JSX.Element {
 }
 
 function SongName(): JSX.Element {
-  const songKey = useAtomValue(currentSongKeyFunc);
-  const { title }: SongDescription = useAtomValue(dataForSongFuncFam(songKey));
+  const songKey = useAtomValue(currentSongKeyAtom);
+  const { title }: SongDescription = useAtomValue(dataForSongAtomFam(songKey));
   return (
     <Text id="song-name" variant="tiny" block={true} nowrap={true}>
       {title}
@@ -118,9 +118,9 @@ function SongName(): JSX.Element {
 }
 
 function ArtistAlbum(): JSX.Element {
-  const songKey = useAtomValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyAtom);
   const { artist, album }: SongDescription = useAtomValue(
-    dataForSongFuncFam(songKey),
+    dataForSongAtomFam(songKey),
   );
   if (songKey) {
     const split = artist.length && album.length ? ': ' : '';
@@ -140,18 +140,18 @@ function ArtistAlbum(): JSX.Element {
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
-    const songKey = useAtomValue(currentSongKeyFunc);
-    const isShuffle = useAtomValue(shuffleState);
-    const isMuted = useAtomValue(mutedState);
-    const volumeLevel = useAtomValue(volumeState);
-    const playbackPercent = useAtomValue(mediaTimePercentFunc);
-    const setPlaying = useSetAtom(playingState);
-    const setMediaTime = useSetAtom(mediaTimeState);
+    const songKey = useAtomValue(currentSongKeyAtom);
+    const isShuffle = useAtomValue(shuffleAtom);
+    const isMuted = useAtomValue(mutedAtom);
+    const volumeLevel = useAtomValue(volumeAtom);
+    const playbackPercent = useAtomValue(mediaTimePercentAtom);
+    const setPlaying = useSetAtom(playingAtom);
+    const setMediaTime = useSetAtom(mediaTimeAtom);
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
     const store = useStore();
-    const songList = useAtomValue(songListState);
-    const rep = useAtomValue(repeatState);
+    const songList = useAtomValue(songListAtom);
+    const rep = useAtomValue(repeatAtom);
     const onEnded = AsyncHandler(async () => {
       log('Heading to the next song!!!');
       if (rep && songList.length === 1) {
@@ -182,7 +182,7 @@ export const SongPlaying = forwardRef(
         });
       }
     };
-    const metadata = useAtomValue(dataForSongFuncFam(songKey));
+    const metadata = useAtomValue(dataForSongAtomFam(songKey));
     const picDataUri = getAlbumImageUrl(songKey);
     useEffect(() => {
       navigator.mediaSession.metadata = new MediaMetadata({
@@ -231,7 +231,7 @@ export const SongPlaying = forwardRef(
     const showDetail = AsyncHandler(
       async (event: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
         if (songKey !== '') {
-          const sm = await store.get(allSongsFunc);
+          const sm = await store.get(allSongsAtom);
           const theSong = sm.get(songKey);
           if (theSong) {
             SongDetailClick(theSong, event.shiftKey);
@@ -241,7 +241,7 @@ export const SongPlaying = forwardRef(
     );
     const flipDisplay = useAtomCallback(
       useCallback(
-        (_get, set) => () => set(playOrderDisplayingState, (prv) => !prv),
+        (_get, set) => () => set(playOrderDisplayingAtom, (prv) => !prv),
         [],
       ),
     );

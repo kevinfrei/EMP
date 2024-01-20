@@ -1,18 +1,18 @@
 import { AlbumKey, ArtistKey, Song } from '@freik/media-core';
 import { hasFieldType, isArrayOfString } from '@freik/typechk';
 import { useAtomValue } from 'jotai';
-import { albumByKeyFuncFam, artistStringFuncFam } from '../Jotai/MusicDatabase';
+import { albumByKeyAtomFam, artistStringAtomFam } from '../Jotai/MusicDatabase';
 
 export function ArtistNameFromArtistIds({
   artistIds,
 }: {
   artistIds: ArtistKey[];
 }): JSX.Element {
-  return <>{useAtomValue(artistStringFuncFam(artistIds))}</>;
+  return <>{useAtomValue(artistStringAtomFam(artistIds))}</>;
 }
 
 function AlbumNameForSong({ song }: { song: Song }): JSX.Element {
-  const album = useAtomValue(albumByKeyFuncFam(song.albumId));
+  const album = useAtomValue(albumByKeyAtomFam(song.albumId));
   const diskNum = Math.floor(song.track / 100);
   if (
     diskNum > 0 &&
@@ -30,7 +30,7 @@ function AlbumNameForSong({ song }: { song: Song }): JSX.Element {
 }
 
 function YearForAlbum({ albumId }: { albumId: AlbumKey }): JSX.Element {
-  const album = useAtomValue(albumByKeyFuncFam(albumId));
+  const album = useAtomValue(albumByKeyAtomFam(albumId));
   return <>{album.year !== 0 ? album.year : ''}</>;
 }
 

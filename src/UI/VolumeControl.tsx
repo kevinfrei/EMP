@@ -1,13 +1,13 @@
 import { FontIcon, Slider } from '@fluentui/react';
 import { useAtom } from 'jotai';
-import { mutedState, volumeState } from '../Jotai/SimpleSettings';
+import { mutedAtom, volumeAtom } from '../Jotai/SimpleSettings';
 import { isHostMac } from '../MyWindow';
 import { mySliderStyles } from './Utilities';
 import './styles/VolumeControl.css';
 
 export function VolumeControl(): JSX.Element {
-  const [muted, setMuted] = useAtom(mutedState);
-  const [volume, setVolume] = useAtom(volumeState);
+  const [muted, setMuted] = useAtom(mutedAtom);
+  const [volume, setVolume] = useAtom(volumeAtom);
   // Make the icon reflect approximate volume
   const iconNum = Math.min(3, Math.floor(4 * (volume + 0.1))).toString();
   const cls = `volume-container-${isHostMac() ? 'mac' : 'win-linux'}`;

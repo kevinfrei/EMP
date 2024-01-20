@@ -11,17 +11,17 @@ import { atom, useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { AddSongs } from '../../Jotai/Interface';
 import {
-  songHateFuncFam,
-  songLikeFuncFam,
-  songLikeNumFromStringFuncFam,
+  songHateAtomFam,
+  songLikeAtomFam,
+  songLikeNumFromStringAtomFam,
 } from '../../Jotai/Likes';
 import {
-  allAlbumsFunc,
-  allArtistsFunc,
-  allSongsFunc,
-  dataForSongListFuncFam,
+  allAlbumsAtom,
+  allArtistsAtom,
+  allSongsAtom,
+  dataForSongListAtomFam,
 } from '../../Jotai/MusicDatabase';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { ignoreArticlesAtom } from '../../Jotai/SimpleSettings';
 import { MyStore } from '../../Jotai/Storage';
 import { MakeSortKey, SortSongList } from '../../Sorting';
 import {
@@ -40,10 +40,10 @@ import './styles/MixedSongs.css';
 const sortOrderState = atom(MakeSortKey([''], ['nrlyt']));
 const sortedSongsState = atom(async (get) =>
   SortSongList(
-    [...(await get(allSongsFunc)).values()],
-    await get(allAlbumsFunc),
-    await get(allArtistsFunc),
-    await get(ignoreArticlesState),
+    [...(await get(allSongsAtom)).values()],
+    await get(allAlbumsAtom),
+    await get(allArtistsAtom),
+    await get(ignoreArticlesAtom),
     get(sortOrderState),
   ),
 );
@@ -53,9 +53,9 @@ const songContextState = atom<SongListMenuData>({
 });
 
 function Liker({ songId }: { songId: SongKey }): JSX.Element {
-  const likeNum = useAtomValue(songLikeNumFromStringFuncFam(songId));
-  const setLike = useSetAtom(songLikeFuncFam(songId));
-  const setHate = useSetAtom(songHateFuncFam(songId));
+  const likeNum = useAtomValue(songLikeNumFromStringAtomFam(songId));
+  const setLike = useSetAtom(songLikeAtomFam(songId));
+  const setHate = useSetAtom(songHateAtomFam(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
   const onClick = AsyncHandler<any, void>(async () => {
     switch (likeNum) {
@@ -149,7 +149,7 @@ export function SimpleSongsList({
   keyprefix?: string;
 }): JSX.Element {
   const pfx = keyprefix || 'ssl';
-  const songList = useAtomValue(dataForSongListFuncFam(forSongs));
+  const songList = useAtomValue(dataForSongListAtomFam(forSongs));
   if (!songList) {
     return <></>;
   }

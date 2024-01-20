@@ -2,7 +2,7 @@ import { Text } from '@fluentui/react';
 import { TranscodeState } from '@freik/emp-shared';
 import { Expandable } from '@freik/web-utils';
 import { useAtomValue } from 'jotai';
-import { transcodeStatusState } from '../../../Jotai/TranscodingState';
+import { transcodeStatusAtom } from '../../../Jotai/TranscodingState';
 
 function completed(xcs: TranscodeState): number {
   return (
@@ -57,7 +57,7 @@ function CountedStringList({
 }
 
 export function TranscodeStatus(): JSX.Element {
-  const curState = useAtomValue(transcodeStatusState);
+  const curState = useAtomValue(transcodeStatusAtom);
   const complete = completed(curState);
   const pending = remaining(curState);
   const summary = (

@@ -1,10 +1,10 @@
 import { Song, SongKey } from '@freik/media-core';
-import { songDetailState } from '../../Jotai/Local';
+import { songDetailAtom } from '../../Jotai/Local';
 import { getStore } from '../../Jotai/Storage';
 
 export function SongDetailClick(song: Song, shift?: boolean): void {
   const store = getStore();
-  store.set(songDetailState, (prev) => {
+  store.set(songDetailAtom, (prev) => {
     const vals = new Set(shift ? prev : []);
     if (shift && prev.has(song.key)) {
       vals.delete(song.key);
@@ -27,7 +27,7 @@ function SetInvert<T>(theSet: Set<T>, toToggle: Iterable<T>): void {
 
 export function SongListDetailClick(songs: SongKey[], shift?: boolean): void {
   const store = getStore();
-  store.set(songDetailState, (prev) => {
+  store.set(songDetailAtom, (prev) => {
     if (shift) {
       const vals = new Set(prev);
       SetInvert(vals, songs);

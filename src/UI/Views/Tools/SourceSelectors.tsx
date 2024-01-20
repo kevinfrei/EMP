@@ -5,12 +5,12 @@ import { useAtomValue, useStore } from 'jotai';
 import { AsyncHandler } from '../../../Jotai/Helpers';
 import {
   AlbumDescriptionWithKey,
-  albumByKeyFuncFam,
-  allAlbumsDataFunc,
-  artistByKeyFuncFam,
-  filteredArtistsFunc,
+  albumByKeyAtomFam,
+  allAlbumsDataAtom,
+  artistByKeyAtomFam,
+  filteredArtistsAtom,
 } from '../../../Jotai/MusicDatabase';
-import { playlistNamesFunc } from '../../../Jotai/Playlists';
+import { playlistNamesAtom } from '../../../Jotai/Playlists';
 
 export function PlaylistSelector({
   value,
@@ -18,7 +18,7 @@ export function PlaylistSelector({
   value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
   const [theValue, setValue] = value;
-  const playlists = useAtomValue(playlistNamesFunc);
+  const playlists = useAtomValue(playlistNamesAtom);
   const theList: IComboBoxOption[] = [...playlists]
     .sort()
     .map((name) => ({ key: name, text: name }));
@@ -50,7 +50,7 @@ export function ArtistSelector({
   value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
   const [theValue, setValue] = value;
-  const artists = useAtomValue(filteredArtistsFunc);
+  const artists = useAtomValue(filteredArtistsAtom);
   const store = useStore();
   const theList: IComboBoxOption[] = artists.map((r: Artist) => ({
     key: r.key,
@@ -60,7 +60,7 @@ export function ArtistSelector({
     async (option?: IComboBoxOption, newValue?: string) => {
       if (isDefined(option) && isString(option.key) && isString(newValue)) {
         try {
-          const art = await store.get(artistByKeyFuncFam(option.key));
+          const art = await store.get(artistByKeyAtomFam(option.key));
           if (art.key === option.key) {
             await setValue(art.key);
           }
@@ -87,7 +87,7 @@ export function AlbumSelector({
   value: [PlaylistName, (val: PlaylistName) => void | PromiseLike<void>];
 }): JSX.Element {
   const [theValue, setValue] = value;
-  const albums = useAtomValue(allAlbumsDataFunc);
+  const albums = useAtomValue(allAlbumsDataAtom);
   const store = useStore();
   const theList: IComboBoxOption[] = albums.map(
     (r: AlbumDescriptionWithKey) => ({
@@ -101,7 +101,7 @@ export function AlbumSelector({
     async (option?: IComboBoxOption, newValue?: string) => {
       if (isDefined(option) && isString(option.key) && isString(newValue)) {
         try {
-          const alb = await store.get(albumByKeyFuncFam(option.key));
+          const alb = await store.get(albumByKeyAtomFam(option.key));
           if (alb.key === option.key) {
             await setValue(alb.key);
           }

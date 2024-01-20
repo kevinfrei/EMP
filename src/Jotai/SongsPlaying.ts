@@ -9,13 +9,13 @@ import {
 import { atom } from 'jotai';
 import { RESET } from 'jotai/utils';
 import { isPromise } from 'util/types';
-import { repeatState } from './SimpleSettings';
+import { repeatAtom } from './SimpleSettings';
 import { atomWithMainStorage } from './Storage';
 
 // The position in the active playlist of the current song
 // For 'ordered' playback, it's the index in the songList
 // otherwise it's an index into the songPlaybackOrderState
-export const currentIndexState = atomWithMainStorage(
+export const currentIndexAtom = atomWithMainStorage(
   'currentIndex',
   -1,
   isNumber,
@@ -24,7 +24,7 @@ export const currentIndexState = atomWithMainStorage(
 const isOrdered: typecheck<'ordered'> = (a): a is 'ordered' => a === 'ordered';
 
 // The order of the playlist to play
-export const songPlaybackOrderState = atomWithMainStorage(
+export const songPlaybackOrderAtom = atomWithMainStorage(
   'playbackOrder',
   'ordered',
   chkOneOf(isOrdered, chkArrayOf(isNumber)),
@@ -32,50 +32,50 @@ export const songPlaybackOrderState = atomWithMainStorage(
 
 // The name of the active playlist
 // the emptry string means the playlist isn't saved as, or based on, anything
-export const activePlaylistState = atomWithMainStorage(
+export const activePlaylistAtom = atomWithMainStorage(
   'nowPlaying',
   '',
   isString,
 );
 
 // The currently active playlist
-export const songListState = atomWithMainStorage(
+export const songListAtom = atomWithMainStorage(
   'currentSongList',
   [],
   chkArrayOf(isSongKey),
 );
 
 // This is the current index into the nowPlayist (sorted, never shuffled) list
-export const currentSongIndexFunc = atom(
+export const currentSongIndexAtom = atom(
   async (get) => {
-    const curIdx = await get(currentIndexState);
+    const curIdx = await get(currentIndexAtom);
     if (curIdx < 0) {
       return curIdx;
     }
-    const order = await get(songPlaybackOrderState);
+    const order = await get(songPlaybackOrderAtom);
     if (isOrdered(order)) {
       return curIdx;
     }
     return order[curIdx];
   },
   async (get, set, newVal: number | Promise<number> | typeof RESET) => {
-    const order = await get(songPlaybackOrderState);
+    const order = await get(songPlaybackOrderAtom);
     if (isOrdered(order)) {
-      await set(currentIndexState, await newVal);
+      await set(currentIndexAtom, await newVal);
     } else if (isNumber(newVal) || isPromise(newVal)) {
-      await set(currentIndexState, order.indexOf(await newVal));
+      await set(currentIndexAtom, order.indexOf(await newVal));
     } else {
-      await set(currentIndexState, -1);
+      await set(currentIndexAtom, -1);
     }
   },
 );
 
 // Selector to get the current song key based on the rest of this nonsense
-export const currentSongKeyFunc = atom(async (get) => {
-  const curIndex = await get(currentIndexState);
+export const currentSongKeyAtom = atom(async (get) => {
+  const curIndex = await get(currentIndexAtom);
   if (curIndex >= 0) {
-    const songList = await get(songListState);
-    const playbackOrder = await get(songPlaybackOrderState);
+    const songList = await get(songListAtom);
+    const playbackOrder = await get(songPlaybackOrderAtom);
     if (curIndex >= 0 && curIndex < songList.length) {
       return isOrdered(playbackOrder)
         ? songList[curIndex]
@@ -86,29 +86,29 @@ export const currentSongKeyFunc = atom(async (get) => {
 });
 
 // Is there a 'next song' to play?
-export const hasNextSongFunc = atom(async (get) => {
-  const songList = await get(songListState);
+export const hasNextSongAtom = atom(async (get) => {
+  const songList = await get(songListAtom);
   if (songList.length === 0) {
     return false;
   }
-  const curIndex = await get(currentIndexState);
+  const curIndex = await get(currentIndexAtom);
   if (curIndex >= 0 && curIndex < songList.length - 1) {
     return true;
   }
-  return get(repeatState);
+  return get(repeatAtom);
 });
 
 // Is there a 'previous song' to play?
-export const hasPrevSongFunc = atom(async (get) => {
-  const songList = await get(songListState);
+export const hasPrevSongAtom = atom(async (get) => {
+  const songList = await get(songListAtom);
   if (songList.length === 0) {
     return false;
   }
-  const curIndex = await get(currentIndexState);
-  return curIndex > 0 || get(repeatState);
+  const curIndex = await get(currentIndexAtom);
+  return curIndex > 0 || get(repeatAtom);
 });
 
 // Do we have any songs at all?
-export const hasAnySongsFunc = atom(
-  async (get) => (await get(songListState)).length > 0,
+export const hasAnySongsAtom = atom(
+  async (get) => (await get(songListAtom)).length > 0,
 );

@@ -13,35 +13,35 @@ function MakeMediaTime(duration: number, position: number): MediaTime {
 
 // This reflects the current state of audio playback
 // True: It's playing; False: It's paused/stopped
-export const playingState = atomWithReset(false);
+export const playingAtom = atomWithReset(false);
 
 // The duration & current position of the currently playing song
-export const mediaTimeState = atomWithReset(MakeMediaTime(0, 0));
+export const mediaTimeAtom = atomWithReset(MakeMediaTime(0, 0));
 
 // Current position, in a 'time' string format
-export const mediaTimePositionFunc = atom((get) => {
-  const { position } = get(mediaTimeState);
+export const mediaTimePositionAtom = atom((get) => {
+  const { position } = get(mediaTimeAtom);
   return position > 0 ? secondsToTime(position) : '';
 });
 
 // Current time remaining in a 'time' string format
-export const mediaTimeRemainingFunc = atom((get): string => {
-  const { position, duration } = get(mediaTimeState);
+export const mediaTimeRemainingAtom = atom((get): string => {
+  const { position, duration } = get(mediaTimeAtom);
   return duration > 0 ? '-' + secondsToTime(duration - position) : '';
 });
 
 // Percent interpolation of current position
-export const mediaTimePercentFunc = atom(
+export const mediaTimePercentAtom = atom(
   (get): number => {
-    const { position, duration } = get(mediaTimeState);
+    const { position, duration } = get(mediaTimeAtom);
     return duration > 0 ? position / duration : 0;
   },
   (get, set, newValue: number | typeof RESET) => {
-    const { duration } = get(mediaTimeState);
+    const { duration } = get(mediaTimeAtom);
     const newVal = Math.min(
       1.0,
       Math.max(0, (typeof newValue === typeof RESET ? 0 : newValue) as number),
     );
-    set(mediaTimeState, MakeMediaTime(duration, duration * newVal));
+    set(mediaTimeAtom, MakeMediaTime(duration, duration * newVal));
   },
 );

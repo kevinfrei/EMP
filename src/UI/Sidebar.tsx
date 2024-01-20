@@ -2,7 +2,7 @@ import { FontIcon, SearchBox, Text } from '@fluentui/react';
 import { CurrentView, Keys, StrId, st } from '@freik/emp-shared';
 import { hasStrField, isObjectNonNull } from '@freik/typechk';
 import { useAtom, useSetAtom } from 'jotai';
-import { curViewFunc } from '../Jotai/CurrentView';
+import { curViewAtom } from '../Jotai/CurrentView';
 import { searchTermState } from '../Jotai/MusicDatabase';
 import { SetSearch, isHostMac } from '../MyWindow';
 import { Notifier } from './Notifier';
@@ -71,7 +71,7 @@ export function isSearchBox(target: EventTarget | null): boolean {
 }
 
 export function Sidebar(): JSX.Element {
-  const [curView, setCurView] = useAtom(curViewFunc);
+  const [curView, setCurView] = useAtom(curViewAtom);
   const setSearchTerm = useSetAtom(searchTermState);
   const onSearch = (newValue: string) => {
     void setCurView(CurrentView.search);

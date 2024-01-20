@@ -24,16 +24,16 @@ import { useState } from 'react';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import { AddSongs } from '../../Jotai/Interface';
-import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
+import { focusedKeysAtomFam } from '../../Jotai/KeyBuffer';
 import {
-  allAlbumsFunc,
-  allArtistsFunc,
-  allSongsFunc,
-  artistByKeyFuncFam,
-  filteredArtistsFunc,
-  SongListFromKey,
+  allAlbumsAtom,
+  allArtistsAtom,
+  allSongsAtom,
+  artistByKeyAtomFam,
+  filteredArtistsAtom,
+  songListFromKeyAtomFam,
 } from '../../Jotai/MusicDatabase';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { ignoreArticlesAtom } from '../../Jotai/SimpleSettings';
 import { MyStore } from '../../Jotai/Storage';
 import {
   articlesCmp,
@@ -69,7 +69,7 @@ const [artistExpandedState, artistIsExpandedState] =
 const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
-  const artist = useAtomValue(artistByKeyFuncFam(group.key));
+  const artist = useAtomValue(artistByKeyAtomFam(group.key));
   const picurl = getArtistImageUrl(group.key);
   const setArtistContext = useSetAtom(artistContextState);
   const store = useStore();
@@ -141,13 +141,13 @@ export function getFilteredArtists(
 export function GroupedAristList(): JSX.Element {
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
-  const artists = useAtomValue(allArtistsFunc);
-  const albums = useAtomValue(allAlbumsFunc);
-  const songs = useAtomValue(allSongsFunc);
-  const ignoreArticles = useAtomValue(ignoreArticlesState);
-  const keyBuffer = useAtomValue(focusedKeysFuncFam(CurrentView.artists));
+  const artists = useAtomValue(allArtistsAtom);
+  const albums = useAtomValue(allAlbumsAtom);
+  const songs = useAtomValue(allSongsAtom);
+  const ignoreArticles = useAtomValue(ignoreArticlesAtom);
+  const keyBuffer = useAtomValue(focusedKeysAtomFam(CurrentView.artists));
   const [artistContext, setArtistContext] = useAtom(artistContextState);
-  const filteredArtists = useAtomValue(filteredArtistsFunc);
+  const filteredArtists = useAtomValue(filteredArtistsAtom);
   const [curSort, setSort] = useAtom(sortOrderState);
   const curExpandedState = useAtom(artistExpandedState);
   const resetArtistContext = useResetAtom(artistContextState);
@@ -236,7 +236,7 @@ export function GroupedAristList(): JSX.Element {
           context={artistContext}
           onClearContext={resetArtistContext}
           onGetSongList={(st: MyStore, data: string) =>
-            store.get(SongListFromKey(data))
+            store.get(songListFromKeyAtomFam(data))
           }
         />
       </ScrollablePane>

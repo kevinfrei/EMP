@@ -10,12 +10,12 @@ import { SongKey } from '@freik/media-core';
 import { isArray, isString } from '@freik/typechk';
 import { Expandable } from '@freik/web-utils';
 import { useAtomValue } from 'jotai';
-import { mediaInfoFuncFam } from '../../Jotai/Media';
+import { mediaInfoAtomFam } from '../../Jotai/Media';
 import {
-  albumByKeyFuncFam,
-  artistStringFuncFam,
-  commonDataFuncFam,
-  songByKeyFuncFam,
+  albumByKeyAtomFam,
+  artistStringAtomFam,
+  commonDataAtomFam,
+  songByKeyAtomFam,
 } from '../../Jotai/MusicDatabase';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
 import { altRowRenderer } from './../SongList';
@@ -54,7 +54,7 @@ function getSampleRate(sr: string | void): string {
 
 // This is the header for single-file editing
 function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
-  const mediaInfo = useAtomValue(mediaInfoFuncFam(forSong));
+  const mediaInfo = useAtomValue(mediaInfoAtomFam(forSong));
 
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = fractionalSecondsStrToHMS(
@@ -112,7 +112,7 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
     },
   ];
 
-  const mediaInfo = useAtomValue(mediaInfoFuncFam(songKey));
+  const mediaInfo = useAtomValue(mediaInfoAtomFam(songKey));
   return (
     <DetailsList
       items={[...mediaInfo.entries()]}
@@ -125,10 +125,10 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
-  const theSong = useAtomValue(songByKeyFuncFam(songKey));
-  const theArtist = useAtomValue(artistStringFuncFam(theSong.artistIds));
-  const moreArtists = useAtomValue(artistStringFuncFam(theSong.secondaryIds));
-  const theAlbum = useAtomValue(albumByKeyFuncFam(theSong.albumId));
+  const theSong = useAtomValue(songByKeyAtomFam(songKey));
+  const theArtist = useAtomValue(artistStringAtomFam(theSong.artistIds));
+  const moreArtists = useAtomValue(artistStringAtomFam(theSong.secondaryIds));
+  const theAlbum = useAtomValue(albumByKeyAtomFam(theSong.albumId));
   const diskNum = Math.floor(theSong.track / 100);
   const diskName =
     diskNum > 0 &&
@@ -154,7 +154,7 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
-  const allTheInfos = useAtomValue(commonDataFuncFam(songKeys));
+  const allTheInfos = useAtomValue(commonDataAtomFam(songKeys));
   return <MetadataEditor forSongs={songKeys} {...allTheInfos} />;
 }
 
