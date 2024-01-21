@@ -3444,12 +3444,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@floating-ui/devtools@npm:0.0.1":
-  version: 0.0.1
-  resolution: "@floating-ui/devtools@npm:0.0.1"
+"@floating-ui/devtools@npm:0.2.1":
+  version: 0.2.1
+  resolution: "@floating-ui/devtools@npm:0.2.1"
   peerDependencies:
-    "@floating-ui/dom": ">=1.0.0 <2.0.0"
-  checksum: f2d89c4f4aaae2848d6f60d00fae39d590a0c36aaa29c214f85eec1373d0465026d2c7bea0e7076d96768ea5a379873f2b637a39f4e85aeeec1977e438885358
+    "@floating-ui/dom": ">=1.5.4"
+  checksum: 423607a7b5fe8f5b2cac1c6ef74013242e6b2bd69831acda3877e257a19a18322578a717e1f382ebbed4cfee4fa63a53f937eaa11d18125092310954bb367345
   languageName: node
   linkType: hard
 
@@ -3462,60 +3462,60 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/date-time-utilities@npm:^8.5.15":
-  version: 8.5.15
-  resolution: "@fluentui/date-time-utilities@npm:8.5.15"
+"@fluentui/date-time-utilities@npm:^8.5.16":
+  version: 8.5.16
+  resolution: "@fluentui/date-time-utilities@npm:8.5.16"
   dependencies:
-    "@fluentui/set-version": "npm:^8.2.13"
+    "@fluentui/set-version": "npm:^8.2.14"
     tslib: "npm:^2.1.0"
-  checksum: 18424b79c48fda2b34864ef17c2e87721aec51f5a330d4c56c9320f701c1a570c38b4dcad90ae1e694893093f6d883ed4a6eaa98d2efcc61b0f85f13436125f9
+  checksum: f48a65d930be493b361240bd77627a05f7c27651bb6c2306c40440cae59c1a61939b57c0f97d90f452a94c3f47a76a3f2a8faa708f2809ff578d8055c284095d
   languageName: node
   linkType: hard
 
-"@fluentui/dom-utilities@npm:^2.2.13":
-  version: 2.2.13
-  resolution: "@fluentui/dom-utilities@npm:2.2.13"
+"@fluentui/dom-utilities@npm:^2.2.14":
+  version: 2.2.14
+  resolution: "@fluentui/dom-utilities@npm:2.2.14"
   dependencies:
-    "@fluentui/set-version": "npm:^8.2.13"
+    "@fluentui/set-version": "npm:^8.2.14"
     tslib: "npm:^2.1.0"
-  checksum: 78e2711a6454c84518bc7ae9906c560aab9f24422d10a1826da714a6fb6fc2638ba0d460699fd7a54d4dd9f5acf0cdc6932fafff788e7c462f2ad477e5f56485
+  checksum: d463a20d2f53e514863f3ef825dbed96536a520815640b89628f9878e5f92e05125995cda2d2086fc33dbe20f893cabe48fba502c4a56cfe8c1d1b01f387e82e
   languageName: node
   linkType: hard
 
-"@fluentui/font-icons-mdl2@npm:^8.5.28":
-  version: 8.5.28
-  resolution: "@fluentui/font-icons-mdl2@npm:8.5.28"
+"@fluentui/font-icons-mdl2@npm:^8.5.31":
+  version: 8.5.31
+  resolution: "@fluentui/font-icons-mdl2@npm:8.5.31"
   dependencies:
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/style-utilities": "npm:^8.9.21"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/style-utilities": "npm:^8.10.2"
+    "@fluentui/utilities": "npm:^8.13.24"
     tslib: "npm:^2.1.0"
-  checksum: f26283c0634c88e0bce0ab714b6f25235a19bd88359fb1f5fc3dd2e64ffda9202386d2fe1ceff56255cf21a2d8e6f119c81ff266f48c6d1c072cfae48c94968d
+  checksum: 025b91709aa46f1a449b848dc259436a0629d2c2c73eba39e09171fd4f6ba9b0a01c13ed0e43d3417b4f0d8bfd3a539b7e239bfee0d0140a5ea77d4b97633be2
   languageName: node
   linkType: hard
 
-"@fluentui/foundation-legacy@npm:^8.2.48":
-  version: 8.2.48
-  resolution: "@fluentui/foundation-legacy@npm:8.2.48"
+"@fluentui/foundation-legacy@npm:^8.2.51":
+  version: 8.2.51
+  resolution: "@fluentui/foundation-legacy@npm:8.2.51"
   dependencies:
-    "@fluentui/merge-styles": "npm:^8.5.14"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/style-utilities": "npm:^8.9.21"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/merge-styles": "npm:^8.5.15"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/style-utilities": "npm:^8.10.2"
+    "@fluentui/utilities": "npm:^8.13.24"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
-  checksum: 9d129f48796f1f4372bf5260dda5270323f23f9aa393bf7ae78f31c89630e2176175238d4d637e434632248a9674e3524d53e41c788b5e48788b66f929fea03d
+  checksum: 2044c75b7ea9b4b8aff85756852a5b8242a9fff3b0c6fa192ddfa9af933880bcb3aef6d550cc44aa29b58715aaeed9f5fd03445c33563daa69fe27be03b787d3
   languageName: node
   linkType: hard
 
-"@fluentui/keyboard-key@npm:^0.4.13":
-  version: 0.4.13
-  resolution: "@fluentui/keyboard-key@npm:0.4.13"
+"@fluentui/keyboard-key@npm:^0.4.14":
+  version: 0.4.14
+  resolution: "@fluentui/keyboard-key@npm:0.4.14"
   dependencies:
     tslib: "npm:^2.1.0"
-  checksum: 4771d973e180ed7476bdf06be87ddbe019e2e19b60b35fcf2d8af9fbfedecdfc4d4080ca30d35fb9ba192ab6aafd074848f99319e333b50b86504771bdb59a35
+  checksum: 4cb7b5c2f294af8422310dd67be4b1fe9099aaced9b6593292c4c99ccfff999c3195eb1cc384e947e77ad36da6da2e0b40ce61a0d6163e54572390a411ab2039
   languageName: node
   linkType: hard
 
@@ -3528,13 +3528,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/merge-styles@npm:^8.5.14":
-  version: 8.5.14
-  resolution: "@fluentui/merge-styles@npm:8.5.14"
+"@fluentui/merge-styles@npm:^8.5.15":
+  version: 8.5.15
+  resolution: "@fluentui/merge-styles@npm:8.5.15"
   dependencies:
-    "@fluentui/set-version": "npm:^8.2.13"
+    "@fluentui/set-version": "npm:^8.2.14"
     tslib: "npm:^2.1.0"
-  checksum: 4269860178529676c57b34752105bbf6df822552a3124a0183043f5c9b6325d42e4255fc04372b305ea0b4f173ed17d0e49fd3808963ef8aa4d5c270ea86f862
+  checksum: 6dc345dd85b982c5e14bec90cb8552e8a584c25f57787192011d756c00819340e77f7cd2ade15ece573b6b54892050f8636f8166cec5408bfc7f683c822b5ef8
   languageName: node
   linkType: hard
 
@@ -3547,527 +3547,529 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react-accordion@npm:^9.3.32":
-  version: 9.3.32
-  resolution: "@fluentui/react-accordion@npm:9.3.32"
+"@fluentui/react-accordion@npm:^9.3.38":
+  version: 9.3.38
+  resolution: "@fluentui/react-accordion@npm:9.3.38"
   dependencies:
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: b8e1601f0c11eccd66c9ccba5ad0b94ef3440e8b0a49248d4217cd5269e258d3929d3c68f9bfa279ddaf96fc14ab981030c040d883ac566297d9cf99b7c54b9f
+  checksum: 7ff37b95b1a1221699bb0c29bc5f83957b9218d539f46661798a1975c706d9c51fc9dd0332bb455c49a3adbc3f1ee23e2210dca0dd2d5025d7319e0033e4a771
   languageName: node
   linkType: hard
 
-"@fluentui/react-alert@npm:9.0.0-beta.97":
-  version: 9.0.0-beta.97
-  resolution: "@fluentui/react-alert@npm:9.0.0-beta.97"
+"@fluentui/react-alert@npm:9.0.0-beta.104":
+  version: 9.0.0-beta.104
+  resolution: "@fluentui/react-alert@npm:9.0.0-beta.104"
   dependencies:
-    "@fluentui/react-avatar": "npm:^9.6.2"
-    "@fluentui/react-button": "npm:^9.3.59"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-avatar": "npm:^9.6.9"
+    "@fluentui/react-button": "npm:^9.3.65"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 1ca9e40caa7b739dd92a094c30d03a78a0ea0d50ec7fc54ec0ff5939026a192af089e847c20b6e3df99e5288b16536c5fda7dd550a9deb92f5c708b3efe43e4a
+  checksum: 15f09972a2c3c840e5e7b8f84423ad0eb63118b00e1e12dc1cace6355b46d822e585517079a9c9371b80d6c0c7f95774264e9806fe818ae40aacff5a06f129e6
   languageName: node
   linkType: hard
 
-"@fluentui/react-aria@npm:^9.6.0":
-  version: 9.6.0
-  resolution: "@fluentui/react-aria@npm:9.6.0"
+"@fluentui/react-aria@npm:^9.7.3":
+  version: 9.7.3
+  resolution: "@fluentui/react-aria@npm:9.7.3"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: cba2ef93b5ef9a30ece878fa7e20b666f0b758f77f94dd3d0f2f3c81a9a79853519fc5a6f01de739d636ef3a5bcab9b6093f9583619b62a32079059db2933a90
+  checksum: 4251e5c2407f1cd60515c487de6917ff691bea5eda287328e44d86883fff25269ff94b52c6432d0995525f0bdfcb6a6eb9c195e8aeb14611232a376acb8ec8d6
   languageName: node
   linkType: hard
 
-"@fluentui/react-avatar@npm:^9.6.2":
-  version: 9.6.2
-  resolution: "@fluentui/react-avatar@npm:9.6.2"
+"@fluentui/react-avatar@npm:^9.6.9":
+  version: 9.6.9
+  resolution: "@fluentui/react-avatar@npm:9.6.9"
   dependencies:
-    "@fluentui/react-badge": "npm:^9.2.17"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-popover": "npm:^9.8.26"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-badge": "npm:^9.2.22"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-popover": "npm:^9.8.33"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-tooltip": "npm:^9.4.4"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-tooltip": "npm:^9.4.11"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: 9d83010a7c294a3caf4c146e3decbf0d9c54d42edad89ab33e21a13cbfa8633a62c58f81554eb2e5ee533d0617258b5aac062210472fe67e52ad44b34a37bffd
+  checksum: 3149f80ce999e13803f7d25e07f4d02676125412a72f1501a58c7d7e5cd586cfad4769280d6bf19b4189b560e7e9c3ee6e9a13a6d2d26ac2137c9753204b0ce9
   languageName: node
   linkType: hard
 
-"@fluentui/react-badge@npm:^9.2.17":
-  version: 9.2.17
-  resolution: "@fluentui/react-badge@npm:9.2.17"
+"@fluentui/react-badge@npm:^9.2.22":
+  version: 9.2.22
+  resolution: "@fluentui/react-badge@npm:9.2.22"
   dependencies:
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 98eaebac536bd054cc0c4cd6ead9e7bca2ed4195bf18c716a5ee2185ab49b9e0d97c97a8022179566b68247db17fc174648a631045da948351b2cef957a063e3
+  checksum: 5bee72baeaae3a92adcae94dccea612eab72fa394ba1610f73da810343795641e030d1bd9776c4cbbadd26aef52a35e9599a16708f9d211289bf157a8d3eb186
   languageName: node
   linkType: hard
 
-"@fluentui/react-breadcrumb@npm:^9.0.5":
-  version: 9.0.5
-  resolution: "@fluentui/react-breadcrumb@npm:9.0.5"
+"@fluentui/react-breadcrumb@npm:^9.0.11":
+  version: 9.0.11
+  resolution: "@fluentui/react-breadcrumb@npm:9.0.11"
   dependencies:
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-button": "npm:^9.3.59"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-link": "npm:^9.2.2"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-button": "npm:^9.3.65"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-link": "npm:^9.2.7"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 2e3471f89f2885d38e12010292406d898ca17b423246e30063f8dc7cc4c96a87c06111009397fb66288430512d1c89a87e55b25c9cd25c476958dad39431d302
+  checksum: 46ad6bd73a6e3e2e1d1ae06b5dfb3c81dbb0d6a1aebf87a55063cd5b3d3be953d346fdf8d91f86e5cc29da5f72f00f078205333113da0859f8f3d98afd6b5db6
   languageName: node
   linkType: hard
 
-"@fluentui/react-button@npm:^9.3.59":
-  version: 9.3.59
-  resolution: "@fluentui/react-button@npm:9.3.59"
+"@fluentui/react-button@npm:^9.3.65":
+  version: 9.3.65
+  resolution: "@fluentui/react-button@npm:9.3.65"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 8ca3bf858e1297fd7ac6b03a799af4fb27476c7faab86921e4861a11051701c7b5a44d3fe1394569b89439a8c0dba1f5315d21c45ff70a62d4de0a7dd6728d15
+  checksum: 3a05091c17dded4035851c12b030b31a4a59ff07f17eb4b9d9350cc61c6abcc70fcb8fa6c9dc0686ef3507201aa40a05aa79843bdfb73502e9f4c115e6a8732c
   languageName: node
   linkType: hard
 
-"@fluentui/react-card@npm:^9.0.58":
-  version: 9.0.58
-  resolution: "@fluentui/react-card@npm:9.0.58"
+"@fluentui/react-card@npm:^9.0.64":
+  version: 9.0.64
+  resolution: "@fluentui/react-card@npm:9.0.64"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: ccd25c2135c726dbe28460a8263f605365cb94bdfec283a9ac7d921495dcb54456dc25c471a66a8f47eecc5ba088b7667e4c17e48d7ce3abf631ef6761e6f7b6
+  checksum: ee85bedefc7f4bedb4d44ce7e261d94b25b43efff9686a106b79c774974d14c224d9ce8330d20b2dd34208cefb89f6f427a2ca93ef9d4a65e7b79add93d580be
   languageName: node
   linkType: hard
 
-"@fluentui/react-checkbox@npm:^9.2.3":
-  version: 9.2.3
-  resolution: "@fluentui/react-checkbox@npm:9.2.3"
+"@fluentui/react-checkbox@npm:^9.2.8":
+  version: 9.2.8
+  resolution: "@fluentui/react-checkbox@npm:9.2.8"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 61f9f51228cea7d8201a3d02149ed49ecb2334ee0d3f97cd8ec2e9c0d7e623fca39f4f65984dbe2141a3bf4b530373774da75a95e5aaf71cd8ecc1e8a9e177d9
+  checksum: f7a8d061ad79f9f2cdfffef42fb27f07c74ba0f0841903dd2038a60eeffb5e98d79b1d8a41d543b7ec53fa202b51ac4a45bab280c648dabec97620a4d579787a
   languageName: node
   linkType: hard
 
-"@fluentui/react-combobox@npm:^9.5.36":
-  version: 9.5.36
-  resolution: "@fluentui/react-combobox@npm:9.5.36"
+"@fluentui/react-combobox@npm:^9.7.0":
+  version: 9.7.0
+  resolution: "@fluentui/react-combobox@npm:9.7.0"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-positioning": "npm:^9.10.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-positioning": "npm:^9.12.4"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: 8b353474df31ac80f0c0acf8ee98a49614f162dcb9ff28973a422ec24a8fa3a3c471da7f7e7115d5dbe64d2c3a213cf31577d1a39b70c5f8fcd00e02cb0eff73
+  checksum: 0d6e01e2e2851d1cb8b15e6a18f7230065c6d2eaf9d6f7cd0647440084f40e9c6699861c41c99b96a13adfa2594af735c7e818b1b8ded1c0ec056e106a11d59b
   languageName: node
   linkType: hard
 
-"@fluentui/react-components@npm:^9.43.3":
-  version: 9.43.3
-  resolution: "@fluentui/react-components@npm:9.43.3"
+"@fluentui/react-components@npm:^9.45.0":
+  version: 9.45.0
+  resolution: "@fluentui/react-components@npm:9.45.0"
   dependencies:
-    "@fluentui/react-accordion": "npm:^9.3.32"
-    "@fluentui/react-alert": "npm:9.0.0-beta.97"
-    "@fluentui/react-avatar": "npm:^9.6.2"
-    "@fluentui/react-badge": "npm:^9.2.17"
-    "@fluentui/react-breadcrumb": "npm:^9.0.5"
-    "@fluentui/react-button": "npm:^9.3.59"
-    "@fluentui/react-card": "npm:^9.0.58"
-    "@fluentui/react-checkbox": "npm:^9.2.3"
-    "@fluentui/react-combobox": "npm:^9.5.36"
-    "@fluentui/react-dialog": "npm:^9.9.1"
-    "@fluentui/react-divider": "npm:^9.2.53"
-    "@fluentui/react-drawer": "npm:^9.0.5"
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-image": "npm:^9.1.50"
-    "@fluentui/react-infobutton": "npm:9.0.0-beta.81"
-    "@fluentui/react-infolabel": "npm:^9.0.9"
-    "@fluentui/react-input": "npm:^9.4.55"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-link": "npm:^9.2.2"
-    "@fluentui/react-menu": "npm:^9.12.38"
-    "@fluentui/react-message-bar": "npm:^9.0.10"
-    "@fluentui/react-overflow": "npm:^9.1.3"
-    "@fluentui/react-persona": "npm:^9.2.61"
-    "@fluentui/react-popover": "npm:^9.8.26"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-positioning": "npm:^9.10.5"
-    "@fluentui/react-progress": "npm:^9.1.55"
-    "@fluentui/react-provider": "npm:^9.13.3"
-    "@fluentui/react-radio": "npm:^9.1.60"
-    "@fluentui/react-select": "npm:^9.1.55"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-skeleton": "npm:^9.0.43"
-    "@fluentui/react-slider": "npm:^9.1.60"
-    "@fluentui/react-spinbutton": "npm:^9.2.55"
-    "@fluentui/react-spinner": "npm:^9.3.33"
-    "@fluentui/react-switch": "npm:^9.1.60"
-    "@fluentui/react-table": "npm:^9.10.16"
-    "@fluentui/react-tabs": "npm:^9.4.1"
-    "@fluentui/react-tabster": "npm:^9.16.0"
-    "@fluentui/react-tags": "npm:^9.0.15"
-    "@fluentui/react-text": "npm:^9.4.2"
-    "@fluentui/react-textarea": "npm:^9.3.55"
+    "@fluentui/react-accordion": "npm:^9.3.38"
+    "@fluentui/react-alert": "npm:9.0.0-beta.104"
+    "@fluentui/react-avatar": "npm:^9.6.9"
+    "@fluentui/react-badge": "npm:^9.2.22"
+    "@fluentui/react-breadcrumb": "npm:^9.0.11"
+    "@fluentui/react-button": "npm:^9.3.65"
+    "@fluentui/react-card": "npm:^9.0.64"
+    "@fluentui/react-checkbox": "npm:^9.2.8"
+    "@fluentui/react-combobox": "npm:^9.7.0"
+    "@fluentui/react-dialog": "npm:^9.9.7"
+    "@fluentui/react-divider": "npm:^9.2.58"
+    "@fluentui/react-drawer": "npm:^9.1.1"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-image": "npm:^9.1.55"
+    "@fluentui/react-infobutton": "npm:9.0.0-beta.88"
+    "@fluentui/react-infolabel": "npm:^9.0.16"
+    "@fluentui/react-input": "npm:^9.4.60"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-link": "npm:^9.2.7"
+    "@fluentui/react-menu": "npm:^9.12.45"
+    "@fluentui/react-message-bar": "npm:^9.0.16"
+    "@fluentui/react-overflow": "npm:^9.1.8"
+    "@fluentui/react-persona": "npm:^9.2.68"
+    "@fluentui/react-popover": "npm:^9.8.33"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-positioning": "npm:^9.12.4"
+    "@fluentui/react-progress": "npm:^9.1.60"
+    "@fluentui/react-provider": "npm:^9.13.8"
+    "@fluentui/react-radio": "npm:^9.2.3"
+    "@fluentui/react-select": "npm:^9.1.60"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-skeleton": "npm:^9.0.48"
+    "@fluentui/react-slider": "npm:^9.1.65"
+    "@fluentui/react-spinbutton": "npm:^9.2.60"
+    "@fluentui/react-spinner": "npm:^9.3.38"
+    "@fluentui/react-switch": "npm:^9.1.65"
+    "@fluentui/react-table": "npm:^9.11.5"
+    "@fluentui/react-tabs": "npm:^9.4.6"
+    "@fluentui/react-tabster": "npm:^9.17.3"
+    "@fluentui/react-tags": "npm:^9.0.22"
+    "@fluentui/react-text": "npm:^9.4.7"
+    "@fluentui/react-textarea": "npm:^9.3.60"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-toast": "npm:^9.3.21"
-    "@fluentui/react-toolbar": "npm:^9.1.60"
-    "@fluentui/react-tooltip": "npm:^9.4.4"
-    "@fluentui/react-tree": "npm:^9.4.18"
-    "@fluentui/react-utilities": "npm:^9.15.4"
-    "@fluentui/react-virtualizer": "npm:9.0.0-alpha.61"
+    "@fluentui/react-toast": "npm:^9.3.27"
+    "@fluentui/react-toolbar": "npm:^9.1.66"
+    "@fluentui/react-tooltip": "npm:^9.4.11"
+    "@fluentui/react-tree": "npm:^9.4.25"
+    "@fluentui/react-utilities": "npm:^9.16.1"
+    "@fluentui/react-virtualizer": "npm:9.0.0-alpha.66"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: 601ecb251e84cb8eb6a2bba2b93eb141b215702f22772624d5e03f3a4f066be8b2a6548aeff69a36b91954703cbfaead66b38dc05ca3f063ad91e35b30d8a621
+  checksum: ec60ef6028b60f8f59b53d677683802bcf857b1fd59447cba5ff0e5312d6f9feb6c8f00b4920069975520bd75da3b52ee7d7fc85f09ccfe4950b91f0a1233dcf
   languageName: node
   linkType: hard
 
-"@fluentui/react-context-selector@npm:^9.1.44":
-  version: 9.1.44
-  resolution: "@fluentui/react-context-selector@npm:9.1.44"
+"@fluentui/react-context-selector@npm:^9.1.49":
+  version: 9.1.49
+  resolution: "@fluentui/react-context-selector@npm:9.1.49"
   dependencies:
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: 4f1b68841081d14ce045bc87e53d5239c88a457051809e15a1ff032563733f6ff2f8ffd2dcc3def85b87702f172a3a1382a8f3fe03c03b72cd40c505cf7e0527
+  checksum: e942c2e6c9460dafa425f37fbdcfc76f34ecfab1115dd0ed1a60341e3a5f3b14162a04b028bc4f2e103747e70ecc006a37ea50d9d9c0a390ec94b99a799342c1
   languageName: node
   linkType: hard
 
-"@fluentui/react-dialog@npm:^9.9.1":
-  version: 9.9.1
-  resolution: "@fluentui/react-dialog@npm:9.9.1"
+"@fluentui/react-dialog@npm:^9.9.7":
+  version: 9.9.7
+  resolution: "@fluentui/react-dialog@npm:9.9.7"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
     react-transition-group: "npm:^4.4.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 6d3711210fc6601b028a9eacccbf534c31390ee3048f7ee9ee4534a536413f8a6caf357fbc5e70b2054ace1aa080d103daef0f6d122ab1c7988aefd1dad08c58
+  checksum: c482b57e53daffa9e1e1d909be9c33df7825e146836458b652355541c6d0dd5239edce9ad3617c815902f0c1cfeab414bb7141cfbdb56f4444089c5c2fc1e848
   languageName: node
   linkType: hard
 
-"@fluentui/react-divider@npm:^9.2.53":
-  version: 9.2.53
-  resolution: "@fluentui/react-divider@npm:9.2.53"
+"@fluentui/react-divider@npm:^9.2.58":
+  version: 9.2.58
+  resolution: "@fluentui/react-divider@npm:9.2.58"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: e302f02f37bc166104819ede309d9d3aa26be96d92cf68a11da828e8abe527bdda00c254e3c019c95fa670d0842ed9bd42612d78f85b40a38d5b469b44384b2b
+  checksum: fbe761ffbf9c1fc2f5707215b2c7ee021c0141fec2100604aac929aeb5e5766f11ee68c882f80493c8c59cbca8158b8442c3fe77ee8e050004186c6356042ba6
   languageName: node
   linkType: hard
 
-"@fluentui/react-drawer@npm:^9.0.5":
-  version: 9.0.5
-  resolution: "@fluentui/react-drawer@npm:9.0.5"
+"@fluentui/react-drawer@npm:^9.1.1":
+  version: 9.1.1
+  resolution: "@fluentui/react-drawer@npm:9.1.1"
   dependencies:
-    "@fluentui/react-dialog": "npm:^9.9.1"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-motion-preview": "npm:^0.5.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-dialog": "npm:^9.9.7"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-motion-preview": "npm:^0.5.10"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: daf183d0d10d10980e430a7068d995025186981a68b73df21df0e5578855a15f006dfafca6efdef1ad675ed85ceb5e22a78eff7378d99c0815cbced9304e1f53
+  checksum: c85a2f5b41dc7d6ac6879820e40fa73761b43fac3083c50a532817fc5e9dc7de94491c8216676e6ffb8b37391ed23188b293d894c6b3e7a9e537df6cb2ca001e
   languageName: node
   linkType: hard
 
-"@fluentui/react-field@npm:^9.1.45":
-  version: 9.1.45
-  resolution: "@fluentui/react-field@npm:9.1.45"
+"@fluentui/react-field@npm:^9.1.50":
+  version: 9.1.50
+  resolution: "@fluentui/react-field@npm:9.1.50"
   dependencies:
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: ecea85719859356a77a7c78cfadbae01ca3db740d657eab953d98aa6246b1973fa8d4c13deccf90645aea7bd4b2f6ea8ca09472d1808e0182ebeda803fbe63bb
+  checksum: c0565378fc3655daacb9e82dacd45c1d8a0d51bc77c3e74730fdecc3217ef1a3d5fc21c9dccc6171d68bf2f704fe2333f4987da5ce1fab06d0e4ea4a8dd9e7ef
   languageName: node
   linkType: hard
 
-"@fluentui/react-focus@npm:^8.8.35":
-  version: 8.8.35
-  resolution: "@fluentui/react-focus@npm:8.8.35"
+"@fluentui/react-focus@npm:^8.8.38":
+  version: 8.8.38
+  resolution: "@fluentui/react-focus@npm:8.8.38"
   dependencies:
-    "@fluentui/keyboard-key": "npm:^0.4.13"
-    "@fluentui/merge-styles": "npm:^8.5.14"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/style-utilities": "npm:^8.9.21"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/keyboard-key": "npm:^0.4.14"
+    "@fluentui/merge-styles": "npm:^8.5.15"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/style-utilities": "npm:^8.10.2"
+    "@fluentui/utilities": "npm:^8.13.24"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
-  checksum: 60165ed661c46b647a4c32b08c6323f6691946b2dcd06d1e71ab869c2e31bd0404679a2c7394c3939fbbfb0a39e13be1ddf0f82401c2b28f81f30d9cf9814351
+  checksum: 4de5957f9635d0c375b374aed85e83021b644d393e58bfa9f6dd8a3ea5d9ce50a30b4d9bf014c8fb89576dd22d56f31f89c2b3dba7e14bcd30d6bbee1176932e
   languageName: node
   linkType: hard
 
-"@fluentui/react-hooks@npm:^8.6.34":
-  version: 8.6.34
-  resolution: "@fluentui/react-hooks@npm:8.6.34"
+"@fluentui/react-hooks@npm:^8.6.36":
+  version: 8.6.36
+  resolution: "@fluentui/react-hooks@npm:8.6.36"
   dependencies:
-    "@fluentui/react-window-provider": "npm:^2.2.17"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/react-window-provider": "npm:^2.2.18"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/utilities": "npm:^8.13.24"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
-  checksum: 02ba5de99dc8429b6af7455dc02eb1ca669048b60f9f519ff22ffe5ef32ea81f29cf6b63b0063e09be5b971cca49622aa377d02375a24c0fc10d512d3783d426
+  checksum: 5bf953ab03aec6209b8698022a5ccb0d1f3130bb664898d6f88511dbaf82315222b326854a746bf937809536b2cd1c745ad161e6d556008a07eaa4feb619c8df
   languageName: node
   linkType: hard
 
-"@fluentui/react-icon-provider@npm:^1.3.49":
-  version: 1.3.49
-  resolution: "@fluentui/react-icon-provider@npm:1.3.49"
+"@fluentui/react-icon-provider@npm:^1.3.52":
+  version: 1.3.52
+  resolution: "@fluentui/react-icon-provider@npm:1.3.52"
   dependencies:
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/style-utilities": "npm:^8.9.21"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/style-utilities": "npm:^8.10.2"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: eb841eebfb29bf7af4e120e3dd5a81f95214b979544e76f987e32d8de261be0b7706448a968615eb6856cd8cc84727c9b3c0ddb9ce7463f35f714605d4533120
+  checksum: 430d47a8b32c1b724c67fbc3900061a2f8a12b9440789f98c943f37fb140367888d84a5161504e9badef9e92a11c58fb71149609bc1a699ec10a765c5c092dc7
   languageName: node
   linkType: hard
 
-"@fluentui/react-icons-mdl2@npm:^1.3.53":
-  version: 1.3.53
-  resolution: "@fluentui/react-icons-mdl2@npm:1.3.53"
+"@fluentui/react-icons-mdl2@npm:^1.3.56":
+  version: 1.3.56
+  resolution: "@fluentui/react-icons-mdl2@npm:1.3.56"
   dependencies:
-    "@fluentui/react-icon-provider": "npm:^1.3.49"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/react-icon-provider": "npm:^1.3.52"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/utilities": "npm:^8.13.24"
     "@microsoft/load-themed-styles": "npm:^1.10.26"
     tslib: "npm:^2.1.0"
   peerDependencies:
     react: ">=16.8.0 <19.0.0"
-  checksum: 4162624bf1ffde773c8880305323f509c70478cb0c6b36b1dc05af378d20e8898eacded9834cb867ec3f694559ba26c1f83090adb1efaddc1864f0f83888e9fc
+  checksum: 131773acdf316ef0685a9260b65f061a480269a4ffb4ca13b5b96a37b1b339685f26ed37dce11c4bea15731d4d5908480f831dee7840953bcecc4a9419914f56
   languageName: node
   linkType: hard
 
-"@fluentui/react-icons@npm:^2.0.217":
-  version: 2.0.223
-  resolution: "@fluentui/react-icons@npm:2.0.223"
+"@fluentui/react-icons@npm:^2.0.224":
+  version: 2.0.225
+  resolution: "@fluentui/react-icons@npm:2.0.225"
   dependencies:
     "@griffel/react": "npm:^1.0.0"
     tslib: "npm:^2.1.0"
   peerDependencies:
     react: ">=16.8.0 <19.0.0"
-  checksum: 38b392ee750e47a1d5935ec9ca85b36a2b7e35057e622cdef30508b5c03bda7ecd6ae7d8c36fbfd504dd0d1bfc1d8e9daed395a4b441ecc7d69a82ceb48644f0
+  checksum: 280cfb9c8b892b68c24bea9d1a757a1f040e52b2c6d66a9f92d635f84719021fc95f3fff8711535861f7d0f254ce839fd3eb528fc1ac738c6722e02d8131c6bb
   languageName: node
   linkType: hard
 
-"@fluentui/react-image@npm:^9.1.50":
-  version: 9.1.50
-  resolution: "@fluentui/react-image@npm:9.1.50"
+"@fluentui/react-image@npm:^9.1.55":
+  version: 9.1.55
+  resolution: "@fluentui/react-image@npm:9.1.55"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: ef0dd880e78af6dd3465948703a8c1da65f3359419aec1caa0d18a929fe550b31da6f53cf4ecd381a28066a26f2b56c8f6abba13d82dd9607ae7cf613bbb71e2
+  checksum: 6f9fca699e5df22b7bee3b643c987e505f76d78a9460b0257d26bdd87009196595ed781357f20423c83809e1f735d9a10e3aa5c13682f5fd40c93a4541d34e12
   languageName: node
   linkType: hard
 
-"@fluentui/react-infobutton@npm:9.0.0-beta.81":
-  version: 9.0.0-beta.81
-  resolution: "@fluentui/react-infobutton@npm:9.0.0-beta.81"
+"@fluentui/react-infobutton@npm:9.0.0-beta.88":
+  version: 9.0.0-beta.88
+  resolution: "@fluentui/react-infobutton@npm:9.0.0-beta.88"
   dependencies:
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-popover": "npm:^9.8.26"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-popover": "npm:^9.8.33"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 744f478b4dbd2785b97850f789d615974939e532c91b19f420ee840dc2c0c4b1add3fcbcfa72b6d35205e57add24530566e2bc4d859fcb1a9503b56c69bb2eed
+  checksum: 7d80762055fd0c40b1cf5f6b6950f29714f2175eb1e9018d909360f5954fbfb943c98b37797205114167552c716e4023640d60d096b8e36b76962ad1edd40bd2
   languageName: node
   linkType: hard
 
-"@fluentui/react-infolabel@npm:^9.0.9":
-  version: 9.0.9
-  resolution: "@fluentui/react-infolabel@npm:9.0.9"
+"@fluentui/react-infolabel@npm:^9.0.16":
+  version: 9.0.16
+  resolution: "@fluentui/react-infolabel@npm:9.0.16"
   dependencies:
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-popover": "npm:^9.8.26"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-popover": "npm:^9.8.33"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
@@ -4075,121 +4077,121 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: 74c4cda1468fb65abb4ae8329babca6b52e695e0c635c4bc6f62289f065f06d0efd13523ecf67229ceeab2e37dbfe8da5ee604b7f10c94835017a272bae568a6
+  checksum: 4a60829bb9a1b0d42f825bae61407b6c5281d5b3079c1cb2d5a83545ca58d857e6f1a364107b7bea4dfbaaab748747a9b5f550fd7e16171a8c0b76747e0dce16
   languageName: node
   linkType: hard
 
-"@fluentui/react-input@npm:^9.4.55":
-  version: 9.4.55
-  resolution: "@fluentui/react-input@npm:9.4.55"
+"@fluentui/react-input@npm:^9.4.60":
+  version: 9.4.60
+  resolution: "@fluentui/react-input@npm:9.4.60"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: ccb0a127ffd7d31fe356ee564200207b1d0ae9996eb18c6d44c14b830106a103e243e0aef72fbe27dde0fd000984ea85f6a7211df038fb52cf4e302792c684ee
+  checksum: 6530b9cb71e34be9a8b3e245494c9a73b68ece40b5b86affc4372f6442bf8eeb5553a20317eaa2be99c65eb736cb498811530fae4d37ec2cf3cc496bfb9bc107
   languageName: node
   linkType: hard
 
-"@fluentui/react-jsx-runtime@npm:^9.0.22":
-  version: 9.0.22
-  resolution: "@fluentui/react-jsx-runtime@npm:9.0.22"
+"@fluentui/react-jsx-runtime@npm:^9.0.27":
+  version: 9.0.27
+  resolution: "@fluentui/react-jsx-runtime@npm:9.0.27"
   dependencies:
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@swc/helpers": "npm:^0.5.1"
     react-is: "npm:^17.0.2"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
-  checksum: caef04023e2693d1f96e2a82221a63c00e45f132ac9880ab1a88311a678af7d2ed9275eb03f1040a28070a31d1eacc1b18dd40b73a76f78fabf2298d520ed47a
+  checksum: b6458bc8a98c3dd028c8c7d161e7ba1e9ca1d853d43fc11fa23f2b7a8c33f101d484fb9a488149b10d1575a1012c04e2c6c274cf6a11a422860baab48a487fe5
   languageName: node
   linkType: hard
 
-"@fluentui/react-label@npm:^9.1.53":
-  version: 9.1.53
-  resolution: "@fluentui/react-label@npm:9.1.53"
+"@fluentui/react-label@npm:^9.1.58":
+  version: 9.1.58
+  resolution: "@fluentui/react-label@npm:9.1.58"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 61234595a5313b3f54fea1264ffdb8c27dc6617f6efbafab683217b48c5b86efe7d372a7983f0e74397bcf9af24abb05cd86b63e06af7069cfaff7e62b41af04
+  checksum: 36a4e835b3d5e45eb8b1621f618c4389e0a52a99dfa3e7af90e9f099e54d21c2e8ad3ea247ce13c11dc2989e3ea7dfe66c836bdeb2eba1d5f8fc5b1a70035e19
   languageName: node
   linkType: hard
 
-"@fluentui/react-link@npm:^9.2.2":
-  version: 9.2.2
-  resolution: "@fluentui/react-link@npm:9.2.2"
+"@fluentui/react-link@npm:^9.2.7":
+  version: 9.2.7
+  resolution: "@fluentui/react-link@npm:9.2.7"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: d7c2e492b53d93d5971e18ca6cd3f44a71bd46e19e69fb1698efec940d89ab5ae1540603c1274dd82639f1fa96f64a7d3cb4aa9b3ba887aad1407ca1af064d7d
+  checksum: a57b183db5b276d8b31d8776d8f303b53e782b9b0e573662a47999d1087ce204a45eb1025fa98fa5cc3171af5ac683e58b0af0ae19644ab48d50900645702efd
   languageName: node
   linkType: hard
 
-"@fluentui/react-menu@npm:^9.12.38":
-  version: 9.12.38
-  resolution: "@fluentui/react-menu@npm:9.12.38"
+"@fluentui/react-menu@npm:^9.12.45":
+  version: 9.12.45
+  resolution: "@fluentui/react-menu@npm:9.12.45"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-positioning": "npm:^9.10.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-positioning": "npm:^9.12.4"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: 7d26aa6b86a6f77a3549259cc53417f3b59c05e1aa7c1be099c6201bd6f7eaa9260958a0d416ee2281a2d6e90527919491195817b9d06e5a68fdc3a2e40f9438
+  checksum: 5f2149a79db3ca1d915dd17e832e855a76763f4580bf6eef94c8ad4538f6c316585859694710434ef4eb42347884409fca9faf47a00e0faf511c6ffef3dc984c
   languageName: node
   linkType: hard
 
-"@fluentui/react-message-bar@npm:^9.0.10":
-  version: 9.0.10
-  resolution: "@fluentui/react-message-bar@npm:9.0.10"
+"@fluentui/react-message-bar@npm:^9.0.16":
+  version: 9.0.16
+  resolution: "@fluentui/react-message-bar@npm:9.0.16"
   dependencies:
-    "@fluentui/react-button": "npm:^9.3.59"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-button": "npm:^9.3.65"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
     react-transition-group: "npm:^4.4.1"
@@ -4198,482 +4200,481 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: 340173aca1418d0641beb5b6e81f69fffa1876896dfa9dd55ec0f8848a2ee6cc1bec37a798a77a096d4653d0606024553047242582526072d908631af2d34706
+  checksum: d36d2c4d3d8ae46330b60317e9a95010d5b71b05de65115e9072169da0b3ce4b5413ee25795c4fec1642ac5542b6110c9585796fac62143d9471839f6640899e
   languageName: node
   linkType: hard
 
-"@fluentui/react-motion-preview@npm:^0.5.5":
-  version: 0.5.5
-  resolution: "@fluentui/react-motion-preview@npm:0.5.5"
+"@fluentui/react-motion-preview@npm:^0.5.10":
+  version: 0.5.10
+  resolution: "@fluentui/react-motion-preview@npm:0.5.10"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 6deb6c9c1726a7f382aa78c89004cdb3c5b5496cda24cfeb55a9848d0411c92cd132f5a091f7a42afe41700f055f9f27343929a8a33dd5e5f189f018cd1c25d9
+  checksum: e2885790ba9f7d7dcdd4908dec0c436299fef1f3c1686716c5b2cd43c9a5e7f97e5b2072ad9231fd9e11e4f85af1b232c27468a1ba149c61b5745fce2d2dafb7
   languageName: node
   linkType: hard
 
-"@fluentui/react-overflow@npm:^9.1.3":
-  version: 9.1.3
-  resolution: "@fluentui/react-overflow@npm:9.1.3"
+"@fluentui/react-overflow@npm:^9.1.8":
+  version: 9.1.8
+  resolution: "@fluentui/react-overflow@npm:9.1.8"
   dependencies:
     "@fluentui/priority-overflow": "npm:^9.1.11"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: 806ee38caf94cac4f14131587fa43c61ab8724e9714ea3f3e68373e4fb1da4d3d822ecb89eed5ec417c436b2cad41fd2e0dc075644725ec530bcc1f9c0788246
+  checksum: 50b1b32e4d31d75a684b6a50653a80c1c63136fa8508ef60dac0c82bb82886d972dc2a7461bc4295684e5fb824eb272459e62e3235018a44e94e3e593a6ad11b
   languageName: node
   linkType: hard
 
-"@fluentui/react-persona@npm:^9.2.61":
-  version: 9.2.61
-  resolution: "@fluentui/react-persona@npm:9.2.61"
+"@fluentui/react-persona@npm:^9.2.68":
+  version: 9.2.68
+  resolution: "@fluentui/react-persona@npm:9.2.68"
   dependencies:
-    "@fluentui/react-avatar": "npm:^9.6.2"
-    "@fluentui/react-badge": "npm:^9.2.17"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-avatar": "npm:^9.6.9"
+    "@fluentui/react-badge": "npm:^9.2.22"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 3da16046ae32ec6efa05d1b74866ff850e09d50ee4a62291e43ec56511bcd720188ef01a4c92590b36a1100ddf9a93dfd85662b713b428361dbb4675dddb43ae
+  checksum: bf487f250df533ca92536d765ed0f8d443811ec0818ea5d794f77c3c722642680a87b3709c94aff358f3114803971157c5d873a45c79a2b0939f0eb7755bed49
   languageName: node
   linkType: hard
 
-"@fluentui/react-popover@npm:^9.8.26":
-  version: 9.8.26
-  resolution: "@fluentui/react-popover@npm:9.8.26"
+"@fluentui/react-popover@npm:^9.8.33":
+  version: 9.8.33
+  resolution: "@fluentui/react-popover@npm:9.8.33"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-positioning": "npm:^9.10.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-positioning": "npm:^9.12.4"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: e6dd24c8efeea27822c793e9a630d4fbd75e6c837827c919ade6917a25d9f983a647a5e58c2a4471829b2cc33d0d5563c7eb3c38edaec190ff6016fb82a4c4bf
+  checksum: ed03d1cf2ba04f5fb1667b6ab34fad2eb5230516a3a5be1e5e9ee23a78b88c173670df8d6eec5fe48e9b4b019c2f59d988d70cec097d778f5d6cfef155ed737c
   languageName: node
   linkType: hard
 
-"@fluentui/react-portal-compat-context@npm:^9.0.10":
-  version: 9.0.10
-  resolution: "@fluentui/react-portal-compat-context@npm:9.0.10"
+"@fluentui/react-portal-compat-context@npm:^9.0.11":
+  version: 9.0.11
+  resolution: "@fluentui/react-portal-compat-context@npm:9.0.11"
   dependencies:
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
-  checksum: 8370c47de425e56bb5578b3a144e01ee15e07de1ede985e89b33fa1b2ffd803eb0a46379a6771739e9ad444381e615dfe5e33a2d163cab679c83f11b3a5adf49
+  checksum: 769c40695756b527ad0b4fa56d6953dbb8fbe4f5392bfa87fa28224ac1104b732f3b00fd7748174e7093db7a6fafe888b89571d3fd624f10c292af541e119af8
   languageName: node
   linkType: hard
 
-"@fluentui/react-portal@npm:^9.4.5":
-  version: 9.4.5
-  resolution: "@fluentui/react-portal@npm:9.4.5"
+"@fluentui/react-portal@npm:^9.4.10":
+  version: 9.4.10
+  resolution: "@fluentui/react-portal@npm:9.4.10"
   dependencies:
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
     use-disposable: "npm:^1.0.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 79601dcf8b410b83ab39c380487bbbcbf5205ebca51404e243d461f891d8faaa3061f9477cccd142f896a6bbf731961c36db1688191940f5407a0251539e2761
+  checksum: 1b8ac237b202e37caf8c767ff46821282f3519abe61cf6064c3b239a76289693cd4b72ebdd3679178f0cb70c8949410e16b79c79222b5c1604b318167b1bd5f7
   languageName: node
   linkType: hard
 
-"@fluentui/react-positioning@npm:^9.10.5":
-  version: 9.10.5
-  resolution: "@fluentui/react-positioning@npm:9.10.5"
+"@fluentui/react-positioning@npm:^9.12.4":
+  version: 9.12.4
+  resolution: "@fluentui/react-positioning@npm:9.12.4"
   dependencies:
-    "@floating-ui/devtools": "npm:0.0.1"
+    "@floating-ui/devtools": "npm:0.2.1"
     "@floating-ui/dom": "npm:^1.2.0"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 2569b8718f15c3e644d858f6688d2e279b45552ab57d7e03bbda033da3160445374164daecffcce6a854ec6494f29d2915a2378ba4de4123d5787cea9eb08ff7
+  checksum: 0a3b79164242ca60637a5aeaaa6f829b72c3c58e6ea93345720352983b331a4ea8916ce3626bd8f762f3c86e6ea1cfdbd0a18ab75a726d3038d7032c2330cfd5
   languageName: node
   linkType: hard
 
-"@fluentui/react-progress@npm:^9.1.55":
-  version: 9.1.55
-  resolution: "@fluentui/react-progress@npm:9.1.55"
+"@fluentui/react-progress@npm:^9.1.60":
+  version: 9.1.60
+  resolution: "@fluentui/react-progress@npm:9.1.60"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: e20c8695f7ea99474efcb8628e0db171721dae75332d0c0a799ccdee941bd3b8d47a88dd78acfdafbbbdaeeb26ffe29c58245f1d6c856aad2dbaef7b25a13e28
+  checksum: 1af5285ddbd7b58f340fc08736fdc8dac8be3dc3b77f14c7369a9fd3509d625998403ae8c3073942abda3725f43ec2b1f56696f83c47441a9e34e19991b19b7f
   languageName: node
   linkType: hard
 
-"@fluentui/react-provider@npm:^9.13.3":
-  version: 9.13.3
-  resolution: "@fluentui/react-provider@npm:9.13.3"
+"@fluentui/react-provider@npm:^9.13.8":
+  version: 9.13.8
+  resolution: "@fluentui/react-provider@npm:9.13.8"
   dependencies:
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/core": "npm:^1.14.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 278d446988486dcee675539f82a6e244c8b70bb62a8ce5eff7bb7e2f184600cbaab332a9e5bbe53c997df9fd6b2ebf0c99bc3f0b0611d6ba4771ba2e9c2a30d0
+  checksum: 213aa172a410b0402e4d39ce01279921c150b49fd6fa98c464e78a14b80b90fc10c93f76ea439d8f44b4bcc8291872cf2e2fbcfb081c8f3d45e39e8af5ceed57
   languageName: node
   linkType: hard
 
-"@fluentui/react-radio@npm:^9.1.60":
-  version: 9.1.60
-  resolution: "@fluentui/react-radio@npm:9.1.60"
+"@fluentui/react-radio@npm:^9.2.3":
+  version: 9.2.3
+  resolution: "@fluentui/react-radio@npm:9.2.3"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: b429117b8140bdfefd3f5b438cf92b947dfe9ceab04ee58bcb3ab13134399fecfd065855a4bac560f73b75387dc0ac6a8248308851ecd2f93fce090c6e4ab81a
+  checksum: b142677dd16f7d815a51ca8b44a3895924dd979fa8da10cd9e448f1162a6591f58eff38b242782f1f12260865c113e168df97154e256cf71055b58858841b531
   languageName: node
   linkType: hard
 
-"@fluentui/react-select@npm:^9.1.55":
-  version: 9.1.55
-  resolution: "@fluentui/react-select@npm:9.1.55"
-  dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
-    "@griffel/react": "npm:^1.5.14"
-    "@swc/helpers": "npm:^0.5.1"
-  peerDependencies:
-    "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
-    react: ">=16.14.0 <19.0.0"
-    react-dom: ">=16.14.0 <19.0.0"
-  checksum: 53dbd9835f2ba09c597c4561d115722b8f75c621eb7ffd76dadb0b96a3761ffe9b0390c4098b9fdc388d3bff6e7970eeece6e24d62ae53344abc0fd0d85e972a
-  languageName: node
-  linkType: hard
-
-"@fluentui/react-shared-contexts@npm:^9.13.2":
-  version: 9.13.2
-  resolution: "@fluentui/react-shared-contexts@npm:9.13.2"
-  dependencies:
-    "@fluentui/react-theme": "npm:^9.1.16"
-    "@swc/helpers": "npm:^0.5.1"
-  peerDependencies:
-    "@types/react": ">=16.14.0 <19.0.0"
-    react: ">=16.14.0 <19.0.0"
-  checksum: 07ecd724bd0f378468ed14832df0110b4815096a2d0c7f4bb434768a9ca0cf79003f02f17c98e9cd3e201b47a425e4346913c5a787a33cdd312fb58e28f72b80
-  languageName: node
-  linkType: hard
-
-"@fluentui/react-skeleton@npm:^9.0.43":
-  version: 9.0.43
-  resolution: "@fluentui/react-skeleton@npm:9.0.43"
-  dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
-    "@griffel/react": "npm:^1.5.14"
-    "@swc/helpers": "npm:^0.5.1"
-  peerDependencies:
-    "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
-    react: ">=16.14.0 <19.0.0"
-    react-dom: ">=16.14.0 <19.0.0"
-  checksum: 3ccd2cd79518c28bb5d1b0cfabc7a736feb76c5ec1d847fbdf4d224c94f16a8f7dcc1bc4a940a690f750844a1368e588a547f04fddb97abf6685e1a277e25d43
-  languageName: node
-  linkType: hard
-
-"@fluentui/react-slider@npm:^9.1.60":
+"@fluentui/react-select@npm:^9.1.60":
   version: 9.1.60
-  resolution: "@fluentui/react-slider@npm:9.1.60"
+  resolution: "@fluentui/react-select@npm:9.1.60"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: f38038bb5b1558ffedd83ac10989bb202a130a73ede2f04d68f2fd733f9e89af816313da3a0160aa16f3226143398c5e2101305a65c36b47b332776a82b70edd
+  checksum: 94db67fdeb93ceccfcaf31bf51c0994a27cd5a9caaf7ddf6efdc84932fd78f4c8c47b46bdae4c721279487bf338fffff4a092f1059c1a60a8fafbd4ad1b94203
   languageName: node
   linkType: hard
 
-"@fluentui/react-spinbutton@npm:^9.2.55":
-  version: 9.2.55
-  resolution: "@fluentui/react-spinbutton@npm:9.2.55"
+"@fluentui/react-shared-contexts@npm:^9.14.0":
+  version: 9.14.0
+  resolution: "@fluentui/react-shared-contexts@npm:9.14.0"
+  dependencies:
+    "@fluentui/react-theme": "npm:^9.1.16"
+    "@swc/helpers": "npm:^0.5.1"
+  peerDependencies:
+    "@types/react": ">=16.14.0 <19.0.0"
+    react: ">=16.14.0 <19.0.0"
+  checksum: 2355b0065128187be975d4cc5c8e2b0341018fa803642397215f57106daf747af6cd29313dc19a8271177eef232b6484bd186b1ce7de484f787dc270afd3260f
+  languageName: node
+  linkType: hard
+
+"@fluentui/react-skeleton@npm:^9.0.48":
+  version: 9.0.48
+  resolution: "@fluentui/react-skeleton@npm:9.0.48"
+  dependencies:
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-theme": "npm:^9.1.16"
+    "@fluentui/react-utilities": "npm:^9.16.1"
+    "@griffel/react": "npm:^1.5.14"
+    "@swc/helpers": "npm:^0.5.1"
+  peerDependencies:
+    "@types/react": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
+    react: ">=16.14.0 <19.0.0"
+    react-dom: ">=16.14.0 <19.0.0"
+  checksum: f40923bb60f12c6080f84623ec6fffdaf3f254df4a3679578239c6a219b80853aae46b964be7e1de6a8593ddef66ff64ed84e4616e9f985306ffe8d92d4bff61
+  languageName: node
+  linkType: hard
+
+"@fluentui/react-slider@npm:^9.1.65":
+  version: 9.1.65
+  resolution: "@fluentui/react-slider@npm:9.1.65"
+  dependencies:
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
+    "@fluentui/react-theme": "npm:^9.1.16"
+    "@fluentui/react-utilities": "npm:^9.16.1"
+    "@griffel/react": "npm:^1.5.14"
+    "@swc/helpers": "npm:^0.5.1"
+  peerDependencies:
+    "@types/react": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
+    react: ">=16.14.0 <19.0.0"
+    react-dom: ">=16.14.0 <19.0.0"
+  checksum: fa09f1ee4eccc183a3d6a56afd9d058c21d4904215ff0bcb44708b4d886fa3b321f0c1612ec1ee3dfdd166eb086fe456f0ea68f30f932c8107cbaa40f2668b9d
+  languageName: node
+  linkType: hard
+
+"@fluentui/react-spinbutton@npm:^9.2.60":
+  version: 9.2.60
+  resolution: "@fluentui/react-spinbutton@npm:9.2.60"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: c79df20e18f8643cc4f5cb10e8cec3ea8aa3ba9166db080d4445c7462bb1fefcfbfa374703a67ce97a9208cb51c8a68946402ed051a5f969c67a7482c55bf3d5
+  checksum: 7405dbb9baeb0de038d853fa3f65f8b1057a03aad8911ce571b6182abb052cc3893f42ae361d33deee9e9b50488e61f5645a955f0739d714aafc49cbd56caf09
   languageName: node
   linkType: hard
 
-"@fluentui/react-spinner@npm:^9.3.33":
-  version: 9.3.33
-  resolution: "@fluentui/react-spinner@npm:9.3.33"
+"@fluentui/react-spinner@npm:^9.3.38":
+  version: 9.3.38
+  resolution: "@fluentui/react-spinner@npm:9.3.38"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 9e37c319122921bd813ea743400f4f55171f7f495106760a6b34fd0e9b527b36001cd38ce92abb986131711bf16631140cf230a3eda3d021ef86f658f95390cc
+  checksum: 6eef7e1e39a5cadf7ef8646a443133bfde78f3e90a11e40af69a14cba6da64c9958e5c840ff2a57c8c94db9b764a2f5d967acf3eb923c835a8dd09cecb173aae
   languageName: node
   linkType: hard
 
-"@fluentui/react-switch@npm:^9.1.60":
-  version: 9.1.60
-  resolution: "@fluentui/react-switch@npm:9.1.60"
+"@fluentui/react-switch@npm:^9.1.65":
+  version: 9.1.65
+  resolution: "@fluentui/react-switch@npm:9.1.65"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-label": "npm:^9.1.53"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-label": "npm:^9.1.58"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 19b303dd6416d7648a22069fc46ae1f5e4d4017a6e84dc4309a7df85b21e132c7f14da96ae2ed49620fd40357d27641de20050e543b0b821c8bc5cf3568361c9
+  checksum: 8183d8eb08e73b2fde83c463bfbaaaf27ee6bdf15a86883d9dc750516a7a9354c6654f1cd34d11c7247f5ad105c296d2141686220c0c9140b50bf954c1b83995
   languageName: node
   linkType: hard
 
-"@fluentui/react-table@npm:^9.10.16":
-  version: 9.10.16
-  resolution: "@fluentui/react-table@npm:9.10.16"
+"@fluentui/react-table@npm:^9.11.5":
+  version: 9.11.5
+  resolution: "@fluentui/react-table@npm:9.11.5"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-avatar": "npm:^9.6.2"
-    "@fluentui/react-checkbox": "npm:^9.2.3"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-radio": "npm:^9.1.60"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-avatar": "npm:^9.6.9"
+    "@fluentui/react-checkbox": "npm:^9.2.8"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-radio": "npm:^9.2.3"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: e3c4cd2931e28ba5d8b352809bedadd80971e5288a7b0275111e8fb7760714f87a469d4a563f421b4ee5bf4bfb1f1d1f18c4a5a6168e55480a8bd1fc19f741b2
+  checksum: fc39d9023984ca0c1ef365a3ea5185f4a6dae4002fabb3cfeef2a4d083b6336a83a80a8f0679773c710c94e7234025ab9f1b32770dc9f25db8fca38a68570b7b
   languageName: node
   linkType: hard
 
-"@fluentui/react-tabs@npm:^9.4.1":
-  version: 9.4.1
-  resolution: "@fluentui/react-tabs@npm:9.4.1"
+"@fluentui/react-tabs@npm:^9.4.6":
+  version: 9.4.6
+  resolution: "@fluentui/react-tabs@npm:9.4.6"
   dependencies:
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
     scheduler: ^0.19.0 || ^0.20.0
-  checksum: ac94cd6c2586d8434ac0491c02029227e7f1a4776fe4e1c87e070c16c2143ef0b0492172320ff5dbda19f8e871d5623b86ed88f3ad74da9e78cb8f84a10e3b54
+  checksum: 8d3c6d7410947a12bbcd93ad86305be1159b10f7cdbfdbc2c7373c00a73f514c3de33831634c19e7ff19f29e9d90659cca67593269ae672847a83eeba8fbfe15
   languageName: node
   linkType: hard
 
-"@fluentui/react-tabster@npm:^9.16.0":
-  version: 9.16.0
-  resolution: "@fluentui/react-tabster@npm:9.16.0"
+"@fluentui/react-tabster@npm:^9.17.3":
+  version: 9.17.3
+  resolution: "@fluentui/react-tabster@npm:9.17.3"
   dependencies:
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
     keyborg: "npm:^2.3.0"
     tabster: "npm:^5.0.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 6e700191f64d0fd6cd47beea610c1f0ff859a50c9895c68ce8e2baf27fef648fd5d2a158cdf94d6f26c2032e4ff7eb682b8c7899abaef307c0ccdcb464e5f00c
+  checksum: c18d92ec5401b37a7ff2ece1052ae2850c50a30ba73f5b08b7ed7ccc35f10e6db9ebce552fa830b3bbf99e233e089ed34d80d3a478d982e3e113e5894043639e
   languageName: node
   linkType: hard
 
-"@fluentui/react-tags@npm:^9.0.15":
-  version: 9.0.15
-  resolution: "@fluentui/react-tags@npm:9.0.15"
+"@fluentui/react-tags@npm:^9.0.22":
+  version: 9.0.22
+  resolution: "@fluentui/react-tags@npm:9.0.22"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-avatar": "npm:^9.6.2"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-avatar": "npm:^9.6.9"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 979fe775bbe82c0a5f2bc9798f01aabf5cb9e5a2dfaf684353f18440b00979bc07aa4b8fe035fad733fe011947f62f9b2e39df764e862fc3a166bb9fc0a8074f
+  checksum: a0625e3ea7c77e61b60978425e91e192e1646c4a66918bc9b8a4315fb72f9d09b587ee0efe6ffdcb1067651b016c7edc29c2c5f3f186b70d3befe74495104241
   languageName: node
   linkType: hard
 
-"@fluentui/react-text@npm:^9.4.2":
-  version: 9.4.2
-  resolution: "@fluentui/react-text@npm:9.4.2"
+"@fluentui/react-text@npm:^9.4.7":
+  version: 9.4.7
+  resolution: "@fluentui/react-text@npm:9.4.7"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: e1720d5099fd07edab046e77c7ef96ed0c979d888020244c7dd4b825279ab102f22a531bfc224a5d60fce941cd9b57f7aba0709b1e91b82e25249b4d29153e0d
+  checksum: 601776cdaca491c6ea653d0b76c5ebfae161983a13c5b57ee6e380fb6cdb0f7eaca14887ae78ff41542e0b3c1c836aba5c7d56cb789c8e41cded94cec3e97e3b
   languageName: node
   linkType: hard
 
-"@fluentui/react-textarea@npm:^9.3.55":
-  version: 9.3.55
-  resolution: "@fluentui/react-textarea@npm:9.3.55"
+"@fluentui/react-textarea@npm:^9.3.60":
+  version: 9.3.60
+  resolution: "@fluentui/react-textarea@npm:9.3.60"
   dependencies:
-    "@fluentui/react-field": "npm:^9.1.45"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-field": "npm:^9.1.50"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 538863973ab0243c22402f5252229661bee242b6b175c9d8609e29df36f2ae1cbac9db4456d87656664dc1a6e6557e10a04ad152785faf7c0b1eaf22a5841742
+  checksum: aeb1e6d3373a074717f2becb9c0d74d23e137f2ec20afd33dc8dd30934a1d8425ac19984d5435b4bf621574ab98a25aa31ab31ad622cbe9dd30b02c0d604caa0
   languageName: node
   linkType: hard
 
@@ -4687,167 +4688,167 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/react-toast@npm:^9.3.21":
-  version: 9.3.21
-  resolution: "@fluentui/react-toast@npm:9.3.21"
+"@fluentui/react-toast@npm:^9.3.27":
+  version: 9.3.27
+  resolution: "@fluentui/react-toast@npm:9.3.27"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
     react-transition-group: "npm:^4.4.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 47c77dc8b2aa49b5158018a60bf53c2f4e895b14e224f96a75d48242f55ebb21f814daae444f9307eda2335530f1fd3acb3280333d03f1ff846787473b9c6cf3
+  checksum: 02979c512e8171a466a04e1773c9a767955cd3a9f644f808c9ce273f85fb94fbd387c6914cc93d09136e38359759b85f87eb53a87f7755cc577717e281b91455
   languageName: node
   linkType: hard
 
-"@fluentui/react-toolbar@npm:^9.1.60":
-  version: 9.1.60
-  resolution: "@fluentui/react-toolbar@npm:9.1.60"
+"@fluentui/react-toolbar@npm:^9.1.66":
+  version: 9.1.66
+  resolution: "@fluentui/react-toolbar@npm:9.1.66"
   dependencies:
-    "@fluentui/react-button": "npm:^9.3.59"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-divider": "npm:^9.2.53"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-radio": "npm:^9.1.60"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-button": "npm:^9.3.65"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-divider": "npm:^9.2.58"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-radio": "npm:^9.2.3"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: f5c86da346e364dd866b930282949df19350e19c050b8cb32ddb21b7933db467eb9ac1cb1df93b152f0a9e12625320cadf5f04c4d41aec078fcf1898bfef1861
+  checksum: 315f1d5df8eb1fb5350e13f27615fc10b83035c67a746be86d7299f009fde989d118ebfc3256a4200ab78b32ceea527094a9e8fe76708a62e865c0f171af0289
   languageName: node
   linkType: hard
 
-"@fluentui/react-tooltip@npm:^9.4.4":
-  version: 9.4.4
-  resolution: "@fluentui/react-tooltip@npm:9.4.4"
+"@fluentui/react-tooltip@npm:^9.4.11":
+  version: 9.4.11
+  resolution: "@fluentui/react-tooltip@npm:9.4.11"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-portal": "npm:^9.4.5"
-    "@fluentui/react-positioning": "npm:^9.10.5"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-portal": "npm:^9.4.10"
+    "@fluentui/react-positioning": "npm:^9.12.4"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: d0d724a60aaa3e6c264a7d52a13ecab7f4a98dd60d371db6e5d8a948e517747347930a47dba5dd93e2672b11b73081553545e928eb3a9f9b926e43de75da5e85
+  checksum: d806fff6c88d7ea42e9a43d8356755d2282227652d743032650962c30bd59b638003ccc5c211073d7d44d97d8b176df88cdc77094881e90c7744c4813e0e853d
   languageName: node
   linkType: hard
 
-"@fluentui/react-tree@npm:^9.4.18":
-  version: 9.4.18
-  resolution: "@fluentui/react-tree@npm:9.4.18"
+"@fluentui/react-tree@npm:^9.4.25":
+  version: 9.4.25
+  resolution: "@fluentui/react-tree@npm:9.4.25"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-aria": "npm:^9.6.0"
-    "@fluentui/react-avatar": "npm:^9.6.2"
-    "@fluentui/react-button": "npm:^9.3.59"
-    "@fluentui/react-checkbox": "npm:^9.2.3"
-    "@fluentui/react-context-selector": "npm:^9.1.44"
-    "@fluentui/react-icons": "npm:^2.0.217"
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-radio": "npm:^9.1.60"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-tabster": "npm:^9.16.0"
+    "@fluentui/react-aria": "npm:^9.7.3"
+    "@fluentui/react-avatar": "npm:^9.6.9"
+    "@fluentui/react-button": "npm:^9.3.65"
+    "@fluentui/react-checkbox": "npm:^9.2.8"
+    "@fluentui/react-context-selector": "npm:^9.1.49"
+    "@fluentui/react-icons": "npm:^2.0.224"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-radio": "npm:^9.2.3"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-tabster": "npm:^9.17.3"
     "@fluentui/react-theme": "npm:^9.1.16"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: 6f75e96dfe1bc225457e1053c5931acbcff6e86e88903d4f369ffa3e0883cb81c2214a40fd4fe8d01c772f3080b22563c67faeac28aae3d215cae147d2f37d15
+  checksum: 2de26b052e9191a2a3e9b3fb87ad41245099dcabae8c1593a8f88098f1a4fa4c0dabadfd54b1965d077e805b026631bbf1eead7e52f73100bb4780e7ae9b74b1
   languageName: node
   linkType: hard
 
-"@fluentui/react-utilities@npm:^9.15.4":
-  version: 9.15.4
-  resolution: "@fluentui/react-utilities@npm:9.15.4"
+"@fluentui/react-utilities@npm:^9.16.1":
+  version: 9.16.1
+  resolution: "@fluentui/react-utilities@npm:9.16.1"
   dependencies:
     "@fluentui/keyboard-keys": "npm:^9.0.7"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
-  checksum: 3735994354338cda2cfaff5c6f2ad2a89a6094450fde275482763b16d324630e8b0bbd7fd3fc4b837793d8a0907297bcfca9752b253f650ea7bd09f93d84c255
+  checksum: a02a80badf8e218f03c89a30b09a275028da828cf39e5cd4c63dbf4a4359efad26e8ed4747bf4b2a65182ff28be52b797c217af932f24129d7f27d1d65f827d6
   languageName: node
   linkType: hard
 
-"@fluentui/react-virtualizer@npm:9.0.0-alpha.61":
-  version: 9.0.0-alpha.61
-  resolution: "@fluentui/react-virtualizer@npm:9.0.0-alpha.61"
+"@fluentui/react-virtualizer@npm:9.0.0-alpha.66":
+  version: 9.0.0-alpha.66
+  resolution: "@fluentui/react-virtualizer@npm:9.0.0-alpha.66"
   dependencies:
-    "@fluentui/react-jsx-runtime": "npm:^9.0.22"
-    "@fluentui/react-shared-contexts": "npm:^9.13.2"
-    "@fluentui/react-utilities": "npm:^9.15.4"
+    "@fluentui/react-jsx-runtime": "npm:^9.0.27"
+    "@fluentui/react-shared-contexts": "npm:^9.14.0"
+    "@fluentui/react-utilities": "npm:^9.16.1"
     "@griffel/react": "npm:^1.5.14"
     "@swc/helpers": "npm:^0.5.1"
   peerDependencies:
     "@types/react": ">=16.14.0 <19.0.0"
-    "@types/react-dom": ">=16.14.0 <19.0.0"
+    "@types/react-dom": ">=16.9.0 <19.0.0"
     react: ">=16.14.0 <19.0.0"
     react-dom: ">=16.14.0 <19.0.0"
-  checksum: fac55bab8073c27cb402dec97a8e34f6b7d0d46318d56f23798227fe88173388b87b7a937b93c3577dec2ecd0a55806a141e64551837d3a77276c37d7d24f3c1
+  checksum: 20cd41d3d28c47117c10ef2d39655b415b541816d5ae5166548f2215d28c14aa6f270765f3c1ec2f85c02849a76b643f177ebd99b897065276944129a01e6b05
   languageName: node
   linkType: hard
 
-"@fluentui/react-window-provider@npm:^2.2.17":
-  version: 2.2.17
-  resolution: "@fluentui/react-window-provider@npm:2.2.17"
+"@fluentui/react-window-provider@npm:^2.2.18":
+  version: 2.2.18
+  resolution: "@fluentui/react-window-provider@npm:2.2.18"
   dependencies:
-    "@fluentui/set-version": "npm:^8.2.13"
+    "@fluentui/set-version": "npm:^8.2.14"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
-  checksum: 46d43333e905c4cb49c685938f875f63ebfe82b8f20b74adc66d6f89c5fb77a6fb05d761eb46c3ab40732a15b6c2e44f68f58c7c56cc50e878032904174cf4d0
+  checksum: c0fee85d541a1377afdd64599a985e4d8939a784d5219cba250ae7cebdbdcf55e1302dfacce041bf7b9f7fc7f8ebca52e31a1700af9f0e216e82060277cb8e44
   languageName: node
   linkType: hard
 
-"@fluentui/react@npm:^8.114.0":
-  version: 8.114.0
-  resolution: "@fluentui/react@npm:8.114.0"
+"@fluentui/react@npm:^8.114.4":
+  version: 8.114.4
+  resolution: "@fluentui/react@npm:8.114.4"
   dependencies:
-    "@fluentui/date-time-utilities": "npm:^8.5.15"
-    "@fluentui/font-icons-mdl2": "npm:^8.5.28"
-    "@fluentui/foundation-legacy": "npm:^8.2.48"
-    "@fluentui/merge-styles": "npm:^8.5.14"
-    "@fluentui/react-focus": "npm:^8.8.35"
-    "@fluentui/react-hooks": "npm:^8.6.34"
-    "@fluentui/react-portal-compat-context": "npm:^9.0.10"
-    "@fluentui/react-window-provider": "npm:^2.2.17"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/style-utilities": "npm:^8.9.21"
-    "@fluentui/theme": "npm:^2.6.39"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/date-time-utilities": "npm:^8.5.16"
+    "@fluentui/font-icons-mdl2": "npm:^8.5.31"
+    "@fluentui/foundation-legacy": "npm:^8.2.51"
+    "@fluentui/merge-styles": "npm:^8.5.15"
+    "@fluentui/react-focus": "npm:^8.8.38"
+    "@fluentui/react-hooks": "npm:^8.6.36"
+    "@fluentui/react-portal-compat-context": "npm:^9.0.11"
+    "@fluentui/react-window-provider": "npm:^2.2.18"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/style-utilities": "npm:^8.10.2"
+    "@fluentui/theme": "npm:^2.6.41"
+    "@fluentui/utilities": "npm:^8.13.24"
     "@microsoft/load-themed-styles": "npm:^1.10.26"
     tslib: "npm:^2.1.0"
   peerDependencies:
@@ -4855,45 +4856,45 @@ __metadata:
     "@types/react-dom": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
     react-dom: ">=16.8.0 <19.0.0"
-  checksum: 5c279b5201923a00cabae377aaad675ab7d9e16791c37ac15e4ae6f69c3a9eafd4ef44155ca42e76d3d85841388de970e64b3bc496ac12e8ef65d6abe15b0a2b
+  checksum: 5f32575ea0b94a61e577df6cce84d60292fc03196c29b92338e40a27eee865b435f294bb0a4cc7edb1d7a64b70b3700c88247e48980432a55d0c47b9a847095f
   languageName: node
   linkType: hard
 
-"@fluentui/set-version@npm:^8.2.13":
-  version: 8.2.13
-  resolution: "@fluentui/set-version@npm:8.2.13"
+"@fluentui/set-version@npm:^8.2.14":
+  version: 8.2.14
+  resolution: "@fluentui/set-version@npm:8.2.14"
   dependencies:
     tslib: "npm:^2.1.0"
-  checksum: 9807cc53125a10ccf8209e450d540486684734a49725a0e7fcebb3c08abe76ad43362ae6307eee81793594e4fa08fd1828d78fcb122dacfeb41faa2531ab0d23
+  checksum: a1b42d983e5de9362341c9837bbff73c04e75e3e3fec9056430f06becca1811f5492d858827619d9d1d733718c193ecb64e3f4f41aa474a888059d74deb2da3a
   languageName: node
   linkType: hard
 
-"@fluentui/style-utilities@npm:^8.9.21":
-  version: 8.9.21
-  resolution: "@fluentui/style-utilities@npm:8.9.21"
+"@fluentui/style-utilities@npm:^8.10.2":
+  version: 8.10.2
+  resolution: "@fluentui/style-utilities@npm:8.10.2"
   dependencies:
-    "@fluentui/merge-styles": "npm:^8.5.14"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/theme": "npm:^2.6.39"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/merge-styles": "npm:^8.5.15"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/theme": "npm:^2.6.41"
+    "@fluentui/utilities": "npm:^8.13.24"
     "@microsoft/load-themed-styles": "npm:^1.10.26"
     tslib: "npm:^2.1.0"
-  checksum: 7a3358e5fe59fb3f41693afa2502ba300b47e344de22e141620a117c8857c614fd1161e61c334daf083f84f771671fe79879edab70a3864c85fda6147495a271
+  checksum: 35581e60b1d9f34cf8aae66e08f6ff1c25930126c088d3f21cbcadcd272a9fa8bdd5dac6efe12311f5ce62a76e032551dbffd9c3c0fb9f1051d3f76eb095b418
   languageName: node
   linkType: hard
 
-"@fluentui/theme@npm:^2.6.39":
-  version: 2.6.39
-  resolution: "@fluentui/theme@npm:2.6.39"
+"@fluentui/theme@npm:^2.6.41":
+  version: 2.6.41
+  resolution: "@fluentui/theme@npm:2.6.41"
   dependencies:
-    "@fluentui/merge-styles": "npm:^8.5.14"
-    "@fluentui/set-version": "npm:^8.2.13"
-    "@fluentui/utilities": "npm:^8.13.22"
+    "@fluentui/merge-styles": "npm:^8.5.15"
+    "@fluentui/set-version": "npm:^8.2.14"
+    "@fluentui/utilities": "npm:^8.13.24"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
-  checksum: 4d6729607a3f1d181f91dd92da622cef4082753d68c5886422a7eed5b91e360177a526514a271ffbe852cd9fdd53b54fe7253340395f07927e6a1a5db9f741d8
+  checksum: d41606a1da6876705a0a53372d414d8939291296090fb914e8bae538fc67a8269e1b89713324a74b5c0a3fbaada274424bbee69735918d2649f194d55484905e
   languageName: node
   linkType: hard
 
@@ -4906,18 +4907,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fluentui/utilities@npm:^8.13.22":
-  version: 8.13.22
-  resolution: "@fluentui/utilities@npm:8.13.22"
+"@fluentui/utilities@npm:^8.13.24":
+  version: 8.13.24
+  resolution: "@fluentui/utilities@npm:8.13.24"
   dependencies:
-    "@fluentui/dom-utilities": "npm:^2.2.13"
-    "@fluentui/merge-styles": "npm:^8.5.14"
-    "@fluentui/set-version": "npm:^8.2.13"
+    "@fluentui/dom-utilities": "npm:^2.2.14"
+    "@fluentui/merge-styles": "npm:^8.5.15"
+    "@fluentui/set-version": "npm:^8.2.14"
     tslib: "npm:^2.1.0"
   peerDependencies:
     "@types/react": ">=16.8.0 <19.0.0"
     react: ">=16.8.0 <19.0.0"
-  checksum: 32318761453867375c19e70b7c1ca11a1765da28f1067af1229600ba4caff746702cab32500a0fadbc6508cda97609b97713df8cf90865065445992a5fea3e0d
+  checksum: ae9f4b5d5cf01629ca73cb684fb19a048f7b45b8aa3899914418682150f4c4ef892780057a6e4fa15bec5177d5e18bcd364dac49966be57adb45752f5919ada5
   languageName: node
   linkType: hard
 
@@ -4939,16 +4940,16 @@ __metadata:
     "@types/jest": "npm:^29.5.11"
     "@types/rmfr": "npm:^2.0.5"
     "@types/xxhashjs": "npm:^0.2.4"
-    "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
-    "@typescript-eslint/parser": "npm:^6.16.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.19.0"
+    "@typescript-eslint/parser": "npm:^6.19.0"
     eslint: "npm:^8.56.0"
     eslint-config-prettier: "npm:^9.1.0"
     jest: "npm:^29.7.0"
-    prettier: "npm:^3.1.1"
+    prettier: "npm:^3.2.4"
     rimraf: "npm:^5.0.5"
     rmfr: "npm:^2.0.0"
     ts-jest: "npm:^29.1.1"
-    typedoc: "npm:^0.25.4"
+    typedoc: "npm:^0.25.7"
     typedoc-plugin-markdown: "npm:^3.17.1"
     typescript: "npm:^5.3.3"
     xxhashjs: "npm:^0.2.2"
@@ -5012,18 +5013,18 @@ __metadata:
     "@freik/typechk": "npm:^0.5.11"
     "@types/debug": "npm:^4.1.12"
     "@types/jest": "npm:^29.5.11"
-    "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
-    "@typescript-eslint/parser": "npm:^6.16.0"
-    electron: "npm:^28.1.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.19.0"
+    "@typescript-eslint/parser": "npm:^6.19.0"
+    electron: "npm:^28.1.4"
     eslint: "npm:^8.56.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
-    eslint-plugin-prettier: "npm:^5.1.2"
+    eslint-plugin-prettier: "npm:^5.1.3"
     jest: "npm:^29.7.0"
-    prettier: "npm:^3.1.1"
+    prettier: "npm:^3.2.4"
     rimraf: "npm:^5.0.5"
     ts-jest: "npm:^29.1.1"
-    typedoc: "npm:^0.25.4"
+    typedoc: "npm:^0.25.7"
     typedoc-plugin-markdown: "npm:^3.17.1"
     typescript: "npm:^5.3.3"
   peerDependencies:
@@ -5040,15 +5041,15 @@ __metadata:
     "@freik/logger": "npm:^0.2.10"
     "@types/debug": "npm:^4.1.12"
     "@types/jest": "npm:^29.5.11"
-    "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
-    "@typescript-eslint/parser": "npm:^6.16.0"
-    electron: "npm:^28.1.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.19.0"
+    "@typescript-eslint/parser": "npm:^6.19.0"
+    electron: "npm:^28.1.4"
     eslint: "npm:^8.56.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
-    eslint-plugin-prettier: "npm:^5.1.2"
+    eslint-plugin-prettier: "npm:^5.1.3"
     jest: "npm:^29.7.0"
-    prettier: "npm:^3.1.1"
+    prettier: "npm:^3.2.4"
     rimraf: "npm:^5.0.5"
     ts-jest: "npm:^29.1.1"
     typescript: "npm:^5.3.3"
@@ -5069,22 +5070,22 @@ __metadata:
     "@freik/web-utils": "npm:^0.5.2"
     "@types/debug": "npm:^4.1.12"
     "@types/jest": "npm:^29.5.11"
-    "@types/react": "npm:^17.0.74"
+    "@types/react": "npm:^17.0.75"
     "@types/react-dom": "npm:^17.0.25"
     "@types/react-test-renderer": "npm:^17.0.9"
-    "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
-    "@typescript-eslint/parser": "npm:^6.16.0"
-    electron: "npm:^28.1.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.19.0"
+    "@typescript-eslint/parser": "npm:^6.19.0"
+    electron: "npm:^28.1.4"
     eslint: "npm:^8.56.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
-    eslint-plugin-prettier: "npm:^5.1.2"
+    eslint-plugin-prettier: "npm:^5.1.3"
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
-    prettier: "npm:^3.1.1"
+    prettier: "npm:^3.2.4"
     react: "npm:^17.0.2"
     react-dom: "npm:^17.0.2"
     react-scripts: "npm:^5.0.1"
@@ -5092,7 +5093,7 @@ __metadata:
     recoil: "npm:^0.7.7"
     rimraf: "npm:^5.0.5"
     ts-jest: "npm:^29.1.1"
-    typedoc: "npm:^0.25.4"
+    typedoc: "npm:^0.25.7"
     typedoc-plugin-markdown: "npm:^3.17.1"
     typescript: "npm:^5.3.3"
   peerDependencies:
@@ -6370,9 +6371,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lerna/create@npm:8.0.1":
-  version: 8.0.1
-  resolution: "@lerna/create@npm:8.0.1"
+"@lerna/create@npm:8.0.2":
+  version: 8.0.2
+  resolution: "@lerna/create@npm:8.0.2"
   dependencies:
     "@npmcli/run-script": "npm:7.0.2"
     "@nx/devkit": "npm:>=17.1.2 < 18"
@@ -6438,7 +6439,7 @@ __metadata:
     write-pkg: "npm:4.0.0"
     yargs: "npm:17.7.2"
     yargs-parser: "npm:21.1.1"
-  checksum: 442cf408579a0305f7de46dbd943545b488d0dcbbf92aa5af3fafa18068137da48b08189bf6e36aed62c441f53acfa6e4b93538e560c7914023784142456d3ab
+  checksum: a36fafa8dce4d5fabfac9de91003e08e86b6d62a2e884619322c8c0f9d13e21348fe99f988ba85e45ff0533a9175512e8cafa1a46f75ce8a94e597da8d0b7924
   languageName: node
   linkType: hard
 
@@ -7511,16 +7512,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.1.6":
-  version: 6.1.6
-  resolution: "@testing-library/jest-dom@npm:6.1.6"
+"@testing-library/jest-dom@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "@testing-library/jest-dom@npm:6.2.0"
   dependencies:
     "@adobe/css-tools": "npm:^4.3.2"
     "@babel/runtime": "npm:^7.9.2"
     aria-query: "npm:^5.0.0"
     chalk: "npm:^3.0.0"
     css.escape: "npm:^1.5.1"
-    dom-accessibility-api: "npm:^0.5.6"
+    dom-accessibility-api: "npm:^0.6.3"
     lodash: "npm:^4.17.15"
     redent: "npm:^3.0.0"
   peerDependencies:
@@ -7537,7 +7538,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 324a790c3c56a95b916ec602d239607f0f9f20691f1234b0dbbc6aec5d41a8fdedc67c1f0ca2121989d6268fe8044ffaa36c8637d4f4455d3f0359e8fceac31a
+  checksum: 4af88d4b6208eda58fad47a520057893a381b972e7b043d7787c0111c887bdc82ed959bed07c21700f2816d4a1e315a519a0aabce120708ad7ba79577374f0fd
   languageName: node
   linkType: hard
 
@@ -7994,12 +7995,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.10.5":
-  version: 20.10.5
-  resolution: "@types/node@npm:20.10.5"
+"@types/node@npm:^20.11.5":
+  version: 20.11.5
+  resolution: "@types/node@npm:20.11.5"
   dependencies:
     undici-types: "npm:~5.26.4"
-  checksum: 4a378428d2c9f692b19801a5a3d20dc4c0ad5d4a3d103350f8b401af439941a9aa5efeadc8eb9db13c66c620318bc7f336abfc8934f82fd32c4a689d85068c6f
+  checksum: 9f31c471047d7b3e240ce7b77ff29b0d15e83be7e3feafb3d0b0d0931122b438b1eefa302a5a2e1e9849914ff3fd76aafbd8ccb372efb1331ba048da63bce6f8
   languageName: node
   linkType: hard
 
@@ -8111,14 +8112,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17.0.74":
-  version: 17.0.74
-  resolution: "@types/react@npm:17.0.74"
+"@types/react@npm:^17.0.75":
+  version: 17.0.75
+  resolution: "@types/react@npm:17.0.75"
   dependencies:
     "@types/prop-types": "npm:*"
     "@types/scheduler": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 4d8c44a01afc07a9d8e22d6592d7528460865aed29935280ab317cdfc9d00867c0d5190d95ebaaeb4bea40f2b0a5d5034f55182d274aabd2f7040e31edc7e78f
+  checksum: c0dc70e51f2e0a6df617bdaef2c95ddf47ea7a7a416b8dffb482299f215fa28444b9a6d9fe95930ede674514c5cfe429b7c9f582dd3caf74dc3325ea6d8565b8
   languageName: node
   linkType: hard
 
@@ -8329,15 +8330,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^6.16.0":
-  version: 6.16.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:6.16.0"
+"@typescript-eslint/eslint-plugin@npm:^6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/eslint-plugin@npm:6.19.0"
   dependencies:
     "@eslint-community/regexpp": "npm:^4.5.1"
-    "@typescript-eslint/scope-manager": "npm:6.16.0"
-    "@typescript-eslint/type-utils": "npm:6.16.0"
-    "@typescript-eslint/utils": "npm:6.16.0"
-    "@typescript-eslint/visitor-keys": "npm:6.16.0"
+    "@typescript-eslint/scope-manager": "npm:6.19.0"
+    "@typescript-eslint/type-utils": "npm:6.19.0"
+    "@typescript-eslint/utils": "npm:6.19.0"
+    "@typescript-eslint/visitor-keys": "npm:6.19.0"
     debug: "npm:^4.3.4"
     graphemer: "npm:^1.4.0"
     ignore: "npm:^5.2.4"
@@ -8350,7 +8351,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 4bedce948ac3c20492a59813ee5d4f1f2306310857864dfaac2736f6c38e18785002c36844fd64c9fbdf3059fc390b29412be105fd7a118177f1eeeb1eb533f7
+  checksum: 5ed8483d792c4bc6ed697159c84a47ba5c35cd124949883813f2053b972537de3900a7ae26d4d6f370194f2cc7929baa2d09268e0b90118f20ed961cf6c176b9
   languageName: node
   linkType: hard
 
@@ -8400,6 +8401,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/parser@npm:^6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/parser@npm:6.19.0"
+  dependencies:
+    "@typescript-eslint/scope-manager": "npm:6.19.0"
+    "@typescript-eslint/types": "npm:6.19.0"
+    "@typescript-eslint/typescript-estree": "npm:6.19.0"
+    "@typescript-eslint/visitor-keys": "npm:6.19.0"
+    debug: "npm:^4.3.4"
+  peerDependencies:
+    eslint: ^7.0.0 || ^8.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 0c6280a69127cf521b3403be9877775eecda2b2e4e44a67874b0d9cf82ed95a7971dac2db633e55ec22f8026da2681137110b2924313421a22b7c03eba8cda67
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/scope-manager@npm:5.59.11":
   version: 5.59.11
   resolution: "@typescript-eslint/scope-manager@npm:5.59.11"
@@ -8420,6 +8439,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/scope-manager@npm:6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/scope-manager@npm:6.19.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:6.19.0"
+    "@typescript-eslint/visitor-keys": "npm:6.19.0"
+  checksum: d36c51c05e14c51ce13181120eeea46d1edd59ed1ff16dc4ec1f5532a975b5faec5c10a373aaa90545f82a12330c6cba18ecedc734e18288f5874855c48ba808
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/type-utils@npm:5.59.11":
   version: 5.59.11
   resolution: "@typescript-eslint/type-utils@npm:5.59.11"
@@ -8437,12 +8466,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/type-utils@npm:6.16.0":
-  version: 6.16.0
-  resolution: "@typescript-eslint/type-utils@npm:6.16.0"
+"@typescript-eslint/type-utils@npm:6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/type-utils@npm:6.19.0"
   dependencies:
-    "@typescript-eslint/typescript-estree": "npm:6.16.0"
-    "@typescript-eslint/utils": "npm:6.16.0"
+    "@typescript-eslint/typescript-estree": "npm:6.19.0"
+    "@typescript-eslint/utils": "npm:6.19.0"
     debug: "npm:^4.3.4"
     ts-api-utils: "npm:^1.0.1"
   peerDependencies:
@@ -8450,7 +8479,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 5964b87a87252bed278a248eb568902babd7c34defd3af8c3df371926d96aec716f33f1dc14bde170e93f73ed1b0af6e591e647853d0f33f378e2c7b3b73fc5b
+  checksum: f1f20ac28c03dd18546050b63ec0b0fd8c67780265ccb9ef566f16441c3de5deb2607a6046fefdebe8a43ac11fecdf0b009f8e5f70a3d15916d855be74b0f3bb
   languageName: node
   linkType: hard
 
@@ -8465,6 +8494,13 @@ __metadata:
   version: 6.16.0
   resolution: "@typescript-eslint/types@npm:6.16.0"
   checksum: 236ca318c2440c95068e5d4d147e2bfed62447775e18695e21c8ca04a341a74d01c37ed2b417629b7bf2fb91ad4fd5e2a6570215d16fc24dd1507ce6973b4e22
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/types@npm:6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/types@npm:6.19.0"
+  checksum: 396ad2ad9f2d759dd87bc880a1ffc9d11fda04db8af9402abb4e8eccd58c01fa2d26e38b186526d0b457012f7c912e7afdab2a3798a73aa0ae34abaf50d617ae
   languageName: node
   linkType: hard
 
@@ -8505,6 +8541,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript-eslint/typescript-estree@npm:6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/typescript-estree@npm:6.19.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:6.19.0"
+    "@typescript-eslint/visitor-keys": "npm:6.19.0"
+    debug: "npm:^4.3.4"
+    globby: "npm:^11.1.0"
+    is-glob: "npm:^4.0.3"
+    minimatch: "npm:9.0.3"
+    semver: "npm:^7.5.4"
+    ts-api-utils: "npm:^1.0.1"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 06e24bb145a302299a6cf86b36652bd4d7080c4e88517ebc24bdc137c57425a68db256ba628ce16b568bfec8020ae2a748ccee93e304efeded329cb3292b17bf
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/utils@npm:5.59.11, @typescript-eslint/utils@npm:^5.58.0":
   version: 5.59.11
   resolution: "@typescript-eslint/utils@npm:5.59.11"
@@ -8523,20 +8578,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:6.16.0":
-  version: 6.16.0
-  resolution: "@typescript-eslint/utils@npm:6.16.0"
+"@typescript-eslint/utils@npm:6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/utils@npm:6.19.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     "@types/json-schema": "npm:^7.0.12"
     "@types/semver": "npm:^7.5.0"
-    "@typescript-eslint/scope-manager": "npm:6.16.0"
-    "@typescript-eslint/types": "npm:6.16.0"
-    "@typescript-eslint/typescript-estree": "npm:6.16.0"
+    "@typescript-eslint/scope-manager": "npm:6.19.0"
+    "@typescript-eslint/types": "npm:6.19.0"
+    "@typescript-eslint/typescript-estree": "npm:6.19.0"
     semver: "npm:^7.5.4"
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 84dd02f7c8e47fae699cc222da5cbea08b28c6e1cc7827860430bc86c2a17ee3f86e198a4356902b95930f85785aa662266ea9c476f69bf80c6a5f648e55f9f4
+  checksum: 4080c36331204ffef9f218e29f43da767f17551fa4d3877c3d3b49194f7c7382dd9ae2124e7b5ebd47d5556946bb6ad195b47d7d215553efabacdebf81b9e74d
   languageName: node
   linkType: hard
 
@@ -8557,6 +8612,16 @@ __metadata:
     "@typescript-eslint/types": "npm:6.16.0"
     eslint-visitor-keys: "npm:^3.4.1"
   checksum: 19e559f14ea0092585a374b8c5f1aca9b6b271fc23909d9857de9cf71a1e1d3abc0afd237e9c02d7a5fbdfe8e3be7853cf9fedf40a6f16bac3495cb7f4e67982
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:6.19.0":
+  version: 6.19.0
+  resolution: "@typescript-eslint/visitor-keys@npm:6.19.0"
+  dependencies:
+    "@typescript-eslint/types": "npm:6.19.0"
+    eslint-visitor-keys: "npm:^3.4.1"
+  checksum: 8d51c0b8d94c5df044fde958f62741cef55be97c6a3a16c47e4df9af7b2ff13aa1ee03ca5240777481dca53f3b7a9b00b329e50aff5e3ad829d96bc5f63ca2c3
   languageName: node
   linkType: hard
 
@@ -9139,9 +9204,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-builder-lib@npm:24.10.0":
-  version: 24.10.0
-  resolution: "app-builder-lib@npm:24.10.0"
+"app-builder-lib@npm:24.11.0":
+  version: 24.11.0
+  resolution: "app-builder-lib@npm:24.11.0"
   dependencies:
     "@develar/schema-utils": "npm:~2.6.5"
     "@electron/notarize": "npm:2.1.0"
@@ -9170,7 +9235,7 @@ __metadata:
     semver: "npm:^7.3.8"
     tar: "npm:^6.1.12"
     temp-file: "npm:^3.4.0"
-  checksum: 8350e08488d13c239ae62d8b4e799d5017d186547538161f47ec6475a3b290152e644e01788f4e35ba0b5bebdf4ef5118450fb52e76bc1813eb81f3db8025976
+  checksum: ec1fecd9864efe84ef5c6da4e5a2d52564fe423c39a9b68b1b4b27a8f74915ed83607c45a8da779b23c0046c7bd8ede90d41ec6fd5ccfe251945397dde85282b
   languageName: node
   linkType: hard
 
@@ -11901,11 +11966,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dmg-builder@npm:24.10.0":
-  version: 24.10.0
-  resolution: "dmg-builder@npm:24.10.0"
+"dmg-builder@npm:24.11.0":
+  version: 24.11.0
+  resolution: "dmg-builder@npm:24.11.0"
   dependencies:
-    app-builder-lib: "npm:24.10.0"
+    app-builder-lib: "npm:24.11.0"
     builder-util: "npm:24.9.4"
     builder-util-runtime: "npm:9.2.3"
     dmg-license: "npm:^1.0.11"
@@ -11915,7 +11980,7 @@ __metadata:
   dependenciesMeta:
     dmg-license:
       optional: true
-  checksum: 237d071ed74b38ab817d85685790b1daf3d415377c0842de850226dd1885441ab5107d9a7193e23660b1c17054b6fca85d4d9c28e7efd4944c5b879aa5e0727c
+  checksum: b6d14b78d369fcfa36a201d0cf424e7257a0db08d6d6011ccfaa7d1423ba791ee1b917330498dbec015acbb525a2753d7203b703a096b28b67bdf66d832a4b76
   languageName: node
   linkType: hard
 
@@ -11971,10 +12036,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dom-accessibility-api@npm:^0.5.6, dom-accessibility-api@npm:^0.5.9":
+"dom-accessibility-api@npm:^0.5.9":
   version: 0.5.16
   resolution: "dom-accessibility-api@npm:0.5.16"
   checksum: 377b4a7f9eae0a5d72e1068c369c99e0e4ca17fdfd5219f3abd32a73a590749a267475a59d7b03a891f9b673c27429133a818c44b2e47e32fec024b34274e2ca
+  languageName: node
+  linkType: hard
+
+"dom-accessibility-api@npm:^0.6.3":
+  version: 0.6.3
+  resolution: "dom-accessibility-api@npm:0.6.3"
+  checksum: 83d3371f8226487fbad36e160d44f1d9017fb26d46faba6a06fcad15f34633fc827b8c3e99d49f71d5f3253d866e2131826866fd0a3c86626f8eccfc361881ff
   languageName: node
   linkType: hard
 
@@ -12173,15 +12245,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:^24.10.0":
-  version: 24.10.0
-  resolution: "electron-builder@npm:24.10.0"
+"electron-builder@npm:^24.11.0":
+  version: 24.11.0
+  resolution: "electron-builder@npm:24.11.0"
   dependencies:
-    app-builder-lib: "npm:24.10.0"
+    app-builder-lib: "npm:24.11.0"
     builder-util: "npm:24.9.4"
     builder-util-runtime: "npm:9.2.3"
     chalk: "npm:^4.1.2"
-    dmg-builder: "npm:24.10.0"
+    dmg-builder: "npm:24.11.0"
     fs-extra: "npm:^10.1.0"
     is-ci: "npm:^3.0.0"
     lazy-val: "npm:^1.0.5"
@@ -12191,7 +12263,7 @@ __metadata:
   bin:
     electron-builder: cli.js
     install-app-deps: install-app-deps.js
-  checksum: 0773bcafdcfa00f70d441f0a9cff1de8b6b87a8ad65285b6bcf4f2a9f6cc17640759b2b4bff408bf3bfbe15b00598de020a87f2cc7fe84b2338e7427dfd9a24f
+  checksum: 402bbcd74281aa7ab2d38bdb2411604e9688e592d0fea18f2dfeab8129ef19d8035591eb637745031a5d0fe7bf0d703f8f924e92ecba9ba8648d02b2700573d0
   languageName: node
   linkType: hard
 
@@ -12231,16 +12303,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^28.1.0":
-  version: 28.1.0
-  resolution: "electron@npm:28.1.0"
+"electron@npm:^28.1.4":
+  version: 28.1.4
+  resolution: "electron@npm:28.1.4"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^18.11.18"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 9d33dd361fbda93c8583a46f5ebfd572b3fb6cf597490182e20748f100eb27baf9d958435b007bf4acebabff148dcb77d9cf84207f39f0e72e1c84cc98a6e148
+  checksum: 73d0e599c4ad6ba420c4b8224623a4fb4d1964d3d9b6963cbd42171a7f4b288b1d410364f9de75a2ea39feea46de061dd2cf508176db87950932daaa658b31e2
   languageName: node
   linkType: hard
 
@@ -12297,9 +12369,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "emp@workspace:."
   dependencies:
-    "@fluentui/react": "npm:^8.114.0"
-    "@fluentui/react-components": "npm:^9.43.3"
-    "@fluentui/react-icons-mdl2": "npm:^1.3.53"
+    "@fluentui/react": "npm:^8.114.4"
+    "@fluentui/react-components": "npm:^9.45.0"
+    "@fluentui/react-icons-mdl2": "npm:^1.3.56"
     "@freik/audiodb": "npm:^0.8.3"
     "@freik/build-tools": "npm:^3.6.10"
     "@freik/containers": "npm:^0.2.13"
@@ -12317,28 +12389,28 @@ __metadata:
     "@freik/text": "npm:^0.3.11"
     "@freik/typechk": "npm:^0.5.11"
     "@freik/web-utils": "npm:^0.5.2"
-    "@testing-library/jest-dom": "npm:^6.1.6"
+    "@testing-library/jest-dom": "npm:^6.2.0"
     "@testing-library/react": "npm:^14.1.2"
     "@types/debug": "npm:^4.1.12"
     "@types/electron-devtools-installer": "npm:^2.2.5"
     "@types/jest": "npm:^29.5.11"
-    "@types/node": "npm:^20.10.5"
-    "@types/react": "npm:^17.0.74"
+    "@types/node": "npm:^20.11.5"
+    "@types/react": "npm:^17.0.75"
     "@types/react-dom": "npm:^17.0.25"
     "@types/react-test-renderer": "npm:^17.0.9"
     "@types/xxhashjs": "npm:^0.2.4"
-    "@typescript-eslint/eslint-plugin": "npm:^6.16.0"
-    "@typescript-eslint/parser": "npm:^6.16.0"
+    "@typescript-eslint/eslint-plugin": "npm:^6.19.0"
+    "@typescript-eslint/parser": "npm:^6.19.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
     album-art: "npm:^3.2.1"
     cross-env: "npm:^7.0.3"
-    electron: "npm:^28.1.0"
-    electron-builder: "npm:^24.10.0"
+    electron: "npm:^28.1.4"
+    electron-builder: "npm:^24.11.0"
     eslint: "npm:^8.56.0"
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-import: "npm:^2.29.1"
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
-    eslint-plugin-prettier: "npm:^5.1.2"
+    eslint-plugin-prettier: "npm:^5.1.3"
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.5"
@@ -12347,10 +12419,10 @@ __metadata:
     jest-environment-jsdom: "npm:^29.7.0"
     jest-transform-css: "npm:^6.0.1"
     jimp: "npm:^0.22.10"
-    lerna: "npm:^8.0.1"
-    open: "npm:^10.0.2"
-    postcss: "npm:8.4.32"
-    prettier: "npm:^3.1.1"
+    lerna: "npm:^8.0.2"
+    open: "npm:^10.0.3"
+    postcss: "npm:8.4.33"
+    prettier: "npm:^3.2.4"
     react: "npm:^17.0.2"
     react-dom: "npm:^17.0.2"
     react-scripts: "npm:^5.0.1"
@@ -12361,8 +12433,8 @@ __metadata:
     tree-kill: "npm:^1.2.2"
     ts-jest: "npm:29.1.1"
     typescript: "npm:^5.3.3"
-    vite: "npm:^5.0.10"
-    vite-plugin-electron: "npm:^0.15.5"
+    vite: "npm:^5.0.12"
+    vite-plugin-electron: "npm:^0.15.6"
     vite-plugin-electron-renderer: "npm:^0.14.5"
     xxhashjs: "npm:^0.2.2"
   languageName: unknown
@@ -13021,6 +13093,26 @@ __metadata:
     eslint-config-prettier:
       optional: true
   checksum: 2d99eabbf6fb146fef85c84bd37acede2e26be6d908bf9efd663e6d7cb82cb6d9dfca9aab5f39bdc1c4987d5f88400f1756f5e8ac93db70cd1073ff1e873f2e4
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-prettier@npm:^5.1.3":
+  version: 5.1.3
+  resolution: "eslint-plugin-prettier@npm:5.1.3"
+  dependencies:
+    prettier-linter-helpers: "npm:^1.0.0"
+    synckit: "npm:^0.8.6"
+  peerDependencies:
+    "@types/eslint": ">=8.0.0"
+    eslint: ">=8.0.0"
+    eslint-config-prettier: "*"
+    prettier: ">=3.0.0"
+  peerDependenciesMeta:
+    "@types/eslint":
+      optional: true
+    eslint-config-prettier:
+      optional: true
+  checksum: 4f26a30444adc61ed692cdb5a9f7e8d9f5794f0917151051e66755ce032a08c3cc72c8b5d56101412e90f6d77035bd8194ea8731e9c16aacdd5ae345a8dae188
   languageName: node
   linkType: hard
 
@@ -17402,11 +17494,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lerna@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "lerna@npm:8.0.1"
+"lerna@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "lerna@npm:8.0.2"
   dependencies:
-    "@lerna/create": "npm:8.0.1"
+    "@lerna/create": "npm:8.0.2"
     "@npmcli/run-script": "npm:7.0.2"
     "@nx/devkit": "npm:>=17.1.2 < 18"
     "@octokit/plugin-enterprise-rest": "npm:6.0.1"
@@ -17482,7 +17574,7 @@ __metadata:
     yargs-parser: "npm:21.1.1"
   bin:
     lerna: dist/cli.js
-  checksum: 1f2ce9ab12549dbf676f6114215aa0a19090c83508d8802af960b097d1653e32ca10f4f946d632874a3cabdb93e5d633efb67a69b551e95e5240dfbcb9b966c4
+  checksum: e68bf988c47bcadfbde34031d8119f8d5e9a261b448d98d62e83a6c9d3e3c516e6ab8a180398ffe862c438f69f106ac329ce56cf1eb2c5b7c22397f1961dfda2
   languageName: node
   linkType: hard
 
@@ -19262,15 +19354,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"open@npm:^10.0.2":
-  version: 10.0.2
-  resolution: "open@npm:10.0.2"
+"open@npm:^10.0.3":
+  version: 10.0.3
+  resolution: "open@npm:10.0.3"
   dependencies:
     default-browser: "npm:^5.2.1"
     define-lazy-prop: "npm:^3.0.0"
     is-inside-container: "npm:^1.0.0"
     is-wsl: "npm:^3.1.0"
-  checksum: 6f7f9e08204af00930f2998690293df1a919a61c98b225ff9e3aa09a765254b8a98bec101644ffe991452c6aabea0c6f9e49670b559d48a44bfc5238f6b58351
+  checksum: 4dc757ad1d3d63490822f991e9cbe3a7c05b7249fca2eaa571cb7d191e5cec88bc37e15d8ef4fd740d8989a288b661d8da253caa8d98e8c97430ddbbb0ae4ed1
   languageName: node
   linkType: hard
 
@@ -20721,14 +20813,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:8.4.32, postcss@npm:^8.4.32":
-  version: 8.4.32
-  resolution: "postcss@npm:8.4.32"
+"postcss@npm:8.4.33":
+  version: 8.4.33
+  resolution: "postcss@npm:8.4.33"
   dependencies:
     nanoid: "npm:^3.3.7"
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.0.2"
-  checksum: 28084864122f29148e1f632261c408444f5ead0e0b9ea9bd9729d0468818ebe73fe5dc0075acd50c1365dbe639b46a79cba27d355ec857723a24bc9af0f18525
+  checksum: e22a4594c255f26117f38419fb494d7ecab0f596cd409f7aadc8a6173abf180ed7ea970cd13fd366ab12b5840be901d2a09b25197700c2ebcb5a8077326bf519
   languageName: node
   linkType: hard
 
@@ -20750,6 +20842,17 @@ __metadata:
     picocolors: "npm:^1.0.0"
     source-map-js: "npm:^1.0.2"
   checksum: 8d20defe7c2914e0561dc84ec497756600c2b1182f3dff3c8f0a857dfdc4d3849a3d5de9afd771a869ed4c06e9d24cb4dbd0cc833a7d5ce877fd26984c3b57aa
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.4.32":
+  version: 8.4.32
+  resolution: "postcss@npm:8.4.32"
+  dependencies:
+    nanoid: "npm:^3.3.7"
+    picocolors: "npm:^1.0.0"
+    source-map-js: "npm:^1.0.2"
+  checksum: 28084864122f29148e1f632261c408444f5ead0e0b9ea9bd9729d0468818ebe73fe5dc0075acd50c1365dbe639b46a79cba27d355ec857723a24bc9af0f18525
   languageName: node
   linkType: hard
 
@@ -20782,6 +20885,15 @@ __metadata:
   bin:
     prettier: bin/prettier.cjs
   checksum: 26a249f321b97d26c04483f1bf2eeb22e082a76f4222a2c922bebdc60111691aad4ec3979610e83942e0b956058ec361d9e9c81c185172264eb6db9aa678082b
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "prettier@npm:3.2.4"
+  bin:
+    prettier: bin/prettier.cjs
+  checksum: e2b735d0552501b3a7ac8bd3ba3b6de2920bb35bd4cd02d08cb9057ebe3e96d83b9a7e4b903d987b7530a50223b12c74d107c154337236ae2c68156ba1e65cd2
   languageName: node
   linkType: hard
 
@@ -22567,15 +22679,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^0.14.1":
-  version: 0.14.2
-  resolution: "shiki@npm:0.14.2"
+"shiki@npm:^0.14.7":
+  version: 0.14.7
+  resolution: "shiki@npm:0.14.7"
   dependencies:
     ansi-sequence-parser: "npm:^1.1.0"
     jsonc-parser: "npm:^3.2.0"
     vscode-oniguruma: "npm:^1.7.0"
     vscode-textmate: "npm:^8.0.0"
-  checksum: f540b1bdbacdd252bfef9e678a826a9c397765f6e8a0ff655420802075f25cbcea3e47f1fb72a42460eb4224849956be22025c6fc6c26fd7197880626946e8a0
+  checksum: be3f2444c65bd0c57802026f171cb42ad571d361ee885be0c292b60785f68c70f19b69310f5ffe7f7a93db4c5ef50211e0a0248794bc6bb48d242bc43fe72a62
   languageName: node
   linkType: hard
 
@@ -24174,19 +24286,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.25.4":
-  version: 0.25.4
-  resolution: "typedoc@npm:0.25.4"
+"typedoc@npm:^0.25.7":
+  version: 0.25.7
+  resolution: "typedoc@npm:0.25.7"
   dependencies:
     lunr: "npm:^2.3.9"
     marked: "npm:^4.3.0"
     minimatch: "npm:^9.0.3"
-    shiki: "npm:^0.14.1"
+    shiki: "npm:^0.14.7"
   peerDependencies:
     typescript: 4.6.x || 4.7.x || 4.8.x || 4.9.x || 5.0.x || 5.1.x || 5.2.x || 5.3.x
   bin:
     typedoc: bin/typedoc
-  checksum: 638f63d751ba86f1b0e04a303501b88b6e97ba093f82c3fa72a555c207e16fd316ec76c13f7d628e9ee26296f80fddc45b87d4b13714925c5e726047adb76d22
+  checksum: fa88c808e9912ef248cc45b4defea49522e93b97b4bb67423670257a4507ccabdc25c1518a39f6058a728d08675ee0947de55944419fa4bb9f870d84ba4db764
   languageName: node
   linkType: hard
 
@@ -24626,9 +24738,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-electron@npm:^0.15.5":
-  version: 0.15.5
-  resolution: "vite-plugin-electron@npm:0.15.5"
+"vite-plugin-electron@npm:^0.15.6":
+  version: 0.15.6
+  resolution: "vite-plugin-electron@npm:0.15.6"
   peerDependencies:
     tree-kill: "*"
     vite-plugin-electron-renderer: "*"
@@ -24637,13 +24749,13 @@ __metadata:
       optional: true
     vite-plugin-electron-renderer:
       optional: true
-  checksum: a234156bc0683b6cffdf429ae5e91a9c9b4cb8301fff7cddc3a146097061563c488b119c7779e9116fd24e2a2508b4a91fdd67fc1adc21af79d87be1859e8335
+  checksum: 6ec693df0a42f99835417168a0fc8f5e477c6ce342ce4a0eceade243f27f44528135ed8bf450a0eb68aff734f659d08f1bb6885e58f6f5fbeeef4daaf26b3df3
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.10":
-  version: 5.0.10
-  resolution: "vite@npm:5.0.10"
+"vite@npm:^5.0.12":
+  version: 5.0.12
+  resolution: "vite@npm:5.0.12"
   dependencies:
     esbuild: "npm:^0.19.3"
     fsevents: "npm:~2.3.3"
@@ -24677,7 +24789,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 5421e9c7f8cf3152eace9a8b528269141635f367e5dc63c5f1fe2712a766d9757f8197733cf3f28be590afdd520130d38de90c955e6dba6edfa6f9056c1e5ea7
+  checksum: ed0bb26a0d0c8e1dae0b70af9e36adffd7e15d80297443fe4da762596dc81570bad7f0291f590a57c1553f5e435338d8c7ffc483bd9431a95c09d9ac90665fad
   languageName: node
   linkType: hard
 
