@@ -112,5 +112,5 @@
     "vite-plugin-electron": "^0.15.6",
     "vite-plugin-electron-renderer": "^0.14.5"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.1"
 }
