@@ -19,6 +19,7 @@ import {
   isObjectOfExactType,
   isString,
 } from '@freik/typechk';
+import { promises as fsp } from 'fs';
 import path from 'path';
 
 const { log, wrn } = MakeLog('@freik/audiodb:DbMetadata');
@@ -211,11 +212,11 @@ export function IsFullMetadata(obj: unknown): obj is FullMetadata {
   );
 }
 
-function MakeMetadataStore(
+async function MakeMetadataStore(
   persist: Persist,
   name: string,
   rootLocation: string,
-): MetadataStore {
+): Promise<MetadataStore> {
   // The lookup for metadata
   const store = new Map<string, MinimumMetadata>();
   // A flag to keep track of if we've changed anything
@@ -226,6 +227,9 @@ function MakeMetadataStore(
   const root = PathUtil.xplat(
     PathUtil.trailingSlash(path.resolve(rootLocation)).toLocaleUpperCase(),
   );
+  const roots = new Set(
+    (await fsp.readdir(root)).map((s) => s.toLocaleUpperCase()),
+  );
 
   function normalize(p: string): string {
     const maybeRel = PathUtil.xplat(
@@ -233,8 +237,15 @@ function MakeMetadataStore(
     ).toLocaleUpperCase();
     if (path.isAbsolute(maybeRel)) {
       if (!maybeRel.startsWith(root)) {
+        // Try to make it relative...
+        const parts = maybeRel.split(/[\/\\]/);
+        for (let i = 1; i < parts.length; i++) {
+          if (roots.has(parts[i].toLocaleUpperCase())) {
+            return path.join(...parts.slice(i));
+          }
+        }
         throw new Error(
-          `Invalid path in Metadata Store: "${p}": "${maybeRel}" [${root}]`,
+          `Invalid absolute path in Metadata Store: "${p}": "${maybeRel}" [${root}]`,
         );
       } else {
         return maybeRel.substring(root.length);
@@ -373,7 +384,7 @@ export async function GetMetadataStore(
 ): Promise<MetadataStore> {
   let mdc = mdcm.get(name);
   if (!mdc) {
-    mdc = MakeMetadataStore(persist, name, rootLocation);
+    mdc = await MakeMetadataStore(persist, name, rootLocation);
     mdcm.set(name, mdc);
   }
   if (!(await mdc.load())) log(`Loading Metadata Store "${name}" failed`);
