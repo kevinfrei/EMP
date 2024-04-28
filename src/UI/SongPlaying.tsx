@@ -135,7 +135,6 @@ function ArtistAlbum(): JSX.Element {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
     const songKey = useRecoilValue(currentSongKeyFunc);
@@ -173,7 +172,7 @@ export const SongPlaying = forwardRef(
           const ae = ev.currentTarget;
           log('time update');
           log(ev);
-          // eslint-disable-next-line id-blacklist
+
           if (!Number.isNaN(ae.duration)) {
             set(mediaTimeState, (prevTime: MediaTime) => {
               if (
@@ -212,7 +211,7 @@ export const SongPlaying = forwardRef(
       if (isMutableRefObject(audioRef)) {
         const targetTime = audioRef.current.duration * playbackPercent;
         const currentTime = audioRef.current.currentTime;
-        // eslint-disable-next-line id-blacklist
+
         if (
           targetTime < Number.MAX_SAFE_INTEGER &&
           targetTime >= 0 &&

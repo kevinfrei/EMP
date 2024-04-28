@@ -27,7 +27,7 @@ function updateTime({ set, get }: MyTransactionInterface, offset: number) {
     curTime.duration,
     Math.max(0, curTime.position + offset),
   );
-  // eslint-disable-next-line id-blacklist
+
   if (position < Number.MAX_SAFE_INTEGER && position >= 0) {
     set(mediaTimeState, { position, duration: curTime.duration });
     set(mediaTimePercentFunc, position / curTime.duration);

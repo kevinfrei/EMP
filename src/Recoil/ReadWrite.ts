@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Effects } from '@freik/electron-render';
 import { isAlbumKey, isArtistKey, isSongKey, SongKey } from '@freik/media-core';
 import { atom, selector, selectorFamily } from 'recoil';

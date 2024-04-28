@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { registerIcons } from '@fluentui/react/lib/Styling';
 // Note: This approach works with any SVG icon set, not just @fluentui/react-icons-mdl2
 import {

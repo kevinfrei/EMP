@@ -35,17 +35,17 @@ const cp = {
 
 const cwd = process.cwd();
 
-const deQuote = (str: string): string => str.replace(/\"/g, '~!~');
+const deQuote = (str: string): string => str.replace(/"/g, '~!~');
 
 function reQuote(str: string): { [key: string]: string } {
   let res: string = str.replace(/\\/g, '\\\\');
-  res = res.replace(/\"/g, '\\"');
+  res = res.replace(/"/g, '\\"');
   res = res.replace(/~!~/g, '"');
   return JSON.parse(res) as { [key: string]: string };
 }
 
 /// vvvv Hurray for a Typescript compiler bug
-// eslint-disable-next-line no-shadow
+
 enum XcodeResCode {
   alreadyExists,
   mediaInfoFailure,
@@ -91,7 +91,7 @@ export async function toMp4Async(
         hasFieldType(res.error, 'toString', isFunction)
       ) {
         // MediaInfo failed: no continue, sorry
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+
         const resStr = asString(res.error.toString(), 'Unknown error');
         return tr(
           XcodeResCode.mediaInfoFailure,
@@ -124,7 +124,7 @@ export async function toMp4Async(
       await Encode.FfmpegAsync(
         originalFile,
         newFile,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+
         { 'b:a': bitrate.toString(), movflags: '+faststart' },
         metadata as unknown as Attributes,
       )
@@ -511,20 +511,22 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
       // TODO: Handle artwork for this stuff
       const db = await GetAudioDB();
       switch (settings.source.type) {
-        case TranscodeSourceType.Album:
+        case TranscodeSourceType.Album: {
           const album = db.getAlbum(settings.source.loc);
           if (album) {
             workQueue.push(...album.songs);
           }
           // TODO: Report no such album
           break;
-        case TranscodeSourceType.Artist:
+        }
+        case TranscodeSourceType.Artist: {
           const artist = db.getArtist(settings.source.loc);
           if (artist) {
             workQueue.push(...artist.songs);
           }
           // TODO: Report no such album
           break;
+        }
         case TranscodeSourceType.Playlist:
           workQueue.push(...(await LoadPlaylist(settings.source.loc)));
           break;

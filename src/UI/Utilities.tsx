@@ -30,12 +30,12 @@ import { isSearchBox } from './Sidebar';
 const { wrn } = MakeLog('EMP:render:Utilities');
 
 // Used by the key buffer to know when to reset the keys
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 let lastHeard: () => void = () => {};
 
 // In order to allow scrolling to work, we need to clear out the key buffer
 // once it's been "consumed"
-// eslint-disable-next-line @typescript-eslint/naming-convention
+
 const ResetTheKeyBufferTimer = DebouncedDelay(() => lastHeard(), 750);
 
 function TypingListener(): JSX.Element {
@@ -146,7 +146,6 @@ export const mySliderStyles: Partial<ISliderStyles> = {
   },
 };
 
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const HostOs: 'mac' | 'windows' | 'linux' = (() => {
   const ua = window.navigator.userAgent;
   if (ua.indexOf('Mac') >= 0) {

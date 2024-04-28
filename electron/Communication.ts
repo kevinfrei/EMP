@@ -84,7 +84,7 @@ async function setSaveMenu(enabled: boolean): Promise<void> {
       await Promise.resolve();
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   return;
 }
 

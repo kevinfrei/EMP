@@ -16,7 +16,7 @@
     "testnode": "jest --config config/jest.node.js --watch",
     "justtest": "jest --config config/jest.jsdom.js && jest --pass-with-no-tests --config config/jest.node.js",
     "format": "ftool format",
-    "lint": "yarn eslint --fix --ext .ts --ext .tsx ./src ./electron ./renderer",
+    "lint": "yarn eslint --fix ./src ./electron ./renderer",
     "linecount": "ftool linecount .css .ts .tsx .html -__ -.d.ts",
     "postinstall": "husky install",
     "typecheck": "tsc --noEmit",
@@ -70,6 +70,7 @@
     ]
   },
   "devDependencies": {
+    "@eslint/js": "^9.1.1",
     "@freik/build-tools": "^3.6.10",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^15.0.5",
@@ -95,6 +96,7 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "globals": "^15.1.0",
     "husky": "^9.0.11",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
@@ -108,6 +110,7 @@
     "tree-kill": "^1.2.2",
     "ts-jest": "29.1.2",
     "typescript": "^5.4.5",
+    "typescript-eslint": "^7.7.1",
     "vite": "^5.2.10",
     "vite-plugin-electron": "^0.28.7",
     "vite-plugin-electron-renderer": "^0.14.5"

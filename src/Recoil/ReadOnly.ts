@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { Effects, Ipc } from '@freik/electron-render';
 import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
@@ -33,7 +32,7 @@ import {
 } from './ReadWrite';
 import { songListState } from './SongPlaying';
 
-const { wrn, log } = MakeLog('EMP:render:ReadOnly:log'); // eslint-disable-line
+const { wrn, log } = MakeLog('EMP:render:ReadOnly:log');
 
 // type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
 

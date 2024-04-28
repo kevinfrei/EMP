@@ -15,7 +15,6 @@ export function flushPromisesAndTimers(): Promise<void> {
   return act(
     () =>
       new Promise((resolve) => {
-        // eslint-disable-next-line no-restricted-globals
         setTimeout(resolve, 100);
         jest.runAllTimers();
       }),

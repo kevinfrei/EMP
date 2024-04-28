@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Effects } from '@freik/electron-render';
 import { SongKey } from '@freik/media-core';
 import { isArrayOfString } from '@freik/typechk';

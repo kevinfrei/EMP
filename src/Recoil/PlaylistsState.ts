@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Ipc } from '@freik/electron-render';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import { isArray, isArrayOfString, isSetOfString } from '@freik/typechk';
