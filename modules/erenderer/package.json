@@ -36,7 +36,7 @@
     "@freik/seqnum": "^1.1.10",
     "@freik/typechk": "^0.5.11",
     "@freik/web-utils": "^0.5.2",
-    "electron": "^28.3.1"
+    "electron": "^30.0.1"
   },
   "peerDependencies": {
     "react": ">=17.0.2",
@@ -50,10 +50,10 @@
     "@types/react": "^17.0.80",
     "@types/react-dom": "^17.0.25",
     "@types/react-test-renderer": "^17.0.9",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "electron": "^28.3.1",
-    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.1",
+    "@typescript-eslint/parser": "^7.7.1",
+    "electron": "^30.0.1",
+    "eslint": "^9.1.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-jsx-a11y": "^6.8.0",
@@ -74,9 +74,7 @@
     "typedoc-plugin-markdown": "^3.17.1",
     "typescript": "^5.4.5"
   },
-  "files": [
-    "lib/**/*"
-  ],
+  "files": ["lib/**/*"],
   "engines": {
     "node": "^14.13.1 || >= 16.0.0"
   }
