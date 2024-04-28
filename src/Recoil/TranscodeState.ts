@@ -48,7 +48,7 @@ const xcodeErr = (curStatus: string) => ({ ...emptyXcodeInfo, curStatus });
 export const transcodeStatusState = atom<TranscodeState>({
   key: IpcId.TranscodingUpdate,
   default: emptyXcodeInfo,
-  // eslint-disable-next-line @typescript-eslint/naming-convention
+
   effects: [
     Effects.oneWayFromMain(
       // TODO: I don't think I need to initialize this thing...

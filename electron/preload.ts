@@ -87,9 +87,9 @@ function useLoading(): {
 
 // ----------------------------------------------------------------------
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
+// es-lint-disable-next-line react-hooks/rules-of-hooks
 const { appendLoading, removeLoading } = useLoading();
-// eslint-disable-next-line no-console
+
 domReady().then(appendLoading).catch(console.error);
 
 window.onmessage = (ev: MessageEvent<{ payload?: string }>) => {

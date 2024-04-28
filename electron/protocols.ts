@@ -54,7 +54,7 @@ export async function GetDefaultAlbumPicUri(): Promise<string> {
     svg = svg.replace(/\s{2,}/g, ' ');
     svg = svg.trim();
     // Encode the uri-unsafe characters
-    svg = svg.replace(/[%#<>?\[\\\]^`{|}]/g, encodeURIComponent);
+    svg = svg.replace(/[%#<>?[\\\]^`{|}]/g, encodeURIComponent);
     defaultAlbumPicUri = `data:image/svg+xml,${svg}`;
   }
   return asString(defaultAlbumPicUri, '');
@@ -155,7 +155,6 @@ async function tuneNewProtocolHandler(req: Request): Promise<Response> {
       const arr = buf.buffer;
       return new Response(arr, {
         headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
           'Content-Type': mimeType + ', audio/flac',
           // 'Access-Control-Allow-Origin': '*',
           // 'Last-Modified': 'Thu, 01 Jan 1995 00:01:12 GMT',
@@ -205,7 +204,7 @@ export function RegisterProtocols(): void {
   protocol.handle('tune', tuneNewProtocolHandler);
   Comms.registerOldProtocolHandler(
     'trune://song/',
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+
     protocol.registerFileProtocol,
     tuneProtocolHandler,
   );

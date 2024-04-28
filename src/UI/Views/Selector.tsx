@@ -1,19 +1,17 @@
+import { CurrentView } from '@freik/emp-shared';
 import { CSSProperties, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { CurrentView } from '@freik/emp-shared';
 import { curViewFunc } from '../../Recoil/ReadWrite';
 import { GroupedAlbumList } from './Albums';
 import { GroupedAristList } from './Artists';
 import { MixedSongsList } from './MixedSongs';
 import { NowPlayingView } from './NowPlaying';
-import { NuAlbumView } from './NuAlbums';
 import { PlaybackOrder } from './PlaybackOrder';
 import { PlaylistView } from './Playlists';
-import { RecentlyAddedView } from './RecentlyAdded';
 import { SearchResultsView } from './SearchResults';
 import { SettingsView } from './Settings';
-import './styles/Selector.css';
 import { ToolsView } from './Tools';
+import './styles/Selector.css';
 
 function ignore(view: CurrentView): boolean {
   return view === CurrentView.settings || view === CurrentView.tools;
@@ -51,14 +49,14 @@ export function ViewSelector(): JSX.Element {
   ) {
     contents.push([CurrentView.now_playing, <NowPlayingView />]);
   }
-  if (false) {
-    // (rendered.has(CurrentView.albums) || which === CurrentView.recent)
-    contents.push([CurrentView.recent, <RecentlyAddedView />]);
-  }
-  if (false) {
-    // (rendered.has(CurrentView.albums) || which === CurrentView.recent)
-    contents.push([CurrentView.disabled, <NuAlbumView />]);
-  }
+  // if (false) {
+  //   // (rendered.has(CurrentView.albums) || which === CurrentView.recent)
+  //   contents.push([CurrentView.recent, <RecentlyAddedView />]);
+  // }
+  // if (false) {
+  //   // (rendered.has(CurrentView.albums) || which === CurrentView.recent)
+  //   contents.push([CurrentView.disabled, <NuAlbumView />]);
+  // }
   if (which === CurrentView.settings) {
     contents.push([CurrentView.settings, <SettingsView />]);
   }

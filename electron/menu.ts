@@ -24,7 +24,6 @@ type ClickHandler = (
 
 const isMac = process.platform === 'darwin';
 
-// eslint-disable-next-line
 const ___: MenuItemConstructorOptions = { type: 'separator' };
 
 function getClick<T>(handler?: ClickHandler | T): ClickHandler | undefined {
@@ -249,7 +248,7 @@ export function MakeMainMenu(): void {
   });
   Persistence.subscribe('CurrentView', (val: string) => {
     let id: keyof typeof CurrentView;
-    // eslint-disable-next-line guard-for-in
+
     for (id in CurrentView) {
       const item = CurrentView[id];
       const mnu = menu.getMenuItemById(id);

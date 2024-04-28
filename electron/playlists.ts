@@ -83,7 +83,6 @@ export type PlaylistSaveData = {
   songs: SongKey[];
 };
 
-// eslint-disable-next-line
 export const isPlaylistSaveData: typecheck<PlaylistSaveData> =
   chkObjectOfExactType<PlaylistSaveData>({
     name: isString,

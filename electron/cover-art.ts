@@ -24,7 +24,7 @@ import {
   isSetOfString,
 } from '@freik/typechk';
 import albumArt from 'album-art';
-// eslint-disable-next-line @typescript-eslint/naming-convention
+
 import Jimp from 'jimp';
 import { promises as fs } from 'node:fs';
 import https from 'node:https';
@@ -298,7 +298,7 @@ export async function PictureHandler(req: Request): Promise<Response> {
     : GetDefaultAlbumPicBuffer());
   return new Response(
     buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength),
-    // eslint-disable-next-line @typescript-eslint/naming-convention
+
     { headers: { 'Content-Type': 'image/svg+xml' } },
   );
 }
