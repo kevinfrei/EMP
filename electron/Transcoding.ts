@@ -16,11 +16,13 @@ import {
   isFunction,
   isNumber,
   isObjectNonNull,
+  isString,
 } from '@freik/typechk';
 import ocp from 'node:child_process';
 import { promises as fsp } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { isPromise } from 'node:util/types';
 import { rimraf } from 'rimraf';
 import { GetAudioDB } from './AudioDatabase';
 import { SendToUI } from './SendToUI';
@@ -240,11 +242,13 @@ function reportFailure(file: string, error: string) {
   }
 }
 
+type FullPath = [string, string];
+
 // Get the full song file name from the song's media info in the database
-async function getFullSongPathFromSettings(
+async function getFullPathFromSettings(
   settings: TranscodeInfo,
-  file: string,
-): Promise<[string, string] | void> {
+  file: WorkItem,
+): Promise<FullPath | void> {
   if (settings.source.type === TranscodeSource.Disk) {
     const srcdir = settings.source.loc;
     if (!path.normalize(file).startsWith(srcdir)) {
@@ -262,83 +266,132 @@ async function getFullSongPathFromSettings(
   }
 }
 
-function isImage(filepath: string): boolean {
+type WorkItem =
+  | string // Simple file name- for audio, easy, for cover art, destination comes from the path
+  | {
+      // Buffers: For album/artist covers?
+      buffer: Promise<Buffer | void> | Buffer;
+      dest?: string;
+    };
+
+function isImagePath(filepath: string): boolean {
   const fp = filepath.toLocaleUpperCase();
   return fp.endsWith('.PNG') || fp.endsWith('.JPG');
 }
 
+function isImage(wi: WorkItem): boolean {
+  return !isString(wi) || isImagePath(wi);
+}
+
+const png_header = new Uint8Array([
+  0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+]);
+
+async function getFileType(workItem: WorkItem): Promise<string> {
+  if (isString(workItem)) {
+    if (isImagePath(workItem)) {
+      return workItem.toLocaleLowerCase().substring(workItem.length - 3);
+    } else {
+      return 'm4a';
+    }
+  }
+  if (isPromise(workItem.buffer)) {
+    const b = await workItem.buffer;
+    if (b) {
+      workItem.buffer = b;
+    }
+  }
+  if (!isPromise(workItem.buffer)) {
+    const s = workItem.buffer.subarray(0, 9);
+    if (s.compare(png_header)) {
+      return 'png';
+    }
+  }
+  return 'jpg';
+}
+
+async function convertAudio(
+  [src, relName]: FullPath,
+  newName: string,
+  filePairs?: Map<string, string>,
+): Promise<void> {
+  const res = await toMp4Async(src, newName);
+  switch (res.code) {
+    case XcodeResCode.alreadyLowBitRate:
+      try {
+        await fsp.copyFile(src, relName);
+        if (filePairs !== undefined) {
+          filePairs.set(src, relName);
+        }
+      } catch (e) {
+        reportFailure(
+          src,
+          `Unable to copy already mid-quality file ${src} to ${relName}`,
+        );
+      }
+      reportFileTranscoded(src);
+      break;
+    case XcodeResCode.success:
+      reportFileTranscoded(src);
+      if (filePairs !== undefined) {
+        filePairs.set(src, newName);
+      }
+      break;
+    case XcodeResCode.alreadyExists:
+      reportFileUntouched();
+      if (filePairs !== undefined) {
+        filePairs.set(src, newName);
+      }
+      break;
+    default:
+      reportFailure(
+        src,
+        `Transcode failure ${res.code}: ${res.message} - ${src} => ${newName}`,
+      );
+  }
+}
+
 async function convert(
   settings: TranscodeInfo,
-  file: string,
+  workItem: WorkItem,
   filePairs?: Map<string, string>,
 ): Promise<void> {
   reportFilePending();
-  // First, check to see if it's a cover image
-  if (isImage(file)) {
-    if (settings.artwork) {
-      // TOOD: Copy artwork, because we're supposed to:
-    }
-    return;
-  }
   try {
-    const fullSongPath = await getFullSongPathFromSettings(settings, file);
-    if (!fullSongPath) {
+    const fullPath = await getFullPathFromSettings(settings, workItem);
+    if (!fullPath) {
       return;
     }
-    const src = fullSongPath[0];
-    let relName = fullSongPath[1];
+    let relName = fullPath[1];
     if (!path.isAbsolute(relName)) {
       relName = path.join(settings.dest, relName);
+      fullPath[1] = relName;
     }
-    log(`${src} -> ${relName}`);
-    const newName = PathUtil.changeExt(relName, 'm4a');
+    const suffix = await getFileType(workItem);
+    const newName = PathUtil.changeExt(relName, suffix);
+    log(`${fullPath[0]} -> ${newName}`);
     try {
       const dr = path.dirname(newName);
       try {
         await fsp.stat(dr);
-      } catch {
+      } catch (e) {
         await fsp.mkdir(dr, { recursive: true });
       }
-    } catch {
+    } catch (e) {
       reportFailure(
         newName,
         `Unable to find/create the directory for ${newName}`,
       );
       return;
     }
-    const res = await toMp4Async(src, newName);
-    switch (res.code) {
-      case XcodeResCode.alreadyLowBitRate:
-        try {
-          await fsp.copyFile(src, relName);
-          if (filePairs !== undefined) {
-            filePairs.set(src, relName);
-          }
-        } catch {
-          reportFailure(
-            src,
-            `Unable to copy already mid-quality file ${src} to ${relName}`,
-          );
-        }
-        reportFileTranscoded(src);
-        break;
-      case XcodeResCode.success:
-        reportFileTranscoded(src);
-        if (filePairs !== undefined) {
-          filePairs.set(src, newName);
-        }
-        break;
-      case XcodeResCode.alreadyExists:
-        reportFileUntouched();
-        if (filePairs !== undefined) {
-          filePairs.set(src, newName);
-        }
-        break;
-      default:
-        reportFailure(
-          src,
-          `Transcode failure ${res.code}: ${res.message} - ${src} => ${newName}`,
-        );
+    // First, check to see if it's a cover image
+    if (!isImage(workItem)) {
+      if (settings.artwork) {
+        // TODO: Copy artwork, because we're supposed to:
+      }
+      return;
+    } else {
+      convertAudio(fullPath, newName, filePairs);
     }
   } finally {
     removeFilePending();
@@ -414,7 +467,7 @@ async function findExcessDirs(settings: TranscodeInfo): Promise<string[]> {
 // Transcode the files from 'files' according to the settings
 async function handleLots(
   settings: TranscodeInfo,
-  files: string[],
+  files: WorkItem[],
 ): Promise<void> {
   // Don't use all the cores if we have multiple cores:
   const limit = pLimit(Math.max(os.cpus().length - 2, 1));
@@ -459,7 +512,7 @@ export function getXcodeStatus(): Promise<TranscodeState> {
 // Read through all the files on the disk to build up the work queue
 async function ScanSourceFromDisk(
   settings: TranscodeInfo,
-  workQueue: string[],
+  workQueue: WorkItem[],
 ) {
   const fileTypes = ['flac', 'mp3', 'wma', 'wav', 'm4a', 'aac'];
   if (settings.artwork) {
@@ -503,7 +556,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
   // Start UI reporting
   startStatusReporting();
   try {
-    const workQueue: string[] = [];
+    const workQueue: WorkItem[] = [];
     if (settings.source.type === TranscodeSource.Disk) {
       await ScanSourceFromDisk(settings, workQueue);
     } else {
@@ -514,6 +567,10 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           const album = db.getAlbum(settings.source.loc);
           if (album) {
             workQueue.push(...album.songs);
+            if (settings.artwork) {
+              // TODO: Get the album artwork destination
+              workQueue.push({ buffer: db.getAlbumPicture(album.key) });
+            }
           }
           // TODO: Report no such album
           break;
@@ -522,12 +579,17 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           const artist = db.getArtist(settings.source.loc);
           if (artist) {
             workQueue.push(...artist.songs);
+            if (settings.artwork) {
+              // TODO: Get the album artwork destination
+              workQueue.push({ buffer: db.getArtistPicture(artist.key) });
+            }
           }
           // TODO: Report no such album
           break;
         }
         case TranscodeSource.Playlist:
           workQueue.push(...(await LoadPlaylist(settings.source.loc)));
+          // TODO: Handle song artwork
           break;
       }
       reportFilesFound(workQueue.length);

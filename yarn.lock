@@ -10316,10 +10316,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001464, caniuse-lite@npm:^1.0.30001503, caniuse-lite@npm:^1.0.30001565":
+"caniuse-lite@npm:^1.0.0, caniuse-lite@npm:^1.0.30001464, caniuse-lite@npm:^1.0.30001503":
   version: 1.0.30001635
   resolution: "caniuse-lite@npm:1.0.30001635"
   checksum: 10/8cbdcad1868da7c1e04ae9ba58e84a2a99dfbbcd5fe2c169065cf602219358e9da5739aa931fabdbc2c884ea43a04e1c1fc18e6bf2507bc05f3fe33143d81b48
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001565":
+  version: 1.0.30001570
+  resolution: "caniuse-lite@npm:1.0.30001570"
+  checksum: 10/a9b939e003dd70580cc18bce54627af84f298af7c774415c8d6c99871e7cee13bd8278b67955a979cd338369c73e8821a10b37e607d1fff2fbc8ff92fc489653
   languageName: node
   linkType: hard
 
