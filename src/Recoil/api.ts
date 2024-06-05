@@ -192,7 +192,7 @@ export function PlaySongs(
   playlistName?: PlaylistName,
 ): void {
   const store = getStore();
-  // eslint-disable-next-line @typescript-eslint/unbound-method
+
   const { reset, set, get } = xact;
   const playList = GetFilteredSongs(xact, listToPlay);
   if (isPlaylist(playlistName)) {

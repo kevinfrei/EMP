@@ -166,7 +166,7 @@ export const SongPlaying = forwardRef(
       const ae = ev.currentTarget;
       log('time update');
       log(ev);
-      // eslint-disable-next-line id-blacklist
+
       if (!Number.isNaN(ae.duration)) {
         setMediaTime((prevTime: MediaTime) => {
           if (

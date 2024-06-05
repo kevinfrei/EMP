@@ -30,7 +30,9 @@ function makeGetItem<T>(
       try {
         const val = SafelyUnpickle(strValue, chk);
         return isUndefined(val) ? initialValue : val;
-      } catch (e) {}
+      } catch (e) {
+        /* */
+      }
     }
     return initialValue;
   };
@@ -40,6 +42,7 @@ async function setItem<T>(key: string, newValue: T): Promise<void> {
   await Ipc.WriteToStorage(key, Pickle(newValue));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function noSetItem<T>(_key: string, _newValue: T): Promise<void> {
   await Promise.resolve();
 }
@@ -48,6 +51,7 @@ async function removeItem(key: string): Promise<void> {
   await Ipc.DeleteFromStorage(key);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function noRemoveItem(_key: string): Promise<void> {
   await Promise.resolve();
 }

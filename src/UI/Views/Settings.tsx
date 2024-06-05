@@ -21,7 +21,7 @@ import {
   useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
-// eslint-disable-next-line @typescript-eslint/naming-convention
+
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -63,6 +63,7 @@ async function GetDirs(): Promise<string[] | void> {
 }
 
 export async function addLocation({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   set,
 }: MyTransactionInterface): Promise<boolean> {
   const locs = await GetDirs();
