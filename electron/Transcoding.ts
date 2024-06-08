@@ -251,11 +251,22 @@ async function getFullPathFromSettings(
 ): Promise<FullPath | void> {
   if (settings.source.type === TranscodeSource.Disk) {
     const srcdir = settings.source.loc;
-    if (!path.normalize(file).startsWith(srcdir)) {
-      reportFailure(file, `${file} doesn't match ${srcdir}`);
-      return;
+    if (isString(file)) {
+      if (!path.normalize(file).startsWith(srcdir)) {
+        reportFailure(file, `${file} doesn't match ${srcdir}`);
+        return;
+      }
+      return [file, path.join(settings.dest, file.substring(srcdir.length))];
+    } else if (file.dest) {
+      if (!path.normalize(file.dest).startsWith(srcdir)) {
+        reportFailure(file.dest, `${file.dest} doesn't match ${srcdir}`);
+        return;
+      }
+      return [
+        file.dest,
+        path.join(settings.dest, file.dest.substring(srcdir.length)),
+      ];
     }
-    return [file, path.join(settings.dest, file.substring(srcdir.length))];
   } else {
     const db = await GetAudioDB();
     const filepath = db.getCanonicalFileName(file);
@@ -385,11 +396,28 @@ async function convert(
       return;
     }
     // First, check to see if it's a cover image
-    if (!isImage(workItem)) {
+    if (isImage(workItem)) {
       if (settings.artwork) {
-        // TODO: Copy artwork, because we're supposed to:
+        // Copy artwork, because we're supposed to
+        try {
+          if (isString(workItem)) {
+            await fsp.copyFile(workItem, newName);
+          } else {
+            const b = await workItem.buffer;
+            if (b) {
+              await fsp.writeFile(newName, b);
+            }
+          }
+          if (filePairs !== undefined) {
+            filePairs.set(fullPath[0], newName);
+          }
+        } catch (e) {
+          reportFailure(
+            workItem as string,
+            `Unable to copy artwork ${workItem} to ${newName}`,
+          );
+        }
       }
-      return;
     } else {
       convertAudio(fullPath, newName, filePairs);
     }
