@@ -70,14 +70,7 @@ export async function CreateWindow(
         mainWindow.maximize();
       }
       // Call the user specified "ready to go" function
-      windowCreated()
-        .then(() => {
-          // open the devtools
-          if (!app.isPackaged) {
-            mainWindow?.webContents.openDevTools();
-          }
-        })
-        .catch(wrn);
+      windowCreated().then(openDevTools).catch(wrn);
     }
   });
 
@@ -98,6 +91,33 @@ export async function CreateWindow(
     });
   } else {
     await mainWindow.loadFile(path.join(process.env.DIST, 'index.html'));
+  }
+}
+
+async function installExtensions() {
+  const {
+    default: installExtension,
+    REACT_DEVELOPER_TOOLS,
+    REDUX_DEVTOOLS,
+  } = await import('electron-devtools-installer');
+
+  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
+  for (const extension of extensions) {
+    try {
+      const name = await installExtension(extension);
+      console.log(`Added Extension:  ${name}`);
+    } catch (e) {
+      console.log('An error occurred: ', e);
+    }
+  }
+}
+
+async function openDevTools() {
+  // Make sure we have the dev tools installed
+  // open the devtools
+  if (!app.isPackaged) {
+    await installExtensions();
+    mainWindow?.webContents.openDevTools();
   }
 }
 

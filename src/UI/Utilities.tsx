@@ -17,7 +17,6 @@ import {
   CSSProperties,
   Component,
   ForwardedRef,
-  ReactChildren,
   SyntheticEvent,
   useEffect,
 } from 'react';
@@ -245,9 +244,10 @@ export function StringSpinButton({
   );
 }
 
-export class ErrorBoundary extends Component {
-  state: { hasError: boolean };
-  constructor(props: { children: ReactChildren }) {
+type EBProps = { children: React.ReactNode };
+type EBState = { hasError: boolean };
+export class ErrorBoundary extends Component<EBProps, EBState> {
+  constructor(props: EBProps) {
     super(props);
     this.state = { hasError: false };
   }
