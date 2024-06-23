@@ -2,7 +2,7 @@ import { Effects } from '@freik/electron-render';
 import { SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
 import { atom, selector } from 'recoil';
-import { repeatState } from './ReadWrite';
+import { repeatState } from './PlaybackOrder';
 
 // The position in the active playlist of the current song
 // For 'ordered' playback, it's the index in the songList

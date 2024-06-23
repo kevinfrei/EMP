@@ -6,7 +6,8 @@ import { ForwardedRef, MouseEventHandler } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { playingState } from '../Jotai/MediaPlaying';
 import { MyStore } from '../Jotai/Storage';
-import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
+import { repeatState } from '../Recoil/PlaybackOrder';
+import { shuffleFunc } from '../Recoil/ReadWrite';
 import {
   hasAnySongsFunc,
   hasNextSongFunc,
@@ -14,7 +15,7 @@ import {
 } from '../Recoil/SongPlaying';
 import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { isMutableRefObject } from '../Tools';
-import { GetHelperText } from './Utilities';
+import { GetHelperText } from './MenuHelpers';
 import './styles/PlaybackControls.css';
 
 const { log, wrn } = MakeLog('EMP:render:SongControls');

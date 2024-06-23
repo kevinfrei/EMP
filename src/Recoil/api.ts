@@ -26,9 +26,10 @@ import {
   onlyPlayLikesState,
   songHateFuncFam,
 } from './Likes';
+import { repeatState } from './PlaybackOrder';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
-import { repeatState, shuffleFunc } from './ReadWrite';
+import { shuffleFunc } from './ReadWrite';
 import {
   activePlaylistState,
   currentIndexState,

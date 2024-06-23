@@ -6,8 +6,8 @@ import { useRecoilCallback } from 'recoil';
 import { curViewFunc } from '../Jotai/CurrentView';
 import { SetSearch, isHostMac } from '../MyWindow';
 import { searchTermState } from '../Recoil/ReadOnly';
+import { GetHelperText } from './MenuHelpers';
 import { Notifier } from './Notifier';
-import { GetHelperText } from './Utilities';
 import './styles/Sidebar.css';
 
 type ViewEntry = { name: CurrentView; title: StrId; accelerator: Keys };

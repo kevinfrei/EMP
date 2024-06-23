@@ -12,23 +12,24 @@ import {
   SongKey,
   isSongKey,
 } from '@freik/media-core';
-import {
-  chkArrayOf,
-  chkObjectOfType,
-  hasFieldType,
-  isArrayOfString,
-  isNumber,
-  isString,
-} from '@freik/typechk';
+import { hasFieldType, isArrayOfString, isString } from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
 import { SetDB } from '../MyWindow';
-import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
+import { MetadataProps } from '../UI/DetailPanel/MetadataProps';
 import * as ipc from '../ipc';
+import {
+  AlbumMap,
+  ArtistMap,
+  MusicLibrary,
+  SongMap,
+  emptyLibrary,
+  isFlatAudioDatabase,
+} from './MusicLibrarySchema';
 import {
   minSongCountForArtistListState,
   showArtistsWithFullAlbumsState,
-} from './ReadWrite';
+} from './Preferences';
 import { songListState } from './SongPlaying';
 
 const { wrn, log } = MakeLog('EMP:render:ReadOnly:log');
@@ -76,56 +77,6 @@ export const picForKeyFam = selectorFamily<string, MediaKey>({
       return isString(data) ? data : 'error';
     },
 });
-
-type SongMap = Map<SongKey, Song>;
-type AlbumMap = Map<AlbumKey, Album>;
-type ArtistMap = Map<ArtistKey, Artist>;
-type MusicLibrary = { songs: SongMap; albums: AlbumMap; artists: ArtistMap };
-
-const isSong = chkObjectOfType<Song & { path?: string }>(
-  {
-    key: isString,
-    track: isNumber,
-    title: isString,
-    albumId: isString,
-    artistIds: isArrayOfString,
-    secondaryIds: isArrayOfString,
-  },
-  { path: isString, variations: isArrayOfString },
-);
-
-const isAlbum = chkObjectOfType<Album>(
-  {
-    key: isString,
-    year: isNumber,
-    title: isString,
-    primaryArtists: isArrayOfString,
-    songs: isArrayOfString,
-    vatype: (o: unknown) => o === '' || o === 'ost' || o === 'va',
-  },
-  {
-    diskNames: isArrayOfString,
-  },
-);
-
-const isArtist = chkObjectOfType<Artist>({
-  key: isString,
-  name: isString,
-  albums: isArrayOfString,
-  songs: isArrayOfString,
-});
-
-const isFlatAudioDatabase = chkObjectOfType<FlatAudioDatabase>({
-  songs: chkArrayOf(isSong),
-  albums: chkArrayOf(isAlbum),
-  artists: chkArrayOf(isArtist),
-});
-
-const emptyLibrary = {
-  songs: new Map<SongKey, Song>(),
-  albums: new Map<AlbumKey, Album>(),
-  artists: new Map<ArtistKey, Artist>(),
-};
 
 function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
   // For debugging, this is helpful sometimes:

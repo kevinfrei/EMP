@@ -54,6 +54,7 @@ import {
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Recoil/api';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
+import { GetHelperText } from '../MenuHelpers';
 import {
   AlbumForSongRender,
   ArtistsForSongRender,
@@ -61,7 +62,6 @@ import {
 } from '../SimpleTags';
 import { MakeColumns, altRowRenderer } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
-import { GetHelperText } from '../Utilities';
 import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
 

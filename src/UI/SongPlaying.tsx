@@ -22,6 +22,7 @@ import {
   playingState,
 } from '../Jotai/MediaPlaying';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
+import { repeatState } from '../Recoil/PlaybackOrder';
 import {
   SongDescription,
   albumKeyForSongKeyFuncFam,
@@ -29,7 +30,7 @@ import {
   dataForSongFuncFam,
   picForKeyFam,
 } from '../Recoil/ReadOnly';
-import { repeatState, shuffleFunc } from '../Recoil/ReadWrite';
+import { shuffleFunc } from '../Recoil/ReadWrite';
 import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
 import { getAlbumImageUrl, isMutableRefObject } from '../Tools';

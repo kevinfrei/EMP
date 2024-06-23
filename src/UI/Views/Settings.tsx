@@ -39,16 +39,16 @@ import {
 } from '../../Jotai/SimpleSettings';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
+  minSongCountForArtistListState,
+  showArtistsWithFullAlbumsState,
+} from '../../Recoil/Preferences';
+import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   ignoreItemsState,
 } from '../../Recoil/ReadOnly';
-import {
-  minSongCountForArtistListState,
-  showArtistsWithFullAlbumsState,
-} from '../../Recoil/ReadWrite';
-import { GetHelperText } from '../Utilities';
+import { GetHelperText } from '../MenuHelpers';
 import './styles/Settings.css';
 
 const btnWidth: React.CSSProperties = { width: '155px', padding: 0 };

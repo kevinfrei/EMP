@@ -7,7 +7,7 @@ import {
   SpinButton,
 } from '@fluentui/react';
 import { Ipc, useListener, useMediaEffect } from '@freik/electron-render';
-import { IpcId, Keys } from '@freik/emp-shared';
+import { IpcId } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
@@ -140,31 +140,6 @@ export const mySliderStyles: Partial<ISliderStyles> = {
     zIndex: 100,
   },
 };
-
-export const HostOs: 'mac' | 'windows' | 'linux' = (() => {
-  const ua = window.navigator.userAgent;
-  if (ua.indexOf('Mac') >= 0) {
-    return 'mac';
-  }
-  if (ua.indexOf('Windows') >= 0) {
-    return 'windows';
-  }
-  return 'linux';
-})();
-
-const accPrefix = HostOs === 'mac' ? '⌘' : 'Ctrl';
-
-export function GetHelperText(key: Keys) {
-  if (key.length === 1) {
-    return `${accPrefix}-${key}`;
-  }
-  if (key === Keys.PreviousTrack) {
-    return accPrefix + '-←';
-  }
-  if (key === Keys.NextTrack) {
-    return accPrefix + '-→';
-  }
-}
 
 export function useRecoilBoolState(st: RecoilState<boolean>): BoolState {
   const [value, setter] = useRecoilState(st);

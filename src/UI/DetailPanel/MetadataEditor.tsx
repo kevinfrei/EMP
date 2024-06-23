@@ -34,23 +34,9 @@ import {
 import { picCacheAvoiderStateFam } from '../../Recoil/cacheAvoider';
 import { getAlbumImageUrl } from '../../Tools';
 import { SetMediaInfo } from '../../ipc';
+import { MetadataProps } from './MetadataProps';
 
 const { log } = MakeLog('EMP:render:MetadataEditor');
-
-export type MetadataProps = {
-  forSong?: SongKey;
-  forSongs?: SongKey[];
-  artist?: string;
-  album?: string;
-  track?: string;
-  title?: string;
-  year?: string;
-  va?: string;
-  variations?: string;
-  moreArtists?: string;
-  albumId?: AlbumKey;
-  diskName?: string;
-};
 
 export function MetadataEditor(props: MetadataProps): JSX.Element {
   const [artist, setArtist] = useState<false | string>(false);
