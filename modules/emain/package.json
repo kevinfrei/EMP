@@ -40,9 +40,9 @@
     "@freik/node-utils": "^1.6.3",
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.12",
-    "@typescript-eslint/eslint-plugin": "^7.13.0",
-    "@typescript-eslint/parser": "^7.13.0",
-    "electron": "^31.0.1",
+    "@typescript-eslint/eslint-plugin": "^7.14.1",
+    "@typescript-eslint/parser": "^7.14.1",
+    "electron": "^31.0.2",
     "eslint": "^9.5.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
@@ -51,9 +51,9 @@
     "prettier": "^3.3.2",
     "rimraf": "^5.0.7",
     "ts-jest": "^29.1.5",
-    "typedoc": "^0.25.13",
-    "typedoc-plugin-markdown": "^4.0.3",
-    "typescript": "^5.4.5"
+    "typedoc": "^0.26.2",
+    "typedoc-plugin-markdown": "^4.1.0",
+    "typescript": "^5.5.2"
   },
   "files": [
     "lib/**/*"

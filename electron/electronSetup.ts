@@ -1,13 +1,12 @@
 import { MakeLog } from '@freik/logger';
 import { app } from 'electron';
 import { MakeMainMenu } from './menu';
+import { OnWindowCreated } from './types';
 import { CreateWindow, HasWindow } from './window';
 
 const { wrn } = MakeLog('EMP:main:electronSetup');
 
 app.commandLine.appendSwitch('disable-http-cache');
-
-export type OnWindowCreated = () => Promise<void>;
 
 /*
 

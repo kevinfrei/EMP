@@ -13,7 +13,7 @@ import {
 } from 'electron';
 import * as path from 'path';
 import process from 'process';
-import { OnWindowCreated } from './electronSetup';
+import { OnWindowCreated } from './types';
 
 const { wrn } = MakeLog('EMP:main:window');
 

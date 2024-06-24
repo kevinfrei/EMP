@@ -57,7 +57,7 @@ import {
   RestoreWindow,
 } from './window';
 
-const { wrn, log } = MakeLog('EMP:main:Communication');
+const { wrn } = MakeLog('EMP:main:Communication');
 
 /**
  * Show a file in the shell
@@ -190,13 +190,4 @@ export function CommsSetup(): void {
     RemoveIgnoreItem,
     isIgnoreItemFn,
   );
-}
-
-// This is for one-way comms to the UI process
-export function SendToUI<T>(name: IpcId, data: T) {
-  const obj: { [key: string]: T } = {};
-  obj[name] = data;
-  log(`Sending ${name} with data:`);
-  log(data);
-  Comms.AsyncSend(obj);
 }

@@ -39,3 +39,4 @@ dist-electron
 shared/build
 modules/*/lib
 .nx
+*-deps.svg

@@ -3,12 +3,12 @@ import { MakeLog } from '@freik/logger';
 import { isString } from '@freik/typechk';
 import { app } from 'electron';
 import { UpdateLocations } from './AudioDatabase';
-import { CommsSetup } from './Communication';
+import { CommsSetup } from './CommsSetup';
 import {
   RegisterListeners,
   RegisterPrivileges,
   RegisterProtocols,
-} from './protocols';
+} from './RegisterProtocols';
 
 const { wrn } = MakeLog('EMP:main:Startup');
 

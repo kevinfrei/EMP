@@ -21,7 +21,7 @@ import { Sleep } from '@freik/sync';
 import { SafelyUnpickle, isArrayOfString } from '@freik/typechk';
 import { statSync } from 'fs';
 import path from 'path';
-import { SendToUI } from './Communication';
+import { SendToUI } from './SendToUI';
 
 const { log, wrn } = MakeLog('EMP:main:AudioDatabase');
 // log.enabled = true;

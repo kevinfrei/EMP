@@ -11,7 +11,7 @@ import {
 } from 'electron';
 import { KeyboardEvent } from 'electron/main';
 import { ShowAbout } from './About.js';
-import { SendToUI } from './Communication.js';
+import { SendToUI } from './SendToUI.js';
 import { ToggleMiniPlayer } from './window.js';
 
 // const { wrn } = MakeLog('EMP:main:menu');

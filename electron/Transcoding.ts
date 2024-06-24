@@ -23,7 +23,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { rimraf } from 'rimraf';
 import { GetAudioDB } from './AudioDatabase';
-import { SendToUI } from './Communication';
+import { SendToUI } from './SendToUI';
 import { LoadPlaylist } from './playlists';
 
 const { log, wrn } = MakeLog('EMP:main:Transcoding');
