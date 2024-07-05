@@ -282,7 +282,7 @@ type WorkItem =
   | {
     // Buffers: For album/artist covers?
     buffer: Promise<Buffer | void> | Buffer;
-    dest?: string;
+    forSong?: string;
   };
 
 function isImagePath(filepath: string): boolean {
@@ -597,7 +597,10 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
             workQueue.push(...album.songs);
             if (settings.artwork) {
               // TODO: Get the album artwork destination
-              workQueue.push({ buffer: db.getAlbumPicture(album.key) });
+              workQueue.push({
+                buffer: db.getAlbumPicture(album.key),
+                forSong: album.songs[0],
+              });
             }
           }
           // TODO: Report no such album
@@ -609,7 +612,10 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
             workQueue.push(...artist.songs);
             if (settings.artwork) {
               // TODO: Get the album artwork destination
-              workQueue.push({ buffer: db.getArtistPicture(artist.key) });
+              workQueue.push({
+                buffer: db.getArtistPicture(artist.key),
+                forSong: artist.songs[0],
+              });
             }
           }
           // TODO: Report no such album
