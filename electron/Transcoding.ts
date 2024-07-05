@@ -280,10 +280,10 @@ async function getFullPathFromSettings(
 type WorkItem =
   | string // Simple file name- for audio, easy, for cover art, destination comes from the path
   | {
-      // Buffers: For album/artist covers?
-      buffer: Promise<Buffer | void> | Buffer;
-      dest?: string;
-    };
+    // Buffers: For album/artist covers?
+    buffer: Promise<Buffer | void> | Buffer;
+    forSong?: string;
+  };
 
 function isImagePath(filepath: string): boolean {
   const fp = filepath.toLocaleUpperCase();
@@ -597,7 +597,10 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
             workQueue.push(...album.songs);
             if (settings.artwork) {
               // TODO: Get the album artwork destination
-              workQueue.push({ buffer: db.getAlbumPicture(album.key) });
+              workQueue.push({
+                buffer: db.getAlbumPicture(album.key),
+                forSong: album.songs[0],
+              });
             }
           }
           // TODO: Report no such album
@@ -609,7 +612,10 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
             workQueue.push(...artist.songs);
             if (settings.artwork) {
               // TODO: Get the album artwork destination
-              workQueue.push({ buffer: db.getArtistPicture(artist.key) });
+              workQueue.push({
+                buffer: db.getArtistPicture(artist.key),
+                forSong: artist.songs[0],
+              });
             }
           }
           // TODO: Report no such album
