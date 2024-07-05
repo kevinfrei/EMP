@@ -32,8 +32,10 @@ import {
   allArtistsFunc,
   allSongsFunc,
   dataForAlbumFuncFam,
+  SongListFromKey,
 } from '../../Jotai/MusicDatabase';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { MyStore } from '../../Jotai/Storage';
 import {
   articlesCmp,
   MakeSortKey,
@@ -184,11 +186,8 @@ export function GroupedAlbumList(): JSX.Element {
     );
     detailRef.focusIndex(index);
   }
-  /*
-  const onGetSongList = () => (data: string) => {
-    SongListFromKey(data);
-  };
-  */
+  const onGetSongList = (store: MyStore, data: string) =>
+    store.get(SongListFromKey(data));
   return (
     <div className="songListForAlbum" data-is-scrollable="true">
       <ScrollablePane scrollbarVisibility={ScrollbarVisibility.always}>
@@ -208,7 +207,7 @@ export function GroupedAlbumList(): JSX.Element {
         <SongListMenu
           context={albumContext}
           onClearContext={resetAlbumContext}
-          /* onGetSongList={onGetSongList} */
+          onGetSongList={onGetSongList}
         />
       </ScrollablePane>
     </div>

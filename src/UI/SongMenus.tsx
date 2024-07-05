@@ -64,7 +64,7 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
 
-  const onAdd = AsyncHandler<void, void>(
+  const onAdd = AsyncHandler(
     async () =>
       await AddSongs(
         store,
@@ -72,7 +72,7 @@ export function SongListMenu({
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
   );
-  const onReplace = AsyncHandler<void, void>(
+  const onReplace = AsyncHandler(
     async () =>
       await PlaySongs(
         store,
@@ -80,10 +80,10 @@ export function SongListMenu({
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
   );
-  const onProps = AsyncHandler<void, void>(async () => {
+  const onProps = AsyncHandler(async () => {
     SongListDetailClick(await onGetSongList(store, context.data), false);
   });
-  const onLove = AsyncHandler<void, void>(async () => {
+  const onLove = AsyncHandler(async () => {
     const songs = await onGetSongList(store, context.data);
     const likeVal = await store.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
@@ -92,7 +92,7 @@ export function SongListMenu({
     }
   });
 
-  const onHate = AsyncHandler<void, void>(async () => {
+  const onHate = AsyncHandler(async () => {
     const songs = await onGetSongList(store, context.data);
     const hateVal = await store.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {

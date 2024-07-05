@@ -17,11 +17,12 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { hasFieldType, isBoolean } from '@freik/typechk';
-import { useMyTransaction } from '@freik/web-utils';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
 import { useState } from 'react';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { AddSongs } from '../../Jotai/Interface';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -29,7 +30,6 @@ import {
   searchFuncFam,
   searchTermState,
 } from '../../Jotai/MusicDatabase';
-import { AddSongs } from '../../Recoil/api';
 import { MakeSortKey } from '../../Sorting';
 import {
   SongDetailClick,
@@ -191,8 +191,9 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, props.keys);
+  const theStore = useStore();
+  const onAddSongListClick = AsyncHandler(async () => {
+    AddSongs(theStore, props.keys);
   });
   const onRightClick = SongListDetailContextMenuClick(props.keys);
   const theStyle = { marginLeft: props.depth * 20 };
@@ -214,6 +215,7 @@ function SearchResultsGroupHeader(props: {
 const noSort = MakeSortKey('rlnt');
 
 export function SearchResultsView(): JSX.Element {
+  const theStore = useStore();
   const searchTerm = useAtomValue(searchTermState);
   const searchResults = useAtomValue(searchFuncFam(searchTerm));
   const songs = useAtomValue(allSongsFunc);
@@ -230,8 +232,8 @@ export function SearchResultsView(): JSX.Element {
       item.song,
       hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
     );
-  const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {
-    AddSongs(xact, [item.song.key]);
+  const onAddSongClick = AsyncHandler(async (item: SearchSongData) => {
+    AddSongs(theStore, [item.song.key]);
   });
 
   if (

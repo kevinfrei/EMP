@@ -5,7 +5,6 @@ import { useAtom, useAtomValue } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import { WritableAtom } from 'jotai/vanilla';
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   AlbumDescriptionWithKey,
   albumByKeyFuncFam,
@@ -13,7 +12,7 @@ import {
   artistByKeyFuncFam,
   filteredArtistsFunc,
 } from '../../../Jotai/MusicDatabase';
-import { playlistNamesFunc } from '../../../Recoil/PlaylistsState';
+import { playlistNamesFunc } from '../../../Jotai/Playlists';
 
 export function PlaylistSelector({
   value,
@@ -21,7 +20,7 @@ export function PlaylistSelector({
   value: WritableAtom<PlaylistName, [PlaylistName], PlaylistName>;
 }): JSX.Element {
   const [getValue, setValue] = useAtom(value);
-  const playlists = useRecoilValue(playlistNamesFunc);
+  const playlists = useAtomValue(playlistNamesFunc);
   const theList: IComboBoxOption[] = [...playlists]
     .sort()
     .map((name) => ({ key: name, text: name }));

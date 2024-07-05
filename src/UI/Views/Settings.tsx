@@ -38,7 +38,7 @@ import {
   showArtistsWithFullAlbumsState,
 } from '../../Jotai/SimpleSettings';
 import { MyStore } from '../../Jotai/Storage';
-import { GetHelperText } from '../Utilities';
+import { GetHelperText } from '../MenuHelpers';
 import './styles/Settings.css';
 
 const btnWidth: React.CSSProperties = { width: '155px', padding: 0 };
