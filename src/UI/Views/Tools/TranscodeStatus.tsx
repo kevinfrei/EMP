@@ -1,8 +1,8 @@
 import { Text } from '@fluentui/react';
-import { Expandable } from '@freik/web-utils';
-import { useRecoilValue } from 'recoil';
 import { TranscodeState } from '@freik/emp-shared';
-import { transcodeStatusState } from '../../../Recoil/TranscodeState';
+import { Expandable } from '@freik/web-utils';
+import { useAtomValue } from 'jotai';
+import { transcodeStatusState } from '../../../Jotai/TranscodingState';
 
 function completed(xcs: TranscodeState): number {
   return (
@@ -57,7 +57,7 @@ function CountedStringList({
 }
 
 export function TranscodeStatus(): JSX.Element {
-  const curState = useRecoilValue(transcodeStatusState);
+  const curState = useAtomValue(transcodeStatusState);
   const complete = completed(curState);
   const pending = remaining(curState);
   const summary = (

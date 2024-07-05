@@ -18,18 +18,18 @@ import {
 } from '@freik/media-core';
 import { hasFieldType, isBoolean } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
+import { useAtomValue } from 'jotai';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
-import { AddSongs } from '../../Recoil/api';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   searchFuncFam,
   searchTermState,
-} from '../../Recoil/ReadOnly';
+} from '../../Jotai/MusicDatabase';
+import { AddSongs } from '../../Recoil/api';
 import { MakeSortKey } from '../../Sorting';
 import {
   SongDetailClick,
@@ -214,11 +214,11 @@ function SearchResultsGroupHeader(props: {
 const noSort = MakeSortKey('rlnt');
 
 export function SearchResultsView(): JSX.Element {
-  const searchTerm = useRecoilValue(searchTermState);
-  const searchResults = useRecoilValue(searchFuncFam(searchTerm));
-  const songs = useRecoilValue(allSongsFunc);
-  const artists = useRecoilValue(allArtistsFunc);
-  const albums = useRecoilValue(allAlbumsFunc);
+  const searchTerm = useAtomValue(searchTermState);
+  const searchResults = useAtomValue(searchFuncFam(searchTerm));
+  const songs = useAtomValue(allSongsFunc);
+  const artists = useAtomValue(allArtistsFunc);
+  const albums = useAtomValue(allAlbumsFunc);
   const curExpandedState = useState(new Set<string>());
   const [curExpandedSet, setExpandedSet] = curExpandedState;
   const onSongDetailClick = (

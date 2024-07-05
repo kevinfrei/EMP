@@ -27,7 +27,7 @@ import { Catch, Fail } from '@freik/web-utils';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { SetDB } from '../MyWindow';
-import { MetadataProps } from '../UI/DetailPanel/MetadataEditor';
+import { MetadataProps } from '../UI/DetailPanel/MetadataProps';
 import * as ipc from '../ipc';
 import {
   minSongCountForArtistListState,

@@ -14,24 +14,18 @@ import {
 } from '@freik/emp-shared';
 import { isArrayOfString, isDefined } from '@freik/typechk';
 import { StateToggle, useBoolState } from '@freik/web-utils';
+import { useAtom, useAtomValue } from 'jotai';
 import { useState } from 'react';
-import {
-  SetterOrUpdater,
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-} from 'recoil';
+import { SetterOrUpdater, useRecoilCallback } from 'recoil';
 import {
   destLocationState,
   sourceLocationAlbumState,
   sourceLocationArtistState,
-  sourceLocationDescriptorFunc,
   sourceLocationDirState,
   sourceLocationPlaylistState,
   sourceLocationTypeState,
-  validSourceFunc,
   xcodeBitRateState,
-} from '../../../Recoil/TranscodeState';
+} from '../../../Jotai/TranscodingState';
 import { StringSpinButton } from '../../Utilities';
 import '../styles/Tools.css';
 import {
@@ -74,13 +68,13 @@ const getDir = (
 export function TranscoderConfiguration(): JSX.Element {
   const copyArtwork = useBoolState(false);
   const mirror = useBoolState(false);
-  const [srcLocType, setSrcLocType] = useRecoilState(sourceLocationTypeState);
-  const [srcDirLoc, setSrcDirLoc] = useRecoilState(sourceLocationDirState);
-  const [dstLoc, setDstLoc] = useRecoilState(destLocationState);
+  const [srcLocType, setSrcLocType] = useAtom(sourceLocationTypeState);
+  const [srcDirLoc, setSrcDirLoc] = useAtom(sourceLocationDirState);
+  const [dstLoc, setDstLoc] = useAtom(destLocationState);
   const [err, setError] = useState('');
-  const bitrate = useRecoilValue(xcodeBitRateState);
-  const validSource = useRecoilValue(validSourceFunc);
-  const srcLocDescr = useRecoilValue(sourceLocationDescriptorFunc);
+  const bitrate = useAtomValue(xcodeBitRateState);
+  const validSource = useAtomValue(validSourceFunc);
+  const srcLocDescr = useAtomValue(sourceLocationDescriptorFunc);
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 

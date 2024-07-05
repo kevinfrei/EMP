@@ -21,17 +21,13 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { useEffect, useState } from 'react';
+import { metadataEditCountState } from '../../Jotai/MusicDatabase';
 import {
   UploadFileForAlbum,
   UploadFileForSong,
   UploadImageForAlbum,
   UploadImageForSong,
 } from '../../MyWindow';
-import {
-  albumKeyForSongKeyFuncFam,
-  metadataEditCountState,
-} from '../../Recoil/ReadOnly';
-import { picCacheAvoiderStateFam } from '../../Recoil/cacheAvoider';
 import { getAlbumImageUrl } from '../../Tools';
 import { SetMediaInfo } from '../../ipc';
 import { MetadataProps } from './MetadataProps';
