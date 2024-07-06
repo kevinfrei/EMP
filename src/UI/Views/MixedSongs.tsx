@@ -7,22 +7,23 @@ import {
 } from '@fluentui/react';
 import { Song, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
-import { useMyTransaction } from '@freik/web-utils';
+import { useAtomValue, useStore } from 'jotai';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { getStore } from '../../Jotai/Storage';
+import { AsyncHandler } from '../../Jotai/Helpers';
+import { AddSongs } from '../../Jotai/Interface';
 import {
   songHateFuncFam,
   songLikeFuncFam,
   songLikeNumFromStringFuncFam,
-} from '../../Recoil/Likes';
+} from '../../Jotai/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   allSongsFunc,
   dataForSongListFuncFam,
-} from '../../Recoil/ReadOnly';
-import { AddSongs } from '../../Recoil/api';
+} from '../../Jotai/MusicDatabase';
+import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { getStore } from '../../Jotai/Storage';
 import { MakeSortKey, SortSongList } from '../../Sorting';
 import {
   AlbumForSongRender,
@@ -60,22 +61,23 @@ const songContextState = atom<SongListMenuData>({
 });
 
 function Liker({ songId }: { songId: SongKey }): JSX.Element {
-  const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(songId));
+  const theStore = useStore();
+  const likeNum = useAtomValue(songLikeNumFromStringFuncFam(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
-  const onClick = useMyTransaction(({ set }) => () => {
+  const onClick = AsyncHandler(async () => {
     switch (likeNum) {
       case 0: // neutral
-        set(songLikeFuncFam(songId), true);
+        await theStore.set(songLikeFuncFam(songId), true);
         break;
       case 1: // like
-        set(songHateFuncFam(songId), true);
+        await theStore.set(songHateFuncFam(songId), true);
         break;
       case 2: // hate
-        set(songHateFuncFam(songId), false);
+        await theStore.set(songHateFuncFam(songId), false);
         break;
       case 3: // mixed
-        set(songLikeFuncFam(songId), false);
-        set(songHateFuncFam(songId), false);
+        await theStore.set(songLikeFuncFam(songId), false);
+        await theStore.set(songHateFuncFam(songId), false);
         break;
     }
   });
@@ -89,10 +91,11 @@ export function LikeOrHate(song: Song): JSX.Element {
 }
 
 export function MixedSongsList(): JSX.Element {
+  const theStore = useStore();
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onAddSongClick = useMyTransaction((xact) => (item: Song) => {
-    AddSongs(xact, [item.key]);
+  const onAddSongClick = AsyncHandler(async (item: Song) => {
+    await AddSongs(theStore, [item.key]);
   });
   const [songContext, setSongContext] = useRecoilState(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
@@ -134,7 +137,9 @@ export function MixedSongsList(): JSX.Element {
           onClearContext={() =>
             setSongContext({ data: '', spot: { left: 0, top: 0 } })
           }
-          onGetSongList={(_xact, data) => (data.length > 0 ? [data] : [])}
+          onGetSongList={(_xact, data: string) =>
+            Promise.resolve(data.length > 0 ? [data] : [])
+          }
         />
       </ScrollablePane>
     </div>
@@ -151,7 +156,7 @@ export function SimpleSongsList({
   keyprefix?: string;
 }): JSX.Element {
   const pfx = keyprefix || 'ssl';
-  const songList = useRecoilValue(dataForSongListFuncFam(forSongs));
+  const songList = useAtomValue(dataForSongListFuncFam(forSongs));
   if (!songList) {
     return <></>;
   }

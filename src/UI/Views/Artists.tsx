@@ -163,11 +163,9 @@ export function GroupedAristList(): JSX.Element {
     }
   };
 
-  const onAddSongClick = AsyncHandler<ArtistSong, void>(
-    async (item: ArtistSong) => {
-      await AddSongs(store, [item.key]);
-    },
-  );
+  const onAddSongClick = AsyncHandler(async (item: ArtistSong) => {
+    await AddSongs(store, [item.key]);
+  });
 
   const filteredArtistsFromSongRenderer = (
     theSong: ArtistSong,

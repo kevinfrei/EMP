@@ -15,8 +15,8 @@ import {
 import { isArrayOfString, isDefined } from '@freik/typechk';
 import { StateToggle, useBoolState } from '@freik/web-utils';
 import { useAtom, useAtomValue } from 'jotai';
+import { useAtomCallback } from 'jotai/utils';
 import { useState } from 'react';
-import { SetterOrUpdater, useRecoilCallback } from 'recoil';
 import {
   destLocationState,
   sourceLocationAlbumState,
@@ -78,7 +78,7 @@ export function TranscoderConfiguration(): JSX.Element {
   // const [targetFormat, setTargetFormat] = useState<IDropdownOption>(targetFormats[0]);
   // const xcodeStatus = <TranscodeSummary />;
 
-  const onChange = useRecoilCallback(({ set }) => (numVal?: number) => {
+  const onChange = useAtomCallback((get, set) => (numVal?: number) => {
     if (isDefined(numVal)) {
       set(xcodeBitRateState, numVal);
     }
