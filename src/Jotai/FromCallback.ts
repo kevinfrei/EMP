@@ -1,4 +1,5 @@
 import { WritableAtom, atom } from 'jotai';
+import { AsyncStorage, SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
 
 type Unsubscribe = () => void;
 
@@ -16,7 +17,7 @@ export interface SyncCallback<Value> {
 
 export function atomFromCallback<Value>(
   key: string,
-  storage: AsyncCallback<Value>,
+  storage: AsyncCallback<Value> | AsyncStorage<Value>,
 ): WritableAtom<
   Value | Promise<Value>,
   [SetStateAction<Value | Promise<Value>>],
@@ -25,19 +26,23 @@ export function atomFromCallback<Value>(
 
 export function atomFromCallback<Value>(
   key: string,
-  storage: SyncCallback<Value>,
+  storage: SyncCallback<Value> | SyncStorage<Value>,
 ): WritableAtom<Value, [SetStateAction<Value>], void>;
 
 export function atomFromCallback<Value>(
   key: string,
-  storage: SyncCallback<Value> | AsyncCallback<Value>,
+  storage:
+    | (SyncCallback<Value> | SyncStorage<Value>)
+    | (AsyncCallback<Value> | SyncCallback<Value>),
 ): any {
-  const baseAtom = atom(storage.getItem(key) as Value | Promise<Value>);
+  const baseAtom = atom(
+    storage.getItem(key, undefined as any) as Value | Promise<Value>,
+  );
 
   baseAtom.onMount = (setAtom) => {
     let unsub: Unsubscribe | undefined;
     if (storage.subscribe) {
-      unsub = storage.subscribe(key, setAtom);
+      unsub = storage.subscribe(key, setAtom, undefined as any);
     }
     return unsub;
   };
