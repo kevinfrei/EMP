@@ -3,8 +3,8 @@ import { AlbumKey, Artist, ArtistKey, PlaylistName } from '@freik/media-core';
 import { isDefined, isString } from '@freik/typechk';
 import { useAtom, useAtomValue } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
-import { WritableAtom } from 'jotai/vanilla';
 import { useCallback } from 'react';
+import { WritableAtomType } from '../../../Jotai/Hooks';
 import {
   AlbumDescriptionWithKey,
   albumByKeyFuncFam,
@@ -17,7 +17,7 @@ import { playlistNamesFunc } from '../../../Jotai/Playlists';
 export function PlaylistSelector({
   value,
 }: {
-  value: WritableAtom<PlaylistName, [PlaylistName], PlaylistName>;
+  value: WritableAtomType<PlaylistName>;
 }): JSX.Element {
   const [getValue, setValue] = useAtom(value);
   const playlists = useAtomValue(playlistNamesFunc);
@@ -49,7 +49,7 @@ export function PlaylistSelector({
 export function ArtistSelector({
   value,
 }: {
-  value: WritableAtom<ArtistKey, [ArtistKey], ArtistKey>;
+  value: WritableAtomType<ArtistKey>;
 }): JSX.Element {
   const selArtistKey = useAtomValue(value);
   const artists = useAtomValue(filteredArtistsFunc);
@@ -95,7 +95,7 @@ export function ArtistSelector({
 export function AlbumSelector({
   value,
 }: {
-  value: WritableAtom<AlbumKey, [AlbumKey], AlbumKey>;
+  value: WritableAtomType<AlbumKey>;
 }): JSX.Element {
   const selAlbumKey = useAtomValue(value);
   const albums = useAtomValue(allAlbumsDataFunc);

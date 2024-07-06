@@ -21,9 +21,11 @@ import {
   destLocationState,
   sourceLocationAlbumState,
   sourceLocationArtistState,
+  sourceLocationDescriptorFunc,
   sourceLocationDirState,
   sourceLocationPlaylistState,
   sourceLocationTypeState,
+  validSourceFunc,
   xcodeBitRateState,
 } from '../../../Jotai/TranscodingState';
 import { StringSpinButton } from '../../Utilities';
