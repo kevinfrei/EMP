@@ -179,7 +179,6 @@ export async function PlaySongs(
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
 ): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
   const playList = await GetFilteredSongs(store, listToPlay);
   if (isPlaylist(playlistName)) {
     await store.set(activePlaylistState, playlistName);

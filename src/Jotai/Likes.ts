@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { SongKey } from '@freik/media-core';
 import { isArrayOfString, isBoolean } from '@freik/typechk';
 import { atom } from 'jotai';

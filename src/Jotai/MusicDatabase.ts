@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
@@ -102,11 +101,13 @@ const isFlatAudioDatabase = chkObjectOfType<FlatAudioDatabase>({
   artists: chkArrayOf(isArtist),
 });
 
+/*
 const emptyLibrary = {
   songs: new Map<SongKey, Song>(),
   albums: new Map<AlbumKey, Album>(),
   artists: new Map<ArtistKey, Artist>(),
 };
+*/
 
 function MakeMusicLibraryFromFlatAudioDatabase(
   fad: FlatAudioDatabase,

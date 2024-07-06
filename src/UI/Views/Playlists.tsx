@@ -15,12 +15,7 @@ import {
   isNumber,
   isUndefined,
 } from '@freik/typechk';
-import {
-  Dialogs,
-  MakeSetState,
-  useDialogState,
-  useMyTransaction,
-} from '@freik/web-utils';
+import { Dialogs, useDialogState } from '@freik/web-utils';
 import {
   atom as jatom,
   useAtom,
@@ -30,7 +25,6 @@ import {
 } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { MakeSortKey } from '../../Sorting';
 import {
   AlbumForSongRender,
@@ -45,6 +39,7 @@ import {
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
 import { AsyncHandler } from '../../Jotai/Helpers';
+import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import {
   AddSongs,
   DeletePlaylist,
@@ -64,7 +59,7 @@ type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
 
 const [playlistExpandedState, playlistIsExpandedState] =
-  MakeSetState<PlaylistName>('playlistExpanded');
+  MakeSetAtomFamily<PlaylistName>();
 
 const playlistContextState = atomWithReset<SongListMenuData>({
   data: '',
@@ -87,11 +82,9 @@ function PlaylistHeaderDisplay({
 }): JSX.Element {
   const theStore = useStore();
   const setPlaylistContext = useSetAtom(playlistContextState);
-  const onHeaderExpanderClick = useMyTransaction(
-    ({ set }) =>
-      () =>
-        set(playlistIsExpandedState(group.key), !group.isCollapsed),
-  );
+  const onHeaderExpanderClick = AsyncHandler(async () => {
+    await theStore.set(playlistIsExpandedState(group.key), !group.isCollapsed);
+  });
   const onAddSongsClick = AsyncHandler(async () => {
     const playlist = await theStore.get(playlistFuncFam(group.key));
     if (isArrayOfString(playlist)) {
@@ -146,7 +139,7 @@ export function PlaylistView(): JSX.Element {
   const allSongs = useAtomValue(allSongsFunc);
   const playlistContext = useAtomValue(playlistContextState);
   const resetPlaylistContext = useResetAtom(playlistContextState);
-  const playlistExpanded = useRecoilState(playlistExpandedState);
+  const playlistExpanded = useAtom(playlistExpandedState);
   const [curSort, setSort] = useAtom(playlistSortState);
   const [songContext, setSongContext] = useAtom(songContextState);
   const resetSongContext = useResetAtom(songContextState);

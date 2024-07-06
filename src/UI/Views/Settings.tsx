@@ -13,7 +13,7 @@ import { Ipc, Util } from '@freik/electron-render';
 import { IgnoreItemType, IpcId, Keys, st, StrId } from '@freik/emp-shared';
 import { isDefined } from '@freik/typechk';
 import { Catch, Expandable, Spinner, StateToggle } from '@freik/web-utils';
-// eslint-disable-next-line @typescript-eslint/naming-convention
+
 import { useAtom, useAtomValue, useStore } from 'jotai';
 import React, { useState } from 'react';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';

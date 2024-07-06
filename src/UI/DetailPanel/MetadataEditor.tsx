@@ -13,8 +13,8 @@ import { Util } from '@freik/electron-render';
 import { StrId, st } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { AlbumKey, FullMetadata, Metadata, SongKey } from '@freik/media-core';
-import { isArrayOfString, isString } from '@freik/typechk';
-import { Catch, onRejected, useMyTransaction } from '@freik/web-utils';
+import { isArrayOfString, isDefined, isString } from '@freik/typechk';
+import { Catch, onRejected } from '@freik/web-utils';
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { AsyncHandler } from '../../Jotai/Helpers';
@@ -186,25 +186,24 @@ export function MetadataEditor(props: MetadataProps): JSX.Element {
       ).catch((e) => Catch(e));
     }
   };
-  const onSelectFile = useMyTransaction((xact) => () => {
-    Util.ShowOpenDialog({
-      title: st(StrId.ChooseCoverArt),
-      properties: ['openFile'],
-      filters: [
-        { name: st(StrId.ImageName), extensions: ['jpg', 'jpeg', 'png'] },
-      ],
-    })
-      .then((selected) => {
-        return selected !== undefined
-          ? uploadImage(
-              async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
-              async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
-            )
-          : new Promise(() => {
-              return;
-            });
-      })
-      .catch((e) => Catch(e));
+  const onSelectFile = AsyncHandler(async () => {
+    try {
+      const selected = await Util.ShowOpenDialog({
+        title: st(StrId.ChooseCoverArt),
+        properties: ['openFile'],
+        filters: [
+          { name: st(StrId.ImageName), extensions: ['jpg', 'jpeg', 'png'] },
+        ],
+      });
+      if (isDefined(selected)) {
+        await uploadImage(
+          async (sk: SongKey) => await UploadFileForSong(sk, selected[0]),
+          async (ak: AlbumKey) => await UploadFileForAlbum(ak, selected[0]),
+        );
+      }
+    } catch (e) {
+      Catch(e);
+    }
   });
   const coverUrl = getAlbumImageUrl(props.albumId || '___');
   // Nothing selected: EMPTY!

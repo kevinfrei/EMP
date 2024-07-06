@@ -6,7 +6,8 @@ import { atomFamily } from 'jotai/utils';
 import { atomFromIpc } from './Storage';
 
 // Maybe I need new atom helper "atomFromCall" or something similar
-export const mediaInfoFuncFam = atomFamily((sk: SongKey) =>
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const mediaInfoFuncFam = atomFamily((_sk: SongKey) =>
   atomFromIpc(
     'mediainfo', // IpcId.GetMediaInfo,
     isMapOfStrings,

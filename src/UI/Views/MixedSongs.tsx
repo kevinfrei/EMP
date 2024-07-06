@@ -51,6 +51,7 @@ const sortedSongsState = atom(async (get) => {
   );
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const songContextState = atomWithDefault<SongListMenuData>((get) => ({
   data: '',
   spot: { left: 0, top: 0 },
