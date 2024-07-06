@@ -4,7 +4,6 @@ import { IpcId } from '@freik/emp-shared';
 import { Spinner } from '@freik/web-utils';
 import { Provider, useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
-import { RecoilRoot } from 'recoil';
 import { isMiniplayerState } from '../Jotai/Local';
 import { getStore } from '../Jotai/Storage';
 import { isHostMac } from '../MyWindow';
@@ -72,34 +71,32 @@ export function App(): JSX.Element {
   const store = getStore();
   return (
     <Provider store={store}>
-      <RecoilRoot>
-        <Spinner>
-          <ElectronWireUp />
-          <Utilities audioRef={audioRef} />
-          <span id={lilGrabber} />
-        </Spinner>
-        <span id="left-column" />
-        <span id="top-row" />
-        <WindowChrome />
-        <Spinner>
-          <PlaybackControls audioRef={audioRef} />
-        </Spinner>
-        <Spinner>
-          <ErrorBoundary>
-            <SongPlaying ref={audioRef} />
-          </ErrorBoundary>
-        </Spinner>
-        <Spinner>
-          <VolumeControl />
-        </Spinner>
-        <Spinner>
-          <Sidebar />
-        </Spinner>
-        <Spinner size={SpinnerSize.large}>
-          <ViewSelector />
-        </Spinner>
-        <SongDetailPanel />
-      </RecoilRoot>
+      <Spinner>
+        <ElectronWireUp />
+        <Utilities audioRef={audioRef} />
+        <span id={lilGrabber} />
+      </Spinner>
+      <span id="left-column" />
+      <span id="top-row" />
+      <WindowChrome />
+      <Spinner>
+        <PlaybackControls audioRef={audioRef} />
+      </Spinner>
+      <Spinner>
+        <ErrorBoundary>
+          <SongPlaying ref={audioRef} />
+        </ErrorBoundary>
+      </Spinner>
+      <Spinner>
+        <VolumeControl />
+      </Spinner>
+      <Spinner>
+        <Sidebar />
+      </Spinner>
+      <Spinner size={SpinnerSize.large}>
+        <ViewSelector />
+      </Spinner>
+      <SongDetailPanel />
     </Provider>
   );
 }

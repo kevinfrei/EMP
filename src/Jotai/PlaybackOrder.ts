@@ -1,16 +1,8 @@
-import { Effects } from '@freik/electron-render';
-import { atom } from 'recoil';
+import { isBoolean } from '@freik/typechk';
+import { atomFromMain } from './Storage';
 
 // const log = MakeLogger('ReadWrite');
 // const err = MakeError('ReadWrite-err');
-export const shuffleState = atom<boolean>({
-  key: 'shuffle',
-  default: false,
-  effects: [Effects.syncWithMain<boolean>()],
-});
+export const shuffleState = atomFromMain('shuffle', isBoolean);
 
-export const repeatState = atom<boolean>({
-  key: 'repeat',
-  default: false,
-  effects: [Effects.syncWithMain<boolean>()],
-});
+export const repeatState = atomFromMain('repeat', isBoolean);
