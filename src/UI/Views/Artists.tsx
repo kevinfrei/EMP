@@ -149,7 +149,7 @@ export function GroupedAristList(): JSX.Element {
   const [artistContext, setArtistContext] = useAtom(artistContextState);
   const filteredArtists = useAtomValue(filteredArtistsFunc);
   const [curSort, setSort] = useAtom(sortOrderState);
-  const curExpandedState = useAtomValue(artistExpandedState);
+  const curExpandedState = useAtom(artistExpandedState);
   const resetArtistContext = useResetAtom(artistContextState);
   const store = useStore();
 

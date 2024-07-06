@@ -52,10 +52,9 @@ const sourceOptions: IComboBoxOption[] = [
   { key: TranscodeSourceType.Disk, text: 'Disk location' },
 ];
 
-const getDir = (
-  setter: SetterOrUpdater<string>,
-  setError: SetterOrUpdater<string>,
-) => {
+type Setter<T> = (arg: T) => void;
+
+const getDir = (setter: Setter<string>, setError: Setter<string>) => {
   Util.ShowOpenDialog({ properties: ['openDirectory'] })
     .then((val) => {
       if (isArrayOfString(val) && val.length === 1) {

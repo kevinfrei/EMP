@@ -7,8 +7,8 @@ import {
 } from '@fluentui/react';
 import { Song, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
-import { useAtomValue, useStore } from 'jotai';
-import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
+import { atom, useAtom, useAtomValue, useStore } from 'jotai';
+import { atomWithDefault, atomWithReset } from 'jotai/utils';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { AddSongs } from '../../Jotai/Interface';
 import {
@@ -38,27 +38,23 @@ import {
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 import './styles/MixedSongs.css';
 
-const sortOrderState = atom({
-  key: 'mixedSongSortOrder',
-  default: MakeSortKey([''], ['nrlyt']),
+const sortOrderState = atomWithReset(MakeSortKey([''], ['nrlyt']));
+
+const sortedSongsState = atom(async (get) => {
+  const store = getStore();
+  return SortSongList(
+    [...(await get(allSongsFunc)).values()],
+    await get(allAlbumsFunc),
+    await get(allArtistsFunc),
+    await store.get(ignoreArticlesState),
+    get(sortOrderState),
+  );
 });
-const sortedSongsState = selector({
-  key: 'msSorted',
-  get: async ({ get }) => {
-    const store = getStore();
-    return SortSongList(
-      [...get(allSongsFunc).values()],
-      get(allAlbumsFunc),
-      get(allArtistsFunc),
-      await store.get(ignoreArticlesState),
-      get(sortOrderState),
-    );
-  },
-});
-const songContextState = atom<SongListMenuData>({
-  key: 'mixedSongContext',
-  default: { data: '', spot: { left: 0, top: 0 } },
-});
+
+const songContextState = atomWithDefault<SongListMenuData>((get) => ({
+  data: '',
+  spot: { left: 0, top: 0 },
+}));
 
 function Liker({ songId }: { songId: SongKey }): JSX.Element {
   const theStore = useStore();
@@ -92,12 +88,12 @@ export function LikeOrHate(song: Song): JSX.Element {
 
 export function MixedSongsList(): JSX.Element {
   const theStore = useStore();
-  const sortedItems = useRecoilValue(sortedSongsState);
-  const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
+  const sortedItems = useAtomValue(sortedSongsState);
+  const [sortOrder, setSortOrder] = useAtom(sortOrderState);
   const onAddSongClick = AsyncHandler(async (item: Song) => {
     await AddSongs(theStore, [item.key]);
   });
-  const [songContext, setSongContext] = useRecoilState(songContextState);
+  const [songContext, setSongContext] = useAtom(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
     const event = ev as any as MouseEvent;
     if (ev && item) {
