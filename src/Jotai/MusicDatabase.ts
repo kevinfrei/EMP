@@ -1,5 +1,5 @@
 import { FlatAudioDatabase } from '@freik/audiodb';
-import { isIgnoreItemArrayFn } from '@freik/emp-shared';
+import { IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import {
   Album,
@@ -122,7 +122,7 @@ function MakeMusicLibraryFromFlatAudioDatabase(
 }
 
 const musicLibraryState = atomFromIpc<FlatAudioDatabase, MusicLibrary>(
-  'musicDatabase',
+  IpcId.GetMusicDatabase,
   isFlatAudioDatabase,
   MakeMusicLibraryFromFlatAudioDatabase,
 );
@@ -465,11 +465,11 @@ export const filteredArtistsFunc = atom(async (get) => {
 });
 
 export const ignoreItemsState = atomFromIpc(
-  'IgnoreItemsState',
+  IpcId.GetIgnoreList,
   isIgnoreItemArrayFn,
 );
 
 export const rescanInProgressState = atomFromMain(
-  'RescanInProgress',
+  IpcId.RescanInProgress,
   isBoolean,
 );

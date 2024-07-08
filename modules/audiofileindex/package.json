@@ -27,15 +27,15 @@
     "doc": "typedoc ./src/index.ts --readme none --tsconfig tsconfig.json"
   },
   "dependencies": {
-    "@freik/containers": "^0.2.13",
-    "@freik/helpers": "^0.3.12",
-    "@freik/logger": "^0.2.10",
-    "@freik/media-core": "^0.14.12",
-    "@freik/media-utils": "^0.19.4",
-    "@freik/node-utils": "^1.6.3",
-    "@freik/search": "^1.1.10",
-    "@freik/text": "^0.3.11",
-    "@freik/typechk": "^0.5.11",
+    "@freik/containers": "^0.2.14",
+    "@freik/helpers": "^0.3.13",
+    "@freik/logger": "^0.2.11",
+    "@freik/media-core": "^0.14.13",
+    "@freik/media-utils": "^0.19.5",
+    "@freik/node-utils": "^1.6.4",
+    "@freik/search": "^1.1.11",
+    "@freik/text": "^0.3.12",
+    "@freik/typechk": "^0.5.12",
     "xxhashjs": "^0.2.2"
   },
   "devDependencies": {
@@ -50,11 +50,11 @@
     "eslint-config-prettier": "^9.1.0",
     "jest": "^29.7.0",
     "prettier": "^3.3.2",
-    "rimraf": "^5.0.7",
+    "rimraf": "^5.0.8",
     "rmfr": "^2.0.0",
     "ts-jest": "^29.1.5",
     "typedoc": "^0.26.3",
-    "typedoc-plugin-markdown": "^4.1.1",
+    "typedoc-plugin-markdown": "^4.1.2",
     "typescript": "^5.5.3"
   },
   "files": [

@@ -1,4 +1,5 @@
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import {
   Pickle,
   SafelyUnpickle,
@@ -131,7 +132,7 @@ export function getMainReadOnlyStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
 }
 
 export function atomFromMain<T>(
-  key: string,
+  key: IpcId,
   chk: typecheck<T>,
 ): WriteOnlyAtomType<T> {
   return atomFromCallback(key, getMainReadOnlyStorage(chk));
@@ -200,17 +201,17 @@ function getMainIpcListener<T, U>(
 }
 
 export function atomFromIpc<T>(
-  key: string,
+  key: IpcId,
   chk: typecheck<T>,
 ): WritableAtomType<T>;
 export function atomFromIpc<T, U>(
-  key: string,
+  key: IpcId,
   chk: typecheck<T>,
   xform: (v: T) => U,
 ): WritableAtomType<U>;
 
 export function atomFromIpc<T, U>(
-  key: string,
+  key: IpcId,
   chk: typecheck<T>,
   xform?: (v: T) => U,
 ): WriteOnlyAtomType<U> | WriteOnlyAtomType<T> {

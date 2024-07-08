@@ -1,3 +1,4 @@
+import { IpcId } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isArrayOfString, isBoolean } from '@freik/typechk';
 import { atom } from 'jotai';
@@ -21,13 +22,13 @@ export const onlyPlayLikesState = atomWithMainStorage(
 );
 
 const songLikeBackerState = atomFromIpc(
-  'likedSongs',
+  IpcId.GetLikes,
   isArrayOfString,
   (strs) => new Set<string>(strs),
 );
 
 const songHateBackerState = atomFromIpc(
-  'hatedSongs',
+  IpcId.GetHates,
   isArrayOfString,
   (strs) => new Set<string>(strs),
 );

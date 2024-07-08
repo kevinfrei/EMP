@@ -1,3 +1,4 @@
+import { IpcId } from '@freik/emp-shared';
 import { WritableAtom, atom } from 'jotai';
 import { AsyncStorage, SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
 
@@ -6,17 +7,17 @@ type Unsubscribe = () => void;
 type SetStateAction<Value> = Value | ((prev: Value) => Value);
 
 export interface AsyncCallback<Value> {
-  getItem: (key: string) => PromiseLike<Value>;
+  getItem: (key: IpcId) => PromiseLike<Value>;
   subscribe?: (key: string, callback: (value: Value) => void) => Unsubscribe;
 }
 
 export interface SyncCallback<Value> {
-  getItem: (key: string) => Value;
+  getItem: (key: IpcId) => Value;
   subscribe?: (key: string, callback: (value: Value) => void) => Unsubscribe;
 }
 
 export function atomFromCallback<Value>(
-  key: string,
+  key: IpcId,
   storage: AsyncCallback<Value> | AsyncStorage<Value>,
 ): WritableAtom<
   Value | Promise<Value>,
@@ -25,12 +26,12 @@ export function atomFromCallback<Value>(
 >;
 
 export function atomFromCallback<Value>(
-  key: string,
+  key: IpcId,
   storage: SyncCallback<Value> | SyncStorage<Value>,
 ): WritableAtom<Value, [SetStateAction<Value>], void>;
 
 export function atomFromCallback<Value>(
-  key: string,
+  key: IpcId,
   storage:
     | (SyncCallback<Value> | SyncStorage<Value>)
     | (AsyncCallback<Value> | SyncCallback<Value>),

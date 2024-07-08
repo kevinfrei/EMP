@@ -32,9 +32,9 @@
   },
   "homepage": "https://github.com/kevinfrei/elect-render-tools#readme",
   "dependencies": {
-    "@freik/logger": "^0.2.10",
-    "@freik/seqnum": "^1.1.10",
-    "@freik/typechk": "^0.5.11",
+    "@freik/logger": "^0.2.11",
+    "@freik/seqnum": "^1.1.11",
+    "@freik/typechk": "^0.5.12",
     "@freik/web-utils": "^0.5.2",
     "electron": "^31.1.0"
   },
@@ -68,10 +68,10 @@
     "react-scripts": "^5.0.1",
     "react-test-renderer": "^18.3.1",
     "recoil": "^0.7.7",
-    "rimraf": "^5.0.7",
+    "rimraf": "^5.0.8",
     "ts-jest": "^29.1.5",
     "typedoc": "^0.26.3",
-    "typedoc-plugin-markdown": "^4.1.1",
+    "typedoc-plugin-markdown": "^4.1.2",
     "typescript": "^5.5.3"
   },
   "files": ["lib/**/*"],
