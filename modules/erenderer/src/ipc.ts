@@ -1,3 +1,4 @@
+import { IpcId, isIpcId } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import SeqNum from '@freik/seqnum';
 import {
@@ -21,8 +22,8 @@ const { log, wrn } = MakeLog('@freik:elect-render-tools:ipc');
  * @param key The key to read
  * @returns A promise that resolves to the value read (or void if none found)
  */
-export async function ReadFromStorage(key: string): Promise<string | void> {
-  return await CallMain('read-from-storage', key, isString);
+export async function ReadFromStorage(key: IpcId): Promise<string | void> {
+  return await CallMain(IpcId.ReadFromStorage, key, isString);
 }
 
 /**
@@ -32,8 +33,8 @@ export async function ReadFromStorage(key: string): Promise<string | void> {
  * @param key The key to write
  * @param data The value to be written
  */
-export async function WriteToStorage(key: string, data: string): Promise<void> {
-  await InvokeMain('write-to-storage', [key, data]);
+export async function WriteToStorage(key: IpcId, data: string): Promise<void> {
+  await InvokeMain(IpcId.WriteToStorage, [key, data]);
 }
 
 /**
@@ -42,14 +43,14 @@ export async function WriteToStorage(key: string, data: string): Promise<void> {
  *
  * @param key The key to delete
  */
-export async function DeleteFromStorage(key: string): Promise<void> {
-  await InvokeMain('delete-from-storage', key);
+export async function DeleteFromStorage(key: IpcId): Promise<void> {
+  await InvokeMain(IpcId.DeleteFromStorage, key);
 }
 
 const sn = SeqNum('Listen');
 
 // map of message names to map of id's to funtions
-const listeners = new Map<string, Map<string, MessageHandler>>();
+const listeners = new Map<IpcId, Map<string, MessageHandler>>();
 
 /**
  * This subscribes the `handler` to listen for messages coming from the
@@ -60,7 +61,7 @@ const listeners = new Map<string, Map<string, MessageHandler>>();
  * @returns the key to use to unsubscribe
  */
 export function Subscribe(
-  key: string,
+  key: IpcId,
   handler: (val: unknown) => void,
 ): ListenKey {
   const theKey = { key, id: sn() };
@@ -99,7 +100,7 @@ function HandleMessage(message: unknown): void {
   if (isObjectNonNull(message)) {
     state = 1;
     for (const field of Object.keys(message)) {
-      if (hasField(message, field)) {
+      if (hasField(message, field) && isIpcId(field)) {
         state = 2;
         const lstn = listeners.get(field);
         if (lstn) {
@@ -146,7 +147,7 @@ export function InitialWireUp(): () => void {
     // send from the main process
     window.electronConnector.ipc.on('async-data', listener);
     // get the isDev value (because electron-is-dev doesn't work in the renderer)
-    CallMain('is-dev', '', isBoolean)
+    CallMain(IpcId.IsDev, '', isBoolean)
       .then((isdev) => {
         if (window.electronConnector !== undefined && isBoolean(isdev)) {
           window.electronConnector.isDev = isdev;
@@ -173,10 +174,7 @@ export function InitialWireUp(): () => void {
  * @param key The key to communicate to the message (if any)
  * @returns A promise that resolves to the result of the RPC
  */
-export async function InvokeMain<T>(
-  channel: string,
-  key?: T,
-): Promise<unknown> {
+export async function InvokeMain<T>(channel: IpcId, key?: T): Promise<unknown> {
   let result;
   if (!window.electronConnector) {
     // Wait a bit, as Jotai may call IPC stuff pretty early
@@ -207,7 +205,7 @@ export async function InvokeMain<T>(
   return result;
 }
 
-export function SendMain<T>(channel: string, key?: T): void {
+export function SendMain<T>(channel: IpcId, key?: T): void {
   void InvokeMain(channel, key);
 }
 
@@ -222,7 +220,7 @@ export function SendMain<T>(channel: string, key?: T): void {
  * @returns A promise that resolves to the typechecked return value of the RPC
  */
 export async function CallMain<R, T>(
-  channel: string,
+  channel: IpcId,
   key: T,
   typecheck: (val: unknown) => val is R,
 ): Promise<R | void> {
@@ -244,6 +242,6 @@ export async function CallMain<R, T>(
  * @param key The key to communicate to the message
  * @returns A promise that resolves when the RPC has returned
  */
-export async function PostMain<T>(channel: string, key?: T): Promise<void> {
+export async function PostMain<T>(channel: IpcId, key?: T): Promise<void> {
   return CallMain(channel, key, (a: unknown): a is void => true);
 }

@@ -1,6 +1,7 @@
+import { IpcId } from '@freik/emp-shared';
 import { IpcRenderer } from 'electron';
 
-export type ListenKey = { key: string; id: string };
+export type ListenKey = { key: IpcId; id: string };
 
 export type MessageHandler = (val: unknown) => void;
 

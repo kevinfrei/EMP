@@ -1,3 +1,4 @@
+import { IpcId } from '@freik/emp-shared';
 import { isArrayOfString } from '@freik/typechk';
 import { NativeImage, OpenDialogSyncOptions } from 'electron';
 import { CallMain } from './ipc.js';
@@ -56,7 +57,7 @@ export function SetInit(func: () => void): void {
 export async function ShowOpenDialog(
   options: OpenDialogSyncOptions,
 ): Promise<string[] | void> {
-  return await CallMain('show-open-dialog', options, isArrayOfString);
+  return await CallMain(IpcId.ShowOpenDialog, options, isArrayOfString);
 }
 
 /**

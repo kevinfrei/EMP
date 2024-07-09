@@ -23,6 +23,7 @@ export enum MenuKeys {
   Quieter = 'quieter',
   View = 'view',
 }
+export type MenuKeysEnum = keyof typeof MenuKeys;
 
 export enum MenuView {
   NowPlaying = 'NowPlaying',
@@ -33,8 +34,14 @@ export enum MenuView {
   Settings = 'Settings',
   Tools = 'Tools',
 }
+export type MenuViewEnum = keyof typeof MenuView;
 
 export enum IpcId {
+  ReadFromStorage = 'read-from-storage',
+  WriteToStorage = 'write-to-storage',
+  DeleteFromStorage = 'delete-from-storage',
+  IsDev = 'is-dev',
+  ShowOpenDialog = 'show-open-dialog',
   ClearHates = 'clear-hates',
   ClearLikes = 'clear-likes',
   ClearLocalOverrides = 'clear-local-overrides',
@@ -81,6 +88,9 @@ export enum IpcId {
   IgnoreListId = 'ignore-list',
   RescanInProgress = 'rescan-in-progress',
 }
+export function isIpcId(obj: unknown): obj is IpcId {
+  return Object.values(IpcId).includes(obj as IpcId);
+}
 
 export enum Keys {
   AddFileLocation = 'O',
@@ -102,6 +112,7 @@ export enum Keys {
   ToggleMiniPlayer = '9',
   Tools = 'L',
 }
+export type KeysEnum = keyof typeof Keys;
 
 // TODO: This stuff let's me localize my strings eventually
 export enum StrId {
@@ -147,6 +158,7 @@ export enum StrId {
   ViewTools = 'Tools',
   ImportFiles = 'Import Files...',
 }
+export type StrIdEnum = keyof typeof StrId;
 
 export function st(id: StrId): string {
   return id;
@@ -165,10 +177,11 @@ export enum CurrentView {
   search = 8,
   tools = 9,
 }
+export type CurrentViewEnum = typeof CurrentView;
 
-export const isCurrentView: typecheck<CurrentView> = (
+export const isCurrentView: typecheck<CurrentViewEnum> = (
   val: unknown,
-): val is CurrentView =>
+): val is CurrentViewEnum =>
   isNumber(val) &&
   Number.isInteger(val) &&
   val >= CurrentView.disabled &&
@@ -179,7 +192,7 @@ export enum TranscodeFormatTargets {
   mp3 = 'mp3',
   aac = 'aac',
 }
-export type TranscodeFormatTargetNames = 'm4a' | 'mp3' | 'aac';
+export type TranscodeFormatTargetEnum = keyof typeof TranscodeFormatTargets; //  'm4a' | 'mp3' | 'aac';
 
 export enum TranscodeSourceType {
   Playlist = 'p',
@@ -187,6 +200,7 @@ export enum TranscodeSourceType {
   Album = 'l',
   Disk = 'd',
 }
+export type TranscodeSourceTypeEnum = keyof typeof TranscodeSourceType;
 export function isTranscodeSourceType(v: unknown): v is TranscodeSourceType {
   return v === 'p' || v === 'r' || v === 'l' || v === 'd';
 }
@@ -216,7 +230,7 @@ export type TranscodeInfo = {
   dest: string;
   artwork: boolean;
   mirror: boolean;
-  format: TranscodeFormatTargetNames;
+  format: TranscodeFormatTargetEnum;
   bitrate: number;
 };
 
@@ -225,7 +239,7 @@ export const isXcodeInfo = chkObjectOfType<TranscodeInfo>({
   dest: isString,
   artwork: isBoolean,
   mirror: isBoolean,
-  format: (o: unknown): o is TranscodeFormatTargetNames => {
+  format: (o: unknown): o is TranscodeFormatTargetEnum => {
     return o === 'm4a' || o === 'mp3' || o === 'aac';
   },
   bitrate: isNumber,

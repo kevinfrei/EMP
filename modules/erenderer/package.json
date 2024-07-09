@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/kevinfrei/elect-render-tools#readme",
   "dependencies": {
+    "@freik/emp-shared": "workspace:^",
     "@freik/logger": "^0.2.11",
     "@freik/seqnum": "^1.1.11",
     "@freik/typechk": "^0.5.12",

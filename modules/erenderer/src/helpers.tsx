@@ -1,3 +1,4 @@
+import { IpcId } from '@freik/emp-shared';
 import { DependencyList, useEffect } from 'react';
 import { InitialWireUp, Subscribe, Unsubscribe } from './ipc';
 
@@ -11,7 +12,7 @@ import { InitialWireUp, Subscribe, Unsubscribe } from './ipc';
  * @param listener The function to invoke with the data sent
  */
 export function useListener(
-  message: string,
+  message: IpcId,
   listener: (args: unknown) => void,
 ): void {
   useEffect(() => {
