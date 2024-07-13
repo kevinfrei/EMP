@@ -172,7 +172,7 @@ function getTranslatedMainReadOnlyStorage<T, U>(
   };
 }
 
-export function atomWithMainStorageTranslation<T, U>(
+export function atomWithTranslatedStorageInMain<T, U>(
   key: string,
   init: T,
   chk: typecheck<U>,
@@ -186,7 +186,7 @@ export function atomWithMainStorageTranslation<T, U>(
   );
 }
 
-export function atomFromMainStorageTranslation<T, U>(
+export function atomFromTranslatedStorageFromMain<T, U>(
   key: string,
   init: T,
   chk: typecheck<U>,

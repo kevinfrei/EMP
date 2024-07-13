@@ -23,6 +23,18 @@ export type MusicLibrary = {
   albums: AlbumMap;
   artists: ArtistMap;
 };
+export type AlbumDescription = {
+  artist: string;
+  album: string;
+  year: string;
+};
+export type AlbumDescriptionWithKey = {
+  key: AlbumKey;
+} & AlbumDescription;
+export type SongDescription = {
+  title: string;
+  track: number;
+} & AlbumDescription;
 
 const isSong = chkObjectOfType<Song & { path?: string }>(
   {
