@@ -16,8 +16,8 @@ import {
   useMyTransaction,
 } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomWithReset, useAtomCallback, useResetAtom } from 'jotai/utils';
-import { useCallback, useState } from 'react';
+import { atomWithReset, useResetAtom } from 'jotai/utils';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import {
@@ -45,6 +45,7 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
+import { useJotaiCallback } from '../../Jotai/Helpers';
 import './styles/Playlists.css';
 
 type PlaylistSong = Song & { playlist: PlaylistName };
@@ -74,11 +75,9 @@ function PlaylistHeaderDisplay({
 }): JSX.Element {
   const expandedAtom = playlistIsExpandedState(group.key);
   const setPlaylistContext = useSetAtom(playlistContextState);
-  const onHeaderExpanderClick = useAtomCallback(
-    useCallback(
-      (get, set) => set(expandedAtom, !group.isCollapsed),
-      [expandedAtom, group.isCollapsed],
-    ),
+  const onHeaderExpanderClick = useJotaiCallback(
+    (get, set) => set(expandedAtom, !group.isCollapsed),
+    [expandedAtom, group.isCollapsed],
   );
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, xact.get(playlistFuncFam(group.key)), group.key);
