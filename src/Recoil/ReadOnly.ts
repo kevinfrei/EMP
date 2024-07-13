@@ -26,10 +26,10 @@ import {
   emptyLibrary,
   isFlatAudioDatabase,
 } from './MusicLibrarySchema';
-import {
-  minSongCountForArtistListState,
-  showArtistsWithFullAlbumsState,
-} from './Preferences';
+// import {
+//   minSongCountForArtistListState,
+//   showArtistsWithFullAlbumsState,
+// } from './Preferences';
 import { songListState } from './SongPlaying';
 
 const { wrn, log } = MakeLog('EMP:render:ReadOnly:log');
@@ -470,8 +470,8 @@ export const commonDataFuncFam = selectorFamily<MetadataProps, SongKey[]>({
 export const filteredArtistsFunc = selector<Artist[]>({
   key: 'filteredArtists',
   get: ({ get }) => {
-    const fullAlbums = get(showArtistsWithFullAlbumsState);
-    const minSongCount = get(minSongCountForArtistListState);
+    const fullAlbums = false; // get(showArtistsWithFullAlbumsState);
+    const minSongCount = 3; // get(minSongCountForArtistListState);
     const artists = [...get(allArtistsFunc).values()];
     if (fullAlbums) {
       const albums = get(allAlbumsFunc);

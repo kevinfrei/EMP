@@ -24,10 +24,15 @@ import {
 
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
+import { AsyncHandler } from '../../Jotai/Helpers';
 import { useBoolAtom } from '../../Jotai/Hooks';
 import { rescanInProgressState } from '../../Jotai/Miscellany';
+import {
+  minSongCountForArtistListState,
+  showArtistsWithFullAlbumsState,
+} from '../../Jotai/Preferences';
 import {
   albumCoverNameState,
   defaultLocationState,
@@ -38,10 +43,6 @@ import {
   saveAlbumArtworkWithMusicState,
 } from '../../Jotai/SimpleSettings';
 import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
-import {
-  minSongCountForArtistListState,
-  showArtistsWithFullAlbumsState,
-} from '../../Recoil/Preferences';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -234,22 +235,24 @@ function ArticleSorting(): JSX.Element {
 }
 
 function ArtistFiltering(): JSX.Element {
-  const onlyAlbumArtists = useBoolRecoilState(showArtistsWithFullAlbumsState);
-  const [songCount, setSongCount] = useRecoilState(
-    minSongCountForArtistListState,
-  );
+  const onlyAlbumArtists = useBoolAtom(showArtistsWithFullAlbumsState);
+  const [songCount, setSongCount] = useAtom(minSongCountForArtistListState);
   return (
     <>
       <StateToggle
-        label="Only show artists with full albums"
+        label="Only show artists with full albums (JODO)"
         state={onlyAlbumArtists}
       />
       <SpinButton
-        label="Only show artists with at least this many songs"
+        label="Only show artists with at least this many songs (JODO)"
         disabled={onlyAlbumArtists[0]}
         value={songCount.toString()}
-        onIncrement={() => setSongCount(Math.min(100, songCount + 1))}
-        onDecrement={() => setSongCount(Math.max(1, songCount - 1))}
+        onIncrement={AsyncHandler(() =>
+          setSongCount(Math.min(100, songCount + 1)),
+        )}
+        onDecrement={AsyncHandler(() =>
+          setSongCount(Math.max(1, songCount - 1)),
+        )}
         style={{ width: '10px' }}
       />
     </>
