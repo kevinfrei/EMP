@@ -81,7 +81,7 @@ export const isSongHatedFam = atomFamily((key: SongKey) =>
         if (likeSet.has(key)) {
           const newLikes = new Set(likeSet);
           newLikes.delete(key);
-          set(songLikeBackerState, newHates);
+          set(songLikeBackerState, newLikes);
         }
       } else {
         newHates.delete(key);

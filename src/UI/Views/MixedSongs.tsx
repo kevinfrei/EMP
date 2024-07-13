@@ -82,7 +82,7 @@ function Liker({ songId }: { songId: SongKey }): JSX.Element {
           break;
       }
     },
-    [songId],
+    [songId, likeNum],
   );
   return <div onClick={onClick}>{strings[likeNum]}</div>;
 }
