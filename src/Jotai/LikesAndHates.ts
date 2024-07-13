@@ -8,7 +8,10 @@ import {
 import { isArrayOfString, isBoolean } from '@freik/typechk';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
-import { atomWithMainStorage, atomWithMainStorageTranslation } from './Storage';
+import {
+  atomWithMainStorage,
+  atomWithTranslatedStorageInMain,
+} from './Storage';
 
 // const log = MakeLogger('Likes');
 // const err = MakeError('Likes-err');
@@ -25,7 +28,7 @@ export const onlyPlayLikesState = atomWithMainStorage(
   isBoolean,
 );
 
-const songLikeBackerState = atomWithMainStorageTranslation(
+const songLikeBackerState = atomWithTranslatedStorageInMain(
   'likedSongs',
   new Set<SongKey>(),
   isArrayOfString,
@@ -33,7 +36,7 @@ const songLikeBackerState = atomWithMainStorageTranslation(
   (val: string[]) => new Set<string>(val),
 );
 
-const songHateBackerState = atomWithMainStorageTranslation(
+const songHateBackerState = atomWithTranslatedStorageInMain(
   'hatedSongs',
   new Set<SongKey>(),
   isArrayOfString,

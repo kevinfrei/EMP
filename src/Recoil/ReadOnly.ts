@@ -15,41 +15,29 @@ import {
 import { hasFieldType, isArrayOfString, isString } from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
-import { SetDB } from '../MyWindow';
-import { MetadataProps } from '../UI/DetailPanel/MetadataProps';
 import * as ipc from '../ipc';
 import {
+  AlbumDescriptionWithKey,
   AlbumMap,
   ArtistMap,
   MusicLibrary,
+  SongDescription,
   SongMap,
   emptyLibrary,
   isFlatAudioDatabase,
-} from './MusicLibrarySchema';
+} from '../MusicLibrarySchema';
+import { SetDB } from '../MyWindow';
+import { MetadataProps } from '../UI/DetailPanel/MetadataProps';
+import { songListState } from './SongPlaying';
+
 // import {
 //   minSongCountForArtistListState,
 //   showArtistsWithFullAlbumsState,
 // } from './Preferences';
-import { songListState } from './SongPlaying';
 
 const { wrn, log } = MakeLog('EMP:render:ReadOnly:log');
 
 // type GetRecoilValue = <T>(recoilVal: RecoilValue<T>) => T;
-
-export type AlbumDescription = {
-  artist: string;
-  album: string;
-  year: string;
-};
-
-export type AlbumDescriptionWithKey = {
-  key: AlbumKey;
-} & AlbumDescription;
-
-export type SongDescription = {
-  title: string;
-  track: number;
-} & AlbumDescription;
 
 export const mediaInfoFuncFam = selectorFamily<Map<string, string>, SongKey>({
   key: 'mediaInfoSelector',
