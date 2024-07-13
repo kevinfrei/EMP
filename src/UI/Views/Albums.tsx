@@ -15,8 +15,8 @@ import { AlbumKey, Song } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
 import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomWithReset, useAtomCallback, useResetAtom } from 'jotai/utils';
-import { useCallback, useState } from 'react';
+import { atomWithReset, useResetAtom } from 'jotai/utils';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
@@ -48,6 +48,7 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
+import { useJotaiCallback } from '../../Jotai/Helpers';
 import './styles/Albums.css';
 
 // This is used to trigger the popup menu in the list view
@@ -73,11 +74,9 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
     AddSongs(xact, album.songs);
   });
   const thisSetSetter = albumIsExpandedState(group.key);
-  const onHeaderExpanderClick = useAtomCallback(
-    useCallback(
-      (get, set) => set(thisSetSetter, !group.isCollapsed),
-      [thisSetSetter, group.isCollapsed],
-    ),
+  const onHeaderExpanderClick = useJotaiCallback(
+    (get, set) => set(thisSetSetter, !group.isCollapsed),
+    [thisSetSetter, group.isCollapsed],
   );
   const setAlbumContext = useSetAtom(albumContextState);
   const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
