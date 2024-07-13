@@ -147,6 +147,31 @@ export function atomFromMain<T>(
   return atomWithStorage(key, init, getMainReadOnlyStorage(chk));
 }
 
+function getTranslatedMainStorage<T, U>(
+  chk: typecheck<U>,
+  fromMain: (val: U) => T,
+  toMain: (val: T) => U,
+): AsyncStorage<T> {
+  return {
+    getItem: makeGetTranslatedItem(chk, fromMain),
+    setItem: async (k, v) => setTranslatedItem(k, toMain(v), fromMain),
+    removeItem,
+    subscribe: makeTranslatedSubscribe(chk, fromMain),
+  };
+}
+
+function getTranslatedMainReadOnlyStorage<T, U>(
+  chk: typecheck<U>,
+  fromMain: (val: U) => T,
+): AsyncStorage<T> {
+  return {
+    getItem: makeGetTranslatedItem(chk, fromMain),
+    setItem: noSetItem,
+    removeItem: noRemoveItem,
+    subscribe: makeTranslatedSubscribe(chk, fromMain),
+  };
+}
+
 export function atomWithMainStorageTranslation<T, U>(
   key: string,
   init: T,
@@ -154,10 +179,22 @@ export function atomWithMainStorageTranslation<T, U>(
   toMain: (val: T) => U,
   fromMain: (val: U) => T,
 ): WritableAtomType<T> {
-  return atomWithStorage(key, init, {
-    getItem: makeGetTranslatedItem(chk, fromMain),
-    setItem: async (k, v) => setTranslatedItem(k, toMain(v), fromMain),
-    removeItem,
-    subscribe: makeTranslatedSubscribe(chk, fromMain),
-  });
+  return atomWithStorage(
+    key,
+    init,
+    getTranslatedMainStorage<T, U>(chk, fromMain, toMain),
+  );
+}
+
+export function atomFromMainStorageTranslation<T, U>(
+  key: string,
+  init: T,
+  chk: typecheck<U>,
+  fromMain: (val: U) => T,
+): WritableAtomType<T> {
+  return atomWithStorage(
+    key,
+    init,
+    getTranslatedMainReadOnlyStorage<T, U>(chk, fromMain),
+  );
 }
