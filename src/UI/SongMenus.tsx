@@ -14,12 +14,8 @@ import {
   MyTransactionInterface,
   useMyTransaction,
 } from '@freik/web-utils';
-import { useRecoilValue } from 'recoil';
-import {
-  songHateFuncFam,
-  songLikeFuncFam,
-  songLikeNumFromStringFuncFam,
-} from '../Recoil/Likes';
+import { useAtomValue } from 'jotai';
+import { songListLikeNumberFromStringFam } from '../Jotai/LikesAndHates';
 import { AddSongs, PlaySongs } from '../Recoil/api';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 import { ErrorBoundary } from './Utilities';
@@ -85,16 +81,20 @@ export function SongListMenu({
     (xact) => () =>
       SongListDetailClick(onGetSongList(xact, context.data), false),
   );
-  const onLove = useMyTransaction((xact) => () => {
+  // JODO: Update this once we've got the song list from the media interface
+  const onLove = () => {}; /*
+  useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);
     const likeVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
       // Set it to true if there's any song that *isn't* liked
       xact.set(songLikeFuncFam(song), likeVal !== 1);
     }
-  });
+  });*/
 
-  const onHate = useMyTransaction((xact) => () => {
+  // JODO: Update this once we've got the song list from the media interface
+  const onHate = () => {}; /*
+  useJotaiCallback((get, set) => useMyTransaction((xact) => () => {
     const songs = onGetSongList(xact, context.data);
     const hateVal = xact.get(songLikeNumFromStringFuncFam(context.data));
     for (const song of songs) {
@@ -102,11 +102,11 @@ export function SongListMenu({
       xact.set(songHateFuncFam(song), hateVal !== 2);
     }
   });
-
+  */
   const onShow = () => {
     Ipc.InvokeMain(IpcId.ShowLocFromKey, context.data).catch(Catch);
   };
-  const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(context.data));
+  const likeNum = useAtomValue(songListLikeNumberFromStringFam(context.data));
   const likeIcons = ['Like', 'LikeSolid', 'Like', 'More'];
   const hateIcons = ['Dislike', 'Dislike', 'DislikeSolid', 'More'];
   if (context.data === '' || context.spot === undefined) {

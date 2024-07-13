@@ -8,14 +8,16 @@ import {
 import { Song, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
+import { useAtomValue } from 'jotai';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
+import { useJotaiCallback } from '../../Jotai/Helpers';
+import {
+  isSongHatedFam,
+  isSongLikedFam,
+  songListLikeNumberFromStringFam,
+} from '../../Jotai/LikesAndHates';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
 import { getStore } from '../../Jotai/Storage';
-import {
-  songHateFuncFam,
-  songLikeFuncFam,
-  songLikeNumFromStringFuncFam,
-} from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -60,25 +62,28 @@ const songContextState = atom<SongListMenuData>({
 });
 
 function Liker({ songId }: { songId: SongKey }): JSX.Element {
-  const likeNum = useRecoilValue(songLikeNumFromStringFuncFam(songId));
+  const likeNum = useAtomValue(songListLikeNumberFromStringFam(songId));
   const strings = ['⋯', '👍', '👎', '⋮'];
-  const onClick = useMyTransaction(({ set }) => () => {
-    switch (likeNum) {
-      case 0: // neutral
-        set(songLikeFuncFam(songId), true);
-        break;
-      case 1: // like
-        set(songHateFuncFam(songId), true);
-        break;
-      case 2: // hate
-        set(songHateFuncFam(songId), false);
-        break;
-      case 3: // mixed
-        set(songLikeFuncFam(songId), false);
-        set(songHateFuncFam(songId), false);
-        break;
-    }
-  });
+  const onClick = useJotaiCallback(
+    (get, set) => {
+      switch (likeNum) {
+        case 0: // neutral
+          set(isSongLikedFam(songId), true);
+          break;
+        case 1: // like
+          set(isSongHatedFam(songId), true);
+          break;
+        case 2: // hate
+          set(isSongHatedFam(songId), false);
+          break;
+        case 3: // mixed
+          set(isSongLikedFam(songId), false);
+          set(isSongHatedFam(songId), false);
+          break;
+      }
+    },
+    [songId, likeNum],
+  );
   return <div onClick={onClick}>{strings[likeNum]}</div>;
 }
 
