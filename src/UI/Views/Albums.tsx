@@ -47,6 +47,7 @@ import {
   StickyRenderDetailsHeader,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+
 import './styles/Albums.css';
 
 // This is used to trigger the popup menu in the list view
@@ -75,7 +76,7 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const onHeaderExpanderClick = useAtomCallback(
     useCallback(
       (get, set) => set(thisSetSetter, !group.isCollapsed),
-      [thisSetSetter, group.key, group.isCollapsed],
+      [thisSetSetter, group.isCollapsed],
     ),
   );
   const setAlbumContext = useSetAtom(albumContextState);
