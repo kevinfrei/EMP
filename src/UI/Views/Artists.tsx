@@ -47,6 +47,7 @@ import {
   StickyRenderDetailsHeader,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+
 import './styles/Artists.css';
 
 // This is used to trigger the popup menu in the list view
@@ -72,7 +73,7 @@ function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
   const onHeaderExpanderClick = useAtomCallback(
     useCallback(
       (get, set) => set(expansionState, !group.isCollapsed),
-      [expansionState, group.key, group.isCollapsed],
+      [expansionState, group.isCollapsed],
     ),
   );
   const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) =>

@@ -11,15 +11,15 @@ import { PlaylistName, Song, SongKey } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import {
   Dialogs,
-  MakeSetState,
   MyTransactionInterface,
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomWithReset, useResetAtom } from 'jotai/utils';
-import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { atomWithReset, useAtomCallback, useResetAtom } from 'jotai/utils';
+import { useCallback, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import {
   AddSongs,
   DeletePlaylist,
@@ -51,7 +51,7 @@ type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
 
 const [playlistExpandedState, playlistIsExpandedState] =
-  MakeSetState<PlaylistName>('playlistExpanded');
+  MakeSetAtomFamily<PlaylistName>();
 
 const playlistContextState = atomWithReset<SongListMenuData>({
   data: '',
@@ -72,11 +72,13 @@ function PlaylistHeaderDisplay({
   group: IGroup;
   onDelete: (key: string) => void;
 }): JSX.Element {
+  const expandedAtom = playlistIsExpandedState(group.key);
   const setPlaylistContext = useSetAtom(playlistContextState);
-  const onHeaderExpanderClick = useMyTransaction(
-    ({ set }) =>
-      () =>
-        set(playlistIsExpandedState(group.key), !group.isCollapsed),
+  const onHeaderExpanderClick = useAtomCallback(
+    useCallback(
+      (get, set) => set(expandedAtom, !group.isCollapsed),
+      [expandedAtom, group.isCollapsed],
+    ),
   );
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, xact.get(playlistFuncFam(group.key)), group.key);
@@ -128,7 +130,7 @@ export function PlaylistView(): JSX.Element {
   const allSongs = useRecoilValue(allSongsFunc);
   const playlistContext = useAtomValue(playlistContextState);
   const resetPlaylistContext = useResetAtom(playlistContextState);
-  const playlistExpanded = useRecoilState(playlistExpandedState);
+  const playlistExpanded = useAtom(playlistExpandedState);
   const [curSort, setSort] = useAtom(playlistSortState);
   const [songContext, setSongContext] = useAtom(songContextState);
   const resetSongContext = useResetAtom(songContextState);
