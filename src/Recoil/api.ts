@@ -19,13 +19,6 @@ import {
 import { mediaTimeState, playingState } from '../Jotai/MediaPlaying';
 import { getStore } from '../Jotai/Storage';
 import { isPlaylist, ShuffleArray } from '../Tools';
-import {
-  isSongHated,
-  isSongLiked,
-  neverPlayHatesState,
-  onlyPlayLikesState,
-  songHateFuncFam,
-} from './Likes';
 import { repeatState } from './PlaybackOrder';
 import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
@@ -33,7 +26,6 @@ import { shuffleFunc } from './ReadWrite';
 import {
   activePlaylistState,
   currentIndexState,
-  currentSongKeyFunc,
   songListState,
   songPlaybackOrderState,
 } from './SongPlaying';
@@ -49,6 +41,7 @@ import {
  * @returns {Promise<boolean>} true if the next song started playing,
  *  false otherwise
  */
+// JODO: This is messed up during transition
 export function MaybePlayNext(
   xact: MyTransactionInterface,
   dislike = false,
@@ -56,12 +49,14 @@ export function MaybePlayNext(
   const { get, set } = xact;
   const curIndex = get(currentIndexState);
   const songList = get(songListState);
-  const curSong = get(currentSongKeyFunc);
+  // const curSong = get(currentSongKeyFunc);
   if (dislike) {
+    /*
     set(songHateFuncFam(curSong), true);
     if (get(neverPlayHatesState)) {
       RemoveSongFromNowPlaying(xact, curSong);
     }
+      */
   }
   if (curIndex + 1 < songList.length) {
     set(currentIndexState, curIndex + 1);
@@ -105,20 +100,24 @@ export function MaybePlayPrev({ get, set }: MyTransactionInterface): void {
  *
  * @returns {SongKey[]} The filtered list of songs
  */
+// JODO: This is messed up during transition
 function GetFilteredSongs(
   xact: MyTransactionInterface,
   listToFilter: Iterable<SongKey>,
 ): SongKey[] {
+  /*
   const onlyLikes = xact.get(onlyPlayLikesState);
   const neverHates = xact.get(neverPlayHatesState);
+  */
   const playList = [...listToFilter];
-  const filtered = playList.filter((songKey: SongKey) => {
+  const filtered = playList.filter((/*_songKey: SongKey*/) => {
+    /*    
     if (onlyLikes) {
       return isSongLiked(xact, songKey);
     }
     if (neverHates) {
       return !isSongHated(xact, songKey);
-    }
+    }*/
     return true;
   });
   return filtered.length === 0 ? playList : filtered;

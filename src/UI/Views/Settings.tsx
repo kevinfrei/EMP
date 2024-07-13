@@ -18,7 +18,6 @@ import {
   MyTransactionInterface,
   Spinner,
   StateToggle,
-  useBoolRecoilState,
   useMyTransaction,
 } from '@freik/web-utils';
 
@@ -28,6 +27,10 @@ import { useRecoilValue } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { AsyncHandler } from '../../Jotai/Helpers';
 import { useBoolAtom } from '../../Jotai/Hooks';
+import {
+  neverPlayHatesState,
+  onlyPlayLikesState,
+} from '../../Jotai/LikesAndHates';
 import { rescanInProgressState } from '../../Jotai/Miscellany';
 import {
   minSongCountForArtistListState,
@@ -42,7 +45,6 @@ import {
   locationsState,
   saveAlbumArtworkWithMusicState,
 } from '../../Jotai/SimpleSettings';
-import { neverPlayHatesState, onlyPlayLikesState } from '../../Recoil/Likes';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -260,8 +262,8 @@ function ArtistFiltering(): JSX.Element {
 }
 
 function LikeFiltering(): JSX.Element {
-  const neverPlayHates = useBoolRecoilState(neverPlayHatesState);
-  const onlyPlayLikes = useBoolRecoilState(onlyPlayLikesState);
+  const neverPlayHates = useBoolAtom(neverPlayHatesState);
+  const onlyPlayLikes = useBoolAtom(onlyPlayLikesState);
   return (
     <>
       <StateToggle
