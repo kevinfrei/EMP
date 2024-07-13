@@ -13,15 +13,12 @@ import {
 import { CurrentView } from '@freik/emp-shared';
 import { AlbumKey, Song } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
-import {
-  MakeSetState,
-  MyTransactionInterface,
-  useMyTransaction,
-} from '@freik/web-utils';
+import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
-import { atomWithReset, useResetAtom } from 'jotai/utils';
-import { useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { atomWithReset, useAtomCallback, useResetAtom } from 'jotai/utils';
+import { useCallback, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
 import { AddSongs, SongListFromKey } from '../../Recoil/api';
@@ -59,7 +56,7 @@ const albumContextState = atomWithReset<SongListMenuData>({
 });
 
 const [albumExpandedState, albumIsExpandedState] =
-  MakeSetState<AlbumKey>('albumExpanded');
+  MakeSetAtomFamily<AlbumKey>();
 
 // For grouping to work properly, the sort order needs to be fully specified
 // Also, the album year, VA type, and artist have to "stick" with the album name
@@ -74,10 +71,12 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
   const onAddSongsClick = useMyTransaction((xact) => () => {
     AddSongs(xact, album.songs);
   });
-  const onHeaderExpanderClick = useMyTransaction(
-    ({ set }) =>
-      () =>
-        set(albumIsExpandedState(group.key), !group.isCollapsed),
+  const thisSetSetter = albumIsExpandedState(group.key);
+  const onHeaderExpanderClick = useAtomCallback(
+    useCallback(
+      (get, set) => set(thisSetSetter, !group.isCollapsed),
+      [thisSetSetter, group.key, group.isCollapsed],
+    ),
   );
   const setAlbumContext = useSetAtom(albumContextState);
   const onRightClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -128,7 +127,7 @@ export function GroupedAlbumList(): JSX.Element {
   const newAlbumSort = useAtomValue(albumSortState);
   const [albumContext, setAlbumContext] = useAtom(albumContextState);
 
-  const curExpandedState = useRecoilState(albumExpandedState);
+  const curExpandedState = useAtom(albumExpandedState);
   const [curSort, setSort] = useAtom(albumSortState);
   const resetAlbumContext = useResetAtom(albumContextState);
 
