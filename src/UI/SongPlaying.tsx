@@ -22,6 +22,7 @@ import {
   playingState,
 } from '../Jotai/MediaPlaying';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
+import { currentSongKeyState, shuffleState } from '../Jotai/SongPlayback';
 import { SongDescription } from '../MusicLibrarySchema';
 import { repeatState } from '../Recoil/PlaybackOrder';
 import {
@@ -30,8 +31,7 @@ import {
   dataForSongFuncFam,
   picForKeyFam,
 } from '../Recoil/ReadOnly';
-import { shuffleFunc } from '../Recoil/ReadWrite';
-import { currentSongKeyFunc, songListState } from '../Recoil/SongPlaying';
+import { songListState } from '../Recoil/SongPlaying';
 import { MaybePlayNext } from '../Recoil/api';
 import { getAlbumImageUrl, isMutableRefObject } from '../Tools';
 import { SongDetailClick } from './DetailPanel/Clickers';
@@ -43,7 +43,7 @@ const { log } = MakeLog('EMP:render:SongPlayback');
 // const log = console.log;
 
 function CoverArt(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyState);
   const albumKey = useRecoilValue(albumKeyForSongKeyFuncFam(songKey));
   const picurl = getAlbumImageUrl(albumKey);
   return (
@@ -82,7 +82,7 @@ function MediaTimeRemaining(): JSX.Element {
 }
 
 function MediaTimeSlider(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyState);
   const [mediaTimePercent, setMediaTimePercent] = useAtom(mediaTimePercentFunc);
   return (
     <Slider
@@ -107,7 +107,7 @@ function MediaTimeSlider(): JSX.Element {
 }
 
 function SongName(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyState);
   const { title }: SongDescription = useRecoilValue(
     dataForSongFuncFam(songKey),
   );
@@ -119,7 +119,7 @@ function SongName(): JSX.Element {
 }
 
 function ArtistAlbum(): JSX.Element {
-  const songKey = useRecoilValue(currentSongKeyFunc);
+  const songKey = useAtomValue(currentSongKeyState);
   const { artist, album }: SongDescription = useRecoilValue(
     dataForSongFuncFam(songKey),
   );
@@ -140,8 +140,8 @@ function ArtistAlbum(): JSX.Element {
 
 export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
-    const songKey = useRecoilValue(currentSongKeyFunc);
-    const isShuffle = useRecoilValue(shuffleFunc);
+    const songKey = useAtomValue(currentSongKeyState);
+    const isShuffle = useAtomValue(shuffleState);
     const isMuted = useAtomValue(mutedState);
     const volumeLevel = useAtomValue(volumeState);
     const playbackPercent = useAtomValue(mediaTimePercentFunc);

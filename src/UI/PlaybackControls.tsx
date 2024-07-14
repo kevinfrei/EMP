@@ -1,19 +1,19 @@
 import { Keys } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
-import { onRejected, useMyTransaction } from '@freik/web-utils';
-import { useAtomValue, useStore } from 'jotai';
-import { ForwardedRef, MouseEventHandler } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { onRejected } from '@freik/web-utils';
+import { useAtom, useAtomValue, useStore } from 'jotai';
+import { ForwardedRef, MouseEventHandler, useCallback } from 'react';
+import { MaybePlayNext, MaybePlayPrev } from '../Jotai/API';
+import { AsyncHandler } from '../Jotai/Helpers';
 import { playingState } from '../Jotai/MediaPlaying';
-import { MyStore } from '../Jotai/Storage';
-import { repeatState } from '../Recoil/PlaybackOrder';
-import { shuffleFunc } from '../Recoil/ReadWrite';
 import {
-  hasAnySongsFunc,
-  hasNextSongFunc,
-  hasPrevSongFunc,
-} from '../Recoil/SongPlaying';
-import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
+  hasAnySongsState,
+  hasNextSongState,
+  hasPrevSongState,
+  repeatState,
+  shuffleState,
+} from '../Jotai/SongPlayback';
+import { MyStore } from '../Jotai/Storage';
 import { isMutableRefObject } from '../Tools';
 import { GetHelperText } from './MenuHelpers';
 import './styles/PlaybackControls.css';
@@ -53,11 +53,11 @@ export function PlaybackControls({
 }: PlaybackControlsProps): JSX.Element {
   const isPlaying = useAtomValue(playingState);
 
-  const hasAnySong = useRecoilValue(hasAnySongsFunc);
-  const shuf = useRecoilValue(shuffleFunc);
-  const [rep, repSet] = useRecoilState(repeatState);
-  const hasNextSong = useRecoilValue(hasNextSongFunc);
-  const hasPrevSong = useRecoilValue(hasPrevSongFunc);
+  const hasAnySong = useAtomValue(hasAnySongsState);
+  const [shuf, shufSet] = useAtom(shuffleState);
+  const [rep, repSet] = useAtom(repeatState);
+  const hasNextSong = useAtomValue(hasNextSongState);
+  const hasPrevSong = useAtomValue(hasPrevSongState);
 
   const shufClass = shuf ? 'enabled' : 'disabled';
   const repClass = rep ? 'enabled' : 'disabled';
@@ -69,27 +69,29 @@ export function PlaybackControls({
   const nextClass = hasNextSong ? 'enabled' : 'disabled';
   const prevClass = hasPrevSong ? 'enabled' : 'disabled';
 
-  const clickShuffle = useMyTransaction((xact) => () => {
-    xact.set(shuffleFunc, (prevShuf) => !prevShuf);
-  });
-  const clickRepeat = () => repSet(!rep);
+  const clickShuffle = useCallback(() => shufSet(!shuf), [shuf]);
+  const clickRepeat = useCallback(() => repSet(!rep), [rep]);
   const store = useStore();
   const clickPlayPause = () => onClickPlayPause(store, audioRef);
 
-  const clickPrev = useMyTransaction((xact) => () => {
-    if (hasPrevSong) {
-      MaybePlayPrev(xact);
-    }
-  });
-  const clickNext: MouseEventHandler<HTMLSpanElement> = useMyTransaction(
-    (xact) => (ev) => {
+  const clickPrev = useCallback(
+    AsyncHandler(async () => {
+      if (hasPrevSong) {
+        await MaybePlayPrev(store);
+      }
+    }),
+    [store],
+  );
+  const clickNext: MouseEventHandler<HTMLSpanElement> = useCallback(
+    AsyncHandler(async (ev) => {
       if (hasNextSong) {
-        MaybePlayNext(
-          xact,
+        await MaybePlayNext(
+          store,
           ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey,
         );
       }
-    },
+    }),
+    [store],
   );
   return (
     <span id="control-container">
