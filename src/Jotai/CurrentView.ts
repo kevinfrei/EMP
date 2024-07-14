@@ -1,13 +1,13 @@
 // The currently selected item from the left bar
 
-import { CurrentView, isCurrentView } from '@freik/emp-shared';
+import { CurrentView, CurrentViewEnum, isCurrentView } from '@freik/emp-shared';
 import { atom } from 'jotai';
 import { isMiniplayerState } from './Local';
 import { atomWithMainStorage } from './Storage';
 
 // The currently selected item from the left bar
 // artist, album, search, tools, settings, etc...
-const curViewBackerState = atomWithMainStorage<CurrentView>(
+const curViewBackerState = atomWithMainStorage<CurrentViewEnum>(
   'CurrentView',
   CurrentView.settings,
   isCurrentView,
@@ -17,5 +17,5 @@ const curViewBackerState = atomWithMainStorage<CurrentView>(
 export const curViewFunc = atom(
   (get) =>
     get(isMiniplayerState) ? CurrentView.now_playing : get(curViewBackerState),
-  (_get, set, newVal: CurrentView) => set(curViewBackerState, newVal),
+  (_get, set, newVal: CurrentViewEnum) => set(curViewBackerState, newVal),
 );

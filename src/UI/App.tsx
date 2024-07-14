@@ -1,6 +1,6 @@
 import { IconButton, SpinnerSize } from '@fluentui/react';
 import { ElectronWireUp, Ipc } from '@freik/electron-render';
-import { IpcId } from '@freik/emp-shared';
+import { IpcId, IpcIdEnum } from '@freik/emp-shared';
 import { Spinner } from '@freik/web-utils';
 import { Provider, useAtomValue } from 'jotai';
 import { useRef, useState } from 'react';
@@ -30,7 +30,9 @@ function WindowChrome(): JSX.Element {
     // 'CheckBox' 'SingleColumn' 'GridViewLarge' all look okay
     const resMaxTitle = isMax ? 'restore' : 'maximize';
     const resMaxName = isMax ? 'ChromeRestore' : 'GridViewLarge';
-    const resMaxId: IpcId = isMax ? IpcId.RestoreWindow : IpcId.MaximizeWindow;
+    const resMaxId: IpcIdEnum = isMax
+      ? IpcId.RestoreWindow
+      : IpcId.MaximizeWindow;
     const ic = (iconName: string) => ({ iconName, style: { fontSize: 10 } });
     return (
       <span id="window-chrome">

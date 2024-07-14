@@ -1,7 +1,7 @@
 import {
   IpcId,
   TranscodeInfo,
-  TranscodeSourceType,
+  TranscodeSource,
   TranscodeState,
 } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
@@ -44,23 +44,22 @@ function reQuote(str: string): { [key: string]: string } {
   return JSON.parse(res) as { [key: string]: string };
 }
 
-/// vvvv Hurray for a Typescript compiler bug
-
-enum XcodeResCode {
-  alreadyExists,
-  mediaInfoFailure,
-  encodeFailure,
-  unknownError,
-  alreadyLowBitRate,
-  success,
-}
+const XcodeResCode = Object.freeze({
+  alreadyExists: 0,
+  mediaInfoFailure: 1,
+  encodeFailure: 2,
+  unknownError: 3,
+  alreadyLowBitRate: 4,
+  success: 5,
+} as const);
+type XcodeResCodeEnum = (typeof XcodeResCode)[keyof typeof XcodeResCode];
 
 type TranscodeResult = {
-  code: XcodeResCode;
+  code: XcodeResCodeEnum;
   message: string;
 };
 
-const tr = (code: XcodeResCode, message: string) => ({ code, message });
+const tr = (code: XcodeResCodeEnum, message: string) => ({ code, message });
 let bitrate = 163840;
 
 export async function toMp4Async(
@@ -246,7 +245,7 @@ async function getFullSongPathFromSettings(
   settings: TranscodeInfo,
   file: string,
 ): Promise<[string, string] | void> {
-  if (settings.source.type === TranscodeSourceType.Disk) {
+  if (settings.source.type === TranscodeSource.Disk) {
     const srcdir = settings.source.loc;
     if (!path.normalize(file).startsWith(srcdir)) {
       reportFailure(file, `${file} doesn't match ${srcdir}`);
@@ -505,13 +504,13 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
   startStatusReporting();
   try {
     const workQueue: string[] = [];
-    if (settings.source.type === TranscodeSourceType.Disk) {
+    if (settings.source.type === TranscodeSource.Disk) {
       await ScanSourceFromDisk(settings, workQueue);
     } else {
       // TODO: Handle artwork for this stuff
       const db = await GetAudioDB();
       switch (settings.source.type) {
-        case TranscodeSourceType.Album: {
+        case TranscodeSource.Album: {
           const album = db.getAlbum(settings.source.loc);
           if (album) {
             workQueue.push(...album.songs);
@@ -519,7 +518,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           // TODO: Report no such album
           break;
         }
-        case TranscodeSourceType.Artist: {
+        case TranscodeSource.Artist: {
           const artist = db.getArtist(settings.source.loc);
           if (artist) {
             workQueue.push(...artist.songs);
@@ -527,7 +526,7 @@ export async function startTranscode(settings: TranscodeInfo): Promise<void> {
           // TODO: Report no such album
           break;
         }
-        case TranscodeSourceType.Playlist:
+        case TranscodeSource.Playlist:
           workQueue.push(...(await LoadPlaylist(settings.source.loc)));
           break;
       }

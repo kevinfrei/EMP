@@ -1,4 +1,4 @@
-import { CurrentView } from '@freik/emp-shared';
+import { CurrentView, CurrentViewEnum } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
@@ -98,7 +98,7 @@ export function MenuHandler(
         break;
       case 'view':
         if (hasStrField(message, 'select')) {
-          let theView: CurrentView = CurrentView.none;
+          let theView: CurrentViewEnum = CurrentView.none;
           switch (message.select) {
             case 'NowPlaying':
               theView = CurrentView.now_playing;

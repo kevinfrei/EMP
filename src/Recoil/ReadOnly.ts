@@ -1,6 +1,6 @@
 import { FlatAudioDatabase } from '@freik/audiodb';
 import { Effects, Ipc } from '@freik/electron-render';
-import { IgnoreItem, IpcId, isIgnoreItemArrayFn } from '@freik/emp-shared';
+import { IgnoreItem, IpcId, isIgnoreItemArray } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import {
   Album,
@@ -499,13 +499,13 @@ export const ignoreItemsState = atom<IgnoreItem[]>({
         const il = await Ipc.CallMain(
           IpcId.GetIgnoreList,
           undefined,
-          isIgnoreItemArrayFn,
+          isIgnoreItemArray,
         );
         return il || [];
       },
       IpcId.PushIgnoreList,
       (il: unknown) => {
-        if (isIgnoreItemArrayFn(il)) {
+        if (isIgnoreItemArray(il)) {
           return il;
         }
         wrn('Invalid result from ignore-items-update:');
