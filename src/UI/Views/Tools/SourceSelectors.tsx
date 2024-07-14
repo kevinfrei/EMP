@@ -2,7 +2,10 @@ import { ComboBox, IComboBox, IComboBoxOption } from '@fluentui/react';
 import { AlbumKey, Artist, ArtistKey, PlaylistName } from '@freik/media-core';
 import { isDefined, isString } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
-import { RecoilState, useRecoilValue } from 'recoil';
+import { useAtom, useAtomValue } from 'jotai';
+import { useRecoilValue } from 'recoil';
+import { useJotaiCallback } from '../../../Jotai/Helpers';
+import { WritableAtomType } from '../../../Jotai/Hooks';
 import { AlbumDescriptionWithKey } from '../../../MusicLibrarySchema';
 import { playlistNamesFunc } from '../../../Recoil/PlaylistsState';
 import {
@@ -15,25 +18,27 @@ import {
 export function PlaylistSelector({
   value,
 }: {
-  value: RecoilState<PlaylistName>;
+  value: WritableAtomType<PlaylistName>;
 }): JSX.Element {
-  const get = useRecoilValue(value);
+  const get = useAtomValue(value);
   const playlists = useRecoilValue(playlistNamesFunc);
   const theList: IComboBoxOption[] = [...playlists]
     .sort()
     .map((name) => ({ key: name, text: name }));
-  const onChange = useMyTransaction(
-    ({ set }) =>
-      (
-        event: React.FormEvent<IComboBox>,
-        option?: IComboBoxOption,
-        index?: number,
-        val?: string,
-      ): void => {
-        if (isDefined(option) && isString(val) && playlists.has(val)) {
-          set(value, val);
-        }
-      },
+  const onChange = useJotaiCallback(
+    (
+      get,
+      set,
+      event: React.FormEvent<IComboBox>,
+      option?: IComboBoxOption,
+      index?: number,
+      val?: string,
+    ): void => {
+      if (isDefined(option) && isString(val) && playlists.has(val)) {
+        set(value, val);
+      }
+    },
+    [value],
   );
   return (
     <ComboBox
@@ -49,16 +54,16 @@ export function PlaylistSelector({
 export function ArtistSelector({
   value,
 }: {
-  value: RecoilState<ArtistKey>;
+  value: WritableAtomType<ArtistKey>;
 }): JSX.Element {
-  const selArtistKey = useRecoilValue(value);
+  const [selArtistKey, setSelArtistKey] = useAtom(value);
   const artists = useRecoilValue(filteredArtistsFunc);
   const theList: IComboBoxOption[] = artists.map((r: Artist) => ({
     key: r.key,
     text: r.name,
   }));
   const onChange = useMyTransaction(
-    ({ get, set }) =>
+    ({ get }) =>
       (
         event: React.FormEvent<IComboBox>,
         option?: IComboBoxOption,
@@ -69,7 +74,7 @@ export function ArtistSelector({
           try {
             const art = get(artistByKeyFuncFam(option.key));
             if (art.key === option.key) {
-              set(value, art.key);
+              setSelArtistKey(art.key);
             }
           } catch {
             /* */
@@ -91,9 +96,9 @@ export function ArtistSelector({
 export function AlbumSelector({
   value,
 }: {
-  value: RecoilState<AlbumKey>;
+  value: WritableAtomType<AlbumKey>;
 }): JSX.Element {
-  const selAlbumKey = useRecoilValue(value);
+  const [selAlbumKey, setSelArtistKey] = useAtom(value);
   const albums = useRecoilValue(allAlbumsDataFunc);
   const theList: IComboBoxOption[] = albums.map(
     (r: AlbumDescriptionWithKey) => ({
@@ -104,7 +109,7 @@ export function AlbumSelector({
     }),
   );
   const onChange = useMyTransaction(
-    ({ get, set }) =>
+    ({ get }) =>
       (
         event: React.FormEvent<IComboBox>,
         option?: IComboBoxOption,
@@ -115,7 +120,7 @@ export function AlbumSelector({
           try {
             const alb = get(albumByKeyFuncFam(option.key));
             if (alb.key === option.key) {
-              set(value, alb.key);
+              setSelArtistKey(alb.key);
             }
           } catch {
             /* */
