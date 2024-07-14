@@ -22,9 +22,9 @@ import {
   playingState,
 } from '../Jotai/MediaPlaying';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
+import { SongDescription } from '../MusicLibrarySchema';
 import { repeatState } from '../Recoil/PlaybackOrder';
 import {
-  SongDescription,
   albumKeyForSongKeyFuncFam,
   allSongsFunc,
   dataForSongFuncFam,
