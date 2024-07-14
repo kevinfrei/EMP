@@ -1,4 +1,10 @@
 import { Effects } from '@freik/electron-render';
+import {
+  IpcId,
+  TranscodeSource,
+  TranscodeSourceEnum,
+  TranscodeState,
+} from '@freik/emp-shared';
 import { AlbumKey, ArtistKey, PlaylistName } from '@freik/media-core';
 import {
   chkArrayOf,
@@ -8,7 +14,6 @@ import {
   isString,
 } from '@freik/typechk';
 import { atom, selector, selectorFamily } from 'recoil';
-import { IpcId, TranscodeSourceType, TranscodeState } from '@freik/emp-shared';
 import { allPlaylistsFunc } from './PlaylistsState';
 import { allAlbumsFunc, allArtistsFunc } from './ReadOnly';
 
@@ -62,9 +67,9 @@ export const transcodeStatusState = atom<TranscodeState>({
   ],
 });
 
-export const sourceLocationTypeState = atom<TranscodeSourceType>({
+export const sourceLocationTypeState = atom<TranscodeSourceEnum>({
   key: 'xcodeSrcLocType',
-  default: TranscodeSourceType.Playlist,
+  default: TranscodeSource.Playlist,
 });
 
 export const sourceLocationDirState = atom<string>({
@@ -123,20 +128,20 @@ export const validSourceFunc = selector<boolean>({
   get: ({ get }) => {
     const sel = get(sourceLocationTypeState);
     switch (sel) {
-      case TranscodeSourceType.Playlist:
+      case TranscodeSource.Playlist:
         return get(validPlaylist(get(sourceLocationPlaylistState)));
-      case TranscodeSourceType.Artist:
+      case TranscodeSource.Artist:
         return get(validArtist(get(sourceLocationArtistState)));
-      case TranscodeSourceType.Album:
+      case TranscodeSource.Album:
         return get(validAlbum(get(sourceLocationAlbumState)));
-      case TranscodeSourceType.Disk:
+      case TranscodeSource.Disk:
         return get(sourceLocationDirState).length > 0;
     }
   },
 });
 
 export const sourceLocationDescriptorFunc = selector<{
-  type: TranscodeSourceType;
+  type: TranscodeSourceEnum;
   loc: string;
 }>({
   key: 'xcodeSourceLocDescr',
@@ -144,16 +149,16 @@ export const sourceLocationDescriptorFunc = selector<{
     let loc: string;
     const type = get(sourceLocationTypeState);
     switch (type) {
-      case TranscodeSourceType.Playlist:
+      case TranscodeSource.Playlist:
         loc = get(sourceLocationPlaylistState);
         break;
-      case TranscodeSourceType.Artist:
+      case TranscodeSource.Artist:
         loc = get(sourceLocationArtistState);
         break;
-      case TranscodeSourceType.Album:
+      case TranscodeSource.Album:
         loc = get(sourceLocationAlbumState);
         break;
-      case TranscodeSourceType.Disk:
+      case TranscodeSource.Disk:
         loc = get(sourceLocationDirState);
         break;
     }

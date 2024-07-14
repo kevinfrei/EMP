@@ -7,11 +7,7 @@ import {
   TextField,
 } from '@fluentui/react';
 import { Ipc, Util } from '@freik/electron-render';
-import {
-  IpcId,
-  TranscodeSourceType,
-  isTranscodeSourceType,
-} from '@freik/emp-shared';
+import { IpcId, TranscodeSource, isTranscodeSource } from '@freik/emp-shared';
 import { isArrayOfString, isDefined } from '@freik/typechk';
 import { StateToggle, useBoolState } from '@freik/web-utils';
 import { useState } from 'react';
@@ -50,10 +46,10 @@ const targetFormats: IDropdownOption[] = [
 */
 
 const sourceOptions: IComboBoxOption[] = [
-  { key: TranscodeSourceType.Playlist, text: 'Playlist' },
-  { key: TranscodeSourceType.Artist, text: 'Artist' },
-  { key: TranscodeSourceType.Album, text: 'Album' },
-  { key: TranscodeSourceType.Disk, text: 'Disk location' },
+  { key: TranscodeSource.Playlist, text: 'Playlist' },
+  { key: TranscodeSource.Artist, text: 'Artist' },
+  { key: TranscodeSource.Album, text: 'Album' },
+  { key: TranscodeSource.Disk, text: 'Disk location' },
 ];
 
 const getDir = (
@@ -94,7 +90,7 @@ export function TranscoderConfiguration(): JSX.Element {
     event: React.FormEvent<HTMLDivElement>,
     option?: IDropdownOption,
   ): void => {
-    if (isDefined(option) && isTranscodeSourceType(option.key)) {
+    if (isDefined(option) && isTranscodeSource(option.key)) {
       setSrcLocType(option.key);
     }
   };
@@ -102,18 +98,18 @@ export function TranscoderConfiguration(): JSX.Element {
   // TODO: Create the element for the transcode source type (and populated it, if appropriate)
   let xcodeSrcLocElem;
   switch (srcLocType) {
-    case TranscodeSourceType.Playlist:
+    case TranscodeSource.Playlist:
       xcodeSrcLocElem = (
         <PlaylistSelector value={sourceLocationPlaylistState} />
       );
       break;
-    case TranscodeSourceType.Artist:
+    case TranscodeSource.Artist:
       xcodeSrcLocElem = <ArtistSelector value={sourceLocationArtistState} />;
       break;
-    case TranscodeSourceType.Album:
+    case TranscodeSource.Album:
       xcodeSrcLocElem = <AlbumSelector value={sourceLocationAlbumState} />;
       break;
-    case TranscodeSourceType.Disk:
+    case TranscodeSource.Disk:
     default:
       xcodeSrcLocElem = (
         <TextField

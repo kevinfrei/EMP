@@ -150,23 +150,25 @@ export enum TranscodeFormatTargets {
 }
 export type TranscodeFormatTargetNames = 'm4a' | 'mp3' | 'aac';
 
-export enum TranscodeSourceType {
-  Playlist = 'p',
-  Artist = 'r',
-  Album = 'l',
-  Disk = 'd',
-}
-export function isTranscodeSourceType(v: unknown): v is TranscodeSourceType {
-  return v === 'p' || v === 'r' || v === 'l' || v === 'd';
+export const TranscodeSource = {
+  Playlist: 'p',
+  Artist: 'r',
+  Album: 'l',
+  Disk: 'd',
+} as const;
+export type TranscodeSourceEnum =
+  (typeof TranscodeSource)[keyof typeof TranscodeSource];
+export function isTranscodeSource(v: unknown): v is TranscodeSourceEnum {
+  return Object.values(TranscodeSource).includes(v as TranscodeSourceEnum);
 }
 
 export type TranscodeSourceLocation = {
-  type: TranscodeSourceType;
+  type: TranscodeSourceEnum;
   loc: string;
 };
 
 export const isXcodeSrcLoc = chkObjectOfType<TranscodeSourceLocation>({
-  type: isTranscodeSourceType,
+  type: isTranscodeSource,
   loc: isString,
 });
 
@@ -181,7 +183,7 @@ export type TranscodeState = {
 };
 
 export type TranscodeInfo = {
-  source: { type: TranscodeSourceType; loc: string };
+  source: { type: TranscodeSourceEnum; loc: string };
   dest: string;
   artwork: boolean;
   mirror: boolean;
