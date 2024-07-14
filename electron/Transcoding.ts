@@ -44,23 +44,22 @@ function reQuote(str: string): { [key: string]: string } {
   return JSON.parse(res) as { [key: string]: string };
 }
 
-/// vvvv Hurray for a Typescript compiler bug
-
-enum XcodeResCode {
-  alreadyExists,
-  mediaInfoFailure,
-  encodeFailure,
-  unknownError,
-  alreadyLowBitRate,
-  success,
-}
+const XcodeResCode = Object.freeze({
+  alreadyExists: 0,
+  mediaInfoFailure: 1,
+  encodeFailure: 2,
+  unknownError: 3,
+  alreadyLowBitRate: 4,
+  success: 5,
+} as const);
+type XcodeResCodeEnum = (typeof XcodeResCode)[keyof typeof XcodeResCode];
 
 type TranscodeResult = {
-  code: XcodeResCode;
+  code: XcodeResCodeEnum;
   message: string;
 };
 
-const tr = (code: XcodeResCode, message: string) => ({ code, message });
+const tr = (code: XcodeResCodeEnum, message: string) => ({ code, message });
 let bitrate = 163840;
 
 export async function toMp4Async(

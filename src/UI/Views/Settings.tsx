@@ -10,7 +10,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { Ipc, Util } from '@freik/electron-render';
-import { IgnoreItemType, IpcId, Keys, st, StrId } from '@freik/emp-shared';
+import { IgnoreItemTypeEnum, IpcId, Keys, st, StrId } from '@freik/emp-shared';
 import { isDefined } from '@freik/typechk';
 import {
   Catch,
@@ -152,7 +152,7 @@ function MusicLocations(): JSX.Element {
   );
 }
 
-const ignoreTypeNameMap = new Map<IgnoreItemType, string>([
+const ignoreTypeNameMap = new Map<IgnoreItemTypeEnum, string>([
   ['path-root', 'Root Path'],
   ['dir-name', 'Directory Name'],
   ['path-keyword', 'Keyword'],
@@ -164,7 +164,7 @@ const ignoreOptions: IDropdownOption[] = [...ignoreTypeNameMap.entries()].map(
 
 function IgnoreList(): JSX.Element {
   const ignoreItems = useRecoilValue(ignoreItemsState);
-  const [newType, setNewType] = useState<IgnoreItemType | ''>('');
+  const [newType, setNewType] = useState<IgnoreItemTypeEnum | ''>('');
   const [newValue, setNewValue] = useState<string>('');
   return (
     <div id="ignore-list">
@@ -191,7 +191,7 @@ function IgnoreList(): JSX.Element {
           selectedKey={newType}
           onChange={(ev: unknown, option?: IDropdownOption) => {
             if (isDefined(option) && option.key !== '') {
-              setNewType(option.key as IgnoreItemType);
+              setNewType(option.key as IgnoreItemTypeEnum);
             }
           }}
           options={ignoreOptions}

@@ -1,4 +1,4 @@
-import { Keys } from '@freik/emp-shared';
+import { Keys, KeysEnum } from '@freik/emp-shared';
 
 const HostOs: 'mac' | 'windows' | 'linux' = (() => {
   const ua = window.navigator.userAgent;
@@ -13,7 +13,7 @@ const HostOs: 'mac' | 'windows' | 'linux' = (() => {
 
 const accPrefix = HostOs === 'mac' ? '⌘' : 'Ctrl';
 
-export function GetHelperText(key: Keys) {
+export function GetHelperText(key: KeysEnum) {
   if (key.length === 1) {
     return `${accPrefix}-${key}`;
   }

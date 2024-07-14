@@ -1,6 +1,6 @@
 import { IsOnlyMetadata } from '@freik/audiodb';
 import { Comms, Shell } from '@freik/electron-main';
-import { IpcId, isIgnoreItemFn, isXcodeInfo } from '@freik/emp-shared';
+import { IpcId, isIgnoreItem, isXcodeInfo } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { MediaKey } from '@freik/media-core';
 import {
@@ -184,10 +184,6 @@ export function CommsSetup(): void {
 
   // Ignore list stuff:
   Comms.registerChannel(IpcId.GetIgnoreList, GetIgnoreList, isVoid);
-  Comms.registerChannel(IpcId.AddIgnoreItem, AddIgnoreItem, isIgnoreItemFn);
-  Comms.registerChannel(
-    IpcId.RemoveIgnoreItem,
-    RemoveIgnoreItem,
-    isIgnoreItemFn,
-  );
+  Comms.registerChannel(IpcId.AddIgnoreItem, AddIgnoreItem, isIgnoreItem);
+  Comms.registerChannel(IpcId.RemoveIgnoreItem, RemoveIgnoreItem, isIgnoreItem);
 }

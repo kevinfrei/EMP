@@ -3,7 +3,9 @@ import {
   CurrentView,
   CurrentViewEnum,
   Keys,
+  KeysEnum,
   StrId,
+  StrIdEnum,
   st,
 } from '@freik/emp-shared';
 import { hasStrField, isObjectNonNull } from '@freik/typechk';
@@ -16,8 +18,16 @@ import { GetHelperText } from './MenuHelpers';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
 
-type ViewEntry = { name: CurrentViewEnum; title: StrId; accelerator: Keys };
-const mkEntry = (name: CurrentViewEnum, title: StrId, accelerator: Keys) => ({
+type ViewEntry = {
+  name: CurrentViewEnum;
+  title: StrIdEnum;
+  accelerator: KeysEnum;
+};
+const mkEntry = (
+  name: CurrentViewEnum,
+  title: StrIdEnum,
+  accelerator: KeysEnum,
+) => ({
   name,
   title,
   accelerator,
