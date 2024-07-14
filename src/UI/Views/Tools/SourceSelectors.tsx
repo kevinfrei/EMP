@@ -3,9 +3,9 @@ import { AlbumKey, Artist, ArtistKey, PlaylistName } from '@freik/media-core';
 import { isDefined, isString } from '@freik/typechk';
 import { useMyTransaction } from '@freik/web-utils';
 import { RecoilState, useRecoilValue } from 'recoil';
+import { AlbumDescriptionWithKey } from '../../../MusicLibrarySchema';
 import { playlistNamesFunc } from '../../../Recoil/PlaylistsState';
 import {
-  AlbumDescriptionWithKey,
   albumByKeyFuncFam,
   allAlbumsDataFunc,
   artistByKeyFuncFam,
