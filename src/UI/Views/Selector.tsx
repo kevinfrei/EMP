@@ -1,4 +1,4 @@
-import { CurrentView } from '@freik/emp-shared';
+import { CurrentView, CurrentViewEnum } from '@freik/emp-shared';
 import { useAtomValue } from 'jotai';
 import { CSSProperties, useState } from 'react';
 import { curViewFunc } from '../../Jotai/CurrentView';
@@ -13,20 +13,20 @@ import { SettingsView } from './Settings';
 import { ToolsView } from './Tools';
 import './styles/Selector.css';
 
-function ignore(view: CurrentView): boolean {
+function ignore(view: CurrentViewEnum): boolean {
   return view === CurrentView.settings || view === CurrentView.tools;
 }
 
 export function ViewSelector(): JSX.Element {
   const which = useAtomValue(curViewFunc);
-  const [rendered, setRendered] = useState(new Set<CurrentView>([which]));
+  const [rendered, setRendered] = useState(new Set<CurrentViewEnum>([which]));
   // Let's see if I can speed this up a bit by not trying to render everything
   // the first time
-  const sl = (v: CurrentView): CSSProperties =>
+  const sl = (v: CurrentViewEnum): CSSProperties =>
     which === v ? {} : { visibility: 'hidden' };
-  const contents: [CurrentView, JSX.Element][] = [];
+  const contents: [CurrentViewEnum, JSX.Element][] = [];
   if (!rendered.has(which) && !ignore(which)) {
-    const newrendered = new Set<CurrentView>([which, ...rendered]);
+    const newrendered = new Set<CurrentViewEnum>([which, ...rendered]);
     setRendered(newrendered);
     // We still need to do a full render, because otherwise elements get
     // deleted and recreated, and that's probably bad, right?

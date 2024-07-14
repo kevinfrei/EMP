@@ -1,11 +1,40 @@
 import {
   chkArrayOf,
   chkObjectOfType,
+  isArray,
   isBoolean,
   isNumber,
   isString,
   typecheck,
 } from '@freik/typechk';
+
+/**
+ * Type check to validate that obj is a valid constant allowed in
+ * the Typescript 'string constant' type provided
+ * @param {unknown} obj
+ * @returns {obj_is<T>}
+ */
+export function chkValidConst<T>(
+  typearray: readonly T[] | Set<T>,
+): typecheck<T> {
+  return (obj: unknown): obj is T =>
+    isArray(typearray)
+      ? typearray.includes(obj as unknown as T)
+      : (typearray as Set<T>).has(obj as unknown as T);
+}
+
+/**
+ * Type check to validate that obj is a valid constant allowed in
+ * the Typescript 'string constant' type provided
+ * @param {unknown} obj
+ * @returns {obj_is<T>}
+ */
+export function isValidConst<T>(
+  typearray: readonly T[] | Set<T>,
+  obj: unknown,
+): obj is T {
+  return chkValidConst(typearray)(obj);
+}
 
 export enum IpcId {
   ClearHates = 'clear-hates',
@@ -121,46 +150,52 @@ export function st(id: StrId): string {
   return id;
 }
 
-export enum CurrentView {
-  disabled = -1,
-  none = 0,
-  recent = 1,
-  albums = 2,
-  artists = 3,
-  songs = 4,
-  playlists = 5,
-  now_playing = 6,
-  settings = 7,
-  search = 8,
-  tools = 9,
-}
-
-export const isCurrentView: typecheck<CurrentView> = (
+export const CurrentView = Object.freeze({
+  disabled: -1,
+  none: 0,
+  recent: 1,
+  albums: 2,
+  artists: 3,
+  songs: 4,
+  playlists: 5,
+  now_playing: 6,
+  settings: 7,
+  search: 8,
+  tools: 9,
+} as const);
+export type CurrentViewEnum = (typeof CurrentView)[keyof typeof CurrentView];
+export const isCurrentView: typecheck<CurrentViewEnum> = (
   val: unknown,
-): val is CurrentView =>
+): val is CurrentViewEnum =>
   isNumber(val) &&
   Number.isInteger(val) &&
   val >= CurrentView.disabled &&
   val <= CurrentView.tools;
 
-export enum TranscodeFormatTargets {
-  m4a = 'm4a',
-  mp3 = 'mp3',
-  aac = 'aac',
-}
-export type TranscodeFormatTargetNames = 'm4a' | 'mp3' | 'aac';
+export const TranscodeFormatTargetName = Object.freeze({
+  m4a: 'm4a',
+  mp3: 'mp3',
+  aac: 'aac',
+} as const);
+export type TranscodeFormatTargetNameEnum =
+  (typeof TranscodeFormatTargetName)[keyof typeof TranscodeFormatTargetName];
+const TranscodeFormatTargetNameEnumValues: readonly TranscodeFormatTargetNameEnum[] =
+  Object.values(TranscodeFormatTargetName);
+export const isTranscodeFormatTargetName = chkValidConst(
+  TranscodeFormatTargetNameEnumValues,
+);
 
-export const TranscodeSource = {
+export const TranscodeSource = Object.freeze({
   Playlist: 'p',
   Artist: 'r',
   Album: 'l',
   Disk: 'd',
-} as const;
+} as const);
 export type TranscodeSourceEnum =
   (typeof TranscodeSource)[keyof typeof TranscodeSource];
-export function isTranscodeSource(v: unknown): v is TranscodeSourceEnum {
-  return Object.values(TranscodeSource).includes(v as TranscodeSourceEnum);
-}
+const TranscodeSourceEnumValues: readonly TranscodeSourceEnum[] =
+  Object.values(TranscodeSource);
+export const isTranscodeSource = chkValidConst(TranscodeSourceEnumValues);
 
 export type TranscodeSourceLocation = {
   type: TranscodeSourceEnum;
@@ -187,7 +222,7 @@ export type TranscodeInfo = {
   dest: string;
   artwork: boolean;
   mirror: boolean;
-  format: TranscodeFormatTargetNames;
+  format: TranscodeFormatTargetNameEnum;
   bitrate: number;
 };
 
@@ -196,9 +231,7 @@ export const isXcodeInfo = chkObjectOfType<TranscodeInfo>({
   dest: isString,
   artwork: isBoolean,
   mirror: isBoolean,
-  format: (o: unknown): o is TranscodeFormatTargetNames => {
-    return o === 'm4a' || o === 'mp3' || o === 'aac';
-  },
+  format: isTranscodeFormatTargetName,
   bitrate: isNumber,
 });
 

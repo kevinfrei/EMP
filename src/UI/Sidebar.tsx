@@ -1,5 +1,11 @@
 import { FontIcon, SearchBox, Text } from '@fluentui/react';
-import { CurrentView, Keys, StrId, st } from '@freik/emp-shared';
+import {
+  CurrentView,
+  CurrentViewEnum,
+  Keys,
+  StrId,
+  st,
+} from '@freik/emp-shared';
 import { hasStrField, isObjectNonNull } from '@freik/typechk';
 import { useAtom } from 'jotai';
 import { useRecoilCallback } from 'recoil';
@@ -10,8 +16,8 @@ import { GetHelperText } from './MenuHelpers';
 import { Notifier } from './Notifier';
 import './styles/Sidebar.css';
 
-type ViewEntry = { name: CurrentView; title: StrId; accelerator: Keys };
-const mkEntry = (name: CurrentView, title: StrId, accelerator: Keys) => ({
+type ViewEntry = { name: CurrentViewEnum; title: StrId; accelerator: Keys };
+const mkEntry = (name: CurrentViewEnum, title: StrId, accelerator: Keys) => ({
   name,
   title,
   accelerator,
@@ -31,8 +37,8 @@ const views: (ViewEntry | null)[] = [
 ];
 
 function getEntry(
-  curView: CurrentView,
-  setCurView: (newView: CurrentView) => Promise<void>,
+  curView: CurrentViewEnum,
+  setCurView: (newView: CurrentViewEnum) => Promise<void>,
   view: ViewEntry | null,
   index: number,
 ) {
