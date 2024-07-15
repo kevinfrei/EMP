@@ -5,10 +5,13 @@ import {
   ScrollbarVisibility,
   SelectionMode,
 } from '@fluentui/react';
+import { MakeLog } from '@freik/logger';
 import { Song, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
-import { useAtomValue, useStore } from 'jotai';
+import { useAtomValue } from 'jotai';
+import { useCallback } from 'react';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
+import { AddSongs } from '../../Jotai/API';
 import { useJotaiCallback } from '../../Jotai/Helpers';
 import {
   isSongHatedFam,
@@ -36,9 +39,6 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
-import { MakeLog } from '@freik/logger';
-import { useCallback } from 'react';
-import { AddSongs } from '../../Jotai/API';
 import './styles/MixedSongs.css';
 
 const { wrn } = MakeLog('EMP:render:MixedSongs');
@@ -98,11 +98,10 @@ export function LikeOrHate(song: Song): JSX.Element {
 }
 
 export function MixedSongsList(): JSX.Element {
-  const theStore = useStore();
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
   const onAddSongClick = useCallback(
-    (item: Song) => AddSongs(theStore, [item.key]).catch(wrn),
+    (item: Song) => AddSongs([item.key]).catch(wrn),
     [],
   );
   const [songContext, setSongContext] = useRecoilState(songContextState);

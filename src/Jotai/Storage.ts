@@ -14,9 +14,10 @@ import { WritableAtomType } from './Hooks';
 const theStore = createStore();
 
 export type MyStore = typeof theStore;
+export type MaybeStore = MyStore | undefined;
 
-export function getStore(): MyStore {
-  return theStore;
+export function getStore(curStore?: MaybeStore): MyStore {
+  return curStore || theStore;
 }
 
 // This is the simple "sync with main" storage provider for Jotai

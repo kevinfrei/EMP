@@ -7,7 +7,7 @@ import { MaybePlayNext, MaybePlayPrev } from '../Jotai/API';
 import { curViewFunc } from '../Jotai/CurrentView';
 import { mediaTimePercentFunc, mediaTimeState } from '../Jotai/MediaPlaying';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
-import { MyStore, getStore } from '../Jotai/Storage';
+import { getStore, MaybeStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
 import { repeatState } from '../Recoil/PlaybackOrder';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
@@ -19,7 +19,8 @@ import { addLocation } from './Views/Settings';
 const { wrn, log } = MakeLog('EMP:render:MenuHandler');
 // log.enabled = true;
 
-function updateTime(store: MyStore, offset: number) {
+function updateTime(offset: number, mstore?: MaybeStore) {
+  const store = getStore(mstore);
   const curTime = store.get(mediaTimeState);
   const position = Math.min(
     curTime.duration,
@@ -37,7 +38,6 @@ export function MenuHandler(
   message: unknown,
   audioRef: ForwardedRef<HTMLAudioElement>,
 ): void {
-  const store = getStore();
   wrn('Menu command:', message);
   log('Menu command:', message);
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
@@ -66,36 +66,42 @@ export function MenuHandler(
 
       // Playback control:
       case 'playback':
-        onClickPlayPause(store, audioRef);
+        onClickPlayPause(audioRef);
         break;
       case 'nextTrack':
-        MaybePlayNext(store).catch(wrn);
+        MaybePlayNext().catch(wrn);
         break;
       case 'prevTrack':
-        MaybePlayPrev(store).catch(wrn);
+        MaybePlayPrev().catch(wrn);
         break;
 
       // Time control
       case 'fwd':
-        updateTime(store, 10);
+        updateTime(10);
         break;
       case 'back':
-        updateTime(store, -10);
+        updateTime(-10);
         break;
 
-      case 'mute':
-        void store.set(mutedState, async (cur) => !(await cur));
+      case 'mute': {
+        const store = getStore();
+        store.set(mutedState, async (cur) => !(await cur)).catch(wrn);
         break;
-      case 'louder':
-        void store.set(volumeState, async (val) =>
-          Math.min(1.0, (await val) + 0.1),
-        );
+      }
+      case 'louder': {
+        const store = getStore();
+        store
+          .set(volumeState, async (val) => Math.min(1.0, (await val) + 0.1))
+          .catch(wrn);
         break;
-      case 'quieter':
-        void store.set(volumeState, async (val) =>
-          Math.max(0, (await val) - 0.1),
-        );
+      }
+      case 'quieter': {
+        const store = getStore();
+        store
+          .set(volumeState, async (val) => Math.max(0, (await val) - 0.1))
+          .catch(wrn);
         break;
+      }
       case 'view':
         if (hasStrField(message, 'select')) {
           let theView: CurrentViewEnum = CurrentView.none;
@@ -126,7 +132,8 @@ export function MenuHandler(
               break;
           }
           if (theView !== CurrentView.none) {
-            void store.set(curViewFunc, theView);
+            const store = getStore();
+            store.set(curViewFunc, theView).catch(wrn);
           }
         } else {
           wrn('Invalid view menu message:');

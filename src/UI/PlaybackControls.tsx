@@ -1,7 +1,7 @@
 import { Keys } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
 import { onRejected } from '@freik/web-utils';
-import { useAtom, useAtomValue, useStore } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import { ForwardedRef, MouseEventHandler, useCallback } from 'react';
 import { MaybePlayNext, MaybePlayPrev } from '../Jotai/API';
 import { playingState } from '../Jotai/MediaPlaying';
@@ -12,7 +12,7 @@ import {
   repeatState,
   shuffleState,
 } from '../Jotai/SongPlayback';
-import { MyStore } from '../Jotai/Storage';
+import { getStore, MaybeStore } from '../Jotai/Storage';
 import { isMutableRefObject } from '../Tools';
 import { GetHelperText } from './MenuHelpers';
 import './styles/PlaybackControls.css';
@@ -20,13 +20,14 @@ import './styles/PlaybackControls.css';
 const { log, wrn } = MakeLog('EMP:render:SongControls');
 
 export function onClickPlayPause(
-  store: MyStore,
   audioRef: ForwardedRef<HTMLAudioElement>,
+  mstore?: MaybeStore,
 ): void {
   if (!isMutableRefObject<HTMLAudioElement>(audioRef)) {
     wrn('Clicking but no audio element');
     return;
   }
+  const store = getStore(mstore);
   store.set(playingState, (isPlaying) => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -70,25 +71,20 @@ export function PlaybackControls({
 
   const clickShuffle = useCallback(() => shufSet(!shuf), [shuf]);
   const clickRepeat = useCallback(() => repSet(!rep), [rep]);
-  const store = useStore();
-  const clickPlayPause = () => onClickPlayPause(store, audioRef);
+  const clickPlayPause = () => onClickPlayPause(audioRef);
 
   const clickPrev = useCallback(() => {
     if (hasPrevSong) {
-      MaybePlayPrev(store).catch(wrn);
+      MaybePlayPrev().catch(wrn);
     }
-  }, [store]);
-  const clickNext: MouseEventHandler<HTMLSpanElement> = useCallback(
-    (ev) => {
-      if (hasNextSong) {
-        MaybePlayNext(
-          store,
-          ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey,
-        ).catch(wrn);
-      }
-    },
-    [store],
-  );
+  }, []);
+  const clickNext: MouseEventHandler<HTMLSpanElement> = useCallback((ev) => {
+    if (hasNextSong) {
+      MaybePlayNext(ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey).catch(
+        wrn,
+      );
+    }
+  }, []);
   return (
     <span id="control-container">
       <span

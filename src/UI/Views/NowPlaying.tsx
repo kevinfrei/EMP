@@ -31,7 +31,7 @@ import {
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useStore } from 'jotai';
+import { atom as jatom, useAtom, useAtomValue } from 'jotai';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/API';
@@ -75,7 +75,6 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const theStore = useStore();
   const playlists = useRecoilValue(playlistNamesFunc);
   const nowPlaying = useRecoilValue(activePlaylistState);
   const songList = useRecoilValue(songListState);
@@ -92,10 +91,10 @@ function TopLine(): JSX.Element {
       set(activePlaylistState, inputName);
     }
   });
-  const stopAndClear = useCallback(() => StopAndClear(theStore).catch(wrn), []);
+  const stopAndClear = useCallback(() => StopAndClear().catch(wrn), []);
   const clickClearQueue = useCallback(() => {
     if (isPlaylist(nowPlaying)) {
-      StopAndClear(theStore).catch(wrn);
+      StopAndClear().catch(wrn);
     } else {
       showConfirm();
     }
@@ -195,7 +194,6 @@ function StickyDetailsHeader(
 
 // The Now Playing (Current playlist) view
 export function NowPlayingView(): JSX.Element {
-  const theStore = useStore();
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsFunc);
@@ -221,7 +219,7 @@ export function NowPlayingView(): JSX.Element {
   };
   const removeSong = useCallback(
     (indexOrKey: number | SongKey) =>
-      RemoveSongFromNowPlaying(theStore, indexOrKey).catch(wrn),
+      RemoveSongFromNowPlaying(indexOrKey).catch(wrn),
     [],
   );
   const drawDeleter = (song: Song, index?: number) => (

@@ -14,7 +14,7 @@ import {
   MyTransactionInterface,
   useMyTransaction,
 } from '@freik/web-utils';
-import { useAtomValue, useStore } from 'jotai';
+import { useAtomValue } from 'jotai';
 import { AddSongs, PlaySongs } from '../Jotai/API';
 import { songListLikeNumberFromStringFam } from '../Jotai/LikesAndHates';
 import { SongListDetailClick } from './DetailPanel/Clickers';
@@ -39,7 +39,6 @@ export function SongListMenu({
   onGetPlaylistName,
   items,
 }: SongListMenuArgs): JSX.Element {
-  const theStore = useStore();
   const i = (
     name: string,
     iconName: string,
@@ -62,7 +61,6 @@ export function SongListMenu({
   const onAdd = useMyTransaction(
     (xact) => () =>
       AddSongs(
-        theStore,
         onGetSongList(xact, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
@@ -70,7 +68,6 @@ export function SongListMenu({
   const onReplace = useMyTransaction(
     (xact) => () =>
       PlaySongs(
-        theStore,
         onGetSongList(xact, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
