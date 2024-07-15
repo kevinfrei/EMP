@@ -12,15 +12,22 @@ import {
 } from '@fluentui/react';
 import { CurrentView } from '@freik/emp-shared';
 import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
-import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { MyTransactionInterface } from '@freik/web-utils';
+import {
+  atom as jatom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  useStore,
+} from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useJotaiCallback } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import { SongListFromKey } from '../../Recoil/api';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -48,8 +55,12 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
-import { useJotaiCallback } from '../../Jotai/Helpers';
+import { MakeLog } from '@freik/logger';
+import { AddSongs } from '../../Jotai/API';
 import './styles/Artists.css';
+
+const { wrn } = MakeLog('EMP:render:Artists');
+wrn.enabled = true;
 
 // This is used to trigger the popup menu in the list view
 const artistContextState = atomWithReset<SongListMenuData>({
@@ -64,13 +75,14 @@ const [artistExpandedState, artistIsExpandedState] =
 const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
+  const theStore = useStore();
   const expansionState = artistIsExpandedState(group.key);
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
   const picurl = getArtistImageUrl(group.key);
   const setArtistContext = useSetAtom(artistContextState);
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, artist.songs);
-  });
+  const onAddSongsClick = useCallback(() => {
+    AddSongs(theStore, artist.songs).catch(wrn);
+  }, [artist.songs, theStore]);
   const onHeaderExpanderClick = useJotaiCallback(
     (get, set) => set(expansionState, !group.isCollapsed),
     [expansionState, group.isCollapsed],
@@ -135,6 +147,7 @@ export function getFilteredArtists(
 }
 
 export function GroupedAristList(): JSX.Element {
+  const theStore = useStore();
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const artists = useRecoilValue(allArtistsFunc);
@@ -157,8 +170,9 @@ export function GroupedAristList(): JSX.Element {
       });
     }
   };
-  const onAddSongClick = useMyTransaction(
-    (xact) => (item: ArtistSong) => AddSongs(xact, [item.key]),
+  const onAddSongClick = useCallback(
+    (item: ArtistSong) => AddSongs(theStore, [item.key]),
+    [],
   );
 
   const filteredArtistsFromSongRenderer = (

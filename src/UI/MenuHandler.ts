@@ -3,6 +3,7 @@ import { MakeLog } from '@freik/logger';
 import { hasStrField } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
 import { ForwardedRef } from 'react';
+import { MaybePlayNext, MaybePlayPrev } from '../Jotai/API';
 import { curViewFunc } from '../Jotai/CurrentView';
 import { mediaTimePercentFunc, mediaTimeState } from '../Jotai/MediaPlaying';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
@@ -12,7 +13,6 @@ import { repeatState } from '../Recoil/PlaybackOrder';
 import { playlistFuncFam } from '../Recoil/PlaylistsState';
 import { shuffleFunc } from '../Recoil/ReadWrite';
 import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
-import { MaybePlayNext, MaybePlayPrev } from '../Recoil/api';
 import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
 
@@ -57,7 +57,7 @@ export function MenuHandler(
         break;
 
       case 'addLocation':
-        void addLocation(xact);
+        addLocation(xact).catch(wrn);
         break;
 
       case 'find':
@@ -69,10 +69,10 @@ export function MenuHandler(
         onClickPlayPause(store, audioRef);
         break;
       case 'nextTrack':
-        void MaybePlayNext(xact);
+        MaybePlayNext(store).catch(wrn);
         break;
       case 'prevTrack':
-        void MaybePlayPrev(xact);
+        MaybePlayPrev(store).catch(wrn);
         break;
 
       // Time control

@@ -6,13 +6,10 @@ import {
   mergeStyleSets,
 } from '@fluentui/react';
 import { Album } from '@freik/media-core';
-import { useMyTransaction } from '@freik/web-utils';
 import { useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
-import { AddSongs } from '../../Recoil/api';
 import { allAlbumsFunc, dataForAlbumFuncFam } from '../../Recoil/ReadOnly';
 import { getAlbumImageUrl } from '../../Tools';
-import { SongListDetailContextMenuClick } from '../DetailPanel/Clickers';
 import './styles/Albums.css';
 
 const theme: ITheme = getTheme();
@@ -82,11 +79,9 @@ function AlbumCoverView({
   const picurl = getAlbumImageUrl(album.key);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, album.songs);
-  });
+  // const onAddSongsClick = () => AddSongs(store, album.songs).catch(wrn);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onRightClick = SongListDetailContextMenuClick(album.songs);
+  // const onRightClick = SongListDetailContextMenuClick(album.songs);
   if (!album) {
     return <></>;
   }

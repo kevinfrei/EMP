@@ -15,17 +15,19 @@ import {
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import {
+  atom as jatom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  useStore,
+} from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { useJotaiCallback } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
-import {
-  AddSongs,
-  DeletePlaylist,
-  PlaySongs,
-  RenamePlaylist,
-} from '../../Recoil/api';
+import { DeletePlaylist } from '../../Recoil/api';
 import {
   allPlaylistsFunc,
   playlistFuncFam,
@@ -45,8 +47,12 @@ import {
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
 
-import { useJotaiCallback } from '../../Jotai/Helpers';
+import { MakeLog } from '@freik/logger';
+import { AddSongs, PlaySongs } from '../../Jotai/API';
 import './styles/Playlists.css';
+
+const { wrn } = MakeLog('EMP:render:Playlists');
+wrn.enabled = true;
 
 type PlaylistSong = Song & { playlist: PlaylistName };
 type ItemType = PlaylistSong;
@@ -73,6 +79,7 @@ function PlaylistHeaderDisplay({
   group: IGroup;
   onDelete: (key: string) => void;
 }): JSX.Element {
+  const theStore = useStore();
   const expandedAtom = playlistIsExpandedState(group.key);
   const setPlaylistContext = useSetAtom(playlistContextState);
   const onHeaderExpanderClick = useJotaiCallback(
@@ -80,7 +87,9 @@ function PlaylistHeaderDisplay({
     [expandedAtom, group.isCollapsed],
   );
   const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, xact.get(playlistFuncFam(group.key)), group.key);
+    AddSongs(theStore, xact.get(playlistFuncFam(group.key)), group.key).catch(
+      wrn,
+    );
   });
   const onRightClick = (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setPlaylistContext({
@@ -116,6 +125,7 @@ function PlaylistHeaderDisplay({
 }
 
 export function PlaylistView(): JSX.Element {
+  const theStore = useStore();
   const [selected, setSelected] = useState('');
   const [songPlaylistToRemove, setSongPlaylistToRemove] = useState<
     [string, string, number]
@@ -139,7 +149,7 @@ export function PlaylistView(): JSX.Element {
   const onPlaylistInvoked = useMyTransaction(
     (xact) => (playlistName: PlaylistName) => {
       const songs = xact.get(playlistFuncFam(playlistName));
-      PlaySongs(xact, songs, playlistName);
+      PlaySongs(theStore, songs, playlistName).catch(wrn);
     },
   );
   const onRemoveDupes = useMyTransaction(({ get, set }) => () => {
@@ -164,9 +174,10 @@ export function PlaylistView(): JSX.Element {
   const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });
-  const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
-    RenamePlaylist(xact, selected, newName);
-  });
+  const renameConfirmed = () => {};
+  // useMyTransaction((xact) => (newName: string) => {
+  // RenamePlaylist(xact, selected, newName);
+  // });
   const removeSongConfirmed = useMyTransaction((xact) => () => {
     if (
       songPlaylistToRemove[0].length > 0 &&

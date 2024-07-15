@@ -2,7 +2,7 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
-import { useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import {
   ForwardedRef,
@@ -12,6 +12,7 @@ import {
   useEffect,
 } from 'react';
 import { useRecoilValue } from 'recoil';
+import { MaybePlayNext } from '../Jotai/API';
 import { playOrderDisplayingState } from '../Jotai/Local';
 import {
   MediaTime,
@@ -32,14 +33,13 @@ import {
   picForKeyFam,
 } from '../Recoil/ReadOnly';
 import { songListState } from '../Recoil/SongPlaying';
-import { MaybePlayNext } from '../Recoil/api';
 import { getAlbumImageUrl, isMutableRefObject } from '../Tools';
 import { SongDetailClick } from './DetailPanel/Clickers';
 import { mySliderStyles } from './Utilities';
 import './styles/SongPlaying.css';
 
-const { log } = MakeLog('EMP:render:SongPlayback');
-// log.enabled = true;
+const { log, wrn } = MakeLog('EMP:render:SongPlayback');
+wrn.enabled = true;
 // const log = console.log;
 
 function CoverArt(): JSX.Element {
@@ -140,6 +140,7 @@ function ArtistAlbum(): JSX.Element {
 
 export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
+    const theStore = useStore();
     const songKey = useAtomValue(currentSongKeyState);
     const isShuffle = useAtomValue(shuffleState);
     const isMuted = useAtomValue(mutedState);
@@ -160,7 +161,7 @@ export const SongPlaying = forwardRef(
           void audioRef.current.play();
         }
       } else {
-        setPlaying(MaybePlayNext(xact));
+        MaybePlayNext(theStore).then(setPlaying).catch(wrn);
       }
     });
     const onTimeUpdate = (ev: SyntheticEvent<HTMLMediaElement>) => {

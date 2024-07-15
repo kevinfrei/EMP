@@ -7,8 +7,7 @@ import {
 } from '@fluentui/react';
 import { Song, SongKey } from '@freik/media-core';
 import { isNumber } from '@freik/typechk';
-import { useMyTransaction } from '@freik/web-utils';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
 import { atom, selector, useRecoilState, useRecoilValue } from 'recoil';
 import { useJotaiCallback } from '../../Jotai/Helpers';
 import {
@@ -24,7 +23,6 @@ import {
   allSongsFunc,
   dataForSongListFuncFam,
 } from '../../Recoil/ReadOnly';
-import { AddSongs } from '../../Recoil/api';
 import { MakeSortKey, SortSongList } from '../../Sorting';
 import {
   AlbumForSongRender,
@@ -37,7 +35,13 @@ import {
   altRowRenderer,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
+
+import { MakeLog } from '@freik/logger';
+import { useCallback } from 'react';
+import { AddSongs } from '../../Jotai/API';
 import './styles/MixedSongs.css';
+
+const { wrn } = MakeLog('EMP:render:MixedSongs');
 
 const sortOrderState = atom({
   key: 'mixedSongSortOrder',
@@ -94,11 +98,13 @@ export function LikeOrHate(song: Song): JSX.Element {
 }
 
 export function MixedSongsList(): JSX.Element {
+  const theStore = useStore();
   const sortedItems = useRecoilValue(sortedSongsState);
   const [sortOrder, setSortOrder] = useRecoilState(sortOrderState);
-  const onAddSongClick = useMyTransaction((xact) => (item: Song) => {
-    AddSongs(xact, [item.key]);
-  });
+  const onAddSongClick = useCallback(
+    (item: Song) => AddSongs(theStore, [item.key]).catch(wrn),
+    [],
+  );
   const [songContext, setSongContext] = useRecoilState(songContextState);
   const onRightClick = (item?: Song, index?: number, ev?: Event) => {
     const event = ev as any as MouseEvent;
