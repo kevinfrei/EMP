@@ -9,11 +9,28 @@ import {
   SongKey,
 } from '@freik/media-core';
 import type { MyTransactionInterface } from '@freik/web-utils';
-import { playlistNamesFunc } from './PlaylistsState';
+import { playlistFuncFam, playlistNamesFunc } from './PlaylistsState';
 import { albumByKeyFuncFam, artistByKeyFuncFam } from './ReadOnly';
 import { activePlaylistState } from './SongPlaying';
 
 // const { err, log } = MakeLog('EMP:render:api');
+
+/**
+ * Rename a playlist (make sure you've got the name right)
+ **/
+export function RenamePlaylist(
+  { set, get }: MyTransactionInterface,
+  curName: PlaylistName,
+  newName: PlaylistName,
+): void {
+  const curNames = get(playlistNamesFunc);
+  const curSongs = get(playlistFuncFam(curName));
+  curNames.delete(curName);
+  curNames.add(newName);
+  set(playlistFuncFam(newName), curSongs);
+  set(playlistNamesFunc, new Set(curNames));
+  void Ipc.PostMain(IpcId.RenamePlaylist, [curName, newName]);
+}
 
 /**
  * Delete a playlist (make sure you've got the name right)
