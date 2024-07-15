@@ -27,7 +27,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useJotaiCallback } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
-import { DeletePlaylist } from '../../Recoil/api';
+import { DeletePlaylist, RenamePlaylist } from '../../Recoil/api';
 import {
   allPlaylistsFunc,
   playlistFuncFam,
@@ -174,10 +174,9 @@ export function PlaylistView(): JSX.Element {
   const deleteConfirmed = useMyTransaction((xact) => () => {
     DeletePlaylist(xact, selected);
   });
-  const renameConfirmed = () => {};
-  // useMyTransaction((xact) => (newName: string) => {
-  // RenamePlaylist(xact, selected, newName);
-  // });
+  const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
+    RenamePlaylist(xact, selected, newName);
+  });
   const removeSongConfirmed = useMyTransaction((xact) => () => {
     if (
       songPlaylistToRemove[0].length > 0 &&
