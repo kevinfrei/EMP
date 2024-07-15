@@ -18,7 +18,6 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { hasFieldType, isBoolean } from '@freik/typechk';
-import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
@@ -194,9 +193,8 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const theStore = useStore();
   const onAddSongListClick = useCallback(
-    () => AddSongs(theStore, props.keys).catch(wrn),
+    () => AddSongs(props.keys).catch(wrn),
     [props.keys],
   );
   const onRightClick = SongListDetailContextMenuClick(props.keys);
@@ -219,7 +217,6 @@ function SearchResultsGroupHeader(props: {
 const noSort = MakeSortKey('rlnt');
 
 export function SearchResultsView(): JSX.Element {
-  const theStore = useStore();
   const searchTerm = useRecoilValue(searchTermState);
   const searchResults = useRecoilValue(searchFuncFam(searchTerm));
   const songs = useRecoilValue(allSongsFunc);
@@ -237,7 +234,7 @@ export function SearchResultsView(): JSX.Element {
       hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
     );
   const onAddSongClick = useCallback((item: SearchSongData) => {
-    AddSongs(theStore, [item.song.key]).catch(wrn);
+    AddSongs([item.song.key]).catch(wrn);
   }, []);
 
   if (

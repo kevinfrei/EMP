@@ -2,7 +2,7 @@ import { Slider, Text } from '@fluentui/react';
 import { ListIcon } from '@fluentui/react-icons-mdl2';
 import { MakeLog } from '@freik/logger';
 import { useMyTransaction } from '@freik/web-utils';
-import { useAtom, useAtomValue, useSetAtom, useStore } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { useAtomCallback } from 'jotai/utils';
 import {
   ForwardedRef,
@@ -140,7 +140,6 @@ function ArtistAlbum(): JSX.Element {
 
 export const SongPlaying = forwardRef(
   (_props, audioRef: ForwardedRef<HTMLAudioElement>): JSX.Element => {
-    const theStore = useStore();
     const songKey = useAtomValue(currentSongKeyState);
     const isShuffle = useAtomValue(shuffleState);
     const isMuted = useAtomValue(mutedState);
@@ -161,7 +160,7 @@ export const SongPlaying = forwardRef(
           void audioRef.current.play();
         }
       } else {
-        MaybePlayNext(theStore).then(setPlaying).catch(wrn);
+        MaybePlayNext().then(setPlaying).catch(wrn);
       }
     });
     const onTimeUpdate = (ev: SyntheticEvent<HTMLMediaElement>) => {

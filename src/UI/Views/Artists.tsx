@@ -13,13 +13,7 @@ import {
 import { CurrentView } from '@freik/emp-shared';
 import { Album, AlbumKey, Artist, ArtistKey } from '@freik/media-core';
 import { MyTransactionInterface } from '@freik/web-utils';
-import {
-  atom as jatom,
-  useAtom,
-  useAtomValue,
-  useSetAtom,
-  useStore,
-} from 'jotai';
+import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -75,14 +69,13 @@ const [artistExpandedState, artistIsExpandedState] =
 const sortOrderState = jatom(MakeSortKey(['r', ''], ['r', 'ylnt']));
 
 function ArtistHeaderDisplay({ group }: { group: IGroup }): JSX.Element {
-  const theStore = useStore();
   const expansionState = artistIsExpandedState(group.key);
   const artist = useRecoilValue(artistByKeyFuncFam(group.key));
   const picurl = getArtistImageUrl(group.key);
   const setArtistContext = useSetAtom(artistContextState);
   const onAddSongsClick = useCallback(() => {
-    AddSongs(theStore, artist.songs).catch(wrn);
-  }, [artist.songs, theStore]);
+    AddSongs(artist.songs).catch(wrn);
+  }, [artist.songs]);
   const onHeaderExpanderClick = useJotaiCallback(
     (get, set) => set(expansionState, !group.isCollapsed),
     [expansionState, group.isCollapsed],
@@ -147,7 +140,6 @@ export function getFilteredArtists(
 }
 
 export function GroupedAristList(): JSX.Element {
-  const theStore = useStore();
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const artists = useRecoilValue(allArtistsFunc);
@@ -171,7 +163,7 @@ export function GroupedAristList(): JSX.Element {
     }
   };
   const onAddSongClick = useCallback(
-    (item: ArtistSong) => AddSongs(theStore, [item.key]),
+    (item: ArtistSong) => AddSongs([item.key]),
     [],
   );
 

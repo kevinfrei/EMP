@@ -15,13 +15,7 @@ import { MakeLog } from '@freik/logger';
 import { AlbumKey, Song } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
 import { MyTransactionInterface } from '@freik/web-utils';
-import {
-  atom as jatom,
-  useAtom,
-  useAtomValue,
-  useSetAtom,
-  useStore,
-} from 'jotai';
+import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -77,13 +71,12 @@ const albumSortState = jatom(MakeSortKey(['l', 'n'], ['lry', 'nrt']));
 
 type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
-  const theStore = useStore();
   const album = useRecoilValue(albumByKeyFuncFam(group.key));
   const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
   const picurl = getAlbumImageUrl(group.key);
   const onAddSongsClick = useCallback(() => {
-    AddSongs(theStore, album.songs).catch(wrn);
-  }, [theStore, album.songs]);
+    AddSongs(album.songs).catch(wrn);
+  }, [album.songs]);
   const thisSetSetter = albumIsExpandedState(group.key);
   const onHeaderExpanderClick = useJotaiCallback(
     (get, set) => set(thisSetSetter, !group.isCollapsed),
@@ -128,7 +121,6 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
 }
 
 export function GroupedAlbumList(): JSX.Element {
-  const theStore = useStore();
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums = useRecoilValue(allAlbumsFunc);
@@ -144,7 +136,7 @@ export function GroupedAlbumList(): JSX.Element {
   const resetAlbumContext = useResetAtom(albumContextState);
 
   const onAddSongClick = useCallback(
-    (item: Song) => AddSongs(theStore, [item.key]).catch(wrn),
+    (item: Song) => AddSongs([item.key]).catch(wrn),
     [],
   );
   const onRightClick = (item: Song, _index?: number, ev?: Event) => {

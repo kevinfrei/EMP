@@ -15,13 +15,7 @@ import {
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
-import {
-  atom as jatom,
-  useAtom,
-  useAtomValue,
-  useSetAtom,
-  useStore,
-} from 'jotai';
+import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -79,7 +73,6 @@ function PlaylistHeaderDisplay({
   group: IGroup;
   onDelete: (key: string) => void;
 }): JSX.Element {
-  const theStore = useStore();
   const expandedAtom = playlistIsExpandedState(group.key);
   const setPlaylistContext = useSetAtom(playlistContextState);
   const onHeaderExpanderClick = useJotaiCallback(
@@ -87,9 +80,7 @@ function PlaylistHeaderDisplay({
     [expandedAtom, group.isCollapsed],
   );
   const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(theStore, xact.get(playlistFuncFam(group.key)), group.key).catch(
-      wrn,
-    );
+    AddSongs(xact.get(playlistFuncFam(group.key)), group.key).catch(wrn);
   });
   const onRightClick = (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setPlaylistContext({
@@ -125,7 +116,6 @@ function PlaylistHeaderDisplay({
 }
 
 export function PlaylistView(): JSX.Element {
-  const theStore = useStore();
   const [selected, setSelected] = useState('');
   const [songPlaylistToRemove, setSongPlaylistToRemove] = useState<
     [string, string, number]
@@ -149,7 +139,7 @@ export function PlaylistView(): JSX.Element {
   const onPlaylistInvoked = useMyTransaction(
     (xact) => (playlistName: PlaylistName) => {
       const songs = xact.get(playlistFuncFam(playlistName));
-      PlaySongs(theStore, songs, playlistName).catch(wrn);
+      PlaySongs(songs, playlistName).catch(wrn);
     },
   );
   const onRemoveDupes = useMyTransaction(({ get, set }) => () => {

@@ -33,7 +33,7 @@ import {
   songListState,
   songPlaybackOrderState,
 } from './SongPlayback';
-import { MyStore } from './Storage';
+import { getStore, MaybeStore } from './Storage';
 
 /**
  * Try to play the next song in the playlist
@@ -43,16 +43,17 @@ import { MyStore } from './Storage';
  *  false otherwise
  */
 export async function MaybePlayNext(
-  store: MyStore,
   dislike = false,
+  mstore?: MaybeStore,
 ): Promise<boolean> {
+  const store = getStore(mstore);
   const curIndex = await store.get(currentIndexState);
   const songList = await store.get(songListState);
   const curSong = await store.get(currentSongKeyState);
   if (dislike) {
     await store.set(isSongHatedFam(curSong), true);
     if (await store.get(neverPlayHatesState)) {
-      await RemoveSongFromNowPlaying(store, curSong);
+      await RemoveSongFromNowPlaying(curSong, store);
     }
   }
   if (curIndex + 1 < songList.length) {
@@ -64,7 +65,7 @@ export async function MaybePlayNext(
     return false;
   }
   if (await store.get(shuffleState)) {
-    await ShufflePlaying(store, true);
+    await ShufflePlaying(true, store);
   }
   await store.set(currentIndexState, 0);
   return true;
@@ -75,7 +76,8 @@ export async function MaybePlayNext(
  *
  * @returns Promise<void>
  */
-export async function MaybePlayPrev(store: MyStore): Promise<void> {
+export async function MaybePlayPrev(mstore?: MaybeStore): Promise<void> {
+  const store = getStore(mstore);
   const songList = await store.get(songListState);
   if (songList.length > 0) {
     const curIndex = await store.get(currentIndexState);
@@ -95,9 +97,10 @@ export async function MaybePlayPrev(store: MyStore): Promise<void> {
  * @returns {SongKey[]} The filtered list of songs
  */
 async function GetFilteredSongs(
-  store: MyStore,
   listToFilter: Iterable<SongKey>,
+  mstore?: MaybeStore,
 ): Promise<SongKey[]> {
+  const store = getStore(mstore);
   const onlyLikes = await store.get(onlyPlayLikesState);
   const neverHates = await store.get(neverPlayHatesState);
   const playList: SongKey[] = [];
@@ -122,18 +125,19 @@ async function GetFilteredSongs(
  * @returns void
  */
 export async function AddSongs(
-  store: MyStore,
   listToAdd: Iterable<SongKey>,
   playlistName?: string,
+  mstore?: MaybeStore,
 ): Promise<void> {
+  const store = getStore(mstore);
   const songList = await store.get(songListState);
   if (songList.length === 0) {
     // This makes it so that if you add, it will still register as
     // the playlist you added, if the current playlist is empty
-    await PlaySongs(store, listToAdd, playlistName);
+    await PlaySongs(listToAdd, playlistName, store);
   }
   const shuffle = await store.get(shuffleState);
-  const playList = await GetFilteredSongs(store, listToAdd);
+  const playList = await GetFilteredSongs(listToAdd, store);
   const fullList = [...songList, ...playList];
   await store.set(songListState, fullList);
   let order: number[] | 'ordered' = 'ordered';
@@ -173,11 +177,12 @@ export async function AddSongs(
  * @param playlistName - The playlist name
  */
 export async function PlaySongs(
-  store: MyStore,
   listToPlay: Iterable<SongKey>,
   playlistName?: PlaylistName,
+  mstore?: MaybeStore,
 ): Promise<void> {
-  const playList = await GetFilteredSongs(store, listToPlay);
+  const store = getStore(mstore);
+  const playList = await GetFilteredSongs(listToPlay, store);
   if (isPlaylist(playlistName)) {
     await store.set(activePlaylistState, playlistName);
   } else {
@@ -206,7 +211,8 @@ export async function PlaySongs(
  *
  * @returns void
  */
-export async function StopAndClear(store: MyStore): Promise<void> {
+export async function StopAndClear(mstore?: MaybeStore): Promise<void> {
+  const store = getStore(mstore);
   await Promise.all([
     store.set(songListState, RESET),
     store.set(currentIndexState, RESET),
@@ -224,9 +230,10 @@ export async function StopAndClear(store: MyStore): Promise<void> {
  * @param {CallbackInterface} callbackInterface - a Recoil Callback interface
  */
 export async function ShufflePlaying(
-  store: MyStore,
   ignoreCur?: boolean,
+  mstore?: MaybeStore,
 ): Promise<void> {
+  const store = getStore(mstore);
   ignoreCur = ignoreCur === true;
   const curIndex = await store.get(currentIndexState);
   const curSongList = await store.get(songListState);
@@ -251,9 +258,10 @@ export async function ShufflePlaying(
 }
 
 export async function RemoveSongFromNowPlaying(
-  store: MyStore,
   indexOrKey: number | SongKey,
+  mstore?: MaybeStore,
 ): Promise<void> {
+  const store = getStore(mstore);
   // If we're going to be removing a song before the current index
   // we need to move the curIndex pointer as well
   const songList = await store.get(songListState);
