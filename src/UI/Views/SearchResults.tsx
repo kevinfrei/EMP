@@ -8,6 +8,7 @@ import {
   SelectionMode,
   Text,
 } from '@fluentui/react';
+import { MakeLog } from '@freik/logger';
 import {
   Album,
   AlbumKey,
@@ -17,12 +18,12 @@ import {
   SongKey,
 } from '@freik/media-core';
 import { hasFieldType, isBoolean } from '@freik/typechk';
-import { useMyTransaction } from '@freik/web-utils';
-import { useState } from 'react';
+import { useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { GetDataForSong, SongData } from '../../DataSchema';
 import { SearchResults } from '../../ipc';
-import { AddSongs } from '../../Recoil/api';
+import { AddSongs } from '../../Jotai/API';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -42,6 +43,8 @@ import {
   StickyRenderDetailsHeader,
 } from '../SongList';
 import './styles/SearchResults.css';
+
+const { wrn } = MakeLog('EMP:render:SearchResults');
 
 type SearchSongData = SongData & { key: string; group: string };
 
@@ -191,9 +194,11 @@ function SearchResultsGroupHeader(props: {
   text: string;
   keys: SongKey[];
 }): JSX.Element {
-  const onAddSongListClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, props.keys);
-  });
+  const theStore = useStore();
+  const onAddSongListClick = useCallback(
+    () => AddSongs(theStore, props.keys).catch(wrn),
+    [props.keys],
+  );
   const onRightClick = SongListDetailContextMenuClick(props.keys);
   const theStyle = { marginLeft: props.depth * 20 };
   return (
@@ -214,6 +219,7 @@ function SearchResultsGroupHeader(props: {
 const noSort = MakeSortKey('rlnt');
 
 export function SearchResultsView(): JSX.Element {
+  const theStore = useStore();
   const searchTerm = useRecoilValue(searchTermState);
   const searchResults = useRecoilValue(searchFuncFam(searchTerm));
   const songs = useRecoilValue(allSongsFunc);
@@ -230,9 +236,9 @@ export function SearchResultsView(): JSX.Element {
       item.song,
       hasFieldType(ev, 'shiftKey', isBoolean) && ev.shiftKey,
     );
-  const onAddSongClick = useMyTransaction((xact) => (item: SearchSongData) => {
-    AddSongs(xact, [item.song.key]);
-  });
+  const onAddSongClick = useCallback((item: SearchSongData) => {
+    AddSongs(theStore, [item.song.key]).catch(wrn);
+  }, []);
 
   if (
     !searchResults.albums.length &&

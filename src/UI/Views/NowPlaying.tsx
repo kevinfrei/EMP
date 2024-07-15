@@ -15,6 +15,7 @@ import {
   TooltipHost,
 } from '@fluentui/react';
 import { Keys } from '@freik/emp-shared';
+import { MakeLog } from '@freik/logger';
 import {
   Album,
   AlbumKey,
@@ -30,9 +31,10 @@ import {
   useDialogState,
   useMyTransaction,
 } from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue } from 'jotai';
-import { useState } from 'react';
+import { atom as jatom, useAtom, useAtomValue, useStore } from 'jotai';
+import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/API';
 import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
 import {
@@ -51,7 +53,6 @@ import {
   songListState,
   songPlaybackOrderState,
 } from '../../Recoil/SongPlaying';
-import { RemoveSongFromNowPlaying, StopAndClear } from '../../Recoil/api';
 import { SortKey, SortSongList } from '../../Sorting';
 import { isPlaylist } from '../../Tools';
 import { GetHelperText } from '../MenuHelpers';
@@ -65,6 +66,8 @@ import { SongListMenu, SongListMenuData } from '../SongMenus';
 import { LikeOrHate } from './MixedSongs';
 import './styles/NowPlaying.css';
 
+const { wrn } = MakeLog('EMP:render:NowPlaying');
+
 const nowPlayingContextState = jatom<SongListMenuData>({
   data: '',
   spot: { left: 0, top: 0 },
@@ -72,6 +75,7 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
+  const theStore = useStore();
   const playlists = useRecoilValue(playlistNamesFunc);
   const nowPlaying = useRecoilValue(activePlaylistState);
   const songList = useRecoilValue(songListState);
@@ -88,16 +92,14 @@ function TopLine(): JSX.Element {
       set(activePlaylistState, inputName);
     }
   });
-  const stopAndClear = useMyTransaction((xact) => () => {
-    StopAndClear(xact);
-  });
-  const clickClearQueue = useMyTransaction((xact) => () => {
+  const stopAndClear = useCallback(() => StopAndClear(theStore).catch(wrn), []);
+  const clickClearQueue = useCallback(() => {
     if (isPlaylist(nowPlaying)) {
-      StopAndClear(xact);
+      StopAndClear(theStore).catch(wrn);
     } else {
       showConfirm();
     }
-  });
+  }, []);
   const save = useMyTransaction(({ set }) => () => {
     set(playlistFuncFam(nowPlaying), songList);
   });
@@ -193,6 +195,7 @@ function StickyDetailsHeader(
 
 // The Now Playing (Current playlist) view
 export function NowPlayingView(): JSX.Element {
+  const theStore = useStore();
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums: Map<AlbumKey, Album> = useRecoilValue(allAlbumsFunc);
@@ -216,9 +219,10 @@ export function NowPlayingView(): JSX.Element {
       });
     }
   };
-  const removeSong = useMyTransaction(
-    (xact: MyTransactionInterface) => (indexOrKey: number | SongKey) =>
-      RemoveSongFromNowPlaying(xact, indexOrKey),
+  const removeSong = useCallback(
+    (indexOrKey: number | SongKey) =>
+      RemoveSongFromNowPlaying(theStore, indexOrKey).catch(wrn),
+    [],
   );
   const drawDeleter = (song: Song, index?: number) => (
     <FontIcon

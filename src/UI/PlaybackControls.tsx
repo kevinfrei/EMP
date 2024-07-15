@@ -4,7 +4,6 @@ import { onRejected } from '@freik/web-utils';
 import { useAtom, useAtomValue, useStore } from 'jotai';
 import { ForwardedRef, MouseEventHandler, useCallback } from 'react';
 import { MaybePlayNext, MaybePlayPrev } from '../Jotai/API';
-import { AsyncHandler } from '../Jotai/Helpers';
 import { playingState } from '../Jotai/MediaPlaying';
 import {
   hasAnySongsState,
@@ -74,23 +73,20 @@ export function PlaybackControls({
   const store = useStore();
   const clickPlayPause = () => onClickPlayPause(store, audioRef);
 
-  const clickPrev = useCallback(
-    AsyncHandler(async () => {
-      if (hasPrevSong) {
-        await MaybePlayPrev(store);
-      }
-    }),
-    [store],
-  );
+  const clickPrev = useCallback(() => {
+    if (hasPrevSong) {
+      MaybePlayPrev(store).catch(wrn);
+    }
+  }, [store]);
   const clickNext: MouseEventHandler<HTMLSpanElement> = useCallback(
-    AsyncHandler(async (ev) => {
+    (ev) => {
       if (hasNextSong) {
-        await MaybePlayNext(
+        MaybePlayNext(
           store,
           ev.altKey || ev.shiftKey || ev.ctrlKey || ev.metaKey,
-        );
+        ).catch(wrn);
       }
-    }),
+    },
     [store],
   );
   return (

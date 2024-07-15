@@ -11,17 +11,26 @@ import {
   Text,
 } from '@fluentui/react';
 import { CurrentView } from '@freik/emp-shared';
+import { MakeLog } from '@freik/logger';
 import { AlbumKey, Song } from '@freik/media-core';
 import { hasFieldType, isDefined, isNumber } from '@freik/typechk';
-import { MyTransactionInterface, useMyTransaction } from '@freik/web-utils';
-import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
+import { MyTransactionInterface } from '@freik/web-utils';
+import {
+  atom as jatom,
+  useAtom,
+  useAtomValue,
+  useSetAtom,
+  useStore,
+} from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { AddSongs } from '../../Jotai/API';
+import { useJotaiCallback } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
 import { focusedKeysFuncFam } from '../../Jotai/KeyBuffer';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
-import { AddSongs, SongListFromKey } from '../../Recoil/api';
+import { SongListFromKey } from '../../Recoil/api';
 import {
   albumByKeyFuncFam,
   allAlbumsFunc,
@@ -47,9 +56,10 @@ import {
   StickyRenderDetailsHeader,
 } from '../SongList';
 import { SongListMenu, SongListMenuData } from '../SongMenus';
-
-import { useJotaiCallback } from '../../Jotai/Helpers';
 import './styles/Albums.css';
+
+const { wrn } = MakeLog('EMP:render:Albums');
+wrn.enabled = true;
 
 // This is used to trigger the popup menu in the list view
 const albumContextState = atomWithReset<SongListMenuData>({
@@ -67,12 +77,13 @@ const albumSortState = jatom(MakeSortKey(['l', 'n'], ['lry', 'nrt']));
 
 type AHDProps = { group: IGroup };
 function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
+  const theStore = useStore();
   const album = useRecoilValue(albumByKeyFuncFam(group.key));
   const albumData = useRecoilValue(dataForAlbumFuncFam(group.key));
   const picurl = getAlbumImageUrl(group.key);
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact, album.songs);
-  });
+  const onAddSongsClick = useCallback(() => {
+    AddSongs(theStore, album.songs).catch(wrn);
+  }, [theStore, album.songs]);
   const thisSetSetter = albumIsExpandedState(group.key);
   const onHeaderExpanderClick = useJotaiCallback(
     (get, set) => set(thisSetSetter, !group.isCollapsed),
@@ -117,6 +128,7 @@ function AlbumHeaderDisplay({ group }: AHDProps): JSX.Element {
 }
 
 export function GroupedAlbumList(): JSX.Element {
+  const theStore = useStore();
   const [detailRef, setDetailRef] = useState<IDetailsList | null>(null);
 
   const albums = useRecoilValue(allAlbumsFunc);
@@ -131,8 +143,9 @@ export function GroupedAlbumList(): JSX.Element {
   const [curSort, setSort] = useAtom(albumSortState);
   const resetAlbumContext = useResetAtom(albumContextState);
 
-  const onAddSongClick = useMyTransaction(
-    (xact) => (item: Song) => AddSongs(xact, [item.key]),
+  const onAddSongClick = useCallback(
+    (item: Song) => AddSongs(theStore, [item.key]).catch(wrn),
+    [],
   );
   const onRightClick = (item: Song, _index?: number, ev?: Event) => {
     if (

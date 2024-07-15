@@ -14,9 +14,9 @@ import {
   MyTransactionInterface,
   useMyTransaction,
 } from '@freik/web-utils';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
+import { AddSongs, PlaySongs } from '../Jotai/API';
 import { songListLikeNumberFromStringFam } from '../Jotai/LikesAndHates';
-import { AddSongs, PlaySongs } from '../Recoil/api';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 import { ErrorBoundary } from './Utilities';
 
@@ -31,9 +31,6 @@ type SongListMenuArgs = {
   items?: (IContextualMenuItem | string)[];
 };
 
-/**
- *
- */
 export function SongListMenu({
   title,
   context,
@@ -42,6 +39,7 @@ export function SongListMenu({
   onGetPlaylistName,
   items,
 }: SongListMenuArgs): JSX.Element {
+  const theStore = useStore();
   const i = (
     name: string,
     iconName: string,
@@ -64,7 +62,7 @@ export function SongListMenu({
   const onAdd = useMyTransaction(
     (xact) => () =>
       AddSongs(
-        xact,
+        theStore,
         onGetSongList(xact, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
@@ -72,7 +70,7 @@ export function SongListMenu({
   const onReplace = useMyTransaction(
     (xact) => () =>
       PlaySongs(
-        xact,
+        theStore,
         onGetSongList(xact, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
