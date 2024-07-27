@@ -48,7 +48,7 @@ export const IpcId = Object.freeze({
   GetMediaInfo: 'media-info',
   GetMusicDatabase: 'get-music-database',
   GetPlaylists: 'get-playlists',
-  LoadPlaylists: 'load-playlists',
+  LoadPlaylist: 'load-playlist',
   ManualRescan: 'manual-rescan',
   MenuAction: 'menuAction',
   MusicDBUpdate: 'music-database-update',

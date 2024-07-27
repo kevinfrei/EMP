@@ -154,7 +154,7 @@ export function CommsSetup(): void {
   Comms.registerChannel(IpcId.Search, SearchWholeWord, isStrOrUndef);
   Comms.registerChannel(IpcId.SubstrSearch, SearchSubstring, isString);
 
-  Comms.registerChannel(IpcId.LoadPlaylists, LoadPlaylist, isString);
+  Comms.registerChannel(IpcId.LoadPlaylist, LoadPlaylist, isString);
   Comms.registerChannel(IpcId.GetPlaylists, GetPlaylists, isVoid);
   Comms.registerChannel(IpcId.SetPlaylists, CheckPlaylists, isArrayOfString);
   Comms.registerChannel(IpcId.RenamePlaylist, RenamePlaylist, isKeyValue);
