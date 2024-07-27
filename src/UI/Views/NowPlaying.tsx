@@ -35,13 +35,14 @@ import { atom as jatom, useAtom, useAtomValue } from 'jotai';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/API';
+import { useJotaiCallback } from '../../Jotai/Helpers';
 import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
-import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
 import {
-  playlistFuncFam,
-  playlistNamesFunc,
-  saveableFunc,
-} from '../../Recoil/PlaylistsState';
+  playlistNamesState,
+  playlistStateFamily,
+  saveableState,
+} from '../../Jotai/PlaylistControl';
+import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
 import {
   allAlbumsFunc,
   allArtistsFunc,
@@ -75,10 +76,10 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useRecoilValue(playlistNamesFunc);
+  const playlists = useAtomValue(playlistNamesState);
   const nowPlaying = useRecoilValue(activePlaylistState);
   const songList = useRecoilValue(songListState);
-  const saveEnabled = useRecoilValue(saveableFunc);
+  const saveEnabled = useAtomValue(saveableState);
 
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
@@ -99,9 +100,12 @@ function TopLine(): JSX.Element {
       showConfirm();
     }
   }, []);
-  const save = useMyTransaction(({ set }) => () => {
-    set(playlistFuncFam(nowPlaying), songList);
-  });
+  const save = useJotaiCallback(
+    (get, set) => () => {
+      set(playlistStateFamily(nowPlaying), songList);
+    },
+    [],
+  );
 
   const emptyQueue = songList.length === 0;
   const isPL = isPlaylist(nowPlaying);
