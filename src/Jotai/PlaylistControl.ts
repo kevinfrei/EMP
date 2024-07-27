@@ -93,4 +93,6 @@ export const saveableState = atom(async (get) => {
   return false;
 });
 
-export const playlistNamesState = atom((get) => {});
+export const playlistNamesState = atom((get) => {
+  ['abc', 'def'];
+});

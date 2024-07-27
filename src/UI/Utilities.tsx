@@ -12,7 +12,7 @@ import { MakeLog } from '@freik/logger';
 import { DebouncedDelay } from '@freik/sync';
 import { isNumber, isUndefined } from '@freik/typechk';
 import { BoolState, Catch, useMyTransaction } from '@freik/web-utils';
-import { useAtom, useSetAtom } from 'jotai';
+import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import {
   CSSProperties,
   Component,
@@ -20,10 +20,10 @@ import {
   SyntheticEvent,
   useEffect,
 } from 'react';
-import { RecoilState, useRecoilState, useRecoilValue } from 'recoil';
+import { RecoilState, useRecoilState } from 'recoil';
 import { keyBufferState } from '../Jotai/KeyBuffer';
 import { isMiniplayerState } from '../Jotai/Local';
-import { saveableFunc } from '../Recoil/PlaylistsState';
+import { saveableState } from '../Jotai/PlaylistControl';
 import { MenuHandler } from './MenuHandler';
 import { isSearchBox } from './Sidebar';
 
@@ -66,7 +66,7 @@ function TypingListener(): JSX.Element {
 // keep track of which mode we're in, and generally deal with "global" silliness
 function SaveMenuUpdater(): JSX.Element {
   /* Save menu state maintenance */
-  const saveable = useRecoilValue(saveableFunc);
+  const saveable = useAtomValue(saveableState);
   useEffect(() => {
     Ipc.PostMain(IpcId.SetSaveMenu, saveable).catch(Catch);
   }, [saveable]);
