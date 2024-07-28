@@ -26,7 +26,10 @@ type SongListMenuArgs = {
   title?: string;
   context: SongListMenuData;
   onClearContext: () => void;
-  onGetSongList: (xact: MyTransactionInterface, data: string) => SongKey[];
+  onGetSongList: (
+    (xact: MyTransactionInterface, data: string) => SongKey[]) 
+    | 
+    (xact: MyTransactionInterface, data: string) => Promise<SongKey[]>);
   onGetPlaylistName?: (data: string) => string;
   items?: (IContextualMenuItem | string)[];
 };

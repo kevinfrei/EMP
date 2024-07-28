@@ -29,13 +29,12 @@ import {
   Dialogs,
   MyTransactionInterface,
   useDialogState,
-  useMyTransaction,
 } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue } from 'jotai';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/API';
-import { useJotaiCallback } from '../../Jotai/Helpers';
+import { AsyncHandler, useJotaiCallback } from '../../Jotai/Helpers';
 import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
 import {
   playlistNamesState,
@@ -43,13 +42,13 @@ import {
   saveableState,
 } from '../../Jotai/PlaylistControl';
 import { ignoreArticlesState } from '../../Jotai/SimpleSettings';
+import { activePlaylistState } from '../../Jotai/SongPlayback';
 import {
   allAlbumsFunc,
   allArtistsFunc,
   curSongsFunc,
 } from '../../Recoil/ReadOnly';
 import {
-  activePlaylistState,
   currentSongIndexFunc,
   songListState,
   songPlaybackOrderState,
@@ -77,21 +76,25 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
   const playlists = useAtomValue(playlistNamesState);
-  const nowPlaying = useRecoilValue(activePlaylistState);
+  const nowPlaying = useAtomValue(activePlaylistState);
   const songList = useRecoilValue(songListState);
   const saveEnabled = useAtomValue(saveableState);
 
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useMyTransaction(({ set }) => (inputName: string) => {
-    if (playlists.has(inputName)) {
-      window.alert("Sorry: You can't overwrite an existing playlist.");
-    } else {
-      set(playlistFuncFam(inputName), [...songList]);
-      set(activePlaylistState, inputName);
-    }
-  });
+  const saveListAs = useJotaiCallback(
+    (get, set) =>
+      AsyncHandler(async (inputName: string) => {
+        if (playlists.includes(inputName)) {
+          window.alert("Sorry: You can't overwrite an existing playlist.");
+        } else {
+          set(playlistStateFamily(inputName), [...songList]);
+          set(activePlaylistState, inputName);
+        }
+      }),
+    [playlistStateFamily, activePlaylistState],
+  );
   const stopAndClear = useCallback(() => StopAndClear().catch(wrn), []);
   const clickClearQueue = useCallback(() => {
     if (isPlaylist(nowPlaying)) {

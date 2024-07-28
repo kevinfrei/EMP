@@ -12,7 +12,7 @@ import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import {
   Dialogs,
   MyTransactionInterface,
-  useDialogState
+  useDialogState,
 } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
@@ -176,28 +176,27 @@ export function PlaylistView(): JSX.Element {
     (newName: string) => RenamePlaylist(selected, newName),
     [selected],
   );
-  const removeSongConfirmed = useJotaiCallback((get, set) => AsyncHandler(async () => {
-    if (
-      songPlaylistToRemove[0].length > 0 &&
-      songPlaylistToRemove[1].length > 0
-    ) {
-      const playlistName = songPlaylistToRemove[0];
-      const songList = await get(playlistStateFamily(playlistName));
-      const songKey = songPlaylistToRemove[1];
-      const index = songPlaylistToRemove[2];
-      const listLocation = index >= 0 ? index : songList.indexOf(songKey);
-      await set(
-        playlistStateFamily(songPlaylistToRemove[0]),
-        (curList: SongKey[]) => {
-          if (curList[listLocation] === songKey) {
-            return curList.filter((_v, i) => i !== listLocation);
-          } else {
-            return curList;
-          }
-        },
-      );
-    }
-  });
+  const removeSongConfirmed = useJotaiCallback(
+    (get, set) =>
+      AsyncHandler(async () => {
+        if (
+          songPlaylistToRemove[0].length > 0 &&
+          songPlaylistToRemove[1].length > 0
+        ) {
+          const playlistName = songPlaylistToRemove[0];
+          const songList = await get(playlistStateFamily(playlistName));
+          const songKey = songPlaylistToRemove[1];
+          const index = songPlaylistToRemove[2];
+          const listLocation = index >= 0 ? index : songList.indexOf(songKey);
+          const prvSongList = await get(
+            playlistStateFamily(songPlaylistToRemove[0]),
+          );
+          const newSongList = prvSongList.filter((v, i) => i !== listLocation);
+          await set(playlistStateFamily(songPlaylistToRemove[0]), newSongList);
+        }
+      }),
+    [songPlaylistToRemove],
+  );
 
   // TODO: make delete work
   const onTitleRenderer = (ttl: PlaylistSong, index?: number): JSX.Element => (
@@ -222,6 +221,14 @@ export function PlaylistView(): JSX.Element {
     </div>
   );
 
+  const onGetSongList = useJotaiCallback(
+    (get) =>
+      AsyncHandler(
+        async (xact: MyTransactionInterface, data: string) =>
+          await get(playlistStateFamily(data)),
+      ),
+    [],
+  );
   const groups: IGroup[] = [];
   const expItems: PlaylistSong[] = [];
 
@@ -317,9 +324,7 @@ export function PlaylistView(): JSX.Element {
         <SongListMenu
           context={playlistContext}
           onClearContext={onClearPlaylist}
-          onGetSongList={({ get }: MyTransactionInterface, data: string) =>
-            get(playlistFuncFam(data))
-          }
+          onGetSongList={onGetSongList}
           onGetPlaylistName={(data: string) => data}
           items={[
             'add',
