@@ -12,21 +12,14 @@ import { hasFieldType, isDefined, isNumber, isUndefined } from '@freik/typechk';
 import {
   Dialogs,
   MyTransactionInterface,
-  useDialogState,
-  useMyTransaction,
+  useDialogState
 } from '@freik/web-utils';
 import { atom as jatom, useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useJotaiCallback } from '../../Jotai/Helpers';
+import { AsyncHandler, useJotaiCallback } from '../../Jotai/Helpers';
 import { MakeSetAtomFamily } from '../../Jotai/Hooks';
-import { DeletePlaylist, RenamePlaylist } from '../../Recoil/api';
-import {
-  allPlaylistsFunc,
-  playlistFuncFam,
-  playlistNamesFunc,
-} from '../../Recoil/PlaylistsState';
 import { allSongsFunc } from '../../Recoil/ReadOnly';
 import { MakeSortKey } from '../../Sorting';
 import {
@@ -43,6 +36,13 @@ import { SongListMenu, SongListMenuData } from '../SongMenus';
 
 import { MakeLog } from '@freik/logger';
 import { AddSongs, PlaySongs } from '../../Jotai/API';
+import {
+  allPlaylistsState,
+  DeletePlaylist,
+  playlistNamesState,
+  playlistStateFamily,
+  RenamePlaylist,
+} from '../../Jotai/PlaylistControl';
 import './styles/Playlists.css';
 
 const { wrn } = MakeLog('EMP:render:Playlists');
@@ -79,9 +79,10 @@ function PlaylistHeaderDisplay({
     (get, set) => set(expandedAtom, !group.isCollapsed),
     [expandedAtom, group.isCollapsed],
   );
-  const onAddSongsClick = useMyTransaction((xact) => () => {
-    AddSongs(xact.get(playlistFuncFam(group.key)), group.key).catch(wrn);
-  });
+  const thisPlaylist = useAtomValue(playlistStateFamily(group.key));
+  const onAddSongsClick = useCallback(() => {
+    AddSongs(thisPlaylist, group.key).catch(wrn);
+  }, [group.key, thisPlaylist]);
   const onRightClick = (ev: React.MouseEvent<HTMLElement, MouseEvent>) => {
     setPlaylistContext({
       data: group.key,
@@ -124,8 +125,8 @@ export function PlaylistView(): JSX.Element {
   const [showRename, renameData] = useDialogState();
   const [showRemoveSong, removeSongData] = useDialogState();
 
-  const playlistNames = useRecoilValue(playlistNamesFunc);
-  const playlistContents = useRecoilValue(allPlaylistsFunc);
+  const playlistNames = new Set(useAtomValue(playlistNamesState));
+  const playlistContents = useAtomValue(allPlaylistsState);
   const allSongs = useRecoilValue(allSongsFunc);
   const playlistContext = useAtomValue(playlistContextState);
   const resetPlaylistContext = useResetAtom(playlistContextState);
@@ -136,49 +137,57 @@ export function PlaylistView(): JSX.Element {
 
   const clearSongContext = () => resetSongContext();
   const onClearPlaylist = () => resetPlaylistContext();
-  const onPlaylistInvoked = useMyTransaction(
-    (xact) => (playlistName: PlaylistName) => {
-      const songs = xact.get(playlistFuncFam(playlistName));
-      PlaySongs(songs, playlistName).catch(wrn);
-    },
+  const onPlaylistInvoked = useJotaiCallback(
+    (get) =>
+      AsyncHandler(async (playlistName: PlaylistName) => {
+        const songs = await get(playlistStateFamily(playlistName));
+        PlaySongs(songs, playlistName).catch(wrn);
+      }),
+    [],
   );
-  const onRemoveDupes = useMyTransaction(({ get, set }) => () => {
-    if (!playlistNames.has(playlistContext.data)) {
-      return;
-    }
-    const songs = get(playlistFuncFam(playlistContext.data));
-    const seen = new Set<SongKey>();
-    const newList: SongKey[] = [];
-    for (const song of songs) {
-      if (!seen.has(song)) {
-        newList.push(song);
-      }
-      seen.add(song);
-    }
-    set(playlistFuncFam(playlistContext.data), newList);
-  });
-  const onPlaylistDelete = (key: string) => {
+  const onRemoveDupes = useJotaiCallback(
+    (get, set) =>
+      AsyncHandler(async () => {
+        if (!playlistNames.has(playlistContext.data)) {
+          return;
+        }
+        const songs = await get(playlistStateFamily(playlistContext.data));
+        const seen = new Set<SongKey>();
+        const newList: SongKey[] = [];
+        for (const song of songs) {
+          if (!seen.has(song)) {
+            newList.push(song);
+          }
+          seen.add(song);
+        }
+        set(playlistStateFamily(playlistContext.data), newList);
+      }),
+    [playlistNames, playlistContext.data],
+  );
+  const onPlaylistDelete = useCallback((key: string) => {
     setSelected(key);
     showPlaylistDelete();
-  };
-  const deleteConfirmed = useMyTransaction((xact) => () => {
-    DeletePlaylist(xact, selected);
-  });
-  const renameConfirmed = useMyTransaction((xact) => (newName: string) => {
-    RenamePlaylist(xact, selected, newName);
-  });
-  const removeSongConfirmed = useMyTransaction((xact) => () => {
+  }, []);
+  const deleteConfirmed = useCallback(
+    () => DeletePlaylist(selected),
+    [selected],
+  );
+  const renameConfirmed = useCallback(
+    (newName: string) => RenamePlaylist(selected, newName),
+    [selected],
+  );
+  const removeSongConfirmed = useJotaiCallback((get, set) => AsyncHandler(async () => {
     if (
       songPlaylistToRemove[0].length > 0 &&
       songPlaylistToRemove[1].length > 0
     ) {
       const playlistName = songPlaylistToRemove[0];
-      const songList = xact.get(playlistFuncFam(playlistName));
+      const songList = await get(playlistStateFamily(playlistName));
       const songKey = songPlaylistToRemove[1];
       const index = songPlaylistToRemove[2];
       const listLocation = index >= 0 ? index : songList.indexOf(songKey);
-      xact.set(
-        playlistFuncFam(songPlaylistToRemove[0]),
+      await set(
+        playlistStateFamily(songPlaylistToRemove[0]),
         (curList: SongKey[]) => {
           if (curList[listLocation] === songKey) {
             return curList.filter((_v, i) => i !== listLocation);
