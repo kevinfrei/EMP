@@ -1,8 +1,8 @@
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import { PlaylistName, SongKey } from '@freik/media-core';
 import { isArray, isArrayOfString, isSetOfString } from '@freik/typechk';
 import { atom, atomFamily, selector, selectorFamily } from 'recoil';
-import { IpcId } from '@freik/emp-shared';
 import { isPlaylist } from '../Tools';
 import { activePlaylistState, songListState } from './SongPlaying';
 
@@ -69,7 +69,7 @@ export const playlistFuncFam = selectorFamily<SongKey[], PlaylistName>({
       const backed = get(playlistBackerFam(arg));
       if (backed === false) {
         const listStr = await Ipc.CallMain(
-          IpcId.LoadPlaylists,
+          IpcId.LoadPlaylist,
           arg,
           isArrayOfString,
         );
