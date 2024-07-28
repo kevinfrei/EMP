@@ -28,6 +28,7 @@ function playlistPath(name: string): string {
   return path.join(playlistDir(), ToPathSafeName(name));
 }
 
+// No longer in use, I believe...
 export async function RenamePlaylist([curName, newName]: [
   string,
   string,
@@ -58,6 +59,7 @@ export async function DeletePlaylist(data: string): Promise<void> {
   }
 }
 
+// Returns the list of playlists
 export async function GetPlaylists(): Promise<string[]> {
   log('getPlaylists');
   try {
