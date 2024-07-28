@@ -16,6 +16,7 @@ import {
 } from '@freik/web-utils';
 import { useAtomValue } from 'jotai';
 import { AddSongs, PlaySongs } from '../Jotai/API';
+import { AsyncHandler } from '../Jotai/Helpers';
 import { songListLikeNumberFromStringFam } from '../Jotai/LikesAndHates';
 import { SongListDetailClick } from './DetailPanel/Clickers';
 import { ErrorBoundary } from './Utilities';
@@ -26,10 +27,9 @@ type SongListMenuArgs = {
   title?: string;
   context: SongListMenuData;
   onClearContext: () => void;
-  onGetSongList: (
-    (xact: MyTransactionInterface, data: string) => SongKey[]) 
-    | 
-    (xact: MyTransactionInterface, data: string) => Promise<SongKey[]>);
+  onGetSongList:
+    | ((xact: MyTransactionInterface, data: string) => SongKey[])
+    | ((xact: MyTransactionInterface, data: string) => Promise<SongKey[]>);
   onGetPlaylistName?: (data: string) => string;
   items?: (IContextualMenuItem | string)[];
 };
@@ -61,23 +61,26 @@ export function SongListMenu({
     itemType: ContextualMenuItemType.Divider,
   });
 
-  const onAdd = useMyTransaction(
-    (xact) => () =>
+  const onAdd = useMyTransaction((xact) =>
+    AsyncHandler(async () =>
       AddSongs(
-        onGetSongList(xact, context.data),
+        await onGetSongList(xact, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
+    ),
   );
-  const onReplace = useMyTransaction(
-    (xact) => () =>
+  const onReplace = useMyTransaction((xact) =>
+    AsyncHandler(async () =>
       PlaySongs(
-        onGetSongList(xact, context.data),
+        await onGetSongList(xact, context.data),
         onGetPlaylistName ? onGetPlaylistName(context.data) : undefined,
       ),
+    ),
   );
-  const onProps = useMyTransaction(
-    (xact) => () =>
-      SongListDetailClick(onGetSongList(xact, context.data), false),
+  const onProps = useMyTransaction((xact) =>
+    AsyncHandler(async () =>
+      SongListDetailClick(await onGetSongList(xact, context.data), false),
+    ),
   );
   // JODO: Update this once we've got the song list from the media interface
   const onLove = () => {}; /*

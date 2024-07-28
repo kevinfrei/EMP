@@ -58,7 +58,10 @@ export const allPlaylistsState = atom(
           await Ipc.PostMain(IpcId.DeletePlaylist, key);
         }),
         ...toAdd.map(async (key) => {
-          await Ipc.PostMain(IpcId.SavePlaylist, [key, newVal.get(key)]);
+          await Ipc.PostMain(IpcId.SavePlaylist, {
+            name: key,
+            songs: newVal.get(key),
+          });
         }),
       ]);
     }
@@ -72,7 +75,7 @@ export const allPlaylistsState = atom(
           news &&
           (olds.length !== news.length || !ArraySetEqual([...olds], [...news]))
         ) {
-          await Ipc.PostMain(IpcId.SavePlaylist, [key, news]);
+          await Ipc.PostMain(IpcId.SavePlaylist, { name: key, songs: news });
         }
       }),
     );
@@ -83,13 +86,20 @@ export const playlistStateFamily = atomFamily<
   PlaylistName,
   WritableAtomType<SongKey[]>
 >((name: PlaylistName) =>
-  atom(async (get) => {
-    const pl = await get(allPlaylistsState);
-    return pl.get(name) || [];
-  },
-    async (get, set, param: SetStateActionWithReset<Playlist | Promise<Playlist>>) => {
+  atom(
+    async (get) => {
+      const pl = await get(allPlaylistsState);
+      return pl.get(name) || [];
+    },
+    async (
+      get,
+      set,
+      param: SetStateActionWithReset<Playlist | Promise<Playlist>>,
+    ) => {
       const oldVal = await get(allPlaylistsState);
-      const newThing = await (isFunction(param) ? param(oldVal.get(name) || []) : param);
+      const newThing = await (isFunction(param)
+        ? param(oldVal.get(name) || [])
+        : param);
       const newMap = new Map(oldVal);
       if (newThing === RESET) {
         newMap.delete(name);
@@ -97,7 +107,9 @@ export const playlistStateFamily = atomFamily<
         newMap.set(name, newThing);
       }
       set(allPlaylistsState, newMap);
-    }));
+    },
+  ),
+);
 
 export const playlistNamesState = atom(async (get) => {
   return [...(await get(allPlaylistsState)).keys()];
@@ -106,9 +118,14 @@ export const playlistNamesState = atom(async (get) => {
 // TODO: Need to add the ability to delete a playlist :/
 // This decides if the current playlist is something that can be 'saved'
 // (Is it already a playlist or not?)
-export const saveableState = atom(async (get) => (await get(activePlaylistState)) === '');
+export const saveableState = atom(
+  async (get) => (await get(activePlaylistState)) === '',
+);
 
-export async function DeletePlaylist(name: PlaylistName, store?: MyStore): Promise<void> {
+export async function DeletePlaylist(
+  name: PlaylistName,
+  store?: MyStore,
+): Promise<void> {
   store = store || getStore();
   const oldVal = await store.get(allPlaylistsState);
   const newMap = new Map(oldVal);
@@ -116,7 +133,11 @@ export async function DeletePlaylist(name: PlaylistName, store?: MyStore): Promi
   await store.set(allPlaylistsState, newMap);
 }
 
-export async function RenamePlaylist(oldName: PlaylistName, newName: PlaylistName, store?: MyStore): Promise<void> {
+export async function RenamePlaylist(
+  oldName: PlaylistName,
+  newName: PlaylistName,
+  store?: MyStore,
+): Promise<void> {
   store = store || getStore();
   const oldVal = await store.get(allPlaylistsState);
   const newMap = new Map(oldVal);
