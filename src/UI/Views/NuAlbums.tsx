@@ -78,9 +78,8 @@ function AlbumCoverView({
   const albumData = useRecoilValue(dataForAlbumFuncFam(album.key));
   const picurl = getAlbumImageUrl(album.key);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // const onAddSongsClick = () => AddSongs(store, album.songs).catch(wrn);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   // const onRightClick = SongListDetailContextMenuClick(album.songs);
   if (!album) {
     return <></>;

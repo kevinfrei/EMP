@@ -32,7 +32,8 @@
     "hook-commit": "ftool format",
     "hook-push": "yarn test",
     "client-deps": "yarn madge --image client-deps.svg src/main.tsx",
-    "server-deps": "yarn madge --image server-deps.svg electron/main.ts"
+    "server-deps": "yarn madge --image server-deps.svg electron/main.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@fluentui/react": "^8.120.7",
