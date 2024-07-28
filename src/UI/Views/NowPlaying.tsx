@@ -34,7 +34,7 @@ import { atom as jatom, useAtom, useAtomValue } from 'jotai';
 import { useCallback, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { RemoveSongFromNowPlaying, StopAndClear } from '../../Jotai/API';
-import { AsyncHandler, useJotaiCallback } from '../../Jotai/Helpers';
+import { useJotaiAsyncCallback, useJotaiCallback } from '../../Jotai/Helpers';
 import { isMiniplayerState, nowPlayingSortState } from '../../Jotai/Local';
 import {
   playlistNamesState,
@@ -75,7 +75,6 @@ const nowPlayingContextState = jatom<SongListMenuData>({
 
 // The top line of the Now Playing view: Buttons & dialogs & stuff
 function TopLine(): JSX.Element {
-  const playlists = useAtomValue(playlistNamesState);
   const nowPlaying = useAtomValue(activePlaylistState);
   const songList = useRecoilValue(songListState);
   const saveEnabled = useAtomValue(saveableState);
@@ -83,16 +82,16 @@ function TopLine(): JSX.Element {
   const [showSaveAs, saveAsData] = useDialogState();
   const [showConfirm, confirmData] = useDialogState();
 
-  const saveListAs = useJotaiCallback(
-    (get, set) =>
-      AsyncHandler(async (inputName: string) => {
-        if (playlists.includes(inputName)) {
-          window.alert("Sorry: You can't overwrite an existing playlist.");
-        } else {
-          set(playlistStateFamily(inputName), [...songList]);
-          set(activePlaylistState, inputName);
-        }
-      }),
+  const saveListAs = useJotaiAsyncCallback(
+    async (get, set, inputName: string) => {
+      const playlists = await get(playlistNamesState);
+      if (playlists.includes(inputName)) {
+        window.alert("Sorry: You can't overwrite an existing playlist.");
+      } else {
+        set(playlistStateFamily(inputName), [...songList]);
+        set(activePlaylistState, inputName);
+      }
+    },
     [playlistStateFamily, activePlaylistState],
   );
   const stopAndClear = useCallback(() => StopAndClear().catch(wrn), []);

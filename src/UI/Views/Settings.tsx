@@ -22,7 +22,7 @@ import {
 } from '@freik/web-utils';
 
 import { useAtom, useAtomValue } from 'jotai';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { AddIgnoreItem, RemoveIgnoreItem } from '../../ipc';
 import { AsyncHandler } from '../../Jotai/Helpers';
@@ -239,6 +239,14 @@ function ArticleSorting(): JSX.Element {
 function ArtistFiltering(): JSX.Element {
   const onlyAlbumArtists = useBoolAtom(showArtistsWithFullAlbumsState);
   const [songCount, setSongCount] = useAtom(minSongCountForArtistListState);
+  const onIncrement = useCallback(
+    AsyncHandler(() => setSongCount(Math.min(100, songCount + 1))),
+    [minSongCountForArtistListState],
+  );
+  const onDecrement = useCallback(
+    AsyncHandler(() => setSongCount(Math.max(1, songCount - 1))),
+    [minSongCountForArtistListState],
+  );
   return (
     <>
       <StateToggle
@@ -249,12 +257,8 @@ function ArtistFiltering(): JSX.Element {
         label="Only show artists with at least this many songs (JODO)"
         disabled={onlyAlbumArtists[0]}
         value={songCount.toString()}
-        onIncrement={AsyncHandler(() =>
-          setSongCount(Math.min(100, songCount + 1)),
-        )}
-        onDecrement={AsyncHandler(() =>
-          setSongCount(Math.max(1, songCount - 1)),
-        )}
+        onIncrement={onIncrement}
+        onDecrement={onDecrement}
         style={{ width: '10px' }}
       />
     </>

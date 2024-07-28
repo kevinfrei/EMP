@@ -19,3 +19,11 @@ export function useJotaiCallback<Result, Args extends unknown[]>(
 ): (...args: Args) => Result {
   return useAtomCallback(useCallback(fn, deps), options);
 }
+
+export function useJotaiAsyncCallback<Result, Args extends unknown[]>(
+  fn: (get: Getter, set: Setter, ...args: Args) => Promise<Result>,
+  deps: any[],
+  options?: Options,
+): (...args: Args) => Promise<Result> {
+  return useAtomCallback(useCallback(fn, deps), options);
+}
