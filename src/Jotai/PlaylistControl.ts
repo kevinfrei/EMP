@@ -1,7 +1,6 @@
 import { Ipc } from '@freik/electron-render';
 import { IpcId } from '@freik/emp-shared';
 import { ArraySetEqual } from '@freik/helpers';
-import { MakeLog } from '@freik/logger';
 import { Playlist, PlaylistName, SongKey } from '@freik/media-core';
 import { isArrayOfString, isFunction } from '@freik/typechk';
 import { atom } from 'jotai';
@@ -10,7 +9,7 @@ import { SetStateActionWithReset, WritableAtomType } from './Hooks';
 import { activePlaylistState } from './SongPlayback';
 import { getStore, MyStore } from './Storage';
 
-const { wrn } = MakeLog('EMP:UI:PlaylistControl');
+// const { wrn } = MakeLog('EMP:UI:PlaylistControl');
 
 let theCache: Map<PlaylistName, Playlist> | undefined = undefined;
 
@@ -41,10 +40,10 @@ async function getCache(): Promise<Map<PlaylistName, Playlist>> {
 }
 
 export const allPlaylistsState = atom(
-  async (get) => {
+  async () => {
     return await getCache();
   },
-  async (get, set, newVal: Map<PlaylistName, Playlist>) => {
+  async (_get, _set, newVal: Map<PlaylistName, Playlist>) => {
     const oldVal = await getCache();
     theCache = newVal;
     if (oldVal.size !== newVal.size) {
