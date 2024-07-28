@@ -6,12 +6,11 @@ import { ForwardedRef } from 'react';
 import { MaybePlayNext, MaybePlayPrev } from '../Jotai/API';
 import { curViewFunc } from '../Jotai/CurrentView';
 import { mediaTimePercentFunc, mediaTimeState } from '../Jotai/MediaPlaying';
+import { playlistStateFamily } from '../Jotai/PlaylistControl';
 import { mutedState, volumeState } from '../Jotai/SimpleSettings';
+import { repeatState, shuffleState } from '../Jotai/SongPlayback';
 import { getStore, MaybeStore } from '../Jotai/Storage';
 import { FocusSearch } from '../MyWindow';
-import { repeatState } from '../Recoil/PlaybackOrder';
-import { playlistFuncFam } from '../Recoil/PlaylistsState';
-import { shuffleFunc } from '../Recoil/ReadWrite';
 import { activePlaylistState, songListState } from '../Recoil/SongPlaying';
 import { onClickPlayPause } from './PlaybackControls';
 import { addLocation } from './Views/Settings';
@@ -41,19 +40,20 @@ export function MenuHandler(
   wrn('Menu command:', message);
   log('Menu command:', message);
   // I'm not really thrilled with this mechanism. String-based dispatch sucks
+  const store = getStore();
   if (hasStrField(message, 'state')) {
     switch (message.state) {
       case 'savePlaylist': {
         const nowPlaying = xact.get(activePlaylistState);
         const songList = xact.get(songListState);
-        xact.set(playlistFuncFam(nowPlaying), songList);
+        store.set(playlistStateFamily(nowPlaying), songList);
         break;
       }
       case 'shuffle':
-        xact.set(shuffleFunc, (cur) => !cur);
+        store.set(shuffleState, !store.get(shuffleState));
         break;
       case 'repeat':
-        xact.set(repeatState, (cur) => !cur);
+        store.set(repeatState, !store.get(repeatState));
         break;
 
       case 'addLocation':
@@ -83,25 +83,20 @@ export function MenuHandler(
         updateTime(-10);
         break;
 
-      case 'mute': {
-        const store = getStore();
+      case 'mute':
         store.set(mutedState, async (cur) => !(await cur)).catch(wrn);
         break;
-      }
-      case 'louder': {
-        const store = getStore();
+
+      case 'louder':
         store
           .set(volumeState, async (val) => Math.min(1.0, (await val) + 0.1))
           .catch(wrn);
         break;
-      }
-      case 'quieter': {
-        const store = getStore();
+      case 'quieter':
         store
           .set(volumeState, async (val) => Math.max(0, (await val) - 0.1))
           .catch(wrn);
         break;
-      }
       case 'view':
         if (hasStrField(message, 'select')) {
           let theView: CurrentViewEnum = CurrentView.none;
@@ -132,7 +127,6 @@ export function MenuHandler(
               break;
           }
           if (theView !== CurrentView.none) {
-            const store = getStore();
             store.set(curViewFunc, theView).catch(wrn);
           }
         } else {
