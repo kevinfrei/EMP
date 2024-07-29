@@ -43,18 +43,19 @@ export function MenuHandler(
   const store = getStore();
   if (hasStrField(message, 'state')) {
     switch (message.state) {
-      case 'savePlaylist': {
-        const nowPlaying = xact.get(activePlaylistState);
-        const songList = xact.get(songListState);
-        store.set(playlistStateFamily(nowPlaying), songList);
-        break;
-      }
       case 'shuffle':
         store.set(shuffleState, !store.get(shuffleState));
         break;
       case 'repeat':
         store.set(repeatState, !store.get(repeatState));
         break;
+
+      case 'savePlaylist': {
+        const nowPlaying = xact.get(activePlaylistState);
+        const songList = xact.get(songListState);
+        store.set(playlistStateFamily(nowPlaying), songList);
+        break;
+      }
 
       case 'addLocation':
         addLocation(xact).catch(wrn);
@@ -86,7 +87,6 @@ export function MenuHandler(
       case 'mute':
         store.set(mutedState, async (cur) => !(await cur)).catch(wrn);
         break;
-
       case 'louder':
         store
           .set(volumeState, async (val) => Math.min(1.0, (await val) + 0.1))

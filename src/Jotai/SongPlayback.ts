@@ -1,3 +1,4 @@
+import { StorageId } from '@freik/emp-shared';
 import { isSongKey, SongKey } from '@freik/media-core';
 import {
   chkArrayOf,
@@ -9,22 +10,30 @@ import {
 import { atom } from 'jotai';
 import { atomWithMainStorage } from './Storage';
 
-export const shuffleState = atomWithMainStorage('shuffle', false, isBoolean);
+export const shuffleState = atomWithMainStorage(
+  StorageId.Shuffle,
+  false,
+  isBoolean,
+);
 
-export const repeatState = atomWithMainStorage('repeat', false, isBoolean);
+export const repeatState = atomWithMainStorage(
+  StorageId.Repeat,
+  false,
+  isBoolean,
+);
 
 // The position in the active playlist of the current song
 // For 'ordered' playback, it's the index in the songList
 // otherwise it's an index into the songPlaybackOrderState
 export const currentIndexState = atomWithMainStorage(
-  'currentIndex',
+  StorageId.CurrentIndex,
   -1,
   isNumber,
 );
 
 // The order of the playlist to play
 export const songPlaybackOrderState = atomWithMainStorage<'ordered' | number[]>(
-  'playbackOrder',
+  StorageId.PlaybackOrder,
   'ordered',
   chkOneOf((a): a is 'ordered' => a === 'ordered', chkArrayOf(isNumber)),
 );
@@ -32,14 +41,14 @@ export const songPlaybackOrderState = atomWithMainStorage<'ordered' | number[]>(
 // The name of the active playlist
 // the emptry string means the playlist isn't saved as, or based on, anything
 export const activePlaylistState = atomWithMainStorage(
-  'nowPlaying',
+  StorageId.NowPlaying,
   '',
   isString,
 );
 
 // The currently active playlist
 export const songListState = atomWithMainStorage<SongKey[]>(
-  'currentSongList',
+  StorageId.CurrentSongList,
   [],
   chkArrayOf(isSongKey),
 );
