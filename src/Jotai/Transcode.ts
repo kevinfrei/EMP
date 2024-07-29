@@ -1,5 +1,5 @@
 import {
-  IpcId,
+  StorageId,
   TranscodeSource,
   TranscodeSourceEnum,
   TranscodeState,
@@ -59,8 +59,9 @@ export type TranscodeSourceLocation = {
 
 // const xcodeErr = (curStatus: string) => ({ ...emptyXcodeInfo, curStatus });
 
+// I think this one may be wrong
 export const transcodeStatusState = atomWithMainStorage<TranscodeState>(
-  IpcId.TranscodingUpdate,
+  StorageId.TranscodingUpdate,
   emptyXcodeInfo,
   isTranscodeState,
 );
@@ -70,25 +71,25 @@ export const sourceLocationTypeState = atom<TranscodeSourceEnum>(
 );
 
 export const sourceLocationDirState = atomWithMainStorage(
-  'xcodeSrcLocDir',
+  StorageId.TranscodeSrcLocDir,
   '',
   isString,
 );
 
 export const sourceLocationPlaylistState = atomWithMainStorage(
-  'xcodeSrcLocPlaylist',
+  StorageId.TranscodeSrcLocPlaylist,
   '',
   isString,
 );
 
 export const sourceLocationArtistState = atomWithMainStorage(
-  'xcodeSrcLocArtist',
+  StorageId.TranscodeSrcLocArtist,
   '',
   isArtistKey,
 );
 
 export const sourceLocationAlbumState = atomWithMainStorage(
-  'xcodeSrcLocAlbum',
+  StorageId.TranscodeSrcLocAlbum,
   '',
   isAlbumKey,
 );
@@ -138,13 +139,13 @@ export const sourceLocationState = atom(async (get) => {
 });
 
 export const destLocationState = atomWithMainStorage(
-  'xcodeDestLoc',
+  StorageId.TranscodeDestLoc,
   '',
   isString,
 );
 
 export const xcodeBitRateState = atomWithMainStorage(
-  'xcodeBitRate',
+  StorageId.TranscodeBitRate,
   128,
   isNumber,
 );

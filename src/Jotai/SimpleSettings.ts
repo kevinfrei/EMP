@@ -1,3 +1,4 @@
+import { StorageId } from '@freik/emp-shared';
 import { isArrayOfString, isBoolean, isNumber, isString } from '@freik/typechk';
 import { atomWithMainStorage } from './Storage';
 
@@ -9,58 +10,58 @@ export const volumeState = atomWithMainStorage('volume', 0.5, isNumber);
 
 // This is the 'locations' for searching for tunes
 export const locationsState = atomWithMainStorage(
-  'locations',
+  StorageId.Locations,
   [],
   isArrayOfString,
 );
 
 export const defaultLocationState = atomWithMainStorage(
-  'defaultLocation',
+  StorageId.DefaultLocation,
   '',
   isString,
 );
 
 // Sort with/without articles setting
 export const ignoreArticlesState = atomWithMainStorage(
-  'rSortWithArticles',
+  StorageId.SortWithArticles,
   true,
   isBoolean,
 );
 
 // Only show artists in the list who appear on full albums
 export const showArtistsWithFullAlbumsState = atomWithMainStorage(
-  'FullAlbumsOnly',
+  StorageId.FullAlbumsOnly,
   false,
   isBoolean,
 );
 
 export const downloadAlbumArtworkState = atomWithMainStorage(
-  'downloadAlbumArtwork',
+  StorageId.DownloadAlbumArtwork,
   false,
   isBoolean,
 );
 
 export const downloadArtistArtworkState = atomWithMainStorage(
-  'downloadArtistArtwork',
+  StorageId.DownloadArtistArtwork,
   false,
   isBoolean,
 );
 
 export const saveAlbumArtworkWithMusicState = atomWithMainStorage(
-  'saveAlbumArtworkWithMusic',
+  StorageId.SaveAlbumArtworkWithMusic,
   false,
   isBoolean,
 );
 
 export const albumCoverNameState = atomWithMainStorage(
-  'albumCoverName',
+  StorageId.AlbumCoverName,
   '.CoverArt',
   isString,
 );
 
 // The minimum # of songs an artist needs to show up in the artist list
 export const minSongCountForArtistListState = atomWithMainStorage(
-  'MinSongCount',
+  StorageId.MinSongCount,
   1,
   isNumber,
 );

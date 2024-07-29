@@ -1,3 +1,4 @@
+import { StorageId } from '@freik/emp-shared';
 import {
   AlbumKey,
   ArtistKey,
@@ -17,19 +18,19 @@ import {
 // const err = MakeError('Likes-err');
 
 export const neverPlayHatesState = atomWithMainStorage(
-  'neverPlayHates',
+  StorageId.NeverPlayHates,
   true,
   isBoolean,
 );
 
 export const onlyPlayLikesState = atomWithMainStorage(
-  'onlyPlayLikes',
+  StorageId.OnlyPlayLikes,
   false,
   isBoolean,
 );
 
 const songLikeBackerState = atomWithTranslatedStorageInMain(
-  'likedSongs',
+  StorageId.LikedSongs,
   new Set<SongKey>(),
   isArrayOfString,
   (val: Set<string>) => [...val],
@@ -37,7 +38,7 @@ const songLikeBackerState = atomWithTranslatedStorageInMain(
 );
 
 const songHateBackerState = atomWithTranslatedStorageInMain(
-  'hatedSongs',
+  StorageId.HatedSongs,
   new Set<SongKey>(),
   isArrayOfString,
   (val: Set<string>) => [...val],

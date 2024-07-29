@@ -1,4 +1,5 @@
 import { Ipc } from '@freik/electron-render';
+import { StorageIdEnum } from '@freik/emp-shared';
 import {
   Pickle,
   SafelyUnpickle,
@@ -133,7 +134,7 @@ export function getMainReadOnlyStorage<T>(chk: typecheck<T>): AsyncStorage<T> {
 }
 
 export function atomWithMainStorage<T>(
-  key: string,
+  key: StorageIdEnum,
   init: T,
   chk: typecheck<T>,
 ): WritableAtomType<T> {

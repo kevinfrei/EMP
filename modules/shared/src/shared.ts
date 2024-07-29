@@ -81,6 +81,41 @@ export const IpcId = Object.freeze({
 } as const);
 export type IpcIdEnum = (typeof IpcId)[keyof typeof IpcId];
 
+export const StorageId = Object.freeze({
+  CurrentView: 'CurrentView',
+  CurrentIndex: 'currentIndex',
+  PlaybackOrder: 'playbackOrder',
+  NowPlaying: 'nowPlaying',
+  CurrentSongList: 'currentSongList',
+  Shuffle: 'shuffle',
+  Repeat: 'repeat',
+  NeverPlayHates: 'neverPlayHates',
+  OnlyPlayLikes: 'onlyPlayLikes',
+  FullAlbumsOnly: 'FullAlbumsOnly',
+  MinSongCount: 'MinSongCount',
+  Mute: 'mute',
+  LikedSongs: 'likedSongs',
+  HatedSongs: 'hatedSongs',
+  Volume: 'volume',
+  Locations: 'locations',
+  DefaultLocation: 'defaultLocation',
+  SortWithArticles: 'rSortWithArticles',
+  DownloadAlbumArtwork: 'downloadAlbumArtwork',
+  DownloadArtistArtwork: 'downloadArtistArtwork',
+  SaveAlbumArtworkWithMusic: 'saveAlbumArtworkWithMusic',
+  AlbumCoverName: 'albumCoverName',
+  TranscodingUpdate: 'get-xcode-update',
+  TranscodeSrcLocDir: 'xcodeSrcLocDir',
+  TranscodeSrcLocPlaylist: 'xcodeSrcLocPlaylist',
+  TranscodeSrcLocArtist: 'xcodeSrcLocArtist',
+  TranscodeSrcLocAlbum: 'xcodeSrcLocAlbum',
+  TranscodeDestLoc: 'xcodeDestLoc',
+  TranscodeBitRate: 'xcodeBitRate',
+} as const);
+export type StorageIdEnum = (typeof StorageId)[keyof typeof StorageId];
+// const StorageIdEnumValues: readonly StorageIdEnum[] = Object.values(StorageId);
+// export const isStorageId = chkValidConst(StorageIdEnumValues);
+
 export const Keys = Object.freeze({
   AddFileLocation: 'O',
   Albums: '2',
