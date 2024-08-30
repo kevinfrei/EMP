@@ -71,7 +71,7 @@ export function ArtistSelector({
             if (art.key === option.key) {
               set(value, art.key);
             }
-          } catch (e) {
+          } catch {
             /* */
           }
         }
@@ -117,7 +117,7 @@ export function AlbumSelector({
             if (alb.key === option.key) {
               set(value, alb.key);
             }
-          } catch (e) {
+          } catch {
             /* */
           }
         }

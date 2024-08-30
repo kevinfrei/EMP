@@ -37,11 +37,11 @@ function fileWatchFilter(filepath: string): boolean {
         const noXcode = path.join(filepath, '.notranscode');
         const st = statSync(noXcode);
         return !st.isFile();
-      } catch (errorValue) {
+      } catch {
         /* */
       }
     }
-  } catch (e) {
+  } catch {
     /* */
   }
   return true;

@@ -30,7 +30,7 @@ function makeGetItem<T>(
       try {
         const val = SafelyUnpickle(strValue, chk);
         return isUndefined(val) ? initialValue : val;
-      } catch (e) {
+      } catch {
         /* */
       }
     }
@@ -48,7 +48,7 @@ function makeGetTranslatedItem<T, U>(
       try {
         const val = SafelyUnpickle(strValue, chk);
         return isUndefined(val) ? initialValue : xlate(val);
-      } catch (e) {
+      } catch {
         /* */
       }
     }

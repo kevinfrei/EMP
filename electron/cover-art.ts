@@ -120,7 +120,7 @@ async function LookForAlbum(
         log(`Got album art for ${artist}: ${album} [${albTrim}]`);
         return attempt;
       }
-    } catch (e) {
+    } catch {
       log(`Failed album attempt ${albTrim}`);
     }
     lastAlbum = albTrim;
@@ -161,7 +161,7 @@ async function LookForArtist(artist: string): Promise<string | void> {
       log(`Got artist art for ${artist}`);
       return attempt;
     }
-  } catch (e) {
+  } catch {
     log(`Failed artist attempt ${artist}`);
   }
 

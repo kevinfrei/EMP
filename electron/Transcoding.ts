@@ -74,7 +74,7 @@ export async function toMp4Async(
         XcodeResCode.alreadyExists,
         `'${newFile}' already appears to exist`,
       );
-    } catch (error) {
+    } catch {
       /* The file doesn't exist, so we're happy */
     }
     const ext: string = PathUtil.getExtNoDot(originalFile).toLowerCase();
@@ -296,10 +296,10 @@ async function convert(
       const dr = path.dirname(newName);
       try {
         await fsp.stat(dr);
-      } catch (e) {
+      } catch {
         await fsp.mkdir(dr, { recursive: true });
       }
-    } catch (e) {
+    } catch {
       reportFailure(
         newName,
         `Unable to find/create the directory for ${newName}`,
@@ -314,7 +314,7 @@ async function convert(
           if (filePairs !== undefined) {
             filePairs.set(src, relName);
           }
-        } catch (e) {
+        } catch {
           reportFailure(
             src,
             `Unable to copy already mid-quality file ${src} to ${relName}`,
@@ -399,7 +399,7 @@ async function findExcessDirs(settings: TranscodeInfo): Promise<string[]> {
         if (!st.isDirectory()) {
           result.push(dirname);
         }
-      } catch (e) {
+      } catch {
         result.push(dirname);
       }
       return true;

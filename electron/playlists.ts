@@ -94,7 +94,7 @@ export async function SavePlaylist(data: PlaylistSaveData): Promise<void> {
   try {
     try {
       await fsp.mkdir(playlistDir(), { recursive: true });
-    } catch (e) {
+    } catch {
       /* */
     }
     await fsp.writeFile(

@@ -232,12 +232,10 @@ export function MockERU() {
       async invoke<T>(channel: string, key?: T) {
         return await InvokeMain(channel, key);
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
-      on(key: string, listen: Function) {
+      on(/* key: string, listen: Function */) {
         // Probably should do something here, right?
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/ban-types
-      removeEventListener(key: string, listen: Function) {
+      removeEventListener(/* key: string, listen: Function */) {
         // Maybe do something here, too?
       },
     } as unknown as IpcRenderer,
