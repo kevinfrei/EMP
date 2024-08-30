@@ -10,6 +10,7 @@ import {
 import {
   chkArrayOf,
   chkObjectOfType,
+  hasFieldType,
   isArrayOfString,
   isNumber,
   isString,
@@ -96,3 +97,16 @@ export type SongInfo = {
   moreArtists: string;
   album: Album;
 };
+export function diskNumName(
+  songData: SongInfo,
+): [string | null, string | null] {
+  const diskNo = Math.floor(songData.song.track / 100);
+  if (diskNo > 0) {
+    if (hasFieldType(songData.album, 'diskNames', isArrayOfString)) {
+      return [diskNo.toString(), songData.album.diskNames[diskNo - 1]];
+    }
+    return [diskNo.toString(), null];
+  } else {
+    return [null, null];
+  }
+}

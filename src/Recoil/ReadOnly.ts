@@ -11,7 +11,7 @@ import {
   SongKey,
   isSongKey,
 } from '@freik/media-core';
-import { hasFieldType, isArrayOfString, isString } from '@freik/typechk';
+import { isString } from '@freik/typechk';
 import { Catch, Fail } from '@freik/web-utils';
 import { atom, selector, selectorFamily } from 'recoil';
 import * as ipc from '../ipc';
@@ -22,7 +22,9 @@ import {
   MakeMusicLibraryFromFlatAudioDatabase,
   MusicLibrary,
   SongDescription,
+  SongInfo,
   SongMap,
+  diskNumName,
   emptyLibrary,
   isFlatAudioDatabase,
 } from '../MusicLibrarySchema';
@@ -342,25 +344,6 @@ export const searchFuncFam = selectorFamily<ipc.SearchResults, string>({
       return res || { songs: [], albums: [], artists: [] } || mdCount;
     },
 });
-
-type SongInfo = {
-  song: Song;
-  artists: string;
-  moreArtists: string;
-  album: Album;
-};
-
-function diskNumName(songData: SongInfo): [string | null, string | null] {
-  const diskNo = Math.floor(songData.song.track / 100);
-  if (diskNo > 0) {
-    if (hasFieldType(songData.album, 'diskNames', isArrayOfString)) {
-      return [diskNo.toString(), songData.album.diskNames[diskNo - 1]];
-    }
-    return [diskNo.toString(), null];
-  } else {
-    return [null, null];
-  }
-}
 
 // Given a collection of SongKeys, get all the common metadata info
 // and shove it in the Partial<FullMetadata> object

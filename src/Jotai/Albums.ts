@@ -1,8 +1,9 @@
-import { AlbumKey } from '@freik/media-core';
+import { AlbumKey, SongKey } from '@freik/media-core';
 import { Fail } from '@freik/web-utils';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { musicLibraryState } from './MusicLibrary';
+import { maybeSongByKey } from './Songs';
 
 export const allAlbumsState = atom((get) => {
   return get(musicLibraryState).albums;
@@ -19,5 +20,16 @@ export const albumByKey = atomFamily((ak: AlbumKey) =>
       Fail(ak, 'Unfound album key');
     }
     return album;
+  }),
+);
+
+export const albumKeyFromSongKey = atomFamily((sk: SongKey) =>
+  atom(async (get): Promise<AlbumKey> => {
+    if (sk.length > 0) {
+      const song = await get(maybeSongByKey(sk));
+      return song ? song.albumId : '';
+    } else {
+      return '';
+    }
   }),
 );
