@@ -14,6 +14,7 @@ import {
   isNumber,
   isString,
 } from '@freik/typechk';
+import { SetDB } from './MyWindow';
 
 export type SongMap = Map<SongKey, Song>;
 export type AlbumMap = Map<AlbumKey, Album>;
@@ -79,4 +80,19 @@ export const emptyLibrary = {
   songs: new Map<SongKey, Song>(),
   albums: new Map<AlbumKey, Album>(),
   artists: new Map<ArtistKey, Artist>(),
+};
+export function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
+  // For debugging, this is helpful sometimes:
+  SetDB(fad);
+  return {
+    songs: new Map(fad.songs.map((swp) => [swp.key, swp])),
+    albums: new Map(fad.albums.map((alb) => [alb.key, alb])),
+    artists: new Map(fad.artists.map((art) => [art.key, art])),
+  };
+}
+export type SongInfo = {
+  song: Song;
+  artists: string;
+  moreArtists: string;
+  album: Album;
 };

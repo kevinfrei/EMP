@@ -1,5 +1,5 @@
 import { StorageId } from '@freik/emp-shared';
-import { isSongKey, SongKey } from '@freik/media-core';
+import { isSongKey, Song, SongKey } from '@freik/media-core';
 import {
   chkArrayOf,
   chkOneOf,
@@ -7,7 +7,9 @@ import {
   isNumber,
   isString,
 } from '@freik/typechk';
+import { Catch } from '@freik/web-utils';
 import { atom } from 'jotai';
+import { songByKey } from './Songs';
 import { atomWithMainStorage } from './Storage';
 
 export const shuffleState = atomWithMainStorage(
@@ -120,3 +122,17 @@ export const hasPrevSongState = atom(async (get) => {
 export const hasAnySongsState = atom(
   async (get) => (await get(songListState)).length > 0,
 );
+
+export const curSongsState = atom(async (get): Promise<Song[]> => {
+  const curList = await get(songListState);
+  const songList: Song[] = [];
+  for (const sk of curList) {
+    try {
+      const s = await get(songByKey(sk));
+      songList.push(s);
+    } catch (e) {
+      Catch(e, `Error for SongKey '${sk}'`);
+    }
+  }
+  return songList; // curList.map((sk: SongKey) => get(getSongByKeyState(sk)));
+});

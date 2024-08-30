@@ -5,16 +5,17 @@ import {
   TextField,
 } from '@fluentui/react';
 import { Ipc } from '@freik/electron-render';
+import { IpcId } from '@freik/emp-shared';
 import { SongKey } from '@freik/media-core';
 import { isArray, isString } from '@freik/typechk';
 import { Expandable } from '@freik/web-utils';
+import { useAtomValue } from 'jotai';
 import { useRecoilValue } from 'recoil';
-import { IpcId } from '@freik/emp-shared';
+import { mediaInfoStateFamily } from '../../Jotai/MediaInfo';
 import {
   albumByKeyFuncFam,
   artistStringFuncFam,
   commonDataFuncFam,
-  mediaInfoFuncFam,
   songByKeyFuncFam,
 } from '../../Recoil/ReadOnly';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
@@ -54,7 +55,7 @@ function getSampleRate(sr: string | void): string {
 
 // This is the header for single-file editing
 function MediaFormatDetails({ forSong }: { forSong: SongKey }): JSX.Element {
-  const mediaInfo = useRecoilValue(mediaInfoFuncFam(forSong));
+  const mediaInfo = useAtomValue(mediaInfoStateFamily(forSong));
 
   const fileType = getType(mediaInfo.get('format.codec'));
   const duration = fractionalSecondsStrToHMS(
@@ -112,7 +113,7 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
     },
   ];
 
-  const mediaInfo = useRecoilValue(mediaInfoFuncFam(songKey));
+  const mediaInfo = useAtomValue(mediaInfoStateFamily(songKey));
   return (
     <DetailsList
       items={[...mediaInfo.entries()]}

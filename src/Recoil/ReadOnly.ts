@@ -1,4 +1,3 @@
-import { FlatAudioDatabase } from '@freik/audiodb';
 import { Effects, Ipc } from '@freik/electron-render';
 import { IgnoreItem, IpcId, isIgnoreItemArray } from '@freik/emp-shared';
 import { MakeLog } from '@freik/logger';
@@ -20,13 +19,13 @@ import {
   AlbumDescriptionWithKey,
   AlbumMap,
   ArtistMap,
+  MakeMusicLibraryFromFlatAudioDatabase,
   MusicLibrary,
   SongDescription,
   SongMap,
   emptyLibrary,
   isFlatAudioDatabase,
 } from '../MusicLibrarySchema';
-import { SetDB } from '../MyWindow';
 import { MetadataProps } from '../UI/DetailPanel/MetadataProps';
 import { songListState } from './SongPlaying';
 
@@ -65,16 +64,6 @@ export const picForKeyFam = selectorFamily<string, MediaKey>({
       return isString(data) ? data : 'error';
     },
 });
-
-function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
-  // For debugging, this is helpful sometimes:
-  SetDB(fad);
-  return {
-    songs: new Map(fad.songs.map((swp) => [swp.key, swp])),
-    albums: new Map(fad.albums.map((alb) => [alb.key, alb])),
-    artists: new Map(fad.artists.map((art) => [art.key, art])),
-  };
-}
 
 const musicLibraryState = atom<MusicLibrary>({
   key: 'musicDatabase',
