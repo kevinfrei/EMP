@@ -82,6 +82,7 @@ export const emptyLibrary = {
   albums: new Map<AlbumKey, Album>(),
   artists: new Map<ArtistKey, Artist>(),
 };
+
 export function MakeMusicLibraryFromFlatAudioDatabase(fad: FlatAudioDatabase) {
   // For debugging, this is helpful sometimes:
   SetDB(fad);

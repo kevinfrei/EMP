@@ -4,12 +4,12 @@ import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import { musicLibraryState } from './MusicLibrary';
 
-export const allArtistsState = atom((get) => {
-  return get(musicLibraryState).artists;
+export const allArtistsState = atom(async (get) => {
+  return (await get(musicLibraryState)).artists;
 });
 
 export const maybeArtistByKey = atomFamily((ak: ArtistKey) =>
-  atom(async (get) => await get(allArtistsState).get(ak)),
+  atom(async (get) => (await get(allArtistsState)).get(ak)),
 );
 
 export const artistByKey = atomFamily((ak: ArtistKey) =>
