@@ -20,6 +20,7 @@ import {
   AlbumMap,
   ArtistMap,
   MakeMusicLibraryFromFlatAudioDatabase,
+  MetadataProps,
   MusicLibrary,
   SongDescription,
   SongInfo,
@@ -28,7 +29,6 @@ import {
   emptyLibrary,
   isFlatAudioDatabase,
 } from '../MusicLibrarySchema';
-import { MetadataProps } from '../UI/DetailPanel/MetadataProps';
 import { songListState } from './SongPlaying';
 
 // import {

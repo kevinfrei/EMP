@@ -98,6 +98,7 @@ export type SongInfo = {
   moreArtists: string;
   album: Album;
 };
+
 export function diskNumName(
   songData: SongInfo,
 ): [string | null, string | null] {
@@ -111,3 +112,18 @@ export function diskNumName(
     return [null, null];
   }
 }
+
+export type MetadataProps = {
+  forSong?: SongKey;
+  forSongs?: SongKey[];
+  artist?: string;
+  album?: string;
+  track?: string;
+  title?: string;
+  year?: string;
+  va?: string;
+  variations?: string;
+  moreArtists?: string;
+  albumId?: AlbumKey;
+  diskName?: string;
+};

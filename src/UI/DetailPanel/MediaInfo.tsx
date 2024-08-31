@@ -10,14 +10,13 @@ import { SongKey } from '@freik/media-core';
 import { isArray, isString } from '@freik/typechk';
 import { Expandable } from '@freik/web-utils';
 import { useAtomValue } from 'jotai';
-import { useRecoilValue } from 'recoil';
-import { mediaInfoStateFamily } from '../../Jotai/MediaInfo';
+import { albumByKey } from '../../Jotai/Albums';
+import { artistStringStateFamily } from '../../Jotai/Artists';
 import {
-  albumByKeyFuncFam,
-  artistStringFuncFam,
-  commonDataFuncFam,
-  songByKeyFuncFam,
-} from '../../Recoil/ReadOnly';
+  commonMetadataFromSongKeys,
+  mediaInfoStateFamily,
+} from '../../Jotai/MediaInfo';
+import { songByKey } from '../../Jotai/Songs';
 import { divGrand, fractionalSecondsStrToHMS } from '../../Tools';
 import { altRowRenderer } from './../SongList';
 import { SimpleSongsList } from './../Views/MixedSongs';
@@ -126,10 +125,12 @@ function RawMetadata({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
-  const theSong = useRecoilValue(songByKeyFuncFam(songKey));
-  const theArtist = useRecoilValue(artistStringFuncFam(theSong.artistIds));
-  const moreArtists = useRecoilValue(artistStringFuncFam(theSong.secondaryIds));
-  const theAlbum = useRecoilValue(albumByKeyFuncFam(theSong.albumId));
+  const theSong = useAtomValue(songByKey(songKey));
+  const theArtist = useAtomValue(artistStringStateFamily(theSong.artistIds));
+  const moreArtists = useAtomValue(
+    artistStringStateFamily(theSong.secondaryIds),
+  );
+  const theAlbum = useAtomValue(albumByKey(theSong.albumId));
   const diskNum = Math.floor(theSong.track / 100);
   const diskName =
     diskNum > 0 &&
@@ -155,7 +156,7 @@ function SingleFileEditor({ songKey }: { songKey: SongKey }): JSX.Element {
 }
 
 function MultiFileEditor({ songKeys }: { songKeys: SongKey[] }): JSX.Element {
-  const allTheInfos = useRecoilValue(commonDataFuncFam(songKeys));
+  const allTheInfos = useAtomValue(commonMetadataFromSongKeys(songKeys));
   return <MetadataEditor forSongs={songKeys} {...allTheInfos} />;
 }
 

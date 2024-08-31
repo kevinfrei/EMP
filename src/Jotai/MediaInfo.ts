@@ -4,6 +4,10 @@ import { Fail } from '@freik/web-utils';
 import { atom } from 'jotai';
 import { atomFamily } from 'jotai/utils';
 import * as ipc from '../ipc';
+import { diskNumName, MetadataProps, SongInfo } from '../MusicLibrarySchema';
+import { albumByKey } from './Albums';
+import { artistStringStateFamily } from './Artists';
+import { songByKey } from './Songs';
 
 const { log } = MakeLog('EMP:render:Jotai:MediaInfo');
 
@@ -19,16 +23,20 @@ export const mediaInfoStateFamily = atomFamily((sk: SongKey) =>
     return result;
   }),
 );
-/*
-export const commonDataFuncFam = atomFamily((keys: SongKey[]) => atom(
-  async (get) => {
-    const theSongsData: SongInfo[] = keys.map((songKey) => {
-      const song = get(songByKeyFuncFam(songKey));
-      const artists = get(artistStringFuncFam(song.artistIds));
-      const moreArtists = get(artistStringFuncFam(song.secondaryIds));
-      const album = get(albumByKeyFuncFam(song.albumId));
-      return { song, artists, moreArtists, album };
-    });
+
+export const commonMetadataFromSongKeys = atomFamily((keys: SongKey[]) =>
+  atom(async (get) => {
+    const theSongsData: SongInfo[] = await Promise.all(
+      keys.map(async (songKey) => {
+        const song = await get(songByKey(songKey));
+        const artists = await get(artistStringStateFamily(song.artistIds));
+        const moreArtists = await get(
+          artistStringStateFamily(song.secondaryIds),
+        );
+        const album = await get(albumByKey(song.albumId));
+        return { song, artists, moreArtists, album };
+      }),
+    );
     let artist: string | null = null;
     let albumTitle: string | null = null;
     let year: string | null = null;
@@ -93,6 +101,5 @@ export const commonDataFuncFam = atomFamily((keys: SongKey[]) => atom(
       props.diskName = diskName;
     }
     return props;
-  },
-  });
-*/
+  }),
+);
